@@ -36,7 +36,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/
-          key: pipeline-data-${{ hashFiles('public/index.json') }}
+          key: pipeline-data-${{ github.run_number }}
           restore-keys: |
             pipeline-data-
 
@@ -52,6 +52,7 @@ jobs:
         run: npm run build
 
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: public-directory
@@ -67,6 +68,7 @@ jobs:
           if [ -n "$(git status public/ --porcelain)" ]; then
             git add public/
             git commit -m "chore: update directory data [skip ci]"
+            git pull --rebase origin main
             if ! git push; then
               echo "::error::Failed to push changes - manual intervention required"
               exit 1
