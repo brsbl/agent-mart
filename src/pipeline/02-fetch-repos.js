@@ -1,4 +1,4 @@
-import { batchGetRepos, getRepo, getUser, safeApiCall } from '../lib/github.js';
+import { batchGetRepos } from '../lib/github.js';
 import { saveJson, loadJson, log } from '../lib/utils.js';
 
 const INPUT_PATH = './data/01-discovered.json';
@@ -26,7 +26,7 @@ export async function fetchRepos() {
   // Transform results to match expected output format
   const enriched = [];
 
-  for (const { owner, repo, full_name, marketplace_path } of repos) {
+  for (const { full_name, marketplace_path } of repos) {
     const data = repoData[full_name];
     if (!data) {
       log(`No data for ${full_name}, skipping`);

@@ -15,8 +15,8 @@ const FILE_PATTERNS = [
   /(^|\/)?\.claude-plugin\/plugin\.json$/,
   // Commands (root or nested)
   /(^|\/)commands\/[^/]+\.md$/,
-  // Skills
-  /SKILL\.md$/
+  // Skills - must be in skills/<skill-name>/SKILL.md format
+  /(^|\/)skills\/[^/]+\/SKILL\.md$/
 ];
 
 /**
@@ -78,7 +78,7 @@ export async function fetchFiles() {
           });
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Fall back to individual REST calls if batch fails
       log(`Batch failed for ${full_name}, falling back to REST`);
       for (const entry of filesToFetch) {

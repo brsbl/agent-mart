@@ -8,6 +8,10 @@ import { logError } from './utils.js';
  * @returns {Object|null} Parsed object or null
  */
 export function parseJson(content, context = '') {
+  if (typeof content !== 'string') {
+    logError(`parseJson: expected string, got ${typeof content}: ${context}`);
+    return null;
+  }
   try {
     return JSON.parse(content);
   } catch (error) {
@@ -22,6 +26,10 @@ export function parseJson(content, context = '') {
  * @returns {{ frontmatter: Object|null, body: string }} Parsed frontmatter and body
  */
 export function parseFrontmatter(content) {
+  if (typeof content !== 'string') {
+    logError(`parseFrontmatter: expected string, got ${typeof content}`);
+    return { frontmatter: null, body: '' };
+  }
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
 
   if (!match) {
@@ -44,7 +52,7 @@ export function parseFrontmatter(content) {
  * @returns {string} Command name like "/my-command"
  */
 export function extractCommandName(filePath) {
-  if (filePath == null || filePath === '') {
+  if (filePath === null || filePath === undefined || filePath === '') {
     return '/unknown';
   }
 
@@ -68,7 +76,7 @@ export function extractSkillName(filePath, frontmatter) {
     return frontmatter.name;
   }
 
-  if (filePath == null || filePath === '') {
+  if (filePath === null || filePath === undefined || filePath === '') {
     return 'unknown-skill';
   }
 

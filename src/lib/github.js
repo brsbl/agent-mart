@@ -16,45 +16,89 @@ const MAX_RATE_LIMIT_RETRIES = 3; // Max times to wait for rate limit reset
 const REPO_BATCH_SIZE = 15;
 const FILE_BATCH_SIZE = 20;
 
-// Validate GITHUB_TOKEN at startup
-if (!process.env.GITHUB_TOKEN) {
-  console.error('ERROR: GITHUB_TOKEN environment variable is not set.');
-  console.error('Please set GITHUB_TOKEN in your .env file or environment.');
-  console.error('You can create a token at: https://github.com/settings/tokens');
-  process.exit(1);
+/**
+ * Sanitize a string for use in GraphQL queries
+ * Escapes backslashes and double quotes to prevent injection
+ * @param {string} str - String to sanitize
+ * @returns {string} Sanitized string
+ */
+function sanitizeForGraphQL(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
-// Create throttled Octokit instance
+// Create throttled Octokit class
 const ThrottledOctokit = Octokit.plugin(throttling);
 
-const octokit = new ThrottledOctokit({
-  auth: process.env.GITHUB_TOKEN,
-  request: {
-    timeout: 30000 // 30 second timeout per request
-  },
-  throttle: {
-    onRateLimit: (retryAfter, options, octokit, retryCount) => {
-      log(`Rate limit hit for ${options.method} ${options.url}`);
-      if (retryCount < 2) {
-        log(`Retrying after ${retryAfter} seconds`);
-        return true;
-      }
-      return false;
-    },
-    onSecondaryRateLimit: (retryAfter, options, octokit) => {
-      log(`Secondary rate limit hit for ${options.method} ${options.url}`);
-      log(`Retrying after ${retryAfter} seconds`);
-      return true;
-    },
-  },
-});
+// Lazy-initialized clients (prevents crashes during import in tests)
+let _octokit = null;
+let _graphqlWithAuth = null;
+let _tokenValidated = false;
 
-// GraphQL client with authentication
-const graphqlWithAuth = graphql.defaults({
-  headers: {
-    authorization: `token ${process.env.GITHUB_TOKEN}`,
-  },
-});
+/**
+ * Validate GitHub token and throw if missing
+ * @throws {Error} If GITHUB_TOKEN is not set
+ */
+function validateToken() {
+  if (_tokenValidated) return;
+
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error(
+      'GITHUB_TOKEN environment variable is not set. ' +
+      'Please set GITHUB_TOKEN in your .env file or environment. ' +
+      'You can create a token at: https://github.com/settings/tokens'
+    );
+  }
+  _tokenValidated = true;
+}
+
+/**
+ * Get the Octokit instance (lazy initialization)
+ * @returns {Octokit} Configured Octokit instance
+ */
+function getOctokit() {
+  if (!_octokit) {
+    validateToken();
+    _octokit = new ThrottledOctokit({
+      auth: process.env.GITHUB_TOKEN,
+      request: {
+        timeout: 30000 // 30 second timeout per request
+      },
+      throttle: {
+        onRateLimit: (retryAfter, options, octokit, retryCount) => {
+          log(`Rate limit hit for ${options.method} ${options.url}`);
+          if (retryCount < 2) {
+            log(`Retrying after ${retryAfter} seconds`);
+            return true;
+          }
+          return false;
+        },
+        onSecondaryRateLimit: (retryAfter, options, _octokit) => {
+          log(`Secondary rate limit hit for ${options.method} ${options.url}`);
+          log(`Retrying after ${retryAfter} seconds`);
+          return true;
+        },
+      },
+    });
+  }
+  return _octokit;
+}
+
+/**
+ * Get the GraphQL client (lazy initialization)
+ * @returns {Function} Configured GraphQL client
+ */
+function getGraphQL() {
+  if (!_graphqlWithAuth) {
+    validateToken();
+    _graphqlWithAuth = graphql.defaults({
+      headers: {
+        authorization: `token ${process.env.GITHUB_TOKEN}`,
+      },
+    });
+  }
+  return _graphqlWithAuth;
+}
 
 // GraphQL rate limit tracking
 let graphqlRateLimit = { remaining: 5000, resetAt: null };
@@ -85,7 +129,7 @@ restLimiter.on('depleted', () => {
 });
 
 // Log when requests are dropped due to queue overflow
-restLimiter.on('dropped', (dropped) => {
+restLimiter.on('dropped', (_dropped) => {
   logError(`Request dropped due to queue overflow - queue limit reached`);
 });
 
@@ -111,7 +155,7 @@ async function checkGraphQLRateLimit() {
 async function executeGraphQL(query, variables = {}) {
   await checkGraphQLRateLimit();
 
-  const result = await graphqlWithAuth(query, variables);
+  const result = await getGraphQL()(query, variables);
 
   // Update rate limit tracking if present
   if (result.rateLimit) {
@@ -133,7 +177,7 @@ async function executeGraphQL(query, variables = {}) {
 export async function searchCode(query, page = 1) {
   return searchLimiter.schedule(async () => {
     log(`Searching code: "${query}" (page ${page})`);
-    const response = await octokit.rest.search.code({
+    const response = await getOctokit().rest.search.code({
       q: query,
       per_page: 100,
       page
@@ -151,7 +195,7 @@ export async function searchCode(query, page = 1) {
 export async function getRepo(owner, repo) {
   return restLimiter.schedule(async () => {
     log(`Fetching repo: ${owner}/${repo}`);
-    const response = await octokit.rest.repos.get({ owner, repo });
+    const response = await getOctokit().rest.repos.get({ owner, repo });
     return response.data;
   });
 }
@@ -164,7 +208,7 @@ export async function getRepo(owner, repo) {
 export async function getUser(username) {
   return restLimiter.schedule(async () => {
     log(`Fetching user: ${username}`);
-    const response = await octokit.rest.users.getByUsername({ username });
+    const response = await getOctokit().rest.users.getByUsername({ username });
     return response.data;
   });
 }
@@ -182,9 +226,9 @@ export async function batchGetRepos(repos) {
     const batch = repos.slice(i, i + REPO_BATCH_SIZE);
     log(`Batch fetching repos ${i + 1}-${Math.min(i + REPO_BATCH_SIZE, repos.length)} of ${repos.length}`);
 
-    // Build dynamic query with aliases
+    // Build dynamic query with aliases (sanitize inputs to prevent GraphQL injection)
     const repoQueries = batch.map((r, idx) => `
-      repo${idx}: repository(owner: "${r.owner}", name: "${r.repo}") {
+      repo${idx}: repository(owner: "${sanitizeForGraphQL(r.owner)}", name: "${sanitizeForGraphQL(r.repo)}") {
         name
         description
         url
@@ -302,7 +346,7 @@ export async function batchGetRepos(repos) {
 export async function getTree(owner, repo, sha) {
   return restLimiter.schedule(async () => {
     log(`Fetching tree: ${owner}/${repo}@${sha}`);
-    const response = await octokit.rest.git.getTree({
+    const response = await getOctokit().rest.git.getTree({
       owner,
       repo,
       tree_sha: sha,
@@ -322,7 +366,7 @@ export async function getTree(owner, repo, sha) {
 export async function getFileContent(owner, repo, path) {
   return restLimiter.schedule(async () => {
     log(`Fetching file: ${owner}/${repo}/${path}`);
-    const response = await octokit.rest.repos.getContent({
+    const response = await getOctokit().rest.repos.getContent({
       owner,
       repo,
       path
@@ -347,9 +391,10 @@ export async function batchGetFiles(owner, repo, branch, paths) {
     const batch = paths.slice(i, i + FILE_BATCH_SIZE);
     log(`Batch fetching files ${i + 1}-${Math.min(i + FILE_BATCH_SIZE, paths.length)} of ${paths.length} from ${owner}/${repo}`);
 
-    // Build dynamic query with aliases (sanitize paths for GraphQL aliases)
+    // Build dynamic query with aliases (sanitize inputs to prevent GraphQL injection)
+    const safeBranch = sanitizeForGraphQL(branch);
     const fileQueries = batch.map((path, idx) => `
-      file${idx}: object(expression: "${branch}:${path}") {
+      file${idx}: object(expression: "${safeBranch}:${sanitizeForGraphQL(path)}") {
         ... on Blob {
           text
           byteSize
