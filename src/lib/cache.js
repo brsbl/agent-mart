@@ -24,7 +24,7 @@ function validateCachePath(filepath) {
 
 // Cache TTLs
 const TTL = {
-  USER: 24 * 60 * 60 * 1000, // 24 hours for user profiles
+  OWNER: 24 * 60 * 60 * 1000, // 24 hours for owner profiles
   TREE: 0 // Trees are cached by SHA, which is immutable (no TTL needed)
 };
 

@@ -6,7 +6,7 @@
 
 Build a **public, read‑only reference directory** for Claude Code resources that lets users:
 
-* Discover **who** is building things (GitHub users)
+* Discover **who** is building things (GitHub owners)
 * See **what** they publish (marketplaces → plugins → commands/skills)
 * Copy/paste **official install commands** to install resources *wherever they choose*
 
@@ -82,7 +82,7 @@ Only repos matching this are indexed in v1.
 
 ## 5. Data Model (Simple, Stable, Marketplace‑Derived)
 
-### User
+### Owner
 
 Fetched from GitHub API (`GET /users/{username}`)
 
@@ -210,14 +210,14 @@ From `GET /repos/{owner}/{repo}`:
 
 ---
 
-## 8. User‑Centric Organization (Core UX)
+## 8. Owner‑Centric Organization (Core UX)
 
-Everything is grouped by **GitHub user**.
+Everything is grouped by **GitHub owner**.
 
 ### Navigation Hierarchy
 
 ```
-User
+Owner
  └─ Repo (marketplace)
      └─ Marketplace
          └─ Plugin (workflow)
@@ -258,14 +258,14 @@ Where the user installs (user vs project) is **their decision**, not the directo
 
 ### `public/index.json`
 
-* List of users
-* User metadata + avatar
+* List of owners
+* Owner metadata + avatar
 * Counts (repos, plugins, commands, skills)
 * Aggregated social proof
 
-### `public/users/<user>.json`
+### `public/owners/<owner>.json`
 
-* User metadata
+* Owner metadata
 * All marketplace repos
 * Fully enriched plugins
 

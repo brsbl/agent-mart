@@ -2,7 +2,7 @@ import { saveJson, loadJson, ensureDir, log, sanitizeFilename } from '../lib/uti
 
 const INPUT_PATH = './data/06-enriched.json';
 const INDEX_PATH = './public/index.json';
-const USERS_DIR = './public/users';
+const OWNERS_DIR = './public/owners';
 
 /**
  * Generate final public JSON files
@@ -10,23 +10,23 @@ const USERS_DIR = './public/users';
 export async function output() {
   log('Generating public JSON files...');
 
-  const { users } = loadJson(INPUT_PATH);
-  ensureDir(USERS_DIR);
+  const { owners } = loadJson(INPUT_PATH);
+  ensureDir(OWNERS_DIR);
 
-  // Build user summaries for index (sorted by stars)
-  const userSummaries = Object.values(users)
-    .map(user => ({
-      id: user.id,
-      display_name: user.display_name,
-      type: user.type,
-      avatar_url: user.avatar_url,
-      url: user.url,
-      stats: user.stats
+  // Build owner summaries for index (sorted by stars)
+  const ownerSummaries = Object.values(owners)
+    .map(owner => ({
+      id: owner.id,
+      display_name: owner.display_name,
+      type: owner.type,
+      avatar_url: owner.avatar_url,
+      url: owner.url,
+      stats: owner.stats
     }))
     .sort((a, b) => b.stats.total_stars - a.stats.total_stars);
 
   // Calculate totals
-  const totals = userSummaries.reduce(
+  const totals = ownerSummaries.reduce(
     (acc, o) => ({
       repos: acc.repos + o.stats.total_repos,
       plugins: acc.plugins + o.stats.total_plugins,
@@ -39,44 +39,44 @@ export async function output() {
   // Write index.json
   const indexData = {
     meta: {
-      total_users: userSummaries.length,
+      total_owners: ownerSummaries.length,
       total_repos: totals.repos,
       total_plugins: totals.plugins,
       total_commands: totals.commands,
       total_skills: totals.skills,
       generated_at: new Date().toISOString()
     },
-    users: userSummaries
+    owners: ownerSummaries
   };
 
   saveJson(INDEX_PATH, indexData);
   log(`Generated ${INDEX_PATH}`);
 
-  // Write per-user files
-  for (const user of Object.values(users)) {
-    const userData = {
-      user: {
-        id: user.id,
-        display_name: user.display_name,
-        type: user.type,
-        avatar_url: user.avatar_url,
-        url: user.url,
-        bio: user.bio,
-        stats: user.stats
+  // Write per-owner files
+  for (const owner of Object.values(owners)) {
+    const ownerData = {
+      owner: {
+        id: owner.id,
+        display_name: owner.display_name,
+        type: owner.type,
+        avatar_url: owner.avatar_url,
+        url: owner.url,
+        bio: owner.bio,
+        stats: owner.stats
       },
-      repos: user.repos.sort((a, b) => b.signals.stars - a.signals.stars)
+      repos: owner.repos.sort((a, b) => b.signals.stars - a.signals.stars)
     };
 
-    const userPath = `${USERS_DIR}/${sanitizeFilename(user.id)}.json`;
-    saveJson(userPath, userData);
+    const ownerPath = `${OWNERS_DIR}/${sanitizeFilename(owner.id)}.json`;
+    saveJson(ownerPath, ownerData);
   }
 
-  log(`Generated ${Object.keys(users).length} user files in ${USERS_DIR}/`);
+  log(`Generated ${Object.keys(owners).length} owner files in ${OWNERS_DIR}/`);
 
   // Summary
   log('');
   log('=== Output Summary ===');
-  log(`Users: ${userSummaries.length}`);
+  log(`Owners: ${ownerSummaries.length}`);
   log(`Repos: ${totals.repos}`);
   log(`Plugins: ${totals.plugins}`);
   log(`Commands: ${totals.commands}`);

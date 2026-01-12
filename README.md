@@ -7,7 +7,7 @@ A marketplace-first directory builder for Claude Code plugins, skills, and comma
 - **7-step ETL pipeline** - Discover, fetch, parse, enrich, and output
 - **GraphQL batching** - 90% fewer GitHub API calls
 - **SHA-based caching** - Fast rebuilds for unchanged repos
-- **User-centric model** - Browse by creator, not category
+- **Owner-centric model** - Browse by creator, not category
 - **Static JSON output** - CDN-friendly, no database required
 
 ## Quick Start
@@ -54,9 +54,9 @@ The pipeline generates:
 
 ```
 public/
-  index.json           # Directory homepage with all users
-  users/
-    vercel.json        # Per-user detail files
+  index.json           # Directory homepage with all owners
+  owners/
+    vercel.json        # Per-owner detail files
     anthropics.json
     ...
 ```
@@ -66,12 +66,12 @@ public/
 ```json
 {
   "meta": {
-    "total_users": 3,
+    "total_owners": 3,
     "total_repos": 3,
     "total_plugins": 5,
     "generated_at": "2026-01-12T02:33:28.814Z"
   },
-  "users": [
+  "owners": [
     {
       "id": "vercel",
       "display_name": "Vercel",
@@ -88,11 +88,11 @@ public/
 | Step | Description | Output |
 |------|-------------|--------|
 | 01-discover | Find repos with `marketplace.json` | Discovered repos |
-| 02-fetch-repos | Fetch repo & user metadata | Repo details |
+| 02-fetch-repos | Fetch repo & owner metadata | Repo details |
 | 03-fetch-trees | Download file structures | File trees |
 | 04-fetch-files | Fetch specific files | File contents |
 | 05-parse | Parse & validate files | Parsed data |
-| 06-enrich | Build user-centric model | Enriched data |
+| 06-enrich | Build owner-centric model | Enriched data |
 | 07-output | Generate public JSON | Final output |
 
 ## Performance

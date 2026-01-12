@@ -30,7 +30,7 @@ GitHub API
     ▼
 ┌─────────────┐
 │ 07-output   │ ──► public/index.json
-│             │     public/users/*.json
+│             │     public/owners/*.json
 └─────────────┘
 ```
 
@@ -65,7 +65,7 @@ agent-mart/
 │   └── ...
 └── public/                # Final output (gitignored)
     ├── index.json
-    └── users/
+    └── owners/
         └── *.json
 ```
 
@@ -153,11 +153,11 @@ Parses and validates all fetched files:
 
 **File:** `src/pipeline/06-enrich.js`
 
-Builds user-centric data model:
+Builds owner-centric data model:
 
 ```javascript
 {
-  user: {
+  owner: {
     id: "vercel",
     display_name: "Vercel",
     stats: { total_stars, total_plugins, ... }
@@ -181,8 +181,8 @@ Builds user-centric data model:
 **File:** `src/pipeline/07-output.js`
 
 Generates public JSON files:
-- `public/index.json` - Directory homepage with all users
-- `public/users/<id>.json` - Per-user detail pages
+- `public/index.json` - Directory homepage with all owners
+- `public/owners/<id>.json` - Per-owner detail pages
 
 ## GitHub API Usage
 
@@ -321,7 +321,7 @@ function getOctokit() {
 }
 ```
 
-### User (output)
+### Owner (output)
 
 ```json
 {
@@ -395,7 +395,7 @@ function getOctokit() {
 - Lower spam risk (curated by maintainers)
 - Canonical install commands
 
-### Why user-centric model?
+### Why owner-centric model?
 
 - Users follow creators, not categories
 - Natural social proof aggregation
