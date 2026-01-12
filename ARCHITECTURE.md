@@ -30,7 +30,7 @@ GitHub API
     ▼
 ┌─────────────┐
 │ 07-output   │ ──► public/index.json
-│             │     public/owners/*.json
+│             │     public/users/*.json
 └─────────────┘
 ```
 
@@ -65,7 +65,7 @@ agent-mart/
 │   └── ...
 └── public/                # Final output (gitignored)
     ├── index.json
-    └── owners/
+    └── users/
         └── *.json
 ```
 
@@ -153,11 +153,11 @@ Parses and validates all fetched files:
 
 **File:** `src/pipeline/06-enrich.js`
 
-Builds owner-centric data model:
+Builds user-centric data model:
 
 ```javascript
 {
-  owner: {
+  user: {
     id: "vercel",
     display_name: "Vercel",
     stats: { total_stars, total_plugins, ... }
@@ -181,8 +181,8 @@ Builds owner-centric data model:
 **File:** `src/pipeline/07-output.js`
 
 Generates public JSON files:
-- `public/index.json` - Directory homepage with all owners
-- `public/owners/<id>.json` - Per-owner detail pages
+- `public/index.json` - Directory homepage with all users
+- `public/users/<id>.json` - Per-user detail pages
 
 ## GitHub API Usage
 
@@ -228,7 +228,7 @@ const RETRY_DELAYS = [1000, 5000, 15000]; // Exponential backoff
 | Data | Cache Key | TTL |
 |------|-----------|-----|
 | Trees | Commit SHA | Never expires (immutable) |
-| Owners | Username | 24 hours |
+| Users | Username | 24 hours |
 
 ### Implementation
 
@@ -238,7 +238,7 @@ const CACHE_DIR = './data/.cache';
 
 // Cache format
 tree_<sha>.json
-owner_<username>.json
+user_<username>.json
 ```
 
 ### Security
@@ -323,7 +323,7 @@ function getOctokit() {
 }
 ```
 
-### Owner (output)
+### User (output)
 
 ```json
 {
@@ -397,7 +397,7 @@ function getOctokit() {
 - Lower spam risk (curated by maintainers)
 - Canonical install commands
 
-### Why owner-centric model?
+### Why user-centric model?
 
 - Users follow creators, not categories
 - Natural social proof aggregation

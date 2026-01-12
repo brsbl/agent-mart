@@ -62,21 +62,21 @@ export async function enrich() {
 
   log(`Indexed ${parsedData.commands.length} commands and ${parsedData.skills.length} skills`);
 
-  const enrichedOwners = new Map();
+  const enrichedUsers = new Map();
 
   for (const repo of reposData.repos) {
     const { full_name, owner: ownerInfo } = repo;
 
-    // Get or create owner entry
-    if (!enrichedOwners.has(ownerInfo.id)) {
-      const ownerProfile = reposData.owners[ownerInfo.id] || {};
-      enrichedOwners.set(ownerInfo.id, {
+    // Get or create user entry
+    if (!enrichedUsers.has(ownerInfo.id)) {
+      const userProfile = reposData.owners[ownerInfo.id] || {};
+      enrichedUsers.set(ownerInfo.id, {
         id: ownerInfo.id,
-        display_name: ownerProfile.display_name || ownerInfo.id,
+        display_name: userProfile.display_name || ownerInfo.id,
         type: ownerInfo.type,
         avatar_url: ownerInfo.avatar_url,
-        url: ownerProfile.url || `https://github.com/${ownerInfo.id}`,
-        bio: ownerProfile.bio || null,
+        url: userProfile.url || `https://github.com/${ownerInfo.id}`,
+        bio: userProfile.bio || null,
         stats: {
           total_repos: 0,
           total_plugins: 0,
@@ -89,7 +89,7 @@ export async function enrich() {
       });
     }
 
-    const ownerData = enrichedOwners.get(ownerInfo.id);
+    const userData = enrichedUsers.get(ownerInfo.id);
 
     // Find marketplace.json for this repo
     const marketplace = marketplaceMap.get(full_name);
@@ -165,25 +165,25 @@ export async function enrich() {
       }
     };
 
-    // Update owner stats
-    ownerData.stats.total_repos++;
-    ownerData.stats.total_plugins += plugins.length;
-    ownerData.stats.total_commands += plugins.reduce((sum, p) => sum + p.commands.length, 0);
-    ownerData.stats.total_skills += plugins.reduce((sum, p) => sum + p.skills.length, 0);
-    ownerData.stats.total_stars += repo.repo.signals.stars;
-    ownerData.stats.total_forks += repo.repo.signals.forks;
+    // Update user stats
+    userData.stats.total_repos++;
+    userData.stats.total_plugins += plugins.length;
+    userData.stats.total_commands += plugins.reduce((sum, p) => sum + p.commands.length, 0);
+    userData.stats.total_skills += plugins.reduce((sum, p) => sum + p.skills.length, 0);
+    userData.stats.total_stars += repo.repo.signals.stars;
+    userData.stats.total_forks += repo.repo.signals.forks;
 
-    ownerData.repos.push(repoEntry);
+    userData.repos.push(repoEntry);
   }
 
   const output = {
     enriched_at: new Date().toISOString(),
-    total_owners: enrichedOwners.size,
-    owners: Object.fromEntries(enrichedOwners)
+    total_users: enrichedUsers.size,
+    users: Object.fromEntries(enrichedUsers)
   };
 
   saveJson(OUTPUT_PATH, output);
-  log(`Enriched ${enrichedOwners.size} owners with full data`);
+  log(`Enriched ${enrichedUsers.size} users with full data`);
 
   return output;
 }
