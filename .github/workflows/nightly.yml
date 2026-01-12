@@ -10,6 +10,8 @@ concurrency:
   group: nightly-build
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -57,7 +59,7 @@ jobs:
           if [ -n "$(git status public/ --porcelain)" ]; then
             git add public/
             git commit -m "chore: update directory data [skip ci]"
-            git push
+            git push || echo "::warning::Failed to push changes, may need manual intervention"
           else
             echo "No changes to commit"
           fi
