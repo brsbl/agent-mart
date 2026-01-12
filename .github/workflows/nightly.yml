@@ -26,11 +26,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Cache pipeline data
+        uses: actions/cache@v4
+        with:
+          path: data/
+          key: pipeline-data-${{ hashFiles('public/index.json') }}
+          restore-keys: |
+            pipeline-data-
 
       - name: Run linting
         run: npm run lint
@@ -59,7 +67,10 @@ jobs:
           if [ -n "$(git status public/ --porcelain)" ]; then
             git add public/
             git commit -m "chore: update directory data [skip ci]"
-            git push || echo "::warning::Failed to push changes, may need manual intervention"
+            if ! git push; then
+              echo "::error::Failed to push changes - manual intervention required"
+              exit 1
+            fi
           else
             echo "No changes to commit"
           fi

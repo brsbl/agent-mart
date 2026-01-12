@@ -1,5 +1,8 @@
 # Agent Mart
 
+![CI](https://github.com/brsbl/agent-mart/actions/workflows/ci.yml/badge.svg)
+![Nightly Build](https://github.com/brsbl/agent-mart/actions/workflows/nightly.yml/badge.svg)
+
 A marketplace-first directory builder for Claude Code plugins, skills, and commands. Crawls GitHub for repositories containing Claude Code marketplace definitions, enriches them with metadata, and generates static JSON artifacts.
 
 ## Features
@@ -30,7 +33,7 @@ REPO_LIMIT=3 npm run build
 ## Requirements
 
 - Node.js >= 20.0.0
-- GitHub Personal Access Token with `public_repo` scope
+- GitHub Personal Access Token (see [Token Setup](#github-action) for recommended scopes)
 
 ## Configuration
 
@@ -136,13 +139,24 @@ npm test
 The pipeline runs nightly via GitHub Actions at 2 AM UTC. To set up:
 
 1. Go to **Settings → Secrets and variables → Actions**
-2. Create a secret named `PIPELINE_GITHUB_TOKEN` with a GitHub PAT that has `public_repo` scope
+2. Create a secret named `PIPELINE_GITHUB_TOKEN` with a fine-grained PAT:
+   - **Repository access:** This repository only
+   - **Permissions:** Contents (Read and write), Metadata (Read)
+
+   *Alternatively, a classic PAT with `public_repo` scope works but grants broader access.*
 3. The workflow will:
    - Run the full pipeline
    - Commit updated `public/` files automatically
    - Upload artifacts for 30 days
 
 You can also trigger manually from **Actions → Nightly Build → Run workflow**.
+
+### Requirements for Nightly Workflow
+
+For the nightly workflow to push commits automatically, ensure one of:
+- Branch protection allows `github-actions[bot]` to push, OR
+- A ruleset bypasses protection for GitHub Actions, OR
+- The PAT has permissions to bypass branch protection
 
 ## License
 
