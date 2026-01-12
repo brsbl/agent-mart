@@ -88,11 +88,11 @@ public/
 | Step | Description | Output |
 |------|-------------|--------|
 | 01-discover | Find repos with `marketplace.json` | Discovered repos |
-| 02-fetch-repos | Fetch repo & owner metadata | Repo details |
+| 02-fetch-repos | Fetch repo & user metadata | Repo details |
 | 03-fetch-trees | Download file structures | File trees |
 | 04-fetch-files | Fetch specific files | File contents |
 | 05-parse | Parse & validate files | Parsed data |
-| 06-enrich | Build owner-centric model | Enriched data |
+| 06-enrich | Build user-centric model | Enriched data |
 | 07-output | Generate public JSON | Final output |
 
 ## Performance

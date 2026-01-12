@@ -6,7 +6,7 @@
 
 Build a **public, read‑only reference directory** for Claude Code resources that lets users:
 
-* Discover **who** is building things (GitHub owners)
+* Discover **who** is building things (GitHub users)
 * See **what** they publish (marketplaces → plugins → commands/skills)
 * Copy/paste **official install commands** to install resources *wherever they choose*
 
@@ -44,16 +44,16 @@ This matches how Claude Code users actually install and share workflows.
 ### Crawl & Index Pipeline
 
 1. Discover marketplace repos on GitHub
-2. Fetch repo + owner metadata (social proof)
+2. Fetch repo + user metadata (social proof)
 3. Parse `marketplace.json`
 4. Enrich every plugin listed
-5. Normalize everything into an owner‑centric model
+5. Normalize everything into a user‑centric model
 6. Emit static JSON artifacts for a website
 
 ### Output Artifacts
 
-* `public/index.json` – owners list + summary cards
-* `public/owners/<owner>.json` – full data for one owner
+* `public/index.json` – users list + summary cards
+* `public/users/<user>.json` – full data for one user
 
 No database required. Static hosting only.
 
@@ -82,9 +82,9 @@ Only repos matching this are indexed in v1.
 
 ## 5. Data Model (Simple, Stable, Marketplace‑Derived)
 
-### Owner
+### User
 
-Fetched from GitHub API (`GET /users/{owner}`)
+Fetched from GitHub API (`GET /users/{username}`)
 
 ```json
 {
@@ -210,14 +210,14 @@ From `GET /repos/{owner}/{repo}`:
 
 ---
 
-## 8. Owner‑Centric Organization (Core UX)
+## 8. User‑Centric Organization (Core UX)
 
-Everything is grouped by **GitHub owner**.
+Everything is grouped by **GitHub user**.
 
 ### Navigation Hierarchy
 
 ```
-Owner
+User
  └─ Repo (marketplace)
      └─ Marketplace
          └─ Plugin (workflow)
@@ -258,14 +258,14 @@ Where the user installs (user vs project) is **their decision**, not the directo
 
 ### `public/index.json`
 
-* List of owners
-* Owner metadata + avatar
+* List of users
+* User metadata + avatar
 * Counts (repos, plugins, commands, skills)
 * Aggregated social proof
 
-### `public/owners/<owner>.json`
+### `public/users/<user>.json`
 
-* Owner metadata
+* User metadata
 * All marketplace repos
 * Fully enriched plugins
 
@@ -283,7 +283,7 @@ Default ordering:
 
 Applies to:
 
-* Owners
+* Users
 * Repos
 * Plugins
 
@@ -306,7 +306,7 @@ Applies to:
 * Marketplace discovery
 * Plugin enrichment
 * Commands & skills preview
-* Owner avatars + names
+* User avatars + names
 * Stars/forks social proof
 
 ### Excluded (Future)

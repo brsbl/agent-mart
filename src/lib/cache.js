@@ -24,7 +24,7 @@ function validateCachePath(filepath) {
 
 // Cache TTLs
 const TTL = {
-  OWNER: 24 * 60 * 60 * 1000, // 24 hours for owner profiles
+  USER: 24 * 60 * 60 * 1000, // 24 hours for user profiles
   TREE: 0 // Trees are cached by SHA, which is immutable (no TTL needed)
 };
 
@@ -39,7 +39,7 @@ function ensureCacheDir() {
 
 /**
  * Generate a safe cache key from an identifier
- * @param {string} prefix - Cache prefix (e.g., 'owner', 'tree')
+ * @param {string} prefix - Cache prefix (e.g., 'user', 'tree')
  * @param {string} id - Identifier
  * @returns {string} Safe filename
  * @throws {Error} If id is a forbidden prototype pollution vector
