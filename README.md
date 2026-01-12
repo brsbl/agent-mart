@@ -131,6 +131,19 @@ npm test
 - Security (cache keys, GraphQL sanitization)
 - File patterns (SKILL.md, commands, etc.)
 
+## GitHub Action
+
+The pipeline runs nightly via GitHub Actions at 2 AM UTC. To set up:
+
+1. Go to **Settings → Secrets and variables → Actions**
+2. Create a secret named `PIPELINE_GITHUB_TOKEN` with a GitHub PAT that has `public_repo` scope
+3. The workflow will:
+   - Run the full pipeline
+   - Commit updated `public/` files automatically
+   - Upload artifacts for 30 days
+
+You can also trigger manually from **Actions → Nightly Build → Run workflow**.
+
 ## License
 
 MIT

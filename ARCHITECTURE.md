@@ -228,7 +228,6 @@ const RETRY_DELAYS = [1000, 5000, 15000]; // Exponential backoff
 | Data | Cache Key | TTL |
 |------|-----------|-----|
 | Trees | Commit SHA | Never expires (immutable) |
-| Owners | Username | 24 hours |
 
 ### Implementation
 
@@ -238,7 +237,6 @@ const CACHE_DIR = './data/.cache';
 
 // Cache format
 tree_<sha>.json
-owner_<username>.json
 ```
 
 ### Security
