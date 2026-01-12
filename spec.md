@@ -47,13 +47,13 @@ This matches how Claude Code users actually install and share workflows.
 2. Fetch repo + user metadata (social proof)
 3. Parse `marketplace.json`
 4. Enrich every plugin listed
-5. Normalize everything into a user‑centric model
+5. Normalize everything into an owner‑centric model
 6. Emit static JSON artifacts for a website
 
 ### Output Artifacts
 
-* `public/index.json` – users list + summary cards
-* `public/users/<user>.json` – full data for one user
+* `public/index.json` – owners list + summary cards
+* `public/owners/<owner>.json` – full data for one owner
 
 No database required. Static hosting only.
 

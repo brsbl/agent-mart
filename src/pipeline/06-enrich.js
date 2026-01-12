@@ -165,7 +165,7 @@ export async function enrich() {
       }
     };
 
-    // Update user stats
+    // Update owner stats
     ownerData.stats.total_repos++;
     ownerData.stats.total_plugins += plugins.length;
     ownerData.stats.total_commands += plugins.reduce((sum, p) => sum + p.commands.length, 0);
