@@ -39,7 +39,7 @@ function ensureCacheDir() {
 
 /**
  * Generate a safe cache key from an identifier
- * @param {string} prefix - Cache prefix (e.g., 'user', 'tree')
+ * @param {string} prefix - Cache prefix (e.g., 'owner', 'tree')
  * @param {string} id - Identifier
  * @returns {string} Safe filename
  * @throws {Error} If id is a forbidden prototype pollution vector

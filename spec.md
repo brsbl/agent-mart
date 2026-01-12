@@ -44,7 +44,7 @@ This matches how Claude Code users actually install and share workflows.
 ### Crawl & Index Pipeline
 
 1. Discover marketplace repos on GitHub
-2. Fetch repo + user metadata (social proof)
+2. Fetch repo + owner metadata (social proof)
 3. Parse `marketplace.json`
 4. Enrich every plugin listed
 5. Normalize everything into an owner‑centric model
@@ -84,7 +84,7 @@ Only repos matching this are indexed in v1.
 
 ### Owner
 
-Fetched from GitHub API (`GET /users/{username}`)
+Fetched from GitHub API (`GET /users/{owner}`)
 
 ```json
 {
@@ -283,7 +283,7 @@ Default ordering:
 
 Applies to:
 
-* Users
+* Owners
 * Repos
 * Plugins
 
@@ -306,7 +306,7 @@ Applies to:
 * Marketplace discovery
 * Plugin enrichment
 * Commands & skills preview
-* User avatars + names
+* Owner avatars + names
 * Stars/forks social proof
 
 ### Excluded (Future)
