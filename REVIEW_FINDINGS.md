@@ -6,6 +6,21 @@
 
 ---
 
+## Resolution Status
+
+| Issue | Severity | Status | Resolution |
+|-------|----------|--------|------------|
+| #1 Stale output data (users→owners) | CRITICAL | ✅ RESOLVED | Regenerated output with correct terminology |
+| #2 public/ not in version control | MEDIUM | ✅ RESOLVED | Removed from .gitignore, now tracked |
+| #3 README example mismatch | LOW | ✅ AUTO-RESOLVED | Fixed by resolving #1 |
+| #4 ARCHITECTURE.md directory ref | LOW | ✅ AUTO-RESOLVED | Fixed by resolving #1 |
+| #5 spec.md path ambiguity | LOW | ⏳ DEFERRED | Minor clarification, no action needed |
+| Nightly workflow improvements | N/A | ✅ RESOLVED | Added caching, error handling, rebase |
+
+**All critical and medium issues have been addressed in branch `fix/data-terminology-alignment`.**
+
+---
+
 ## Summary
 
 Overall, the pipeline architecture is solid and well-designed. However, there are several documentation/code alignment issues and one critical data regeneration issue that need to be addressed before the frontend can reliably consume the output.
@@ -202,10 +217,10 @@ public/
 
 After fixes are applied, verify:
 
-- [ ] `npm run build` completes without errors
-- [ ] `public/index.json` contains `total_owners` and `owners` array
-- [ ] `public/owners/` directory exists (not `public/users/`)
-- [ ] Per-owner files have `owner` key (not `user`)
-- [ ] `npm test` passes (41 tests)
-- [ ] `npm run lint` passes
+- [x] `npm run build` completes without errors
+- [x] `public/index.json` contains `total_owners` and `owners` array
+- [x] `public/owners/` directory exists (not `public/users/`)
+- [x] Per-owner files have `owner` key (not `user`)
+- [x] `npm test` passes (41 tests)
+- [x] `npm run lint` passes
 - [ ] Nightly workflow runs successfully after merge
