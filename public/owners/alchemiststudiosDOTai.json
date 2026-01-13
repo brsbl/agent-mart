@@ -1,0 +1,132 @@
+{
+  "owner": {
+    "id": "alchemiststudiosDOTai",
+    "display_name": "alchemiststudios.ai",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/150386647?v=4",
+    "url": "https://github.com/alchemiststudiosDOTai",
+    "bio": null,
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 2,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "alchemiststudiosDOTai/coderabbit-fix-flow-plugin",
+      "url": "https://github.com/alchemiststudiosDOTai/coderabbit-fix-flow-plugin",
+      "description": "Claude Code plugin for systematic CodeRabbit code review feedback processing with MCP-powered analysis",
+      "homepage": null,
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2025-11-02T20:03:42Z",
+        "created_at": "2025-11-02T19:29:40Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 1121
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 654
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 320
+        },
+        {
+          "path": ".mcp.json",
+          "type": "blob",
+          "size": 261
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1073
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 8931
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/coderabbit-fix-flow",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/coderabbit-fix-flow/SKILL.md",
+          "type": "blob",
+          "size": 4455
+        }
+      ],
+      "marketplace": {
+        "name": "coderabbit-fix-flow-marketplace",
+        "version": "1.0.0",
+        "description": "Claude Code plugin marketplace for systematic CodeRabbit code review feedback processing",
+        "owner_info": {
+          "name": "AlchemistStudios",
+          "email": "tunahorse@users.noreply.github.com"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "coderabbit-fix-flow",
+            "description": "Systematic workflow for processing CodeRabbit code review feedback with MCP-powered analysis and fixes",
+            "source": "./",
+            "category": "development",
+            "version": "1.0.0",
+            "author": {
+              "name": "AlchemistStudios",
+              "email": "tunahorse@users.noreply.github.com"
+            },
+            "install_commands": [
+              "/plugin marketplace add alchemiststudiosDOTai/coderabbit-fix-flow-plugin",
+              "/plugin install coderabbit-fix-flow@coderabbit-fix-flow-marketplace"
+            ],
+            "signals": {
+              "stars": 2,
+              "forks": 0,
+              "pushed_at": "2025-11-02T20:03:42Z",
+              "created_at": "2025-11-02T19:29:40Z",
+              "license": "MIT"
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "coderabbit-fix-flow",
+                "description": "This skill should be used when CodeRabbit code review feedback needs to be processed and fixed systematically. Use after running `coderabbit --plain` to automatically save feedback, analyze issues using MCP tools, and implement minimal code fixes with proper planning.",
+                "path": "skills/coderabbit-fix-flow/SKILL.md",
+                "frontmatter": {
+                  "name": "coderabbit-fix-flow",
+                  "description": "This skill should be used when CodeRabbit code review feedback needs to be processed and fixed systematically. Use after running `coderabbit --plain` to automatically save feedback, analyze issues using MCP tools, and implement minimal code fixes with proper planning."
+                },
+                "content": "# CodeRabbit Fix Flow\n\n## Overview\n\nThis skill automates the workflow of processing CodeRabbit code review feedback by saving the review output to a timestamped document, then using MCP tools (sequential thinking and Exa context) to analyze and implement fixes with minimal code changes.\n\n## When to Use\n\nUse this skill immediately after running `coderabbit --plain` or when you have CodeRabbit feedback that needs systematic processing. The skill handles type safety issues, code style violations, and other CodeRabbit-identified problems.\n\n## Workflow\n\n### Step 1: Execute CodeRabbit Review\n\nRun the CodeRabbit review command in plain text mode:\n```bash\ncoderabbit --plain\n```\n\n### Step 2: Save Feedback Document\n\nSave the CodeRabbit output to a timestamped QA document:\n- Create file: `memory-bank/qa/coderabbit/cr-qa-{timestamp}.md`\n- Include the full CodeRabbit output in the document\n- Add YAML front matter with metadata:\n  ```yaml\n  ---\n  title: \"CodeRabbit QA Review - {timestamp}\"\n  link: \"cr-qa-{timestamp}\"\n  type: \"qa\"\n  tags:\n    - code-review\n    - coderabbit\n    - type-safety\n  created_at: \"{timestamp}\"\n  updated_at: \"{timestamp}\"\n  uuid: \"{generate-uuid}\"\n  ---\n  ```\n\n### Step 3: Analyze Issues with Sequential Thinking\n\nUse the sequential thinking MCP tool to analyze all identified issues:\n1. **Categorize issues** by type (type safety, performance, style, security)\n2. **Prioritize fixes** (critical runtime issues first, then documentation)\n3. **Plan minimal changes** to achieve the fixes\n4. **Identify dependencies** between issues\n\n### Step 4: Get Best Practices Context\n\nUse the Exa code context MCP tool to research current best practices for each issue type:\n- For type issues: \"TypeScript type guards runtime validation best practices\"\n- For Python type issues: \"Python type annotations Optional None best practices\"\n- For performance: \"Performance optimization best practices [language]\"\n- For security: \"Security vulnerability fixes [language]\"\n\n### Step 5: Implement Fixes Systematically\n\nExecute the fixes following the sequential thinking plan:\n\n1. **Create TodoWrite list** tracking all issues\n2. **Mark each issue** as in_progress → completed\n3. **Apply minimal code changes** using best practices from Exa context\n4. **Verify fixes** address the root cause identified by CodeRabbit\n\n### Step 6: Validate and Document\n\nRun validation as appropriate:\n- TypeScript: `npm run build` or `tsc --noEmit`\n- Python: `mypy` or `ruff check`\n- JavaScript: `npm run lint` or biome\n\nDocument the fixes in the QA document with:\n- What was fixed\n- How it was fixed\n- Validation results\n\n## Issue Type Patterns\n\n### Type Safety Issues\n- Use proper type guards instead of assertions\n- Apply Optional/Union types for nullable fields\n- Implement runtime validation where needed\n\n### Code Style Issues\n- Follow language-specific style guides\n- Use linting tools to verify fixes\n- Maintain consistency with existing codebase\n\n### Performance Issues\n- Research current optimization patterns\n- Implement minimal impactful changes\n- Measure before/after when possible\n\n### Security Issues\n- Understand the vulnerability context\n- Apply security best practices\n- Ensure fixes don't break functionality\n\n## Examples\n\n### Type Safety Fix Pattern\n```typescript\n// Before (unsafe)\nconst data = response as ResearchDataShape;\n\n// After (safe)\nconst data = isResearchDataShape(response) ? response : {} as ResearchDataShape;\n```\n\n### Python Type Annotation Fix Pattern\n```python\n# Before (incorrect)\ntimestamp: float = None\nmetadata: dict[str, Any] = None\n\n# After (correct)\ntimestamp: float | None = None\nmetadata: dict[str, Any] | None = None\n```\n\n## MCP Tool Usage\n\n### Sequential Thinking Tool\nUse for:\n- Breaking down complex issues into steps\n- Planning fix order and dependencies\n- Analyzing multiple issues systematically\n\n### Exa Code Context Tool\nUse for:\n- Getting current best practices\n- Understanding language-specific patterns\n- Finding optimal implementation approaches\n\n## Resources\n\nThis skill doesn't require bundled resources as it relies on MCP tools for context and the existing codebase for implementation."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

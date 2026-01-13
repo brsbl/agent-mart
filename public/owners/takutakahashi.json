@@ -1,0 +1,152 @@
+{
+  "owner": {
+    "id": "takutakahashi",
+    "display_name": "Takuya TAKAHASHI",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/38676393?u=02a184f0bbfea58a35544b008e90ec1f7633ed05&v=4",
+    "url": "https://github.com/takutakahashi",
+    "bio": null,
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "takutakahashi/claude-code-plugins",
+      "url": "https://github.com/takutakahashi/claude-code-plugins",
+      "description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-03T10:46:37Z",
+        "created_at": "2026-01-03T08:56:21Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 712
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1070
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3164
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/build-test-tools",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/build-test-tools/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/build-test-tools/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 594
+        },
+        {
+          "path": "plugins/build-test-tools/README.md",
+          "type": "blob",
+          "size": 1600
+        },
+        {
+          "path": "plugins/build-test-tools/agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/build-test-tools/agents/build-test-runner.md",
+          "type": "blob",
+          "size": 3598
+        },
+        {
+          "path": "plugins/build-test-tools/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/build-test-tools/skills/build-test-auto",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/build-test-tools/skills/build-test-auto/SKILL.md",
+          "type": "blob",
+          "size": 2276
+        }
+      ],
+      "marketplace": {
+        "name": "claude-code-plugins",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "takutakahashi",
+          "email": "and3k0208@gmail.com"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "build-test-tools",
+            "description": "Automated build and test execution tools. Supports Node.js, Python, Rust, Go, Java, Ruby and more.",
+            "source": "./plugins/build-test-tools",
+            "category": null,
+            "version": "1.0.0",
+            "author": {
+              "name": "takutakahashi"
+            },
+            "install_commands": [
+              "/plugin marketplace add takutakahashi/claude-code-plugins",
+              "/plugin install build-test-tools@claude-code-plugins"
+            ],
+            "signals": {
+              "stars": 0,
+              "forks": 0,
+              "pushed_at": "2026-01-03T10:46:37Z",
+              "created_at": "2026-01-03T08:56:21Z",
+              "license": "MIT"
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "build-test-auto",
+                "description": "Automatically builds and tests code changes. Use whenever code is modified, tests fail, before creating pull requests, or when verifying code quality.",
+                "path": "plugins/build-test-tools/skills/build-test-auto/SKILL.md",
+                "frontmatter": {
+                  "name": "build-test-auto",
+                  "description": "Automatically builds and tests code changes. Use whenever code is modified, tests fail, before creating pull requests, or when verifying code quality.",
+                  "allowed-tools": "Bash, Read, Glob, Grep, Edit"
+                },
+                "content": "# Automated Build & Test Workflow\n\n## Overview\n\nThis skill provides automated build and test execution for various project types. It is triggered automatically when code changes are made or when tests need verification.\n\n## Quick Reference\n\n### Project Detection & Commands\n\n```bash\n# JavaScript/Node.js\nif [ -f \"package.json\" ]; then\n    npm install && npm run build && npm test\nfi\n\n# Python\nif [ -f \"pyproject.toml\" ] || [ -f \"setup.py\" ]; then\n    pip install -e . && python -m pytest\nfi\n\n# Rust\nif [ -f \"Cargo.toml\" ]; then\n    cargo build && cargo test\nfi\n\n# Go\nif [ -f \"go.mod\" ]; then\n    go build ./... && go test ./...\nfi\n\n# Java Maven\nif [ -f \"pom.xml\" ]; then\n    mvn compile && mvn test\nfi\n\n# Java/Kotlin Gradle\nif [ -f \"build.gradle\" ] || [ -f \"build.gradle.kts\" ]; then\n    ./gradlew build && ./gradlew test\nfi\n\n# Ruby\nif [ -f \"Gemfile\" ]; then\n    bundle install && bundle exec rspec\nfi\n\n# Make-based\nif [ -f \"Makefile\" ]; then\n    make && make test\nfi\n```\n\n## Workflow Steps\n\n### 1. Pre-Build Checks\n- Verify dependencies are installed\n- Check for required tools (use `mise` if available)\n- Validate configuration files\n\n### 2. Build Phase\n- Run the build command\n- Capture all output\n- Stop immediately on build failure\n- Show exact error location\n\n### 3. Test Phase\n- Run the full test suite\n- Capture test output with verbose mode\n- Document all failures\n\n### 4. Failure Analysis\nFor each failure:\n1. Identify the test name and file\n2. Show the exact error message\n3. Display relevant stack trace\n4. Analyze root cause\n\n### 5. Fix & Verify\n- Apply minimal fixes\n- Re-run tests to confirm\n- Report final status\n\n## Linting\n\nAfter tests pass, also run linting:\n\n| Project Type | Lint Command |\n|-------------|--------------|\n| Node.js | `npm run lint` |\n| Python | `ruff check .` or `flake8` |\n| Rust | `cargo clippy` |\n| Go | `go vet ./...` |\n\n## Tips\n\n- Use `mise` to install missing runtimes\n- Check `.nvmrc`, `.python-version`, `.tool-versions` for version requirements\n- Run lint and build before pushing to remote"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

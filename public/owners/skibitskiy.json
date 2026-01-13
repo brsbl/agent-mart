@@ -1,0 +1,145 @@
+{
+  "owner": {
+    "id": "skibitskiy",
+    "display_name": "Maxim Skibitskiy",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/26598251?u=3a5806247b7c7a8c13caa94793de6098ae5f074c&v=4",
+    "url": "https://github.com/skibitskiy",
+    "bio": "Frontend Developer",
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "skibitskiy/yandex-cloud-terraform-skill",
+      "url": "https://github.com/skibitskiy/yandex-cloud-terraform-skill",
+      "description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-02T13:33:32Z",
+        "created_at": "2025-12-30T07:14:03Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 911
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 338
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 2590
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/yandex-cloud-terraform",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/yandex-cloud-terraform/SKILL.md",
+          "type": "blob",
+          "size": 2073
+        },
+        {
+          "path": "skills/yandex-cloud-terraform/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/yandex-cloud-terraform/references/CONTAINERS.md",
+          "type": "blob",
+          "size": 6499
+        },
+        {
+          "path": "skills/yandex-cloud-terraform/references/FUNCTIONS.md",
+          "type": "blob",
+          "size": 3494
+        },
+        {
+          "path": "skills/yandex-cloud-terraform/references/IAM.md",
+          "type": "blob",
+          "size": 5471
+        },
+        {
+          "path": "skills/yandex-cloud-terraform/references/QUEUE.md",
+          "type": "blob",
+          "size": 3836
+        },
+        {
+          "path": "skills/yandex-cloud-terraform/references/YDB.md",
+          "type": "blob",
+          "size": 4324
+        }
+      ],
+      "marketplace": {
+        "name": "yandex-cloud-terraform",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "skibitskiy"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "yandex-cloud-terraform",
+            "description": "Terraform IaC patterns for Yandex Cloud. Provides resource patterns, naming conventions, and best practices for YDB, S3, Message Queue, Cloud Functions, API Gateway, and Serverless Containers.",
+            "source": "./",
+            "category": "infrastructure",
+            "version": "1.0.0",
+            "author": {
+              "name": "skibitskiy"
+            },
+            "install_commands": [
+              "/plugin marketplace add skibitskiy/yandex-cloud-terraform-skill",
+              "/plugin install yandex-cloud-terraform@yandex-cloud-terraform"
+            ],
+            "signals": {
+              "stars": 0,
+              "forks": 0,
+              "pushed_at": "2026-01-02T13:33:32Z",
+              "created_at": "2025-12-30T07:14:03Z",
+              "license": null
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "yandex-cloud-terraform",
+                "description": "Terraform IaC patterns for Yandex Cloud. Use when creating, modifying, or refactoring Terraform configurations for YDB, S3, Message Queue, Cloud Functions, API Gateway, or Serverless Containers. Provides resource patterns, naming conventions, and best practices from production projects.",
+                "path": "skills/yandex-cloud-terraform/SKILL.md",
+                "frontmatter": {
+                  "name": "yandex-cloud-terraform",
+                  "description": "Terraform IaC patterns for Yandex Cloud. Use when creating, modifying, or refactoring Terraform configurations for YDB, S3, Message Queue, Cloud Functions, API Gateway, or Serverless Containers. Provides resource patterns, naming conventions, and best practices from production projects."
+                },
+                "content": "# Terraform Yandex Cloud\n\n## Quick Start\n\n### Choose Structure\n\n**Modular** (`environments/` + `modules/`): Multiple environments (dev/stage/prod), reusable components\n\n**Flat** (functional files): Single environment, small-medium projects\n\n### Essential Patterns\n\n```hcl\n# Resource naming with prefix\nlocals {\n  resource_prefix = \"${var.project_name}-${var.environment}\"\n}\n\n# YDB tables require wait for database readiness\nresource \"time_sleep\" \"wait_for_database\" {\n  depends_on      = [yandex_ydb_database_serverless.this]\n  create_duration = \"30s\"\n}\n\n# TTL on temporary data\nttl {\n  column_name     = \"expires_at\"\n  expire_interval = \"PT0S\"  # immediate\n}\n\n# Secondary index with concurrency guard\nresource \"yandex_ydb_table_index\" \"index2\" {\n  # ...\n  depends_on = [yandex_ydb_table_index.index1]\n}\n```\n\n## Common Tasks\n\n- **Add YDB table**: See [YDB.md](references/YDB.md) for table patterns, TTL, indexes\n- **Add Cloud Function**: See [FUNCTIONS.md](references/FUNCTIONS.md) for build+deploy patterns\n- **Add Message Queue**: See [QUEUE.md](references/QUEUE.md) for DLQ and retry patterns\n- **Add Serverless Container**: See [CONTAINERS.md](references/CONTAINERS.md) for Docker registry, triggers, sizing\n- **IAM roles**: See [IAM.md](references/IAM.md) for common role combinations\n\n## Key Pitfalls\n\n1. YDB tables fail without `depends_on = [time_sleep.wait_for_database]`\n2. Multiple indexes need sequential `depends_on` to avoid concurrent schema modifications\n3. TTL format: `P5D` = 5 days, `PT0S` = immediate\n4. Service accounts need explicit IAM role bindings\n5. Functions need `user_hash` for redeployment triggers\n6. **Docker images MUST be built with `--platform=linux/amd64`** (ARM images fail with \"Internal error\")"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

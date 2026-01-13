@@ -1,0 +1,134 @@
+{
+  "owner": {
+    "id": "rstarkey",
+    "display_name": "Rob Starkey",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2244441?u=7b643727972e2dfd7ed49eb673e614ce085ed1ec&v=4",
+    "url": "https://github.com/rstarkey",
+    "bio": null,
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 1,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "rstarkey/s5y-plugins",
+      "url": "https://github.com/rstarkey/s5y-plugins",
+      "description": "Claude Code plugin with development expertise skills",
+      "homepage": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2025-11-22T00:23:31Z",
+        "created_at": "2025-11-22T00:23:23Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 245
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 516
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 299
+        },
+        {
+          "path": "CHANGELOG.md",
+          "type": "blob",
+          "size": 711
+        },
+        {
+          "path": "CLAUDE.md",
+          "type": "blob",
+          "size": 1663
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1068
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 2659
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/python-expert",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/python-expert/SKILL.md",
+          "type": "blob",
+          "size": 4245
+        }
+      ],
+      "marketplace": {
+        "name": "s5y-dev",
+        "version": null,
+        "description": "Development marketplace for s5y-plugins",
+        "owner_info": {
+          "name": "Rob Starkey",
+          "email": "rstarkey@gmail.com"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "s5y-plugins",
+            "description": null,
+            "source": "./",
+            "category": null,
+            "version": null,
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add rstarkey/s5y-plugins",
+              "/plugin install s5y-plugins@s5y-dev"
+            ],
+            "signals": {
+              "stars": 1,
+              "forks": 0,
+              "pushed_at": "2025-11-22T00:23:31Z",
+              "created_at": "2025-11-22T00:23:23Z",
+              "license": "MIT"
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "python-expert",
+                "description": "Use for Python development requiring async programming, type system expertise, testing patterns, or performance optimization.",
+                "path": "skills/python-expert/SKILL.md",
+                "frontmatter": {
+                  "name": "python-expert",
+                  "description": "Use for Python development requiring async programming, type system expertise, testing patterns, or performance optimization."
+                },
+                "content": "# Python Expert\n\nElite Python 3.13+ expertise for backend development, testing, async programming, and type systems.\n\n## When to Use\n\n- Async/await, asyncio, concurrency patterns\n- Type errors or complex annotations\n- Writing/debugging tests (pytest, async, mocking)\n- Performance optimization\n- Security review\n- Backend architecture (FastAPI, Django, SQLAlchemy)\n\n## Core Expertise\n\n**Python Mastery**: Decorators, context managers, metaclasses, descriptors, generators, coroutines, data model, GIL internals\n\n**Backend**: FastAPI/Django/Flask, PostgreSQL/Redis/MongoDB, SQLAlchemy/Django ORM, REST/GraphQL/WebSockets/gRPC, OAuth2/JWT, microservices\n\n## Code Standards\n\n- Full type hints, Google/NumPy docstrings, 88-char lines\n- PEP 8 naming, SOLID principles, secure by default\n- Use f-strings for formatting, focused small functions\n\n## Testing\n\n**pytest**: Use `setup_method`, `pytest.raises`, `@patch` for mocking\n**Async**: Use anyio for test fixtures, `AsyncMock` for mocking async functions\n**Integration**: In-memory SQLite fixtures with proper cleanup\n**All network calls must be mocked**\n\n## Async/Await\n\n- `asyncio.run()` for entry, `TaskGroup` for structured concurrency (preferred over `gather()`)\n- `asyncio.timeout()` for timeouts, `Semaphore` for rate limiting\n- Handle cancellation with try/finally, use `ExceptionGroup` for multiple errors\n- Type: `async def foo() -> T` or `Awaitable[T]`\n\n## Type System\n\n**Modern syntax** (Python 3.10+): `list[str]`, `dict[str, int]`, `str | None`\n**Variance**: dict invariant, Mapping covariant—use `Mapping[K, V]` when needed\n**Advanced**: `Self` for fluent methods, `ParamSpec` for decorator typing, `TypedDict`\n\n**Minimize `Any`**:\n- Use `Protocol` for structural typing instead of `Any`\n- Use `TypedDict` for dicts with known structure instead of `dict[str, Any]`\n- Document why `Any` is necessary when it must be used\n\n**Common fixes**: Mixed type ops, SQLAlchemy column assignments, API response access\n**Atomic processing**: Fix ALL type errors in file with single edit\n\n## Patterns\n\n```python\n# Dataclass with slots (memory efficient)\n@dataclass(slots=True)\nclass User:\n    name: str\n    email: str\n    tags: list[str] = field(default_factory=list)\n    def __post_init__(self):\n        if not self.name: raise ValueError(\"Name required\")\n\n# Pattern matching (3.10+)\nmatch response.status:\n    case 200: return response.json()\n    case 404: raise NotFoundError()\n    case _: raise APIError(response.status)\n```\n\n**Prefer**: Dependency injection over singletons, `@cache` for memoized instances\n\n## Security\n\n- Validate/sanitize all inputs, parameterized SQL queries only\n- Rate limiting, CORS/CSRF protection, secure sessions\n- Avoid dynamic code evaluation and unsafe serialization with untrusted data\n\n**Cryptography**:\n- Forbidden: MD5, SHA-1, DES/3DES, RC4, custom crypto\n- Required: SHA-256+ for hashing, AES-256-GCM for encryption, Argon2/scrypt for passwords\n- Use `secrets` module for tokens, `cryptography` package for crypto operations\n\n## Performance\n\n- Profile first (cProfile, timeit), optimize real bottlenecks\n- Sets for O(1) lookup, deque for queues, Counter for counting\n- Generators for large data, `__slots__` for memory\n- `@cache` (unbounded) or `@lru_cache` (bounded) for memoization\n- Eager loading (N+1), connection pooling, async I/O\n\n## Pitfalls\n\n```python\n# Mutable defaults: use None, then check identity\ndef f(items=None):\n    if items is None:\n        items = []  # Don't use `or []` - empty list is falsy!\n    return items\n\n# Late binding: capture with default arg\nfuncs = [lambda x=i: x for i in range(3)]\n```\n\n**Avoid**: God classes, spaghetti code, magic numbers, copy-paste, bare `except:`\n\n## Error Handling\n\nCustom exception hierarchies, structured JSON logging, circuit breakers, retry with backoff, graceful degradation\n\n## Tooling\n\n```bash\nruff check .    # lint\nruff format .   # format\npyright .       # typecheck\n```\n\n**Stack**: uv, httpx/aiohttp/anyio, pydantic\n\n## Cleanup\n\nRemove before completion: `debug-*.py`, `test-*.py`, `__pycache__/`, `*.pyc`, `*_REPORT.md`"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

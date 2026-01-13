@@ -1,0 +1,116 @@
+{
+  "owner": {
+    "id": "bryanmig",
+    "display_name": "Bryan Migliorisi",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/43345?u=ceb19cc33cfbe6bd1b6221b75c929f2615716159&v=4",
+    "url": "https://github.com/bryanmig",
+    "bio": null,
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "bryanmig/claude-plugins",
+      "url": "https://github.com/bryanmig/claude-plugins",
+      "description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-29T17:18:01Z",
+        "created_at": "2025-12-29T17:00:31Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 465
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 846
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/decision-log",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/decision-log/README.md",
+          "type": "blob",
+          "size": 1857
+        },
+        {
+          "path": "skills/decision-log/SKILL.md",
+          "type": "blob",
+          "size": 3071
+        }
+      ],
+      "marketplace": {
+        "name": "bryanmig-claude-plugins",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "Bryan"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "decision-log",
+            "description": "Check DECISIONS.md before architectural choices, cite past decisions, and log new ones",
+            "source": {
+              "source": "local",
+              "path": "skills/decision-log"
+            },
+            "category": null,
+            "version": "1.0.0",
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add bryanmig/claude-plugins",
+              "/plugin install decision-log@bryanmig-claude-plugins"
+            ],
+            "signals": {
+              "stars": 0,
+              "forks": 0,
+              "pushed_at": "2025-12-29T17:18:01Z",
+              "created_at": "2025-12-29T17:00:31Z",
+              "license": null
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "decision-log",
+                "description": "Use when making architectural choices, adding entities, choosing patterns, or resolving non-obvious technical trade-offs in a project that may have a DECISIONS.md file",
+                "path": "skills/decision-log/SKILL.md",
+                "frontmatter": {
+                  "name": "decision-log",
+                  "description": "Use when making architectural choices, adding entities, choosing patterns, or resolving non-obvious technical trade-offs in a project that may have a DECISIONS.md file"
+                },
+                "content": "# Decision Log\n\nCheck `DECISIONS.md` before making architectural choices. Past decisions exist for reasons that aren't obvious from code alone.\n\n## The Rule\n\n**Before any architectural choice, check for DECISIONS.md.** This includes:\n- Adding new entities or data models\n- Choosing between implementation patterns\n- Selecting libraries or approaches\n- Any non-obvious technical trade-off\n\n## Red Flags - STOP and Check DECISIONS.md\n\n- Adding an ID field to any entity\n- Creating shared behavior (inheritance vs composition?)\n- Adding user-facing changes (feature flags?)\n- Choosing data formats, protocols, or storage\n- \"This is simple, I'll just...\"\n\n**Time pressure is not an excuse.** Urgent tasks still require checking. A wrong choice made quickly creates more work than checking first.\n\n| Rationalization | Reality |\n|-----------------|---------|\n| \"This is too small to check\" | Small choices compound. ID format affects entire codebase. |\n| \"I already know there's nothing relevant\" | You don't know what you don't know. Check anyway. |\n| \"The file probably doesn't exist\" | Takes 2 seconds to verify. Check. |\n| \"Checking will slow me down\" | Wrong choice creates more rework than checking. |\n| \"This is obvious/standard\" | Project-specific decisions override industry defaults. |\n\n## Workflow\n\n```dot\ndigraph decision_flow {\n  \"Architectural choice needed\" [shape=box];\n  \"DECISIONS.md exists?\" [shape=diamond];\n  \"Relevant precedent?\" [shape=diamond];\n  \"Apply and cite decision\" [shape=box];\n  \"Uncertain if applies?\" [shape=diamond];\n  \"Ask user\" [shape=box];\n  \"Proceed with choice\" [shape=box];\n  \"Offer to log if non-obvious\" [shape=box];\n\n  \"Architectural choice needed\" -> \"DECISIONS.md exists?\";\n  \"DECISIONS.md exists?\" -> \"Relevant precedent?\" [label=\"yes\"];\n  \"DECISIONS.md exists?\" -> \"Proceed with choice\" [label=\"no\"];\n  \"Relevant precedent?\" -> \"Apply and cite decision\" [label=\"yes\"];\n  \"Relevant precedent?\" -> \"Uncertain if applies?\" [label=\"no exact match\"];\n  \"Uncertain if applies?\" -> \"Ask user\" [label=\"yes\"];\n  \"Uncertain if applies?\" -> \"Proceed with choice\" [label=\"no\"];\n  \"Proceed with choice\" -> \"Offer to log if non-obvious\";\n}\n```\n\n## When Applying a Decision\n\nCite it explicitly:\n\n> \"Per DECISIONS.md (2024-11-15), using UUID for the product ID rather than auto-increment integer.\"\n\n## After Resolving Non-Obvious Choices\n\nIf you and the user worked through a technical trade-off, offer:\n\n> \"This decision about X might be worth logging in DECISIONS.md for future reference. Want me to add it?\"\n\n## What Belongs in DECISIONS.md\n\n- Foundational architectural choices with rationale\n- Conditional trade-offs (when X, do Y because Z)\n- Domain knowledge not obvious from code\n\n## What Doesn't Belong\n\n- Patterns already visible in existing code\n- Temporary fixes or debugging choices\n- Style preferences (put in CLAUDE.md)"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

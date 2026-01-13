@@ -1,0 +1,568 @@
+{
+  "owner": {
+    "id": "zippoxer",
+    "display_name": "Zippo",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/859015?v=4",
+    "url": "https://github.com/zippoxer",
+    "bio": null,
+    "stats": {
+      "total_repos": 2,
+      "total_plugins": 3,
+      "total_commands": 1,
+      "total_skills": 5,
+      "total_stars": 5,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "zippoxer/claude-skills",
+      "url": "https://github.com/zippoxer/claude-skills",
+      "description": "Spawn and collaborate with Codex subagents, or run a stealth-browser that bypasses anti-bot measures (sometimes)",
+      "homepage": "",
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-01-10T15:21:07Z",
+        "created_at": "2026-01-08T14:39:16Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 820
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 2529
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/stealth-browser",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/stealth-browser/SKILL.md",
+          "type": "blob",
+          "size": 6553
+        },
+        {
+          "path": "skills/stealth-browser/client.py",
+          "type": "blob",
+          "size": 6974
+        },
+        {
+          "path": "skills/stealth-browser/requirements.txt",
+          "type": "blob",
+          "size": 56
+        },
+        {
+          "path": "skills/stealth-browser/server.py",
+          "type": "blob",
+          "size": 13938
+        },
+        {
+          "path": "skills/stealth-browser/server.sh",
+          "type": "blob",
+          "size": 1524
+        },
+        {
+          "path": "skills/stealth-browser/snapshot.py",
+          "type": "blob",
+          "size": 40766
+        },
+        {
+          "path": "skills/subcodex",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/subcodex/SKILL.md",
+          "type": "blob",
+          "size": 2452
+        },
+        {
+          "path": "skills/subcodex/subcodex",
+          "type": "blob",
+          "size": 158
+        },
+        {
+          "path": "skills/subcodex/subcodex.py",
+          "type": "blob",
+          "size": 28445
+        }
+      ],
+      "marketplace": {
+        "name": "zippoxer-skills",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "zippoxer"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "subcodex",
+            "description": "Named Codex sessions for Claude Code - collaborate with GPT-5.2 via persistent sessions",
+            "source": "./",
+            "category": null,
+            "version": null,
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add zippoxer/claude-skills",
+              "/plugin install subcodex@zippoxer-skills"
+            ],
+            "signals": {
+              "stars": 3,
+              "forks": 0,
+              "pushed_at": "2026-01-10T15:21:07Z",
+              "created_at": "2026-01-08T14:39:16Z",
+              "license": null
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "stealth-browser",
+                "description": "Stealth browser automation with anti-bot bypass and persistent page state. Use when users need to navigate Cloudflare-protected sites, fill forms, take screenshots, extract web data, or automate browser workflows on sites that block regular automation. Trigger phrases include \"go to [url]\", \"click on\", \"fill out the form\", \"take a screenshot\", \"scrape\", \"automate\", \"bypass cloudflare\", or any browser interaction request on protected sites.",
+                "path": "skills/stealth-browser/SKILL.md",
+                "frontmatter": {
+                  "name": "stealth-browser",
+                  "description": "Stealth browser automation with anti-bot bypass and persistent page state. Use when users need to navigate Cloudflare-protected sites, fill forms, take screenshots, extract web data, or automate browser workflows on sites that block regular automation. Trigger phrases include \"go to [url]\", \"click on\", \"fill out the form\", \"take a screenshot\", \"scrape\", \"automate\", \"bypass cloudflare\", or any browser interaction request on protected sites."
+                },
+                "content": "# Stealth Browser Skill\n\nBrowser automation using nodriver for anti-bot/Cloudflare bypass. Maintains page state across script executions. Write small, focused scripts to accomplish tasks incrementally.\n\n**Key difference from dev-browser**: Uses nodriver instead of Playwright, which bypasses most anti-bot detection including Cloudflare Turnstile.\n\n## Choosing Your Approach\n\n- **Local/source-available sites**: Read the source code first to write selectors directly\n- **Unknown page layouts**: Use `get_ai_snapshot()` to discover elements and `select_snapshot_ref()` to interact with them\n- **Visual feedback**: Take screenshots to see what the user sees\n\n## Setup\n\n**Important: Each session needs its own server. Do not reuse servers started by other sessions.**\n\nStart your server:\n\n```bash\n./skills/stealth-browser/server.sh &\n```\n\n- Default port is 6222. If in use, the script will tell you which port to use instead.\n- Add `--headless` flag if user requests headless mode.\n- **Wait for the `Ready on port XXXX` message before running scripts.**\n- **Remember the port number** - you'll need it for `connect(port=XXXX)`.\n\nIf you see \"Port 6222 is in use\", that's another session's server. Start your own on the suggested port:\n\n```bash\n./skills/stealth-browser/server.sh --port 6223 &\n```\n\n## Writing Scripts\n\nExecute scripts inline using heredocs. **Use the port from your server startup:**\n\n```bash\ncd skills/stealth-browser && source venv/bin/activate && python <<'EOF'\nfrom client import connect\n\nclient = connect(port=6222)  # Use YOUR server's port!\npage = client.page(\"example\")  # descriptive name like \"cnn-homepage\"\n\npage.goto(\"https://example.com\")\n\nprint(f\"Title: {page.title()}\")\nprint(f\"URL: {page.url}\")\n\nclient.disconnect()\nEOF\n```\n\n**Write to `tmp/` files only when** the script needs reuse, is complex, or user explicitly requests it.\n\n### Key Principles\n\n1. **Small scripts**: Each script does ONE thing (navigate, click, fill, check)\n2. **Evaluate state**: Print state at the end to decide next steps\n3. **Descriptive page names**: Use `\"checkout\"`, `\"login\"`, not `\"main\"`\n4. **Disconnect to exit**: `client.disconnect()` - pages persist on server\n5. **Plain JS in evaluate**: `page.evaluate()` runs in browser - use JavaScript syntax\n\n## Workflow Loop\n\nFollow this pattern for complex tasks:\n\n1. **Write a script** to perform one action\n2. **Run it** and observe the output\n3. **Evaluate** - did it work? What's the current state?\n4. **Decide** - is the task complete or do we need another script?\n5. **Repeat** until task is done\n\n## Client API\n\n```python\nfrom client import connect\n\nclient = connect(port=6222)                 # Connect to YOUR server's port!\npage = client.page(\"name\")                  # Get or create named page\npages = client.list()                       # List all page names\nclient.close(\"name\")                        # Close a page\nclient.disconnect()                         # Disconnect (pages persist)\n\n# ARIA Snapshot methods\nsnapshot = client.get_ai_snapshot(\"name\")   # Get accessibility tree (YAML)\nref = client.select_snapshot_ref(\"name\", \"e5\")  # Get element proxy by ref\nref.click()                                 # Click the ref\nref.fill(\"text\")                            # Fill the ref with text\n```\n\n## Page Operations\n\n```python\nclient = connect(port=6222)  # Your server's port\npage = client.page(\"mypage\")\n\n# Navigation\npage.goto(\"https://example.com\")\n\n# Get state\nurl = page.url                    # Current URL (property)\ntitle = page.title()              # Page title\n\n# Interaction\npage.click(\"button.submit\")       # Click by CSS selector\npage.fill(\"input[name=q]\", \"search term\")  # Fill input\n\n# JavaScript\nresult = page.evaluate(\"document.title\")   # Run JS, get result\n\n# Screenshots\npage.screenshot(\"screenshot.png\")          # Saves to tmp/ directory\n\n# Waiting\npage.wait_for_selector(\".results\")         # Wait for element\n```\n\n## Inspecting Page State\n\n### Screenshots\n\n```python\npage.screenshot(\"screenshot.png\")      # Saves to tmp/screenshot.png\npage.screenshot(\"tmp/full.png\")        # Explicit path\n```\n\n### ARIA Snapshot (Element Discovery)\n\nUse `get_ai_snapshot()` to discover page elements. Returns YAML-formatted accessibility tree:\n\n```yaml\n- banner:\n  - link \"Hacker News\" [ref=e1]\n  - navigation:\n    - link \"new\" [ref=e2]\n- main:\n  - list:\n    - listitem:\n      - link \"Article Title\" [ref=e8]\n      - link \"328 comments\" [ref=e9]\n- contentinfo:\n  - textbox [ref=e10]\n    - /placeholder: \"Search\"\n```\n\n**Interpreting refs:**\n\n- `[ref=eN]` - Element reference for interaction (visible, clickable elements only)\n- `[checked]`, `[disabled]`, `[expanded]` - Element states\n- `[level=N]` - Heading level\n- `/url:`, `/placeholder:` - Element properties\n\n**Interacting with refs:**\n\n```python\nsnapshot = client.get_ai_snapshot(\"hackernews\")\nprint(snapshot)  # Find the ref you need\n\nelement = client.select_snapshot_ref(\"hackernews\", \"e2\")\nelement.click()\n```\n\n## Error Recovery\n\nPage state persists after failures. Debug with:\n\n```bash\ncd skills/stealth-browser && source venv/bin/activate && python <<'EOF'\nfrom client import connect\n\nclient = connect(port=6222)  # Your server's port\npage = client.page(\"debug\")\n\npage.screenshot(\"debug.png\")\nprint(f\"URL: {page.url}\")\nprint(f\"Title: {page.title()}\")\nprint(f\"Body: {page.evaluate('document.body.innerText.substring(0, 200)')}\")\n\nclient.disconnect()\nEOF\n```\n\n## Cloudflare Bypass\n\nThis skill uses nodriver which has built-in stealth patches. Sites protected by Cloudflare (like lowendtalk.com) work automatically:\n\n```python\npage.goto(\"https://lowendtalk.com/\")\n# No Cloudflare challenge - loads directly!\nprint(page.title())  # \"LowEndTalk\" (not \"Just a moment...\")\n```\n\n## Differences from dev-browser\n\n| Aspect | dev-browser | stealth-browser |\n|--------|-------------|-----------------|\n| Language | TypeScript | Python |\n| Browser lib | Playwright | nodriver (stealth) |\n| Anti-bot | None | Built-in bypass |\n| Port | 9222 | 6222 |\n| Extension mode | Yes | No |\n| Script syntax | `npx tsx <<'EOF'` | `python <<'EOF'` |"
+              },
+              {
+                "name": "subcodex",
+                "description": "Collaborate with Codex (GPT-5.2) via named sessions. Trigger: user asks to work with Codex, use Codex, ask Codex, involve Codex, etc.\nCRITICAL: Use subcodex CLI via Bash, NOT the Task subagent tool.\n",
+                "path": "skills/subcodex/SKILL.md",
+                "frontmatter": {
+                  "name": "subcodex",
+                  "description": "Collaborate with Codex (GPT-5.2) via named sessions. Trigger: user asks to work with Codex, use Codex, ask Codex, involve Codex, etc.\nCRITICAL: Use subcodex CLI via Bash, NOT the Task subagent tool.\n"
+                },
+                "content": "# subcodex\n\nNamed Codex sessions that persist across conversation compacts.\n\n## Quick Reference\n\n```bash\n# New session\n./skills/subcodex/subcodex new <name> \"prompt\"\n\n# Resume session\n./skills/subcodex/subcodex resume <session-name> \"prompt\"\n\n# List sessions (shows last 25, use --all for all)\n./skills/subcodex/subcodex list\n\n# Code review\n./skills/subcodex/subcodex review --uncommitted <name>\n./skills/subcodex/subcodex review --base main <name> \"focus on security...\"\n```\n\n## Critical: Background Execution\n\n**ALWAYS use `run_in_background: true`** — Codex takes 1-30+ minutes.\n\nAfter starting a background command:\n1. Tell the user you're waiting for Codex\n2. Stop immediately — don't poll or check\n3. You'll be notified via `<task-notification>` when Codex is done\n\n## Codex Capabilities\n\n**Codex can read, write, and execute** — just like you. Tell it to make changes directly, not to provide diffs or suggestions.\n\nOptions:\n- `--reasoning low|medium|high|xhigh` (default: high)\n- `--read-only` — read-only sandbox\n- `--dangerous` — full system access\n\n## Sessions\n\nSession names get a random suffix: `my-task` becomes `my-task-x7k2`.\n\nUse the full name (with suffix) when resuming:\n```bash\n./skills/subcodex/subcodex resume my-task-x7k2 \"continue with...\"\n```\n\n`subcodex list` shows: status (running/stopped), tool_calls, cwd, duration.\n\n## Code Reviews\n\n```bash\n# Review uncommitted changes\n./skills/subcodex/subcodex review --uncommitted my-review\n\n# Review against branch\n./skills/subcodex/subcodex review --base main my-review\n\n# Review specific commit\n./skills/subcodex/subcodex review --commit HEAD my-review\n\n# Add instructions\n./skills/subcodex/subcodex review --uncommitted my-review \"read these relevant docs first, focus on security, suggest simplifications, ..\"\n```\n\nReviews use `--reasoning xhigh` and read-only mode by default.\n\n## Collaboration\n\n**Claude leads, Codex executes.** Use Codex to review designs and implement complex tasks. Push back on over-engineering.\n\nTypical flow:\n1. Claude proposes approach\n2. Codex reviews/critiques\n3. Claude decides\n4. Codex implements\n5. Claude reviews result\n\nPush for simple code: less abstraction, fail-fast, no \"just in case\" code."
+              }
+            ]
+          },
+          {
+            "name": "stealth-browser",
+            "description": "Browser automation with anti-bot/Cloudflare bypass using nodriver",
+            "source": "./",
+            "category": null,
+            "version": null,
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add zippoxer/claude-skills",
+              "/plugin install stealth-browser@zippoxer-skills"
+            ],
+            "signals": {
+              "stars": 3,
+              "forks": 0,
+              "pushed_at": "2026-01-10T15:21:07Z",
+              "created_at": "2026-01-08T14:39:16Z",
+              "license": null
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "stealth-browser",
+                "description": "Stealth browser automation with anti-bot bypass and persistent page state. Use when users need to navigate Cloudflare-protected sites, fill forms, take screenshots, extract web data, or automate browser workflows on sites that block regular automation. Trigger phrases include \"go to [url]\", \"click on\", \"fill out the form\", \"take a screenshot\", \"scrape\", \"automate\", \"bypass cloudflare\", or any browser interaction request on protected sites.",
+                "path": "skills/stealth-browser/SKILL.md",
+                "frontmatter": {
+                  "name": "stealth-browser",
+                  "description": "Stealth browser automation with anti-bot bypass and persistent page state. Use when users need to navigate Cloudflare-protected sites, fill forms, take screenshots, extract web data, or automate browser workflows on sites that block regular automation. Trigger phrases include \"go to [url]\", \"click on\", \"fill out the form\", \"take a screenshot\", \"scrape\", \"automate\", \"bypass cloudflare\", or any browser interaction request on protected sites."
+                },
+                "content": "# Stealth Browser Skill\n\nBrowser automation using nodriver for anti-bot/Cloudflare bypass. Maintains page state across script executions. Write small, focused scripts to accomplish tasks incrementally.\n\n**Key difference from dev-browser**: Uses nodriver instead of Playwright, which bypasses most anti-bot detection including Cloudflare Turnstile.\n\n## Choosing Your Approach\n\n- **Local/source-available sites**: Read the source code first to write selectors directly\n- **Unknown page layouts**: Use `get_ai_snapshot()` to discover elements and `select_snapshot_ref()` to interact with them\n- **Visual feedback**: Take screenshots to see what the user sees\n\n## Setup\n\n**Important: Each session needs its own server. Do not reuse servers started by other sessions.**\n\nStart your server:\n\n```bash\n./skills/stealth-browser/server.sh &\n```\n\n- Default port is 6222. If in use, the script will tell you which port to use instead.\n- Add `--headless` flag if user requests headless mode.\n- **Wait for the `Ready on port XXXX` message before running scripts.**\n- **Remember the port number** - you'll need it for `connect(port=XXXX)`.\n\nIf you see \"Port 6222 is in use\", that's another session's server. Start your own on the suggested port:\n\n```bash\n./skills/stealth-browser/server.sh --port 6223 &\n```\n\n## Writing Scripts\n\nExecute scripts inline using heredocs. **Use the port from your server startup:**\n\n```bash\ncd skills/stealth-browser && source venv/bin/activate && python <<'EOF'\nfrom client import connect\n\nclient = connect(port=6222)  # Use YOUR server's port!\npage = client.page(\"example\")  # descriptive name like \"cnn-homepage\"\n\npage.goto(\"https://example.com\")\n\nprint(f\"Title: {page.title()}\")\nprint(f\"URL: {page.url}\")\n\nclient.disconnect()\nEOF\n```\n\n**Write to `tmp/` files only when** the script needs reuse, is complex, or user explicitly requests it.\n\n### Key Principles\n\n1. **Small scripts**: Each script does ONE thing (navigate, click, fill, check)\n2. **Evaluate state**: Print state at the end to decide next steps\n3. **Descriptive page names**: Use `\"checkout\"`, `\"login\"`, not `\"main\"`\n4. **Disconnect to exit**: `client.disconnect()` - pages persist on server\n5. **Plain JS in evaluate**: `page.evaluate()` runs in browser - use JavaScript syntax\n\n## Workflow Loop\n\nFollow this pattern for complex tasks:\n\n1. **Write a script** to perform one action\n2. **Run it** and observe the output\n3. **Evaluate** - did it work? What's the current state?\n4. **Decide** - is the task complete or do we need another script?\n5. **Repeat** until task is done\n\n## Client API\n\n```python\nfrom client import connect\n\nclient = connect(port=6222)                 # Connect to YOUR server's port!\npage = client.page(\"name\")                  # Get or create named page\npages = client.list()                       # List all page names\nclient.close(\"name\")                        # Close a page\nclient.disconnect()                         # Disconnect (pages persist)\n\n# ARIA Snapshot methods\nsnapshot = client.get_ai_snapshot(\"name\")   # Get accessibility tree (YAML)\nref = client.select_snapshot_ref(\"name\", \"e5\")  # Get element proxy by ref\nref.click()                                 # Click the ref\nref.fill(\"text\")                            # Fill the ref with text\n```\n\n## Page Operations\n\n```python\nclient = connect(port=6222)  # Your server's port\npage = client.page(\"mypage\")\n\n# Navigation\npage.goto(\"https://example.com\")\n\n# Get state\nurl = page.url                    # Current URL (property)\ntitle = page.title()              # Page title\n\n# Interaction\npage.click(\"button.submit\")       # Click by CSS selector\npage.fill(\"input[name=q]\", \"search term\")  # Fill input\n\n# JavaScript\nresult = page.evaluate(\"document.title\")   # Run JS, get result\n\n# Screenshots\npage.screenshot(\"screenshot.png\")          # Saves to tmp/ directory\n\n# Waiting\npage.wait_for_selector(\".results\")         # Wait for element\n```\n\n## Inspecting Page State\n\n### Screenshots\n\n```python\npage.screenshot(\"screenshot.png\")      # Saves to tmp/screenshot.png\npage.screenshot(\"tmp/full.png\")        # Explicit path\n```\n\n### ARIA Snapshot (Element Discovery)\n\nUse `get_ai_snapshot()` to discover page elements. Returns YAML-formatted accessibility tree:\n\n```yaml\n- banner:\n  - link \"Hacker News\" [ref=e1]\n  - navigation:\n    - link \"new\" [ref=e2]\n- main:\n  - list:\n    - listitem:\n      - link \"Article Title\" [ref=e8]\n      - link \"328 comments\" [ref=e9]\n- contentinfo:\n  - textbox [ref=e10]\n    - /placeholder: \"Search\"\n```\n\n**Interpreting refs:**\n\n- `[ref=eN]` - Element reference for interaction (visible, clickable elements only)\n- `[checked]`, `[disabled]`, `[expanded]` - Element states\n- `[level=N]` - Heading level\n- `/url:`, `/placeholder:` - Element properties\n\n**Interacting with refs:**\n\n```python\nsnapshot = client.get_ai_snapshot(\"hackernews\")\nprint(snapshot)  # Find the ref you need\n\nelement = client.select_snapshot_ref(\"hackernews\", \"e2\")\nelement.click()\n```\n\n## Error Recovery\n\nPage state persists after failures. Debug with:\n\n```bash\ncd skills/stealth-browser && source venv/bin/activate && python <<'EOF'\nfrom client import connect\n\nclient = connect(port=6222)  # Your server's port\npage = client.page(\"debug\")\n\npage.screenshot(\"debug.png\")\nprint(f\"URL: {page.url}\")\nprint(f\"Title: {page.title()}\")\nprint(f\"Body: {page.evaluate('document.body.innerText.substring(0, 200)')}\")\n\nclient.disconnect()\nEOF\n```\n\n## Cloudflare Bypass\n\nThis skill uses nodriver which has built-in stealth patches. Sites protected by Cloudflare (like lowendtalk.com) work automatically:\n\n```python\npage.goto(\"https://lowendtalk.com/\")\n# No Cloudflare challenge - loads directly!\nprint(page.title())  # \"LowEndTalk\" (not \"Just a moment...\")\n```\n\n## Differences from dev-browser\n\n| Aspect | dev-browser | stealth-browser |\n|--------|-------------|-----------------|\n| Language | TypeScript | Python |\n| Browser lib | Playwright | nodriver (stealth) |\n| Anti-bot | None | Built-in bypass |\n| Port | 9222 | 6222 |\n| Extension mode | Yes | No |\n| Script syntax | `npx tsx <<'EOF'` | `python <<'EOF'` |"
+              },
+              {
+                "name": "subcodex",
+                "description": "Collaborate with Codex (GPT-5.2) via named sessions. Trigger: user asks to work with Codex, use Codex, ask Codex, involve Codex, etc.\nCRITICAL: Use subcodex CLI via Bash, NOT the Task subagent tool.\n",
+                "path": "skills/subcodex/SKILL.md",
+                "frontmatter": {
+                  "name": "subcodex",
+                  "description": "Collaborate with Codex (GPT-5.2) via named sessions. Trigger: user asks to work with Codex, use Codex, ask Codex, involve Codex, etc.\nCRITICAL: Use subcodex CLI via Bash, NOT the Task subagent tool.\n"
+                },
+                "content": "# subcodex\n\nNamed Codex sessions that persist across conversation compacts.\n\n## Quick Reference\n\n```bash\n# New session\n./skills/subcodex/subcodex new <name> \"prompt\"\n\n# Resume session\n./skills/subcodex/subcodex resume <session-name> \"prompt\"\n\n# List sessions (shows last 25, use --all for all)\n./skills/subcodex/subcodex list\n\n# Code review\n./skills/subcodex/subcodex review --uncommitted <name>\n./skills/subcodex/subcodex review --base main <name> \"focus on security...\"\n```\n\n## Critical: Background Execution\n\n**ALWAYS use `run_in_background: true`** — Codex takes 1-30+ minutes.\n\nAfter starting a background command:\n1. Tell the user you're waiting for Codex\n2. Stop immediately — don't poll or check\n3. You'll be notified via `<task-notification>` when Codex is done\n\n## Codex Capabilities\n\n**Codex can read, write, and execute** — just like you. Tell it to make changes directly, not to provide diffs or suggestions.\n\nOptions:\n- `--reasoning low|medium|high|xhigh` (default: high)\n- `--read-only` — read-only sandbox\n- `--dangerous` — full system access\n\n## Sessions\n\nSession names get a random suffix: `my-task` becomes `my-task-x7k2`.\n\nUse the full name (with suffix) when resuming:\n```bash\n./skills/subcodex/subcodex resume my-task-x7k2 \"continue with...\"\n```\n\n`subcodex list` shows: status (running/stopped), tool_calls, cwd, duration.\n\n## Code Reviews\n\n```bash\n# Review uncommitted changes\n./skills/subcodex/subcodex review --uncommitted my-review\n\n# Review against branch\n./skills/subcodex/subcodex review --base main my-review\n\n# Review specific commit\n./skills/subcodex/subcodex review --commit HEAD my-review\n\n# Add instructions\n./skills/subcodex/subcodex review --uncommitted my-review \"read these relevant docs first, focus on security, suggest simplifications, ..\"\n```\n\nReviews use `--reasoning xhigh` and read-only mode by default.\n\n## Collaboration\n\n**Claude leads, Codex executes.** Use Codex to review designs and implement complex tasks. Push back on over-engineering.\n\nTypical flow:\n1. Claude proposes approach\n2. Codex reviews/critiques\n3. Claude decides\n4. Codex implements\n5. Claude reviews result\n\nPush for simple code: less abstraction, fail-fast, no \"just in case\" code."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "full_name": "zippoxer/subtask",
+      "url": "https://github.com/zippoxer/subtask",
+      "description": "Task tracking and orchestration for AI coding agents",
+      "homepage": "",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-01-12T21:28:57Z",
+        "created_at": "2026-01-11T11:17:02Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 524
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 147
+        },
+        {
+          "path": "CLAUDE.md",
+          "type": "blob",
+          "size": 11646
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3898
+        },
+        {
+          "path": "TODO.md",
+          "type": "blob",
+          "size": 2974
+        },
+        {
+          "path": "cmd",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "cmd/subtask",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "cmd/subtask/close.go",
+          "type": "blob",
+          "size": 2801
+        },
+        {
+          "path": "cmd/subtask/draft.go",
+          "type": "blob",
+          "size": 3475
+        },
+        {
+          "path": "cmd/subtask/init.go",
+          "type": "blob",
+          "size": 3607
+        },
+        {
+          "path": "cmd/subtask/list.go",
+          "type": "blob",
+          "size": 1321
+        },
+        {
+          "path": "cmd/subtask/main.go",
+          "type": "blob",
+          "size": 937
+        },
+        {
+          "path": "cmd/subtask/output.go",
+          "type": "blob",
+          "size": 6837
+        },
+        {
+          "path": "cmd/subtask/resume.go",
+          "type": "blob",
+          "size": 7627
+        },
+        {
+          "path": "cmd/subtask/review.go",
+          "type": "blob",
+          "size": 1102
+        },
+        {
+          "path": "cmd/subtask/run.go",
+          "type": "blob",
+          "size": 15058
+        },
+        {
+          "path": "cmd/subtask/show.go",
+          "type": "blob",
+          "size": 1311
+        },
+        {
+          "path": "cmd/subtask/stage.go",
+          "type": "blob",
+          "size": 2588
+        },
+        {
+          "path": "cmd/subtask/workspace.go",
+          "type": "blob",
+          "size": 370
+        },
+        {
+          "path": "e2e",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "e2e/parallel_test.go",
+          "type": "blob",
+          "size": 9487
+        },
+        {
+          "path": "e2e/resume_test.go",
+          "type": "blob",
+          "size": 4801
+        },
+        {
+          "path": "e2e/run_test.go",
+          "type": "blob",
+          "size": 5041
+        },
+        {
+          "path": "e2e/taskfolder_test.go",
+          "type": "blob",
+          "size": 8085
+        },
+        {
+          "path": "e2e/workflow_test.go",
+          "type": "blob",
+          "size": 5904
+        },
+        {
+          "path": "git",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "git/git.go",
+          "type": "blob",
+          "size": 3318
+        },
+        {
+          "path": "go.mod",
+          "type": "blob",
+          "size": 264
+        },
+        {
+          "path": "go.sum",
+          "type": "blob",
+          "size": 1583
+        },
+        {
+          "path": "harness",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "harness/codex.go",
+          "type": "blob",
+          "size": 4005
+        },
+        {
+          "path": "harness/harness.go",
+          "type": "blob",
+          "size": 2640
+        },
+        {
+          "path": "harness/mock.go",
+          "type": "blob",
+          "size": 4857
+        },
+        {
+          "path": "harness/prompt.go",
+          "type": "blob",
+          "size": 1871
+        },
+        {
+          "path": "plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 330
+        },
+        {
+          "path": "plugin/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/commands/setup.md",
+          "type": "blob",
+          "size": 1207
+        },
+        {
+          "path": "plugin/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/skills/subtask",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/skills/subtask/SKILL.md",
+          "type": "blob",
+          "size": 4207
+        },
+        {
+          "path": "task",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "task/lock.go",
+          "type": "blob",
+          "size": 1317
+        },
+        {
+          "path": "task/paths.go",
+          "type": "blob",
+          "size": 1797
+        },
+        {
+          "path": "task/progress.go",
+          "type": "blob",
+          "size": 1583
+        },
+        {
+          "path": "task/state.go",
+          "type": "blob",
+          "size": 3909
+        },
+        {
+          "path": "task/task.go",
+          "type": "blob",
+          "size": 2991
+        },
+        {
+          "path": "testutil",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "testutil/testutil.go",
+          "type": "blob",
+          "size": 4624
+        },
+        {
+          "path": "workflow",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "workflow/templates",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "workflow/templates/collaborative.yaml",
+          "type": "blob",
+          "size": 1600
+        },
+        {
+          "path": "workflow/templates/default.yaml",
+          "type": "blob",
+          "size": 897
+        },
+        {
+          "path": "workflow/workflow.go",
+          "type": "blob",
+          "size": 5743
+        },
+        {
+          "path": "workspace",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "workspace/config.go",
+          "type": "blob",
+          "size": 1182
+        },
+        {
+          "path": "workspace/pool.go",
+          "type": "blob",
+          "size": 2802
+        }
+      ],
+      "marketplace": {
+        "name": "subtask",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "zippoxer"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "subtask",
+            "description": "Dispatch work to parallel Codex workers in isolated git workspaces",
+            "source": "./plugin",
+            "category": null,
+            "version": "1.0.0",
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add zippoxer/subtask",
+              "/plugin install subtask@subtask"
+            ],
+            "signals": {
+              "stars": 2,
+              "forks": 0,
+              "pushed_at": "2026-01-12T21:28:57Z",
+              "created_at": "2026-01-11T11:17:02Z",
+              "license": null
+            },
+            "commands": [
+              {
+                "name": "/setup",
+                "description": "Install and configure the subtask CLI tool",
+                "path": "plugin/commands/setup.md",
+                "frontmatter": {
+                  "description": "Install and configure the subtask CLI tool"
+                },
+                "content": "# Setup Subtask\n\nHelp the user install the subtask CLI for parallel task orchestration.\n\n## Step 1: Check Prerequisites\n\nVerify Go is installed:\n```bash\ngo version\n```\n\nIf not installed, guide the user to install Go first (https://go.dev/dl/).\n\n## Step 2: Determine Installation Method\n\nAsk the user how they want to install:\n\n1. **Build from source** (if in the subtask repo):\n   ```bash\n   go build -o ~/.local/bin/subtask ./cmd/subtask\n   ```\n\n2. **Go install** (from anywhere):\n   ```bash\n   go install github.com/zippoxer/subtask/cmd/subtask@latest\n   ```\n\n## Step 3: Verify PATH\n\nEnsure the installation directory is in PATH:\n```bash\nwhich subtask\n```\n\nIf not found, add to shell config:\n```bash\n# For ~/.local/bin:\necho 'export PATH=\"$HOME/.local/bin:$PATH\"' >> ~/.zshrc  # or ~/.bashrc\nsource ~/.zshrc\n```\n\n## Step 4: Initialize in Project\n\nNavigate to the project where you want to use subtask:\n```bash\nsubtask init\n```\n\nThis creates:\n- `.subtask/config.json` - project configuration\n- Workspace pool at `~/.subtask/workspaces/`\n\n## Step 5: Verify\n\n```bash\nsubtask list\n```\n\nShould show an empty task list with available workspaces."
+              }
+            ],
+            "skills": [
+              {
+                "name": "subtask",
+                "description": "Parallel background task orchestration. Use when you need to dispatch work to parallel workers (like Codex) in isolated git workspaces. Triggers: mention of subtask/subtasks/codex, dispatching planning/implementation work, continuing worker tasks, managing background tasks, working with Codex.",
+                "path": "plugin/skills/subtask/SKILL.md",
+                "frontmatter": {
+                  "name": "subtask",
+                  "description": "Parallel background task orchestration. Use when you need to dispatch work to parallel workers (like Codex) in isolated git workspaces. Triggers: mention of subtask/subtasks/codex, dispatching planning/implementation work, continuing worker tasks, managing background tasks, working with Codex."
+                },
+                "content": "# Subtask\n\nDispatch work to parallel workers (e.g., Codex) in isolated git worktrees.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `subtask draft <task> --base-branch <branch> --title \"...\"` | Create a task |\n| `subtask run <task>` | Run task with prompt |\n| `subtask resume <task>` | Send follow-up to paused task |\n| `subtask stage <task> <stage>` | Advance workflow stage |\n| `subtask list` | View all tasks |\n| `subtask show <task>` | View task details |\n| `subtask close <task>` | Complete task, free workspace |\n| `subtask workspace <task>` | Get workspace path (a git worktree) |\n\n## Flow\n\n```bash\n# 1. Draft (task description is shared with worker)\nsubtask draft fix/bug --base-branch main --title \"Fix race condition\" <<'EOF'\nFix the race condition in worker pool.\nThe issue is in pool.go where we access shared state without locks.\nAdd tests for the fix.\nEOF\n\n# 2. Run with instructions\nsubtask run fix/bug \"Implement as described.\"\n\n# 3. When worker finishes, review and iterate\nsubtask stage fix/bug reviewing\n# Review at: cd $(subtask workspace fix/bug)\n\n# 4. Request changes if needed\nsubtask resume fix/bug <<'EOF'\nAlso handle the edge case when pool is empty.\nEOF\n\n# 5. When ready, close\nsubtask stage fix/bug ready\ncd $(subtask workspace fix/bug) && git add -A && git commit -m \"Fix race condition\" && git push\nsubtask close fix/bug\n```\n\n**Critical:** Always use `run_in_background: true` for `run` and `resume`. Tell the user you're waiting and **stop immediately**. Don't poll - you'll be notified when done.\n\n## Stages\n\nAll tasks have stages: `implementing → reviewing → ready`\n\n| Stage | When to advance |\n|-------|-----------------|\n| `implementing` | Worker is working (default) |\n| `reviewing` | Worker done, you're reviewing code |\n| `ready` | Ready for human to decide (merge, more work, etc.) |\n\nAdvance with: `subtask stage <task> <stage>`\n\n## Collaborative Workflow\n\nFor complex tasks, use `--workflow collaborative` to add a planning stage:\n\n`planning → implementing → reviewing → ready`\n\n```bash\nsubtask draft feat/auth --workflow collaborative --base-branch main --title \"Refactor auth\" <<'EOF'\nMigrate authentication from sessions to JWT tokens.\nNeed to update middleware, user model, and all API endpoints.\nEOF\n\n# Worker reviews your PLAN.md and pokes holes\nsubtask run feat/auth \"Review PLAN.md and the relevant code and identify issues.\"\n```\n\nThe collaborative workflow guides you to draft PLAN.md first, get worker feedback, then implement.\n\n## Task Folder\n\nEach task has a folder at `.subtask/tasks/<name>/`:\n\n| File | Purpose |\n|------|---------|\n| `TASK.md` | Description (auto-created from draft) |\n| `PLAN.md` | Your plan (optional, you create) |\n| `PROGRESS.json` | Step checklist (worker creates/updates) |\n| `conversation.txt` | Full conversation log |\n\n**Worker sees:** TASK.md description as context, plus any files you add (PLAN.md, etc.).\n\n**PROGRESS.json format** (for tracking multi-step work):\n```json\n[\n  {\"step\": \"Remove session auth\", \"done\": true},\n  {\"step\": \"Add JWT tokens\", \"done\": false}\n]\n```\nWorker updates `done: true` as it completes steps. Shows as `1/2` in `subtask list`.\n\n## Status\n\n| Status | Meaning |\n|--------|---------|\n| `draft` | Created, never run |\n| `running` | Worker executing |\n| `paused` | Awaiting follow-up |\n| `error` | Failed |\n| `closed` | Done, workspace freed |\n\n## Other Options\n\n**Continue from previous task's conversation:**\n```bash\nsubtask draft feat/tests --base-branch feat/auth --context feat/auth --title \"Add tests\" <<'EOF'\nAdd tests for the auth changes.\nEOF\n```\n\n**Ask mode (question only, no branch, workspace freed after):**\n```bash\nsubtask draft ask/arch --base-branch main --title \"Architecture question\" --ask <<'EOF'\nQuestion about the codebase architecture.\nEOF\n\nsubtask run ask/arch <<'EOF'\nHow does the event system work?\nEOF\n```"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

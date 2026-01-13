@@ -1,0 +1,170 @@
+{
+  "owner": {
+    "id": "stolostron",
+    "display_name": "Stolostron",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/60207193?v=4",
+    "url": "https://github.com/stolostron",
+    "bio": "Contains OpenShift/OKD compatibility projects for Open Cluster Management, found at https://github.com/open-cluster-management-io (stolos = fleet, tron = tool)",
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 1
+    }
+  },
+  "repos": [
+    {
+      "full_name": "stolostron/acm-config",
+      "url": "https://github.com/stolostron/acm-config",
+      "description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2025-12-15T02:43:58Z",
+        "created_at": "2025-10-31T08:29:02Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 332
+        },
+        {
+          "path": "OWNERS",
+          "type": "blob",
+          "size": 26
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 1590
+        },
+        {
+          "path": "product",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "product/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "product/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 201
+        },
+        {
+          "path": "product/OWNERS",
+          "type": "blob",
+          "size": 67
+        },
+        {
+          "path": "product/compare_prodsec_components.py",
+          "type": "blob",
+          "size": 2503
+        },
+        {
+          "path": "product/component-registry.yaml",
+          "type": "blob",
+          "size": 38872
+        },
+        {
+          "path": "product/product-manifest.json",
+          "type": "blob",
+          "size": 26311
+        },
+        {
+          "path": "product/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "product/skills/component-registry-query",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "product/skills/component-registry-query/SKILL.md",
+          "type": "blob",
+          "size": 6333
+        },
+        {
+          "path": "teams",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "teams/server-foundation",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "teams/server-foundation/member-ownership.md",
+          "type": "blob",
+          "size": 1187
+        },
+        {
+          "path": "teams/server-foundation/team-members.md",
+          "type": "blob",
+          "size": 1276
+        }
+      ],
+      "marketplace": {
+        "name": "acm-config-plugins",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "Advanced Cluster Management(RedHat)",
+          "email": "zxue@redhat.com"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "product",
+            "description": "Manage, view, and operate all active (open) pull requests of the server foundation team.",
+            "source": "./product",
+            "category": null,
+            "version": null,
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add stolostron/acm-config",
+              "/plugin install product@acm-config-plugins"
+            ],
+            "signals": {
+              "stars": 0,
+              "forks": 1,
+              "pushed_at": "2025-12-15T02:43:58Z",
+              "created_at": "2025-10-31T08:29:02Z",
+              "license": null
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "component-registry-query",
+                "description": "Query ACM/MCE component registry information including squad ownership, GitHub repositories, Konflux components, JIRA components, bundles, and prodsec components. Use when user asks about component ownership, squad assignments, repository URLs, component mappings, or any queries related to ACM/MCE components like \"which squad owns X\", \"what's the repo for Y\", \"list components for Z squad\", \"what JIRA component for X\", or \"show all Server Foundation components\".",
+                "path": "product/skills/component-registry-query/SKILL.md",
+                "frontmatter": {
+                  "name": "component-registry-query",
+                  "description": "Query ACM/MCE component registry information including squad ownership, GitHub repositories, Konflux components, JIRA components, bundles, and prodsec components. Use when user asks about component ownership, squad assignments, repository URLs, component mappings, or any queries related to ACM/MCE components like \"which squad owns X\", \"what's the repo for Y\", \"list components for Z squad\", \"what JIRA component for X\", or \"show all Server Foundation components\".",
+                  "allowed-tools": "Read, Bash, Grep"
+                },
+                "content": "# Component Registry Query Skill\n\nThis skill helps query the ACM/MCE component registry (component-registry.yaml) to find information about components, squads, repositories, and their relationships.\n\n## What this skill does\n\n- Find which squad owns a specific component\n- List all components owned by a squad\n- Get GitHub repository URL for a component\n- Find Konflux component names\n- Get JIRA component mappings\n- Find bundle information\n- Get prodsec component identifiers\n- Search components by various attributes\n\n## Instructions\n\n### Step 1: Load the component registry\n\nFirst, read the component-registry.yaml file. The file is located at `product/component-registry.yaml` relative to the project root:\n\n```bash\ncat product/component-registry.yaml\n```\n\nOr use the Read tool to read the file directly.\n\n### Step 2: Parse and query the data\n\nThe YAML structure contains a list of components with these fields:\n- `name`: Component name\n- `konflux_component`: Konflux component identifier\n- `bundle`: Bundle name (e.g., \"mce-operator-bundle\", \"acm-operator-bundle\")\n- `repository`: GitHub repository URL\n- `prodseccomponent`: Product security component identifier\n- `squad`: Squad/team name\n- `jira_component`: JIRA component name\n\n### Step 3: Answer the query\n\nProcess the YAML data to answer questions like:\n\n**Squad ownership queries:**\n- \"Which squad owns [component]?\" → Find component and return squad field\n- \"What components does [squad] own?\" → Filter by squad field and list all components\n\n**Repository queries:**\n- \"What's the GitHub repo for [component]?\" → Return repository field\n- \"Show me the repo URL for [component]\" → Return repository field\n\n**Component mapping queries:**\n- \"What's the Konflux component for [component]?\" → Return konflux_component field\n- \"What JIRA component for [component]?\" → Return jira_component field\n- \"What bundle is [component] in?\" → Return bundle field\n\n**List queries:**\n- \"List all Server Foundation components\" → Filter by squad: \"Server Foundation\"\n- \"Show all components in mce-operator-bundle\" → Filter by bundle\n- \"What components are in the GRC squad?\" → Filter by squad: \"GRC\"\n\n### Step 4: Format the response\n\nPresent the information clearly:\n- For single component queries: Show all relevant fields\n- For list queries: Use bullet points or tables\n- Include links to GitHub repositories when showing repo information\n- Highlight the specific information requested\n\n## Examples\n\n### Example 1: Find squad ownership\n\n**User asks:** \"Which squad is responsible for cluster-proxy?\"\n\n**Process:**\n1. Read component-registry.yaml\n2. Search for component with name: \"cluster-proxy\"\n3. Extract the squad field\n\n**Response:**\n```\nThe cluster-proxy component is owned by the Server Foundation squad.\n\nAdditional details:\n- Konflux component: cluster-proxy-mce\n- Repository: https://github.com/stolostron/cluster-proxy\n- Bundle: mce-operator-bundle\n- JIRA component: Server Foundation\n```\n\n### Example 2: Find repository URL\n\n**User asks:** \"What's the GitHub repo for thanos?\"\n\n**Process:**\n1. Read component-registry.yaml\n2. Find component with name: \"thanos\"\n3. Return repository URL\n\n**Response:**\n```\nThe GitHub repository for thanos is: https://github.com/stolostron/thanos\n\nThis component is:\n- Owned by: Observability squad\n- Part of: acm-operator-bundle\n- Konflux component: thanos-acm\n```\n\n### Example 3: List squad components\n\n**User asks:** \"What components does the Hypershift squad own?\"\n\n**Process:**\n1. Read component-registry.yaml\n2. Filter all components where squad == \"Hypershift\"\n3. List component names\n\n**Response:**\n```\nThe Hypershift squad owns the following components:\n\n- cluster-api-provider-agent\n- cluster-api-provider-kubevirt\n- hypershift-addon-operator\n- hypershift-cli\n- hypershift-release\n```\n\n### Example 4: Multiple attribute query\n\n**User asks:** \"Show me all components in the Install squad with their repos\"\n\n**Process:**\n1. Read component-registry.yaml\n2. Filter by squad: \"Install\"\n3. Extract name and repository for each\n\n**Response:**\n```\nInstall squad components:\n\n1. backplane-must-gather\n   Repository: https://github.com/stolostron/backplane-must-gather\n\n2. backplane-operator\n   Repository: https://github.com/stolostron/backplane-operator\n\n3. discovery-operator\n   Repository: https://github.com/stolostron/discovery\n\n4. mce-operator-bundle\n   Repository: https://github.com/stolostron/mce-operator-bundle\n\n5. acm-operator-bundle\n   Repository: https://github.com/stolostron/acm-operator-bundle\n\n6. multiclusterhub-operator\n   Repository: https://github.com/stolostron/multiclusterhub-operator\n```\n\n## Tips for effective queries\n\n1. **Use exact component names** when possible (case-sensitive matching preferred)\n2. **Common squad names** include: Server Foundation, Install, Hypershift, CAPI, Assisted Installer, Cluster Lifecycle, Console, Hive, GRC, Observability, Search, etc.\n3. **Repository URLs** are GitHub links - can be opened directly\n4. **Some components may not have all fields** - handle missing data gracefully\n5. **JIRA components** may differ from squad names (e.g., \"Infrastructure Operator\" vs \"Assisted Installer\")\n\n## Error handling\n\n- If component not found: Suggest similar component names or ask user to verify spelling\n- If squad not found: List all available squads\n- For missing fields: Indicate field is not available for that component\n- For ambiguous queries: Ask for clarification\n\n## Notes\n\n- The component-registry.yaml file is located at: `product/component-registry.yaml` (relative to project root)\n- Data is sourced from product-manifest.json and component-squad.yaml\n- Last updated information is in the header comments of the YAML file\n- Some components may have duplicate entries with different Konflux component names"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

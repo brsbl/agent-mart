@@ -10,6 +10,8 @@ concurrency:
   group: nightly-build
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,11 +26,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Cache pipeline data
+        uses: actions/cache@v4
+        with:
+          path: data/
+          key: pipeline-data-${{ github.run_number }}
+          restore-keys: |
+            pipeline-data-
 
       - name: Run linting
         run: npm run lint
@@ -42,6 +52,7 @@ jobs:
         run: npm run build
 
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: public-directory
@@ -57,7 +68,11 @@ jobs:
           if [ -n "$(git status public/ --porcelain)" ]; then
             git add public/
             git commit -m "chore: update directory data [skip ci]"
-            git push
+            git pull --rebase origin main
+            if ! git push; then
+              echo "::error::Failed to push changes - manual intervention required"
+              exit 1
+            fi
           else
             echo "No changes to commit"
           fi
