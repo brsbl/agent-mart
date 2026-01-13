@@ -1,0 +1,149 @@
+{
+  "owner": {
+    "id": "otahontas",
+    "display_name": "Otto Ahoniemi",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/43019238?u=3859e8830c8a7740b08dcfc48324e3c68296594d&v=4",
+    "url": "https://github.com/otahontas",
+    "bio": "Fullstack dev, @mindlercare.\r\nStudying audio tech & acoustics at Aalto University and data science at Helsinki University.",
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 2,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "otahontas/jira-cli-skill",
+      "url": "https://github.com/otahontas/jira-cli-skill",
+      "description": "Claude Code plugin that teaches Claude how to use the jira CLI",
+      "homepage": "",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2025-11-16T16:36:59Z",
+        "created_at": "2025-11-12T08:18:17Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 148
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 401
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 114
+        },
+        {
+          "path": "CLAUDE.md",
+          "type": "blob",
+          "size": 3019
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1066
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 1216
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/jira",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/jira/SKILL.md",
+          "type": "blob",
+          "size": 4094
+        },
+        {
+          "path": "skills/jira/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/jira/references/mcp-parity.md",
+          "type": "blob",
+          "size": 7796
+        },
+        {
+          "path": "skills/jira/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/jira/scripts/check-environment.sh",
+          "type": "blob",
+          "size": 702
+        }
+      ],
+      "marketplace": {
+        "name": "jira-cli-skill",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "Otahontas"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "jira",
+            "description": null,
+            "source": "./",
+            "category": null,
+            "version": null,
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add otahontas/jira-cli-skill",
+              "/plugin install jira@jira-cli-skill"
+            ],
+            "signals": {
+              "stars": 2,
+              "forks": 0,
+              "pushed_at": "2025-11-16T16:36:59Z",
+              "created_at": "2025-11-12T08:18:17Z",
+              "license": "MIT"
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "jira",
+                "description": "Operate Atlassian Jira through the official jira CLI; trigger this skill to list, inspect, create, update, triage, or report on Jira work using deterministic shell commands aligned with Jira MCP workflows.",
+                "path": "skills/jira/SKILL.md",
+                "frontmatter": {
+                  "name": "jira",
+                  "description": "Operate Atlassian Jira through the official jira CLI; trigger this skill to list, inspect, create, update, triage, or report on Jira work using deterministic shell commands aligned with Jira MCP workflows.",
+                  "version": "0.1.0"
+                },
+                "content": "# Jira Issue Management\n\n**Use this skill whenever Jira work is requested.**\n\n## Setup\n\n- Run `./scripts/check-environment.sh`. The skill halts with explicit instructions when `jira` is missing or not authenticated (`jira init` required once).\n- Ensure the `jira` CLI remains in PATH after the check.\n- Use upstream flags like `--project`, `--board`, etc., for context as needed; no extra configuration lives in the skill.\n\n## Command Pattern\n\n```bash\njira <command> <subcommand> [arguments] [flags]\n```\n\nPrimary commands: `issue`, `project`, `board`, `sprint`, `epic`, `release`, `open`, `me`, `serverinfo`.\n\nKeep outputs deterministic:\n\n- Run `./scripts/check-environment.sh` at the start of every session; abort work if it reports an error.\n- Add `--plain` plus `--columns ...` for TSV tables that stream cleanly.\n- Use `--raw` (alias for JSON) when structured data is required.\n- Provide explicit ranges via `--paginate start:limit` to cap interactive views.\n\n## Core Workflows\n\n- **Projects** – enumerate available projects  \n  ```bash\n  jira project list --plain --columns key,name,type\n  ```\n\n- **Issues**  \n  - Search / filter:\n    ```bash\n    jira issue list --status Done --assignee \"$(jira me)\" --plain --columns key,summary,status,assignee\n    jira issue search 'project = PROJ AND status = \"In Progress\"' --plain --columns key,summary,status\n    jira issue list --raw --jql 'label = backend' --paginate 0:50\n    ```\n  - View details: `jira issue view PROJ-123 --plain --comments 5`\n  - Create:\n    ```bash\n    jira issue create \\\n      --type Bug \\\n      --summary \"API returns 500\" \\\n      --description-file docs/bug.md \\\n      --priority High \\\n      --assignee \"$(jira me)\" \\\n      --label backend --label urgent\n    ```\n  - Update:\n    ```bash\n    jira issue edit PROJ-123 --summary \"Refine API contract\" --priority Medium\n    jira issue move PROJ-123 \"In Review\" --comment \"Ready for QA\"\n    jira issue assign PROJ-123 user@example.com\n    ```\n  - Comment / worklog:\n    ```bash\n    jira issue comment add PROJ-123 \"Investigating...\" --no-input\n    jira issue worklog add PROJ-123 \"1h 30m\" --comment \"Debugging\"\n    ```\n  - Linking: `jira issue link PROJ-1 PROJ-2 \"Blocks\"` (remove with `jira issue unlink ...`).\n\n- **Epics**  \n  - Create: `jira epic create --name \"Platform Stability\" --summary \"Q3 initiative\"`  \n  - List: `jira epic list --plain --columns key,summary,status`  \n  - Attach issues: `jira epic add EPIC-1 PROJ-123 PROJ-456`\n\n- **Boards & Sprints**  \n  - Boards: `jira board list --plain --columns id,name,type`\n  - Sprint overview: `jira sprint list --plain --columns id,name,state,start,end`\n  - Sprint issues: `jira sprint list <SPRINT_ID> --plain --columns key,summary,status,assignee`\n  - Move issues: `jira sprint add <SPRINT_ID> PROJ-123 PROJ-456`\n  - Close sprint: `jira sprint close <SPRINT_ID>`\n\n- **Releases (Versions)** – `jira release list --plain --columns name,start,end,state`\n\n- **Open in browser** – `jira open PROJ-123 --no-browser` (omit flag to launch UI).\n\n- **User / Instance context** – `jira me`, `jira serverinfo`, `jira version`.\n\n## Output Strategies\n\n- Issues default to `key,summary,status,assignee`; sprints to `id,name,state,start,end`. Override with `--columns`.\n- `--raw` returns JSON for downstream processing (`jq`, scripting).\n- Combine commands with standard Unix tooling:\n  ```bash\n  jira issue list --plain --columns key,status,assignee | rg \"In Progress\"\n  jira issue view PROJ-123 --plain --comments 10 | tee PROJ-123.txt\n  ```\n\n## Reference Material\n\n- `references/mcp-parity.md` contains a Jira MCP → CLI mapping, including attachments, watchers, and worklogs.\n- For authentication or environment issues\n    - re-run `jira init` and review `~/.config/.jira/.config.yml`.\n    - check that JIRA_API_TOKEN is set or `~/.netrc` contains proper jira setup"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

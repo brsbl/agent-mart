@@ -1,0 +1,137 @@
+{
+  "owner": {
+    "id": "aidankinzett",
+    "display_name": "Aidan Kinzett",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8899750?v=4",
+    "url": "https://github.com/aidankinzett",
+    "bio": "Tech Lead at @Labrys-Group ",
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "aidankinzett/claude-git-pr-skill",
+      "url": "https://github.com/aidankinzett/claude-git-pr-skill",
+      "description": "Professional GitHub PR review skill for Claude Code with pending reviews, code suggestions, and user approval workflow",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-02T07:41:33Z",
+        "created_at": "2025-12-02T07:10:16Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 618
+        },
+        {
+          "path": ".claude",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude/CLAUDE.md",
+          "type": "blob",
+          "size": 2424
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 184
+        },
+        {
+          "path": "CHANGELOG.md",
+          "type": "blob",
+          "size": 4118
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 5705
+        },
+        {
+          "path": "github-pr-review",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "github-pr-review/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "github-pr-review/skills/github-pr-review",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "github-pr-review/skills/github-pr-review/SKILL.md",
+          "type": "blob",
+          "size": 9284
+        }
+      ],
+      "marketplace": {
+        "name": "github-pr-skills",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "Aidan Kinzett",
+          "email": "[email protected]"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "github-pr-review",
+            "description": "Professional GitHub PR reviews with pending reviews, code suggestions, and user approval workflow",
+            "source": "./github-pr-review",
+            "category": null,
+            "version": "1.1.1",
+            "author": {
+              "name": "Aidan Kinzett"
+            },
+            "install_commands": [
+              "/plugin marketplace add aidankinzett/claude-git-pr-skill",
+              "/plugin install github-pr-review@github-pr-skills"
+            ],
+            "signals": {
+              "stars": 0,
+              "forks": 0,
+              "pushed_at": "2025-12-02T07:41:33Z",
+              "created_at": "2025-12-02T07:10:16Z",
+              "license": null
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "github-pr-review",
+                "description": "Use when reviewing GitHub pull requests with gh CLI - creates pending reviews with code suggestions, batches comments, and chooses appropriate event types (COMMENT/APPROVE/REQUEST_CHANGES)",
+                "path": "github-pr-review/skills/github-pr-review/SKILL.md",
+                "frontmatter": {
+                  "name": "github-pr-review",
+                  "description": "Use when reviewing GitHub pull requests with gh CLI - creates pending reviews with code suggestions, batches comments, and chooses appropriate event types (COMMENT/APPROVE/REQUEST_CHANGES)",
+                  "allowed-tools": "AskUserQuestion"
+                },
+                "content": "# GitHub PR Review\n\n## Overview\n\nWorkflow for reviewing GitHub pull requests using `gh api` to create pending reviews with code suggestions. **Always use pending reviews to batch comments, even under time pressure.**\n\n**CRITICAL: Always get explicit user approval before posting any review comments.** Show exactly what will be posted and ask for yes/no confirmation using AskUserQuestion.\n\n## When to Use\n\n- Reviewing pull requests\n- Adding code suggestions to PRs\n- Posting review comments with the gh CLI\n\n## Prerequisites\n\n**CRITICAL: Check if gh CLI is installed before attempting to use this skill.**\n\n### Check for gh CLI\n\nBefore starting any PR review workflow, verify the gh CLI is available:\n\n```bash\ngh --version\n```\n\n**If gh is not installed:**\n\n1. **Stop immediately** - Do not attempt to run gh api commands\n2. **Inform the user** with this message:\n\n```\nThe GitHub CLI (gh) is required for this skill but is not installed.\n\nPlease install it from: https://cli.github.com/\n\nInstallation options:\n- macOS: brew install gh\n- Windows: winget install GitHub.cli\n- Linux: See https://cli.github.com/ for your distro\n\nAfter installing, authenticate with:\n  gh auth login\n\nThen try your PR review request again.\n```\n\n3. **Do not proceed** with the review workflow until gh is installed\n\n### After Installation\n\nOnce gh is installed, users must authenticate:\n```bash\ngh auth login\n```\n\n## Core Workflow\n\n**REQUIRED STEPS (do not skip):**\n\n1. **Check gh CLI is installed** - Run `gh --version` to verify\n2. **Draft the review** - Analyze PR and prepare all comments\n3. **Show user exactly what will be posted** - Use AskUserQuestion with yes/no\n4. **Get explicit approval** - Wait for user confirmation\n5. **Post the review** - Only after approval\n\n### Approval Pattern\n\nBefore posting ANY review, use AskUserQuestion to show:\n- File and line number for each comment\n- Exact comment text (including code suggestions)\n- Event type (APPROVE/REQUEST_CHANGES/COMMENT)\n- Overall review message\n\n**Example:**\n```\nQuestion: \"Ready to post this review?\"\nHeader: \"PR Review\"\nOptions:\n  - Yes, post it: Posts the review as shown\n  - No, let me revise: Allows refinement\n```\n\n### Technical Workflow\n\n**ALWAYS use the pending review pattern, even for single comments:**\n\n```bash\n# Step 1: Create PENDING review (no event field)\ngh api repos/:owner/:repo/pulls/<PR_NUMBER>/reviews \\\n  -X POST \\\n  -f commit_id=\"<COMMIT_SHA>\" \\\n  -f 'comments[][path]=path/to/file.ts' \\\n  -F 'comments[][line]=<LINE_NUMBER>' \\\n  -f 'comments[][side]=RIGHT' \\\n  -f 'comments[][body]=Comment text\n\n```suggestion\n// suggested code here\n```\n\nAdditional explanation...' \\\n  --jq '{id, state}'\n\n# Returns: {\"id\": <REVIEW_ID>, \"state\": \"PENDING\"}\n\n# Step 2: Submit the pending review\ngh api repos/:owner/:repo/pulls/<PR_NUMBER>/reviews/<REVIEW_ID>/events \\\n  -X POST \\\n  -f event=\"COMMENT\" \\\n  -f body=\"Optional overall review message\"\n```\n\n## Event Types\n\nChoose the appropriate event type when submitting:\n\n| Event Type | When to Use | Example Situations |\n|------------|-------------|-------------------|\n| `APPROVE` | Non-blocking suggestions, PR is ready to merge | Minor style improvements, optional refactoring |\n| `REQUEST_CHANGES` | Blocking issues that must be fixed | Security vulnerabilities, bugs, failing tests |\n| `COMMENT` | Neutral feedback, questions | Asking for clarification, neutral observations |\n\n## Quick Reference\n\n### Getting Prerequisites\n\n```bash\n# Get commit SHA\ngh pr view <PR_NUMBER> --json commits --jq '.commits[-1].oid'\n\n# Repository info (usually auto-detected by gh)\ngh repo view --json owner,name\n```\n\n### Required Parameters\n\n- `commit_id`: Latest commit SHA from the PR\n- `comments[][path]`: File path relative to repo root\n- `comments[][line]`: End line number (use `-F` for numbers)\n- `comments[][side]`: Use `RIGHT` for added/modified lines (most common), `LEFT` for deleted lines\n- `comments[][body]`: Comment text with optional ```suggestion block\n\n### Optional Parameters\n\n- `comments[][start_line]`: For multi-line code suggestions (use `-F`)\n- `event`: Omit for PENDING, or use `COMMENT`/`APPROVE`/`REQUEST_CHANGES`\n\n### Syntax Rules\n\n✅ **DO:**\n- Use single quotes around parameters with `[]`: `'comments[][path]'`\n- Use `-f` for string values\n- Use `-F` for numeric values (line numbers)\n- Use triple backticks with `suggestion` identifier for code suggestions\n\n❌ **DON'T:**\n- Use double quotes around `comments[][]` parameters\n- Mix up `-f` and `-F` flags\n- Forget to get commit SHA first\n\n## Code Suggestions Format\n\n```bash\n-f 'comments[][body]=Your comment explaining the issue\n\n```suggestion\n// The suggested code that will replace the specified line(s)\nconst fixed = \"like this\";\n```\n\nAdditional context or explanation after the suggestion.'\n```\n\n**Important**: Code suggestions replace the entire line or line range. Make sure the suggested code is complete and correct.\n\n### Edge Case: Suggestions with Nested Code Blocks\n\nWhen suggesting changes to markdown files or documentation that contain triple backticks, use 4 backticks or tildes to prevent conflicts:\n\n`````markdown\n````suggestion\n```javascript\n// Suggested code with nested backticks\nconst example = \"value\";\n```\n````\n`````\n\nOr use tildes:\n\n```markdown\n~~~suggestion\n```javascript\nconst example = \"value\";\n```\n~~~\n```\n\n## Common Mistakes\n\n| Mistake | Fix |\n|---------|-----|\n| Posting immediately under time pressure | Still create pending review first - can submit immediately after |\n| \"Only one comment so no need for pending\" | Use pending anyway - consistent workflow, allows adding more later |\n| Forgetting single quotes around `comments[][]` | Always quote: `'comments[][path]'` not `comments[][path]` |\n| Not getting commit SHA | Run `gh pr view <NUMBER> --json commits --jq '.commits[-1].oid'` |\n| Using wrong event type | Security/bugs → REQUEST_CHANGES, Style → APPROVE, Questions → COMMENT |\n\n## Red Flags - You're About to Violate the Pattern\n\nStop if you're thinking:\n- \"User said ASAP so I'll skip pending review\"\n- \"Only one comment so I'll post directly\"\n- \"Time pressure means I should post immediately\"\n- \"I'll post this one now and batch the rest later\"\n- **\"User already approved the review idea, so I'll skip the approval step\"**\n- **\"I'll post it and then tell them what I posted\"**\n- **\"The approval step slows things down\"**\n- **\"I'll check for gh later, let me draft the review first\"**\n- **\"gh is probably installed, no need to check\"**\n\n**All of these mean: STOP. Check gh first, get explicit approval, then use pending review.**\n\n**Why pending reviews?** Take the same time (2 API calls vs 1) but provide critical benefits:\n- Can add more comments if you find additional issues while writing the first\n- Can review your own comments before submitting\n- Consistent workflow regardless of urgency\n- Batches all comments into one notification for the PR author\n\n**Why approval step?** Users need to see exactly what will be posted publicly:\n- Review comments are public and permanent\n- Code suggestions might be incorrect\n- Tone might need adjustment\n- User might want to refine the message\n\n## Complete Example with Approval\n\n**Step 1: Draft and show for approval**\n\nFirst, analyze the PR and draft your comments. Then use AskUserQuestion:\n\n```\nI've reviewed PR #123 and found 3 issues. Here's what I'll post:\n\n**Comment 1:** src/auth.ts line 20\nToken expiry validation is missing...\n[code suggestion shown]\n\n**Comment 2:** src/auth.ts line 35\nMissing error handling...\n[code suggestion shown]\n\n**Comment 3:** tests/auth.test.ts line 12\nMissing error case test...\n[code suggestion shown]\n\n**Event Type:** REQUEST_CHANGES\n**Overall message:** \"Found 3 issues that need to be addressed before merging.\"\n\nReady to post this review?\n```\n\n**Step 2: After approval, post the review**\n\n```bash\n# Create pending review with multiple comments\ngh api repos/:owner/:repo/pulls/123/reviews \\\n  -X POST \\\n  -f commit_id=\"abc123\" \\\n  -f 'comments[][path]=src/auth.ts' \\\n  -F 'comments[][line]=20' \\\n  -f 'comments[][side]=RIGHT' \\\n  -f 'comments[][body]=First issue...' \\\n  -f 'comments[][path]=src/auth.ts' \\\n  -F 'comments[][line]=35' \\\n  -f 'comments[][side]=RIGHT' \\\n  -f 'comments[][body]=Second issue...' \\\n  -f 'comments[][path]=tests/auth.test.ts' \\\n  -F 'comments[][line]=12' \\\n  -f 'comments[][side]=RIGHT' \\\n  -f 'comments[][body]=Third issue...' \\\n  --jq '{id, state}'\n\n# Submit with appropriate event type\ngh api repos/:owner/:repo/pulls/123/reviews/<REVIEW_ID>/events \\\n  -X POST \\\n  -f event=\"REQUEST_CHANGES\" \\\n  -f body=\"Found 3 issues that need to be addressed before merging.\"\n```\n\n## Real-World Impact\n\n**Without this pattern:**\n- Multiple separate notifications spam the PR author\n- Can't batch feedback together\n- Easy to forget issues while reviewing\n- Inconsistent workflow based on perceived urgency\n\n**With this pattern:**\n- All feedback in one coherent review\n- PR author gets one notification with full context\n- Can refine comments before posting\n- Professional, organized reviews"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

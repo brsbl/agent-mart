@@ -1,0 +1,204 @@
+{
+  "owner": {
+    "id": "coreos",
+    "display_name": "CoreOS",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3730757?v=4",
+    "url": "https://github.com/coreos",
+    "bio": "Key components to secure, simplify and automate your container infrastructure",
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 2,
+      "total_commands": 2,
+      "total_skills": 0,
+      "total_stars": 2,
+      "total_forks": 3
+    }
+  },
+  "repos": [
+    {
+      "full_name": "coreos/ai-helpers",
+      "url": "https://github.com/coreos/ai-helpers",
+      "description": "CoreOS Team developer productivity tools for Claude Code & other AI assistants ",
+      "homepage": null,
+      "signals": {
+        "stars": 2,
+        "forks": 3,
+        "pushed_at": "2026-01-03T10:31:02Z",
+        "created_at": "2025-10-30T12:36:41Z",
+        "license": "Apache-2.0"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 421
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 11357
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 2865
+        },
+        {
+          "path": "agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "agents/README.md",
+          "type": "blob",
+          "size": 1563
+        },
+        {
+          "path": "agents/issuesolver",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "agents/issuesolver/README.md",
+          "type": "blob",
+          "size": 1378
+        },
+        {
+          "path": "agents/issuesolver/issuesolver.md",
+          "type": "blob",
+          "size": 4459
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/customer-cases",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/customer-cases/README.md",
+          "type": "blob",
+          "size": 348
+        },
+        {
+          "path": "plugins/customer-cases/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/customer-cases/commands/customer-cases.md",
+          "type": "blob",
+          "size": 1290
+        },
+        {
+          "path": "plugins/customer-cases/plugin.json",
+          "type": "blob",
+          "size": 193
+        },
+        {
+          "path": "plugins/pipeline-status",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/pipeline-status/README.md",
+          "type": "blob",
+          "size": 630
+        },
+        {
+          "path": "plugins/pipeline-status/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/pipeline-status/commands/pipeline_status.md",
+          "type": "blob",
+          "size": 3390
+        },
+        {
+          "path": "plugins/pipeline-status/plugin.json",
+          "type": "blob",
+          "size": 167
+        }
+      ],
+      "marketplace": {
+        "name": "ai-helpers",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "coreos"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "pipeline-status",
+            "description": "Summarize the status of the RHCOS pipeline using Slack",
+            "source": "./plugins/pipeline-status",
+            "category": null,
+            "version": null,
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add coreos/ai-helpers",
+              "/plugin install pipeline-status@ai-helpers"
+            ],
+            "signals": {
+              "stars": 2,
+              "forks": 3,
+              "pushed_at": "2026-01-03T10:31:02Z",
+              "created_at": "2025-10-30T12:36:41Z",
+              "license": "Apache-2.0"
+            },
+            "commands": [
+              {
+                "name": "/pipeline_status",
+                "description": null,
+                "path": "plugins/pipeline-status/commands/pipeline_status.md",
+                "frontmatter": null,
+                "content": "# CoreOS Pipeline Status Analysis\n\nAnalyze CoreOS pipeline build status for a specific date using the containerized CoreOS pipeline status tool.\n\n## Usage\n- `coreos_pipeline_status` - Analyze builds for today's date\n- `coreos_pipeline_status YYYY-MM-DD` - Analyze builds for specific date\n\n## Implementation\n\n### Step 1: Execute Pipeline Status Query\n```bash\n# Set date parameter (defaults to current date)\ndate=${1:-$(date +%Y-%m-%d)}\npodman run --rm --env-file .env quay.io/cverna/coreos-pipeline-status:latest --date $date --pretty\n```\n\n### Step 2: Analysis Requirements\n1. **Build Summary**: Count total builds, failures, and successes\n2. **Version Breakdown**: Use exact version names from Jenkins messages (e.g., rhel-10.1, 4.21-9.6, 4.20-10.1)\n3. **Job Type Analysis**: Break down by job type (architecture builds, release builds, node-image builds)\n4. **Architecture Analysis**: Break down by architecture (x86_64, ppc64le, s390x, aarch64)\n5. **Failure Rate**: Calculate overall failure percentage\n6. **Notable Issues**: Highlight patterns or user comments about failures\n\n### Step 3: Report Generation\nCreate a concise summary including:\n\n#### Required Sections:\n- **Total Messages**: Count of pipeline notifications\n- **Build Status Overview**: Success/failure counts with emoji indicators\n- **Builds by Version & Job Type**: Version-specific breakdowns using exact Jenkins message names\n- **Job Type Breakdown**: Success/failure rates by job type (arch builds, releases, node-image builds)\n- **Architecture Breakdown**: Per-architecture success/failure rates\n- **Notable Issues**: Key problems or patterns observed\n\n#### Status Indicators:\n- 🔥 Failed builds (red color in Slack)\n- ✨ Successful builds (green color in Slack)\n- 🚅 Release builds (yellow/orange color in Slack)\n\n#### Formatting Requirements:\n- Use markdown headers and bullet points\n- Include build numbers and Jenkins url links\n- Calculate and display failure percentages\n- Highlight architecture-specific issues (e.g., 100% ppc64le failures)\n\n### Step 4: Slack Summary Generation\n\nFinish the status with a short slack message to highlight the failures, see example below:\n\n```\n🚨 CoreOS Pipeline Summary - 2025-09-17\n21% failure rate (3/14 builds failed)\n\nnode-image builds:\n- 4.21-10.1: 0/1 🔥\n- 4.21-9.6: 0/2 🔥\n- 4.20-10.1: 1/1 ✅\n\nRHCOS & Release builds:\n- rhel-10.1: 5/5 ✅\n- 4.15-9.2: 5/5 ✅\n```\n\n#### Summary Guidelines:\n- Lead with overall failure percentage\n- Highlight job type specific failures (e.g., node-image builds vs arch builds)\n- Use exact version names from Jenkins messages\n- Group by job type when patterns emerge (e.g., all node-image builds failing)\n- End with builds by version table using ✅/🔥 indicators\n- Keep under 10 lines for urgent visibility\n- Use emojis for quick visual scanning\n\n### Step 5: Post Summary to Slack\n\nAfter generating the analysis and summary, post the summary to the Slack channel:\n\n```bash\npodman run --rm --env-file .env quay.io/cverna/coreos-pipeline-status:latest --summary \"SLACK_SUMMARY_TEXT\"\n```\n\nExample:\n```bash\npodman run --rm --env-file .env quay.io/cverna/coreos-pipeline-status:latest --summary \"🚨 CoreOS Pipeline Summary - 2025-09-17\n21% failure rate (3/14 builds failed)\n\nnode-image builds:\n- 4.21-10.1: 0/1 🔥\n- 4.21-9.6: 0/2 🔥\n- 4.20-10.1: 1/1 ✅\n\nRHCOS & Release builds:\n- rhel-10.1: 5/5 ✅\n- 4.15-9.2: 5/5 ✅\"\n```"
+              }
+            ],
+            "skills": []
+          },
+          {
+            "name": "customer-cases",
+            "description": "Summarize the RHCOS OCPBUGS with an open Customer Case",
+            "source": "./plugins/customer-cases",
+            "category": null,
+            "version": null,
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add coreos/ai-helpers",
+              "/plugin install customer-cases@ai-helpers"
+            ],
+            "signals": {
+              "stars": 2,
+              "forks": 3,
+              "pushed_at": "2026-01-03T10:31:02Z",
+              "created_at": "2025-10-30T12:36:41Z",
+              "license": "Apache-2.0"
+            },
+            "commands": [
+              {
+                "name": "/customer-cases",
+                "description": null,
+                "path": "plugins/customer-cases/commands/customer-cases.md",
+                "frontmatter": null,
+                "content": "# CoreOS Customer Cases Bug Report Generator\n\nGenerate a comprehensive weekly report of CoreOS bugs that have Customer Cases linked to them using the jira CLI tool.\n\n## JQL Query\nUse this JQL query to retrieve all active CoreOS bugs with customer cases:\n```\nfilter = \"CoreOS Bugs\" AND \"SFDC Cases Counter\" > 0 AND issuetype = Bug and Project in (RHEL, COS, OCPBUGS) AND statusCategory != Done\n```\n\n## Implementation\n\n### Step 1: Execute JQL Query\n```bash\njira issue list -q 'filter = \"CoreOS Bugs\" AND \"SFDC Cases Counter\" > 0 AND Project in (RHEL, COS, OCPBUGS) AND statusCategory NOT IN (Done)' --plain --columns key,summary,assignee,created,status,labels\n```\n\n### Step 2: Analysis Requirements\n1. Weekly New Bugs: Identify bugs created within the current week (Monday-Sunday)\n2. Unassigned Bugs: Find all bugs with empty assignee fields\n3. Age Categorization: Group bugs by age:\n   - Recent: < 1 month old\n   - Medium-term: 1-3 months old  \n   - Long-term: 3+ months old\n4. Assignment Summary: Count bugs by assignee\n5. Statistics: Calculate oldest bug age and total counts\n\n#### Special Attention Items:\n- CVE-related bugs (flag as security concerns)\n- Bugs over 100 days old without assignment\n- Multiple new bugs in a single week\n- Highlight the issue with rhcos-waitingonrhel label\n\n"
+              }
+            ],
+            "skills": []
+          }
+        ]
+      }
+    }
+  ]
+}

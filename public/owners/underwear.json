@@ -1,0 +1,119 @@
+{
+  "owner": {
+    "id": "underwear",
+    "display_name": "Igor Filippov",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/4825406?v=4",
+    "url": "https://github.com/underwear",
+    "bio": "php dev",
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "underwear/laravel-forge-claude-skill",
+      "url": "https://github.com/underwear/laravel-forge-claude-skill",
+      "description": "Claude Code skill for inspecting Laravel Forge infrastructure (servers and sites)",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-07T16:15:44Z",
+        "created_at": "2026-01-07T15:24:50Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 420
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 257
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 318
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3703
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/laravel-forge",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/laravel-forge/SKILL.md",
+          "type": "blob",
+          "size": 13552
+        }
+      ],
+      "marketplace": {
+        "name": "underwear-plugins",
+        "version": null,
+        "description": "Laravel Forge management plugin for Claude Code",
+        "owner_info": {
+          "name": "underwear"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "laravel-forge",
+            "description": "Complete Laravel Forge management from Claude Code - servers, sites, deployments, databases, SSL, SSH keys, firewall, jobs, daemons, and more",
+            "source": "./",
+            "category": null,
+            "version": "1.0.0",
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add underwear/laravel-forge-claude-skill",
+              "/plugin install laravel-forge@underwear-plugins"
+            ],
+            "signals": {
+              "stars": 0,
+              "forks": 0,
+              "pushed_at": "2026-01-07T16:15:44Z",
+              "created_at": "2026-01-07T15:24:50Z",
+              "license": null
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "laravel-forge",
+                "description": "Complete Laravel Forge management via curl - servers, sites, deployments, databases, SSL, SSH keys, firewall, jobs, daemons, and more.",
+                "path": "skills/laravel-forge/SKILL.md",
+                "frontmatter": {
+                  "name": "laravel-forge",
+                  "description": "Complete Laravel Forge management via curl - servers, sites, deployments, databases, SSL, SSH keys, firewall, jobs, daemons, and more.",
+                  "allowed-tools": "Bash(curl:*)"
+                },
+                "content": "# Laravel Forge Control\n\nManage Laravel Forge infrastructure using curl. No dependencies required - just curl (available on all systems).\n\n## Setup\n\nUser must set environment variables:\n```bash\nexport FORGE_API_TOKEN=\"your-token\"      # From https://forge.laravel.com/profile/api\nexport FORGE_ORG_SLUG=\"your-org-slug\"    # Your organization slug from Forge URL\n```\n\n## API Endpoints Reference\n\nBase URL: `https://forge.laravel.com/api`\n\nAll requests require header: `Authorization: Bearer $FORGE_API_TOKEN`\n\n---\n\n### Servers\n\n**List all servers:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers\"\n```\n\n**Get server details:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}\"\n```\n\n**Reboot server:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"action\":\"reboot\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/actions\"\n```\n\n**Restart Nginx:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"action\":\"restart\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/nginx-action\"\n```\n\n**Restart PHP-FPM:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"action\":\"restart\",\"version\":\"8.2\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/php-action\"\n```\n\n**Restart MySQL:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"action\":\"restart\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/mysql-action\"\n```\n\n---\n\n### Sites\n\n**List all sites:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites\"\n```\n\n**Get site details:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}\"\n```\n\n**Create site:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"domain\":\"example.com\",\"project_type\":\"laravel\",\"directory\":\"/public\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites\"\n```\n\n**Delete site:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}\"\n```\n\n**Get .env file:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/env\"\n```\n\n**Update .env file:**\n```bash\ncurl -s -X PUT -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"content\":\"APP_ENV=production\\nAPP_DEBUG=false\"}' \\\n  \"https://forge.laravel.com/api/sites/{site_id}/env\"\n```\n\n**Get Nginx config:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/nginx\"\n```\n\n**Update Nginx config:**\n```bash\ncurl -s -X PUT -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"content\":\"server { ... }\"}' \\\n  \"https://forge.laravel.com/api/sites/{site_id}/nginx\"\n```\n\n**Get site logs:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/logs?type=error\"\n```\n\n---\n\n### Deployments\n\n**Trigger deployment:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/deployments\"\n```\n\n**List deployments:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/deployments\"\n```\n\n**Get deployment details:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/deployments/{deployment_id}\"\n```\n\n**Get deployment output:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/deployments/{deployment_id}/output\"\n```\n\n**Get deploy script:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/deployment-script\"\n```\n\n**Update deploy script:**\n```bash\ncurl -s -X PUT -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"content\":\"cd /home/forge/site\\ngit pull\\ncomposer install --no-dev\"}' \\\n  \"https://forge.laravel.com/api/sites/{site_id}/deployment-script\"\n```\n\n---\n\n### Databases\n\n**List databases:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/database/schemas\"\n```\n\n**Create database:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"name\":\"my_database\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/database/schemas\"\n```\n\n**Delete database:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/database/schemas/{database_id}\"\n```\n\n**List database users:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/database/users\"\n```\n\n**Create database user:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\":\"dbuser\",\"password\":\"secret123\",\"databases\":[1,2]}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/database/users\"\n```\n\n**Delete database user:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/database/users/{user_id}\"\n```\n\n---\n\n### Domains & SSL\n\n**List domains:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/domains\"\n```\n\n**Add domain:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"name\":\"www.example.com\"}' \\\n  \"https://forge.laravel.com/api/sites/{site_id}/domains\"\n```\n\n**Delete domain:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/domains/{domain_id}\"\n```\n\n**Get SSL certificate status:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/domains/{domain_id}/certificate\"\n```\n\n**Install Let's Encrypt SSL:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"type\":\"letsencrypt\"}' \\\n  \"https://forge.laravel.com/api/sites/{site_id}/domains/{domain_id}/certificate\"\n```\n\n**Delete SSL certificate:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/sites/{site_id}/domains/{domain_id}/certificate\"\n```\n\n---\n\n### SSH Keys\n\n**List SSH keys:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/ssh-keys\"\n```\n\n**Add SSH key:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\":\"My Key\",\"key\":\"ssh-rsa AAAA...\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/ssh-keys\"\n```\n\n**Delete SSH key:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/ssh-keys/{key_id}\"\n```\n\n---\n\n### Firewall Rules\n\n**List firewall rules:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/firewall-rules\"\n```\n\n**Add firewall rule:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\":\"Custom Port\",\"port\":\"8080\",\"ip_address\":null}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/firewall-rules\"\n```\n\n**Add firewall rule with IP restriction:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\":\"MySQL Restricted\",\"port\":\"3306\",\"ip_address\":\"10.0.0.1\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/firewall-rules\"\n```\n\n**Delete firewall rule:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/firewall-rules/{rule_id}\"\n```\n\n---\n\n### Scheduled Jobs (Cron)\n\n**List scheduled jobs:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/scheduled-jobs\"\n```\n\n**Create scheduled job:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"command\":\"php artisan schedule:run\",\"frequency\":\"minutely\",\"user\":\"forge\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/scheduled-jobs\"\n```\n\nFrequency options: `minutely`, `hourly`, `nightly`, `weekly`, `monthly`, `custom`\n\n**Create custom cron job:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"command\":\"php artisan backup:run\",\"frequency\":\"custom\",\"cron\":\"0 2 * * *\",\"user\":\"forge\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/scheduled-jobs\"\n```\n\n**Delete scheduled job:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/scheduled-jobs/{job_id}\"\n```\n\n---\n\n### Daemons (Background Processes)\n\n**List daemons:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/background-processes\"\n```\n\n**Create daemon:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"command\":\"php artisan queue:work\",\"user\":\"forge\",\"processes\":3}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/background-processes\"\n```\n\n**Delete daemon:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/background-processes/{daemon_id}\"\n```\n\n**Restart daemon:**\n```bash\ncurl -s -X PUT -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" -d '{\"action\":\"restart\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/background-processes/{daemon_id}\"\n```\n\n**Get daemon logs:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/background-processes/{daemon_id}/log\"\n```\n\n---\n\n### Redirect Rules\n\n**List redirects:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites/{site_id}/redirect-rules\"\n```\n\n**Create redirect (301 permanent):**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"from\":\"/old-page\",\"to\":\"/new-page\",\"type\":\"permanent\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites/{site_id}/redirect-rules\"\n```\n\n**Create redirect (302 temporary):**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"from\":\"/promo\",\"to\":\"/sale\",\"type\":\"temporary\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites/{site_id}/redirect-rules\"\n```\n\n**Delete redirect:**\n```bash\ncurl -s -X DELETE -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites/{site_id}/redirect-rules/{redirect_id}\"\n```\n\n---\n\n### Command Execution\n\n**Run command on site:**\n```bash\ncurl -s -X POST -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"command\":\"php artisan migrate --force\"}' \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites/{site_id}/commands\"\n```\n\n**List command history:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites/{site_id}/commands\"\n```\n\n**Get command output:**\n```bash\ncurl -s -H \"Authorization: Bearer $FORGE_API_TOKEN\" \\\n  \"https://forge.laravel.com/api/orgs/$FORGE_ORG_SLUG/servers/{server_id}/sites/{site_id}/commands/{command_id}/output\"\n```\n\n---\n\n## Usage Notes\n\n1. **Always list first** - Use list commands to get IDs before other operations\n2. **Confirm destructive actions** - Ask user before delete/reboot operations\n3. **Replace placeholders** - Replace `{server_id}`, `{site_id}`, etc. with actual IDs\n4. **Check response** - API returns JSON with operation status\n\n## API Reference\n\nOfficial docs: https://forge.laravel.com/docs/api-reference/introduction"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

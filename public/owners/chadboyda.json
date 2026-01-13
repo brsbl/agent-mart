@@ -1,0 +1,144 @@
+{
+  "owner": {
+    "id": "chadboyda",
+    "display_name": "Chad Boyda",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/418800?v=4",
+    "url": "https://github.com/chadboyda",
+    "bio": null,
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "chadboyda/chadboyda-agent",
+      "url": "https://github.com/chadboyda/chadboyda-agent",
+      "description": "Claude Code marketplace - plugins and skills for development workflows",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-09T17:57:32Z",
+        "created_at": "2026-01-09T17:47:00Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 550
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1067
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 1746
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/iterm-worktree",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/iterm-worktree/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/iterm-worktree/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 401
+        },
+        {
+          "path": "plugins/iterm-worktree/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/iterm-worktree/skills/iterm-worktree",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/iterm-worktree/skills/iterm-worktree/SKILL.md",
+          "type": "blob",
+          "size": 3521
+        },
+        {
+          "path": "plugins/iterm-worktree/skills/iterm-worktree/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/iterm-worktree/skills/iterm-worktree/scripts/worktree.py",
+          "type": "blob",
+          "size": 16607
+        }
+      ],
+      "marketplace": {
+        "name": "chadboyda-agent",
+        "version": "1.0.0",
+        "description": "Chad Boyda's Claude Code plugins and skills",
+        "owner_info": {
+          "name": "Chad Boyda",
+          "email": "me@chadboyda.com"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "iterm-worktree",
+            "description": "Git worktree management with iTerm2 integration for parallel feature development",
+            "source": "./plugins/iterm-worktree",
+            "category": "development",
+            "version": "1.0.0",
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add chadboyda/chadboyda-agent",
+              "/plugin install iterm-worktree@chadboyda-agent"
+            ],
+            "signals": {
+              "stars": 0,
+              "forks": 0,
+              "pushed_at": "2026-01-09T17:57:32Z",
+              "created_at": "2026-01-09T17:47:00Z",
+              "license": "MIT"
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "iterm-worktree",
+                "description": "Manage git worktrees with iTerm2 integration. Use when user asks to create isolated development environments, work on features in parallel, manage worktrees, open worktrees in new tabs/windows, switch between worktrees, or close completed worktrees. Triggers on \"create worktree\", \"new worktree\", \"feature branch with worktree\", \"open worktree\", \"switch worktree\", \"close worktree\", \"list worktrees\", or mentions wanting to work on multiple features simultaneously.",
+                "path": "plugins/iterm-worktree/skills/iterm-worktree/SKILL.md",
+                "frontmatter": {
+                  "name": "iterm-worktree",
+                  "description": "Manage git worktrees with iTerm2 integration. Use when user asks to create isolated development environments, work on features in parallel, manage worktrees, open worktrees in new tabs/windows, switch between worktrees, or close completed worktrees. Triggers on \"create worktree\", \"new worktree\", \"feature branch with worktree\", \"open worktree\", \"switch worktree\", \"close worktree\", \"list worktrees\", or mentions wanting to work on multiple features simultaneously."
+                },
+                "content": "# iTerm2 Worktree Manager\n\nAutomate git worktree management with iTerm2 tab/window integration for parallel feature development.\n\n## Quick Reference\n\n| Command | Description |\n|---------|-------------|\n| `create <branch>` | Create worktree + branch, open in iTerm2 |\n| `close <worktree>` | Safely remove worktree after validation |\n| `list` | Show all worktrees with iTerm2 tab status |\n| `switch <worktree>` | Focus existing worktree tab |\n| `open <worktree>` | Open existing worktree in new tab |\n\n## Usage\n\nRun the script at `scripts/worktree.py`:\n\n```bash\npython3 scripts/worktree.py <command> [options]\n```\n\n### Create Worktree\n\nCreate a new worktree with feature branch:\n\n```bash\npython3 scripts/worktree.py create feature-auth\npython3 scripts/worktree.py create feature-auth --base develop\npython3 scripts/worktree.py create feature-auth --from-current  # Branch from current branch\npython3 scripts/worktree.py create feature-auth --open-mode new_window\npython3 scripts/worktree.py create feature-auth --claude --task \"Implement user authentication\"\n```\n\nOptions:\n- `--base, -b`: Base branch (default: main/master)\n- `--from-current, -f`: Branch from current branch instead of main/master\n- `--path, -p`: Custom worktree path (default: sibling directory)\n- `--open-mode, -o`: `new_tab`, `new_window`, `new_pane_right`, `new_pane_below`\n- `--no-iterm`: Skip iTerm2 automation\n- `--claude, -c`: Launch Claude in the new tab\n- `--task, -t`: Task description for Claude\n\n### Close Worktree\n\nSafely remove a worktree after validating clean state:\n\n```bash\npython3 scripts/worktree.py close feature-auth\npython3 scripts/worktree.py close feature-auth --delete-branch\npython3 scripts/worktree.py close feature-auth --force\n```\n\nOptions:\n- `--force, -f`: Force removal despite uncommitted/unpushed changes\n- `--delete-branch, -d`: Also delete the branch\n\n### List Worktrees\n\nShow all worktrees with iTerm2 tab indicators:\n\n```bash\npython3 scripts/worktree.py list\npython3 scripts/worktree.py list --json\n```\n\n### Switch to Worktree\n\nFocus an existing iTerm2 tab, or open new if not found:\n\n```bash\npython3 scripts/worktree.py switch feature-auth\n```\n\n### Open Worktree\n\nOpen existing worktree in iTerm2:\n\n```bash\npython3 scripts/worktree.py open feature-auth\npython3 scripts/worktree.py open feature-auth --open-mode new_pane_right\npython3 scripts/worktree.py open feature-auth --force  # Open new tab even if exists\n```\n\n## Typical Workflow\n\n1. **Start feature**: `create feature-name` - Creates worktree + branch in new tab\n2. **Work in isolation**: Each worktree has its own directory and git state\n3. **Switch context**: `switch other-feature` - Jump between parallel features\n4. **Complete feature**: Push changes, merge PR\n5. **Cleanup**: `close feature-name --delete-branch` - Remove worktree and branch\n\n## Safety Features\n\n- Validates no uncommitted changes before closing\n- Checks for unpushed commits before closing\n- Auto-detects default branch (main/master)\n- Prevents duplicate branch/path creation"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "owner": {
+    "id": "ivan-magda",
+    "display_name": "Ivan Magda",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8586063?u=994c52f96106d44ec6c0bed45cc36109f1379b45&v=4",
+    "url": "https://github.com/ivan-magda",
+    "bio": "\r\n    \r\n",
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 2,
+      "total_forks": 1
+    }
+  },
+  "repos": [
+    {
+      "full_name": "ivan-magda/claude-code-marketplace",
+      "url": "https://github.com/ivan-magda/claude-code-marketplace",
+      "description": "Personally curated and maintained collection of Claude Code plugins",
+      "homepage": "",
+      "signals": {
+        "stars": 2,
+        "forks": 1,
+        "pushed_at": "2026-01-04T09:01:56Z",
+        "created_at": "2025-10-25T20:41:21Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 661
+        },
+        {
+          "path": ".github",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".github/dependabot.yml",
+          "type": "blob",
+          "size": 278
+        },
+        {
+          "path": ".github/workflows",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".github/workflows/validate-plugins.yml",
+          "type": "blob",
+          "size": 8720
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 440
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1067
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 4697
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/swift",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/swift/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/swift/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 484
+        },
+        {
+          "path": "plugins/swift/README.md",
+          "type": "blob",
+          "size": 1660
+        },
+        {
+          "path": "plugins/swift/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/swift/skills/swift-6-migration",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/swift/skills/swift-6-migration/SKILL.md",
+          "type": "blob",
+          "size": 4124
+        },
+        {
+          "path": "plugins/swift/skills/swift-6-migration/migration-guide.md",
+          "type": "blob",
+          "size": 123216
+        }
+      ],
+      "marketplace": {
+        "name": "claude-code-marketplace",
+        "version": null,
+        "description": null,
+        "owner_info": {
+          "name": "Ivan Magda",
+          "email": "ivan.magda@outlook.com"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "swift",
+            "description": "Swift programming language utilities and migration tools for Claude Code",
+            "source": "./plugins/swift",
+            "category": "languages",
+            "version": "1.0.2",
+            "author": {
+              "name": "Ivan Magda"
+            },
+            "install_commands": [
+              "/plugin marketplace add ivan-magda/claude-code-marketplace",
+              "/plugin install swift@claude-code-marketplace"
+            ],
+            "signals": {
+              "stars": 2,
+              "forks": 1,
+              "pushed_at": "2026-01-04T09:01:56Z",
+              "created_at": "2025-10-25T20:41:21Z",
+              "license": "MIT"
+            },
+            "commands": [],
+            "skills": [
+              {
+                "name": "swift-6-migration",
+                "description": "Use when encountering Swift 6 concurrency errors, Sendable conformance warnings, actor isolation issues, \"global variable is not concurrency-safe\" errors, or migrating codebases to Swift 6 language mode",
+                "path": "plugins/swift/skills/swift-6-migration/SKILL.md",
+                "frontmatter": {
+                  "name": "swift-6-migration",
+                  "description": "Use when encountering Swift 6 concurrency errors, Sendable conformance warnings, actor isolation issues, \"global variable is not concurrency-safe\" errors, or migrating codebases to Swift 6 language mode",
+                  "allowed-tools": "Read, Edit, Grep, Glob, Bash"
+                },
+                "content": "# Swift 6 Migration\n\n## Overview\n\nSwift 6 enforces data race safety at compile time. Migration involves making implicit isolation explicit and ensuring all shared state is thread-safe through Sendable conformance, actor isolation, or explicit synchronization.\n\n## When to Use\n\n**Symptoms that trigger this skill:**\n- Compiler error: `global variable 'X' is not concurrency-safe`\n- Compiler error: `cannot pass argument of non-sendable type`\n- Compiler error: `actor-isolated property cannot be referenced from non-isolated context`\n- Warning: `reference to var 'X' is not concurrency-safe`\n- Warning: `type 'X' does not conform to the 'Sendable' protocol`\n- Need to enable `-strict-concurrency=complete` or Swift 6 mode\n- Migrating from GCD/DispatchQueue to async/await\n\n**When NOT to use:**\n- General Swift syntax questions (not concurrency-related)\n- iOS/macOS API usage unrelated to concurrency\n- Performance optimization without concurrency issues\n\n## Quick Reference\n\n| Problem | Solution |\n|---------|----------|\n| Mutable global var | Use `let`, isolate to `@MainActor`, or wrap in actor |\n| Non-Sendable class | Add `Sendable` + `@unchecked Sendable`, or make an actor |\n| Actor isolation error | Add `await`, use `nonisolated`, or annotate with `@MainActor` |\n| Closure capturing non-Sendable | Use `@Sendable` closure, capture explicitly, or restructure |\n| Legacy callback API | Wrap with `withCheckedContinuation` or `withCheckedThrowingContinuation` |\n| Third-party non-Sendable types | Use `@preconcurrency import` as temporary workaround |\n\n## Commands\n\n```bash\n# Check Swift version\nswift --version\n\n# Build with complete concurrency checking (warnings)\nswift build -Xswiftc -strict-concurrency=complete\n\n# Build in Swift 6 mode (errors)\nswift build -Xswiftc -swift-version -Xswiftc 6\n```\n\n**Package.swift settings:**\n```swift\n// Enable strict concurrency per target\n.target(\n    name: \"MyTarget\",\n    swiftSettings: [.enableExperimentalFeature(\"StrictConcurrency\")]\n)\n\n// Or enable Swift 6 mode\nswiftLanguageVersions: [.v6]\n```\n\n## Migration Strategy\n\n1. **Enable warnings first** - Use `-strict-concurrency=complete` before Swift 6 mode\n2. **Fix from leaves inward** - Start with types that have no dependencies, work up\n3. **Group related fixes** - Sendable conformance often cascades through a module\n4. **Test runtime behavior** - Some changes affect execution order\n\n## Common Mistakes\n\n| Mistake | Why It's Wrong | Better Approach |\n|---------|----------------|-----------------|\n| Adding `@unchecked Sendable` everywhere | Hides real data races | Analyze actual thread safety first |\n| Using `nonisolated(unsafe)` without synchronization | Compiler trusts you but runtime doesn't | Only use with actual locks/queues protecting access |\n| Wrapping everything in `Task { }` | Creates unnecessary concurrency | Use `await` at natural boundaries |\n| Making all classes actors | Actors have overhead and change semantics | Use actors for shared mutable state only |\n| Ignoring `@preconcurrency` warnings | Technical debt accumulates | Plan to address underlying issues |\n\n## Reference Documentation\n\nThe [migration-guide.md](migration-guide.md) file contains Apple's complete migration documentation (25 bundled files). Key sections:\n\n| Topic | Search Pattern |\n|-------|----------------|\n| Common errors | `FILE: Guide.docc/CommonProblems.md` |\n| Data race safety | `FILE: Guide.docc/DataRaceSafety.md` |\n| Incremental adoption | `FILE: Guide.docc/IncrementalAdoption.md` |\n| Swift 6 mode | `FILE: Guide.docc/Swift6Mode.md` |\n| Complete checking | `FILE: Guide.docc/CompleteChecking.md` |\n| Sendable examples | `FILE: Sources/Examples/ConformanceMismatches.swift` |\n| Global variable patterns | `FILE: Sources/Examples/Globals.swift` |\n\nUse grep to find specific content: `grep -n \"pattern\" migration-guide.md`"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

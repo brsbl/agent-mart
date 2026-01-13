@@ -1,0 +1,202 @@
+{
+  "owner": {
+    "id": "vleytman",
+    "display_name": "vleytman",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/14976692?v=4",
+    "url": "https://github.com/vleytman",
+    "bio": null,
+    "stats": {
+      "total_repos": 1,
+      "total_plugins": 1,
+      "total_commands": 3,
+      "total_skills": 0,
+      "total_stars": 1,
+      "total_forks": 0
+    }
+  },
+  "repos": [
+    {
+      "full_name": "vleytman/1wp-plugins",
+      "url": "https://github.com/vleytman/1wp-plugins",
+      "description": "Claude Code Plugin Marketplace by 1WP",
+      "homepage": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2025-12-10T16:04:08Z",
+        "created_at": "2025-12-10T15:34:12Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 460
+        },
+        {
+          "path": ".gitignore",
+          "type": "blob",
+          "size": 264
+        },
+        {
+          "path": "LICENSE",
+          "type": "blob",
+          "size": 1060
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 1054
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 342
+        },
+        {
+          "path": "plugins/auggie-context/README.md",
+          "type": "blob",
+          "size": 3387
+        },
+        {
+          "path": "plugins/auggie-context/agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context/agents/auggie.md",
+          "type": "blob",
+          "size": 1175
+        },
+        {
+          "path": "plugins/auggie-context/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context/commands/auggie-index.md",
+          "type": "blob",
+          "size": 2439
+        },
+        {
+          "path": "plugins/auggie-context/commands/auggie-setup.md",
+          "type": "blob",
+          "size": 1635
+        },
+        {
+          "path": "plugins/auggie-context/commands/auggie.md",
+          "type": "blob",
+          "size": 593
+        },
+        {
+          "path": "plugins/auggie-context/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context/hooks/hooks.json",
+          "type": "blob",
+          "size": 313
+        },
+        {
+          "path": "plugins/auggie-context/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context/skills/auggie",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/auggie-context/skills/auggie/SKILL.md",
+          "type": "blob",
+          "size": 1195
+        }
+      ],
+      "marketplace": {
+        "name": "1wp-plugins",
+        "version": null,
+        "description": "1WP Plugin Marketplace for Claude Code",
+        "owner_info": {
+          "name": "1WP",
+          "email": "plugins@1wp.dev"
+        },
+        "keywords": [],
+        "plugins": [
+          {
+            "name": "auggie-context",
+            "description": "Context management and enhancement plugin for Claude Code",
+            "source": "./plugins/auggie-context",
+            "category": "productivity",
+            "version": "0.1.0",
+            "author": null,
+            "install_commands": [
+              "/plugin marketplace add vleytman/1wp-plugins",
+              "/plugin install auggie-context@1wp-plugins"
+            ],
+            "signals": {
+              "stars": 1,
+              "forks": 0,
+              "pushed_at": "2025-12-10T16:04:08Z",
+              "created_at": "2025-12-10T15:34:12Z",
+              "license": "MIT"
+            },
+            "commands": [
+              {
+                "name": "/auggie-index",
+                "description": "Index or re-index the codebase for Auggie context search",
+                "path": "plugins/auggie-context/commands/auggie-index.md",
+                "frontmatter": {
+                  "description": "Index or re-index the codebase for Auggie context search"
+                },
+                "content": "# Auggie Index Command\n\nIndex the current codebase to enable context-aware search and assistance.\n\n## What This Command Does\n\n1. Scans the current project directory for code files\n2. Uploads file contents to the Auggie Context Engine for indexing\n3. Saves the index state to `auggie-context.json` for persistence between sessions\n4. On subsequent runs, performs incremental updates (only changed files)\n\n## Usage\n\nRun this command:\n- After initial setup (`/auggie-setup`)\n- After making significant changes to your codebase\n- If search results seem stale or incomplete\n\n## Execution Steps\n\n### Step 1: Check authentication\n\nFirst verify Auggie credentials are configured:\n```bash\nauggie token print\n```\n\nIf not authenticated, direct user to run `/auggie-setup` first.\n\n### Step 2: Index the codebase\n\nExplain to the user that you will use the Auggie Context Engine SDK to:\n\n1. **Check for existing index**: Look for `auggie-context.json` in the project root\n2. **Load or create index**:\n   - If `auggie-context.json` exists: Load it with `DirectContext.importFromFile()`\n   - If not: Create new with `DirectContext.create()`\n3. **Gather files**: Collect all code files (respecting `.gitignore` patterns)\n4. **Index files**: Call `addToIndex()` with file contents\n5. **Save state**: Call `exportToFile('auggie-context.json')`\n\n### Step 3: Confirm completion\n\nTell the user:\n- How many files were indexed\n- That the index is saved to `auggie-context.json`\n- They can now use `/auggie` for context-aware assistance\n\n## Technical Details\n\nThe index uses Auggie's DirectContext API:\n- Files are uploaded and processed by Auggie's context engine\n- Index state (file checksums, blob references) is stored in `auggie-context.json`\n- Incremental indexing: Only new/changed files are re-uploaded\n- The index file should be added to `.gitignore` (contains project-specific data)\n\n## Files Indexed\n\nBy default, indexes common code file types:\n- TypeScript/JavaScript: `.ts`, `.tsx`, `.js`, `.jsx`\n- Python: `.py`\n- Ruby: `.rb`\n- Go: `.go`\n- Rust: `.rs`\n- And more...\n\nFiles in `.gitignore` and common exclusions (`node_modules/`, `.git/`, etc.) are skipped.\n\n## Notes\n\n- First-time indexing may take a few minutes for large codebases\n- Re-running after changes is fast (incremental updates)\n- The `auggie-context.json` file is project-specific and should not be committed"
+              },
+              {
+                "name": "/auggie-setup",
+                "description": "Set up Auggie credentials for the auggie-context plugin",
+                "path": "plugins/auggie-context/commands/auggie-setup.md",
+                "frontmatter": {
+                  "description": "Set up Auggie credentials for the auggie-context plugin"
+                },
+                "content": "# Auggie Setup Command\n\nHelp the user configure their Auggie credentials using `auggie login`.\n\n## Steps to Guide the User\n\n### Step 1: Check if already authenticated\n\nAsk the user to run:\n\n```bash\nauggie token print\n```\n\nIf this outputs `accessToken` and `tenantURL`, they're already authenticated. Skip to Step 3.\n\nIf it shows an error or asks to login, proceed to Step 2.\n\n### Step 2: Authenticate with Auggie\n\nInstruct the user:\n\n1. **Install Auggie CLI** (if not already installed):\n\n   Visit https://docs.augmentcode.com/cli for installation instructions.\n\n2. **Login to Auggie**:\n   ```bash\n   auggie login\n   ```\n\n   This will:\n   - Open a browser for authentication\n   - Save credentials to `~/.augment/session.json`\n   - The SDK automatically reads from this file\n\n3. **Verify login succeeded**:\n   ```bash\n   auggie token print\n   ```\n\n   You should see your `accessToken` and `tenantURL`.\n\n### Step 3: Restart Claude Code\n\nAfter authenticating, restart Claude Code to pick up the new credentials.\n\nThen run `/auggie-index` to index your codebase.\n\n## How It Works\n\nThe Auggie SDK automatically loads credentials from `~/.augment/session.json` (created by `auggie login`). No environment variables or manual configuration needed.\n\n## Troubleshooting\n\n### \"Command not found: auggie\"\nInstall the Auggie CLI from https://docs.augmentcode.com/cli\n\n### \"Not authenticated\" errors\nRun `auggie login` again to refresh your session.\n\n### Credentials not being picked up\n1. Verify `~/.augment/session.json` exists\n2. Restart Claude Code after logging in"
+              },
+              {
+                "name": "/auggie",
+                "description": "Invoke the Auggie context assistant",
+                "path": "plugins/auggie-context/commands/auggie.md",
+                "frontmatter": {
+                  "description": "Invoke the Auggie context assistant",
+                  "allowed-tools": "Read, Glob, Grep, Task"
+                },
+                "content": "# Auggie Context Command\n\nYou are Auggie, a context-aware assistant that helps users understand and navigate their codebase.\n\nWhen this command is invoked:\n\n1. If arguments are provided, treat them as a question or task about the codebase\n2. If no arguments are provided, offer to help with:\n   - Understanding code structure\n   - Finding relevant files\n   - Explaining code patterns\n   - Providing context about the project\n\nAlways be helpful, concise, and focus on providing actionable context."
+              }
+            ],
+            "skills": []
+          }
+        ]
+      }
+    }
+  ]
+}
