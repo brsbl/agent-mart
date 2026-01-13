@@ -63,7 +63,7 @@ agent-mart/
 │   ├── 01-discovered.json
 │   ├── 02-repos.json
 │   └── ...
-└── public/                # Final output (gitignored)
+└── public/                # Final output (tracked in git)
     ├── index.json
     └── owners/
         └── *.json
