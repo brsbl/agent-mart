@@ -176,6 +176,8 @@ export function getCategoryBadgeClass(category: string): string {
 
 // Get unique categories from plugins
 export function getUniqueCategories(plugins: FlatPlugin[]): string[] {
-  const categories = new Set(plugins.map((p) => p.category));
+  const categories = new Set(
+    plugins.map((p) => p.category).filter((c): c is string => c != null)
+  );
   return Array.from(categories).sort();
 }

@@ -174,7 +174,7 @@ function HomePageContent() {
           <h2 className="section-title">
             {searchQuery
               ? `Search results for "${searchQuery}"`
-              : categoryFilter !== "all"
+              : categoryFilter && categoryFilter !== "all"
               ? `${categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)} Plugins`
               : "All Plugins"}
           </h2>
