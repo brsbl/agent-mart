@@ -1,4 +1,4 @@
-<img width="1536" height="1024" alt="ChatGPT Image Jan 13, 2026, 11_46_49 PM" src="https://github.com/user-attachments/assets/3fb2785c-eb79-412f-8bd7-82fb6a805aad" />
+<img width="1536" height="688" alt="Rectangle" src="https://github.com/user-attachments/assets/757896e8-1add-4809-aa98-fdf2b01fced7" />
 
 # Agent Mart
 
