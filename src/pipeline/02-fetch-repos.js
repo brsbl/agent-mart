@@ -1,9 +1,9 @@
 import { batchGetRepos } from '../lib/github.js';
-import { saveJson, loadJson, log } from '../lib/utils.js';
+import { saveJson, loadJson, log, getRepoLimit } from '../lib/utils.js';
 
 const INPUT_PATH = './data/01-discovered.json';
 const OUTPUT_PATH = './data/02-repos.json';
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
+const REPO_LIMIT = getRepoLimit();
 
 /**
  * Fetch repository and owner metadata for all discovered repos

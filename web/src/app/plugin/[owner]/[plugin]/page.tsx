@@ -1,6 +1,6 @@
 "use client";
 
-import "react";
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,8 +15,9 @@ import {
 import { CopyableCommand, FileTree, LoadingState, ErrorState } from "@/components";
 import { useFetch } from "@/hooks";
 import type { OwnerDetail, Plugin, Repo } from "@/lib/types";
-import { formatNumber, formatDate, getCategoryBadgeClass } from "@/lib/data";
+import { formatNumber, formatDate, getCategoryBadgeClass, normalizeCategory } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
+import { DATA_URLS } from "@/lib/constants";
 
 export default function PluginPage() {
   const params = useParams();
@@ -24,7 +25,7 @@ export default function PluginPage() {
   const pluginName = validateUrlParam(params.plugin);
 
   // Build URL conditionally - null if params are invalid
-  const url = ownerId && pluginName ? `/data/owners/${ownerId}.json` : null;
+  const url = ownerId && pluginName ? DATA_URLS.OWNER(ownerId) : null;
 
   const { data: ownerData, loading, error } = useFetch<OwnerDetail>(
     url,
@@ -32,7 +33,7 @@ export default function PluginPage() {
   );
 
   // Find the plugin and repo from owner data
-  function findPluginAndRepo(): { plugin: Plugin; repo: Repo } | null {
+  const pluginData = useMemo(() => {
     if (!ownerData || !pluginName) {
       return null;
     }
@@ -46,9 +47,7 @@ export default function PluginPage() {
     }
 
     return null;
-  }
-
-  const pluginData = findPluginAndRepo();
+  }, [ownerData, pluginName]);
   const plugin = pluginData?.plugin ?? null;
   const repo = pluginData?.repo ?? null;
 
@@ -93,8 +92,8 @@ export default function PluginPage() {
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-bold">{plugin.name}</h1>
-            <span className={`badge ${getCategoryBadgeClass(plugin.category ?? "uncategorized")}`}>
-              {plugin.category ?? "uncategorized"}
+            <span className={`badge ${getCategoryBadgeClass(normalizeCategory(plugin.category))}`}>
+              {normalizeCategory(plugin.category)}
             </span>
           </div>
 

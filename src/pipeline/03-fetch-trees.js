@@ -1,10 +1,10 @@
 import { getTree, safeApiCall } from '../lib/github.js';
 import { getCached, setCache } from '../lib/cache.js';
-import { saveJson, loadJson, log } from '../lib/utils.js';
+import { saveJson, loadJson, log, getRepoLimit } from '../lib/utils.js';
 
 const INPUT_PATH = './data/02-repos.json';
 const OUTPUT_PATH = './data/03-trees.json';
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
+const REPO_LIMIT = getRepoLimit();
 
 /**
  * Fetch full file trees for all repos

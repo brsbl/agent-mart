@@ -1,14 +1,14 @@
 import { batchGetFiles, getFileContent, safeApiCall } from '../lib/github.js';
-import { saveJson, loadJson, decodeBase64, log } from '../lib/utils.js';
+import { saveJson, loadJson, decodeBase64, log, getRepoLimit } from '../lib/utils.js';
 
 const TREES_PATH = './data/03-trees.json';
 const OUTPUT_PATH = './data/04-files.json';
 
 // Limit repos for testing (set REPO_LIMIT env var, default: no limit)
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
+const REPO_LIMIT = getRepoLimit();
 
 // Patterns for files we want to fetch
-const FILE_PATTERNS = [
+export const FILE_PATTERNS = [
   // Marketplace config (always fetch)
   /^\.claude-plugin\/marketplace\.json$/,
   // Plugin configs (root or nested)

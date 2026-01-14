@@ -16,13 +16,14 @@ import { useFetch } from "@/hooks";
 import type { OwnerDetail, FlatPlugin } from "@/lib/types";
 import { flattenPlugins, formatNumber } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
+import { DATA_URLS } from "@/lib/constants";
 
 export default function OwnerPage() {
   const params = useParams();
   const ownerId = validateUrlParam(params.id);
 
   // Build URL conditionally - null if ownerId is invalid
-  const url = ownerId ? `/data/owners/${ownerId}.json` : null;
+  const url = ownerId ? DATA_URLS.OWNER(ownerId) : null;
 
   const { data: ownerData, loading, error } = useFetch<OwnerDetail>(
     url,

@@ -52,7 +52,7 @@ export function parseFrontmatter(content) {
  * @returns {string} Command name like "/my-command"
  */
 export function extractCommandName(filePath) {
-  if (filePath === null || filePath === undefined || filePath === '') {
+  if (!filePath) {
     return '/unknown';
   }
 
@@ -76,7 +76,7 @@ export function extractSkillName(filePath, frontmatter) {
     return frontmatter.name;
   }
 
-  if (filePath === null || filePath === undefined || filePath === '') {
+  if (!filePath) {
     return 'unknown-skill';
   }
 

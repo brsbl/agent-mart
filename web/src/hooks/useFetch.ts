@@ -37,16 +37,18 @@ export function useFetch<T>(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Reset state when URL changes
-    setData(null);
-    setError(null);
-    setLoading(true);
-
     // Skip fetch if URL is null (conditional fetching)
     if (url === null) {
+      setData(null);
+      setError(null);
       setLoading(false);
       return;
     }
+
+    // Reset state when URL changes to a valid URL
+    setData(null);
+    setError(null);
+    setLoading(true);
 
     const controller = new AbortController();
     const fetchUrl = url; // Capture url for closure since TypeScript narrowing doesn't persist

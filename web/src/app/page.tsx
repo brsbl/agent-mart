@@ -11,13 +11,12 @@ import {
   formatNumber,
   groupPluginsByCategory,
 } from "@/lib/data";
+import { DATA_URLS, MAX_CATEGORY_PLUGINS } from "@/lib/constants";
 
 interface PluginsData {
   meta: Meta;
   plugins: BrowsePlugin[];
 }
-
-const MAX_CATEGORY_PLUGINS = 12;
 
 export default function HomePage() {
   return (
@@ -32,7 +31,7 @@ function HomePageContent() {
   const searchQuery = searchParams.get("q") || "";
 
   const { data, loading, error } = useFetch<PluginsData>(
-    "/data/plugins-browse.json",
+    DATA_URLS.PLUGINS_BROWSE,
     "Failed to load plugins. Please try refreshing the page."
   );
 

@@ -1,8 +1,8 @@
 import { searchCode, safeApiCall } from '../lib/github.js';
-import { saveJson, log } from '../lib/utils.js';
+import { saveJson, log, getRepoLimit } from '../lib/utils.js';
 
 const OUTPUT_PATH = './data/01-discovered.json';
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
+const REPO_LIMIT = getRepoLimit();
 
 /**
  * Discover all repositories containing marketplace.json

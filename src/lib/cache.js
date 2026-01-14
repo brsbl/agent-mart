@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync, statSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync, statSync } from 'fs';
 import { join, resolve, sep } from 'path';
 import { log } from './utils.js';
 
@@ -26,9 +26,7 @@ function validateCachePath(filepath) {
  * Ensure cache directory exists
  */
 function ensureCacheDir() {
-  if (!existsSync(CACHE_DIR)) {
-    mkdirSync(CACHE_DIR, { recursive: true });
-  }
+  mkdirSync(CACHE_DIR, { recursive: true });
 }
 
 /**

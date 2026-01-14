@@ -75,3 +75,14 @@ export function logError(message, error) {
   const errorInfo = error instanceof Error ? error.message : (error || '');
   console.error(`[${timestamp}] ERROR: ${message}`, errorInfo);
 }
+
+/**
+ * Gets the REPO_LIMIT from environment variable with validation
+ * @returns {number|null} The repo limit or null if not set/invalid
+ */
+export function getRepoLimit() {
+  const rawLimit = process.env.REPO_LIMIT;
+  if (!rawLimit) return null;
+  const parsed = parseInt(rawLimit, 10);
+  return isNaN(parsed) ? null : parsed;
+}

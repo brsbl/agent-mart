@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { DEFAULT_COPY_FEEDBACK_DURATION } from "@/lib/constants";
 
 // Custom hook for clipboard functionality with proper cleanup
-export function useCopyToClipboard(resetDelay = 2000) {
+export function useCopyToClipboard(resetDelay = DEFAULT_COPY_FEEDBACK_DURATION) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
