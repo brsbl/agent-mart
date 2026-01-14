@@ -7,20 +7,21 @@ export const MAX_PARAM_LENGTH = 256;
  * Validates a URL parameter to prevent path traversal attacks.
  * Returns the sanitized value or null if invalid.
  */
-export function validateUrlParam(param: string | undefined): string | null {
-  if (!param || typeof param !== "string") {
+export function validateUrlParam(param: string | string[] | undefined): string | null {
+  const value = Array.isArray(param) ? param[0] : param;
+  if (!value || typeof value !== "string") {
     return null;
   }
 
   // Check length before processing to prevent DoS
-  if (param.length > MAX_PARAM_LENGTH) {
+  if (value.length > MAX_PARAM_LENGTH) {
     return null;
   }
 
   // Decode the parameter to catch encoded traversal attempts
   let decoded: string;
   try {
-    decoded = decodeURIComponent(param);
+    decoded = decodeURIComponent(value);
   } catch {
     return null;
   }

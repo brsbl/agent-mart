@@ -107,8 +107,8 @@ export default function PluginPage() {
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-bold">{plugin.name}</h1>
-            <span className={`badge ${getCategoryBadgeClass(plugin.category)}`}>
-              {plugin.category}
+            <span className={`badge ${getCategoryBadgeClass(plugin.category ?? "uncategorized")}`}>
+              {plugin.category ?? "uncategorized"}
             </span>
           </div>
 
