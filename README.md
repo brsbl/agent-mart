@@ -1,3 +1,5 @@
+<img width="1536" height="1024" alt="ChatGPT Image Jan 13, 2026, 11_46_49 PM" src="https://github.com/user-attachments/assets/3fb2785c-eb79-412f-8bd7-82fb6a805aad" />
+
 # Agent Mart
 
 A marketplace-first directory builder for Claude Code plugins, skills, and commands. Crawls GitHub for repositories containing Claude Code marketplace definitions, enriches them with metadata, and generates static JSON artifacts.
