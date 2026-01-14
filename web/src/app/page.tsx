@@ -4,12 +4,12 @@ import { Suspense, useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, Package, Terminal, Sparkles } from "lucide-react";
 import { PluginCard, PluginCardCompact } from "@/components";
-import type { FlatPlugin, SortOption, Meta } from "@/lib/types";
+import type { FlatPlugin, Meta } from "@/lib/types";
+import type { CategoryGroup } from "@/lib/data";
 import {
   sortPlugins,
-  filterByCategory,
   formatNumber,
-  getUniqueCategories,
+  groupPluginsByCategory,
 } from "@/lib/data";
 
 interface PluginsData {
@@ -39,13 +39,11 @@ function HomePageLoading() {
 
 function HomePageContent() {
   const searchParams = useSearchParams();
-  const categoryFilter = searchParams.get("category") || "all";
   const searchQuery = searchParams.get("q") || "";
 
   const [meta, setMeta] = useState<Meta | null>(null);
   const [allPlugins, setAllPlugins] = useState<FlatPlugin[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState<SortOption>("stars");
 
   // Load pre-built plugins data
   useEffect(() => {
@@ -65,32 +63,18 @@ function HomePageContent() {
     loadData();
   }, []);
 
-  // Filter and sort plugins
-  const filteredPlugins = useMemo(() => {
-    let result = allPlugins;
-
-    // Filter by category
-    if (categoryFilter !== "all") {
-      result = filterByCategory(result, categoryFilter);
-    }
-
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query) ||
-          p.description?.toLowerCase().includes(query) ||
-          p.owner_id.toLowerCase().includes(query)
-      );
-    }
-
-    return result;
-  }, [allPlugins, categoryFilter, searchQuery]);
-
-  const sortedPlugins = useMemo(() => {
-    return sortPlugins(filteredPlugins, sortBy);
-  }, [filteredPlugins, sortBy]);
+  // Search filter
+  const searchResults = useMemo(() => {
+    if (!searchQuery) return null;
+    const query = searchQuery.toLowerCase();
+    const filtered = allPlugins.filter(
+      (p) =>
+        p.name.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query) ||
+        p.owner_id.toLowerCase().includes(query)
+    );
+    return sortPlugins(filtered, "stars");
+  }, [allPlugins, searchQuery]);
 
   // Get new & recently updated plugins
   const recentPlugins = useMemo(() => {
@@ -100,11 +84,12 @@ function HomePageContent() {
           new Date(b.signals.pushed_at).getTime() -
           new Date(a.signals.pushed_at).getTime()
       )
-      .slice(0, 8);
+      .slice(0, 12);
   }, [allPlugins]);
 
-  const categories = useMemo(() => {
-    return getUniqueCategories(allPlugins);
+  // Group plugins by category
+  const categoryGroups = useMemo(() => {
+    return groupPluginsByCategory(allPlugins);
   }, [allPlugins]);
 
   if (loading) {
@@ -119,6 +104,40 @@ function HomePageContent() {
     );
   }
 
+  // Search results view
+  if (searchQuery && searchResults) {
+    return (
+      <div className="container py-8">
+        <section>
+          <h2 className="section-title mb-4">
+            Search results for &quot;{searchQuery}&quot;
+          </h2>
+          <p className="text-sm text-[var(--foreground-muted)] mb-6">
+            {searchResults.length} plugin{searchResults.length !== 1 ? "s" : ""} found
+          </p>
+
+          {searchResults.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {searchResults.map((plugin) => (
+                <PluginCard
+                  key={`${plugin.owner_id}-${plugin.name}`}
+                  plugin={plugin}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-[var(--foreground-muted)]">
+                No plugins found matching your search.
+              </p>
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  }
+
+  // Browse view (category sections)
   return (
     <div className="container py-8">
       {/* Stats Bar */}
@@ -148,107 +167,61 @@ function HomePageContent() {
         </div>
       )}
 
-      {/* New & Recently Updated Section */}
-      {!searchQuery && categoryFilter === "all" && (
-        <section className="mb-12">
-          <div className="section-header">
-            <h2 className="section-title">New & Recently Updated</h2>
-            <button className="flex items-center gap-1 text-sm text-[var(--accent)] hover:underline">
-              View all <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4">
-            {recentPlugins.map((plugin) => (
-              <PluginCardCompact
-                key={`${plugin.owner_id}-${plugin.name}`}
-                plugin={plugin}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Recently Updated Section */}
+      <CategorySection
+        title="Recently Updated"
+        plugins={recentPlugins}
+        showViewAll
+      />
 
-      {/* All Plugins Section */}
-      <section>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <h2 className="section-title">
-            {searchQuery
-              ? `Search results for "${searchQuery}"`
-              : categoryFilter && categoryFilter !== "all"
-              ? `${categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)} Plugins`
-              : "All Plugins"}
-          </h2>
-
-          <div className="flex items-center gap-4">
-            {/* Sort */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-[var(--foreground-muted)]">
-                Sort:
-              </span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="px-3 py-1.5 text-sm bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]"
-              >
-                <option value="stars">Stars</option>
-                <option value="forks">Forks</option>
-                <option value="recent">Recently Updated</option>
-              </select>
-            </div>
-
-            {/* Category Filter */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-[var(--foreground-muted)]">
-                Category:
-              </span>
-              <select
-                value={categoryFilter}
-                onChange={(e) => {
-                  const url = new URL(window.location.href);
-                  if (e.target.value === "all") {
-                    url.searchParams.delete("category");
-                  } else {
-                    url.searchParams.set("category", e.target.value);
-                  }
-                  window.history.pushState({}, "", url);
-                  window.location.reload();
-                }}
-                className="px-3 py-1.5 text-sm bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]"
-              >
-                <option value="all">All</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Results count */}
-        <p className="text-sm text-[var(--foreground-muted)] mb-4">
-          {sortedPlugins.length} plugin{sortedPlugins.length !== 1 ? "s" : ""}
-        </p>
-
-        {/* Plugin Grid */}
-        {sortedPlugins.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {sortedPlugins.map((plugin) => (
-              <PluginCard
-                key={`${plugin.owner_id}-${plugin.name}`}
-                plugin={plugin}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-[var(--foreground-muted)]">
-              No plugins found matching your criteria.
-            </p>
-          </div>
-        )}
-      </section>
+      {/* Category Sections */}
+      {categoryGroups.map((group) => (
+        <CategorySection
+          key={group.category}
+          title={group.displayName}
+          count={group.plugins.length}
+          plugins={group.plugins.slice(0, 12)}
+        />
+      ))}
     </div>
+  );
+}
+
+interface CategorySectionProps {
+  title: string;
+  count?: number;
+  plugins: FlatPlugin[];
+  showViewAll?: boolean;
+}
+
+function CategorySection({ title, count, plugins, showViewAll }: CategorySectionProps) {
+  if (plugins.length === 0) return null;
+
+  return (
+    <section className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          {title}
+          {count !== undefined && (
+            <span className="ml-2 text-sm font-normal text-[var(--foreground-muted)]">
+              ({count})
+            </span>
+          )}
+        </h2>
+        {showViewAll && (
+          <button className="flex items-center gap-1 text-sm text-[var(--accent)] hover:underline">
+            View all <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      <div className="category-scroll">
+        {plugins.map((plugin) => (
+          <PluginCardCompact
+            key={`${plugin.owner_id}-${plugin.name}`}
+            plugin={plugin}
+          />
+        ))}
+      </div>
+    </section>
   );
 }

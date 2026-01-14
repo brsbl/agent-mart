@@ -169,6 +169,26 @@ export function getCategoryBadgeClass(category: string): string {
       return "badge-productivity";
     case "learning":
       return "badge-learning";
+    case "ai-ml":
+      return "badge-ai-ml";
+    case "devops":
+      return "badge-devops";
+    case "security":
+      return "badge-security";
+    case "testing":
+      return "badge-testing";
+    case "quality":
+      return "badge-quality";
+    case "database":
+      return "badge-database";
+    case "automation":
+      return "badge-automation";
+    case "infrastructure":
+      return "badge-infrastructure";
+    case "integration":
+      return "badge-integration";
+    case "uncategorized":
+      return "badge-uncategorized";
     default:
       return "badge-development"; // fallback
   }
@@ -180,4 +200,255 @@ export function getUniqueCategories(plugins: FlatPlugin[]): string[] {
     plugins.map((p) => p.category).filter((c): c is string => c != null)
   );
   return Array.from(categories).sort();
+}
+
+// ============================================
+// CATEGORY NORMALIZATION
+// ============================================
+
+// Map raw categories to consolidated categories
+const CATEGORY_MAP: Record<string, string> = {
+  // Development family
+  development: "development",
+  Development: "development",
+  "developer-tools": "development",
+  "Developer Tools": "development",
+  "Development Tools": "development",
+  "development-tools": "development",
+  "Development Engineering": "development",
+  "development-utilities": "development",
+  "development-workflow": "development",
+  "Development Skills": "development",
+  coding: "development",
+  programming: "development",
+
+  // DevOps family
+  devops: "devops",
+  DevOps: "devops",
+  "Automation DevOps": "devops",
+  deployment: "devops",
+  cicd: "devops",
+  "ci-cd": "devops",
+
+  // AI/ML family
+  "ai-ml": "ai-ml",
+  "AI/ML": "ai-ml",
+  ai: "ai-ml",
+  "ai-agents": "ai-ml",
+  "ai-agency": "ai-ml",
+  agents: "ai-ml",
+  "machine-learning": "ai-ml",
+  personalities: "ai-ml",
+
+  // Productivity family
+  productivity: "productivity",
+  Productivity: "productivity",
+  "productivity-organization": "productivity",
+
+  // Automation family
+  automation: "automation",
+  Automation: "automation",
+  workflows: "automation",
+  workflow: "automation",
+  "Workflow Orchestration": "automation",
+  orchestration: "automation",
+
+  // Testing family
+  testing: "testing",
+  Testing: "testing",
+  "Code Quality Testing": "testing",
+  "testing-qa": "testing",
+  qa: "testing",
+
+  // Quality family
+  quality: "quality",
+  "code-quality": "quality",
+  "Code Quality": "quality",
+  "code-review": "quality",
+
+  // Security family
+  security: "security",
+  Security: "security",
+  "Security, Compliance, & Legal": "security",
+  "security-testing": "security",
+
+  // Database family
+  database: "database",
+  Database: "database",
+  Databases: "database",
+
+  // Documentation family
+  documentation: "documentation",
+  Documentation: "documentation",
+  docs: "documentation",
+
+  // API family
+  api: "api",
+  API: "api",
+  "api-development": "api",
+
+  // Design family
+  design: "design",
+  Design: "design",
+  "Design UX": "design",
+  "UI/Design": "design",
+  "UX/UI": "design",
+  "ui-development": "design",
+
+  // Business family
+  business: "business",
+  Business: "business",
+  "Business Sales": "business",
+  "business-tools": "business",
+  "business-marketing": "business",
+  finance: "business",
+  payments: "business",
+  ecommerce: "business",
+
+  // Marketing family
+  marketing: "marketing",
+  "Marketing Growth": "marketing",
+
+  // Infrastructure family
+  infrastructure: "infrastructure",
+  operations: "infrastructure",
+  cloud: "infrastructure",
+  Cloud: "infrastructure",
+  "cloud-infrastructure": "infrastructure",
+  monitoring: "infrastructure",
+
+  // Languages family
+  languages: "languages",
+  Languages: "languages",
+  language: "languages",
+
+  // Utilities family
+  utilities: "utilities",
+  tools: "utilities",
+  utility: "utilities",
+  tooling: "utilities",
+  "skill-enhancers": "utilities",
+
+  // Integration family
+  integration: "integration",
+  integrations: "integration",
+  mcp: "integration",
+  "mcp-servers": "integration",
+  "MCP Integrations": "integration",
+
+  // Learning family
+  learning: "learning",
+  Learning: "learning",
+  education: "learning",
+
+  // Git family
+  git: "git",
+  "Git Workflow": "git",
+  "git-operations": "git",
+  "version-control": "git",
+
+  // Frameworks family
+  frameworks: "frameworks",
+  Frameworks: "frameworks",
+  framework: "frameworks",
+};
+
+// Ordered list of categories for display
+export const CATEGORY_ORDER = [
+  "development",
+  "ai-ml",
+  "productivity",
+  "automation",
+  "devops",
+  "testing",
+  "quality",
+  "security",
+  "database",
+  "api",
+  "infrastructure",
+  "integration",
+  "design",
+  "documentation",
+  "git",
+  "frameworks",
+  "languages",
+  "utilities",
+  "business",
+  "marketing",
+  "learning",
+  "uncategorized",
+];
+
+// Display names for categories
+const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
+  development: "Development",
+  "ai-ml": "AI & Machine Learning",
+  productivity: "Productivity",
+  automation: "Automation & Workflows",
+  devops: "DevOps",
+  testing: "Testing",
+  quality: "Code Quality",
+  security: "Security",
+  database: "Database",
+  api: "API",
+  infrastructure: "Infrastructure",
+  integration: "Integrations",
+  design: "Design",
+  documentation: "Documentation",
+  git: "Git & Version Control",
+  frameworks: "Frameworks",
+  languages: "Languages",
+  utilities: "Utilities",
+  business: "Business",
+  marketing: "Marketing",
+  learning: "Learning",
+  uncategorized: "Other",
+};
+
+export function normalizeCategory(category: string | null | undefined): string {
+  if (!category) return "uncategorized";
+  return CATEGORY_MAP[category] || "uncategorized";
+}
+
+export function getCategoryDisplayName(category: string): string {
+  return CATEGORY_DISPLAY_NAMES[category] || category;
+}
+
+export interface CategoryGroup {
+  category: string;
+  displayName: string;
+  plugins: FlatPlugin[];
+}
+
+export function groupPluginsByCategory(plugins: FlatPlugin[]): CategoryGroup[] {
+  const groups = new Map<string, FlatPlugin[]>();
+
+  // Group plugins by normalized category
+  for (const plugin of plugins) {
+    const normalizedCat = normalizeCategory(plugin.category);
+    if (!groups.has(normalizedCat)) {
+      groups.set(normalizedCat, []);
+    }
+    groups.get(normalizedCat)!.push(plugin);
+  }
+
+  // Sort plugins within each group by stars
+  for (const [, categoryPlugins] of groups) {
+    categoryPlugins.sort((a, b) => b.signals.stars - a.signals.stars);
+  }
+
+  // Convert to array and sort by CATEGORY_ORDER
+  const result: CategoryGroup[] = [];
+  for (const category of CATEGORY_ORDER) {
+    const categoryPlugins = groups.get(category);
+    if (categoryPlugins && categoryPlugins.length > 0) {
+      result.push({
+        category,
+        displayName: getCategoryDisplayName(category),
+        plugins: categoryPlugins,
+      });
+    }
+  }
+
+  return result;
 }

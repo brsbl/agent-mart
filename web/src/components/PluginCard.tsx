@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Star, Terminal, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import type { FlatPlugin } from "@/lib/types";
-import { formatNumber, getCategoryBadgeClass } from "@/lib/data";
+import { formatNumber, getCategoryBadgeClass, normalizeCategory, getCategoryDisplayName } from "@/lib/data";
 
 interface PluginCardProps {
   plugin: FlatPlugin;
@@ -69,8 +69,8 @@ export function PluginCard({ plugin }: PluginCardProps) {
 
         {/* Footer: Category + Copy button */}
         <div className="flex items-center justify-between gap-2">
-          <span className={`badge ${getCategoryBadgeClass(plugin.category)}`}>
-            {plugin.category}
+          <span className={`badge ${getCategoryBadgeClass(normalizeCategory(plugin.category))}`}>
+            {getCategoryDisplayName(normalizeCategory(plugin.category))}
           </span>
           <button
             onClick={handleCopy}
