@@ -1,35 +1,8 @@
 import type {
-  IndexData,
   OwnerDetail,
   FlatPlugin,
   SortOption,
-  PluginCategory,
 } from "./types";
-import { validateUrlParam } from "./validation";
-
-// ============================================
-// DATA FETCHING
-// ============================================
-
-export async function getIndexData(): Promise<IndexData> {
-  const res = await fetch("/data/index.json");
-  if (!res.ok)
-    throw new Error(`Failed to fetch index data (HTTP ${res.status})`);
-  return res.json();
-}
-
-export async function getOwnerDetail(ownerId: string): Promise<OwnerDetail> {
-  // Validate ownerId to prevent path traversal
-  const validOwnerId = validateUrlParam(ownerId);
-  if (!validOwnerId) {
-    throw new Error(`Invalid owner ID: ${ownerId}`);
-  }
-
-  const res = await fetch(`/data/owners/${validOwnerId}.json`);
-  if (!res.ok)
-    throw new Error(`Failed to fetch owner: ${validOwnerId} (HTTP ${res.status})`);
-  return res.json();
-}
 
 // ============================================
 // DATA FLATTENING (for search/display)
@@ -83,14 +56,6 @@ export function sortPlugins(
 // FILTERING
 // ============================================
 
-export function filterByCategory(
-  plugins: FlatPlugin[],
-  category: PluginCategory | "all"
-): FlatPlugin[] {
-  if (category === "all") return plugins;
-  return plugins.filter((p) => p.category === category);
-}
-
 // ============================================
 // UTILITIES
 // ============================================
@@ -139,14 +104,6 @@ export function getCategoryBadgeClass(category: string): string {
     return `badge-${category}`;
   }
   return "badge-development"; // fallback
-}
-
-// Get unique categories from plugins
-export function getUniqueCategories(plugins: FlatPlugin[]): PluginCategory[] {
-  const categories = new Set(
-    plugins.map((p) => p.category).filter((c): c is PluginCategory => c != null)
-  );
-  return Array.from(categories).sort();
 }
 
 // ============================================

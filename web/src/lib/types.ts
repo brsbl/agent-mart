@@ -105,7 +105,6 @@ export type PluginCategory =
   | "learning"
   | "automation"
   | "integration"
-  | "utility"
   | "ai-ml"
   | "devops"
   | "testing"

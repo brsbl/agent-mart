@@ -20,16 +20,12 @@ export function CopyableCommand({
   const textToCopy = commands.join("\n");
   const isMultiLine = commands.length > 1;
 
-  const handleCopy = () => {
-    copy(textToCopy);
-  };
-
   // Compact variant - single inline button
   if (compact) {
     return (
       <>
         <button
-          onClick={handleCopy}
+          onClick={() => copy(textToCopy)}
           className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-mono bg-[var(--terminal-bg)] text-[var(--terminal-text)] rounded hover:bg-[var(--terminal-bg)]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors ${className}`}
           title={copied ? "Copied!" : "Click to copy"}
         >
@@ -65,7 +61,7 @@ export function CopyableCommand({
           )}
         </div>
         <button
-          onClick={handleCopy}
+          onClick={() => copy(textToCopy)}
           className="flex-shrink-0 p-1 rounded opacity-50 group-hover:opacity-100 hover:bg-white/10 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--terminal-bg)] transition-opacity"
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >

@@ -1,7 +1,7 @@
 /**
  * Maximum allowed length for URL parameters to prevent DoS attacks.
  */
-export const MAX_PARAM_LENGTH = 256;
+const MAX_PARAM_LENGTH = 256;
 
 /**
  * Validates a URL parameter to prevent path traversal attacks.

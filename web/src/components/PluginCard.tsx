@@ -103,7 +103,7 @@ export function PluginCardCompact({ plugin }: PluginCardProps) {
   return (
     <Link
       href={`/plugin/${plugin.owner_id}/${plugin.name}`}
-      className="card p-3 flex items-center gap-3 min-w-[280px]"
+      className="card p-3 flex items-center gap-3 min-w-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-lg"
     >
       <Image
         src={plugin.owner_avatar_url}

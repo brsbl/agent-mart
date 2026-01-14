@@ -100,8 +100,9 @@ export default function OwnerPage() {
               rel="noopener noreferrer"
               className="p-2 hover:bg-[var(--background-secondary)] rounded-lg transition-colors"
               title="View on GitHub"
+              aria-label="View on GitHub"
             >
-              <ExternalLink className="w-5 h-5 text-[var(--foreground-muted)]" />
+              <ExternalLink className="w-5 h-5 text-[var(--foreground-muted)]" aria-hidden="true" />
             </a>
           </div>
           <div className="flex items-center gap-2 text-[var(--foreground-muted)] mb-4">

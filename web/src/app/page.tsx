@@ -94,18 +94,6 @@ function HomePageContent() {
     return groupPluginsByCategory(allPlugins);
   }, [allPlugins]);
 
-  if (loading) {
-    return (
-      <div className="container py-12">
-        <div className="flex items-center justify-center">
-          <div className="animate-pulse text-[var(--foreground-muted)]">
-            Loading plugins...
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="container py-12">
