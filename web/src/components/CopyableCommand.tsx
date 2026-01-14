@@ -1,49 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
 import { Copy, Check } from "lucide-react";
-
-// Custom hook for clipboard functionality with proper cleanup
-function useCopyToClipboard(resetDelay = 2000) {
-  const [copied, setCopied] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  const copy = useCallback(
-    async (text: string) => {
-      try {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-
-        // Clear any existing timeout
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-
-        timeoutRef.current = setTimeout(() => {
-          setCopied(false);
-          timeoutRef.current = null;
-        }, resetDelay);
-
-        return true;
-      } catch (error) {
-        console.error("Failed to copy to clipboard:", error);
-        return false;
-      }
-    },
-    [resetDelay]
-  );
-
-  return { copied, copy };
-}
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 
 interface CopyableCommandProps {
   command: string | string[];
@@ -69,18 +27,23 @@ export function CopyableCommand({
   // Compact variant - single inline button
   if (compact) {
     return (
-      <button
-        onClick={handleCopy}
-        className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-mono bg-[var(--terminal-bg)] text-[var(--terminal-text)] rounded hover:bg-[var(--terminal-bg)]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors ${className}`}
-        title={copied ? "Copied!" : "Click to copy"}
-      >
-        {copied ? (
-          <Check className="w-3 h-3 text-[var(--success)]" />
-        ) : (
-          <Copy className="w-3 h-3 opacity-50" />
-        )}
-        <span className="truncate max-w-[200px]">{commands[0]}</span>
-      </button>
+      <>
+        <button
+          onClick={handleCopy}
+          className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-mono bg-[var(--terminal-bg)] text-[var(--terminal-text)] rounded hover:bg-[var(--terminal-bg)]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors ${className}`}
+          title={copied ? "Copied!" : "Click to copy"}
+        >
+          {copied ? (
+            <Check className="w-3 h-3 text-[var(--success)]" />
+          ) : (
+            <Copy className="w-3 h-3 opacity-50" />
+          )}
+          <span className="truncate max-w-[200px]">{commands[0]}</span>
+        </button>
+        <span role="status" aria-live="polite" className="sr-only">
+          {copied ? "Command copied to clipboard" : ""}
+        </span>
+      </>
     );
   }
 
@@ -124,19 +87,3 @@ export function CopyableCommand({
     </div>
   );
 }
-
-// Backward compatibility alias for existing usage with `commands` prop
-interface CopyableCommandLegacyProps {
-  commands: string[];
-  className?: string;
-}
-
-export function CopyableCommandMulti({
-  commands,
-  className,
-}: CopyableCommandLegacyProps) {
-  return <CopyableCommand command={commands} className={className} />;
-}
-
-// Backward compatibility alias for CopyableCommandSingle
-export const CopyableCommandSingle = CopyableCommand;

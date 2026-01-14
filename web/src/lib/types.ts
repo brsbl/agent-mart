@@ -90,7 +90,7 @@ export interface Plugin {
   name: string;
   description: string;
   source: string;
-  category: PluginCategory;
+  category: PluginCategory | null;
   version: string | null;
   author: PluginAuthor | null;
   install_commands: string[];
@@ -182,10 +182,3 @@ export interface FlatSkill extends Skill {
 
 // Sort options
 export type SortOption = "stars" | "forks" | "recent";
-
-// Search result types (discriminated union for type-safe access)
-export type SearchResult =
-  | { type: "plugin"; item: FlatPlugin }
-  | { type: "command"; item: FlatCommand }
-  | { type: "skill"; item: FlatSkill }
-  | { type: "repo"; item: Repo };

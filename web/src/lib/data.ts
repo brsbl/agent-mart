@@ -2,11 +2,10 @@ import type {
   IndexData,
   OwnerDetail,
   FlatPlugin,
-  FlatCommand,
-  FlatSkill,
   SortOption,
   PluginCategory,
 } from "./types";
+import { validateUrlParam } from "./validation";
 
 // ============================================
 // DATA FETCHING
@@ -19,17 +18,16 @@ export async function getIndexData(): Promise<IndexData> {
   return res.json();
 }
 
-const VALID_OWNER_ID_PATTERN = /^[a-zA-Z0-9_.-]+$/;
-
 export async function getOwnerDetail(ownerId: string): Promise<OwnerDetail> {
   // Validate ownerId to prevent path traversal
-  if (!VALID_OWNER_ID_PATTERN.test(ownerId)) {
+  const validOwnerId = validateUrlParam(ownerId);
+  if (!validOwnerId) {
     throw new Error(`Invalid owner ID: ${ownerId}`);
   }
 
-  const res = await fetch(`/data/owners/${ownerId}.json`);
+  const res = await fetch(`/data/owners/${validOwnerId}.json`);
   if (!res.ok)
-    throw new Error(`Failed to fetch owner: ${ownerId} (HTTP ${res.status})`);
+    throw new Error(`Failed to fetch owner: ${validOwnerId} (HTTP ${res.status})`);
   return res.json();
 }
 
@@ -56,48 +54,6 @@ export function flattenPlugins(ownerDetail: OwnerDetail): FlatPlugin[] {
   return plugins;
 }
 
-export function flattenCommands(ownerDetail: OwnerDetail): FlatCommand[] {
-  const commands: FlatCommand[] = [];
-
-  for (const repo of ownerDetail.repos) {
-    const repoPlugins = repo.marketplace?.plugins || [];
-    for (const plugin of repoPlugins) {
-      for (const command of plugin.commands || []) {
-        commands.push({
-          ...command,
-          owner_id: ownerDetail.owner.id,
-          plugin_name: plugin.name,
-          repo_full_name: repo.full_name,
-          stars: plugin.signals?.stars ?? 0,
-        });
-      }
-    }
-  }
-
-  return commands;
-}
-
-export function flattenSkills(ownerDetail: OwnerDetail): FlatSkill[] {
-  const skills: FlatSkill[] = [];
-
-  for (const repo of ownerDetail.repos) {
-    const repoPlugins = repo.marketplace?.plugins || [];
-    for (const plugin of repoPlugins) {
-      for (const skill of plugin.skills || []) {
-        skills.push({
-          ...skill,
-          owner_id: ownerDetail.owner.id,
-          plugin_name: plugin.name,
-          repo_full_name: repo.full_name,
-          stars: plugin.signals?.stars ?? 0,
-        });
-      }
-    }
-  }
-
-  return skills;
-}
-
 // ============================================
 // SORTING
 // ============================================
@@ -109,13 +65,13 @@ export function sortPlugins(
   return [...plugins].sort((a, b) => {
     switch (sortBy) {
       case "stars":
-        return b.signals.stars - a.signals.stars;
+        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
       case "forks":
-        return b.signals.forks - a.signals.forks;
+        return (b.signals?.forks ?? 0) - (a.signals?.forks ?? 0);
       case "recent":
         return (
-          new Date(b.signals.pushed_at).getTime() -
-          new Date(a.signals.pushed_at).getTime()
+          new Date(b.signals?.pushed_at ?? 0).getTime() -
+          new Date(a.signals?.pushed_at ?? 0).getTime()
         );
       default:
         return 0;
@@ -177,36 +133,12 @@ export function formatBytes(bytes: number | null): string {
 }
 
 export function getCategoryBadgeClass(category: string): string {
-  switch (category) {
-    case "development":
-      return "badge-development";
-    case "productivity":
-      return "badge-productivity";
-    case "learning":
-      return "badge-learning";
-    case "ai-ml":
-      return "badge-ai-ml";
-    case "devops":
-      return "badge-devops";
-    case "security":
-      return "badge-security";
-    case "testing":
-      return "badge-testing";
-    case "quality":
-      return "badge-quality";
-    case "database":
-      return "badge-database";
-    case "automation":
-      return "badge-automation";
-    case "infrastructure":
-      return "badge-infrastructure";
-    case "integration":
-      return "badge-integration";
-    case "uncategorized":
-      return "badge-uncategorized";
-    default:
-      return "badge-development"; // fallback
+  // Validate category is in CATEGORY_ORDER to avoid arbitrary class names
+  const validCategories = new Set(CATEGORY_ORDER);
+  if (validCategories.has(category as NormalizedCategory)) {
+    return `badge-${category}`;
   }
+  return "badge-development"; // fallback
 }
 
 // Get unique categories from plugins
@@ -454,7 +386,7 @@ export function groupPluginsByCategory(plugins: FlatPlugin[]): CategoryGroup[] {
 
   // Sort plugins within each group by stars
   for (const [, categoryPlugins] of groups) {
-    categoryPlugins.sort((a, b) => b.signals.stars - a.signals.stars);
+    categoryPlugins.sort((a, b) => (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0));
   }
 
   // Convert to array and sort by CATEGORY_ORDER
