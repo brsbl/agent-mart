@@ -3,8 +3,8 @@
 import { Suspense, useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Package, Terminal, Sparkles } from "lucide-react";
-import { PluginCard, PluginCardCompact } from "@/components";
-import type { FlatPlugin, Meta } from "@/lib/types";
+import { PluginCard, PluginCardCompact, LoadingState, ErrorState } from "@/components";
+import type { BrowsePlugin, Meta } from "@/lib/types";
 import {
   sortPlugins,
   formatNumber,
@@ -13,26 +13,16 @@ import {
 
 interface PluginsData {
   meta: Meta;
-  plugins: FlatPlugin[];
+  plugins: BrowsePlugin[];
 }
+
+const MAX_CATEGORY_PLUGINS = 12;
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<HomePageLoading />}>
+    <Suspense fallback={<LoadingState />}>
       <HomePageContent />
     </Suspense>
-  );
-}
-
-function HomePageLoading() {
-  return (
-    <div className="container py-12">
-      <div className="flex items-center justify-center">
-        <div className="animate-pulse text-[var(--foreground-muted)]">
-          Loading...
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -41,28 +31,36 @@ function HomePageContent() {
   const searchQuery = searchParams.get("q") || "";
 
   const [meta, setMeta] = useState<Meta | null>(null);
-  const [allPlugins, setAllPlugins] = useState<FlatPlugin[]>([]);
+  const [allPlugins, setAllPlugins] = useState<BrowsePlugin[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load pre-built plugins data
   useEffect(() => {
+    const controller = new AbortController();
+
     async function loadData() {
       try {
-        const res = await fetch("/data/plugins.json");
+        const res = await fetch("/data/plugins-browse.json", { signal: controller.signal });
         if (!res.ok) throw new Error("Failed to fetch plugins data");
         const data: PluginsData = await res.json();
         setMeta(data.meta);
         setAllPlugins(data.plugins);
       } catch (error) {
-        console.error("Failed to load data:", error);
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to load data:", error);
+        }
         setError("Failed to load plugins. Please try refreshing the page.");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
 
     loadData();
+    return () => controller.abort();
   }, []);
 
   // Search filter
@@ -86,7 +84,7 @@ function HomePageContent() {
           new Date(b.signals.pushed_at).getTime() -
           new Date(a.signals.pushed_at).getTime()
       )
-      .slice(0, 12);
+      .slice(0, MAX_CATEGORY_PLUGINS);
   }, [allPlugins]);
 
   // Group plugins by category
@@ -94,20 +92,20 @@ function HomePageContent() {
     return groupPluginsByCategory(allPlugins);
   }, [allPlugins]);
 
+  if (loading) {
+    return <LoadingState />;
+  }
+
   if (error) {
     return (
-      <div className="container py-12">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
-          <p className="text-[var(--foreground-muted)] mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-[var(--accent)] text-[var(--accent-foreground)] rounded-lg hover:bg-[var(--accent-hover)] transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
+      <ErrorState
+        title="Something went wrong"
+        message={error}
+        action={{
+          label: "Try Again",
+          onClick: () => window.location.reload(),
+        }}
+      />
     );
   }
 
@@ -186,7 +184,7 @@ function HomePageContent() {
           key={group.category}
           title={group.displayName}
           count={group.plugins.length}
-          plugins={group.plugins.slice(0, 12)}
+          plugins={group.plugins.slice(0, MAX_CATEGORY_PLUGINS)}
         />
       ))}
     </div>
@@ -196,7 +194,7 @@ function HomePageContent() {
 interface CategorySectionProps {
   title: string;
   count?: number;
-  plugins: FlatPlugin[];
+  plugins: BrowsePlugin[];
 }
 
 function CategorySection({ title, count, plugins }: CategorySectionProps) {

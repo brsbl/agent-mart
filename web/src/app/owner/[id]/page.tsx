@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import {
   Star,
   GitFork,
@@ -12,7 +11,7 @@ import {
   Building2,
   User,
 } from "lucide-react";
-import { PluginCard } from "@/components";
+import { PluginCard, LoadingState, ErrorState } from "@/components";
 import type { OwnerDetail, FlatPlugin } from "@/lib/types";
 import { flattenPlugins, formatNumber } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
@@ -28,6 +27,8 @@ export default function OwnerPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function loadOwner() {
       if (!ownerId) {
         setError("Invalid owner ID");
@@ -35,46 +36,36 @@ export default function OwnerPage() {
         return;
       }
       try {
-        const res = await fetch(`/data/owners/${ownerId}.json`);
+        const res = await fetch(`/data/owners/${ownerId}.json`, { signal: controller.signal });
         if (!res.ok) throw new Error("Owner not found");
         const data: OwnerDetail = await res.json();
         setOwnerData(data);
         setPlugins(flattenPlugins(data));
-      } catch {
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
         setError("Failed to load owner data");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
 
     loadOwner();
+    return () => controller.abort();
   }, [ownerId]);
 
   if (loading) {
-    return (
-      <div className="container py-12">
-        <div className="flex items-center justify-center">
-          <div className="animate-pulse text-[var(--foreground-muted)]">
-            Loading...
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (error || !ownerData) {
     return (
-      <div className="container py-12">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Owner Not Found</h1>
-          <p className="text-[var(--foreground-muted)]">
-            {error || "This owner does not exist."}
-          </p>
-          <Link href="/" className="btn btn-primary mt-4 inline-flex">
-            Back to Home
-          </Link>
-        </div>
-      </div>
+      <ErrorState
+        title="Owner Not Found"
+        message={error || "This owner does not exist."}
+        action={{ label: "Back to Home", href: "/" }}
+      />
     );
   }
 
@@ -107,9 +98,9 @@ export default function OwnerPage() {
           </div>
           <div className="flex items-center gap-2 text-[var(--foreground-muted)] mb-4">
             {owner.type === "Organization" ? (
-              <Building2 className="w-4 h-4" />
+              <Building2 className="w-4 h-4" aria-hidden="true" />
             ) : (
-              <User className="w-4 h-4" />
+              <User className="w-4 h-4" aria-hidden="true" />
             )}
             <span>@{owner.id}</span>
             <span>&middot;</span>
@@ -125,21 +116,21 @@ export default function OwnerPage() {
           {/* Stats */}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-[var(--accent)]" />
+              <Star className="w-4 h-4 text-[var(--accent)]" aria-hidden="true" />
               <span className="font-semibold">
                 {formatNumber(owner.stats.total_stars)}
               </span>
               <span className="text-[var(--foreground-muted)]">total stars</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <GitFork className="w-4 h-4 text-[var(--foreground-muted)]" />
+              <GitFork className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
               <span className="font-semibold">
                 {formatNumber(owner.stats.total_forks)}
               </span>
               <span className="text-[var(--foreground-muted)]">forks</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Package className="w-4 h-4 text-[var(--foreground-muted)]" />
+              <Package className="w-4 h-4" aria-hidden="true" />
               <span className="font-semibold">{owner.stats.total_repos}</span>
               <span className="text-[var(--foreground-muted)]">
                 repo{owner.stats.total_repos !== 1 ? "s" : ""}
@@ -172,18 +163,18 @@ export default function OwnerPage() {
                     >
                       {repo.full_name}
                     </a>
-                    <ExternalLink className="w-4 h-4 text-[var(--foreground-muted)]" />
+                    <ExternalLink className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
                   </div>
                   <p className="text-[var(--foreground-secondary)] text-sm mb-3">
                     {repo.description || "No description"}
                   </p>
                   <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--foreground-muted)]">
                     <span className="flex items-center gap-1">
-                      <Star className="w-4 h-4" />
+                      <Star className="w-4 h-4" aria-hidden="true" />
                       {formatNumber(repo.signals.stars)}
                     </span>
                     <span className="flex items-center gap-1">
-                      <GitFork className="w-4 h-4" />
+                      <GitFork className="w-4 h-4" aria-hidden="true" />
                       {formatNumber(repo.signals.forks)}
                     </span>
                     <span>{repo.marketplace?.plugins?.length || 0} plugins</span>

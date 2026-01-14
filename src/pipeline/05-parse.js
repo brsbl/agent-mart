@@ -146,5 +146,9 @@ export function parse() {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  parse().catch(console.error);
+  try {
+    parse();
+  } catch (error) {
+    console.error(error);
+  }
 }

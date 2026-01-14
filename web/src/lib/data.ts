@@ -1,6 +1,7 @@
 import type {
   OwnerDetail,
   FlatPlugin,
+  BrowsePlugin,
   SortOption,
 } from "./types";
 
@@ -32,19 +33,17 @@ export function flattenPlugins(ownerDetail: OwnerDetail): FlatPlugin[] {
 // ============================================
 
 export function sortPlugins(
-  plugins: FlatPlugin[],
+  plugins: BrowsePlugin[],
   sortBy: SortOption
-): FlatPlugin[] {
+): BrowsePlugin[] {
   return [...plugins].sort((a, b) => {
     switch (sortBy) {
       case "stars":
-        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
-      case "forks":
-        return (b.signals?.forks ?? 0) - (a.signals?.forks ?? 0);
+        return b.signals.stars - a.signals.stars;
       case "recent":
         return (
-          new Date(b.signals?.pushed_at ?? 0).getTime() -
-          new Date(a.signals?.pushed_at ?? 0).getTime()
+          new Date(b.signals.pushed_at).getTime() -
+          new Date(a.signals.pushed_at).getTime()
         );
       default:
         return 0;
@@ -80,10 +79,13 @@ export function formatDate(dateString: string): string {
 
   if (diffDays === 0) return "today";
   if (diffDays === 1) return "yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-  return `${Math.floor(diffDays / 365)} years ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+  const weeks = Math.floor(diffDays / 7);
+  if (diffDays < 30) return `${weeks} week${weeks !== 1 ? "s" : ""} ago`;
+  const months = Math.floor(diffDays / 30);
+  if (diffDays < 365) return `${months} month${months !== 1 ? "s" : ""} ago`;
+  const years = Math.floor(diffDays / 365);
+  return `${years} year${years !== 1 ? "s" : ""} ago`;
 }
 
 export function formatBytes(bytes: number | null): string {
@@ -106,151 +108,111 @@ export function getCategoryBadgeClass(category: string): string {
 // CATEGORY NORMALIZATION
 // ============================================
 
-// Map raw categories to consolidated categories
-const CATEGORY_MAP: Record<string, string> = {
-  // Development family
-  development: "development",
-  Development: "development",
+// Non-obvious category aliases (case variations handled by normalizeCategory)
+const CATEGORY_ALIASES: Record<string, string> = {
+  // Development aliases
   "developer-tools": "development",
-  "Developer Tools": "development",
-  "Development Tools": "development",
   "development-tools": "development",
-  "Development Engineering": "development",
+  "development-engineering": "development",
   "development-utilities": "development",
   "development-workflow": "development",
-  "Development Skills": "development",
-  coding: "development",
-  programming: "development",
+  "development-skills": "development",
+  "coding": "development",
+  "programming": "development",
 
-  // DevOps family
-  devops: "devops",
-  DevOps: "devops",
-  "Automation DevOps": "devops",
-  deployment: "devops",
-  cicd: "devops",
+  // DevOps aliases
+  "automation-devops": "devops",
+  "deployment": "devops",
+  "cicd": "devops",
   "ci-cd": "devops",
 
-  // AI/ML family
-  "ai-ml": "ai-ml",
-  "AI/ML": "ai-ml",
-  ai: "ai-ml",
+  // AI/ML aliases
+  "ai": "ai-ml",
   "ai-agents": "ai-ml",
   "ai-agency": "ai-ml",
-  agents: "ai-ml",
+  "agents": "ai-ml",
   "machine-learning": "ai-ml",
-  personalities: "ai-ml",
+  "personalities": "ai-ml",
 
-  // Productivity family
-  productivity: "productivity",
-  Productivity: "productivity",
+  // Productivity aliases
   "productivity-organization": "productivity",
 
-  // Automation family
-  automation: "automation",
-  Automation: "automation",
-  workflows: "automation",
-  workflow: "automation",
-  "Workflow Orchestration": "automation",
-  orchestration: "automation",
+  // Automation aliases
+  "workflows": "automation",
+  "workflow": "automation",
+  "workflow-orchestration": "automation",
+  "orchestration": "automation",
 
-  // Testing family
-  testing: "testing",
-  Testing: "testing",
-  "Code Quality Testing": "testing",
+  // Testing aliases
+  "code-quality-testing": "testing",
   "testing-qa": "testing",
-  qa: "testing",
+  "qa": "testing",
 
-  // Quality family
-  quality: "quality",
+  // Quality aliases
   "code-quality": "quality",
-  "Code Quality": "quality",
   "code-review": "quality",
 
-  // Security family
-  security: "security",
-  Security: "security",
-  "Security, Compliance, & Legal": "security",
+  // Security aliases
+  "security-compliance-legal": "security",
   "security-testing": "security",
 
-  // Database family
-  database: "database",
-  Database: "database",
-  Databases: "database",
+  // Database aliases
+  "databases": "database",
 
-  // Documentation family
-  documentation: "documentation",
-  Documentation: "documentation",
-  docs: "documentation",
+  // Documentation aliases
+  "docs": "documentation",
 
-  // API family
-  api: "api",
-  API: "api",
+  // API aliases
   "api-development": "api",
 
-  // Design family
-  design: "design",
-  Design: "design",
-  "Design UX": "design",
-  "UI/Design": "design",
-  "UX/UI": "design",
+  // Design aliases
+  "design-ux": "design",
+  "ui-design": "design",
+  "ux-ui": "design",
   "ui-development": "design",
 
-  // Business family
-  business: "business",
-  Business: "business",
-  "Business Sales": "business",
+  // Business aliases
+  "business-sales": "business",
   "business-tools": "business",
   "business-marketing": "business",
-  finance: "business",
-  payments: "business",
-  ecommerce: "business",
+  "finance": "business",
+  "payments": "business",
+  "ecommerce": "business",
 
-  // Marketing family
-  marketing: "marketing",
-  "Marketing Growth": "marketing",
+  // Marketing aliases
+  "marketing-growth": "marketing",
 
-  // Infrastructure family
-  infrastructure: "infrastructure",
-  operations: "infrastructure",
-  cloud: "infrastructure",
-  Cloud: "infrastructure",
+  // Infrastructure aliases
+  "operations": "infrastructure",
+  "cloud": "infrastructure",
   "cloud-infrastructure": "infrastructure",
-  monitoring: "infrastructure",
+  "monitoring": "infrastructure",
 
-  // Languages family
-  languages: "languages",
-  Languages: "languages",
-  language: "languages",
+  // Languages aliases
+  "language": "languages",
 
-  // Utilities family
-  utilities: "utilities",
-  tools: "utilities",
-  utility: "utilities",
-  tooling: "utilities",
+  // Utilities aliases
+  "tools": "utilities",
+  "utility": "utilities",
+  "tooling": "utilities",
   "skill-enhancers": "utilities",
 
-  // Integration family
-  integration: "integration",
-  integrations: "integration",
-  mcp: "integration",
+  // Integration aliases
+  "integrations": "integration",
+  "mcp": "integration",
   "mcp-servers": "integration",
-  "MCP Integrations": "integration",
+  "mcp-integrations": "integration",
 
-  // Learning family
-  learning: "learning",
-  Learning: "learning",
-  education: "learning",
+  // Learning aliases
+  "education": "learning",
 
-  // Git family
-  git: "git",
-  "Git Workflow": "git",
+  // Git aliases
+  "git-workflow": "git",
   "git-operations": "git",
   "version-control": "git",
 
-  // Frameworks family
-  frameworks: "frameworks",
-  Frameworks: "frameworks",
-  framework: "frameworks",
+  // Frameworks aliases
+  "framework": "frameworks",
 };
 
 // Ordered list of categories for display
@@ -282,7 +244,7 @@ export const CATEGORY_ORDER = [
 export type NormalizedCategory = typeof CATEGORY_ORDER[number];
 
 // Display names for categories
-const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
+const CATEGORY_DISPLAY_NAMES: Record<NormalizedCategory, string> = {
   development: "Development",
   "ai-ml": "AI & Machine Learning",
   productivity: "Productivity",
@@ -309,21 +271,37 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
 
 export function normalizeCategory(category: string | null | undefined): string {
   if (!category) return "uncategorized";
-  return CATEGORY_MAP[category] || "uncategorized";
+
+  // Normalize: lowercase, trim, replace spaces/underscores with hyphens
+  const normalized = category.toLowerCase().trim().replace(/[\s_]+/g, "-");
+
+  // Remove special characters like commas, ampersands, slashes
+  const cleaned = normalized.replace(/[,&/]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+
+  // Check if it's already a valid category
+  if (CATEGORY_ORDER.includes(cleaned as NormalizedCategory)) {
+    return cleaned;
+  }
+
+  // Check aliases
+  return CATEGORY_ALIASES[cleaned] || "uncategorized";
 }
 
 export function getCategoryDisplayName(category: string): string {
-  return CATEGORY_DISPLAY_NAMES[category] || category;
+  if (CATEGORY_ORDER.includes(category as NormalizedCategory)) {
+    return CATEGORY_DISPLAY_NAMES[category as NormalizedCategory];
+  }
+  return category;
 }
 
 export interface CategoryGroup {
   category: NormalizedCategory;
   displayName: string;
-  plugins: FlatPlugin[];
+  plugins: BrowsePlugin[];
 }
 
-export function groupPluginsByCategory(plugins: FlatPlugin[]): CategoryGroup[] {
-  const groups = new Map<string, FlatPlugin[]>();
+export function groupPluginsByCategory(plugins: BrowsePlugin[]): CategoryGroup[] {
+  const groups = new Map<string, BrowsePlugin[]>();
 
   // Group plugins by normalized category
   for (const plugin of plugins) {

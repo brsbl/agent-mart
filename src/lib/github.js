@@ -196,7 +196,7 @@ export async function searchCode(query, page = 1) {
  * @param {string} repo - Repository name
  * @returns {Promise<Object>} Repository data
  */
-export async function getRepo(owner, repo) {
+async function getRepo(owner, repo) {
   return restLimiter.schedule(async () => {
     log(`Fetching repo: ${owner}/${repo}`);
     const response = await getOctokit().rest.repos.get({ owner, repo });
@@ -209,7 +209,7 @@ export async function getRepo(owner, repo) {
  * @param {string} username - GitHub username
  * @returns {Promise<Object>} User data
  */
-export async function getUser(username) {
+async function getUser(username) {
   return restLimiter.schedule(async () => {
     log(`Fetching user: ${username}`);
     const response = await getOctokit().rest.users.getByUsername({ username });
@@ -515,10 +515,3 @@ export async function safeApiCall(fn, context, defaultValue = null) {
   return defaultValue;
 }
 
-/**
- * Get current GraphQL rate limit status
- * @returns {Object} Rate limit info
- */
-export function getGraphQLRateLimit() {
-  return graphqlRateLimit;
-}

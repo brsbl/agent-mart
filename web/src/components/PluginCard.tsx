@@ -3,16 +3,28 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Star, Terminal, Copy, Check } from "lucide-react";
-import type { FlatPlugin } from "@/lib/types";
+import type { BrowsePlugin, FlatPlugin } from "@/lib/types";
 import { formatNumber, getCategoryBadgeClass, normalizeCategory, getCategoryDisplayName } from "@/lib/data";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 
+// Accept both browse (lightweight) and full plugin types
+type PluginCardPlugin = BrowsePlugin | FlatPlugin;
+
 interface PluginCardProps {
-  plugin: FlatPlugin;
+  plugin: PluginCardPlugin;
+}
+
+// Helper to get command count from either type
+function getCommandCount(plugin: PluginCardPlugin): number {
+  if ("commands_count" in plugin) {
+    return plugin.commands_count;
+  }
+  return plugin.commands?.length ?? 0;
 }
 
 export function PluginCard({ plugin }: PluginCardProps) {
   const { copied, copy } = useCopyToClipboard();
+  const normalizedCategory = normalizeCategory(plugin.category);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,25 +74,22 @@ export function PluginCard({ plugin }: PluginCardProps) {
           <Star className="w-4 h-4" aria-hidden="true" />
           {formatNumber(plugin.signals.stars)}
         </span>
-        {plugin.commands.length > 0 && (
-          <span className="flex items-center gap-1">
-            <Terminal className="w-4 h-4" aria-hidden="true" />
-            {plugin.commands.length} command
-            {plugin.commands.length !== 1 ? "s" : ""}
-          </span>
-        )}
+        {(() => {
+          const commandCount = getCommandCount(plugin);
+          return commandCount > 0 && (
+            <span className="flex items-center gap-1">
+              <Terminal className="w-4 h-4" aria-hidden="true" />
+              {commandCount} command{commandCount !== 1 ? "s" : ""}
+            </span>
+          );
+        })()}
       </div>
 
       {/* Footer: Category + Copy button */}
       <div className="flex items-center justify-between gap-2 relative z-10">
-        {(() => {
-          const normalizedCat = normalizeCategory(plugin.category);
-          return (
-            <span className={`badge ${getCategoryBadgeClass(normalizedCat)} pointer-events-none`}>
-              {getCategoryDisplayName(normalizedCat)}
-            </span>
-          );
-        })()}
+        <span className={`badge ${getCategoryBadgeClass(normalizedCategory)} pointer-events-none`}>
+          {getCategoryDisplayName(normalizedCategory)}
+        </span>
         <button
           onClick={handleCopy}
           className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]"

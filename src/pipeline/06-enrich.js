@@ -191,5 +191,9 @@ export function enrich() {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  enrich().catch(console.error);
+  try {
+    enrich();
+  } catch (error) {
+    console.error(error);
+  }
 }

@@ -12,7 +12,7 @@ import {
   Sparkles,
   Calendar,
 } from "lucide-react";
-import { CopyableCommand, FileTree } from "@/components";
+import { CopyableCommand, FileTree, LoadingState, ErrorState } from "@/components";
 import type { OwnerDetail, Plugin, Repo } from "@/lib/types";
 import { formatNumber, formatDate, getCategoryBadgeClass } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
@@ -31,6 +31,8 @@ export default function PluginPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function loadPlugin() {
       if (!ownerId || !pluginName) {
         setError("Invalid URL parameters");
@@ -38,7 +40,7 @@ export default function PluginPage() {
         return;
       }
       try {
-        const res = await fetch(`/data/owners/${ownerId}.json`);
+        const res = await fetch(`/data/owners/${ownerId}.json`, { signal: controller.signal });
         if (!res.ok) throw new Error("Owner not found");
         const data: OwnerDetail = await res.json();
         setOwnerData(data);
@@ -46,48 +48,38 @@ export default function PluginPage() {
         // Find the plugin
         for (const r of data.repos) {
           const plugins = r.marketplace?.plugins || [];
-          const p = plugins.find((p) => p.name === pluginName);
-          if (p) {
-            setPlugin(p);
+          const foundPlugin = plugins.find((plugin) => plugin.name === pluginName);
+          if (foundPlugin) {
+            setPlugin(foundPlugin);
             setRepo(r);
             break;
           }
         }
-      } catch {
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
         setError("Failed to load plugin data");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
 
     loadPlugin();
+    return () => controller.abort();
   }, [ownerId, pluginName]);
 
   if (loading) {
-    return (
-      <div className="container py-12">
-        <div className="flex items-center justify-center">
-          <div className="animate-pulse text-[var(--foreground-muted)]">
-            Loading...
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (error || !ownerData || !plugin || !repo) {
     return (
-      <div className="container py-12">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Plugin Not Found</h1>
-          <p className="text-[var(--foreground-muted)]">
-            {error || "This plugin does not exist."}
-          </p>
-          <Link href="/" className="btn btn-primary mt-4 inline-flex">
-            Back to Home
-          </Link>
-        </div>
-      </div>
+      <ErrorState
+        title="Plugin Not Found"
+        message={error || "This plugin does not exist."}
+        action={{ label: "Back to Home", href: "/" }}
+      />
     );
   }
 
@@ -128,7 +120,7 @@ export default function PluginPage() {
               className="hover:text-[var(--foreground)] transition-colors flex items-center gap-1"
             >
               {repo.full_name}
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink className="w-3 h-3" aria-hidden="true" />
             </a>
             {plugin.version && (
               <>
@@ -145,19 +137,19 @@ export default function PluginPage() {
           {/* Stats */}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-[var(--accent)]" />
+              <Star className="w-4 h-4 text-[var(--accent)]" aria-hidden="true" />
               <span className="font-semibold">
                 {formatNumber(plugin.signals.stars)}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <GitFork className="w-4 h-4 text-[var(--foreground-muted)]" />
+              <GitFork className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
               <span className="font-semibold">
                 {formatNumber(plugin.signals.forks)}
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-[var(--foreground-muted)]">
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-4 h-4" aria-hidden="true" />
               <span>Updated {formatDate(plugin.signals.pushed_at)}</span>
             </div>
           </div>
@@ -179,7 +171,7 @@ export default function PluginPage() {
           {plugin.commands.length > 0 && (
             <section>
               <h2 className="section-title mb-4 flex items-center gap-2">
-                <Terminal className="w-5 h-5 text-[var(--accent)]" />
+                <Terminal className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
                 Commands ({plugin.commands.length})
               </h2>
               <div className="space-y-3">
@@ -201,7 +193,7 @@ export default function PluginPage() {
           {plugin.skills.length > 0 && (
             <section>
               <h2 className="section-title mb-4 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-[var(--accent)]" />
+                <Sparkles className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
                 Skills ({plugin.skills.length})
               </h2>
               <div className="space-y-3">
@@ -245,7 +237,7 @@ export default function PluginPage() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
                 View on GitHub
               </a>
               {repo.homepage && (
@@ -255,7 +247,7 @@ export default function PluginPage() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
                 >
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="w-4 h-4" aria-hidden="true" />
                   Homepage
                 </a>
               )}

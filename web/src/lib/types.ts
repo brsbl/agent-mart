@@ -2,11 +2,6 @@
 // AGENT MART DATA TYPES
 // ============================================
 
-interface IndexData {
-  meta: Meta;
-  owners: OwnerSummary[];
-}
-
 export interface Meta {
   total_owners: number;
   total_repos: number;
@@ -14,15 +9,6 @@ export interface Meta {
   total_commands: number;
   total_skills: number;
   generated_at: string;
-}
-
-interface OwnerSummary {
-  id: string;
-  display_name: string;
-  type: "Organization" | "User";
-  avatar_url: string;
-  url: string;
-  stats: OwnerStats;
 }
 
 export interface OwnerStats {
@@ -46,7 +32,7 @@ export interface Owner {
   type: "Organization" | "User";
   avatar_url: string;
   url: string;
-  bio: string | null;
+  bio?: string | null;
   stats: OwnerStats;
 }
 
@@ -57,7 +43,7 @@ export interface Repo {
   homepage: string | null;
   signals: Signals;
   file_tree: FileTreeEntry[];
-  marketplace: Marketplace;
+  marketplace?: Marketplace;
 }
 
 export interface Marketplace {
@@ -88,7 +74,7 @@ export interface FileTreeEntry {
 
 export interface Plugin {
   name: string;
-  description: string;
+  description: string | null;
   source: string;
   category: PluginCategory | null;
   version: string | null;
@@ -125,14 +111,14 @@ export type PluginCategory =
 
 export interface PluginAuthor {
   name: string;
-  email: string;
+  email?: string;
 }
 
 export interface Command {
   name: string;
   description: string;
   path: string;
-  frontmatter: CommandFrontmatter;
+  frontmatter: CommandFrontmatter | null;
   content: string;
 }
 
@@ -147,7 +133,7 @@ export interface Skill {
   name: string;
   description: string;
   path: string;
-  frontmatter: SkillFrontmatter;
+  frontmatter: SkillFrontmatter | null;
   content: string;
 }
 
@@ -165,19 +151,23 @@ export interface FlatPlugin extends Plugin {
   repo_full_name: string;
 }
 
-interface FlatCommand extends Command {
+// Lightweight plugin type for browse/search (excludes full commands/skills content)
+export interface BrowsePlugin {
+  name: string;
+  description: string | null;
+  category: PluginCategory | null;
   owner_id: string;
-  plugin_name: string;
+  owner_display_name: string;
+  owner_avatar_url: string;
   repo_full_name: string;
-  stars: number;
-}
-
-interface FlatSkill extends Skill {
-  owner_id: string;
-  plugin_name: string;
-  repo_full_name: string;
-  stars: number;
+  install_commands: string[];
+  signals: {
+    stars: number;
+    pushed_at: string;
+  };
+  commands_count: number;
+  skills_count: number;
 }
 
 // Sort options
-export type SortOption = "stars" | "forks" | "recent";
+export type SortOption = "stars" | "recent";
