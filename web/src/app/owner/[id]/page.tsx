@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import {
@@ -12,51 +12,41 @@ import {
   User,
 } from "lucide-react";
 import { PluginCard, LoadingState, ErrorState } from "@/components";
+import { useFetch } from "@/hooks";
 import type { OwnerDetail, FlatPlugin } from "@/lib/types";
 import { flattenPlugins, formatNumber } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
 
 export default function OwnerPage() {
   const params = useParams();
-  const rawOwnerId = params.id as string;
-  const ownerId = validateUrlParam(rawOwnerId);
+  const ownerId = validateUrlParam(params.id);
 
-  const [ownerData, setOwnerData] = useState<OwnerDetail | null>(null);
-  const [plugins, setPlugins] = useState<FlatPlugin[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Build URL conditionally - null if ownerId is invalid
+  const url = ownerId ? `/data/owners/${ownerId}.json` : null;
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const { data: ownerData, loading, error } = useFetch<OwnerDetail>(
+    url,
+    "Failed to load owner data"
+  );
 
-    async function loadOwner() {
-      if (!ownerId) {
-        setError("Invalid owner ID");
-        setLoading(false);
-        return;
-      }
-      try {
-        const res = await fetch(`/data/owners/${ownerId}.json`, { signal: controller.signal });
-        if (!res.ok) throw new Error("Owner not found");
-        const data: OwnerDetail = await res.json();
-        setOwnerData(data);
-        setPlugins(flattenPlugins(data));
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-        setError("Failed to load owner data");
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadOwner();
-    return () => controller.abort();
-  }, [ownerId]);
+  // Derive plugins from owner data
+  const plugins: FlatPlugin[] = useMemo(() => {
+    return ownerData ? flattenPlugins(ownerData) : [];
+  }, [ownerData]);
 
   if (loading) {
     return <LoadingState />;
+  }
+
+  // Handle invalid ownerId case
+  if (!ownerId) {
+    return (
+      <ErrorState
+        title="Owner Not Found"
+        message="Invalid owner ID"
+        action={{ label: "Back to Home", href: "/" }}
+      />
+    );
   }
 
   if (error || !ownerData) {

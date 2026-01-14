@@ -25,6 +25,7 @@ function getCommandCount(plugin: PluginCardPlugin): number {
 export function PluginCard({ plugin }: PluginCardProps) {
   const { copied, copy } = useCopyToClipboard();
   const normalizedCategory = normalizeCategory(plugin.category);
+  const commandCount = getCommandCount(plugin);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -74,15 +75,12 @@ export function PluginCard({ plugin }: PluginCardProps) {
           <Star className="w-4 h-4" aria-hidden="true" />
           {formatNumber(plugin.signals.stars)}
         </span>
-        {(() => {
-          const commandCount = getCommandCount(plugin);
-          return commandCount > 0 && (
-            <span className="flex items-center gap-1">
-              <Terminal className="w-4 h-4" aria-hidden="true" />
-              {commandCount} command{commandCount !== 1 ? "s" : ""}
-            </span>
-          );
-        })()}
+        {commandCount > 0 && (
+          <span className="flex items-center gap-1">
+            <Terminal className="w-4 h-4" aria-hidden="true" />
+            {commandCount} command{commandCount !== 1 ? "s" : ""}
+          </span>
+        )}
       </div>
 
       {/* Footer: Category + Copy button */}

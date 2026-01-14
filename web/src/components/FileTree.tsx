@@ -83,7 +83,7 @@ interface TreeNodeComponentProps {
 }
 
 function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
-  const [expanded, setExpanded] = useState(level < DEFAULT_EXPAND_DEPTH);
+  const [expanded, setExpanded] = useState(() => level < DEFAULT_EXPAND_DEPTH);
   const isFolder = node.type === "tree";
   const hasChildren = node.children.length > 0;
 

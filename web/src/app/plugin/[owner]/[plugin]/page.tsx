@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,64 +13,58 @@ import {
   Calendar,
 } from "lucide-react";
 import { CopyableCommand, FileTree, LoadingState, ErrorState } from "@/components";
+import { useFetch } from "@/hooks";
 import type { OwnerDetail, Plugin, Repo } from "@/lib/types";
 import { formatNumber, formatDate, getCategoryBadgeClass } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
 
 export default function PluginPage() {
   const params = useParams();
-  const rawOwnerId = params.owner as string;
-  const rawPluginName = params.plugin as string;
-  const ownerId = validateUrlParam(rawOwnerId);
-  const pluginName = validateUrlParam(rawPluginName);
+  const ownerId = validateUrlParam(params.owner);
+  const pluginName = validateUrlParam(params.plugin);
 
-  const [ownerData, setOwnerData] = useState<OwnerDetail | null>(null);
-  const [plugin, setPlugin] = useState<Plugin | null>(null);
-  const [repo, setRepo] = useState<Repo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Build URL conditionally - null if params are invalid
+  const url = ownerId && pluginName ? `/data/owners/${ownerId}.json` : null;
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const { data: ownerData, loading, error } = useFetch<OwnerDetail>(
+    url,
+    "Failed to load plugin data"
+  );
 
-    async function loadPlugin() {
-      if (!ownerId || !pluginName) {
-        setError("Invalid URL parameters");
-        setLoading(false);
-        return;
-      }
-      try {
-        const res = await fetch(`/data/owners/${ownerId}.json`, { signal: controller.signal });
-        if (!res.ok) throw new Error("Owner not found");
-        const data: OwnerDetail = await res.json();
-        setOwnerData(data);
+  // Find the plugin and repo from owner data
+  function findPluginAndRepo(): { plugin: Plugin; repo: Repo } | null {
+    if (!ownerData || !pluginName) {
+      return null;
+    }
 
-        // Find the plugin
-        for (const r of data.repos) {
-          const plugins = r.marketplace?.plugins || [];
-          const foundPlugin = plugins.find((plugin) => plugin.name === pluginName);
-          if (foundPlugin) {
-            setPlugin(foundPlugin);
-            setRepo(r);
-            break;
-          }
-        }
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-        setError("Failed to load plugin data");
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+    for (const r of ownerData.repos) {
+      const plugins = r.marketplace?.plugins || [];
+      const foundPlugin = plugins.find((p) => p.name === pluginName);
+      if (foundPlugin) {
+        return { plugin: foundPlugin, repo: r };
       }
     }
 
-    loadPlugin();
-    return () => controller.abort();
-  }, [ownerId, pluginName]);
+    return null;
+  }
+
+  const pluginData = findPluginAndRepo();
+  const plugin = pluginData?.plugin ?? null;
+  const repo = pluginData?.repo ?? null;
 
   if (loading) {
     return <LoadingState />;
+  }
+
+  // Handle invalid URL params
+  if (!ownerId || !pluginName) {
+    return (
+      <ErrorState
+        title="Plugin Not Found"
+        message="Invalid URL parameters"
+        action={{ label: "Back to Home", href: "/" }}
+      />
+    );
   }
 
   if (error || !ownerData || !plugin || !repo) {

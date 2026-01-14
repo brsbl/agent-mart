@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useState, useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Package, Terminal, Sparkles } from "lucide-react";
 import { PluginCard, PluginCardCompact, LoadingState, ErrorState } from "@/components";
+import { useFetch } from "@/hooks";
 import type { BrowsePlugin, Meta } from "@/lib/types";
 import {
   sortPlugins,
@@ -30,38 +31,13 @@ function HomePageContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q") || "";
 
-  const [meta, setMeta] = useState<Meta | null>(null);
-  const [allPlugins, setAllPlugins] = useState<BrowsePlugin[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, loading, error } = useFetch<PluginsData>(
+    "/data/plugins-browse.json",
+    "Failed to load plugins. Please try refreshing the page."
+  );
 
-  // Load pre-built plugins data
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadData() {
-      try {
-        const res = await fetch("/data/plugins-browse.json", { signal: controller.signal });
-        if (!res.ok) throw new Error("Failed to fetch plugins data");
-        const data: PluginsData = await res.json();
-        setMeta(data.meta);
-        setAllPlugins(data.plugins);
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-        if (process.env.NODE_ENV === "development") {
-          console.error("Failed to load data:", error);
-        }
-        setError("Failed to load plugins. Please try refreshing the page.");
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadData();
-    return () => controller.abort();
-  }, []);
+  const meta = data?.meta ?? null;
+  const allPlugins = useMemo(() => data?.plugins ?? [], [data?.plugins]);
 
   // Search filter
   const searchResults = useMemo(() => {

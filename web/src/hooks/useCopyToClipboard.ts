@@ -18,6 +18,10 @@ export function useCopyToClipboard(resetDelay = 2000) {
   const copy = useCallback(
     async (text: string) => {
       try {
+        if (!navigator.clipboard) {
+          console.error("Clipboard API not supported");
+          return false;
+        }
         await navigator.clipboard.writeText(text);
         setCopied(true);
 
