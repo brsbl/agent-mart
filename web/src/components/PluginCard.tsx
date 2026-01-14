@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Star, Terminal, Copy, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { FlatPlugin } from "@/lib/types";
 import { formatNumber, getCategoryBadgeClass, normalizeCategory, getCategoryDisplayName } from "@/lib/data";
 
@@ -14,7 +13,16 @@ interface PluginCardProps {
 
 export function PluginCard({ plugin }: PluginCardProps) {
   const [copied, setCopied] = useState(false);
-  const router = useRouter();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount to prevent memory leak
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -23,7 +31,11 @@ export function PluginCard({ plugin }: PluginCardProps) {
     try {
       await navigator.clipboard.writeText(installCmd);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      // Clear any existing timeout before setting a new one
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error("Failed to copy to clipboard:", error);
     }
@@ -31,22 +43,10 @@ export function PluginCard({ plugin }: PluginCardProps) {
 
   const pluginUrl = `/plugin/${plugin.owner_id}/${plugin.name}`;
 
-  const handleCardClick = () => {
-    router.push(pluginUrl);
-  };
-
   return (
-    <article
-      onClick={handleCardClick}
-      className="card p-4 h-full flex flex-col cursor-pointer"
-      role="link"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleCardClick();
-        }
-      }}
+    <Link
+      href={pluginUrl}
+      className="card p-4 h-full flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
     >
         {/* Header: Avatar + Name */}
         <div className="flex items-start gap-3 mb-3">
@@ -95,7 +95,7 @@ export function PluginCard({ plugin }: PluginCardProps) {
           </span>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded transition-colors"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]"
             title={copied ? "Copied!" : "Copy install command"}
           >
             {copied ? (
@@ -111,7 +111,7 @@ export function PluginCard({ plugin }: PluginCardProps) {
             )}
           </button>
         </div>
-      </article>
+    </Link>
   );
 }
 

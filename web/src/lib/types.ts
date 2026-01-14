@@ -183,10 +183,9 @@ export interface FlatSkill extends Skill {
 // Sort options
 export type SortOption = "stars" | "forks" | "recent";
 
-// Search result types
-export type SearchResultType = "plugin" | "command" | "skill" | "repo";
-
-export interface SearchResult {
-  type: SearchResultType;
-  item: FlatPlugin | FlatCommand | FlatSkill | Repo;
-}
+// Search result types (discriminated union for type-safe access)
+export type SearchResult =
+  | { type: "plugin"; item: FlatPlugin }
+  | { type: "command"; item: FlatCommand }
+  | { type: "skill"; item: FlatSkill }
+  | { type: "repo"; item: Repo };

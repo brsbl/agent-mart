@@ -232,7 +232,7 @@ export default function PluginPage() {
           {/* Install */}
           <section>
             <h2 className="section-title mb-4">Install</h2>
-            <CopyableCommand commands={plugin.install_commands} />
+            <CopyableCommand command={plugin.install_commands} />
           </section>
 
           {/* Links */}

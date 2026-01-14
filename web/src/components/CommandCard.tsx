@@ -13,7 +13,7 @@ export function CommandCard({ command }: CommandCardProps) {
   return (
     <Link
       href={`/plugin/${command.owner_id}/${command.plugin_name}`}
-      className="block"
+      className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-lg"
     >
       <article className="card p-4">
         {/* Header */}
@@ -37,7 +37,7 @@ export function CommandCard({ command }: CommandCardProps) {
             {command.plugin_name} &middot; {command.repo_full_name}
           </span>
           <span className="flex items-center gap-1 flex-shrink-0">
-            <Star className="w-3 h-3" />
+            <Star className="w-3 h-3" aria-hidden="true" />
             {formatNumber(command.stars)}
           </span>
         </div>

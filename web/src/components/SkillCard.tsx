@@ -13,7 +13,7 @@ export function SkillCard({ skill }: SkillCardProps) {
   return (
     <Link
       href={`/plugin/${skill.owner_id}/${skill.plugin_name}`}
-      className="block"
+      className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-lg"
     >
       <article className="card p-4">
         {/* Header */}
@@ -37,7 +37,7 @@ export function SkillCard({ skill }: SkillCardProps) {
             {skill.plugin_name} &middot; {skill.repo_full_name}
           </span>
           <span className="flex items-center gap-1 flex-shrink-0">
-            <Star className="w-3 h-3" />
+            <Star className="w-3 h-3" aria-hidden="true" />
             {formatNumber(skill.stars)}
           </span>
         </div>

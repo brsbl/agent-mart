@@ -14,13 +14,22 @@ import type {
 
 export async function getIndexData(): Promise<IndexData> {
   const res = await fetch("/data/index.json");
-  if (!res.ok) throw new Error("Failed to fetch index data");
+  if (!res.ok)
+    throw new Error(`Failed to fetch index data (HTTP ${res.status})`);
   return res.json();
 }
 
+const VALID_OWNER_ID_PATTERN = /^[a-zA-Z0-9_.-]+$/;
+
 export async function getOwnerDetail(ownerId: string): Promise<OwnerDetail> {
+  // Validate ownerId to prevent path traversal
+  if (!VALID_OWNER_ID_PATTERN.test(ownerId)) {
+    throw new Error(`Invalid owner ID: ${ownerId}`);
+  }
+
   const res = await fetch(`/data/owners/${ownerId}.json`);
-  if (!res.ok) throw new Error(`Failed to fetch owner: ${ownerId}`);
+  if (!res.ok)
+    throw new Error(`Failed to fetch owner: ${ownerId} (HTTP ${res.status})`);
   return res.json();
 }
 
@@ -59,7 +68,7 @@ export function flattenCommands(ownerDetail: OwnerDetail): FlatCommand[] {
           owner_id: ownerDetail.owner.id,
           plugin_name: plugin.name,
           repo_full_name: repo.full_name,
-          stars: plugin.signals.stars,
+          stars: plugin.signals?.stars ?? 0,
         });
       }
     }
@@ -80,7 +89,7 @@ export function flattenSkills(ownerDetail: OwnerDetail): FlatSkill[] {
           owner_id: ownerDetail.owner.id,
           plugin_name: plugin.name,
           repo_full_name: repo.full_name,
-          stars: plugin.signals.stars,
+          stars: plugin.signals?.stars ?? 0,
         });
       }
     }
@@ -142,6 +151,12 @@ export function formatNumber(num: number): string {
 
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
+
+  // Handle invalid dates
+  if (isNaN(date.getTime())) {
+    return "Unknown date";
+  }
+
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -431,7 +446,10 @@ export function groupPluginsByCategory(plugins: FlatPlugin[]): CategoryGroup[] {
     if (!groups.has(normalizedCat)) {
       groups.set(normalizedCat, []);
     }
-    groups.get(normalizedCat)!.push(plugin);
+    const categoryPlugins = groups.get(normalizedCat);
+    if (categoryPlugins) {
+      categoryPlugins.push(plugin);
+    }
   }
 
   // Sort plugins within each group by stars

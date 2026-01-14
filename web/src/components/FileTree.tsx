@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronRight, ChevronDown, File, Folder } from "lucide-react";
 import type { FileTreeEntry } from "@/lib/types";
 import { formatBytes } from "@/lib/data";
+
+// Constants
+const DEFAULT_EXPAND_DEPTH = 2;
+const INDENT_PER_LEVEL = 16;
+const BASE_PADDING = 8;
 
 interface FileTreeProps {
   entries: FileTreeEntry[];
@@ -78,7 +83,7 @@ interface TreeNodeComponentProps {
 }
 
 function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
-  const [expanded, setExpanded] = useState(level < 2);
+  const [expanded, setExpanded] = useState(level < DEFAULT_EXPAND_DEPTH);
   const isFolder = node.type === "tree";
   const hasChildren = node.children.length > 0;
 
@@ -86,9 +91,9 @@ function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
     <div>
       <div
         className={`flex items-center gap-1 py-1 px-2 rounded hover:bg-[var(--background-secondary)] transition-colors ${
-          isFolder && hasChildren ? "cursor-pointer" : ""
+          isFolder && hasChildren ? "cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-[-2px]" : ""
         }`}
-        style={{ paddingLeft: `${level * 16 + 8}px` }}
+        style={{ paddingLeft: `${level * INDENT_PER_LEVEL + BASE_PADDING}px` }}
         onClick={() => {
           if (isFolder && hasChildren) {
             setExpanded(!expanded);
@@ -112,19 +117,19 @@ function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
         {/* Expand/collapse icon for folders */}
         {isFolder && hasChildren ? (
           expanded ? (
-            <ChevronDown className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" />
+            <ChevronDown className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" aria-hidden="true" />
           ) : (
-            <ChevronRight className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" />
+            <ChevronRight className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" aria-hidden="true" />
           )
         ) : (
-          <span className="w-4" />
+          <span className="w-4" aria-hidden="true" />
         )}
 
         {/* Icon */}
         {isFolder ? (
-          <Folder className="w-4 h-4 text-[var(--accent)] flex-shrink-0" />
+          <Folder className="w-4 h-4 text-[var(--accent)] flex-shrink-0" aria-hidden="true" />
         ) : (
-          <File className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" />
+          <File className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" aria-hidden="true" />
         )}
 
         {/* Name */}
@@ -157,7 +162,7 @@ function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
 }
 
 export function FileTree({ entries, basePath = "" }: FileTreeProps) {
-  const tree = buildTree(entries, basePath);
+  const tree = useMemo(() => buildTree(entries, basePath), [entries, basePath]);
 
   if (tree.length === 0) {
     return (

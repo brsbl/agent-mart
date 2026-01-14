@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { ArrowRight, Package, Terminal, Sparkles } from "lucide-react";
+import { Package, Terminal, Sparkles } from "lucide-react";
 import { PluginCard, PluginCardCompact } from "@/components";
 import type { FlatPlugin, Meta } from "@/lib/types";
 import {
@@ -190,7 +190,6 @@ function HomePageContent() {
       <CategorySection
         title="Recently Updated"
         plugins={recentPlugins}
-        showViewAll
       />
 
       {/* Category Sections */}
@@ -210,10 +209,9 @@ interface CategorySectionProps {
   title: string;
   count?: number;
   plugins: FlatPlugin[];
-  showViewAll?: boolean;
 }
 
-function CategorySection({ title, count, plugins, showViewAll }: CategorySectionProps) {
+function CategorySection({ title, count, plugins }: CategorySectionProps) {
   if (plugins.length === 0) return null;
 
   return (
@@ -227,11 +225,6 @@ function CategorySection({ title, count, plugins, showViewAll }: CategorySection
             </span>
           )}
         </h2>
-        {showViewAll && (
-          <button className="flex items-center gap-1 text-sm text-[var(--accent)] hover:underline">
-            View all <ArrowRight className="w-4 h-4" />
-          </button>
-        )}
       </div>
       <div className="category-scroll">
         {plugins.map((plugin) => (
