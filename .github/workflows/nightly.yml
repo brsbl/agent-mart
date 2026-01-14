@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     timeout-minutes: 30
 
     steps:
@@ -59,20 +60,43 @@ jobs:
           path: public/
           retention-days: 30
 
-      - name: Commit and push changes
+      - name: Create PR for data updates
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          # Check if there are changes to commit
+          if [ -z "$(git status public/ --porcelain)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Check if there are changes to commit
-          if [ -n "$(git status public/ --porcelain)" ]; then
-            git add public/
-            git commit -m "chore: update directory data [skip ci]"
-            git pull --rebase origin main
-            if ! git push; then
-              echo "::error::Failed to push changes - manual intervention required"
-              exit 1
-            fi
-          else
-            echo "No changes to commit"
+          # Create branch with date
+          BRANCH="data/update-$(date +%Y-%m-%d)"
+          git checkout -b "$BRANCH"
+
+          git add public/
+          git commit -m "chore: update directory data $(date +%Y-%m-%d)"
+          git push -u origin "$BRANCH"
+
+          # Check if PR already exists for this branch
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists for branch $BRANCH"
+            exit 0
           fi
+
+          # Create PR
+          gh pr create \
+            --title "chore: update directory data $(date +%Y-%m-%d)" \
+            --body "Automated data update from nightly pipeline run.
+
+          ## Changes
+          - Updated \`public/index.json\`
+          - Updated \`public/plugins-browse.json\`
+
+          ---
+          *This PR was automatically created by the nightly workflow.*" \
+            --label "automated"
