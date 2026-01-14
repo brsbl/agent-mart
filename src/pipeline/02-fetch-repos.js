@@ -12,7 +12,12 @@ const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10)
 export async function fetchRepos() {
   log('Starting repo metadata fetch...');
 
-  const { repos: allRepos } = loadJson(INPUT_PATH);
+  const data = loadJson(INPUT_PATH);
+  const allRepos = data?.repos || [];
+  if (allRepos.length === 0) {
+    log('No repos found in input file');
+    return { repos: [], owners: {} };
+  }
   const repos = REPO_LIMIT ? allRepos.slice(0, REPO_LIMIT) : allRepos;
 
   if (REPO_LIMIT) {
@@ -68,8 +73,6 @@ export async function fetchRepos() {
       url: data.html_url,
       bio: data.bio,
       company: data.company,
-      location: null, // Not available via GraphQL
-      public_repos: null, // Not fetched
       followers: data.followers
     };
   }

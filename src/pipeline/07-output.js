@@ -7,7 +7,7 @@ const OWNERS_DIR = './public/owners';
 /**
  * Generate final public JSON files
  */
-export async function output() {
+export function output() {
   log('Generating public JSON files...');
 
   const { owners } = loadJson(INPUT_PATH);

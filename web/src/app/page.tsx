@@ -151,21 +151,21 @@ function HomePageContent() {
       {meta && (
         <div className="flex flex-wrap items-center justify-center gap-6 mb-8 py-4 px-6 bg-[var(--background-secondary)] rounded-lg">
           <div className="flex items-center gap-2">
-            <Package className="w-5 h-5 text-[var(--accent)]" />
+            <Package className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
             <span className="font-semibold">
               {formatNumber(meta.total_plugins)}
             </span>
             <span className="text-[var(--foreground-secondary)]">plugins</span>
           </div>
           <div className="flex items-center gap-2">
-            <Terminal className="w-5 h-5 text-[var(--accent)]" />
+            <Terminal className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
             <span className="font-semibold">
               {formatNumber(meta.total_commands)}
             </span>
             <span className="text-[var(--foreground-secondary)]">commands</span>
           </div>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[var(--accent)]" />
+            <Sparkles className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
             <span className="font-semibold">
               {formatNumber(meta.total_skills)}
             </span>

@@ -72,5 +72,6 @@ export function log(message) {
  */
 export function logError(message, error) {
   const timestamp = new Date().toISOString().slice(11, 19);
-  console.error(`[${timestamp}] ERROR: ${message}`, error?.message || '');
+  const errorInfo = error instanceof Error ? error.message : (error || '');
+  console.error(`[${timestamp}] ERROR: ${message}`, errorInfo);
 }

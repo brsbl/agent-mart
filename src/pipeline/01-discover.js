@@ -47,7 +47,7 @@ export async function discover() {
       break;
     }
 
-    if (response.items.length < 100) break;
+    if (!response.items || response.items.length < 100) break;
     if (results.length >= 1000) {
       log('Reached max 1000 results limit');
       break;

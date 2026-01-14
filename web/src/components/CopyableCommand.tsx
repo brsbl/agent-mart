@@ -30,9 +30,9 @@ export function CopyableCommand({
           title={copied ? "Copied!" : "Click to copy"}
         >
           {copied ? (
-            <Check className="w-3 h-3 text-[var(--success)]" />
+            <Check className="w-3 h-3 text-[var(--success)]" aria-hidden="true" />
           ) : (
-            <Copy className="w-3 h-3 opacity-50" />
+            <Copy className="w-3 h-3 opacity-50" aria-hidden="true" />
           )}
           <span className="truncate max-w-[200px]">{commands[0]}</span>
         </button>
@@ -66,9 +66,9 @@ export function CopyableCommand({
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >
           {copied ? (
-            <Check className="w-4 h-4 text-[var(--success)]" />
+            <Check className="w-4 h-4 text-[var(--success)]" aria-hidden="true" />
           ) : (
-            <Copy className="w-4 h-4" />
+            <Copy className="w-4 h-4" aria-hidden="true" />
           )}
         </button>
       </div>

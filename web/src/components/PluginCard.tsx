@@ -73,9 +73,14 @@ export function PluginCard({ plugin }: PluginCardProps) {
 
       {/* Footer: Category + Copy button */}
       <div className="flex items-center justify-between gap-2 relative z-10">
-        <span className={`badge ${getCategoryBadgeClass(normalizeCategory(plugin.category))} pointer-events-none`}>
-          {getCategoryDisplayName(normalizeCategory(plugin.category))}
-        </span>
+        {(() => {
+          const normalizedCat = normalizeCategory(plugin.category);
+          return (
+            <span className={`badge ${getCategoryBadgeClass(normalizedCat)} pointer-events-none`}>
+              {getCategoryDisplayName(normalizedCat)}
+            </span>
+          );
+        })()}
         <button
           onClick={handleCopy}
           className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]"

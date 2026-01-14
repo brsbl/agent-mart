@@ -24,7 +24,11 @@ const FILE_BATCH_SIZE = 20;
  */
 function sanitizeForGraphQL(str) {
   if (typeof str !== 'string') return '';
-  return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r');
 }
 
 // Create throttled Octokit class

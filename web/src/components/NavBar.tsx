@@ -25,7 +25,7 @@ export function NavBar() {
           href="/"
           className="flex items-center gap-2 font-semibold text-lg hover:opacity-80 transition-opacity"
         >
-          <Package className="w-6 h-6 text-[var(--accent)]" />
+          <Package className="w-6 h-6 text-[var(--accent)]" aria-hidden="true" />
           <span>Agent Mart</span>
         </Link>
 
@@ -40,7 +40,7 @@ export function NavBar() {
                   : "w-40 md:w-64"
               }`}
             >
-              <Search className="w-4 h-4 text-[var(--foreground-muted)]" />
+              <Search className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
               <input
                 type="text"
                 placeholder="Search plugins..."
@@ -62,7 +62,7 @@ export function NavBar() {
             className="p-2 text-[var(--foreground-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded-lg transition-colors"
             aria-label="GitHub"
           >
-            <Github className="w-5 h-5" />
+            <Github className="w-5 h-5" aria-hidden="true" />
           </a>
         </div>
       </div>

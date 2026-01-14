@@ -2,7 +2,7 @@
 // AGENT MART DATA TYPES
 // ============================================
 
-export interface IndexData {
+interface IndexData {
   meta: Meta;
   owners: OwnerSummary[];
 }
@@ -16,7 +16,7 @@ export interface Meta {
   generated_at: string;
 }
 
-export interface OwnerSummary {
+interface OwnerSummary {
   id: string;
   display_name: string;
   type: "Organization" | "User";
@@ -165,14 +165,14 @@ export interface FlatPlugin extends Plugin {
   repo_full_name: string;
 }
 
-export interface FlatCommand extends Command {
+interface FlatCommand extends Command {
   owner_id: string;
   plugin_name: string;
   repo_full_name: string;
   stars: number;
 }
 
-export interface FlatSkill extends Skill {
+interface FlatSkill extends Skill {
   owner_id: string;
   plugin_name: string;
   repo_full_name: string;

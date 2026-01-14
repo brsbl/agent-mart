@@ -8,7 +8,7 @@ const OUTPUT_PATH = './data/05-parsed.json';
 /**
  * Parse all fetched files into structured data with validation
  */
-export async function parse() {
+export function parse() {
   log('Starting file parsing with validation...');
 
   const { files } = loadJson(INPUT_PATH);

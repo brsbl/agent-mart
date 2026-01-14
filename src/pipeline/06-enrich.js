@@ -21,13 +21,14 @@ function generateInstallCommands(ownerRepo, marketplaceName, pluginName) {
  */
 function pathBelongsToPlugin(filePath, pluginSource) {
   const normalizedSource = normalizeSourcePath(pluginSource);
+  if (!normalizedSource) return false;
   return filePath.startsWith(normalizedSource + '/') || filePath.startsWith(normalizedSource);
 }
 
 /**
  * Build enriched data model
  */
-export async function enrich() {
+export function enrich() {
   log('Starting data enrichment...');
 
   const reposData = loadJson(REPOS_PATH);
@@ -170,8 +171,8 @@ export async function enrich() {
     ownerData.stats.total_plugins += plugins.length;
     ownerData.stats.total_commands += plugins.reduce((sum, p) => sum + p.commands.length, 0);
     ownerData.stats.total_skills += plugins.reduce((sum, p) => sum + p.skills.length, 0);
-    ownerData.stats.total_stars += repo.repo.signals.stars;
-    ownerData.stats.total_forks += repo.repo.signals.forks;
+    ownerData.stats.total_stars += (repo.repo.signals?.stars || 0);
+    ownerData.stats.total_forks += (repo.repo.signals?.forks || 0);
 
     ownerData.repos.push(repoEntry);
   }

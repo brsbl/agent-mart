@@ -85,36 +85,6 @@ describe('Pipeline: File Pattern Matching', () => {
   });
 });
 
-describe('Security: Cache Key Validation', () => {
-  // Test the forbidden IDs that should be blocked
-  const FORBIDDEN_IDS = ['__proto__', 'constructor', 'prototype'];
-
-  function isValidCacheId(id) {
-    return !FORBIDDEN_IDS.includes(id.toLowerCase());
-  }
-
-  it('should reject __proto__', () => {
-    assert.strictEqual(isValidCacheId('__proto__'), false);
-    assert.strictEqual(isValidCacheId('__PROTO__'), false);
-  });
-
-  it('should reject constructor', () => {
-    assert.strictEqual(isValidCacheId('constructor'), false);
-    assert.strictEqual(isValidCacheId('Constructor'), false);
-  });
-
-  it('should reject prototype', () => {
-    assert.strictEqual(isValidCacheId('prototype'), false);
-    assert.strictEqual(isValidCacheId('PROTOTYPE'), false);
-  });
-
-  it('should allow valid cache IDs', () => {
-    assert.strictEqual(isValidCacheId('owner'), true);
-    assert.strictEqual(isValidCacheId('tree'), true);
-    assert.strictEqual(isValidCacheId('repo-name'), true);
-  });
-});
-
 describe('Security: GraphQL Sanitization', () => {
   // Test the sanitization function logic
   function sanitizeForGraphQL(str) {

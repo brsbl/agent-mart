@@ -108,6 +108,8 @@ export function setCache(prefix, id, data) {
   }
 }
 
+// Utility functions for cache management (manual/debugging use)
+
 /**
  * Check if cache entry exists and is valid
  * @param {string} prefix - Cache prefix

@@ -78,9 +78,9 @@ export async function fetchFiles() {
           });
         }
       }
-    } catch (_error) {
+    } catch (error) {
       // Fall back to individual REST calls if batch fails
-      log(`Batch failed for ${full_name}, falling back to REST`);
+      log(`Batch failed for ${full_name}, falling back to REST: ${error.message}`);
       for (const entry of filesToFetch) {
         const fileData = await safeApiCall(
           () => getFileContent(owner, repo, entry.path),
