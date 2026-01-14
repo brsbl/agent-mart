@@ -195,9 +195,9 @@ export function getCategoryBadgeClass(category: string): string {
 }
 
 // Get unique categories from plugins
-export function getUniqueCategories(plugins: FlatPlugin[]): string[] {
+export function getUniqueCategories(plugins: FlatPlugin[]): PluginCategory[] {
   const categories = new Set(
-    plugins.map((p) => p.category).filter((c): c is string => c != null)
+    plugins.map((p) => p.category).filter((c): c is PluginCategory => c != null)
   );
   return Array.from(categories).sort();
 }
@@ -377,7 +377,9 @@ export const CATEGORY_ORDER = [
   "marketing",
   "learning",
   "uncategorized",
-];
+] as const;
+
+export type NormalizedCategory = typeof CATEGORY_ORDER[number];
 
 // Display names for categories
 const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
@@ -415,7 +417,7 @@ export function getCategoryDisplayName(category: string): string {
 }
 
 export interface CategoryGroup {
-  category: string;
+  category: NormalizedCategory;
   displayName: string;
   plugins: FlatPlugin[];
 }

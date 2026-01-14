@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Star, Terminal, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import type { FlatPlugin } from "@/lib/types";
@@ -13,21 +14,40 @@ interface PluginCardProps {
 
 export function PluginCard({ plugin }: PluginCardProps) {
   const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const installCmd = plugin.install_commands.join("\n");
-    await navigator.clipboard.writeText(installCmd);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(installCmd);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+    }
   };
 
   const pluginUrl = `/plugin/${plugin.owner_id}/${plugin.name}`;
 
+  const handleCardClick = () => {
+    router.push(pluginUrl);
+  };
+
   return (
-    <Link href={pluginUrl} className="block">
-      <article className="card p-4 h-full flex flex-col">
+    <article
+      onClick={handleCardClick}
+      className="card p-4 h-full flex flex-col cursor-pointer"
+      role="link"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
+    >
         {/* Header: Avatar + Name */}
         <div className="flex items-start gap-3 mb-3">
           <Image
@@ -35,6 +55,7 @@ export function PluginCard({ plugin }: PluginCardProps) {
             alt={plugin.owner_display_name}
             width={40}
             height={40}
+            loading="lazy"
             className="rounded-full flex-shrink-0"
           />
           <div className="min-w-0 flex-1">
@@ -91,7 +112,6 @@ export function PluginCard({ plugin }: PluginCardProps) {
           </button>
         </div>
       </article>
-    </Link>
   );
 }
 
@@ -107,6 +127,7 @@ export function PluginCardCompact({ plugin }: PluginCardProps) {
         alt={plugin.owner_display_name}
         width={32}
         height={32}
+        loading="lazy"
         className="rounded-full flex-shrink-0"
       />
       <div className="min-w-0 flex-1">

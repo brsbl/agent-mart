@@ -15,10 +15,12 @@ import {
 import { PluginCard } from "@/components";
 import type { OwnerDetail, FlatPlugin } from "@/lib/types";
 import { flattenPlugins, formatNumber } from "@/lib/data";
+import { validateUrlParam } from "@/lib/validation";
 
 export default function OwnerPage() {
   const params = useParams();
-  const ownerId = params.id as string;
+  const rawOwnerId = params.id as string;
+  const ownerId = validateUrlParam(rawOwnerId);
 
   const [ownerData, setOwnerData] = useState<OwnerDetail | null>(null);
   const [plugins, setPlugins] = useState<FlatPlugin[]>([]);
@@ -27,6 +29,11 @@ export default function OwnerPage() {
 
   useEffect(() => {
     async function loadOwner() {
+      if (!ownerId) {
+        setError("Invalid owner ID");
+        setLoading(false);
+        return;
+      }
       try {
         const res = await fetch(`/data/owners/${ownerId}.json`);
         if (!res.ok) throw new Error("Owner not found");
@@ -40,9 +47,7 @@ export default function OwnerPage() {
       }
     }
 
-    if (ownerId) {
-      loadOwner();
-    }
+    loadOwner();
   }, [ownerId]);
 
   if (loading) {

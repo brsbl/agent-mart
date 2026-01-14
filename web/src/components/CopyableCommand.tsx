@@ -16,9 +16,13 @@ export function CopyableCommand({
 
   const handleCopy = async () => {
     const text = commands.join("\n");
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+    }
   };
 
   return (
@@ -27,8 +31,10 @@ export function CopyableCommand({
       onClick={handleCopy}
       role="button"
       tabIndex={0}
+      aria-label={copied ? "Copied to clipboard" : "Copy commands to clipboard"}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
           handleCopy();
         }
       }}
@@ -36,7 +42,7 @@ export function CopyableCommand({
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 overflow-x-auto">
           {commands.map((cmd, i) => (
-            <div key={i} className="whitespace-nowrap">
+            <div key={`cmd-${i}-${cmd.slice(0, 20)}`} className="whitespace-nowrap">
               {cmd}
             </div>
           ))}
@@ -61,6 +67,9 @@ export function CopyableCommand({
           Copied!
         </div>
       )}
+      <span role="status" aria-live="polite" className="sr-only">
+        {copied ? "Command copied to clipboard" : ""}
+      </span>
     </div>
   );
 }
@@ -80,9 +89,13 @@ export function CopyableCommandSingle({
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(command);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(command);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+    }
   };
 
   if (compact) {
@@ -108,8 +121,10 @@ export function CopyableCommandSingle({
       onClick={handleCopy}
       role="button"
       tabIndex={0}
+      aria-label={copied ? "Copied to clipboard" : "Copy command to clipboard"}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
           handleCopy();
         }
       }}
@@ -138,6 +153,9 @@ export function CopyableCommandSingle({
           Copied!
         </div>
       )}
+      <span role="status" aria-live="polite" className="sr-only">
+        {copied ? "Command copied to clipboard" : ""}
+      </span>
     </div>
   );
 }

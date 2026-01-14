@@ -106,7 +106,23 @@ export type PluginCategory =
   | "automation"
   | "integration"
   | "utility"
-  | string; // Allow other categories
+  | "ai-ml"
+  | "devops"
+  | "testing"
+  | "quality"
+  | "security"
+  | "database"
+  | "api"
+  | "infrastructure"
+  | "design"
+  | "documentation"
+  | "git"
+  | "frameworks"
+  | "languages"
+  | "utilities"
+  | "business"
+  | "marketing"
+  | "uncategorized";
 
 export interface PluginAuthor {
   name: string;

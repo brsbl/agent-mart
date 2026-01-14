@@ -44,6 +44,7 @@ export function NavBar() {
               <input
                 type="text"
                 placeholder="Search plugins..."
+                aria-label="Search plugins"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
@@ -55,7 +56,7 @@ export function NavBar() {
 
           {/* GitHub link */}
           <a
-            href="https://github.com"
+            href="https://github.com/anthropics/claude-code"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-[var(--foreground-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded-lg transition-colors"

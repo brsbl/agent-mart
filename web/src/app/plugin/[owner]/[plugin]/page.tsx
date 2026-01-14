@@ -15,11 +15,14 @@ import {
 import { CopyableCommand, FileTree } from "@/components";
 import type { OwnerDetail, Plugin, Repo } from "@/lib/types";
 import { formatNumber, formatDate, getCategoryBadgeClass } from "@/lib/data";
+import { validateUrlParam } from "@/lib/validation";
 
 export default function PluginPage() {
   const params = useParams();
-  const ownerId = params.owner as string;
-  const pluginName = params.plugin as string;
+  const rawOwnerId = params.owner as string;
+  const rawPluginName = params.plugin as string;
+  const ownerId = validateUrlParam(rawOwnerId);
+  const pluginName = validateUrlParam(rawPluginName);
 
   const [ownerData, setOwnerData] = useState<OwnerDetail | null>(null);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
@@ -29,6 +32,11 @@ export default function PluginPage() {
 
   useEffect(() => {
     async function loadPlugin() {
+      if (!ownerId || !pluginName) {
+        setError("Invalid URL parameters");
+        setLoading(false);
+        return;
+      }
       try {
         const res = await fetch(`/data/owners/${ownerId}.json`);
         if (!res.ok) throw new Error("Owner not found");
@@ -52,9 +60,7 @@ export default function PluginPage() {
       }
     }
 
-    if (ownerId && pluginName) {
-      loadPlugin();
-    }
+    loadPlugin();
   }, [ownerId, pluginName]);
 
   if (loading) {

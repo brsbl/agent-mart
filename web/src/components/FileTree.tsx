@@ -94,6 +94,20 @@ function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
             setExpanded(!expanded);
           }
         }}
+        {...(isFolder && hasChildren
+          ? {
+              role: "button",
+              tabIndex: 0,
+              "aria-expanded": expanded,
+              "aria-label": `${expanded ? "Collapse" : "Expand"} ${node.name} folder`,
+              onKeyDown: (e: React.KeyboardEvent) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setExpanded(!expanded);
+                }
+              },
+            }
+          : {})}
       >
         {/* Expand/collapse icon for folders */}
         {isFolder && hasChildren ? (
