@@ -19,7 +19,7 @@ export function SkillCard({ skill }: SkillCardProps) {
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[var(--accent)]" />
+            <Sparkles className="w-4 h-4 text-[var(--accent)]" aria-hidden="true" />
             <span className="font-semibold text-[var(--foreground)]">
               {skill.name}
             </span>

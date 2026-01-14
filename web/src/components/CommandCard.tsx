@@ -19,7 +19,7 @@ export function CommandCard({ command }: CommandCardProps) {
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-[var(--accent)]" />
+            <Terminal className="w-4 h-4 text-[var(--accent)]" aria-hidden="true" />
             <code className="font-mono font-semibold text-[var(--foreground)]">
               {command.name}
             </code>
