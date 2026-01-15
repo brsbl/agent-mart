@@ -1,11 +1,8 @@
 import { batchGetFiles, getFileContent, safeApiCall } from '../lib/github.js';
-import { saveJson, loadJson, decodeBase64, log, getRepoLimit } from '../lib/utils.js';
+import { saveJson, loadJson, decodeBase64, log, applyRepoLimit } from '../lib/utils.js';
 
 const TREES_PATH = './data/03-trees.json';
 const OUTPUT_PATH = './data/04-files.json';
-
-// Limit repos for testing (set REPO_LIMIT env var, default: no limit)
-const REPO_LIMIT = getRepoLimit();
 
 // Patterns for files we want to fetch
 export const FILE_PATTERNS = [
@@ -36,14 +33,16 @@ export async function fetchFiles() {
   const { trees } = loadJson(TREES_PATH);
   const files = [];
 
-  // Apply repo limit if set
-  const reposToProcess = REPO_LIMIT ? trees.slice(0, REPO_LIMIT) : trees;
-  if (REPO_LIMIT) {
-    log(`REPO_LIMIT=${REPO_LIMIT}: processing ${reposToProcess.length} of ${trees.length} repos`);
-  }
+  const reposToProcess = applyRepoLimit(trees);
 
   for (let i = 0; i < reposToProcess.length; i++) {
     const { full_name, default_branch, tree } = reposToProcess[i];
+
+    if (!full_name || !full_name.includes('/')) {
+      log(`Invalid full_name: ${full_name}, skipping`);
+      continue;
+    }
+
     const [owner, repo] = full_name.split('/');
 
     // Filter to files we want

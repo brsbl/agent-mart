@@ -22,7 +22,7 @@ function generateInstallCommands(ownerRepo, marketplaceName, pluginName) {
 function pathBelongsToPlugin(filePath, pluginSource) {
   const normalizedSource = normalizeSourcePath(pluginSource);
   if (!normalizedSource) return false;
-  return filePath.startsWith(normalizedSource + '/') || filePath.startsWith(normalizedSource);
+  return filePath.startsWith(normalizedSource + '/') || filePath === normalizedSource;
 }
 
 /**
@@ -105,6 +105,12 @@ export function enrich() {
 
     // Build plugins array
     const marketplaceData = marketplace.data;
+
+    if (!full_name || !full_name.includes('/')) {
+      log(`Invalid full_name: ${full_name}, skipping`);
+      continue;
+    }
+
     const marketplaceName = marketplaceData.name || full_name.split('/')[1];
 
     const plugins = (marketplaceData.plugins || []).map(pluginDef => {

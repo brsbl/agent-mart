@@ -1,5 +1,5 @@
 import { searchCode, safeApiCall } from '../lib/github.js';
-import { saveJson, log, getRepoLimit } from '../lib/utils.js';
+import { saveJson, log, logError, getRepoLimit } from '../lib/utils.js';
 
 const OUTPUT_PATH = './data/01-discovered.json';
 const REPO_LIMIT = getRepoLimit();
@@ -79,5 +79,5 @@ export async function discover() {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  discover().catch(console.error);
+  discover().catch(err => logError('Discovery failed', err));
 }

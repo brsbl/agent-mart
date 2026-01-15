@@ -166,6 +166,7 @@ export interface BrowsePlugin {
     pushed_at: string;
   };
   commands_count: number;
+  skills_count: number;
 }
 
 // Sort options

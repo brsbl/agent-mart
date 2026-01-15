@@ -149,6 +149,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     parse();
   } catch (error) {
-    console.error(error);
+    logError('Parse failed', error);
   }
 }

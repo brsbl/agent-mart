@@ -37,7 +37,7 @@ export function parseFrontmatter(content) {
   }
 
   try {
-    const frontmatter = yaml.load(match[1]);
+    const frontmatter = yaml.load(match[1], { schema: yaml.JSON_SCHEMA });
     const body = match[2].trim();
     return { frontmatter, body };
   } catch (error) {
@@ -106,5 +106,10 @@ export function normalizeSourcePath(source) {
   if (!source || typeof source !== 'string') {
     return '';
   }
-  return source.replace(/^\.\//, '');
+  // Reject paths with parent traversal
+  if (source.includes('..')) {
+    return '';
+  }
+  // Remove leading ./ (possibly multiple)
+  return source.replace(/^(\.\/)+/, '');
 }

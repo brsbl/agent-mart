@@ -6,13 +6,11 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 interface CopyableCommandProps {
   command: string | string[];
   className?: string;
-  compact?: boolean;
 }
 
 export function CopyableCommand({
   command,
   className = "",
-  compact = false,
 }: CopyableCommandProps) {
   const { copied, copy } = useCopyToClipboard();
 
@@ -20,30 +18,6 @@ export function CopyableCommand({
   const textToCopy = commands.join("\n");
   const isMultiLine = commands.length > 1;
 
-  // Compact variant - single inline button
-  if (compact) {
-    return (
-      <>
-        <button
-          onClick={() => copy(textToCopy)}
-          className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-mono bg-[var(--terminal-bg)] text-[var(--terminal-text)] rounded hover:bg-[var(--terminal-bg)]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors ${className}`}
-          title={copied ? "Copied!" : "Click to copy"}
-        >
-          {copied ? (
-            <Check className="w-3 h-3 text-[var(--success)]" aria-hidden="true" />
-          ) : (
-            <Copy className="w-3 h-3 opacity-50" aria-hidden="true" />
-          )}
-          <span className="truncate max-w-[200px]">{commands[0]}</span>
-        </button>
-        <span role="status" aria-live="polite" className="sr-only">
-          {copied ? "Command copied to clipboard" : ""}
-        </span>
-      </>
-    );
-  }
-
-  // Standard variant - terminal-style display
   return (
     <div className={`terminal group relative ${className}`}>
       <div

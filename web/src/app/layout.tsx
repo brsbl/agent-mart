@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Agent Mart - Claude Plugin Marketplace",
   description:
-    "Discover and install Claude Code plugins, commands, and skills. Browse 3,920+ plugins from the community.",
+    "Discover and install Claude Code plugins, commands, and skills. Browse plugins from the community.",
 };
 
 export default function RootLayout({
