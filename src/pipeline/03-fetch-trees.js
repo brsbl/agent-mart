@@ -1,10 +1,9 @@
 import { getTree, safeApiCall } from '../lib/github.js';
 import { getCached, setCache } from '../lib/cache.js';
-import { saveJson, loadJson, log } from '../lib/utils.js';
+import { saveJson, loadJson, log, applyRepoLimit } from '../lib/utils.js';
 
 const INPUT_PATH = './data/02-repos.json';
 const OUTPUT_PATH = './data/03-trees.json';
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
 
 /**
  * Fetch full file trees for all repos
@@ -14,11 +13,7 @@ export async function fetchTrees() {
   log('Starting file tree fetch...');
 
   const { repos: allRepos } = loadJson(INPUT_PATH);
-  const repos = REPO_LIMIT ? allRepos.slice(0, REPO_LIMIT) : allRepos;
-
-  if (REPO_LIMIT) {
-    log(`REPO_LIMIT set to ${REPO_LIMIT} - processing ${repos.length} of ${allRepos.length} repos`);
-  }
+  const repos = applyRepoLimit(allRepos);
 
   const trees = [];
   let cacheHits = 0;
@@ -26,6 +21,12 @@ export async function fetchTrees() {
 
   for (let i = 0; i < repos.length; i++) {
     const { full_name, default_branch, default_branch_sha } = repos[i];
+
+    if (!full_name || !full_name.includes('/')) {
+      log(`Invalid full_name: ${full_name}, skipping`);
+      continue;
+    }
+
     const [owner, repo] = full_name.split('/');
 
     log(`[${i + 1}/${repos.length}] Fetching tree for ${full_name}`);

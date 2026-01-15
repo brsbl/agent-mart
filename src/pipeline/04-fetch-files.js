@@ -1,14 +1,11 @@
 import { batchGetFiles, getFileContent, safeApiCall } from '../lib/github.js';
-import { saveJson, loadJson, decodeBase64, log } from '../lib/utils.js';
+import { saveJson, loadJson, decodeBase64, log, applyRepoLimit } from '../lib/utils.js';
 
 const TREES_PATH = './data/03-trees.json';
 const OUTPUT_PATH = './data/04-files.json';
 
-// Limit repos for testing (set REPO_LIMIT env var, default: no limit)
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
-
 // Patterns for files we want to fetch
-const FILE_PATTERNS = [
+export const FILE_PATTERNS = [
   // Marketplace config (always fetch)
   /^\.claude-plugin\/marketplace\.json$/,
   // Plugin configs (root or nested)
@@ -36,14 +33,16 @@ export async function fetchFiles() {
   const { trees } = loadJson(TREES_PATH);
   const files = [];
 
-  // Apply repo limit if set
-  const reposToProcess = REPO_LIMIT ? trees.slice(0, REPO_LIMIT) : trees;
-  if (REPO_LIMIT) {
-    log(`REPO_LIMIT=${REPO_LIMIT}: processing ${reposToProcess.length} of ${trees.length} repos`);
-  }
+  const reposToProcess = applyRepoLimit(trees);
 
   for (let i = 0; i < reposToProcess.length; i++) {
     const { full_name, default_branch, tree } = reposToProcess[i];
+
+    if (!full_name || !full_name.includes('/')) {
+      log(`Invalid full_name: ${full_name}, skipping`);
+      continue;
+    }
+
     const [owner, repo] = full_name.split('/');
 
     // Filter to files we want
@@ -78,9 +77,9 @@ export async function fetchFiles() {
           });
         }
       }
-    } catch (_error) {
+    } catch (error) {
       // Fall back to individual REST calls if batch fails
-      log(`Batch failed for ${full_name}, falling back to REST`);
+      log(`Batch failed for ${full_name}, falling back to REST: ${error.message}`);
       for (const entry of filesToFetch) {
         const fileData = await safeApiCall(
           () => getFileContent(owner, repo, entry.path),

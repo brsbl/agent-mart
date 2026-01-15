@@ -16,15 +16,24 @@ const MAX_RATE_LIMIT_RETRIES = 3; // Max times to wait for rate limit reset
 const REPO_BATCH_SIZE = 15;
 const FILE_BATCH_SIZE = 20;
 
+// Rate limiting thresholds
+const MIN_GRAPHQL_REMAINING = 100;
+const MAX_RATE_LIMIT_WAIT_MS = 300000; // 5 minutes
+const MAX_THROTTLE_RETRIES = 2;
+
 /**
  * Sanitize a string for use in GraphQL queries
  * Escapes backslashes and double quotes to prevent injection
  * @param {string} str - String to sanitize
  * @returns {string} Sanitized string
  */
-function sanitizeForGraphQL(str) {
+export function sanitizeForGraphQL(str) {
   if (typeof str !== 'string') return '';
-  return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r');
 }
 
 // Create throttled Octokit class
@@ -67,7 +76,7 @@ function getOctokit() {
       throttle: {
         onRateLimit: (retryAfter, options, octokit, retryCount) => {
           log(`Rate limit hit for ${options.method} ${options.url}`);
-          if (retryCount < 2) {
+          if (retryCount < MAX_THROTTLE_RETRIES) {
             log(`Retrying after ${retryAfter} seconds`);
             return true;
           }
@@ -137,9 +146,9 @@ restLimiter.on('dropped', (_dropped) => {
  * Check GraphQL rate limit and wait if needed
  */
 async function checkGraphQLRateLimit() {
-  if (graphqlRateLimit.remaining < 100 && graphqlRateLimit.resetAt) {
+  if (graphqlRateLimit.remaining < MIN_GRAPHQL_REMAINING && graphqlRateLimit.resetAt) {
     const waitMs = new Date(graphqlRateLimit.resetAt).getTime() - Date.now() + 1000;
-    if (waitMs > 0 && waitMs < 300000) {
+    if (waitMs > 0 && waitMs < MAX_RATE_LIMIT_WAIT_MS) {
       log(`GraphQL rate limit low (${graphqlRateLimit.remaining}). Waiting ${Math.ceil(waitMs / 1000)}s`);
       await sleep(waitMs);
     }
@@ -192,7 +201,7 @@ export async function searchCode(query, page = 1) {
  * @param {string} repo - Repository name
  * @returns {Promise<Object>} Repository data
  */
-export async function getRepo(owner, repo) {
+async function getRepo(owner, repo) {
   return restLimiter.schedule(async () => {
     log(`Fetching repo: ${owner}/${repo}`);
     const response = await getOctokit().rest.repos.get({ owner, repo });
@@ -205,7 +214,7 @@ export async function getRepo(owner, repo) {
  * @param {string} username - GitHub username
  * @returns {Promise<Object>} User data
  */
-export async function getUser(username) {
+async function getUser(username) {
   return restLimiter.schedule(async () => {
     log(`Fetching user: ${username}`);
     const response = await getOctokit().rest.users.getByUsername({ username });
@@ -483,7 +492,7 @@ export async function safeApiCall(fn, context, defaultValue = null) {
 
         if (resetTime && remaining === '0' && rateLimitRetries < MAX_RATE_LIMIT_RETRIES) {
           const waitMs = (parseInt(resetTime, 10) * 1000) - Date.now() + 1000;
-          if (waitMs > 0 && waitMs < 300000) { // Max 5 minute wait
+          if (waitMs > 0 && waitMs < MAX_RATE_LIMIT_WAIT_MS) {
             rateLimitRetries++;
             log(`Rate limited (${rateLimitRetries}/${MAX_RATE_LIMIT_RETRIES}). Waiting ${Math.ceil(waitMs / 1000)}s for reset: ${context}`);
             await sleep(waitMs);
@@ -511,10 +520,3 @@ export async function safeApiCall(fn, context, defaultValue = null) {
   return defaultValue;
 }
 
-/**
- * Get current GraphQL rate limit status
- * @returns {Object} Rate limit info
- */
-export function getGraphQLRateLimit() {
-  return graphqlRateLimit;
-}

@@ -1,8 +1,8 @@
 import { searchCode, safeApiCall } from '../lib/github.js';
-import { saveJson, log } from '../lib/utils.js';
+import { saveJson, log, logError, getRepoLimit } from '../lib/utils.js';
 
 const OUTPUT_PATH = './data/01-discovered.json';
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
+const REPO_LIMIT = getRepoLimit();
 
 /**
  * Discover all repositories containing marketplace.json
@@ -47,7 +47,7 @@ export async function discover() {
       break;
     }
 
-    if (response.items.length < 100) break;
+    if (!response.items || response.items.length < 100) break;
     if (results.length >= 1000) {
       log('Reached max 1000 results limit');
       break;
@@ -79,5 +79,5 @@ export async function discover() {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  discover().catch(console.error);
+  discover().catch(err => logError('Discovery failed', err));
 }

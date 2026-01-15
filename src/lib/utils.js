@@ -72,5 +72,30 @@ export function log(message) {
  */
 export function logError(message, error) {
   const timestamp = new Date().toISOString().slice(11, 19);
-  console.error(`[${timestamp}] ERROR: ${message}`, error?.message || '');
+  const errorInfo = error instanceof Error ? error.message : (error || '');
+  console.error(`[${timestamp}] ERROR: ${message}`, errorInfo);
+}
+
+/**
+ * Gets the REPO_LIMIT from environment variable with validation
+ * @returns {number|null} The repo limit or null if not set/invalid
+ */
+export function getRepoLimit() {
+  const rawLimit = process.env.REPO_LIMIT;
+  if (!rawLimit) return null;
+  const parsed = parseInt(rawLimit, 10);
+  return isNaN(parsed) ? null : parsed;
+}
+
+/**
+ * Applies REPO_LIMIT to an array of repos if set
+ * @param {Array} repos - Array of repos to limit
+ * @param {string} [label='repos'] - Label for logging
+ * @returns {Array} Limited array of repos
+ */
+export function applyRepoLimit(repos, label = 'repos') {
+  const limit = getRepoLimit();
+  if (!limit) return repos;
+  log(`REPO_LIMIT set to ${limit} - processing ${Math.min(limit, repos.length)} of ${repos.length} ${label}`);
+  return repos.slice(0, limit);
 }

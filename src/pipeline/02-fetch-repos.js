@@ -1,9 +1,8 @@
 import { batchGetRepos } from '../lib/github.js';
-import { saveJson, loadJson, log } from '../lib/utils.js';
+import { saveJson, loadJson, log, applyRepoLimit } from '../lib/utils.js';
 
 const INPUT_PATH = './data/01-discovered.json';
 const OUTPUT_PATH = './data/02-repos.json';
-const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10) : null;
 
 /**
  * Fetch repository and owner metadata for all discovered repos
@@ -12,12 +11,13 @@ const REPO_LIMIT = process.env.REPO_LIMIT ? parseInt(process.env.REPO_LIMIT, 10)
 export async function fetchRepos() {
   log('Starting repo metadata fetch...');
 
-  const { repos: allRepos } = loadJson(INPUT_PATH);
-  const repos = REPO_LIMIT ? allRepos.slice(0, REPO_LIMIT) : allRepos;
-
-  if (REPO_LIMIT) {
-    log(`REPO_LIMIT set to ${REPO_LIMIT} - processing ${repos.length} of ${allRepos.length} repos`);
+  const data = loadJson(INPUT_PATH);
+  const allRepos = data?.repos || [];
+  if (allRepos.length === 0) {
+    log('No repos found in input file');
+    return { repos: [], owners: {} };
   }
+  const repos = applyRepoLimit(allRepos);
 
   // Use GraphQL batching to fetch all repos and owners in batches of 15
   const batchInput = repos.map(r => ({ owner: r.owner, repo: r.repo }));
@@ -68,8 +68,6 @@ export async function fetchRepos() {
       url: data.html_url,
       bio: data.bio,
       company: data.company,
-      location: null, // Not available via GraphQL
-      public_repos: null, // Not fetched
       followers: data.followers
     };
   }
