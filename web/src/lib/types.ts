@@ -42,6 +42,7 @@ export interface Marketplace {
   description: string | null;
   owner_info: { name: string; email: string } | null;
   keywords: string[];
+  categories: MarketplaceCategory[];
   repo_full_name: string;
   repo_url: string;
   homepage: string | null;
@@ -49,6 +50,21 @@ export interface Marketplace {
   file_tree: FileTreeEntry[];
   plugins: Plugin[];
 }
+
+// Marketplace categories (broader than plugin categories)
+export type MarketplaceCategory =
+  | 'multi-agent'
+  | 'web-frameworks'
+  | 'backend-frameworks'
+  | 'testing-automation'
+  | 'code-quality'
+  | 'devops-infra'
+  | 'databases-data'
+  | 'api-integrations'
+  | 'planning-workflow'
+  | 'enterprise-domain'
+  | 'productivity-tools'
+  | 'ai-ml-tools';
 
 export interface Signals {
   stars: number;

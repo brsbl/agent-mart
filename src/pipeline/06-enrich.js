@@ -5,6 +5,7 @@ import { normalizeCategory } from '../lib/categories.js';
 const REPOS_PATH = './data/02-repos.json';
 const TREES_PATH = './data/03-trees.json';
 const PARSED_PATH = './data/05-parsed.json';
+const CATEGORIES_PATH = './data/marketplace-categories.json';
 const OUTPUT_PATH = './data/06-enriched.json';
 
 /**
@@ -35,6 +36,15 @@ export function enrich() {
   const reposData = loadJson(REPOS_PATH);
   const treesData = loadJson(TREES_PATH);
   const parsedData = loadJson(PARSED_PATH);
+
+  // Load marketplace categories (pre-generated)
+  let categoriesData = { marketplaces: {} };
+  try {
+    categoriesData = loadJson(CATEGORIES_PATH);
+    log(`Loaded categories for ${Object.keys(categoriesData.marketplaces).length} marketplaces`);
+  } catch {
+    log('Warning: marketplace-categories.json not found, marketplaces will have no categories');
+  }
 
   // Build maps for O(1) lookups
   const marketplaceMap = new Map(
@@ -159,6 +169,12 @@ export function enrich() {
       };
     });
 
+    // Get marketplace categories from pre-generated data
+    const repoKey = `${ownerInfo.id}/${marketplaceName}`;
+    const marketplaceCategories = categoriesData.marketplaces[repoKey] ||
+                                   categoriesData.marketplaces[full_name] ||
+                                   ['productivity-tools'];
+
     // Build marketplace entry (merged repo + marketplace fields)
     const marketplaceEntry = {
       name: marketplaceName,
@@ -166,6 +182,7 @@ export function enrich() {
       description: marketplaceData.description || null,
       owner_info: marketplaceData.owner || null,
       keywords: marketplaceData.keywords || [],
+      categories: marketplaceCategories,
       repo_full_name: full_name,
       repo_url: `https://github.com/${full_name}`,
       repo_description: repo.repo.description,
