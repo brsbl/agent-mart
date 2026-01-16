@@ -2,21 +2,19 @@
 
 import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Package, Terminal, Sparkles } from "lucide-react";
-import { PluginCard, PluginCardCompact, LoadingState, ErrorState } from "@/components";
+import { Package, Users, Store } from "lucide-react";
+import { MarketplaceCard, LoadingState, ErrorState } from "@/components";
 import { useFetch } from "@/hooks";
-import type { BrowsePlugin, Meta } from "@/lib/types";
-import {
-  sortPlugins,
-  formatNumber,
-  groupPluginsByCategory,
-} from "@/lib/data";
-import { DATA_URLS, MAX_CATEGORY_PLUGINS } from "@/lib/constants";
+import type { BrowseMarketplace, Meta } from "@/lib/types";
+import { formatNumber } from "@/lib/data";
+import { DATA_URLS } from "@/lib/constants";
 
-interface PluginsData {
+interface MarketplacesData {
   meta: Meta;
-  plugins: BrowsePlugin[];
+  marketplaces: BrowseMarketplace[];
 }
+
+const BROWSE_LIMIT = 20;
 
 export default function HomePage() {
   return (
@@ -30,42 +28,37 @@ function HomePageContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q") || "";
 
-  const { data, loading, error } = useFetch<PluginsData>(
-    DATA_URLS.PLUGINS_BROWSE,
-    "Failed to load plugins. Please try refreshing the page."
+  // Fetch only marketplaces data
+  const { data: marketplacesData, loading, error } = useFetch<MarketplacesData>(
+    DATA_URLS.MARKETPLACES_BROWSE,
+    "Failed to load marketplaces."
   );
 
-  const meta = data?.meta ?? null;
-  const allPlugins = useMemo(() => data?.plugins ?? [], [data?.plugins]);
+  const meta = marketplacesData?.meta ?? null;
+  const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
 
-  // Search filter
+  // Search filter for marketplaces only
   const searchResults = useMemo(() => {
     if (!searchQuery) return null;
     const query = searchQuery.toLowerCase();
-    const filtered = allPlugins.filter(
-      (p) =>
-        p.name.toLowerCase().includes(query) ||
-        p.description?.toLowerCase().includes(query) ||
-        p.owner_id.toLowerCase().includes(query)
+
+    const matchedMarketplaces = allMarketplaces.filter((m) =>
+      m.name.toLowerCase().includes(query) ||
+      m.description?.toLowerCase().includes(query) ||
+      m.author_id.toLowerCase().includes(query) ||
+      m.author_display_name.toLowerCase().includes(query) ||
+      m.keywords?.some(k => k.toLowerCase().includes(query))
     );
-    return sortPlugins(filtered, "stars");
-  }, [allPlugins, searchQuery]);
 
-  // Get new & recently updated plugins
-  const recentPlugins = useMemo(() => {
-    return [...allPlugins]
-      .sort(
-        (a, b) =>
-          new Date(b.signals.pushed_at).getTime() -
-          new Date(a.signals.pushed_at).getTime()
-      )
-      .slice(0, MAX_CATEGORY_PLUGINS);
-  }, [allPlugins]);
+    return matchedMarketplaces.sort((a, b) => (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0));
+  }, [allMarketplaces, searchQuery]);
 
-  // Group plugins by category
-  const categoryGroups = useMemo(() => {
-    return groupPluginsByCategory(allPlugins);
-  }, [allPlugins]);
+  // Sort and limit browse items by pushed_at (most recent first)
+  const recentMarketplaces = useMemo(() => {
+    return [...allMarketplaces]
+      .sort((a, b) => new Date(b.signals.pushed_at ?? 0).getTime() - new Date(a.signals.pushed_at ?? 0).getTime())
+      .slice(0, BROWSE_LIMIT);
+  }, [allMarketplaces]);
 
   if (loading) {
     return <LoadingState />;
@@ -93,22 +86,33 @@ function HomePageContent() {
             Search results for &quot;{searchQuery}&quot;
           </h2>
           <p className="text-sm text-[var(--foreground-muted)] mb-6">
-            {searchResults.length} plugin{searchResults.length !== 1 ? "s" : ""} found
+            {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} found
           </p>
 
           {searchResults.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {searchResults.map((plugin) => (
-                <PluginCard
-                  key={`${plugin.owner_id}-${plugin.name}`}
-                  plugin={plugin}
+              {searchResults.map((marketplace) => (
+                <MarketplaceCard
+                  key={`${marketplace.author_id}-${marketplace.name}`}
+                  marketplace={{
+                    name: marketplace.name,
+                    description: marketplace.description,
+                    keywords: marketplace.keywords ?? [],
+                    signals: {
+                      stars: marketplace.signals?.stars ?? 0,
+                      forks: 0,
+                    },
+                  }}
+                  author_id={marketplace.author_id}
+                  author_display_name={marketplace.author_display_name}
+                  author_avatar_url={marketplace.author_avatar_url}
                 />
               ))}
             </div>
           ) : (
             <div className="text-center py-12">
               <p className="text-[var(--foreground-muted)]">
-                No plugins found matching your search.
+                No results found matching your search.
               </p>
             </div>
           )}
@@ -117,12 +121,19 @@ function HomePageContent() {
     );
   }
 
-  // Browse view (category sections)
+  // Browse view
   return (
     <div className="container py-8">
       {/* Stats Bar */}
       {meta && (
         <div className="flex flex-wrap items-center justify-center gap-6 mb-8 py-4 px-6 bg-[var(--background-secondary)] rounded-lg">
+          <div className="flex items-center gap-2">
+            <Store className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
+            <span className="font-semibold">
+              {formatNumber(meta.total_marketplaces)}
+            </span>
+            <span className="text-[var(--foreground-secondary)]">marketplaces</span>
+          </div>
           <div className="flex items-center gap-2">
             <Package className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
             <span className="font-semibold">
@@ -131,70 +142,40 @@ function HomePageContent() {
             <span className="text-[var(--foreground-secondary)]">plugins</span>
           </div>
           <div className="flex items-center gap-2">
-            <Terminal className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
+            <Users className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
             <span className="font-semibold">
-              {formatNumber(meta.total_commands)}
+              {formatNumber(meta.total_authors)}
             </span>
-            <span className="text-[var(--foreground-secondary)]">commands</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
-            <span className="font-semibold">
-              {formatNumber(meta.total_skills)}
-            </span>
-            <span className="text-[var(--foreground-secondary)]">skills</span>
+            <span className="text-[var(--foreground-secondary)]">authors</span>
           </div>
         </div>
       )}
 
-      {/* Recently Updated Section */}
-      <CategorySection
-        title="Recently Updated"
-        plugins={recentPlugins}
-      />
-
-      {/* Category Sections */}
-      {categoryGroups.map((group) => (
-        <CategorySection
-          key={group.category}
-          title={group.displayName}
-          count={group.plugins.length}
-          plugins={group.plugins.slice(0, MAX_CATEGORY_PLUGINS)}
-        />
-      ))}
-    </div>
-  );
-}
-
-interface CategorySectionProps {
-  title: string;
-  count?: number;
-  plugins: BrowsePlugin[];
-}
-
-function CategorySection({ title, count, plugins }: CategorySectionProps) {
-  if (plugins.length === 0) return null;
-
-  return (
-    <section className="mb-10">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-[var(--foreground)]">
-          {title}
-          {count !== undefined && (
-            <span className="ml-2 text-sm font-normal text-[var(--foreground-muted)]">
-              ({count})
-            </span>
-          )}
+      {/* Recent Marketplaces Section */}
+      <section>
+        <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+          Recent Marketplaces
         </h2>
-      </div>
-      <div className="category-scroll">
-        {plugins.map((plugin) => (
-          <PluginCardCompact
-            key={`${plugin.owner_id}-${plugin.name}`}
-            plugin={plugin}
-          />
-        ))}
-      </div>
-    </section>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {recentMarketplaces.map((marketplace) => (
+            <MarketplaceCard
+              key={`${marketplace.author_id}-${marketplace.name}`}
+              marketplace={{
+                name: marketplace.name,
+                description: marketplace.description,
+                keywords: [],
+                signals: {
+                  stars: marketplace.signals.stars,
+                  forks: 0,
+                },
+              }}
+              author_id={marketplace.author_id}
+              author_display_name={marketplace.author_display_name}
+              author_avatar_url={marketplace.author_avatar_url}
+            />
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }

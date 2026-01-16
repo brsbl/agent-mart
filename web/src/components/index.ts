@@ -1,5 +1,5 @@
 export { NavBar } from "./NavBar";
-export { PluginCard, PluginCardCompact } from "./PluginCard";
+export { MarketplaceCard } from "./MarketplaceCard";
 export { CopyableCommand } from "./CopyableCommand";
 export { FileTree } from "./FileTree";
 export { LoadingState } from "./LoadingState";

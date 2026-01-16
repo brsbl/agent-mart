@@ -3,16 +3,16 @@
 // ============================================
 
 export interface Meta {
-  total_owners: number;
-  total_repos: number;
+  total_authors: number;
+  total_marketplaces: number;
   total_plugins: number;
   total_commands: number;
   total_skills: number;
   generated_at: string;
 }
 
-export interface OwnerStats {
-  total_repos: number;
+export interface AuthorStats {
+  total_marketplaces: number;
   total_plugins: number;
   total_commands: number;
   total_skills: number;
@@ -20,41 +20,33 @@ export interface OwnerStats {
   total_forks: number;
 }
 
-// Owner detail (from public/data/owners/{id}.json)
-export interface OwnerDetail {
-  owner: Owner;
-  repos: Repo[];
+// Author detail (from public/data/authors/{id}.json)
+export interface AuthorDetail {
+  author: Author;
+  marketplaces: Marketplace[];
 }
 
-export interface Owner {
+export interface Author {
   id: string;
   display_name: string;
   type: "Organization" | "User";
   avatar_url: string;
   url: string;
   bio?: string | null;
-  stats: OwnerStats;
-}
-
-export interface Repo {
-  full_name: string;
-  url: string;
-  description: string;
-  homepage: string | null;
-  signals: Signals;
-  file_tree: FileTreeEntry[];
-  marketplace?: Marketplace;
+  stats: AuthorStats;
 }
 
 export interface Marketplace {
   name: string;
-  version: string;
-  description: string;
-  owner_info: {
-    name: string;
-    email: string;
-  };
+  version: string | null;
+  description: string | null;
+  owner_info: { name: string; email: string } | null;
   keywords: string[];
+  repo_full_name: string;
+  repo_url: string;
+  homepage: string | null;
+  signals: Signals;
+  file_tree: FileTreeEntry[];
   plugins: Plugin[];
 }
 
@@ -85,29 +77,21 @@ export interface Plugin {
   skills: Skill[];
 }
 
-export type PluginCategory =
-  | "development"
-  | "productivity"
-  | "learning"
-  | "automation"
-  | "integration"
-  | "ai-ml"
-  | "devops"
-  | "testing"
+// Single-level category based on actual marketplace patterns
+export type Category =
+  | "agent"
+  | "devtools"
   | "quality"
-  | "security"
-  | "database"
-  | "api"
-  | "infrastructure"
-  | "design"
-  | "documentation"
-  | "git"
-  | "frameworks"
-  | "languages"
-  | "utilities"
-  | "business"
-  | "marketing"
-  | "uncategorized";
+  | "testing"
+  | "devops"
+  | "data"
+  | "integration"
+  | "framework"
+  | "workflow"
+  | "specialized";
+
+// Plugin category can be string or null
+export type PluginCategory = Category | string | null;
 
 export interface PluginAuthor {
   name: string;
@@ -145,9 +129,9 @@ export interface SkillFrontmatter {
 
 // Flattened types for search/display
 export interface FlatPlugin extends Plugin {
-  owner_id: string;
-  owner_display_name: string;
-  owner_avatar_url: string;
+  author_id: string;
+  author_display_name: string;
+  author_avatar_url: string;
   repo_full_name: string;
 }
 
@@ -156,18 +140,34 @@ export interface BrowsePlugin {
   name: string;
   description: string | null;
   category: PluginCategory | null;
-  owner_id: string;
-  owner_display_name: string;
-  owner_avatar_url: string;
+  author_id: string;
+  author_display_name: string;
+  author_avatar_url: string;
+  marketplace_name: string;
   repo_full_name: string;
   install_commands: string[];
   signals: {
     stars: number;
-    pushed_at: string;
+    pushed_at: string | null;
   };
   commands_count: number;
   skills_count: number;
+  keywords: string[];
 }
 
 // Sort options
 export type SortOption = "stars" | "recent";
+
+export interface BrowseMarketplace {
+  name: string;
+  description: string | null;
+  author_id: string;
+  author_display_name: string;
+  author_avatar_url: string;
+  repo_full_name: string;
+  signals: { stars: number; pushed_at: string | null };
+  plugins_count: number;
+  first_plugin_name: string | null;
+  keywords: string[];
+}
+
