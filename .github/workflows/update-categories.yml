@@ -49,14 +49,29 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore: update marketplace categories'
-          title: 'chore: update marketplace categories'
+          title: 'chore(categories): auto-update marketplace categories'
           body: |
-            ## Marketplace Category Updates
+            ## What this PR does
+
+            Automatically updates `data/marketplace-categories.json` based on detected changes in marketplace content (descriptions, plugins).
+
+            ## Changes detected
 
             ${{ steps.detect.outputs.summary }}
 
-            ### Changes
-            - Updated `data/marketplace-categories.json`
+            ## How to review
+
+            1. Check the diff in `data/marketplace-categories.json`
+            2. Verify new/changed categories make sense for the marketplaces listed
+            3. Categories should match marketplace content (e.g., a Next.js plugin marketplace should have `web-frameworks`)
+
+            ## Merge criteria
+
+            - [ ] Category assignments look reasonable
+            - [ ] No unexpected marketplaces were re-categorized
+            - [ ] Distribution stats in the file look balanced
+
+            If all checks pass, merge this PR. No code changes - just data updates.
 
             ---
             *Automated by [Update Categories](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) workflow*
