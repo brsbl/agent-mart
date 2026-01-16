@@ -43,7 +43,7 @@ export function NavBar() {
               <Search className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
               <input
                 type="text"
-                placeholder="Search plugins..."
+                placeholder="Search..."
                 aria-label="Search plugins"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

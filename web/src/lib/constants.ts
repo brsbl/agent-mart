@@ -1,7 +1,8 @@
 // Data URLs
 export const DATA_URLS = {
   PLUGINS_BROWSE: '/data/plugins-browse.json',
-  OWNER: (ownerId: string) => `/data/owners/${ownerId}.json`,
+  MARKETPLACES_BROWSE: '/data/marketplaces-browse.json',
+  AUTHOR: (authorId: string) => `/data/authors/${authorId}.json`,
 } as const;
 
 // UI Constants

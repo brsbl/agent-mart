@@ -133,6 +133,37 @@ npm test
 - Security (cache keys, GraphQL sanitization)
 - File patterns (SKILL.md, commands, etc.)
 
+## Web Frontend
+
+The project includes a Next.js web application for browsing the plugin directory.
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to browse the marketplace.
+
+See [web/README.md](./web/README.md) for frontend-specific documentation.
+
+## Project Structure
+
+```
+agent-mart/
+├── src/
+│   ├── lib/          # GitHub client, cache, parsers, validators
+│   └── pipeline/     # 7-step ETL pipeline (01-discover to 07-output)
+├── scripts/          # Build orchestrator
+├── tests/            # Unit tests
+├── data/             # Intermediate pipeline files (gitignored)
+├── public/           # Generated JSON output
+└── web/              # Next.js frontend application
+    ├── src/app/      # App router pages
+    ├── src/components/
+    └── src/lib/
+```
+
 ## GitHub Action
 
 The pipeline runs nightly via GitHub Actions at 2 AM UTC. To set up:
@@ -146,6 +177,10 @@ The pipeline runs nightly via GitHub Actions at 2 AM UTC. To set up:
 
 You can also trigger manually from **Actions → Nightly Build → Run workflow**.
 
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
 ## License
 
-MIT
+MIT - see [LICENSE](./LICENSE) for details.

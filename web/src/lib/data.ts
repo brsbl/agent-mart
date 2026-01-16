@@ -1,5 +1,6 @@
 import type {
-  OwnerDetail,
+  AuthorDetail,
+  Marketplace,
   FlatPlugin,
   BrowsePlugin,
   SortOption,
@@ -9,23 +10,31 @@ import type {
 // DATA FLATTENING (for search/display)
 // ============================================
 
-export function flattenPlugins(ownerDetail: OwnerDetail): FlatPlugin[] {
+export function flattenPlugins(authorDetail: AuthorDetail): FlatPlugin[] {
   const plugins: FlatPlugin[] = [];
 
-  for (const repo of ownerDetail.repos) {
-    const repoPlugins = repo.marketplace?.plugins || [];
-    for (const plugin of repoPlugins) {
+  for (const marketplace of authorDetail.marketplaces) {
+    const marketplacePlugins = marketplace.plugins || [];
+    for (const plugin of marketplacePlugins) {
       plugins.push({
         ...plugin,
-        owner_id: ownerDetail.owner.id,
-        owner_display_name: ownerDetail.owner.display_name,
-        owner_avatar_url: ownerDetail.owner.avatar_url,
-        repo_full_name: repo.full_name,
+        author_id: authorDetail.author.id,
+        author_display_name: authorDetail.author.display_name,
+        author_avatar_url: authorDetail.author.avatar_url,
+        repo_full_name: marketplace.repo_full_name,
       });
     }
   }
 
   return plugins;
+}
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+export function isSinglePluginMarketplace(marketplace: Marketplace): boolean {
+  return marketplace.plugins.length === 1;
 }
 
 // ============================================
@@ -39,11 +48,11 @@ export function sortPlugins(
   return [...plugins].sort((a, b) => {
     switch (sortBy) {
       case "stars":
-        return b.signals.stars - a.signals.stars;
+        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
       case "recent":
         return (
-          new Date(b.signals.pushed_at).getTime() -
-          new Date(a.signals.pushed_at).getTime()
+          new Date(b.signals?.pushed_at ?? 0).getTime() -
+          new Date(a.signals?.pushed_at ?? 0).getTime()
         );
       default:
         return 0;
@@ -97,8 +106,7 @@ export function formatBytes(bytes: number | null): string {
 
 export function getCategoryBadgeClass(category: string): string {
   // Validate category is in CATEGORY_ORDER to avoid arbitrary class names
-  const validCategories = new Set(CATEGORY_ORDER);
-  if (validCategories.has(category as NormalizedCategory)) {
+  if (VALID_CATEGORIES.has(category as NormalizedCategory)) {
     return `badge-${category}`;
   }
   return "badge-development"; // fallback
@@ -242,6 +250,9 @@ export const CATEGORY_ORDER = [
 ] as const;
 
 export type NormalizedCategory = typeof CATEGORY_ORDER[number];
+
+// Pre-computed Set for O(1) category validation
+const VALID_CATEGORIES = new Set<NormalizedCategory>(CATEGORY_ORDER);
 
 // Display names for categories
 const CATEGORY_DISPLAY_NAMES: Record<NormalizedCategory, string> = {
