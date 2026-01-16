@@ -3,7 +3,10 @@ import type {
   Marketplace,
   FlatPlugin,
   BrowsePlugin,
+  BrowseMarketplace,
   SortOption,
+  MarketplaceSortOption,
+  MarketplaceCategory,
 } from "./types";
 
 // ============================================
@@ -345,4 +348,109 @@ export function groupPluginsByCategory(plugins: BrowsePlugin[]): CategoryGroup[]
   }
 
   return result;
+}
+
+// ============================================
+// MARKETPLACE CATEGORIES
+// ============================================
+
+// Display names for marketplace categories
+const MARKETPLACE_CATEGORY_DISPLAY: Record<MarketplaceCategory, string> = {
+  'multi-agent': 'Multi-Agent',
+  'web-frameworks': 'Web Frameworks',
+  'backend-frameworks': 'Backend',
+  'testing-automation': 'Testing',
+  'code-quality': 'Code Quality',
+  'devops-infra': 'DevOps',
+  'databases-data': 'Databases',
+  'api-integrations': 'API & Integrations',
+  'planning-workflow': 'Planning',
+  'enterprise-domain': 'Enterprise',
+  'productivity-tools': 'Productivity',
+  'ai-ml-tools': 'AI & ML',
+};
+
+// Map marketplace categories to badge CSS class suffixes
+const MARKETPLACE_CATEGORY_BADGE_MAP: Record<MarketplaceCategory, string> = {
+  'multi-agent': 'ai-ml',
+  'web-frameworks': 'frameworks',
+  'backend-frameworks': 'frameworks',
+  'testing-automation': 'testing',
+  'code-quality': 'quality',
+  'devops-infra': 'devops',
+  'databases-data': 'database',
+  'api-integrations': 'api',
+  'planning-workflow': 'automation',
+  'enterprise-domain': 'business',
+  'productivity-tools': 'productivity',
+  'ai-ml-tools': 'ai-ml',
+};
+
+// Ordered list of marketplace categories for filter display
+export const MARKETPLACE_CATEGORY_ORDER: MarketplaceCategory[] = [
+  'multi-agent',
+  'ai-ml-tools',
+  'web-frameworks',
+  'backend-frameworks',
+  'devops-infra',
+  'testing-automation',
+  'code-quality',
+  'databases-data',
+  'api-integrations',
+  'planning-workflow',
+  'productivity-tools',
+  'enterprise-domain',
+];
+
+export function getMarketplaceCategoryDisplay(category: MarketplaceCategory): string {
+  return MARKETPLACE_CATEGORY_DISPLAY[category] ?? category;
+}
+
+export function getMarketplaceCategoryBadgeClass(category: MarketplaceCategory): string {
+  const badgeSuffix = MARKETPLACE_CATEGORY_BADGE_MAP[category] ?? 'development';
+  return `badge-${badgeSuffix}`;
+}
+
+// ============================================
+// MARKETPLACE SORTING
+// ============================================
+
+export function sortMarketplaces(
+  marketplaces: BrowseMarketplace[],
+  sortBy: MarketplaceSortOption
+): BrowseMarketplace[] {
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  return [...marketplaces].sort((a, b) => {
+    switch (sortBy) {
+      case "popular":
+        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
+
+      case "trending": {
+        // Trending: pushed within last 7 days, sorted by stars
+        const aTime = new Date(a.signals?.pushed_at ?? 0).getTime();
+        const bTime = new Date(b.signals?.pushed_at ?? 0).getTime();
+        const aRecent = aTime > sevenDaysAgo;
+        const bRecent = bTime > sevenDaysAgo;
+
+        // Recent items first
+        if (aRecent !== bRecent) return bRecent ? 1 : -1;
+
+        // Within same recency tier, sort by stars
+        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
+      }
+
+      case "recent":
+        return (
+          new Date(b.signals?.pushed_at ?? 0).getTime() -
+          new Date(a.signals?.pushed_at ?? 0).getTime()
+        );
+
+      default: {
+        // Exhaustiveness check - will cause compile error if new sort option is added
+        const _exhaustiveCheck: never = sortBy;
+        return 0;
+      }
+    }
+  });
 }

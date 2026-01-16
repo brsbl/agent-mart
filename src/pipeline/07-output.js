@@ -131,11 +131,13 @@ export function output() {
         repo_full_name: marketplace.repo_full_name,
         signals: {
           stars: marketplace.signals?.stars || 0,
+          forks: marketplace.signals?.forks || 0,
           pushed_at: marketplace.signals?.pushed_at || null
         },
         plugins_count: marketplace.plugins?.length || 0,
         first_plugin_name: firstPlugin?.name || null,
-        keywords: marketplace.keywords || []
+        keywords: marketplace.keywords || [],
+        categories: marketplace.categories || []
       });
     }
   }

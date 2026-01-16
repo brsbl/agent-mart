@@ -21,6 +21,7 @@ import {
   FileTree,
   LoadingState,
   ErrorState,
+  CategoryPill,
 } from "@/components";
 import { useFetch } from "@/hooks";
 import type { AuthorDetail, Marketplace, Plugin } from "@/lib/types";
@@ -298,11 +299,22 @@ export default function MarketplaceDetailPage() {
               </span>
               <span className="text-[var(--foreground-muted)]">forks</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[var(--foreground-muted)]">
-              <Calendar className="w-4 h-4" aria-hidden="true" />
-              <span>Updated {formatDate(marketplace.signals.pushed_at)}</span>
-            </div>
+            {marketplace.signals.pushed_at && (
+              <div className="flex items-center gap-1.5 text-[var(--foreground-muted)]">
+                <Calendar className="w-4 h-4" aria-hidden="true" />
+                <span>Updated {formatDate(marketplace.signals.pushed_at)}</span>
+              </div>
+            )}
           </div>
+
+          {/* Category Pills */}
+          {marketplace.categories && marketplace.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {marketplace.categories.map((category) => (
+                <CategoryPill key={category} category={category} size="md" />
+              ))}
+            </div>
+          )}
 
           {/* Keyword Pills */}
           {marketplace.keywords.length > 0 && (

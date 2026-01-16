@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Store, Star, GitFork } from "lucide-react";
 import { formatNumber } from "@/lib/data";
+import { CategoryPill } from "./CategoryPill";
+import type { MarketplaceCategory } from "@/lib/types";
 
 // Props for the marketplace card
 // Accepts marketplace data plus author info for flexibility
@@ -12,6 +14,7 @@ export interface MarketplaceCardProps {
     name: string;
     description: string | null;
     keywords: string[];
+    categories?: MarketplaceCategory[];
     signals: {
       stars: number;
       forks: number;
@@ -30,8 +33,8 @@ export function MarketplaceCard({
 }: MarketplaceCardProps) {
   const marketplaceUrl = `/${author_id}/${marketplace.name}`;
 
-  // Show first 3-4 keywords as badges
-  const displayKeywords = marketplace.keywords.slice(0, 4);
+  // Show first 2 categories as badges
+  const displayCategories = (marketplace.categories || []).slice(0, 2);
 
   return (
     <div className="card p-4 h-full flex flex-col relative">
@@ -91,16 +94,11 @@ export function MarketplaceCard({
         </span>
       </div>
 
-      {/* Keywords as small badges */}
-      {displayKeywords.length > 0 && (
+      {/* Category badges */}
+      {displayCategories.length > 0 && (
         <div className="flex flex-wrap gap-1.5 relative z-10 pointer-events-none">
-          {displayKeywords.map((keyword) => (
-            <span
-              key={keyword}
-              className="px-2 py-0.5 text-xs rounded-full bg-[var(--background-secondary)] text-[var(--foreground-muted)]"
-            >
-              {keyword}
-            </span>
+          {displayCategories.map((category) => (
+            <CategoryPill key={category} category={category} size="sm" />
           ))}
         </div>
       )}

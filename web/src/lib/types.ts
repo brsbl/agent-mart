@@ -69,8 +69,8 @@ export type MarketplaceCategory =
 export interface Signals {
   stars: number;
   forks: number;
-  pushed_at: string;
-  created_at: string;
+  pushed_at: string | null;
+  created_at: string | null;
   license: string | null;
 }
 
@@ -173,6 +173,7 @@ export interface BrowsePlugin {
 
 // Sort options
 export type SortOption = "stars" | "recent";
+export type MarketplaceSortOption = "popular" | "trending" | "recent";
 
 export interface BrowseMarketplace {
   name: string;
@@ -181,9 +182,10 @@ export interface BrowseMarketplace {
   author_display_name: string;
   author_avatar_url: string;
   repo_full_name: string;
-  signals: { stars: number; pushed_at: string | null };
+  signals: { stars: number; forks: number; pushed_at: string | null };
   plugins_count: number;
   first_plugin_name: string | null;
   keywords: string[];
+  categories: MarketplaceCategory[];
 }
 
