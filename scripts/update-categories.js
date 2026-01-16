@@ -103,14 +103,27 @@ function updateCategories() {
     return;
   }
 
-  const needsUpdate = JSON.parse(readFileSync(NEEDS_UPDATE_PATH, 'utf-8'));
+  let needsUpdate;
+  try {
+    needsUpdate = JSON.parse(readFileSync(NEEDS_UPDATE_PATH, 'utf-8'));
+  } catch (error) {
+    console.error(`Error parsing ${NEEDS_UPDATE_PATH}: ${error.message}`);
+    process.exit(1);
+  }
+
   if (needsUpdate.length === 0) {
     console.log('No updates needed');
     return;
   }
 
   // Load current categories
-  const categoriesData = JSON.parse(readFileSync(CATEGORIES_PATH, 'utf-8'));
+  let categoriesData;
+  try {
+    categoriesData = JSON.parse(readFileSync(CATEGORIES_PATH, 'utf-8'));
+  } catch (error) {
+    console.error(`Error parsing ${CATEGORIES_PATH}: ${error.message}`);
+    process.exit(1);
+  }
 
   console.log(`Updating ${needsUpdate.length} marketplaces...`);
 

@@ -170,10 +170,13 @@ export function enrich() {
     });
 
     // Get marketplace categories from pre-generated data
+    // Supports both legacy array format and new object format with hash
     const repoKey = `${ownerInfo.id}/${marketplaceName}`;
-    const marketplaceCategories = categoriesData.marketplaces[repoKey] ||
-                                   categoriesData.marketplaces[full_name] ||
-                                   ['productivity-tools'];
+    const categoryEntry = categoriesData.marketplaces[repoKey] ||
+                          categoriesData.marketplaces[full_name];
+    const marketplaceCategories = Array.isArray(categoryEntry)
+      ? categoryEntry
+      : (categoryEntry?.categories || ['productivity-tools']);
 
     // Build marketplace entry (merged repo + marketplace fields)
     const marketplaceEntry = {
