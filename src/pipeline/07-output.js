@@ -20,7 +20,7 @@ export function output() {
   ensureDir(AUTHORS_DIR);
 
   // Load categorized data if available
-  let categorizedMap = new Map();
+  const categorizedMap = new Map();
   let categoryStats = null;
   try {
     const categorized = loadJson(CATEGORIZED_PATH);
@@ -29,7 +29,7 @@ export function output() {
     }
     categoryStats = loadJson(CATEGORY_STATS_PATH);
     log(`Loaded ${categorized.length} categorized marketplaces`);
-  } catch (e) {
+  } catch {
     log('Warning: Categorized data not found. Run 08-categorize.js first.');
   }
 

@@ -66,6 +66,31 @@ export function validateMarketplace(data, context = '') {
 }
 
 /**
+ * Validate plugin.json per Claude Code spec
+ * Required: name
+ * @param {Object} data - Parsed plugin.json data
+ * @param {string} context - Context for error messages
+ * @returns {ValidationResult}
+ */
+export function validatePlugin(data, context = '') {
+  const errors = [];
+  const warnings = [];
+  const prefix = context ? `[${context}] ` : '';
+
+  if (!data || typeof data !== 'object') {
+    errors.push(`${prefix}plugin.json must be a valid JSON object`);
+    return { valid: false, errors, warnings };
+  }
+
+  // Required: name
+  if (!data.name || typeof data.name !== 'string' || data.name.trim() === '') {
+    errors.push(`${prefix}plugin.json requires "name" field (non-empty string)`);
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
+/**
  * Validate SKILL.md frontmatter per Claude Code spec
  * Required: name, description
  * @param {Object|null} frontmatter - Parsed YAML frontmatter

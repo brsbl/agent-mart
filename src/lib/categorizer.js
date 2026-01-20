@@ -178,7 +178,7 @@ export const CAPABILITIES_RULES = {
     patterns: [
       /\bdevops\b/i,
       /\bdeploy(?:ment|ing)?\b/i,
-      /\bci[\/\-]?cd\b/i,
+      /\bci[/-]?cd\b/i,
       /\binfrastructure\s*(?:as\s*code)?\b/i,
       /\bkubernetes\b/i,
       /\bk8s\b/i,
