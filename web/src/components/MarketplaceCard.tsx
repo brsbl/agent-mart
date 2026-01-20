@@ -185,13 +185,9 @@ export function MarketplaceCard({
             ) : (
               <div className="w-5 h-5 rounded-full bg-[var(--background-tertiary)] border border-gray-300" />
             )}
-            <Link
-              href={`/${author_id}`}
-              className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors pointer-events-auto relative z-20 truncate font-[family-name:var(--font-ibm)]"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <span className="text-xs text-[var(--foreground-secondary)] truncate font-[family-name:var(--font-ibm)]">
               @{author_id}
-            </Link>
+            </span>
           </div>
         </div>
 

@@ -1,20 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import {
   Store,
   Star,
   GitFork,
   ExternalLink,
   Calendar,
-  ChevronDown,
-  ChevronRight,
-  Terminal,
-  Sparkles,
-  Puzzle,
 } from "lucide-react";
 import {
   CopyableCommand,
@@ -22,165 +16,13 @@ import {
   LoadingState,
   ErrorState,
   CategoryPill,
+  PluginSection,
 } from "@/components";
 import { useFetch } from "@/hooks";
-import type { AuthorDetail, Marketplace, Plugin } from "@/lib/types";
+import type { AuthorDetail, Marketplace } from "@/lib/types";
 import { formatNumber, formatDate } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
 import { DATA_URLS } from "@/lib/constants";
-
-// Expandable section component for commands and skills
-interface ExpandableSectionProps {
-  name: string;
-  description: string;
-  content: string;
-}
-
-function ExpandableSection({ name, description, content }: ExpandableSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const hasContent = content && content.trim().length > 0;
-
-  return (
-    <div className="border border-[var(--border)] rounded-lg">
-      <button
-        onClick={() => hasContent && setIsExpanded(!isExpanded)}
-        className={`w-full p-3 text-left flex items-start gap-3 ${hasContent ? "cursor-pointer" : "cursor-default"}`}
-        disabled={!hasContent}
-        aria-expanded={isExpanded}
-      >
-        {hasContent && (
-          <span className="flex-shrink-0 mt-0.5 text-[var(--foreground-muted)]">
-            {isExpanded ? (
-              <ChevronDown className="w-4 h-4" aria-hidden="true" />
-            ) : (
-              <ChevronRight className="w-4 h-4" aria-hidden="true" />
-            )}
-          </span>
-        )}
-        <div className={`flex-1 ${!hasContent ? "ml-7" : ""}`}>
-          <code className="font-mono text-sm font-semibold text-[var(--accent)]">
-            {name}
-          </code>
-          <p className="text-xs text-[var(--foreground-secondary)] mt-0.5">
-            {description || "No description"}
-          </p>
-        </div>
-      </button>
-      {isExpanded && hasContent && (
-        <div className="px-3 pb-3 pt-0">
-          <div className="ml-7 p-3 bg-[var(--background-secondary)] rounded-lg overflow-x-auto">
-            <pre className="text-xs text-[var(--foreground-secondary)] whitespace-pre-wrap font-mono">
-              {content}
-            </pre>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Expandable plugin card component
-interface PluginSectionProps {
-  plugin: Plugin;
-  defaultExpanded?: boolean;
-}
-
-function PluginSection({ plugin, defaultExpanded = false }: PluginSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  const hasDetails = plugin.commands.length > 0 || plugin.skills.length > 0;
-
-  return (
-    <div id={plugin.name} className="card scroll-mt-24">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full p-4 text-left flex items-start gap-4 cursor-pointer"
-        aria-expanded={isExpanded}
-      >
-        <div className="w-10 h-10 rounded-lg bg-[var(--background-secondary)] flex items-center justify-center flex-shrink-0">
-          <Puzzle className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold truncate">{plugin.name}</h3>
-            <span className="text-[var(--foreground-muted)]">
-              {isExpanded ? (
-                <ChevronDown className="w-4 h-4" aria-hidden="true" />
-              ) : (
-                <ChevronRight className="w-4 h-4" aria-hidden="true" />
-              )}
-            </span>
-          </div>
-          <p className="text-sm text-[var(--foreground-secondary)] mt-1 line-clamp-2">
-            {plugin.description || "No description"}
-          </p>
-          <div className="flex items-center gap-4 mt-2 text-xs text-[var(--foreground-muted)]">
-            {plugin.commands.length > 0 && (
-              <span className="flex items-center gap-1">
-                <Terminal className="w-3 h-3" aria-hidden="true" />
-                {plugin.commands.length} command{plugin.commands.length !== 1 ? "s" : ""}
-              </span>
-            )}
-            {plugin.skills.length > 0 && (
-              <span className="flex items-center gap-1">
-                <Sparkles className="w-3 h-3" aria-hidden="true" />
-                {plugin.skills.length} skill{plugin.skills.length !== 1 ? "s" : ""}
-              </span>
-            )}
-          </div>
-        </div>
-      </button>
-
-      {isExpanded && (
-        <div className="px-4 pb-4 pt-0 space-y-4">
-          {/* Install Command */}
-          <div className="ml-14">
-            <CopyableCommand command={plugin.install_commands} />
-          </div>
-
-          {/* Commands */}
-          {plugin.commands.length > 0 && (
-            <div className="ml-14">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-muted)] mb-2 flex items-center gap-2">
-                <Terminal className="w-3 h-3" aria-hidden="true" />
-                Commands
-              </h4>
-              <div className="space-y-2">
-                {plugin.commands.map((command) => (
-                  <ExpandableSection
-                    key={command.name}
-                    name={command.name}
-                    description={command.description}
-                    content={command.content}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Skills */}
-          {plugin.skills.length > 0 && (
-            <div className="ml-14">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-muted)] mb-2 flex items-center gap-2">
-                <Sparkles className="w-3 h-3" aria-hidden="true" />
-                Skills
-              </h4>
-              <div className="space-y-2">
-                {plugin.skills.map((skill) => (
-                  <ExpandableSection
-                    key={skill.name}
-                    name={skill.name}
-                    description={skill.description}
-                    content={skill.content}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function MarketplaceDetailPage() {
   const params = useParams();
@@ -261,20 +103,15 @@ export default function MarketplaceDetailPage() {
           </p>
 
           {/* Author info */}
-          <div className="flex items-center gap-2 mb-4">
-            <Link
-              href={`/${author.id}`}
-              className="flex items-center gap-2 text-[var(--foreground-muted)] hover:text-[var(--accent)] transition-colors"
-            >
-              <Image
-                src={author.avatar_url}
-                alt={author.display_name}
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
-              <span>@{author.id}</span>
-            </Link>
+          <div className="flex items-center gap-2 mb-4 text-[var(--foreground-muted)]">
+            <Image
+              src={author.avatar_url}
+              alt={author.display_name}
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
+            <span>@{author.id}</span>
           </div>
 
           {/* Metadata: Stats */}
@@ -397,32 +234,6 @@ export default function MarketplaceDetailPage() {
             </div>
           </section>
 
-          {/* More from Author */}
-          <section>
-            <h2 className="section-title mb-4">
-              More from {author.display_name}
-            </h2>
-            <Link
-              href={`/${author.id}`}
-              className="flex items-center gap-3 p-3 card"
-            >
-              <Image
-                src={author.avatar_url}
-                alt={author.display_name}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-              <div>
-                <span className="font-medium">{author.display_name}</span>
-                <p className="text-xs text-[var(--foreground-muted)]">
-                  {author.stats.total_plugins} plugins across{" "}
-                  {author.stats.total_marketplaces} marketplace
-                  {author.stats.total_marketplaces !== 1 ? "s" : ""}
-                </p>
-              </div>
-            </Link>
-          </section>
         </div>
       </div>
     </div>
