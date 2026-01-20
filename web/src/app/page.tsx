@@ -1,12 +1,12 @@
 "use client";
 
-import { Suspense, useMemo, useState, useEffect } from "react";
+import { Suspense, useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Package, Users, Store } from "lucide-react";
-import { MarketplaceCard, LoadingState, ErrorState, CategoryPill, SortDropdown } from "@/components";
+import { MarketplaceCard, LoadingState, ErrorState, SortDropdown, CategoryPill } from "@/components";
 import { useFetch } from "@/hooks";
-import type { BrowseMarketplace, Meta, MarketplaceSortOption, MarketplaceCategory } from "@/lib/types";
-import { formatNumber, sortMarketplaces, MARKETPLACE_CATEGORY_ORDER } from "@/lib/data";
+import type { BrowseMarketplace, Meta, MarketplaceSortOption, CategoryVerb } from "@/lib/types";
+import { formatNumber, sortMarketplaces, VERB_ORDER, getVerbDisplay } from "@/lib/data";
 import { DATA_URLS } from "@/lib/constants";
 
 interface MarketplacesData {
@@ -31,8 +31,17 @@ function HomePageContent() {
 
   // State for sorting, filtering, and pagination
   const [sortBy, setSortBy] = useState<MarketplaceSortOption>("recent");
-  const [selectedCategory, setSelectedCategory] = useState<MarketplaceCategory | null>(null);
+  const [selectedVerb, setSelectedVerb] = useState<CategoryVerb | null>(null);
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  // Track search query changes to reset pagination - using state instead of effect
+  const [lastSearchQuery, setLastSearchQuery] = useState(searchQuery);
+  if (lastSearchQuery !== searchQuery) {
+    setLastSearchQuery(searchQuery);
+    if (!searchQuery) {
+      setDisplayCount(INITIAL_DISPLAY_COUNT);
+    }
+  }
 
   // Fetch only marketplaces data
   const { data: marketplacesData, loading, error } = useFetch<MarketplacesData>(
@@ -43,11 +52,11 @@ function HomePageContent() {
   const meta = marketplacesData?.meta ?? null;
   const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
 
-  // Get unique categories from all marketplaces, sorted by predefined order
-  const availableCategories = useMemo(() => {
-    const cats = new Set<MarketplaceCategory>();
-    allMarketplaces.forEach(m => m.categories?.forEach(c => cats.add(c)));
-    return MARKETPLACE_CATEGORY_ORDER.filter(c => cats.has(c));
+  // Get unique verbs from all marketplaces, sorted by predefined order
+  const availableVerbs = useMemo(() => {
+    const verbs = new Set<CategoryVerb>();
+    allMarketplaces.forEach(m => m.categories?.verbs?.forEach(v => verbs.add(v)));
+    return VERB_ORDER.filter(v => verbs.has(v));
   }, [allMarketplaces]);
 
   // Search filter for marketplaces only
@@ -61,7 +70,8 @@ function HomePageContent() {
       m.author_id.toLowerCase().includes(query) ||
       m.author_display_name.toLowerCase().includes(query) ||
       m.keywords?.some(k => k.toLowerCase().includes(query)) ||
-      m.categories?.some(c => c.toLowerCase().includes(query))
+      m.categories?.verbs?.some(v => v.toLowerCase().includes(query)) ||
+      m.categories?.nouns?.some(n => n.toLowerCase().includes(query))
     );
 
     return matchedMarketplaces.sort((a, b) => (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0));
@@ -71,22 +81,40 @@ function HomePageContent() {
   const filteredAndSortedMarketplaces = useMemo(() => {
     let result = allMarketplaces;
 
-    // Category filter
-    if (selectedCategory) {
-      result = result.filter(m => m.categories?.includes(selectedCategory));
+    // Verb filter
+    if (selectedVerb) {
+      result = result.filter(m => m.categories?.verbs?.includes(selectedVerb));
     }
 
     // Sort
     return sortMarketplaces(result, sortBy);
-  }, [allMarketplaces, selectedCategory, sortBy]);
+  }, [allMarketplaces, selectedVerb, sortBy]);
 
   const displayedMarketplaces = filteredAndSortedMarketplaces.slice(0, displayCount);
   const hasMore = displayCount < filteredAndSortedMarketplaces.length;
   const remainingCount = filteredAndSortedMarketplaces.length - displayCount;
 
+  // Infinite scroll - load more when sentinel is visible
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setDisplayCount(c => c + LOAD_MORE_COUNT);
+        }
+      },
+      { rootMargin: '100px' } // Trigger 100px before reaching bottom
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore]);
+
   // Reset display count when filter changes
-  const handleCategoryChange = (category: MarketplaceCategory | null) => {
-    setSelectedCategory(category);
+  const handleVerbChange = (verb: CategoryVerb | null) => {
+    setSelectedVerb(verb);
     setDisplayCount(INITIAL_DISPLAY_COUNT);
   };
 
@@ -95,12 +123,6 @@ function HomePageContent() {
     setDisplayCount(INITIAL_DISPLAY_COUNT);
   };
 
-  // Reset pagination when exiting search mode
-  useEffect(() => {
-    if (!searchQuery) {
-      setDisplayCount(INITIAL_DISPLAY_COUNT);
-    }
-  }, [searchQuery]);
 
   // Helper to render marketplace cards consistently
   const renderMarketplaceCard = (marketplace: BrowseMarketplace) => (
@@ -110,10 +132,14 @@ function HomePageContent() {
         name: marketplace.name,
         description: marketplace.description,
         keywords: marketplace.keywords ?? [],
-        categories: marketplace.categories ?? [],
+        categories: marketplace.categories?.verbs ?? [],
+        nouns: marketplace.categories?.nouns ?? [],
+        integration: marketplace.categories?.integration ?? null,
+        repo_full_name: marketplace.repo_full_name ?? undefined,
         signals: {
           stars: marketplace.signals?.stars ?? 0,
           forks: marketplace.signals?.forks ?? 0,
+          pushed_at: marketplace.signals?.pushed_at ?? null,
         },
       }}
       author_id={marketplace.author_id}
@@ -142,7 +168,7 @@ function HomePageContent() {
   // Search results view
   if (searchQuery && searchResults) {
     return (
-      <div className="container py-8">
+      <div className="container px-4 sm:px-6 py-6 sm:py-8">
         <section>
           <h2 className="section-title mb-4">
             Search results for &quot;{searchQuery}&quot;
@@ -152,7 +178,7 @@ function HomePageContent() {
           </p>
 
           {searchResults.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
               {searchResults.map(renderMarketplaceCard)}
             </div>
           ) : (
@@ -169,7 +195,7 @@ function HomePageContent() {
 
   // Browse view
   return (
-    <div className="container py-8">
+    <div className="container px-4 sm:px-6 py-6 sm:py-8">
       {/* Stats Bar */}
       {meta && (
         <div className="flex flex-wrap items-center justify-center gap-6 mb-8 py-4 px-6 bg-[var(--background-secondary)] rounded-lg">
@@ -203,7 +229,7 @@ function HomePageContent() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-[var(--foreground)]">
             Marketplaces
-            {selectedCategory && (
+            {selectedVerb && (
               <span className="text-[var(--foreground-muted)] font-normal ml-2">
                 ({filteredAndSortedMarketplaces.length})
               </span>
@@ -212,27 +238,27 @@ function HomePageContent() {
           <SortDropdown value={sortBy} onChange={handleSortChange} />
         </div>
 
-        {/* Category Filters */}
-        {availableCategories.length > 0 && (
+        {/* Verb Filters */}
+        {availableVerbs.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
             <button
               type="button"
-              onClick={() => handleCategoryChange(null)}
+              onClick={() => handleVerbChange(null)}
               className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
-                selectedCategory === null
+                selectedVerb === null
                   ? "bg-[var(--accent)] text-white"
                   : "bg-[var(--background-secondary)] text-[var(--foreground-secondary)] hover:bg-[var(--background-tertiary)]"
               }`}
             >
               All
             </button>
-            {availableCategories.map((category) => (
+            {availableVerbs.map((verb) => (
               <CategoryPill
-                key={category}
-                category={category}
+                key={verb}
+                category={verb}
                 size="md"
-                isActive={selectedCategory === category}
-                onClick={() => handleCategoryChange(selectedCategory === category ? null : category)}
+                isActive={selectedVerb === verb}
+                onClick={() => handleVerbChange(selectedVerb === verb ? null : verb)}
               />
             ))}
           </div>
@@ -240,7 +266,7 @@ function HomePageContent() {
 
         {/* Marketplace Grid */}
         {displayedMarketplaces.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             {displayedMarketplaces.map(renderMarketplaceCard)}
           </div>
         ) : (
@@ -251,9 +277,9 @@ function HomePageContent() {
           </div>
         )}
 
-        {/* See More Button */}
+        {/* Load more - triggers on scroll or button click */}
         {hasMore && (
-          <div className="text-center mt-8">
+          <div ref={loadMoreRef} className="text-center mt-8">
             <button
               type="button"
               onClick={() => setDisplayCount(c => c + LOAD_MORE_COUNT)}
