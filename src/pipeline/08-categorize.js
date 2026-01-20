@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
+import { extractCategories, generateTaxonomy, TECH_STACK_RULES, CAPABILITIES_RULES } from '../lib/categorizer.js';
 
 const DATA_DIR = join(process.cwd(), 'data');
 
@@ -9,10 +10,8 @@ async function loadJSON(filename) {
 }
 
 export async function categorize() {
-  console.log('Loading taxonomy and analysis data...');
+  console.log('Loading enriched marketplace data...');
 
-  const taxonomy = await loadJSON('category-taxonomy.json');
-  const analysis = await loadJSON('marketplace-detailed-analysis.json');
   const enrichedRaw = await loadJSON('06-enriched.json');
 
   // Extract all marketplaces from the enriched data (organized by author)
@@ -30,125 +29,46 @@ export async function categorize() {
     }
   }
 
-  console.log(`Processing ${analysis.length} analyzed, ${allMarketplaces.length} total marketplaces...`);
+  console.log(`Processing ${allMarketplaces.length} marketplaces with rules-based categorization...`);
 
-  const tagMapping = taxonomy.tagMapping;
-
-  // Create a map for quick lookup
-  const analysisMap = new Map();
-  for (const item of analysis) {
-    analysisMap.set(item.repo, item);
-  }
-
-  // Categorize each marketplace
+  // Categorize each marketplace using extraction rules
   const categorized = allMarketplaces.map(marketplace => {
-    const repo = marketplace.repo_full_name;
-    const analysisItem = analysisMap.get(repo);
-
-    if (!analysisItem) {
-      return {
-        ...marketplace,
-        categories: {
-          verbs: [],
-          nouns: [],
-          integration: null
-        },
-        analysis: null
-      };
-    }
-
-    const verbs = new Set();
-    const nouns = new Set();
-
-    // Map tags to categories
-    for (const tag of analysisItem.stage_lifecycle_arch || []) {
-      const mapping = tagMapping[tag];
-      if (mapping) {
-        if (mapping.verb) verbs.add(mapping.verb);
-        if (mapping.noun) nouns.add(mapping.noun);
-      }
-    }
-
-    // Normalize integration name
-    let integration = analysisItem.integration;
-    if (integration) {
-      // Normalize common variations
-      integration = integration
-        .replace(/^next\.js$/i, 'Next.js')
-        .replace(/^nextjs$/i, 'Next.js')
-        .replace(/^react\.js$/i, 'React')
-        .replace(/^reactjs$/i, 'React')
-        .replace(/^playwright$/i, 'Playwright')
-        .replace(/^github$/i, 'GitHub')
-        .replace(/^git$/i, 'Git')
-        .replace(/^claude code$/i, 'Claude Code')
-        .replace(/^jira$/i, 'Jira')
-        .replace(/^linear$/i, 'Linear')
-        .replace(/^obsidian$/i, 'Obsidian')
-        .replace(/^notion$/i, 'Notion')
-        .replace(/^slack$/i, 'Slack')
-        .replace(/^telegram$/i, 'Telegram')
-        .replace(/^supabase$/i, 'Supabase')
-        .replace(/^aws$/i, 'AWS')
-        .replace(/^kubernetes$/i, 'Kubernetes')
-        .replace(/^docker$/i, 'Docker')
-        .replace(/^postgresql$/i, 'PostgreSQL')
-        .replace(/^fastapi$/i, 'FastAPI')
-        .replace(/^flutter$/i, 'Flutter')
-        .replace(/^angular$/i, 'Angular')
-        .replace(/^vue$/i, 'Vue')
-        .replace(/^svelte$/i, 'Svelte')
-        .replace(/^nuxt$/i, 'Nuxt');
-    }
+    const categories = extractCategories(marketplace);
 
     return {
       ...marketplace,
-      categories: {
-        verbs: Array.from(verbs).sort(),
-        nouns: Array.from(nouns).sort(),
-        integration: integration || null
-      },
-      analysis: {
-        function: analysisItem.function,
-        value: analysisItem.value
-      }
+      categories
     };
   });
 
   // Generate category statistics
   const stats = {
     totalMarketplaces: categorized.length,
-    withVerbs: categorized.filter(m => m.categories.verbs.length > 0).length,
-    withNouns: categorized.filter(m => m.categories.nouns.length > 0).length,
-    withIntegration: categorized.filter(m => m.categories.integration).length,
-    withAnalysis: categorized.filter(m => m.analysis).length,
-    verbCounts: {},
-    nounCounts: {},
-    integrationCounts: {}
+    withTechStack: categorized.filter(m => m.categories.techStack.length > 0).length,
+    withCapabilities: categorized.filter(m => m.categories.capabilities.length > 0).length,
+    withAnyCategory: categorized.filter(m =>
+      m.categories.techStack.length > 0 || m.categories.capabilities.length > 0
+    ).length,
+    techStackCounts: {},
+    capabilityCounts: {}
   };
 
+  // Count tech stack occurrences
   for (const m of categorized) {
-    for (const verb of m.categories.verbs) {
-      stats.verbCounts[verb] = (stats.verbCounts[verb] || 0) + 1;
+    for (const tech of m.categories.techStack) {
+      stats.techStackCounts[tech] = (stats.techStackCounts[tech] || 0) + 1;
     }
-    for (const noun of m.categories.nouns) {
-      stats.nounCounts[noun] = (stats.nounCounts[noun] || 0) + 1;
-    }
-    if (m.categories.integration) {
-      stats.integrationCounts[m.categories.integration] =
-        (stats.integrationCounts[m.categories.integration] || 0) + 1;
+    for (const cap of m.categories.capabilities) {
+      stats.capabilityCounts[cap] = (stats.capabilityCounts[cap] || 0) + 1;
     }
   }
 
-  // Sort counts
-  stats.verbCounts = Object.fromEntries(
-    Object.entries(stats.verbCounts).sort((a, b) => b[1] - a[1])
+  // Sort counts by frequency
+  stats.techStackCounts = Object.fromEntries(
+    Object.entries(stats.techStackCounts).sort((a, b) => b[1] - a[1])
   );
-  stats.nounCounts = Object.fromEntries(
-    Object.entries(stats.nounCounts).sort((a, b) => b[1] - a[1])
-  );
-  stats.integrationCounts = Object.fromEntries(
-    Object.entries(stats.integrationCounts).sort((a, b) => b[1] - a[1])
+  stats.capabilityCounts = Object.fromEntries(
+    Object.entries(stats.capabilityCounts).sort((a, b) => b[1] - a[1])
   );
 
   // Write outputs
@@ -162,31 +82,35 @@ export async function categorize() {
     JSON.stringify(stats, null, 2)
   );
 
+  // Write taxonomy for reference
+  const taxonomy = generateTaxonomy();
+  await writeFile(
+    join(DATA_DIR, 'category-taxonomy.json'),
+    JSON.stringify(taxonomy, null, 2)
+  );
+
   console.log('\nCategorization complete!');
   console.log(`  Total marketplaces: ${stats.totalMarketplaces}`);
-  console.log(`  With verbs: ${stats.withVerbs}`);
-  console.log(`  With nouns: ${stats.withNouns}`);
-  console.log(`  With integration: ${stats.withIntegration}`);
-  console.log(`  With analysis: ${stats.withAnalysis}`);
+  console.log(`  With tech stack: ${stats.withTechStack} (${((stats.withTechStack / stats.totalMarketplaces) * 100).toFixed(1)}%)`);
+  console.log(`  With capabilities: ${stats.withCapabilities} (${((stats.withCapabilities / stats.totalMarketplaces) * 100).toFixed(1)}%)`);
+  console.log(`  With any category: ${stats.withAnyCategory} (${((stats.withAnyCategory / stats.totalMarketplaces) * 100).toFixed(1)}%)`);
 
-  console.log('\nTop verbs:');
-  Object.entries(stats.verbCounts).slice(0, 10).forEach(([verb, count]) => {
-    console.log(`  ${verb}: ${count}`);
-  });
+  console.log('\nTech Stack distribution:');
+  for (const [tech, count] of Object.entries(stats.techStackCounts)) {
+    const label = TECH_STACK_RULES[tech]?.label || tech;
+    console.log(`  ${label}: ${count}`);
+  }
 
-  console.log('\nTop nouns:');
-  Object.entries(stats.nounCounts).slice(0, 10).forEach(([noun, count]) => {
-    console.log(`  ${noun}: ${count}`);
-  });
-
-  console.log('\nTop integrations:');
-  Object.entries(stats.integrationCounts).slice(0, 10).forEach(([int, count]) => {
-    console.log(`  ${int}: ${count}`);
-  });
+  console.log('\nCapabilities distribution:');
+  for (const [cap, count] of Object.entries(stats.capabilityCounts)) {
+    const label = CAPABILITIES_RULES[cap]?.label || cap;
+    console.log(`  ${label}: ${count}`);
+  }
 
   console.log('\nOutput files:');
   console.log('  - data/marketplaces-categorized.json');
   console.log('  - data/category-stats.json');
+  console.log('  - data/category-taxonomy.json');
 }
 
 // Run if executed directly

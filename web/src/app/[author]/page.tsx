@@ -140,7 +140,17 @@ export default function AuthorPage() {
           {marketplaces.map((marketplace) => (
             <MarketplaceCard
               key={marketplace.name}
-              marketplace={marketplace}
+              marketplace={{
+                name: marketplace.name,
+                description: marketplace.description,
+                keywords: marketplace.keywords,
+                techStack: marketplace.categories?.techStack ?? [],
+                capabilities: marketplace.categories?.capabilities ?? [],
+                signals: {
+                  stars: marketplace.signals.stars,
+                  forks: marketplace.signals.forks,
+                },
+              }}
               author_id={author.id}
               author_display_name={author.display_name}
               author_avatar_url={author.avatar_url}

@@ -42,7 +42,7 @@ export interface Marketplace {
   description: string | null;
   owner_info: { name: string; email: string } | null;
   keywords: string[];
-  categories: MarketplaceCategory[];
+  categories: MarketplaceCategories;
   repo_full_name: string;
   repo_url: string;
   homepage: string | null;
@@ -51,20 +51,41 @@ export interface Marketplace {
   plugins: Plugin[];
 }
 
-// Marketplace categories (broader than plugin categories)
-export type MarketplaceCategory =
-  | 'multi-agent'
-  | 'web-frameworks'
-  | 'backend-frameworks'
-  | 'testing-automation'
-  | 'code-quality'
-  | 'devops-infra'
-  | 'databases-data'
-  | 'api-integrations'
-  | 'planning-workflow'
-  | 'enterprise-domain'
-  | 'productivity-tools'
-  | 'ai-ml-tools';
+// ============================================
+// NEW CATEGORY SYSTEM (Tech Stack + Capabilities)
+// ============================================
+
+// Tech Stack - what tech the user already uses
+export type TechStack =
+  | 'nextjs'
+  | 'react'
+  | 'vue'
+  | 'python'
+  | 'node'
+  | 'typescript'
+  | 'go'
+  | 'rust'
+  | 'supabase'
+  | 'aws'
+  | 'docker'
+  | 'postgres';
+
+// Capabilities - what the agent does
+export type Capability =
+  | 'orchestration'
+  | 'memory'
+  | 'browser-automation'
+  | 'boilerplate'
+  | 'review'
+  | 'testing'
+  | 'devops'
+  | 'documentation';
+
+// Combined categories structure
+export interface MarketplaceCategories {
+  techStack: TechStack[];
+  capabilities: Capability[];
+}
 
 export interface Signals {
   stars: number;
@@ -186,6 +207,5 @@ export interface BrowseMarketplace {
   plugins_count: number;
   first_plugin_name: string | null;
   keywords: string[];
-  categories: MarketplaceCategory[];
+  categories: MarketplaceCategories;
 }
-

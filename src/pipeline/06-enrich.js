@@ -157,7 +157,7 @@ export function enrich() {
         source: pluginDef.source,
         category: normalizeCategory(
           pluginDef.category,
-          pluginDef.description || marketplaceData.description || '',
+          pluginDef.description || marketplaceData.description || marketplaceData.metadata?.description || '',
           marketplaceData.keywords || []
         ),
         version: pluginDef.version || null,
@@ -182,7 +182,7 @@ export function enrich() {
     const marketplaceEntry = {
       name: marketplaceName,
       version: marketplaceData.version || null,
-      description: marketplaceData.description || null,
+      description: marketplaceData.description || marketplaceData.metadata?.description || null,
       owner_info: marketplaceData.owner || null,
       keywords: marketplaceData.keywords || [],
       categories: marketplaceCategories,

@@ -7,10 +7,26 @@ import { enrich } from '../src/pipeline/06-enrich.js';
 import { output } from '../src/pipeline/07-output.js';
 import { ensureDir, log } from '../src/lib/utils.js';
 
+// Pipeline steps configuration (exported for use by visualizer)
+export const PIPELINE_STEPS = [
+  { name: 'Discover', fn: discover },
+  { name: 'Fetch Repos', fn: fetchRepos },
+  { name: 'Fetch Trees', fn: fetchTrees },
+  { name: 'Fetch Files', fn: fetchFiles },
+  { name: 'Parse', fn: parse },
+  { name: 'Enrich', fn: enrich },
+  { name: 'Output', fn: output }
+];
+
 /**
  * Run the full pipeline
+ * @param {object} options - Optional configuration
+ * @param {function} options.onStageStart - Callback when a stage starts (name, index)
+ * @param {function} options.onStageComplete - Callback when a stage completes (name, index, result, duration)
+ * @param {function} options.onStageError - Callback when a stage fails (name, index, error)
  */
-async function build() {
+export async function build(options = {}) {
+  const { onStageStart, onStageComplete, onStageError } = options;
   const startTime = Date.now();
 
   log('=================================');
@@ -21,27 +37,34 @@ async function build() {
   // Ensure data directory exists
   ensureDir('./data');
 
-  // Run pipeline steps
-  const steps = [
-    { name: 'Discover', fn: discover },
-    { name: 'Fetch Repos', fn: fetchRepos },
-    { name: 'Fetch Trees', fn: fetchTrees },
-    { name: 'Fetch Files', fn: fetchFiles },
-    { name: 'Parse', fn: parse },
-    { name: 'Enrich', fn: enrich },
-    { name: 'Output', fn: output }
-  ];
+  for (let i = 0; i < PIPELINE_STEPS.length; i++) {
+    const step = PIPELINE_STEPS[i];
 
-  for (const step of steps) {
     log('');
     log(`>>> Step: ${step.name}`);
     log('-'.repeat(40));
 
+    if (onStageStart) {
+      onStageStart(step.name, i);
+    }
+
+    const stepStart = Date.now();
+
     try {
-      await step.fn();
+      const result = await step.fn();
+      const duration = Date.now() - stepStart;
+
+      if (onStageComplete) {
+        onStageComplete(step.name, i, result, duration);
+      }
     } catch (error) {
       log(`ERROR in ${step.name}: ${error.message}`);
       console.error(error);
+
+      if (onStageError) {
+        onStageError(step.name, i, error);
+      }
+
       process.exit(1);
     }
   }
@@ -54,7 +77,10 @@ async function build() {
   log('=================================');
 }
 
-build().catch(error => {
-  console.error('Build failed:', error);
-  process.exit(1);
-});
+// Run if executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  build().catch(error => {
+    console.error('Build failed:', error);
+    process.exit(1);
+  });
+}

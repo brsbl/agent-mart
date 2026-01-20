@@ -308,10 +308,14 @@ export default function MarketplaceDetailPage() {
           </div>
 
           {/* Category Pills */}
-          {marketplace.categories && marketplace.categories.length > 0 && (
+          {((marketplace.categories?.techStack && marketplace.categories.techStack.length > 0) ||
+            (marketplace.categories?.capabilities && marketplace.categories.capabilities.length > 0)) && (
             <div className="flex flex-wrap gap-2 mb-3">
-              {marketplace.categories.map((category) => (
-                <CategoryPill key={category} category={category} size="md" />
+              {marketplace.categories?.techStack?.map((tech) => (
+                <CategoryPill key={tech} category={tech} type="techStack" size="md" />
+              ))}
+              {marketplace.categories?.capabilities?.map((cap) => (
+                <CategoryPill key={cap} category={cap} type="capability" size="md" />
               ))}
             </div>
           )}

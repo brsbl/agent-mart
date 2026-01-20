@@ -6,7 +6,8 @@ import type {
   BrowseMarketplace,
   SortOption,
   MarketplaceSortOption,
-  MarketplaceCategory,
+  TechStack,
+  Capability,
 } from "./types";
 
 // ============================================
@@ -116,7 +117,7 @@ export function getCategoryBadgeClass(category: string): string {
 }
 
 // ============================================
-// CATEGORY NORMALIZATION
+// CATEGORY NORMALIZATION (for plugins)
 // ============================================
 
 // Non-obvious category aliases (case variations handled by normalizeCategory)
@@ -351,64 +352,70 @@ export function groupPluginsByCategory(plugins: BrowsePlugin[]): CategoryGroup[]
 }
 
 // ============================================
-// MARKETPLACE CATEGORIES
+// MARKETPLACE CATEGORIES (NEW SYSTEM)
+// Two dimensions: Tech Stack + Capabilities
 // ============================================
 
-// Display names for marketplace categories
-const MARKETPLACE_CATEGORY_DISPLAY: Record<MarketplaceCategory, string> = {
-  'multi-agent': 'Multi-Agent',
-  'web-frameworks': 'Web Frameworks',
-  'backend-frameworks': 'Backend',
-  'testing-automation': 'Testing',
-  'code-quality': 'Code Quality',
-  'devops-infra': 'DevOps',
-  'databases-data': 'Databases',
-  'api-integrations': 'API & Integrations',
-  'planning-workflow': 'Planning',
-  'enterprise-domain': 'Enterprise',
-  'productivity-tools': 'Productivity',
-  'ai-ml-tools': 'AI & ML',
-};
-
-// Map marketplace categories to badge CSS class suffixes
-const MARKETPLACE_CATEGORY_BADGE_MAP: Record<MarketplaceCategory, string> = {
-  'multi-agent': 'ai-ml',
-  'web-frameworks': 'frameworks',
-  'backend-frameworks': 'frameworks',
-  'testing-automation': 'testing',
-  'code-quality': 'quality',
-  'devops-infra': 'devops',
-  'databases-data': 'database',
-  'api-integrations': 'api',
-  'planning-workflow': 'automation',
-  'enterprise-domain': 'business',
-  'productivity-tools': 'productivity',
-  'ai-ml-tools': 'ai-ml',
-};
-
-// Ordered list of marketplace categories for filter display
-export const MARKETPLACE_CATEGORY_ORDER: MarketplaceCategory[] = [
-  'multi-agent',
-  'ai-ml-tools',
-  'web-frameworks',
-  'backend-frameworks',
-  'devops-infra',
-  'testing-automation',
-  'code-quality',
-  'databases-data',
-  'api-integrations',
-  'planning-workflow',
-  'productivity-tools',
-  'enterprise-domain',
+// Tech Stack order and display names
+export const TECH_STACK_ORDER: TechStack[] = [
+  'typescript',
+  'python',
+  'nextjs',
+  'react',
+  'vue',
+  'node',
+  'go',
+  'rust',
+  'docker',
+  'aws',
+  'supabase',
+  'postgres',
 ];
 
-export function getMarketplaceCategoryDisplay(category: MarketplaceCategory): string {
-  return MARKETPLACE_CATEGORY_DISPLAY[category] ?? category;
+const TECH_STACK_DISPLAY: Record<TechStack, string> = {
+  'nextjs': 'Next.js',
+  'react': 'React',
+  'vue': 'Vue',
+  'python': 'Python',
+  'node': 'Node.js',
+  'typescript': 'TypeScript',
+  'go': 'Go',
+  'rust': 'Rust',
+  'supabase': 'Supabase',
+  'aws': 'AWS',
+  'docker': 'Docker',
+  'postgres': 'PostgreSQL',
+};
+
+// Capability order and display names
+export const CAPABILITY_ORDER: Capability[] = [
+  'orchestration',
+  'memory',
+  'browser-automation',
+  'boilerplate',
+  'review',
+  'testing',
+  'devops',
+  'documentation',
+];
+
+const CAPABILITY_DISPLAY: Record<Capability, string> = {
+  'orchestration': 'Orchestration',
+  'memory': 'Memory',
+  'browser-automation': 'Browser Automation',
+  'boilerplate': 'Boilerplate',
+  'review': 'Code Review',
+  'testing': 'Testing',
+  'devops': 'DevOps',
+  'documentation': 'Documentation',
+};
+
+export function getTechStackDisplay(tech: TechStack): string {
+  return TECH_STACK_DISPLAY[tech] ?? tech;
 }
 
-export function getMarketplaceCategoryBadgeClass(category: MarketplaceCategory): string {
-  const badgeSuffix = MARKETPLACE_CATEGORY_BADGE_MAP[category] ?? 'development';
-  return `badge-${badgeSuffix}`;
+export function getCapabilityDisplay(cap: Capability): string {
+  return CAPABILITY_DISPLAY[cap] ?? cap;
 }
 
 // ============================================

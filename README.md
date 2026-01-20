@@ -6,7 +6,7 @@ A marketplace-first directory builder for Claude Code plugins, skills, and comma
 
 ## Features
 
-- **7-step ETL pipeline** - Discover, fetch, parse, enrich, and output
+- **8-step ETL pipeline** - Discover, fetch, parse, enrich, categorize, and output
 - **GraphQL batching** - 90% fewer GitHub API calls
 - **SHA-based caching** - Fast rebuilds for unchanged repos
 - **Owner-centric model** - Browse by creator, not category
@@ -95,7 +95,46 @@ public/
 | 04-fetch-files | Fetch specific files | File contents |
 | 05-parse | Parse & validate files | Parsed data |
 | 06-enrich | Build owner-centric model | Enriched data |
+| 08-categorize | Extract categories via rules | Categorized data |
 | 07-output | Generate public JSON | Final output |
+
+## Categorization System
+
+The pipeline uses a rules-based categorization system to classify marketplaces across two dimensions:
+
+### Tech Stack
+What technologies the marketplace works with. Detected via text patterns and file presence.
+
+| Category | Label | Detection |
+|----------|-------|-----------|
+| `nextjs` | Next.js | `next.config.js`, "app router", "pages router" |
+| `react` | React | "react" (excludes Next.js) |
+| `vue` | Vue | `vue.config.js`, "nuxt" |
+| `python` | Python | `requirements.txt`, "django", "fastapi", "flask" |
+| `node` | Node.js | `package.json`, "express", "fastify", "nest.js" |
+| `typescript` | TypeScript | `tsconfig.json` |
+| `go` | Go | `go.mod`, "golang" |
+| `rust` | Rust | `Cargo.toml`, "cargo" |
+| `supabase` | Supabase | "supabase" |
+| `aws` | AWS | "aws", "ec2", "dynamodb", "cdk" |
+| `docker` | Docker | `Dockerfile`, "docker-compose" |
+| `postgres` | PostgreSQL | "postgres", "postgresql" |
+
+### Capabilities
+What the agent/marketplace does. Detected via text patterns with anti-patterns to reduce false positives.
+
+| Category | Label | Detection |
+|----------|-------|-----------|
+| `orchestration` | Orchestration | "multi-agent", "swarm", "crew" |
+| `memory` | Memory | "rag", "vector store", "embeddings" |
+| `browser-automation` | Browser Automation | "playwright", "puppeteer", "selenium", "cypress" |
+| `boilerplate` | Boilerplate | "scaffold", "generator", "boilerplate" |
+| `review` | Code Review | "code review", "eslint", "prettier", "refactor" |
+| `testing` | Testing | "test", "jest", "vitest", "pytest", "e2e" |
+| `devops` | DevOps | "kubernetes", "terraform", "ci/cd", "deploy" |
+| `documentation` | Documentation | "jsdoc", "typedoc", "sphinx", "mkdocs" |
+
+The extraction logic is in `src/lib/categorizer.js`. Run `node src/pipeline/08-categorize.js` to regenerate categories.
 
 ## Performance
 
@@ -152,8 +191,8 @@ See [web/README.md](./web/README.md) for frontend-specific documentation.
 ```
 agent-mart/
 ├── src/
-│   ├── lib/          # GitHub client, cache, parsers, validators
-│   └── pipeline/     # 7-step ETL pipeline (01-discover to 07-output)
+│   ├── lib/          # GitHub client, cache, parsers, validators, categorizer
+│   └── pipeline/     # 8-step ETL pipeline (01-discover to 08-categorize)
 ├── scripts/          # Build orchestrator
 ├── tests/            # Unit tests
 ├── data/             # Intermediate pipeline files (gitignored)

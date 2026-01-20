@@ -1,10 +1,14 @@
 import { saveJson, loadJson, ensureDir, log, sanitizeFilename } from '../lib/utils.js';
+import { generateTaxonomy } from '../lib/categorizer.js';
 
 const INPUT_PATH = './data/06-enriched.json';
+const CATEGORIZED_PATH = './data/marketplaces-categorized.json';
+const CATEGORY_STATS_PATH = './data/category-stats.json';
 const INDEX_PATH = './web/public/data/index.json';
 const AUTHORS_DIR = './web/public/data/authors';
 const PLUGINS_BROWSE_PATH = './web/public/data/plugins-browse.json';
 const MARKETPLACES_BROWSE_PATH = './web/public/data/marketplaces-browse.json';
+const CATEGORIES_PATH = './web/public/data/categories.json';
 
 /**
  * Generate final public JSON files
@@ -14,6 +18,20 @@ export function output() {
 
   const { authors } = loadJson(INPUT_PATH);
   ensureDir(AUTHORS_DIR);
+
+  // Load categorized data if available
+  let categorizedMap = new Map();
+  let categoryStats = null;
+  try {
+    const categorized = loadJson(CATEGORIZED_PATH);
+    for (const m of categorized) {
+      categorizedMap.set(m.repo_full_name, m);
+    }
+    categoryStats = loadJson(CATEGORY_STATS_PATH);
+    log(`Loaded ${categorized.length} categorized marketplaces`);
+  } catch (e) {
+    log('Warning: Categorized data not found. Run 08-categorize.js first.');
+  }
 
   // Build author summaries for index (sorted by stars)
   const authorSummaries = Object.values(authors)
@@ -122,9 +140,14 @@ export function output() {
   for (const author of Object.values(authors)) {
     for (const marketplace of author.marketplaces) {
       const firstPlugin = marketplace.plugins?.[0];
+      const catData = categorizedMap.get(marketplace.repo_full_name);
+
+      // Use new two-dimensional categories from categorizer
+      const categories = catData?.categories || { techStack: [], capabilities: [] };
+
       marketplacesBrowse.push({
         name: marketplace.name,
-        description: marketplace.description || null,
+        description: marketplace.description || marketplace.repo_description || null,
         author_id: author.id,
         author_display_name: author.display_name,
         author_avatar_url: author.avatar_url,
@@ -137,7 +160,7 @@ export function output() {
         plugins_count: marketplace.plugins?.length || 0,
         first_plugin_name: firstPlugin?.name || null,
         keywords: marketplace.keywords || [],
-        categories: marketplace.categories || []
+        categories
       });
     }
   }
@@ -148,6 +171,18 @@ export function output() {
   });
   saveJson(MARKETPLACES_BROWSE_PATH, { meta, marketplaces: marketplacesBrowse });
   log(`Generated ${MARKETPLACES_BROWSE_PATH} (${marketplacesBrowse.length} marketplaces)`);
+
+  // Generate categories.json for frontend filtering (new format)
+  const taxonomy = generateTaxonomy();
+  const categoriesData = {
+    meta: {
+      ...meta,
+      stats: categoryStats
+    },
+    taxonomy
+  };
+  saveJson(CATEGORIES_PATH, categoriesData);
+  log(`Generated ${CATEGORIES_PATH}`);
 
   // Summary
   log('');

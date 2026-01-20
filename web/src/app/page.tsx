@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { Package, Users, Store } from "lucide-react";
 import { MarketplaceCard, LoadingState, ErrorState, SortDropdown, CategoryPill } from "@/components";
 import { useFetch } from "@/hooks";
-import type { BrowseMarketplace, Meta, MarketplaceSortOption, CategoryVerb } from "@/lib/types";
-import { formatNumber, sortMarketplaces, VERB_ORDER, getVerbDisplay } from "@/lib/data";
+import type { BrowseMarketplace, Meta, MarketplaceSortOption, TechStack, Capability } from "@/lib/types";
+import { formatNumber, sortMarketplaces, TECH_STACK_ORDER, CAPABILITY_ORDER, getTechStackDisplay, getCapabilityDisplay } from "@/lib/data";
 import { DATA_URLS } from "@/lib/constants";
 
 interface MarketplacesData {
@@ -31,7 +31,8 @@ function HomePageContent() {
 
   // State for sorting, filtering, and pagination
   const [sortBy, setSortBy] = useState<MarketplaceSortOption>("recent");
-  const [selectedVerb, setSelectedVerb] = useState<CategoryVerb | null>(null);
+  const [selectedTechStack, setSelectedTechStack] = useState<Set<TechStack>>(new Set());
+  const [selectedCapabilities, setSelectedCapabilities] = useState<Set<Capability>>(new Set());
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   // Track search query changes to reset pagination - using state instead of effect
@@ -52,11 +53,18 @@ function HomePageContent() {
   const meta = marketplacesData?.meta ?? null;
   const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
 
-  // Get unique verbs from all marketplaces, sorted by predefined order
-  const availableVerbs = useMemo(() => {
-    const verbs = new Set<CategoryVerb>();
-    allMarketplaces.forEach(m => m.categories?.verbs?.forEach(v => verbs.add(v)));
-    return VERB_ORDER.filter(v => verbs.has(v));
+  // Get unique tech stacks from all marketplaces, sorted by predefined order
+  const availableTechStack = useMemo(() => {
+    const techs = new Set<TechStack>();
+    allMarketplaces.forEach(m => m.categories?.techStack?.forEach(t => techs.add(t)));
+    return TECH_STACK_ORDER.filter(t => techs.has(t));
+  }, [allMarketplaces]);
+
+  // Get unique capabilities from all marketplaces, sorted by predefined order
+  const availableCapabilities = useMemo(() => {
+    const caps = new Set<Capability>();
+    allMarketplaces.forEach(m => m.categories?.capabilities?.forEach(c => caps.add(c)));
+    return CAPABILITY_ORDER.filter(c => caps.has(c));
   }, [allMarketplaces]);
 
   // Search filter for marketplaces only
@@ -70,8 +78,8 @@ function HomePageContent() {
       m.author_id.toLowerCase().includes(query) ||
       m.author_display_name.toLowerCase().includes(query) ||
       m.keywords?.some(k => k.toLowerCase().includes(query)) ||
-      m.categories?.verbs?.some(v => v.toLowerCase().includes(query)) ||
-      m.categories?.nouns?.some(n => n.toLowerCase().includes(query))
+      m.categories?.techStack?.some(t => t.toLowerCase().includes(query) || getTechStackDisplay(t).toLowerCase().includes(query)) ||
+      m.categories?.capabilities?.some(c => c.toLowerCase().includes(query) || getCapabilityDisplay(c).toLowerCase().includes(query))
     );
 
     return matchedMarketplaces.sort((a, b) => (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0));
@@ -81,14 +89,27 @@ function HomePageContent() {
   const filteredAndSortedMarketplaces = useMemo(() => {
     let result = allMarketplaces;
 
-    // Verb filter
-    if (selectedVerb) {
-      result = result.filter(m => m.categories?.verbs?.includes(selectedVerb));
+    // Tech stack filter (AND logic - must have ALL selected tech stacks)
+    if (selectedTechStack.size > 0) {
+      result = result.filter(m =>
+        Array.from(selectedTechStack).every(tech =>
+          m.categories?.techStack?.includes(tech)
+        )
+      );
+    }
+
+    // Capabilities filter (AND logic - must have ALL selected capabilities)
+    if (selectedCapabilities.size > 0) {
+      result = result.filter(m =>
+        Array.from(selectedCapabilities).every(cap =>
+          m.categories?.capabilities?.includes(cap)
+        )
+      );
     }
 
     // Sort
     return sortMarketplaces(result, sortBy);
-  }, [allMarketplaces, selectedVerb, sortBy]);
+  }, [allMarketplaces, selectedTechStack, selectedCapabilities, sortBy]);
 
   const displayedMarketplaces = filteredAndSortedMarketplaces.slice(0, displayCount);
   const hasMore = displayCount < filteredAndSortedMarketplaces.length;
@@ -112,9 +133,38 @@ function HomePageContent() {
     return () => observer.disconnect();
   }, [hasMore]);
 
-  // Reset display count when filter changes
-  const handleVerbChange = (verb: CategoryVerb | null) => {
-    setSelectedVerb(verb);
+  // Toggle tech stack filter
+  const handleTechStackToggle = (tech: TechStack) => {
+    setSelectedTechStack(prev => {
+      const next = new Set(prev);
+      if (next.has(tech)) {
+        next.delete(tech);
+      } else {
+        next.add(tech);
+      }
+      return next;
+    });
+    setDisplayCount(INITIAL_DISPLAY_COUNT);
+  };
+
+  // Toggle capability filter
+  const handleCapabilityToggle = (cap: Capability) => {
+    setSelectedCapabilities(prev => {
+      const next = new Set(prev);
+      if (next.has(cap)) {
+        next.delete(cap);
+      } else {
+        next.add(cap);
+      }
+      return next;
+    });
+    setDisplayCount(INITIAL_DISPLAY_COUNT);
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedTechStack(new Set());
+    setSelectedCapabilities(new Set());
     setDisplayCount(INITIAL_DISPLAY_COUNT);
   };
 
@@ -123,6 +173,7 @@ function HomePageContent() {
     setDisplayCount(INITIAL_DISPLAY_COUNT);
   };
 
+  const hasActiveFilters = selectedTechStack.size > 0 || selectedCapabilities.size > 0;
 
   // Helper to render marketplace cards consistently
   const renderMarketplaceCard = (marketplace: BrowseMarketplace) => (
@@ -132,9 +183,8 @@ function HomePageContent() {
         name: marketplace.name,
         description: marketplace.description,
         keywords: marketplace.keywords ?? [],
-        categories: marketplace.categories?.verbs ?? [],
-        nouns: marketplace.categories?.nouns ?? [],
-        integration: marketplace.categories?.integration ?? null,
+        techStack: marketplace.categories?.techStack ?? [],
+        capabilities: marketplace.categories?.capabilities ?? [],
         repo_full_name: marketplace.repo_full_name ?? undefined,
         signals: {
           stars: marketplace.signals?.stars ?? 0,
@@ -229,7 +279,7 @@ function HomePageContent() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-[var(--foreground)]">
             Marketplaces
-            {selectedVerb && (
+            {hasActiveFilters && (
               <span className="text-[var(--foreground-muted)] font-normal ml-2">
                 ({filteredAndSortedMarketplaces.length})
               </span>
@@ -238,31 +288,57 @@ function HomePageContent() {
           <SortDropdown value={sortBy} onChange={handleSortChange} />
         </div>
 
-        {/* Verb Filters */}
-        {availableVerbs.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
+        {/* Two-Dimensional Filters */}
+        <div className="space-y-3 mb-6">
+          {/* Tech Stack Filters */}
+          {availableTechStack.length > 0 && (
+            <div>
+              <div className="text-xs text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">Tech Stack</div>
+              <div className="flex flex-wrap gap-2">
+                {availableTechStack.map((tech) => (
+                  <CategoryPill
+                    key={tech}
+                    category={tech}
+                    type="techStack"
+                    size="md"
+                    isActive={selectedTechStack.has(tech)}
+                    onClick={() => handleTechStackToggle(tech)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Capability Filters */}
+          {availableCapabilities.length > 0 && (
+            <div>
+              <div className="text-xs text-[var(--foreground-muted)] mb-2 uppercase tracking-wide">Capabilities</div>
+              <div className="flex flex-wrap gap-2">
+                {availableCapabilities.map((cap) => (
+                  <CategoryPill
+                    key={cap}
+                    category={cap}
+                    type="capability"
+                    size="md"
+                    isActive={selectedCapabilities.has(cap)}
+                    onClick={() => handleCapabilityToggle(cap)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Clear filters button */}
+          {hasActiveFilters && (
             <button
               type="button"
-              onClick={() => handleVerbChange(null)}
-              className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
-                selectedVerb === null
-                  ? "bg-[var(--accent)] text-white"
-                  : "bg-[var(--background-secondary)] text-[var(--foreground-secondary)] hover:bg-[var(--background-tertiary)]"
-              }`}
+              onClick={clearFilters}
+              className="text-sm text-[var(--accent)] hover:underline"
             >
-              All
+              Clear all filters
             </button>
-            {availableVerbs.map((verb) => (
-              <CategoryPill
-                key={verb}
-                category={verb}
-                size="md"
-                isActive={selectedVerb === verb}
-                onClick={() => handleVerbChange(selectedVerb === verb ? null : verb)}
-              />
-            ))}
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Marketplace Grid */}
         {displayedMarketplaces.length > 0 ? (
@@ -272,8 +348,17 @@ function HomePageContent() {
         ) : (
           <div className="text-center py-12">
             <p className="text-[var(--foreground-muted)]">
-              No marketplaces found in this category.
+              No marketplaces found matching your filters.
             </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-4 text-sm text-[var(--accent)] hover:underline"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         )}
 
