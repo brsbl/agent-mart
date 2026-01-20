@@ -21,15 +21,18 @@ Agent Mart is a static-site generator that crawls GitHub for Claude Code marketp
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
 │                                                              │          │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐                    │          │
-│  │ 07       │  │ 08       │  │ 06       │◀───────────────────┘          │
-│  │ Output   │◀─│ Categorize│◀─│ Enrich   │                              │
+│  │ 07       │◀─│ 08       │◀─│ 06       │◀───────────────────┘          │
+│  │ Output   │  │ Categorize│  │ Enrich   │                              │
 │  └──────────┘  └──────────┘  └──────────┘                              │
+│                                                                         │
+│  Note: Steps execute in order 06 → 08 → 07 (numbering is historical)   │
 └────────────────────────────────┬────────────────────────────────────────┘
                                  │
                                  ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                      Static JSON Output                                  │
-│  public/index.json, authors/*.json, categories.json                     │
+│  web/public/data/: index.json, authors/*.json, categories.json,         │
+│                    marketplaces-browse.json, plugins-browse.json        │
 └────────────────────────────────┬────────────────────────────────────────┘
                                  │
                                  ▼
@@ -135,12 +138,13 @@ Applies rules-based categorization to extract tech stack and capabilities.
 
 Generates final static JSON files for the frontend.
 
-**Input:** `data/marketplaces-categorized.json`
+**Input:** `data/06-enriched.json`, `data/marketplaces-categorized.json`
 **Output:**
-- `web/public/data/index.json` - Homepage data
+- `web/public/data/index.json` - Homepage data with author list
 - `web/public/data/authors/*.json` - Per-author detail pages
 - `web/public/data/categories.json` - Category taxonomy and stats
-- `web/public/data/marketplaces-browse.json` - Browse page data
+- `web/public/data/marketplaces-browse.json` - Browse page marketplace data
+- `web/public/data/plugins-browse.json` - Browse page plugin data
 
 ---
 
@@ -279,14 +283,21 @@ The categorization stage outputs statistics for monitoring:
 ```typescript
 interface Marketplace {
   name: string;
+  version: string | null;
   description: string | null;
-  repo_description: string | null;
+  owner_info: { name: string; email: string } | null;
   keywords: string[];
+  repo_full_name: string;
+  repo_url: string;
+  homepage: string | null;
   plugins: Plugin[];
+  file_tree: FileTreeEntry[];
   signals: {
     stars: number;
     forks: number;
     pushed_at: string | null;
+    created_at: string | null;
+    license: string | null;
   };
   categories: {
     techStack: TechStack[];
@@ -347,8 +358,10 @@ type Capability =
     "author_id": "owner",
     "author_display_name": "Owner Name",
     "author_avatar_url": "https://...",
-    "techStack": ["typescript", "node"],
-    "capabilities": ["testing", "review"],
+    "categories": {
+      "techStack": ["typescript", "node"],
+      "capabilities": ["testing", "review"]
+    },
     "signals": {
       "stars": 100,
       "forks": 10,
@@ -381,6 +394,8 @@ The frontend is a Next.js 14+ application using the App Router.
 │  ├── categories.json │
 │  ├── marketplaces-   │
 │  │   browse.json     │
+│  ├── plugins-        │
+│  │   browse.json     │
 │  └── authors/*.json  │
 └──────────┬───────────┘
            │
@@ -404,10 +419,11 @@ The frontend is a Next.js 14+ application using the App Router.
 ┌──────────────────────┐
 │ Client Components    │
 │  ├── MarketplaceCard │
-│  ├── CategoryPill    │
-│  └── FilterPanel     │
+│  └── CategoryPill    │
 └──────────────────────┘
 ```
+
+Note: Filters are implemented inline in `page.tsx`, not as a separate component.
 
 ### Filter System
 
@@ -422,11 +438,11 @@ const [selectedCapabilities, setSelectedCapabilities] = useState<Set<Capability>
 const filtered = marketplaces.filter(m => {
   // Must have ALL selected tech stack
   for (const tech of selectedTechStack) {
-    if (!m.techStack?.includes(tech)) return false;
+    if (!m.categories?.techStack?.includes(tech)) return false;
   }
   // Must have ALL selected capabilities
   for (const cap of selectedCapabilities) {
-    if (!m.capabilities?.includes(cap)) return false;
+    if (!m.categories?.capabilities?.includes(cap)) return false;
   }
   return true;
 });
@@ -545,7 +561,7 @@ If marketplaces aren't being categorized:
 
 Run categorization with verbose output:
 ```bash
-node -e "
+node --input-type=module -e "
   import { extractCategories, buildSearchText } from './src/lib/categorizer.js';
   import { readFileSync } from 'fs';
   const data = JSON.parse(readFileSync('data/06-enriched.json'));

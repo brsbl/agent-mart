@@ -44,10 +44,11 @@ REPO_LIMIT=3 npm run build
 ## Scripts
 
 ```bash
-npm run build      # Run full pipeline
-npm test           # Run test suite (41 tests)
-npm run lint       # Check code style
-npm run lint:fix   # Auto-fix lint issues
+npm run build          # Run full pipeline
+npm run etl:visualize  # Visualize ETL pipeline stages
+npm test               # Run test suite
+npm run lint           # Check code style
+npm run lint:fix       # Auto-fix lint issues
 ```
 
 ## Output
@@ -100,41 +101,41 @@ public/
 
 ## Categorization System
 
-The pipeline uses a rules-based categorization system to classify marketplaces across two dimensions:
+The pipeline uses a rules-based categorization system to classify marketplaces across two dimensions.
 
 ### Tech Stack
 What technologies the marketplace works with. Detected via text patterns and file presence.
 
-| Category | Label | Detection |
-|----------|-------|-----------|
-| `nextjs` | Next.js | `next.config.js`, "app router", "pages router" |
-| `react` | React | "react" (excludes Next.js) |
-| `vue` | Vue | `vue.config.js`, "nuxt" |
-| `python` | Python | `requirements.txt`, "django", "fastapi", "flask" |
-| `node` | Node.js | `package.json`, "express", "fastify", "nest.js" |
-| `typescript` | TypeScript | `tsconfig.json` |
-| `go` | Go | `go.mod`, "golang" |
-| `rust` | Rust | `Cargo.toml`, "cargo" |
-| `supabase` | Supabase | "supabase" |
-| `aws` | AWS | "aws", "ec2", "dynamodb", "cdk" |
-| `docker` | Docker | `Dockerfile`, "docker-compose" |
-| `postgres` | PostgreSQL | "postgres", "postgresql" |
+| Category | Label | Files | Patterns |
+|----------|-------|-------|----------|
+| `nextjs` | Next.js | `next.config.{js,ts,mjs}` | "next.js", "app router", "pages router" |
+| `react` | React | — | "react", "react components" *(excluded if Next.js)* |
+| `vue` | Vue | `vue.config.js`, `nuxt.config.{js,ts}` | "vue", "nuxt" |
+| `python` | Python | `requirements.txt`, `pyproject.toml`, `setup.py`, `Pipfile` | "django", "fastapi", "flask", "pytest" |
+| `node` | Node.js | `package.json` | "node.js", "express", "koa", "fastify", "nest.js" *(excluded if Next.js/React/Vue)* |
+| `typescript` | TypeScript | `tsconfig.json` | "typescript", "tsc" |
+| `go` | Go | `go.mod`, `go.sum` | "golang", "go module" |
+| `rust` | Rust | `Cargo.toml`, `Cargo.lock` | "rust", "cargo" |
+| `supabase` | Supabase | `supabase/config.toml` | "supabase" |
+| `aws` | AWS | `serverless.yml`, `template.yaml`, `cdk.json` | "aws", "ec2", "dynamodb", "cloudformation", "cdk" |
+| `docker` | Docker | `Dockerfile`, `docker-compose.{yml,yaml}`, `.dockerignore` | "docker", "docker-compose" |
+| `postgres` | PostgreSQL | — | "postgres", "postgresql" |
 
 ### Capabilities
 What the agent/marketplace does. Detected via text patterns with anti-patterns to reduce false positives.
 
-| Category | Label | Detection |
-|----------|-------|-----------|
-| `orchestration` | Orchestration | "multi-agent", "swarm", "crew" |
-| `memory` | Memory | "rag", "vector store", "embeddings" |
-| `browser-automation` | Browser Automation | "playwright", "puppeteer", "selenium", "cypress" |
-| `boilerplate` | Boilerplate | "scaffold", "generator", "boilerplate" |
-| `review` | Code Review | "code review", "eslint", "prettier", "refactor" |
-| `testing` | Testing | "test", "jest", "vitest", "pytest", "e2e" |
-| `devops` | DevOps | "kubernetes", "terraform", "ci/cd", "deploy" |
-| `documentation` | Documentation | "jsdoc", "typedoc", "sphinx", "mkdocs" |
+| Category | Label | Patterns | Anti-patterns (excluded) |
+|----------|-------|----------|--------------------------|
+| `orchestration` | Orchestration | "multi-agent", "swarm", "crew", "agent framework" | — |
+| `memory` | Memory | "rag", "vector store", "embeddings", "long-term memory" | "memory leak", "out of memory" |
+| `browser-automation` | Browser Automation | "playwright", "puppeteer", "selenium", "cypress" | — |
+| `boilerplate` | Boilerplate | "scaffold", "generator", "boilerplate", "starter kit" | "template literal" |
+| `review` | Code Review | "code review", "pr review", "eslint", "prettier", "refactor" | — |
+| `testing` | Testing | "test", "jest", "vitest", "pytest", "e2e", "unit test", "tdd" | "test data", "test file" |
+| `devops` | DevOps | "kubernetes", "k8s", "terraform", "ansible", "ci/cd", "deploy" | "etl pipeline", "data pipeline" |
+| `documentation` | Documentation | "jsdoc", "typedoc", "sphinx", "mkdocs", "api docs" | "read the docs", "see docs" |
 
-The extraction logic is in `src/lib/categorizer.js`. Run `node src/pipeline/08-categorize.js` to regenerate categories.
+For complete pattern definitions, see [`src/lib/categorizer.js`](./src/lib/categorizer.js). Run `node src/pipeline/08-categorize.js` to regenerate categories.
 
 ## Performance
 
