@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
 const CATEGORIES_PATH = './data/marketplace-categories.json';
@@ -29,7 +28,7 @@ const CATEGORY_PATTERNS = {
   ],
   'devops-infra': [
     /\bdocker\b/i, /\bkubernetes\b/i, /\bk8s\b/i, /\bterraform\b/i,
-    /ci[\-\/]cd/i, /\bdeploy/i, /infrastructure/i, /github.*action/i,
+    /ci[-/]cd/i, /\bdeploy/i, /infrastructure/i, /github.*action/i,
     /\bhelm\b/i, /\bansible\b/i, /cloud.*infra/i, /\baws\b/i, /\bgcp\b/i
   ],
   'databases-data': [
@@ -83,14 +82,6 @@ function categorize(description, pluginNames) {
   // Dedupe and limit to 3
   const unique = [...new Set(matches)].slice(0, 3);
   return unique.length > 0 ? unique : ['productivity-tools'];
-}
-
-/**
- * Generate content hash
- */
-function hashContent(description, pluginNames) {
-  const content = [description || '', pluginNames.join(',')].join('|');
-  return createHash('sha256').update(content).digest('hex').substring(0, 16);
 }
 
 /**

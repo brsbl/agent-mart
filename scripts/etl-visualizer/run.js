@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, writeFileSync } from 'fs';
 import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -245,13 +245,14 @@ function getDataPreview(stageId, data) {
         plugins: m.data?.plugins?.length || 0
       }));
 
-    case '06-enrich':
+    case '06-enrich': {
       const authors = Object.values(data.authors || {});
       return authors.slice(0, PREVIEW_LIMIT).map(a => ({
         id: a.id,
         marketplaces: a.stats?.total_marketplaces,
         plugins: a.stats?.total_plugins
       }));
+    }
 
     case '07-output':
       return data.authors?.slice(0, PREVIEW_LIMIT).map(a => ({
