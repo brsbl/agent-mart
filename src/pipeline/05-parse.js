@@ -1,28 +1,27 @@
-import { parseJson, parseFrontmatter, extractCommandName, extractSkillName } from '../lib/parser.js';
+import { parseJson } from '../lib/parser.js';
 import { saveJson, loadJson, log, logError } from '../lib/utils.js';
-import { validateMarketplace, validateSkill, logValidationResult } from '../lib/validator.js';
+import { validateMarketplace, logValidationResult } from '../lib/validator.js';
 
 const INPUT_PATH = './data/04-files.json';
 const OUTPUT_PATH = './data/05-parsed.json';
 
 /**
- * Parse all fetched files into structured data with validation
+ * Parse all fetched files into structured data
+ * - marketplace.json files are parsed and validated
+ * - All other files are stored as raw content indexed by path
  */
 export function parse() {
-  log('Starting file parsing with validation...');
+  log('Starting file parsing...');
 
   const { files } = loadJson(INPUT_PATH);
 
   const parsed = {
     marketplaces: [],
-    commands: [],
-    skills: []
+    files: {} // { "repo_full_name": { "path/to/file": "content", ... } }
   };
 
   const validation = {
-    marketplaces: { valid: 0, invalid: 0, errors: [] },
-    commands: { valid: 0, invalid: 0, errors: [] },
-    skills: { valid: 0, invalid: 0, errors: [] }
+    marketplaces: { valid: 0, invalid: 0, errors: [] }
   };
 
   for (const file of files) {
@@ -31,6 +30,7 @@ export function parse() {
 
     try {
       if (path.endsWith('marketplace.json')) {
+        // Parse and validate marketplace.json
         const data = parseJson(content, context);
         if (data) {
           const result = validateMarketplace(data, context);
@@ -50,58 +50,33 @@ export function parse() {
           validation.marketplaces.invalid++;
           validation.marketplaces.errors.push({ context, errors: ['Invalid JSON - failed to parse'] });
         }
-      } else if (path.includes('/commands/') && path.endsWith('.md')) {
-        const { frontmatter, body } = parseFrontmatter(content);
-        // Commands are always valid (frontmatter is optional per Claude Code spec)
-        parsed.commands.push({
-          full_name,
-          path,
-          name: extractCommandName(path),
-          description: frontmatter?.description || null,
-          frontmatter,
-          content: body
-        });
-        validation.commands.valid++;
-      } else if (path.endsWith('SKILL.md')) {
-        const { frontmatter, body } = parseFrontmatter(content);
-        const result = validateSkill(frontmatter, context);
-        if (result.valid) {
-          parsed.skills.push({
-            full_name,
-            path,
-            name: extractSkillName(path, frontmatter),
-            description: frontmatter?.description || null,
-            frontmatter,
-            content: body
-          });
-          validation.skills.valid++;
-        } else {
-          logValidationResult(result, 'skill', context);
-          validation.skills.invalid++;
-          validation.skills.errors.push({ context, errors: result.errors });
+      } else {
+        // Store all other files as raw content
+        if (!parsed.files[full_name]) {
+          parsed.files[full_name] = {};
         }
+        parsed.files[full_name][path] = content;
       }
     } catch (error) {
       logError(`Failed to parse ${context}`, error);
     }
   }
 
+  // Count total files stored
+  const totalFiles = Object.values(parsed.files).reduce(
+    (sum, repoFiles) => sum + Object.keys(repoFiles).length,
+    0
+  );
+
   const output = {
     parsed_at: new Date().toISOString(),
     counts: {
       marketplaces: parsed.marketplaces.length,
-      commands: parsed.commands.length,
-      skills: parsed.skills.length
+      files: totalFiles
     },
     validation: {
       marketplaces: { valid: validation.marketplaces.valid, invalid: validation.marketplaces.invalid },
-      commands: { valid: validation.commands.valid, invalid: validation.commands.invalid },
-      skills: { valid: validation.skills.valid, invalid: validation.skills.invalid },
-      errors: [
-        ...validation.marketplaces.errors,
-        ...validation.commands.errors,
-        ...validation.skills.errors
-      ]
+      errors: validation.marketplaces.errors
     },
     ...parsed
   };
@@ -109,11 +84,11 @@ export function parse() {
   saveJson(OUTPUT_PATH, output);
 
   // Log summary
-  log(`Parsed: ${parsed.marketplaces.length} marketplaces, ${parsed.commands.length} commands, ${parsed.skills.length} skills`);
+  log(`Parsed: ${parsed.marketplaces.length} marketplaces, ${totalFiles} files across ${Object.keys(parsed.files).length} repos`);
 
-  const totalInvalid = validation.marketplaces.invalid + validation.skills.invalid;
+  const totalInvalid = validation.marketplaces.invalid;
   if (totalInvalid > 0) {
-    log(`Validation: ${totalInvalid} resources excluded (${validation.marketplaces.invalid} marketplaces, ${validation.skills.invalid} skills)`);
+    log(`Validation: ${totalInvalid} marketplaces excluded`);
   }
 
   return output;

@@ -87,7 +87,7 @@ export function output() {
         bio: author.bio,
         stats: author.stats
       },
-      marketplaces: author.marketplaces.sort((a, b) => (b.signals?.stars || 0) - (a.signals?.stars || 0))
+      marketplaces: [...author.marketplaces].sort((a, b) => (b.signals?.stars || 0) - (a.signals?.stars || 0))
     };
 
     const authorPath = `${AUTHORS_DIR}/${sanitizeFilename(author.id)}.json`;
@@ -105,7 +105,7 @@ export function output() {
         pluginsBrowse.push({
           name: plugin.name,
           description: plugin.description,
-          category: plugin.category,
+          categories: plugin.categories || [],
           author_id: author.id,
           author_display_name: author.display_name,
           author_avatar_url: author.avatar_url,
@@ -113,11 +113,9 @@ export function output() {
           repo_full_name: marketplace.repo_full_name,
           install_commands: plugin.install_commands || [],
           signals: {
-            stars: plugin.signals?.stars || 0,
-            pushed_at: plugin.signals?.pushed_at || null
+            stars: marketplace.signals?.stars || 0,
+            pushed_at: marketplace.signals?.pushed_at || null
           },
-          commands_count: plugin.commands?.length || 0,
-          skills_count: plugin.skills?.length || 0,
           keywords: marketplace.keywords || []
         });
       }
@@ -147,7 +145,7 @@ export function output() {
 
       marketplacesBrowse.push({
         name: marketplace.name,
-        description: marketplace.description || marketplace.repo_description || null,
+        description: marketplace.description || null,
         author_id: author.id,
         author_display_name: author.display_name,
         author_avatar_url: author.avatar_url,
@@ -165,8 +163,11 @@ export function output() {
     }
   }
   marketplacesBrowse.sort((a, b) => {
-    const dateA = a.signals.pushed_at ? new Date(a.signals.pushed_at).getTime() : 0;
-    const dateB = b.signals.pushed_at ? new Date(b.signals.pushed_at).getTime() : 0;
+    const timeA = a.signals.pushed_at ? new Date(a.signals.pushed_at).getTime() : 0;
+    const timeB = b.signals.pushed_at ? new Date(b.signals.pushed_at).getTime() : 0;
+    // Handle invalid dates (NaN) by treating them as 0
+    const dateA = Number.isNaN(timeA) ? 0 : timeA;
+    const dateB = Number.isNaN(timeB) ? 0 : timeB;
     return dateB - dateA;
   });
   saveJson(MARKETPLACES_BROWSE_PATH, { meta, marketplaces: marketplacesBrowse });

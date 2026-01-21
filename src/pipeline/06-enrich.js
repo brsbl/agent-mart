@@ -1,4 +1,3 @@
-import { normalizeSourcePath } from '../lib/parser.js';
 import { saveJson, loadJson, log } from '../lib/utils.js';
 import { extractPluginCategories } from '../lib/categorizer.js';
 
@@ -18,12 +17,23 @@ function generateInstallCommands(ownerRepo, marketplaceName, pluginName) {
 }
 
 /**
- * Check if a file path belongs to a plugin
+ * Count commands in a file map (files matching commands/*.md pattern)
  */
-function pathBelongsToPlugin(filePath, pluginSource) {
-  const normalizedSource = normalizeSourcePath(pluginSource);
-  if (!normalizedSource) return false;
-  return filePath.startsWith(normalizedSource + '/') || filePath === normalizedSource;
+function countCommands(files) {
+  if (!files) return 0;
+  return Object.keys(files).filter(path =>
+    (path.startsWith('commands/') || path.includes('/commands/')) && path.endsWith('.md')
+  ).length;
+}
+
+/**
+ * Count skills in a file map (files ending with /SKILL.md)
+ */
+function countSkills(files) {
+  if (!files) return 0;
+  return Object.keys(files).filter(path =>
+    path === 'SKILL.md' || path.endsWith('/SKILL.md')
+  ).length;
 }
 
 /**
@@ -44,25 +54,8 @@ export function enrich() {
     treesData.trees.map(t => [t.full_name, t])
   );
 
-  // Pre-index commands by repo for O(1) lookup (fixes O(n²) scaling issue)
-  const commandsByRepo = new Map();
-  for (const cmd of parsedData.commands) {
-    if (!commandsByRepo.has(cmd.full_name)) {
-      commandsByRepo.set(cmd.full_name, []);
-    }
-    commandsByRepo.get(cmd.full_name).push(cmd);
-  }
-
-  // Pre-index skills by repo for O(1) lookup
-  const skillsByRepo = new Map();
-  for (const skill of parsedData.skills) {
-    if (!skillsByRepo.has(skill.full_name)) {
-      skillsByRepo.set(skill.full_name, []);
-    }
-    skillsByRepo.get(skill.full_name).push(skill);
-  }
-
-  log(`Indexed ${parsedData.commands.length} commands and ${parsedData.skills.length} skills`);
+  // Files are now indexed by repo full_name
+  const filesMap = parsedData.files || {};
 
   const enrichedAuthors = new Map();
 
@@ -104,6 +97,9 @@ export function enrich() {
     const treeEntry = treeMap.get(full_name);
     const tree = treeEntry?.tree || [];
 
+    // Get files for this repo
+    const repoFiles = filesMap[full_name] || {};
+
     // Build plugins array
     const marketplaceData = marketplace.data;
 
@@ -115,59 +111,31 @@ export function enrich() {
     const marketplaceName = marketplaceData.name || full_name.split('/')[1];
 
     const plugins = (marketplaceData.plugins || []).map(pluginDef => {
-      const pluginSource = pluginDef.source || '';
-
-      // Find commands for this plugin (O(1) repo lookup + filter within repo)
-      const repoCommands = commandsByRepo.get(full_name) || [];
-      const commands = repoCommands
-        .filter(c => pathBelongsToPlugin(c.path, pluginSource))
-        .map(c => ({
-          name: c.name,
-          description: c.description,
-          path: c.path,
-          frontmatter: c.frontmatter,
-          content: c.content
-        }));
-
-      // Find skills for this plugin (O(1) repo lookup + filter within repo)
-      const repoSkills = skillsByRepo.get(full_name) || [];
-      const skills = repoSkills
-        .filter(s => pathBelongsToPlugin(s.path, pluginSource))
-        .map(s => ({
-          name: s.name,
-          description: s.description,
-          path: s.path,
-          frontmatter: s.frontmatter,
-          content: s.content
-        }));
-
-      // Build plugin object with commands and skills attached for categorization
-      const pluginWithContent = {
+      // Build plugin object for categorization (using available data)
+      const pluginForCategorization = {
         name: pluginDef.name,
         description: pluginDef.description || null,
-        commands,
-        skills
+        commands: [],
+        skills: []
       };
 
       // Extract categories for this plugin
-      const categories = extractPluginCategories(pluginWithContent);
+      const categories = extractPluginCategories(pluginForCategorization);
 
       return {
         name: pluginDef.name,
         description: pluginDef.description || null,
         source: pluginDef.source,
         categories,
-        version: pluginDef.version || null,
-        author: pluginDef.author || null,
-        install_commands: generateInstallCommands(full_name, marketplaceName, pluginDef.name),
-        signals: repo.repo.signals,
-        commands,
-        skills
+        install_commands: generateInstallCommands(full_name, marketplaceName, pluginDef.name)
       };
     });
 
+    // Count commands and skills from file paths
+    const commandsCount = countCommands(repoFiles);
+    const skillsCount = countSkills(repoFiles);
+
     // Build marketplace entry (merged repo + marketplace fields)
-    // Note: categories will be populated by 08-categorize.js
     const marketplaceEntry = {
       name: marketplaceName,
       version: marketplaceData.version || null,
@@ -180,14 +148,15 @@ export function enrich() {
       homepage: repo.repo.homepage,
       signals: repo.repo.signals,
       file_tree: tree,
+      files: repoFiles,
       plugins
     };
 
     // Update author stats
     authorData.stats.total_marketplaces++;
     authorData.stats.total_plugins += plugins.length;
-    authorData.stats.total_commands += plugins.reduce((sum, p) => sum + p.commands.length, 0);
-    authorData.stats.total_skills += plugins.reduce((sum, p) => sum + p.skills.length, 0);
+    authorData.stats.total_commands += commandsCount;
+    authorData.stats.total_skills += skillsCount;
     authorData.stats.total_stars += (repo.repo.signals?.stars || 0);
     authorData.stats.total_forks += (repo.repo.signals?.forks || 0);
 

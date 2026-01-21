@@ -4,23 +4,44 @@ import { saveJson, loadJson, decodeBase64, log, applyRepoLimit } from '../lib/ut
 const TREES_PATH = './data/03-trees.json';
 const OUTPUT_PATH = './data/04-files.json';
 
-// Patterns for files we want to fetch
-export const FILE_PATTERNS = [
-  // Marketplace config (always fetch)
-  /^\.claude-plugin\/marketplace\.json$/,
-  // Plugin configs (root or nested)
-  /(^|\/)?\.claude-plugin\/plugin\.json$/,
-  // Commands (root or nested)
-  /(^|\/)commands\/[^/]+\.md$/,
-  // Skills - must be in skills/<skill-name>/SKILL.md format
-  /(^|\/)skills\/[^/]+\/SKILL\.md$/
-];
+// Maximum file size to fetch (100KB)
+const MAX_FILE_SIZE = 100000;
+
+// File extensions to skip (binary/large files)
+const SKIP_EXTENSIONS = new Set([
+  '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.webp',
+  '.woff', '.woff2', '.ttf', '.eot', '.otf',
+  '.zip', '.tar', '.gz', '.rar', '.7z',
+  '.pdf', '.doc', '.docx', '.xls', '.xlsx',
+  '.mp3', '.mp4', '.wav', '.avi', '.mov',
+  '.exe', '.dll', '.so', '.dylib',
+  '.lock'
+]);
 
 /**
- * Check if a file path matches our patterns
+ * Check if a file should be fetched based on type, size, and extension
  */
-function shouldFetchFile(path) {
-  return FILE_PATTERNS.some(pattern => pattern.test(path));
+function shouldFetchFile(entry) {
+  if (entry.type !== 'blob') return false;
+
+  // Skip if size is known and too large
+  if (typeof entry.size === 'number' && entry.size > MAX_FILE_SIZE) return false;
+
+  const path = entry.path.toLowerCase();
+
+  // Skip minified files
+  if (path.endsWith('.min.js') || path.endsWith('.min.css')) return false;
+
+  // Skip binary/unwanted extensions
+  const ext = path.match(/\.[^.]+$/)?.[0];
+  if (ext && SKIP_EXTENSIONS.has(ext)) return false;
+
+  // Skip node_modules and common vendor directories
+  if (path.includes('node_modules/') ||
+      path.includes('vendor/') ||
+      path.includes('.git/')) return false;
+
+  return true;
 }
 
 /**
@@ -45,10 +66,8 @@ export async function fetchFiles() {
 
     const [owner, repo] = full_name.split('/');
 
-    // Filter to files we want
-    const filesToFetch = tree.filter(entry =>
-      entry.type === 'blob' && shouldFetchFile(entry.path)
-    );
+    // Filter to files we want to fetch
+    const filesToFetch = tree.filter(shouldFetchFile);
 
     if (filesToFetch.length === 0) {
       log(`[${i + 1}/${reposToProcess.length}] ${full_name}: no matching files`);
