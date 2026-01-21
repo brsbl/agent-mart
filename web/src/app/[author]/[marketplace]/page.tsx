@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import {
   Star,
@@ -49,17 +50,10 @@ function formatRelativeTime(dateString: string | null | undefined): string {
 
 // Get file content for selected file
 function getFileContent(fileName: string, marketplace: Marketplace): string {
-  for (const plugin of marketplace.plugins) {
-    for (const cmd of plugin.commands) {
-      if (fileName === cmd.path || fileName.endsWith(cmd.path)) {
-        return cmd.content;
-      }
-    }
-    for (const skill of plugin.skills) {
-      if (fileName === skill.path || fileName.endsWith(skill.path)) {
-        return skill.content;
-      }
-    }
+  // Look up file content from the files map
+  const content = marketplace.files?.[fileName];
+  if (content) {
+    return content;
   }
   return `File content not available for: ${fileName}`;
 }
@@ -307,19 +301,24 @@ export default function MarketplaceDetailPage() {
 
           {/* More from Author */}
           {otherMarketplaces.length > 0 && (
-            <div className="bg-white rounded-lg border border-gray-200 p-5">
-              <h2 className="text-sm font-semibold text-gray-900 mb-3">
-                `More from {author.id}`
+            <div className="pt-6 border-t border-gray-200">
+              <h2 className="text-sm text-gray-600 mb-3">
+                More from this author
               </h2>
               <div className="space-y-3">
                 {otherMarketplaces.slice(0, 2).map((m) => (
-                  <MarketplaceCard
+                  <Link
                     key={m.name}
-                    marketplace={m}
-                    author_id={author.id}
-                    author_display_name={author.display_name}
-                    author_avatar_url={author.avatar_url}
-                  />
+                    href={`/${author.id}/${m.name}`}
+                    className="block"
+                  >
+                    <MarketplaceCard
+                      marketplace={m}
+                      author_id={author.id}
+                      author_display_name={author.display_name}
+                      author_avatar_url={author.avatar_url}
+                    />
+                  </Link>
                 ))}
               </div>
             </div>

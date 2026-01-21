@@ -2,8 +2,8 @@
 
 import { Suspense, useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search, ArrowDownUp, X } from "lucide-react";
-import { MarketplaceCard, LoadingState, ErrorState, ErrorBoundary, CategoryPill } from "@/components";
+import { Search, X } from "lucide-react";
+import { MarketplaceCard, LoadingState, ErrorState, ErrorBoundary, MultiSelectDropdown, SortDropdown } from "@/components";
 import { useFetch } from "@/hooks";
 import type { BrowseMarketplace, Meta, MarketplaceSortOption, Category } from "@/lib/types";
 import { sortMarketplaces, CATEGORY_ORDER, getCategoryDisplay } from "@/lib/data";
@@ -36,12 +36,12 @@ function HomePageContent() {
     (c): c is Category => CATEGORY_ORDER.includes(c as Category)
   );
   const sortByParam = (searchParams.get("sort") as MarketplaceSortOption) || "recent";
+  const sortDirParam = (searchParams.get("dir") as "asc" | "desc") || "desc";
 
   // State for sorting, filtering, and pagination
   const [sortBy, setSortBy] = useState<MarketplaceSortOption>(sortByParam);
-  const [selectedCategories, setSelectedCategories] = useState<Set<Category>>(
-    () => new Set(validCategories)
-  );
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">(sortDirParam);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>(validCategories);
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -68,16 +68,17 @@ function HomePageContent() {
       CATEGORY_ORDER.includes(c as Category)
     );
     // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from URL on browser navigation
-    setSelectedCategories(new Set(validCats));
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from URL on browser navigation
+    setSelectedCategories(validCats);
     setSortBy((searchParams.get("sort") as MarketplaceSortOption) || "recent");
+    setSortDirection((searchParams.get("dir") as "asc" | "desc") || "desc");
   }, [searchParams]);
 
   // Debounced URL update to prevent rapid history entries
   const urlUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const updateURL = useCallback((
-    cats: Set<Category>,
-    sort: MarketplaceSortOption
+    cats: Category[],
+    sort: MarketplaceSortOption,
+    dir: "asc" | "desc"
   ) => {
     // Clear any pending URL update
     if (urlUpdateTimeoutRef.current) {
@@ -88,8 +89,8 @@ function HomePageContent() {
       const params = new URLSearchParams(searchParams.toString());
 
       // Update categories param
-      if (cats.size > 0) {
-        params.set("cat", Array.from(cats).join(","));
+      if (cats.length > 0) {
+        params.set("cat", cats.join(","));
       } else {
         params.delete("cat");
       }
@@ -99,6 +100,13 @@ function HomePageContent() {
         params.set("sort", sort);
       } else {
         params.delete("sort");
+      }
+
+      // Update sortDirection param (only if not default)
+      if (dir !== "desc") {
+        params.set("dir", dir);
+      } else {
+        params.delete("dir");
       }
 
       const newURL = params.toString() ? `?${params.toString()}` : "/";
@@ -156,17 +164,24 @@ function HomePageContent() {
     let result = allMarketplaces;
 
     // Categories filter (OR logic - must have ANY of the selected categories)
-    if (selectedCategories.size > 0) {
+    if (selectedCategories.length > 0) {
       result = result.filter(m =>
-        Array.isArray(m.categories) && Array.from(selectedCategories).some(cat =>
+        Array.isArray(m.categories) && selectedCategories.some(cat =>
           m.categories.includes(cat)
         )
       );
     }
 
     // Sort
-    return sortMarketplaces(result, sortBy);
-  }, [allMarketplaces, selectedCategories, sortBy]);
+    let sorted = sortMarketplaces(result, sortBy);
+
+    // Apply sort direction (sortMarketplaces defaults to desc, so reverse for asc)
+    if (sortDirection === "asc") {
+      sorted = [...sorted].reverse();
+    }
+
+    return sorted;
+  }, [allMarketplaces, selectedCategories, sortBy, sortDirection]);
 
   const displayedMarketplaces = filteredAndSortedMarketplaces.slice(0, displayCount);
   const hasMore = displayCount < filteredAndSortedMarketplaces.length;
@@ -193,13 +208,10 @@ function HomePageContent() {
   // Toggle category filter
   const handleCategoryToggle = (cat: Category) => {
     setSelectedCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(cat)) {
-        next.delete(cat);
-      } else {
-        next.add(cat);
-      }
-      updateURL(next, sortBy);
+      const next = prev.includes(cat)
+        ? prev.filter(c => c !== cat)
+        : [...prev, cat];
+      updateURL(next, sortBy, sortDirection);
       return next;
     });
     setDisplayCount(INITIAL_DISPLAY_COUNT);
@@ -207,18 +219,23 @@ function HomePageContent() {
 
   // Clear all filters
   const clearFilters = () => {
-    setSelectedCategories(new Set());
+    setSelectedCategories([]);
     setDisplayCount(INITIAL_DISPLAY_COUNT);
-    updateURL(new Set(), sortBy);
+    updateURL([], sortBy, sortDirection);
   };
 
   const handleSortChange = (newSort: MarketplaceSortOption) => {
     setSortBy(newSort);
     setDisplayCount(INITIAL_DISPLAY_COUNT);
-    updateURL(selectedCategories, newSort);
+    updateURL(selectedCategories, newSort, sortDirection);
   };
 
-  const hasActiveFilters = selectedCategories.size > 0;
+  const handleSortDirectionChange = (newDir: "asc" | "desc") => {
+    setSortDirection(newDir);
+    updateURL(selectedCategories, sortBy, newDir);
+  };
+
+  const hasActiveFilters = selectedCategories.length > 0;
 
   // Helper to render marketplace cards consistently
   const renderMarketplaceCard = (marketplace: BrowseMarketplace) => (
@@ -304,71 +321,49 @@ function HomePageContent() {
   // Browse view
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
-      {/* Search and Filters - Modern Layout */}
-      <div className="mb-8 space-y-4">
-        {/* Search Bar - Full Width, Most Prominent */}
-        <form onSubmit={handleSearch}>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input
-              type="text"
-              placeholder="Search repositories..."
-              value={localSearchQuery}
-              onChange={(e) => setLocalSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent bg-white/80"
-            />
-          </div>
-        </form>
-
-        {/* Filters Row - Categories as Pills + Sort Dropdown */}
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          {/* Category Pills */}
-          <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by category">
-            {availableCategories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => handleCategoryToggle(cat)}
-                className={`px-4 py-1 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                  selectedCategories.has(cat)
-                    ? "bg-gray-900 text-white border border-gray-900 hover:bg-gray-800 hover:border-gray-800 active:bg-gray-700 active:border-gray-700"
-                    : "bg-white text-gray-700 border border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-                }`}
-              >
-                {getCategoryDisplay(cat)}
-              </button>
-            ))}
-            {/* Clear filters button - only shown when filters are active */}
-            {selectedCategories.size > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedCategories(new Set());
-                  setDisplayCount(INITIAL_DISPLAY_COUNT);
-                  updateURL(new Set(), sortBy);
-                }}
-                className="p-1 rounded-full text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all cursor-pointer"
-                aria-label="Clear all filters"
-              >
-                <X size={18} />
-              </button>
-            )}
-          </div>
-
-          {/* Sort Dropdown - Compact */}
-          <div className="flex items-center gap-2">
-            <ArrowDownUp size={16} className="text-gray-500" />
-            <select
-              value={sortBy}
-              onChange={(e) => handleSortChange(e.target.value as MarketplaceSortOption)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white cursor-pointer hover:border-gray-400 transition-colors"
-            >
-              <option value="popular">Most Popular</option>
-              <option value="trending">Most Trending</option>
-              <option value="recent">Recently Updated</option>
-            </select>
-          </div>
+      {/* Single Row with Search, Category, Sort */}
+      <div className="flex items-center gap-3 mb-8">
+        {/* Search Bar */}
+        <div className="flex-1">
+          <form onSubmit={handleSearch}>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search repositories..."
+                value={localSearchQuery}
+                onChange={(e) => setLocalSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent bg-white"
+              />
+              {localSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setLocalSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              )}
+            </div>
+          </form>
         </div>
+
+        {/* Category Multi-Select Dropdown */}
+        <MultiSelectDropdown
+          options={availableCategories}
+          selectedOptions={selectedCategories}
+          onToggle={handleCategoryToggle}
+          onClear={clearFilters}
+          placeholder="All Categories"
+        />
+
+        {/* Sort Dropdown */}
+        <SortDropdown
+          sortField={sortBy}
+          sortDirection={sortDirection}
+          onSortFieldChange={handleSortChange}
+          onSortDirectionChange={handleSortDirectionChange}
+        />
       </div>
 
       {/* Grid */}

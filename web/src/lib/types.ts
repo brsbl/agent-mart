@@ -48,6 +48,7 @@ export interface Marketplace {
   homepage: string | null;
   signals: Signals;
   file_tree: FileTreeEntry[];
+  files: Record<string, string>; // path -> content
   plugins: Plugin[];
 }
 
@@ -88,49 +89,10 @@ export interface Plugin {
   description: string | null;
   source: string;
   categories: Category[];
-  version: string | null;
-  author: PluginAuthor | null;
   install_commands: string[];
-  signals: Signals;
-  commands: Command[];
-  skills: Skill[];
 }
 
-export interface PluginAuthor {
-  name: string;
-  email?: string;
-}
-
-export interface Command {
-  name: string;
-  description: string;
-  path: string;
-  frontmatter: CommandFrontmatter | null;
-  content: string;
-}
-
-export interface CommandFrontmatter {
-  description?: string;
-  "allowed-tools"?: string;
-  "argument-hint"?: string[];
-  [key: string]: unknown;
-}
-
-export interface Skill {
-  name: string;
-  description: string;
-  path: string;
-  frontmatter: SkillFrontmatter | null;
-  content: string;
-}
-
-export interface SkillFrontmatter {
-  name?: string;
-  description?: string;
-  [key: string]: unknown;
-}
-
-// Flattened types for search/display
+// Flattened plugin type for search/display
 export interface FlatPlugin extends Plugin {
   author_id: string;
   author_display_name: string;
@@ -138,7 +100,7 @@ export interface FlatPlugin extends Plugin {
   repo_full_name: string;
 }
 
-// Lightweight plugin type for browse/search (excludes full commands/skills content)
+// Lightweight plugin type for browse/search
 export interface BrowsePlugin {
   name: string;
   description: string | null;
@@ -153,8 +115,6 @@ export interface BrowsePlugin {
     stars: number;
     pushed_at: string | null;
   };
-  commands_count: number;
-  skills_count: number;
   keywords: string[];
 }
 

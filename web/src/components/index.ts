@@ -7,5 +7,6 @@ export { ErrorState } from "./ErrorState";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { CategoryPill } from "./CategoryPill";
 export { SortDropdown } from "./SortDropdown";
+export { MultiSelectDropdown } from "./MultiSelectDropdown";
 export { ExpandableSection } from "./ExpandableSection";
 export { PluginSection } from "./PluginSection";
