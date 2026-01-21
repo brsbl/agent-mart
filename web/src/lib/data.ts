@@ -6,8 +6,7 @@ import type {
   BrowseMarketplace,
   SortOption,
   MarketplaceSortOption,
-  TechStack,
-  Capability,
+  Category,
 } from "./types";
 
 // ============================================
@@ -108,314 +107,44 @@ export function formatBytes(bytes: number | null): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function getCategoryBadgeClass(category: string): string {
-  // Validate category is in CATEGORY_ORDER to avoid arbitrary class names
-  if (VALID_CATEGORIES.has(category as NormalizedCategory)) {
-    return `badge-${category}`;
-  }
-  return "badge-development"; // fallback
-}
-
 // ============================================
-// CATEGORY NORMALIZATION (for plugins)
+// UNIFIED CATEGORY SYSTEM (12 categories)
 // ============================================
 
-// Non-obvious category aliases (case variations handled by normalizeCategory)
-const CATEGORY_ALIASES: Record<string, string> = {
-  // Development aliases
-  "developer-tools": "development",
-  "development-tools": "development",
-  "development-engineering": "development",
-  "development-utilities": "development",
-  "development-workflow": "development",
-  "development-skills": "development",
-  "coding": "development",
-  "programming": "development",
-
-  // DevOps aliases
-  "automation-devops": "devops",
-  "deployment": "devops",
-  "cicd": "devops",
-  "ci-cd": "devops",
-
-  // AI/ML aliases
-  "ai": "ai-ml",
-  "ai-agents": "ai-ml",
-  "ai-agency": "ai-ml",
-  "agents": "ai-ml",
-  "machine-learning": "ai-ml",
-  "personalities": "ai-ml",
-
-  // Productivity aliases
-  "productivity-organization": "productivity",
-
-  // Automation aliases
-  "workflows": "automation",
-  "workflow": "automation",
-  "workflow-orchestration": "automation",
-  "orchestration": "automation",
-
-  // Testing aliases
-  "code-quality-testing": "testing",
-  "testing-qa": "testing",
-  "qa": "testing",
-
-  // Quality aliases
-  "code-quality": "quality",
-  "code-review": "quality",
-
-  // Security aliases
-  "security-compliance-legal": "security",
-  "security-testing": "security",
-
-  // Database aliases
-  "databases": "database",
-
-  // Documentation aliases
-  "docs": "documentation",
-
-  // API aliases
-  "api-development": "api",
-
-  // Design aliases
-  "design-ux": "design",
-  "ui-design": "design",
-  "ux-ui": "design",
-  "ui-development": "design",
-
-  // Business aliases
-  "business-sales": "business",
-  "business-tools": "business",
-  "business-marketing": "business",
-  "finance": "business",
-  "payments": "business",
-  "ecommerce": "business",
-
-  // Marketing aliases
-  "marketing-growth": "marketing",
-
-  // Infrastructure aliases
-  "operations": "infrastructure",
-  "cloud": "infrastructure",
-  "cloud-infrastructure": "infrastructure",
-  "monitoring": "infrastructure",
-
-  // Languages aliases
-  "language": "languages",
-
-  // Utilities aliases
-  "tools": "utilities",
-  "utility": "utilities",
-  "tooling": "utilities",
-  "skill-enhancers": "utilities",
-
-  // Integration aliases
-  "integrations": "integration",
-  "mcp": "integration",
-  "mcp-servers": "integration",
-  "mcp-integrations": "integration",
-
-  // Learning aliases
-  "education": "learning",
-
-  // Git aliases
-  "git-workflow": "git",
-  "git-operations": "git",
-  "version-control": "git",
-
-  // Frameworks aliases
-  "framework": "frameworks",
-};
-
-// Ordered list of categories for display
+// Category order for display
 export const CATEGORY_ORDER = [
-  "development",
-  "ai-ml",
-  "productivity",
-  "automation",
-  "devops",
-  "testing",
-  "quality",
-  "security",
-  "database",
-  "api",
-  "infrastructure",
-  "integration",
-  "design",
-  "documentation",
-  "git",
-  "frameworks",
-  "languages",
-  "utilities",
-  "business",
-  "marketing",
-  "learning",
-  "uncategorized",
-] as const;
-
-export type NormalizedCategory = typeof CATEGORY_ORDER[number];
-
-// Pre-computed Set for O(1) category validation
-const VALID_CATEGORIES = new Set<NormalizedCategory>(CATEGORY_ORDER);
-
-// Display names for categories
-const CATEGORY_DISPLAY_NAMES: Record<NormalizedCategory, string> = {
-  development: "Development",
-  "ai-ml": "AI & Machine Learning",
-  productivity: "Productivity",
-  automation: "Automation & Workflows",
-  devops: "DevOps",
-  testing: "Testing",
-  quality: "Code Quality",
-  security: "Security",
-  database: "Database",
-  api: "API",
-  infrastructure: "Infrastructure",
-  integration: "Integrations",
-  design: "Design",
-  documentation: "Documentation",
-  git: "Git & Version Control",
-  frameworks: "Frameworks",
-  languages: "Languages",
-  utilities: "Utilities",
-  business: "Business",
-  marketing: "Marketing",
-  learning: "Learning",
-  uncategorized: "Other",
-};
-
-export function normalizeCategory(category: string | null | undefined): string {
-  if (!category) return "uncategorized";
-
-  // Normalize: lowercase, trim, replace spaces/underscores with hyphens
-  const normalized = category.toLowerCase().trim().replace(/[\s_]+/g, "-");
-
-  // Remove special characters like commas, ampersands, slashes
-  const cleaned = normalized.replace(/[,&/]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-
-  // Check if it's already a valid category
-  if (CATEGORY_ORDER.includes(cleaned as NormalizedCategory)) {
-    return cleaned;
-  }
-
-  // Check aliases
-  return CATEGORY_ALIASES[cleaned] || "uncategorized";
-}
-
-export function getCategoryDisplayName(category: string): string {
-  if (CATEGORY_ORDER.includes(category as NormalizedCategory)) {
-    return CATEGORY_DISPLAY_NAMES[category as NormalizedCategory];
-  }
-  return category;
-}
-
-export interface CategoryGroup {
-  category: NormalizedCategory;
-  displayName: string;
-  plugins: BrowsePlugin[];
-}
-
-export function groupPluginsByCategory(plugins: BrowsePlugin[]): CategoryGroup[] {
-  const groups = new Map<string, BrowsePlugin[]>();
-
-  // Group plugins by normalized category
-  for (const plugin of plugins) {
-    const normalizedCat = normalizeCategory(plugin.category);
-    if (!groups.has(normalizedCat)) {
-      groups.set(normalizedCat, []);
-    }
-    const categoryPlugins = groups.get(normalizedCat);
-    if (categoryPlugins) {
-      categoryPlugins.push(plugin);
-    }
-  }
-
-  // Sort plugins within each group by stars
-  for (const [, categoryPlugins] of groups) {
-    categoryPlugins.sort((a, b) => (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0));
-  }
-
-  // Convert to array and sort by CATEGORY_ORDER
-  const result: CategoryGroup[] = [];
-  for (const category of CATEGORY_ORDER) {
-    const categoryPlugins = groups.get(category);
-    if (categoryPlugins && categoryPlugins.length > 0) {
-      result.push({
-        category,
-        displayName: getCategoryDisplayName(category),
-        plugins: categoryPlugins,
-      });
-    }
-  }
-
-  return result;
-}
-
-// ============================================
-// MARKETPLACE CATEGORIES (NEW SYSTEM)
-// Two dimensions: Tech Stack + Capabilities
-// ============================================
-
-// Tech Stack order and display names
-export const TECH_STACK_ORDER: TechStack[] = [
-  'typescript',
-  'python',
-  'nextjs',
-  'react',
-  'vue',
-  'node',
-  'go',
-  'rust',
-  'docker',
-  'aws',
-  'supabase',
-  'postgres',
-];
-
-const TECH_STACK_DISPLAY: Record<TechStack, string> = {
-  'nextjs': 'Next.js',
-  'react': 'React',
-  'vue': 'Vue',
-  'python': 'Python',
-  'node': 'Node.js',
-  'typescript': 'TypeScript',
-  'go': 'Go',
-  'rust': 'Rust',
-  'supabase': 'Supabase',
-  'aws': 'AWS',
-  'docker': 'Docker',
-  'postgres': 'PostgreSQL',
-};
-
-// Capability order and display names
-export const CAPABILITY_ORDER: Capability[] = [
-  'orchestration',
-  'memory',
-  'browser-automation',
-  'boilerplate',
-  'review',
-  'testing',
+  'templates',
+  'knowledge-base',
   'devops',
+  'code-quality',
+  'code-review',
+  'testing',
+  'data-analytics',
+  'design',
   'documentation',
-];
+  'planning',
+  'security',
+  'orchestration',
+] as const satisfies readonly Category[];
 
-const CAPABILITY_DISPLAY: Record<Capability, string> = {
-  'orchestration': 'Orchestration',
-  'memory': 'Memory',
-  'browser-automation': 'Browser Automation',
-  'boilerplate': 'Boilerplate',
-  'review': 'Code Review',
-  'testing': 'Testing',
+// Category display names
+const CATEGORY_DISPLAY: Record<Category, string> = {
+  'knowledge-base': 'Agent Memory',
+  'templates': 'Templates',
   'devops': 'DevOps',
+  'code-quality': 'Code Quality',
+  'code-review': 'Code Review',
+  'testing': 'Testing',
+  'data-analytics': 'Data & Analytics',
+  'design': 'Design',
   'documentation': 'Documentation',
+  'planning': 'Planning',
+  'security': 'Security',
+  'orchestration': 'Orchestration',
 };
 
-export function getTechStackDisplay(tech: TechStack): string {
-  return TECH_STACK_DISPLAY[tech] ?? tech;
-}
-
-export function getCapabilityDisplay(cap: Capability): string {
-  return CAPABILITY_DISPLAY[cap] ?? cap;
+export function getCategoryDisplay(category: Category): string {
+  return CATEGORY_DISPLAY[category] ?? category;
 }
 
 // ============================================

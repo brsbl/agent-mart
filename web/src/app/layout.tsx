@@ -42,8 +42,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${sourceSerif.variable} ${ibmPlexMono.variable} ${jetbrainsMono.variable} ${inter.className}`}>
-        <NavBar />
-        <main>{children}</main>
+        <div
+          className="min-h-screen bg-gray-50"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px)
+            `,
+            backgroundSize: "32px 32px",
+          }}
+        >
+          <NavBar />
+          <main>{children}</main>
+        </div>
       </body>
     </html>
   );

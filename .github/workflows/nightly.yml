@@ -47,17 +47,25 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Run pipeline
+      - name: Run pipeline with visualization
         env:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_GITHUB_TOKEN }}
-        run: npm run build
+        run: npm run build:dev
 
-      - name: Upload artifacts
+      - name: Upload public directory
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: public-directory
           path: public/
+          retention-days: 30
+
+      - name: Upload ETL visualization report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: etl-visualization-report
+          path: scripts/etl-visualizer/output/pipeline-status.html
           retention-days: 30
 
       - name: Create PR for data updates

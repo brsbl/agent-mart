@@ -42,7 +42,7 @@ export interface Marketplace {
   description: string | null;
   owner_info: { name: string; email: string } | null;
   keywords: string[];
-  categories: MarketplaceCategories;
+  categories: Category[];
   repo_full_name: string;
   repo_url: string;
   homepage: string | null;
@@ -52,40 +52,22 @@ export interface Marketplace {
 }
 
 // ============================================
-// NEW CATEGORY SYSTEM (Tech Stack + Capabilities)
+// UNIFIED CATEGORY SYSTEM (12 categories)
 // ============================================
 
-// Tech Stack - what tech the user already uses
-export type TechStack =
-  | 'nextjs'
-  | 'react'
-  | 'vue'
-  | 'python'
-  | 'node'
-  | 'typescript'
-  | 'go'
-  | 'rust'
-  | 'supabase'
-  | 'aws'
-  | 'docker'
-  | 'postgres';
-
-// Capabilities - what the agent does
-export type Capability =
-  | 'orchestration'
-  | 'memory'
-  | 'browser-automation'
-  | 'boilerplate'
-  | 'review'
-  | 'testing'
+export type Category =
+  | 'knowledge-base'
+  | 'templates'
   | 'devops'
-  | 'documentation';
-
-// Combined categories structure
-export interface MarketplaceCategories {
-  techStack: TechStack[];
-  capabilities: Capability[];
-}
+  | 'code-quality'
+  | 'code-review'
+  | 'testing'
+  | 'data-analytics'
+  | 'design'
+  | 'documentation'
+  | 'planning'
+  | 'security'
+  | 'orchestration';
 
 export interface Signals {
   stars: number;
@@ -105,7 +87,7 @@ export interface Plugin {
   name: string;
   description: string | null;
   source: string;
-  category: PluginCategory | null;
+  categories: Category[];
   version: string | null;
   author: PluginAuthor | null;
   install_commands: string[];
@@ -113,22 +95,6 @@ export interface Plugin {
   commands: Command[];
   skills: Skill[];
 }
-
-// Single-level category based on actual marketplace patterns
-export type Category =
-  | "agent"
-  | "devtools"
-  | "quality"
-  | "testing"
-  | "devops"
-  | "data"
-  | "integration"
-  | "framework"
-  | "workflow"
-  | "specialized";
-
-// Plugin category can be string or null
-export type PluginCategory = Category | string | null;
 
 export interface PluginAuthor {
   name: string;
@@ -176,7 +142,7 @@ export interface FlatPlugin extends Plugin {
 export interface BrowsePlugin {
   name: string;
   description: string | null;
-  category: PluginCategory | null;
+  categories: Category[];
   author_id: string;
   author_display_name: string;
   author_avatar_url: string;
@@ -207,5 +173,5 @@ export interface BrowseMarketplace {
   plugins_count: number;
   first_plugin_name: string | null;
   keywords: string[];
-  categories: MarketplaceCategories;
+  categories: Category[];
 }

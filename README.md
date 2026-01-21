@@ -7,9 +7,11 @@ A marketplace-first directory builder for Claude Code plugins, skills, and comma
 ## Features
 
 - **8-step ETL pipeline** - Discover, fetch, parse, enrich, categorize, and output
+- **Real-time pipeline visualization** - Monitor progress with HTML reports
 - **GraphQL batching** - 90% fewer GitHub API calls
 - **SHA-based caching** - Fast rebuilds for unchanged repos
-- **Owner-centric model** - Browse by creator, not category
+- **Rules-based categorization** - 12 unified categories
+- **Next.js frontend** - Browse the marketplace at [agentmart.dev](https://agentmart.dev)
 - **Static JSON output** - CDN-friendly, no database required
 
 ## Quick Start
@@ -24,6 +26,9 @@ cp .env.example .env
 
 # Run the pipeline
 npm run build
+
+# Run with visualization (opens browser with real-time progress)
+npm run build:dev
 
 # Run with limited repos (for testing)
 REPO_LIMIT=3 npm run build
@@ -41,12 +46,14 @@ REPO_LIMIT=3 npm run build
 | `GITHUB_TOKEN` | Yes | GitHub API token ([create one](https://github.com/settings/tokens)) |
 | `REPO_LIMIT` | No | Limit repos to process (for testing) |
 
-## Scripts
+## NPM Scripts
 
 ```bash
-npm run build          # Run full pipeline
-npm run etl:visualize  # Visualize ETL pipeline stages
-npm test               # Run test suite
+npm run build          # Run full ETL pipeline
+npm run build:dev      # Run pipeline with real-time visualization
+npm test               # Run ETL test suite
+npm run test:web       # Run web frontend tests
+npm run test:all       # Run all tests (ETL + web)
 npm run lint           # Check code style
 npm run lint:fix       # Auto-fix lint issues
 ```
@@ -58,32 +65,12 @@ The pipeline generates:
 ```
 public/
   index.json           # Directory homepage with all owners
+  plugins-browse.json  # Flat list of all plugins with categories
+  category-taxonomy.json # Category definitions
   owners/
     vercel.json        # Per-owner detail files
     anthropics.json
     ...
-```
-
-### index.json Structure
-
-```json
-{
-  "meta": {
-    "total_owners": 3,
-    "total_repos": 3,
-    "total_plugins": 5,
-    "generated_at": "2026-01-12T02:33:28.814Z"
-  },
-  "owners": [
-    {
-      "id": "vercel",
-      "display_name": "Vercel",
-      "type": "Organization",
-      "avatar_url": "https://...",
-      "stats": { "total_stars": 137089, ... }
-    }
-  ]
-}
 ```
 
 ## Pipeline Steps
@@ -96,46 +83,29 @@ public/
 | 04-fetch-files | Fetch specific files | File contents |
 | 05-parse | Parse & validate files | Parsed data |
 | 06-enrich | Build owner-centric model | Enriched data |
-| 08-categorize | Extract categories via rules | Categorized data |
 | 07-output | Generate public JSON | Final output |
+| 08-categorize | Extract categories via rules | Categorized data |
 
 ## Categorization System
 
-The pipeline uses a rules-based categorization system to classify marketplaces across two dimensions.
+The pipeline uses a rules-based categorization system with 12 unified categories. Categories are extracted by matching patterns and keywords in marketplace descriptions, plugin names, command descriptions, and skill descriptions.
 
-### Tech Stack
-What technologies the marketplace works with. Detected via text patterns and file presence.
+| Category | Label | Example Patterns |
+|----------|-------|------------------|
+| `knowledge-base` | Agent Memory | memory, rag, retrieval, embeddings |
+| `templates` | Templates | template, scaffold, boilerplate, starter |
+| `devops` | DevOps | ci/cd, kubernetes, terraform, docker |
+| `code-quality` | Code Quality | lint, format, refactor, eslint |
+| `code-review` | Code Review | code review, pr review |
+| `testing` | Testing | test, jest, vitest, pytest, e2e |
+| `data-analytics` | Data & Analytics | analytics, sql, etl, visualization |
+| `design` | Design | ui/ux, figma, design system, tailwind |
+| `documentation` | Documentation | docs, readme, jsdoc, typedoc |
+| `planning` | Planning | plan, spec, prd, roadmap |
+| `security` | Security | security, auth, vulnerability |
+| `orchestration` | Orchestration | multi-agent, swarm, crew |
 
-| Category | Label | Files | Patterns |
-|----------|-------|-------|----------|
-| `nextjs` | Next.js | `next.config.{js,ts,mjs}` | "next.js", "app router", "pages router" |
-| `react` | React | — | "react", "react components" *(excluded if Next.js)* |
-| `vue` | Vue | `vue.config.js`, `nuxt.config.{js,ts}` | "vue", "nuxt" |
-| `python` | Python | `requirements.txt`, `pyproject.toml`, `setup.py`, `Pipfile` | "django", "fastapi", "flask", "pytest" |
-| `node` | Node.js | `package.json` | "node.js", "express", "koa", "fastify", "nest.js" *(excluded if Next.js/React/Vue)* |
-| `typescript` | TypeScript | `tsconfig.json` | "typescript", "tsc" |
-| `go` | Go | `go.mod`, `go.sum` | "golang", "go module" |
-| `rust` | Rust | `Cargo.toml`, `Cargo.lock` | "rust", "cargo" |
-| `supabase` | Supabase | `supabase/config.toml` | "supabase" |
-| `aws` | AWS | `serverless.yml`, `template.yaml`, `cdk.json` | "aws", "ec2", "dynamodb", "cloudformation", "cdk" |
-| `docker` | Docker | `Dockerfile`, `docker-compose.{yml,yaml}`, `.dockerignore` | "docker", "docker-compose" |
-| `postgres` | PostgreSQL | — | "postgres", "postgresql" |
-
-### Capabilities
-What the agent/marketplace does. Detected via text patterns with anti-patterns to reduce false positives.
-
-| Category | Label | Patterns | Anti-patterns (excluded) |
-|----------|-------|----------|--------------------------|
-| `orchestration` | Orchestration | "multi-agent", "swarm", "crew", "agent framework" | — |
-| `memory` | Memory | "rag", "vector store", "embeddings", "long-term memory" | "memory leak", "out of memory" |
-| `browser-automation` | Browser Automation | "playwright", "puppeteer", "selenium", "cypress" | — |
-| `boilerplate` | Boilerplate | "scaffold", "generator", "boilerplate", "starter kit" | "template literal" |
-| `review` | Code Review | "code review", "pr review", "eslint", "prettier", "refactor" | — |
-| `testing` | Testing | "test", "jest", "vitest", "pytest", "e2e", "unit test", "tdd" | "test data", "test file" |
-| `devops` | DevOps | "kubernetes", "k8s", "terraform", "ansible", "ci/cd", "deploy" | "etl pipeline", "data pipeline" |
-| `documentation` | Documentation | "jsdoc", "typedoc", "sphinx", "mkdocs", "api docs" | "read the docs", "see docs" |
-
-For complete pattern definitions, see [`src/lib/categorizer.js`](./src/lib/categorizer.js). Run `node src/pipeline/08-categorize.js` to regenerate categories.
+For complete pattern definitions, see [`src/lib/categorizer.js`](./src/lib/categorizer.js).
 
 ## Performance
 
@@ -144,6 +114,86 @@ For complete pattern definitions, see [`src/lib/categorizer.js`](./src/lib/categ
 | API calls (3 repos) | ~15 (vs ~229 without batching) |
 | Build time (3 repos) | ~15 seconds |
 | Cache hit rebuild | ~11 seconds |
+
+## Project Structure
+
+```
+agent-mart/
+├── src/
+│   ├── lib/              # GitHub client, cache, parsers, validators, categorizer
+│   └── pipeline/         # 8-step ETL pipeline (01-discover to 08-categorize)
+├── scripts/
+│   ├── build.js          # Pipeline orchestrator
+│   └── etl-visualizer/   # Real-time HTML visualization
+│       ├── run.js        # Runs pipeline with visualization
+│       ├── md-to-html.js # HTML report generator
+│       └── output/       # Generated reports
+├── tests/                # ETL unit tests
+├── data/                 # Intermediate pipeline files (gitignored)
+├── public/               # Generated JSON output
+└── web/                  # Next.js frontend application
+    ├── src/app/          # App router pages
+    ├── src/components/   # React components
+    ├── src/lib/          # Utilities and data fetching
+    └── tests/            # Frontend tests
+```
+
+## Development
+
+### Using the Visualizer
+
+For local development, use the visualizer to monitor pipeline progress in real-time:
+
+```bash
+npm run build:dev
+```
+
+This opens a browser with a live-updating HTML report showing:
+- Stage progress with timing
+- Metrics before/after each stage
+- Validation errors
+- Data previews
+
+The report is saved to `scripts/etl-visualizer/output/pipeline-status.html`.
+
+### Running Tests
+
+```bash
+# Run all tests
+npm run test:all
+
+# Run only ETL tests
+npm test
+
+# Run only web tests
+npm run test:web
+
+# Run web tests in watch mode
+cd web && npm test
+```
+
+## GitHub Actions
+
+### CI Workflow
+
+Runs on every push and pull request:
+- Linting
+- ETL tests
+- Web frontend tests
+
+### Nightly Build
+
+Runs daily at 2 AM UTC:
+- Full ETL pipeline with visualization
+- Uploads `public/` directory as artifact
+- Uploads visualization report as artifact
+- Creates PR with updated data
+
+To set up:
+
+1. Go to **Settings → Secrets and variables → Actions**
+2. Create a secret named `PIPELINE_GITHUB_TOKEN` with a GitHub PAT that has `public_repo` scope
+3. The workflow will run automatically, or trigger manually from **Actions → Nightly Build → Run workflow**
 
 ## Architecture
 
@@ -161,21 +211,9 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation of:
 - **GraphQL injection prevention** - All inputs sanitized before queries
 - **Lazy token validation** - Graceful handling in test environments
 
-## Testing
-
-```bash
-npm test
-```
-
-41 tests covering:
-- Validators (marketplace, plugin, skill schemas)
-- Parsers (JSON, YAML frontmatter, command names)
-- Security (cache keys, GraphQL sanitization)
-- File patterns (SKILL.md, commands, etc.)
-
 ## Web Frontend
 
-The project includes a Next.js web application for browsing the plugin directory.
+The Next.js web application provides a browsable interface for the plugin directory.
 
 ```bash
 cd web
@@ -186,36 +224,6 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) to browse the marketplace.
 
 See [web/README.md](./web/README.md) for frontend-specific documentation.
-
-## Project Structure
-
-```
-agent-mart/
-├── src/
-│   ├── lib/          # GitHub client, cache, parsers, validators, categorizer
-│   └── pipeline/     # 8-step ETL pipeline (01-discover to 08-categorize)
-├── scripts/          # Build orchestrator
-├── tests/            # Unit tests
-├── data/             # Intermediate pipeline files (gitignored)
-├── public/           # Generated JSON output
-└── web/              # Next.js frontend application
-    ├── src/app/      # App router pages
-    ├── src/components/
-    └── src/lib/
-```
-
-## GitHub Action
-
-The pipeline runs nightly via GitHub Actions at 2 AM UTC. To set up:
-
-1. Go to **Settings → Secrets and variables → Actions**
-2. Create a secret named `PIPELINE_GITHUB_TOKEN` with a GitHub PAT that has `public_repo` scope
-3. The workflow will:
-   - Run the full pipeline
-   - Commit updated `public/` files automatically
-   - Upload artifacts for 30 days
-
-You can also trigger manually from **Actions → Nightly Build → Run workflow**.
 
 ## Contributing
 

@@ -1,11 +1,10 @@
 import { normalizeSourcePath } from '../lib/parser.js';
 import { saveJson, loadJson, log } from '../lib/utils.js';
-import { normalizeCategory } from '../lib/categories.js';
+import { extractPluginCategories } from '../lib/categorizer.js';
 
 const REPOS_PATH = './data/02-repos.json';
 const TREES_PATH = './data/03-trees.json';
 const PARSED_PATH = './data/05-parsed.json';
-const CATEGORIES_PATH = './data/marketplace-categories.json';
 const OUTPUT_PATH = './data/06-enriched.json';
 
 /**
@@ -36,15 +35,6 @@ export function enrich() {
   const reposData = loadJson(REPOS_PATH);
   const treesData = loadJson(TREES_PATH);
   const parsedData = loadJson(PARSED_PATH);
-
-  // Load marketplace categories (pre-generated)
-  let categoriesData = { marketplaces: {} };
-  try {
-    categoriesData = loadJson(CATEGORIES_PATH);
-    log(`Loaded categories for ${Object.keys(categoriesData.marketplaces).length} marketplaces`);
-  } catch {
-    log('Warning: marketplace-categories.json not found, marketplaces will have no categories');
-  }
 
   // Build maps for O(1) lookups
   const marketplaceMap = new Map(
@@ -151,15 +141,22 @@ export function enrich() {
           content: s.content
         }));
 
+      // Build plugin object with commands and skills attached for categorization
+      const pluginWithContent = {
+        name: pluginDef.name,
+        description: pluginDef.description || null,
+        commands,
+        skills
+      };
+
+      // Extract categories for this plugin
+      const categories = extractPluginCategories(pluginWithContent);
+
       return {
         name: pluginDef.name,
         description: pluginDef.description || null,
         source: pluginDef.source,
-        category: normalizeCategory(
-          pluginDef.category,
-          pluginDef.description || marketplaceData.description || marketplaceData.metadata?.description || '',
-          marketplaceData.keywords || []
-        ),
+        categories,
         version: pluginDef.version || null,
         author: pluginDef.author || null,
         install_commands: generateInstallCommands(full_name, marketplaceName, pluginDef.name),
@@ -169,23 +166,14 @@ export function enrich() {
       };
     });
 
-    // Get marketplace categories from pre-generated data
-    // Supports both legacy array format and new object format with hash
-    const repoKey = `${ownerInfo.id}/${marketplaceName}`;
-    const categoryEntry = categoriesData.marketplaces[repoKey] ||
-                          categoriesData.marketplaces[full_name];
-    const marketplaceCategories = Array.isArray(categoryEntry)
-      ? categoryEntry
-      : (categoryEntry?.categories || ['productivity-tools']);
-
     // Build marketplace entry (merged repo + marketplace fields)
+    // Note: categories will be populated by 08-categorize.js
     const marketplaceEntry = {
       name: marketplaceName,
       version: marketplaceData.version || null,
       description: marketplaceData.description || marketplaceData.metadata?.description || null,
       owner_info: marketplaceData.owner || null,
       keywords: marketplaceData.keywords || [],
-      categories: marketplaceCategories,
       repo_full_name: full_name,
       repo_url: `https://github.com/${full_name}`,
       repo_description: repo.repo.description,

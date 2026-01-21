@@ -19,35 +19,40 @@ export function CopyableCommand({
   const isMultiLine = commands.length > 1;
 
   return (
-    <div className={`terminal group relative ${className}`}>
+    <div className={`bg-gray-100 rounded-lg p-2.5 group relative ${className}`}>
       <div
-        className={`flex ${isMultiLine ? "items-start" : "items-center"} justify-between gap-4`}
+        className={`flex ${isMultiLine ? "items-start" : "items-center"} justify-between gap-3`}
       >
         <div className="flex-1 overflow-x-auto">
           {isMultiLine ? (
             commands.map((cmd, i) => (
-              <div key={`cmd-${i}-${cmd.slice(0, 20)}`} className="whitespace-nowrap">
+              <div
+                key={`cmd-${i}-${cmd.slice(0, 20)}`}
+                className="whitespace-nowrap text-gray-800 text-xs font-mono"
+              >
                 {cmd}
               </div>
             ))
           ) : (
-            <code className="whitespace-nowrap">{commands[0]}</code>
+            <code className="whitespace-nowrap text-gray-800 text-xs font-mono">
+              {commands[0]}
+            </code>
           )}
         </div>
         <button
           onClick={() => copy(textToCopy)}
-          className="flex-shrink-0 p-1 rounded opacity-50 group-hover:opacity-100 hover:bg-white/10 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--terminal-bg)] transition-opacity"
+          className="flex-shrink-0 p-1 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 transition-colors"
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >
           {copied ? (
-            <Check className="w-4 h-4 text-[var(--success)]" aria-hidden="true" />
+            <Check size={12} className="text-green-600" aria-hidden="true" />
           ) : (
-            <Copy className="w-4 h-4" aria-hidden="true" />
+            <Copy size={12} className="text-gray-500" aria-hidden="true" />
           )}
         </button>
       </div>
       {copied && (
-        <div className="absolute -top-8 right-0 px-2 py-1 text-xs bg-[var(--success)] text-white rounded shadow-md">
+        <div className="absolute -top-8 right-0 px-2 py-1 text-xs bg-green-600 text-white rounded shadow-md">
           Copied!
         </div>
       )}

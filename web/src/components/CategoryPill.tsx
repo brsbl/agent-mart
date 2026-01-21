@@ -1,14 +1,10 @@
 "use client";
 
-import type { TechStack, Capability } from "@/lib/types";
-import { getTechStackDisplay, getCapabilityDisplay } from "@/lib/data";
-
-// Union type for filter pills
-export type FilterCategory = TechStack | Capability;
+import type { Category } from "@/lib/types";
+import { getCategoryDisplay } from "@/lib/data";
 
 export interface CategoryPillProps {
-  category: FilterCategory;
-  type: "techStack" | "capability";
+  category: Category;
   onClick?: () => void;
   isActive?: boolean;
   size?: "sm" | "md";
@@ -16,14 +12,11 @@ export interface CategoryPillProps {
 
 export function CategoryPill({
   category,
-  type,
   onClick,
   isActive = false,
   size = "sm",
 }: CategoryPillProps) {
-  const displayName = type === "techStack"
-    ? getTechStackDisplay(category as TechStack)
-    : getCapabilityDisplay(category as Capability);
+  const displayName = getCategoryDisplay(category);
 
   const sizeClasses = size === "sm" ? "text-xs px-2 py-0.5" : "text-sm px-3 py-1.5";
 

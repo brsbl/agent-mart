@@ -1,12 +1,16 @@
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { extractCategories, generateTaxonomy, TECH_STACK_RULES, CAPABILITIES_RULES } from '../lib/categorizer.js';
+import { extractCategories, generateTaxonomy, CATEGORY_RULES } from '../lib/categorizer.js';
 
 const DATA_DIR = join(process.cwd(), 'data');
 
 async function loadJSON(filename) {
-  const content = await readFile(join(DATA_DIR, filename), 'utf-8');
-  return JSON.parse(content);
+  try {
+    const content = await readFile(join(DATA_DIR, filename), 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    throw new Error(`Failed to load ${filename}: ${error.message}`);
+  }
 }
 
 export async function categorize() {
@@ -33,42 +37,46 @@ export async function categorize() {
 
   // Categorize each marketplace using extraction rules
   const categorized = allMarketplaces.map(marketplace => {
-    const categories = extractCategories(marketplace);
+    // Get marketplace-level categories from text matching
+    const marketplaceLevelCategories = extractCategories(marketplace);
+
+    // Aggregate categories from all plugins (union)
+    const pluginCategories = new Set();
+    for (const plugin of marketplace.plugins || []) {
+      for (const cat of plugin.categories || []) {
+        pluginCategories.add(cat);
+      }
+    }
+
+    // Combine marketplace-level and plugin-level categories
+    const allCategories = new Set([
+      ...marketplaceLevelCategories,
+      ...pluginCategories
+    ]);
 
     return {
       ...marketplace,
-      categories
+      categories: Array.from(allCategories).sort()
     };
   });
 
   // Generate category statistics
   const stats = {
     totalMarketplaces: categorized.length,
-    withTechStack: categorized.filter(m => m.categories.techStack.length > 0).length,
-    withCapabilities: categorized.filter(m => m.categories.capabilities.length > 0).length,
-    withAnyCategory: categorized.filter(m =>
-      m.categories.techStack.length > 0 || m.categories.capabilities.length > 0
-    ).length,
-    techStackCounts: {},
-    capabilityCounts: {}
+    withCategories: categorized.filter(m => m.categories.length > 0).length,
+    categoryCounts: {}
   };
 
-  // Count tech stack occurrences
+  // Count category occurrences
   for (const m of categorized) {
-    for (const tech of m.categories.techStack) {
-      stats.techStackCounts[tech] = (stats.techStackCounts[tech] || 0) + 1;
-    }
-    for (const cap of m.categories.capabilities) {
-      stats.capabilityCounts[cap] = (stats.capabilityCounts[cap] || 0) + 1;
+    for (const cat of m.categories) {
+      stats.categoryCounts[cat] = (stats.categoryCounts[cat] || 0) + 1;
     }
   }
 
   // Sort counts by frequency
-  stats.techStackCounts = Object.fromEntries(
-    Object.entries(stats.techStackCounts).sort((a, b) => b[1] - a[1])
-  );
-  stats.capabilityCounts = Object.fromEntries(
-    Object.entries(stats.capabilityCounts).sort((a, b) => b[1] - a[1])
+  stats.categoryCounts = Object.fromEntries(
+    Object.entries(stats.categoryCounts).sort((a, b) => b[1] - a[1])
   );
 
   // Write outputs
@@ -91,19 +99,14 @@ export async function categorize() {
 
   console.log('\nCategorization complete!');
   console.log(`  Total marketplaces: ${stats.totalMarketplaces}`);
-  console.log(`  With tech stack: ${stats.withTechStack} (${((stats.withTechStack / stats.totalMarketplaces) * 100).toFixed(1)}%)`);
-  console.log(`  With capabilities: ${stats.withCapabilities} (${((stats.withCapabilities / stats.totalMarketplaces) * 100).toFixed(1)}%)`);
-  console.log(`  With any category: ${stats.withAnyCategory} (${((stats.withAnyCategory / stats.totalMarketplaces) * 100).toFixed(1)}%)`);
+  const percentage = stats.totalMarketplaces > 0
+    ? ((stats.withCategories / stats.totalMarketplaces) * 100).toFixed(1)
+    : '0.0';
+  console.log(`  With categories: ${stats.withCategories} (${percentage}%)`);
 
-  console.log('\nTech Stack distribution:');
-  for (const [tech, count] of Object.entries(stats.techStackCounts)) {
-    const label = TECH_STACK_RULES[tech]?.label || tech;
-    console.log(`  ${label}: ${count}`);
-  }
-
-  console.log('\nCapabilities distribution:');
-  for (const [cap, count] of Object.entries(stats.capabilityCounts)) {
-    const label = CAPABILITIES_RULES[cap]?.label || cap;
+  console.log('\nCategory distribution:');
+  for (const [cat, count] of Object.entries(stats.categoryCounts)) {
+    const label = CATEGORY_RULES[cat]?.label || cat;
     console.log(`  ${label}: ${count}`);
   }
 

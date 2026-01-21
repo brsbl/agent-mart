@@ -636,7 +636,7 @@ function formatStatus(status) {
 /**
  * Format duration
  */
-function formatDuration(ms) {
+export function formatDuration(ms) {
   if (ms < 1000) return `${ms}ms`;
   if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
   const mins = Math.floor(ms / 60000);
@@ -647,7 +647,7 @@ function formatDuration(ms) {
 /**
  * Escape HTML special characters to prevent XSS
  */
-function escapeHtml(text) {
+export function escapeHtml(text) {
   if (text === null || text === undefined) return '';
   return String(text)
     .replace(/&/g, '&amp;')

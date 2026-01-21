@@ -142,8 +142,8 @@ export function output() {
       const firstPlugin = marketplace.plugins?.[0];
       const catData = categorizedMap.get(marketplace.repo_full_name);
 
-      // Use new two-dimensional categories from categorizer
-      const categories = catData?.categories || { techStack: [], capabilities: [] };
+      // Use flat category array from categorizer
+      const categories = catData?.categories || [];
 
       marketplacesBrowse.push({
         name: marketplace.name,
