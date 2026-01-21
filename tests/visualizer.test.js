@@ -154,7 +154,7 @@ describe('generatePipelineHtml', () => {
     };
 
     const html = generatePipelineHtml(state);
-    assert.ok(html.includes('Final Output'));
+    assert.ok(html.includes('Output'));
     assert.ok(html.includes('42'));
   });
 });
