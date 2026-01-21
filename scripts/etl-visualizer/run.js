@@ -98,7 +98,7 @@ const STAGES = [
     id: '06-enrich',
     name: 'Enrich',
     fn: enrich,
-    description: 'Builds author-centric data model, aggregates statistics, and generates install commands for each plugin.',
+    description: 'Builds author-centric data model, extracts plugin-level categories, aggregates statistics, and generates install commands.',
     outputFile: './data/06-enriched.json',
     getMetrics: (data, prev) => ({
       'Total authors': { current: data?.total_authors || 0, previous: prev?.total_authors || 0 }
@@ -108,7 +108,7 @@ const STAGES = [
     id: '07-output',
     name: 'Output',
     fn: output,
-    description: 'Generates web-ready JSON files for the frontend including index, browse endpoints, and per-author files.',
+    description: 'Generates web-ready JSON files: index, plugins-browse, marketplaces-browse, categories, and per-author files.',
     outputFile: './web/public/data/index.json',
     getMetrics: (data, prev) => ({
       'Authors': { current: data?.meta?.total_authors || 0, previous: prev?.meta?.total_authors || 0 },
@@ -122,23 +122,23 @@ const STAGES = [
     id: '08-categorize',
     name: 'Categorize',
     fn: categorize,
-    description: 'Applies multi-tier categorization to marketplaces using verbs, nouns, and integrations.',
+    description: 'Applies rules-based categorization using pattern and keyword matching across 12 categories.',
     outputFile: './data/marketplaces-categorized.json',
     getMetrics: (data, prev) => {
-      // data is an array of categorized marketplaces
+      // data is an array of categorized marketplaces with flat categories array
       const current = Array.isArray(data) ? data : [];
       const previous = Array.isArray(prev) ? prev : [];
-      const withVerbs = current.filter(m => m.categories?.verbs?.length > 0).length;
-      const withNouns = current.filter(m => m.categories?.nouns?.length > 0).length;
-      const withIntegration = current.filter(m => m.categories?.integration).length;
-      const prevWithVerbs = previous.filter(m => m.categories?.verbs?.length > 0).length;
-      const prevWithNouns = previous.filter(m => m.categories?.nouns?.length > 0).length;
-      const prevWithIntegration = previous.filter(m => m.categories?.integration).length;
+      const withCategories = current.filter(m => m.categories?.length > 0).length;
+      const prevWithCategories = previous.filter(m => m.categories?.length > 0).length;
+      // Count average categories per marketplace
+      const totalCategories = current.reduce((sum, m) => sum + (m.categories?.length || 0), 0);
+      const avgCategories = current.length > 0 ? (totalCategories / current.length).toFixed(1) : 0;
+      const prevTotalCategories = previous.reduce((sum, m) => sum + (m.categories?.length || 0), 0);
+      const prevAvgCategories = previous.length > 0 ? (prevTotalCategories / previous.length).toFixed(1) : 0;
       return {
         'Marketplaces': { current: current.length, previous: previous.length },
-        'With verbs': { current: withVerbs, previous: prevWithVerbs },
-        'With nouns': { current: withNouns, previous: prevWithNouns },
-        'With integration': { current: withIntegration, previous: prevWithIntegration }
+        'With categories': { current: withCategories, previous: prevWithCategories },
+        'Avg categories': { current: avgCategories, previous: prevAvgCategories }
       };
     }
   },
@@ -254,8 +254,7 @@ function getDataPreview(stageId, data) {
       if (Array.isArray(data)) {
         return data.slice(0, PREVIEW_LIMIT).map(m => ({
           name: m.name,
-          verbs: m.categories?.verbs?.join(', '),
-          nouns: m.categories?.nouns?.join(', ')
+          categories: m.categories?.join(', ') || 'none'
         }));
       }
       return null;
