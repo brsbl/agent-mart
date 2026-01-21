@@ -13,7 +13,7 @@ const CATEGORIES_PATH = './web/public/data/categories.json';
 /**
  * Generate final public JSON files
  */
-export function output() {
+export function output({ onProgress: _onProgress } = {}) {
   log('Generating public JSON files...');
 
   const { authors } = loadJson(INPUT_PATH);

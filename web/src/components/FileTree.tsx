@@ -183,7 +183,7 @@ export function FileTree({ entries, basePath = "", selectedFile, onSelectFile }:
     <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
       <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
         <span className="text-sm font-semibold text-gray-900 font-mono">
-          Marketplace Plugin Files
+          Plugin Marketplace Files
         </span>
       </div>
       <div className="p-4 max-h-[400px] overflow-y-auto">

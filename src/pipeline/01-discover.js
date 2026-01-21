@@ -7,7 +7,7 @@ const REPO_LIMIT = getRepoLimit();
 /**
  * Discover all repositories containing marketplace.json
  */
-export async function discover() {
+export async function discover({ onProgress } = {}) {
   log('Starting marketplace discovery...');
   if (REPO_LIMIT) {
     log(`REPO_LIMIT set to ${REPO_LIMIT} - will stop after finding ${REPO_LIMIT} repos`);
@@ -40,6 +40,7 @@ export async function discover() {
     }
 
     log(`Discovered ${results.length}/${totalCount} repos...`);
+    onProgress?.(results.length, totalCount);
 
     // Check REPO_LIMIT first
     if (REPO_LIMIT && results.length >= REPO_LIMIT) {

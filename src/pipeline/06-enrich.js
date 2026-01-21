@@ -39,7 +39,7 @@ function countSkills(files) {
 /**
  * Build enriched data model
  */
-export function enrich() {
+export function enrich({ onProgress: _onProgress } = {}) {
   log('Starting data enrichment...');
 
   const reposData = loadJson(REPOS_PATH);
@@ -135,11 +135,17 @@ export function enrich() {
     const commandsCount = countCommands(repoFiles);
     const skillsCount = countSkills(repoFiles);
 
+    // Get description: marketplace level > first plugin description > null
+    const firstPluginDescription = marketplaceData.plugins?.[0]?.description || null;
+    const description = marketplaceData.description ||
+                       marketplaceData.metadata?.description ||
+                       firstPluginDescription;
+
     // Build marketplace entry (merged repo + marketplace fields)
     const marketplaceEntry = {
       name: marketplaceName,
       version: marketplaceData.version || null,
-      description: marketplaceData.description || marketplaceData.metadata?.description || null,
+      description,
       owner_info: marketplaceData.owner || null,
       keywords: marketplaceData.keywords || [],
       repo_full_name: full_name,

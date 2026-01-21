@@ -1,5 +1,6 @@
-import { batchGetFiles, getFileContent, safeApiCall } from '../lib/github.js';
-import { saveJson, loadJson, decodeBase64, log, applyRepoLimit } from '../lib/utils.js';
+import { batchGetFiles } from '../lib/github.js';
+import { saveJson, loadJson, log, applyRepoLimit } from '../lib/utils.js';
+import { parseJson } from '../lib/parser.js';
 
 const TREES_PATH = './data/03-trees.json';
 const OUTPUT_PATH = './data/04-files.json';
@@ -19,36 +20,91 @@ const SKIP_EXTENSIONS = new Set([
 ]);
 
 /**
- * Check if a file should be fetched based on type, size, and extension
+ * Check if file should be skipped based on extension/size
  */
-function shouldFetchFile(entry) {
-  if (entry.type !== 'blob') return false;
+function shouldSkipFile(entry) {
+  if (entry.type !== 'blob') return true;
+  if (typeof entry.size === 'number' && entry.size > MAX_FILE_SIZE) return true;
 
-  // Skip if size is known and too large
-  if (typeof entry.size === 'number' && entry.size > MAX_FILE_SIZE) return false;
+  const ext = entry.path.toLowerCase().match(/\.[^.]+$/)?.[0];
+  if (ext && SKIP_EXTENSIONS.has(ext)) return true;
 
-  const path = entry.path.toLowerCase();
-
-  // Skip minified files
-  if (path.endsWith('.min.js') || path.endsWith('.min.css')) return false;
-
-  // Skip binary/unwanted extensions
-  const ext = path.match(/\.[^.]+$/)?.[0];
-  if (ext && SKIP_EXTENSIONS.has(ext)) return false;
-
-  // Skip node_modules and common vendor directories
-  if (path.includes('node_modules/') ||
-      path.includes('vendor/') ||
-      path.includes('.git/')) return false;
-
-  return true;
+  return false;
 }
 
 /**
- * Fetch specific file contents for all repos
- * Uses GraphQL batching for efficiency (95% fewer API calls)
+ * Check if a path is within a directory (handles ./ prefix)
  */
-export async function fetchFiles() {
+function isWithinDirectory(filePath, dirPath) {
+  // Normalize dirPath - remove leading ./ and trailing /
+  const normalizedDir = dirPath.replace(/^\.\//, '').replace(/\/$/, '');
+
+  // Handle root directory case - skip fetching entire repo
+  if (normalizedDir === '.' || normalizedDir === '') {
+    return false;
+  }
+
+  return filePath.startsWith(normalizedDir + '/') || filePath === normalizedDir;
+}
+
+/**
+ * Check if a file is a plugin component (skills, commands, agents, hooks, plugin.json)
+ * We only fetch these files, not arbitrary source code
+ */
+function isPluginComponentFile(path) {
+  // .claude-plugin/ files (plugin.json, etc.)
+  if (path.includes('.claude-plugin/')) return true;
+
+  // SKILL.md files (skills/<name>/SKILL.md or just SKILL.md)
+  if (path.endsWith('/SKILL.md') || path === 'SKILL.md') return true;
+
+  // Commands (commands/*.md)
+  if (path.includes('/commands/') && path.endsWith('.md')) return true;
+
+  // Agents (agents/*.md)
+  if (path.includes('/agents/') && path.endsWith('.md')) return true;
+
+  // Hooks directory (hooks/**)
+  if (path.includes('/hooks/')) return true;
+
+  // Skills directory markdown files
+  if (path.includes('/skills/') && path.endsWith('.md')) return true;
+
+  return false;
+}
+
+/**
+ * Extract plugin source paths from marketplace.json content
+ */
+function extractPluginSourcePaths(marketplaceContent) {
+  const data = parseJson(marketplaceContent, 'marketplace.json');
+  if (!data || !Array.isArray(data.plugins)) return [];
+
+  const paths = [];
+  for (const plugin of data.plugins) {
+    if (!plugin.source) continue;
+
+    // Handle string source (local path)
+    if (typeof plugin.source === 'string') {
+      paths.push(plugin.source);
+    }
+    // Handle object source with path property
+    else if (typeof plugin.source === 'object' && plugin.source.path) {
+      paths.push(plugin.source.path);
+    }
+    // Skip URL-based sources (source.source === 'url')
+  }
+
+  return paths;
+}
+
+/**
+ * Two-pass file fetching:
+ * 1. First fetch .claude-plugin/ files (including marketplace.json)
+ * 2. Parse marketplace.json to find plugin source paths
+ * 3. Fetch files from those source directories
+ */
+export async function fetchFiles({ onProgress } = {}) {
   log('Starting file content fetch...');
 
   const { trees } = loadJson(TREES_PATH);
@@ -65,61 +121,100 @@ export async function fetchFiles() {
     }
 
     const [owner, repo] = full_name.split('/');
+    const branch = default_branch || 'main';
 
-    // Filter to files we want to fetch
-    const filesToFetch = tree.filter(shouldFetchFile);
+    onProgress?.(i + 1, reposToProcess.length);
 
-    if (filesToFetch.length === 0) {
-      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: no matching files`);
+    // Pass 1: Find and fetch .claude-plugin/ files
+    const claudePluginFiles = tree.filter(entry =>
+      !shouldSkipFile(entry) && entry.path.startsWith('.claude-plugin/')
+    );
+
+    if (claudePluginFiles.length === 0) {
+      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: no .claude-plugin/ files`);
       continue;
     }
 
-    log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${filesToFetch.length} files`);
-
-    // Use GraphQL batch fetching
-    const paths = filesToFetch.map(entry => entry.path);
-    const branch = default_branch || 'main';
+    // Fetch .claude-plugin/ files
+    const pass1Paths = claudePluginFiles.map(e => e.path);
+    let pass1Results = {};
 
     try {
-      const batchResults = await batchGetFiles(owner, repo, branch, paths);
-
-      // Process results
-      for (const entry of filesToFetch) {
-        const fileData = batchResults[entry.path];
-        if (fileData && fileData.content) {
-          files.push({
-            full_name,
-            path: entry.path,
-            size: fileData.size || entry.size,
-            sha: null, // GraphQL doesn't return SHA, not critical
-            content: fileData.content
-          });
-        }
-      }
+      pass1Results = await batchGetFiles(owner, repo, branch, pass1Paths);
     } catch (error) {
-      // Fall back to individual REST calls if batch fails
-      log(`Batch failed for ${full_name}, falling back to REST: ${error.message}`);
-      for (const entry of filesToFetch) {
-        const fileData = await safeApiCall(
-          () => getFileContent(owner, repo, entry.path),
-          `file ${full_name}/${entry.path}`
-        );
+      log(`Batch failed for ${full_name} pass 1: ${error.message}`);
+      continue;
+    }
 
-        if (!fileData || !fileData.content) continue;
-
-        // Decode base64 content if encoding is base64
-        const content = fileData.encoding === 'base64'
-          ? decodeBase64(fileData.content)
-          : fileData.content;
-
+    // Store fetched files and find marketplace.json
+    let marketplaceContent = null;
+    for (const entry of claudePluginFiles) {
+      const fileData = pass1Results[entry.path];
+      if (fileData && fileData.content) {
         files.push({
           full_name,
           path: entry.path,
-          size: entry.size,
-          sha: fileData.sha,
-          content
+          size: fileData.size || entry.size,
+          sha: null,
+          content: fileData.content
         });
+
+        if (entry.path.endsWith('marketplace.json')) {
+          marketplaceContent = fileData.content;
+        }
       }
+    }
+
+    // Pass 2: Parse marketplace.json and fetch plugin source directories
+    if (marketplaceContent) {
+      const sourcePaths = extractPluginSourcePaths(marketplaceContent);
+
+      if (sourcePaths.length > 0) {
+        // Find plugin component files in source directories (only skills, commands, agents, hooks)
+        const sourceFiles = tree.filter(entry => {
+          if (shouldSkipFile(entry)) return false;
+          if (entry.path.startsWith('.claude-plugin/')) return false;
+
+          // Must be within a plugin source directory
+          const inSourceDir = sourcePaths.some(srcPath => isWithinDirectory(entry.path, srcPath));
+          if (!inSourceDir) return false;
+
+          // Only fetch plugin component files, not arbitrary source code
+          return isPluginComponentFile(entry.path);
+        });
+
+        if (sourceFiles.length > 0) {
+          const pass2Paths = sourceFiles.map(e => e.path);
+
+          try {
+            const pass2Results = await batchGetFiles(owner, repo, branch, pass2Paths);
+
+            for (const entry of sourceFiles) {
+              const fileData = pass2Results[entry.path];
+              if (fileData && fileData.content) {
+                files.push({
+                  full_name,
+                  path: entry.path,
+                  size: fileData.size || entry.size,
+                  sha: null,
+                  content: fileData.content
+                });
+              }
+            }
+
+            log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} + ${pass2Paths.length} files`);
+          } catch (error) {
+            log(`Batch failed for ${full_name} pass 2: ${error.message}`);
+            log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
+          }
+        } else {
+          log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
+        }
+      } else {
+        log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
+      }
+    } else {
+      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files (no marketplace.json)`);
     }
   }
 

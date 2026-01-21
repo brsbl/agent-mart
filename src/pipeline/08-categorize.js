@@ -13,7 +13,7 @@ async function loadJSON(filename) {
   }
 }
 
-export async function categorize() {
+export async function categorize({ onProgress: _onProgress } = {}) {
   console.log('Loading enriched marketplace data...');
 
   const enrichedRaw = await loadJSON('06-enriched.json');

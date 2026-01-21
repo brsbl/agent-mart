@@ -11,7 +11,6 @@ import { parse } from '../../src/pipeline/05-parse.js';
 import { enrich } from '../../src/pipeline/06-enrich.js';
 import { output } from '../../src/pipeline/07-output.js';
 import { categorize } from '../../src/pipeline/08-categorize.js';
-import { mergeFixes } from '../../src/pipeline/08a-merge-fixes.js';
 import { ensureDir, loadJson } from '../../src/lib/utils.js';
 import { generatePipelineHtml } from './md-to-html.js';
 
@@ -57,7 +56,7 @@ const STAGES = [
     id: '04-fetch-files',
     name: 'Fetch Files',
     fn: fetchFiles,
-    description: 'Downloads marketplace.json, SKILL.md, and command/*.md files for each repository.',
+    description: 'Fetches .claude-plugin/ manifests and plugin component files (skills, commands, agents, hooks) from source directories.',
     outputFile: './data/04-files.json',
     getMetrics: (data, prev) => {
       // Count files by type from the files array
@@ -143,16 +142,6 @@ const STAGES = [
       };
     }
   },
-  {
-    id: '08a-merge-fixes',
-    name: 'Merge Fixes',
-    fn: mergeFixes,
-    description: 'Applies manual corrections to AI-generated analysis data.',
-    outputFile: './data/marketplace-detailed-analysis.json',
-    getMetrics: () => ({
-      // This stage modifies existing data, metrics would require tracking internal state
-    })
-  }
 ];
 
 // State tracking
@@ -173,7 +162,8 @@ const state = {
     metrics: null,
     previousData: null,
     validationErrors: null,  // Validation errors for 05-parse stage
-    dataPreview: null        // First 5 items for data preview
+    dataPreview: null,       // First 5 items for data preview
+    progress: null           // Progress tracking { current, total }
   })),
   error: null
 };
@@ -348,8 +338,14 @@ async function runPipeline() {
     writeReport();
 
     try {
+      // Create progress callback
+      const onProgress = (current, total) => {
+        stageState.progress = { current, total };
+        writeReport();
+      };
+
       // Run the stage
-      const result = await stage.fn();
+      const result = await stage.fn({ onProgress });
 
       // Mark completed
       stageState.status = 'completed';
