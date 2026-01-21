@@ -104,7 +104,7 @@ function TreeNodeComponent({ node, level, selectedFile, onSelectFile }: TreeNode
     <div>
       <div
         className={`flex items-center gap-1 py-1.5 px-2 rounded hover:bg-gray-100 transition-colors cursor-pointer ${
-          isFolder && hasChildren ? "focus-visible:outline focus-visible:outline-2 focus-visible:outline-green-500 focus-visible:outline-offset-[-2px]" : ""
+          isFolder && hasChildren ? "focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-400 focus-visible:outline-offset-[-2px]" : ""
         } ${isSelected ? "bg-gray-100 border-l-2 border-gray-600" : ""}`}
         style={{ paddingLeft: `${level * INDENT_PER_LEVEL + BASE_PADDING}px` }}
         onClick={handleClick}
@@ -183,7 +183,7 @@ export function FileTree({ entries, basePath = "", selectedFile, onSelectFile }:
     <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
       <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
         <span className="text-sm font-semibold text-gray-900 font-mono">
-          Files
+          Marketplace Plugin Files
         </span>
       </div>
       <div className="p-4 max-h-[400px] overflow-y-auto">

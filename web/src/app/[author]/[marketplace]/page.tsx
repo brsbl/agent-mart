@@ -11,6 +11,7 @@ import {
   Clock,
   Copy,
   Check,
+  Github,
 } from "lucide-react";
 import {
   CopyableCommand,
@@ -295,6 +296,7 @@ export default function MarketplaceDetailPage() {
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-sm font-medium transition-colors"
           >
+            <Github size={16} />
             <span>View on GitHub</span>
             <ExternalLink size={14} />
           </a>

@@ -41,7 +41,7 @@ export function CopyableCommand({
         </div>
         <button
           onClick={() => copy(textToCopy)}
-          className="flex-shrink-0 p-1 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 transition-colors"
+          className="flex-shrink-0 p-1 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 transition-colors"
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >
           {copied ? (
