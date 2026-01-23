@@ -35,7 +35,7 @@ cp .env.example .env
 npm test
 
 # Run the pipeline (with limited repos for testing)
-REPO_LIMIT=3 npm run build
+REPO_LIMIT=3 npm run pipeline
 ```
 
 ### Frontend Development

@@ -25,13 +25,13 @@ cp .env.example .env
 # Edit .env and add your GITHUB_TOKEN
 
 # Run the pipeline
-npm run build
+npm run pipeline
 
 # Run with visualization (opens browser with real-time progress)
-npm run build:dev
+npm run pipeline:dev
 
 # Run with limited repos (for testing)
-REPO_LIMIT=3 npm run build
+REPO_LIMIT=3 npm run pipeline
 ```
 
 ## Requirements
@@ -49,13 +49,16 @@ REPO_LIMIT=3 npm run build
 ## NPM Scripts
 
 ```bash
-npm run build          # Run full ETL pipeline
-npm run build:dev      # Run pipeline with real-time visualization
+npm run pipeline       # Run full ETL pipeline
+npm run pipeline:dev   # Run pipeline with real-time visualization
 npm test               # Run ETL test suite
 npm run test:web       # Run web frontend tests
 npm run test:all       # Run all tests (ETL + web)
 npm run lint           # Check code style
 npm run lint:fix       # Auto-fix lint issues
+
+# Web frontend (in web/ directory)
+cd web && npm run build  # Build Next.js frontend (separate from ETL)
 ```
 
 ## Output
@@ -145,7 +148,7 @@ agent-mart/
 For local development, use the visualizer to monitor pipeline progress in real-time:
 
 ```bash
-npm run build:dev
+npm run pipeline:dev
 ```
 
 This opens a browser with a live-updating HTML report showing:

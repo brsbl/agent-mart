@@ -114,6 +114,9 @@ export async function categorize({ onProgress: _onProgress } = {}) {
   console.log('  - data/marketplaces-categorized.json');
   console.log('  - data/category-stats.json');
   console.log('  - data/category-taxonomy.json');
+
+  // Return categorized data for visualizer metrics
+  return categorized;
 }
 
 // Run if executed directly

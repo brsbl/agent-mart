@@ -61,11 +61,13 @@ const STAGES = [
     getMetrics: (data, prev) => {
       // Count files by type from the files array
       const countByType = (files) => {
-        const counts = { marketplace: 0, command: 0, skill: 0, other: 0 };
+        const counts = { marketplace: 0, command: 0, skill: 0, agent: 0, hook: 0, other: 0 };
         for (const f of (files || [])) {
           if (f.path?.includes('marketplace.json')) counts.marketplace++;
           else if (f.path?.includes('/commands/')) counts.command++;
           else if (f.path?.includes('SKILL.md')) counts.skill++;
+          else if (f.path?.includes('/agents/')) counts.agent++;
+          else if (f.path?.includes('/hooks/')) counts.hook++;
           else counts.other++;
         }
         return counts;
@@ -76,7 +78,9 @@ const STAGES = [
         'Total files': { current: data?.total || 0, previous: prev?.total || 0 },
         'Marketplace files': { current: currentCounts.marketplace, previous: prevCounts.marketplace },
         'Command files': { current: currentCounts.command, previous: prevCounts.command },
-        'Skill files': { current: currentCounts.skill, previous: prevCounts.skill }
+        'Skill files': { current: currentCounts.skill, previous: prevCounts.skill },
+        'Agent files': { current: currentCounts.agent, previous: prevCounts.agent },
+        'Hook files': { current: currentCounts.hook, previous: prevCounts.hook }
       };
     }
   },
@@ -84,7 +88,7 @@ const STAGES = [
     id: '05-parse',
     name: 'Parse',
     fn: parse,
-    description: 'Parses JSON/YAML files, validates schemas, and extracts structured data from markdown files.',
+    description: 'Parses marketplace.json files and SKILL.md frontmatter, validates formats, and indexes all files by repository.',
     outputFile: './data/05-parsed.json',
     getMetrics: (data, prev) => ({
       'Marketplaces (valid)': { current: data?.validation?.marketplaces?.valid || 0, previous: prev?.validation?.marketplaces?.valid || 0 },
@@ -100,9 +104,22 @@ const STAGES = [
     fn: enrich,
     description: 'Builds author-centric data model, extracts plugin-level categories, aggregates statistics, and generates install commands.',
     outputFile: './data/06-enriched.json',
-    getMetrics: (data, prev) => ({
-      'Total authors': { current: data?.total_authors || 0, previous: prev?.total_authors || 0 }
-    })
+    getMetrics: (data, prev) => {
+      const sumStats = (d) => {
+        const authors = Object.values(d?.authors || {});
+        return authors.reduce((acc, a) => ({
+          marketplaces: acc.marketplaces + (a.stats?.total_marketplaces || 0),
+          plugins: acc.plugins + (a.stats?.total_plugins || 0)
+        }), { marketplaces: 0, plugins: 0 });
+      };
+      const curr = sumStats(data);
+      const pre = sumStats(prev);
+      return {
+        'Authors': { current: data?.total_authors || 0, previous: prev?.total_authors || 0 },
+        'Marketplaces': { current: curr.marketplaces, previous: pre.marketplaces },
+        'Plugins': { current: curr.plugins, previous: pre.plugins }
+      };
+    }
   },
   {
     id: '07-output',
@@ -207,21 +224,21 @@ function getDataPreview(stageId, data) {
         marketplace_path: r.marketplace_path
       }));
 
-    case '02-repos':
+    case '02-fetch-repos':
       return data.repos?.slice(0, PREVIEW_LIMIT).map(r => ({
         full_name: r.full_name,
         stars: r.repo?.signals?.stars,
         forks: r.repo?.signals?.forks
       }));
 
-    case '03-trees':
+    case '03-fetch-trees':
       return data.trees?.slice(0, PREVIEW_LIMIT).map(t => ({
         full_name: t.full_name,
         file_count: t.tree?.length || 0,
         truncated: t.truncated
       }));
 
-    case '04-files':
+    case '04-fetch-files':
       return data.files?.slice(0, PREVIEW_LIMIT).map(f => ({
         full_name: f.full_name,
         path: f.path,

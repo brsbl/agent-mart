@@ -207,7 +207,7 @@ Trees are cached by commit SHA (immutable, never expires).
 
 ```bash
 # Full pipeline
-npm run build
+npm run pipeline
 
 # Individual steps
 node src/pipeline/06-enrich.js

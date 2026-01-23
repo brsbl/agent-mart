@@ -523,7 +523,7 @@ query {
    export const TECH_STACK_ORDER: TechStack[] = [..., 'newtech'];
    ```
 
-4. Run pipeline: `npm run build`
+4. Run pipeline: `npm run pipeline`
 
 ### Capabilities
 
