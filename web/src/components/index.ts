@@ -10,3 +10,4 @@ export { SortDropdown } from "./SortDropdown";
 export { MultiSelectDropdown } from "./MultiSelectDropdown";
 export { ExpandableSection } from "./ExpandableSection";
 export { PluginSection } from "./PluginSection";
+export { PluginCard, PluginCardCompact } from "./PluginCard";

@@ -21,10 +21,11 @@ export function flattenPlugins(authorDetail: AuthorDetail): FlatPlugin[] {
     for (const plugin of marketplacePlugins) {
       plugins.push({
         ...plugin,
-        author_id: authorDetail.author.id,
-        author_display_name: authorDetail.author.display_name,
-        author_avatar_url: authorDetail.author.avatar_url,
+        owner_id: authorDetail.author.id,
+        owner_display_name: authorDetail.author.display_name,
+        owner_avatar_url: authorDetail.author.avatar_url,
         repo_full_name: marketplace.repo_full_name,
+        signals: marketplace.signals,
       });
     }
   }
@@ -145,6 +146,41 @@ const CATEGORY_DISPLAY: Record<Category, string> = {
 
 export function getCategoryDisplay(category: Category): string {
   return CATEGORY_DISPLAY[category] ?? category;
+}
+
+// Alias for getCategoryDisplay
+export function getCategoryDisplayName(category: Category): string {
+  return getCategoryDisplay(category);
+}
+
+// Normalize a category string (handles unknown categories)
+export function normalizeCategory(category: string | null | undefined): Category {
+  if (!category) return 'orchestration';
+  const normalized = category.toLowerCase().trim();
+  if (CATEGORY_ORDER.includes(normalized as Category)) {
+    return normalized as Category;
+  }
+  return 'orchestration';
+}
+
+// Category badge styling
+const CATEGORY_BADGE_CLASSES: Record<Category, string> = {
+  'knowledge-base': 'badge-purple',
+  'templates': 'badge-blue',
+  'devops': 'badge-orange',
+  'code-quality': 'badge-green',
+  'code-review': 'badge-cyan',
+  'testing': 'badge-yellow',
+  'data-analytics': 'badge-pink',
+  'design': 'badge-indigo',
+  'documentation': 'badge-teal',
+  'planning': 'badge-rose',
+  'security': 'badge-red',
+  'orchestration': 'badge-gray',
+};
+
+export function getCategoryBadgeClass(category: Category): string {
+  return CATEGORY_BADGE_CLASSES[category] ?? 'badge-gray';
 }
 
 // ============================================

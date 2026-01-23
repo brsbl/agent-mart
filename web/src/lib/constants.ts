@@ -3,6 +3,8 @@ export const DATA_URLS = {
   PLUGINS_BROWSE: '/data/plugins-browse.json',
   MARKETPLACES_BROWSE: '/data/marketplaces-browse.json',
   AUTHOR: (authorId: string) => `/data/authors/${authorId}.json`,
+  // Alias for backwards compatibility
+  OWNER: (ownerId: string) => `/data/authors/${ownerId}.json`,
 } as const;
 
 // UI Constants

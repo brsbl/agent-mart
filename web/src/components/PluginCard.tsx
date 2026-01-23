@@ -16,16 +16,33 @@ interface PluginCardProps {
 
 // Helper to get command count from either type
 function getCommandCount(plugin: PluginCardPlugin): number {
-  if ("commands_count" in plugin) {
+  if ("commands_count" in plugin && typeof plugin.commands_count === 'number') {
     return plugin.commands_count;
   }
-  return plugin.commands?.length ?? 0;
+  return 0;
+}
+
+// Helper to get owner/author properties (both types use different naming)
+function getOwnerId(plugin: PluginCardPlugin): string {
+  return 'owner_id' in plugin ? plugin.owner_id : plugin.author_id;
+}
+
+function getOwnerDisplayName(plugin: PluginCardPlugin): string {
+  return 'owner_display_name' in plugin ? plugin.owner_display_name : plugin.author_display_name;
+}
+
+function getOwnerAvatarUrl(plugin: PluginCardPlugin): string {
+  return 'owner_avatar_url' in plugin ? plugin.owner_avatar_url : plugin.author_avatar_url;
 }
 
 export function PluginCard({ plugin }: PluginCardProps) {
   const { copied, copy } = useCopyToClipboard();
-  const normalizedCategory = normalizeCategory(plugin.category);
+  const category = plugin.categories?.[0] ?? 'orchestration';
+  const normalizedCategory = normalizeCategory(category);
   const commandCount = getCommandCount(plugin);
+  const ownerId = getOwnerId(plugin);
+  const ownerDisplayName = getOwnerDisplayName(plugin);
+  const ownerAvatarUrl = getOwnerAvatarUrl(plugin);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -33,7 +50,7 @@ export function PluginCard({ plugin }: PluginCardProps) {
     copy(plugin.install_commands.join("\n"));
   };
 
-  const pluginUrl = `/plugin/${plugin.owner_id}/${plugin.name}`;
+  const pluginUrl = `/plugin/${ownerId}/${plugin.name}`;
 
   return (
     <div className="card p-4 h-full flex flex-col relative">
@@ -41,14 +58,14 @@ export function PluginCard({ plugin }: PluginCardProps) {
       <Link
         href={pluginUrl}
         className="absolute inset-0 z-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-lg"
-        aria-label={`View ${plugin.name} by ${plugin.owner_id}`}
+        aria-label={`View ${plugin.name} by ${ownerId}`}
       />
 
       {/* Header: Avatar + Name */}
       <div className="flex items-start gap-3 mb-3 relative z-10 pointer-events-none">
         <Image
-          src={plugin.owner_avatar_url}
-          alt={plugin.owner_display_name}
+          src={ownerAvatarUrl}
+          alt={ownerDisplayName}
           width={40}
           height={40}
           loading="lazy"
@@ -59,7 +76,7 @@ export function PluginCard({ plugin }: PluginCardProps) {
             {plugin.name}
           </h3>
           <p className="text-xs text-[var(--foreground-muted)] truncate">
-            by @{plugin.owner_id}
+            by @{ownerId}
           </p>
         </div>
       </div>
@@ -112,14 +129,18 @@ export function PluginCard({ plugin }: PluginCardProps) {
 
 // Compact variant for horizontal lists
 export function PluginCardCompact({ plugin }: PluginCardProps) {
+  const ownerId = getOwnerId(plugin);
+  const ownerDisplayName = getOwnerDisplayName(plugin);
+  const ownerAvatarUrl = getOwnerAvatarUrl(plugin);
+
   return (
     <Link
-      href={`/plugin/${plugin.owner_id}/${plugin.name}`}
+      href={`/plugin/${ownerId}/${plugin.name}`}
       className="card p-3 flex items-center gap-3 min-w-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-lg"
     >
       <Image
-        src={plugin.owner_avatar_url}
-        alt={plugin.owner_display_name}
+        src={ownerAvatarUrl}
+        alt={ownerDisplayName}
         width={32}
         height={32}
         loading="lazy"

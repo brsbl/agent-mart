@@ -94,10 +94,11 @@ export interface Plugin {
 
 // Flattened plugin type for search/display
 export interface FlatPlugin extends Plugin {
-  author_id: string;
-  author_display_name: string;
-  author_avatar_url: string;
+  owner_id: string;
+  owner_display_name: string;
+  owner_avatar_url: string;
   repo_full_name: string;
+  signals: Signals;
 }
 
 // Lightweight plugin type for browse/search

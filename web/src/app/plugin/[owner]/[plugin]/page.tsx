@@ -8,14 +8,12 @@ import {
   Star,
   GitFork,
   ExternalLink,
-  Terminal,
-  Sparkles,
   Calendar,
 } from "lucide-react";
 import { CopyableCommand, FileTree, LoadingState, ErrorState } from "@/components";
 import { useFetch } from "@/hooks";
-import type { OwnerDetail, Plugin, Repo } from "@/lib/types";
-import { formatNumber, formatDate, getCategoryBadgeClass, normalizeCategory } from "@/lib/data";
+import type { AuthorDetail, Plugin, Marketplace } from "@/lib/types";
+import { formatNumber, formatDate, getCategoryBadgeClass, normalizeCategory, getCategoryDisplayName } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
 import { DATA_URLS } from "@/lib/constants";
 
@@ -25,31 +23,31 @@ export default function PluginPage() {
   const pluginName = validateUrlParam(params.plugin);
 
   // Build URL conditionally - null if params are invalid
-  const url = ownerId && pluginName ? DATA_URLS.OWNER(ownerId) : null;
+  const url = ownerId && pluginName ? DATA_URLS.AUTHOR(ownerId) : null;
 
-  const { data: ownerData, loading, error } = useFetch<OwnerDetail>(
+  const { data: authorData, loading, error } = useFetch<AuthorDetail>(
     url,
     "Failed to load plugin data"
   );
 
-  // Find the plugin and repo from owner data
+  // Find the plugin and marketplace from author data
   const pluginData = useMemo(() => {
-    if (!ownerData || !pluginName) {
+    if (!authorData || !pluginName) {
       return null;
     }
 
-    for (const r of ownerData.repos) {
-      const plugins = r.marketplace?.plugins || [];
+    for (const m of authorData.marketplaces) {
+      const plugins = m.plugins || [];
       const foundPlugin = plugins.find((p) => p.name === pluginName);
       if (foundPlugin) {
-        return { plugin: foundPlugin, repo: r };
+        return { plugin: foundPlugin, marketplace: m };
       }
     }
 
     return null;
-  }, [ownerData, pluginName]);
+  }, [authorData, pluginName]);
   const plugin = pluginData?.plugin ?? null;
-  const repo = pluginData?.repo ?? null;
+  const marketplace = pluginData?.marketplace ?? null;
 
   if (loading) {
     return <LoadingState />;
@@ -66,7 +64,7 @@ export default function PluginPage() {
     );
   }
 
-  if (error || !ownerData || !plugin || !repo) {
+  if (error || !authorData || !plugin || !marketplace) {
     return (
       <ErrorState
         title="Plugin Not Found"
@@ -76,15 +74,16 @@ export default function PluginPage() {
     );
   }
 
-  const { owner } = ownerData;
+  const { author } = authorData;
+  const category = plugin.categories[0] ?? 'orchestration';
 
   return (
     <div className="container py-8">
       {/* Plugin Header */}
       <div className="flex flex-col md:flex-row items-start gap-6 mb-8">
         <Image
-          src={owner.avatar_url}
-          alt={owner.display_name}
+          src={author.avatar_url}
+          alt={author.display_name}
           width={80}
           height={80}
           className="rounded-full"
@@ -92,121 +91,67 @@ export default function PluginPage() {
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-bold">{plugin.name}</h1>
-            <span className={`badge ${getCategoryBadgeClass(normalizeCategory(plugin.category))}`}>
-              {normalizeCategory(plugin.category)}
+            <span className={`badge ${getCategoryBadgeClass(normalizeCategory(category))}`}>
+              {getCategoryDisplayName(normalizeCategory(category))}
             </span>
           </div>
 
           <div className="flex items-center gap-2 text-[var(--foreground-muted)] mb-4">
             <span>by</span>
             <Link
-              href={`/owner/${owner.id}`}
+              href={`/owner/${author.id}`}
               className="text-[var(--accent)] hover:underline"
             >
-              @{owner.id}
+              @{author.id}
             </Link>
             <span>&middot;</span>
             <a
-              href={repo.url}
+              href={marketplace.repo_url}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[var(--foreground)] transition-colors flex items-center gap-1"
             >
-              {repo.full_name}
+              {marketplace.repo_full_name}
               <ExternalLink className="w-3 h-3" aria-hidden="true" />
             </a>
-            {plugin.version && (
-              <>
-                <span>&middot;</span>
-                <span>v{plugin.version}</span>
-              </>
-            )}
           </div>
 
           <p className="text-[var(--foreground-secondary)] mb-4 max-w-3xl">
             {plugin.description || "No description"}
           </p>
 
-          {/* Stats */}
+          {/* Stats - using marketplace signals */}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5">
               <Star className="w-4 h-4 text-[var(--accent)]" aria-hidden="true" />
               <span className="font-semibold">
-                {formatNumber(plugin.signals.stars)}
+                {formatNumber(marketplace.signals.stars)}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <GitFork className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
               <span className="font-semibold">
-                {formatNumber(plugin.signals.forks)}
+                {formatNumber(marketplace.signals.forks)}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-[var(--foreground-muted)]">
-              <Calendar className="w-4 h-4" aria-hidden="true" />
-              <span>Updated {formatDate(plugin.signals.pushed_at)}</span>
-            </div>
+            {marketplace.signals.pushed_at && (
+              <div className="flex items-center gap-1.5 text-[var(--foreground-muted)]">
+                <Calendar className="w-4 h-4" aria-hidden="true" />
+                <span>Updated {formatDate(marketplace.signals.pushed_at)}</span>
+              </div>
+            )}
           </div>
-
-          {/* Author */}
-          {plugin.author && (
-            <p className="text-sm text-[var(--foreground-muted)] mt-2">
-              Author: {plugin.author.name}
-              {plugin.author.email && ` <${plugin.author.email}>`}
-            </p>
-          )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Commands */}
-          {plugin.commands.length > 0 && (
-            <section>
-              <h2 className="section-title mb-4 flex items-center gap-2">
-                <Terminal className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
-                Commands ({plugin.commands.length})
-              </h2>
-              <div className="space-y-3">
-                {plugin.commands.map((command) => (
-                  <div key={command.name} className="card p-4">
-                    <code className="font-mono font-semibold text-[var(--accent)]">
-                      {command.name}
-                    </code>
-                    <p className="text-sm text-[var(--foreground-secondary)] mt-1">
-                      {command.description || "No description"}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Skills */}
-          {plugin.skills.length > 0 && (
-            <section>
-              <h2 className="section-title mb-4 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
-                Skills ({plugin.skills.length})
-              </h2>
-              <div className="space-y-3">
-                {plugin.skills.map((skill) => (
-                  <div key={skill.name} className="card p-4">
-                    <span className="font-semibold">{skill.name}</span>
-                    <p className="text-sm text-[var(--foreground-secondary)] mt-1">
-                      {skill.description || "No description"}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
           {/* File Tree */}
           <section>
             <h2 className="section-title mb-4">Files</h2>
             <FileTree
-              entries={repo.file_tree}
+              entries={marketplace.file_tree}
               basePath={plugin.source.replace(/^\.\//, "")}
             />
           </section>
@@ -225,7 +170,7 @@ export default function PluginPage() {
             <h2 className="section-title mb-4">Links</h2>
             <div className="space-y-2">
               <a
-                href={repo.url}
+                href={marketplace.repo_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
@@ -233,9 +178,9 @@ export default function PluginPage() {
                 <ExternalLink className="w-4 h-4" aria-hidden="true" />
                 View on GitHub
               </a>
-              {repo.homepage && (
+              {marketplace.homepage && (
                 <a
-                  href={repo.homepage}
+                  href={marketplace.homepage}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
@@ -249,22 +194,22 @@ export default function PluginPage() {
 
           {/* More from this owner */}
           <section>
-            <h2 className="section-title mb-4">More from {owner.display_name}</h2>
+            <h2 className="section-title mb-4">More from {author.display_name}</h2>
             <Link
-              href={`/owner/${owner.id}`}
+              href={`/owner/${author.id}`}
               className="flex items-center gap-3 p-3 card"
             >
               <Image
-                src={owner.avatar_url}
-                alt={owner.display_name}
+                src={author.avatar_url}
+                alt={author.display_name}
                 width={40}
                 height={40}
                 className="rounded-full"
               />
               <div>
-                <span className="font-medium">{owner.display_name}</span>
+                <span className="font-medium">{author.display_name}</span>
                 <p className="text-xs text-[var(--foreground-muted)]">
-                  {owner.stats.total_plugins} plugins
+                  {author.stats.total_plugins} plugins
                 </p>
               </div>
             </Link>
