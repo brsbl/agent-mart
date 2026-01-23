@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Star, Terminal, Copy, Check } from "lucide-react";
+import { Star, Copy, Check } from "lucide-react";
 import type { BrowsePlugin, FlatPlugin } from "@/lib/types";
 import { formatNumber, getCategoryBadgeClass, normalizeCategory, getCategoryDisplayName } from "@/lib/data";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
@@ -12,14 +12,6 @@ type PluginCardPlugin = BrowsePlugin | FlatPlugin;
 
 interface PluginCardProps {
   plugin: PluginCardPlugin;
-}
-
-// Helper to get command count from either type
-function getCommandCount(plugin: PluginCardPlugin): number {
-  if ("commands_count" in plugin && typeof plugin.commands_count === 'number') {
-    return plugin.commands_count;
-  }
-  return 0;
 }
 
 // Helper to get owner/author properties (both types use different naming)
@@ -39,7 +31,6 @@ export function PluginCard({ plugin }: PluginCardProps) {
   const { copied, copy } = useCopyToClipboard();
   const category = plugin.categories?.[0] ?? 'orchestration';
   const normalizedCategory = normalizeCategory(category);
-  const commandCount = getCommandCount(plugin);
   const ownerId = getOwnerId(plugin);
   const ownerDisplayName = getOwnerDisplayName(plugin);
   const ownerAvatarUrl = getOwnerAvatarUrl(plugin);
@@ -92,12 +83,6 @@ export function PluginCard({ plugin }: PluginCardProps) {
           <Star className="w-4 h-4" aria-hidden="true" />
           {formatNumber(plugin.signals.stars)}
         </span>
-        {commandCount > 0 && (
-          <span className="flex items-center gap-1">
-            <Terminal className="w-4 h-4" aria-hidden="true" />
-            {commandCount} command{commandCount !== 1 ? "s" : ""}
-          </span>
-        )}
       </div>
 
       {/* Footer: Category + Copy button */}
