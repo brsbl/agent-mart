@@ -39,9 +39,9 @@ function isWithinDirectory(filePath, dirPath) {
   // Normalize dirPath - remove leading ./ and trailing /
   const normalizedDir = dirPath.replace(/^\.\//, '').replace(/\/$/, '');
 
-  // Handle root directory case - skip fetching entire repo
+  // Handle root directory case - all files are within root; let isPluginComponentFile filter
   if (normalizedDir === '.' || normalizedDir === '') {
-    return false;
+    return true;
   }
 
   return filePath.startsWith(normalizedDir + '/') || filePath === normalizedDir;

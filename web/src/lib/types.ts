@@ -119,6 +119,29 @@ export interface BrowsePlugin {
   keywords: string[];
 }
 
+// ============================================
+// PLUGIN COMPONENTS (for component-organized view)
+// ============================================
+
+export type ComponentType = 'agent' | 'command' | 'skill' | 'hook';
+
+export interface PluginComponent {
+  type: ComponentType;
+  name: string;
+  path: string;
+  description?: string | null;
+  size: number | null;
+}
+
+export interface PluginWithComponents extends Plugin {
+  components: {
+    agents: PluginComponent[];
+    commands: PluginComponent[];
+    skills: PluginComponent[];
+    hooks: PluginComponent[];
+  };
+}
+
 // Sort options
 export type SortOption = "stars" | "recent";
 export type MarketplaceSortOption = "popular" | "trending" | "recent";

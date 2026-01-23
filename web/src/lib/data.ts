@@ -7,6 +7,9 @@ import type {
   SortOption,
   MarketplaceSortOption,
   Category,
+  ComponentType,
+  PluginComponent,
+  PluginWithComponents,
 } from "./types";
 
 // ============================================
@@ -225,4 +228,134 @@ export function sortMarketplaces(
       }
     }
   });
+}
+
+// ============================================
+// PLUGIN COMPONENT UTILITIES
+// ============================================
+
+/**
+ * Categorize a file path by its component type
+ */
+export function getComponentType(path: string): ComponentType | null {
+  if (path.includes('/agents/') && path.endsWith('.md')) return 'agent';
+  if (path.includes('/commands/') && path.endsWith('.md')) return 'command';
+  if (path.includes('/skills/') && path.endsWith('.md')) return 'skill';
+  if (path.endsWith('/SKILL.md') || path === 'SKILL.md') return 'skill';
+  if (path.includes('/hooks/')) return 'hook';
+  return null;
+}
+
+/**
+ * Extract display name from file path
+ */
+export function getComponentName(path: string, type: ComponentType): string {
+  const filename = path.split('/').pop() || path;
+
+  switch (type) {
+    case 'agent':
+    case 'command':
+    case 'skill':
+      // Remove .md extension
+      return filename.replace(/\.md$/i, '');
+    case 'hook':
+      // Keep full filename for hooks (may include extension like .ts, .js)
+      return filename;
+    default:
+      return filename;
+  }
+}
+
+/**
+ * Check if a file belongs to a plugin based on its source path
+ * Handles root source ("./") and .claude-plugin/ prefix correctly
+ */
+export function isFileInPlugin(filePath: string, pluginSource: string): boolean {
+  // Normalize plugin source - remove leading ./ and trailing /
+  const normalizedSource = pluginSource.replace(/^\.\//, '').replace(/\/$/, '');
+
+  // Root source means all files belong to this plugin
+  if (normalizedSource === '.' || normalizedSource === '') {
+    return true;
+  }
+
+  // Check both direct path and .claude-plugin/ prefixed path
+  // Some repos have plugin files at root (stripe), others inside .claude-plugin/ (vercel)
+  return (
+    filePath.startsWith(normalizedSource + '/') ||
+    filePath === normalizedSource ||
+    filePath.startsWith('.claude-plugin/' + normalizedSource + '/') ||
+    filePath === '.claude-plugin/' + normalizedSource
+  );
+}
+
+/**
+ * Organize marketplace files by plugin and component type
+ */
+export function organizePluginComponents(marketplace: Marketplace): PluginWithComponents[] {
+  const result: PluginWithComponents[] = [];
+
+  for (const plugin of marketplace.plugins) {
+    const components: PluginWithComponents['components'] = {
+      agents: [],
+      commands: [],
+      skills: [],
+      hooks: [],
+    };
+
+    // Get all file paths that belong to this plugin
+    const filePaths = Object.keys(marketplace.files || {});
+
+    for (const filePath of filePaths) {
+      // Skip config files (marketplace.json, plugin.json, README)
+      if (filePath.endsWith('/marketplace.json') || filePath.endsWith('/plugin.json')) continue;
+      if (filePath === '.claude-plugin/marketplace.json') continue;
+
+      // Check if file belongs to this plugin
+      if (!isFileInPlugin(filePath, plugin.source)) continue;
+
+      // Determine component type
+      const componentType = getComponentType(filePath);
+      if (!componentType) continue;
+
+      // Find file size from file_tree
+      const treeEntry = marketplace.file_tree.find(e => e.path === filePath);
+
+      const component: PluginComponent = {
+        type: componentType,
+        name: getComponentName(filePath, componentType),
+        path: filePath,
+        size: treeEntry?.size ?? null,
+      };
+
+      // Add to appropriate array
+      switch (componentType) {
+        case 'agent':
+          components.agents.push(component);
+          break;
+        case 'command':
+          components.commands.push(component);
+          break;
+        case 'skill':
+          components.skills.push(component);
+          break;
+        case 'hook':
+          components.hooks.push(component);
+          break;
+      }
+    }
+
+    // Sort each component array by name
+    components.agents.sort((a, b) => a.name.localeCompare(b.name));
+    components.commands.sort((a, b) => a.name.localeCompare(b.name));
+    components.skills.sort((a, b) => a.name.localeCompare(b.name));
+    components.hooks.sort((a, b) => a.name.localeCompare(b.name));
+
+    result.push({
+      ...plugin,
+      components,
+    });
+  }
+
+  return result;
 }

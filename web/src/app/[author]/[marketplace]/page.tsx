@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import {
   CopyableCommand,
-  FileTree,
+  PluginComponentsView,
   LoadingState,
   ErrorState,
   MarketplaceCard,
@@ -107,7 +107,38 @@ export default function MarketplaceDetailPage() {
   const repoId = marketplace?.repo_full_name || "";
   const starred = isStarred(repoId);
   const [isForked, setIsForked] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<string>("README.md");
+
+  // Default to first component file (agent/command/skill/hook) or fallback to first blob
+  const defaultFile = useMemo(() => {
+    if (!marketplace?.files) return "";
+    const filePaths = Object.keys(marketplace.files);
+
+    // Prefer component files in order: agents, commands, skills, hooks
+    const componentFile = filePaths.find(
+      (p) =>
+        (p.includes('/agents/') && p.endsWith('.md')) ||
+        (p.includes('/commands/') && p.endsWith('.md')) ||
+        (p.includes('/skills/') && p.endsWith('.md')) ||
+        p.endsWith('/SKILL.md') ||
+        p === 'SKILL.md' ||
+        p.includes('/hooks/')
+    );
+    if (componentFile) return componentFile;
+
+    // Fallback to first blob in file tree
+    const firstBlob = marketplace.file_tree?.find(e => e.type === "blob");
+    return firstBlob?.path || "";
+  }, [marketplace?.files, marketplace?.file_tree]);
+
+  const [selectedFile, setSelectedFile] = useState<string>("");
+
+  // Set selected file to default when marketplace loads
+  useEffect(() => {
+    if (defaultFile && !selectedFile) {
+      setSelectedFile(defaultFile);
+    }
+  }, [defaultFile, selectedFile]);
+
   const { copied, copy } = useCopyToClipboard();
 
   const handleStarClick = () => {
@@ -208,9 +239,9 @@ export default function MarketplaceDetailPage() {
             </div>
           </div>
 
-          {/* File Tree */}
-          <FileTree
-            entries={marketplace.file_tree}
+          {/* Plugin Components */}
+          <PluginComponentsView
+            marketplace={marketplace}
             selectedFile={selectedFile}
             onSelectFile={setSelectedFile}
           />
