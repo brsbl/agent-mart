@@ -58,17 +58,17 @@ function isPluginComponentFile(path) {
   // SKILL.md files (skills/<name>/SKILL.md or just SKILL.md)
   if (path.endsWith('/SKILL.md') || path === 'SKILL.md') return true;
 
-  // Commands (commands/*.md)
-  if (path.includes('/commands/') && path.endsWith('.md')) return true;
+  // Commands (commands/*.md) - handle both nested and root-level
+  if ((path.includes('/commands/') || path.startsWith('commands/')) && path.endsWith('.md')) return true;
 
-  // Agents (agents/*.md)
-  if (path.includes('/agents/') && path.endsWith('.md')) return true;
+  // Agents (agents/*.md) - handle both nested and root-level
+  if ((path.includes('/agents/') || path.startsWith('agents/')) && path.endsWith('.md')) return true;
 
-  // Hooks directory (hooks/**)
-  if (path.includes('/hooks/')) return true;
+  // Hooks directory (hooks/**) - handle both nested and root-level
+  if (path.includes('/hooks/') || path.startsWith('hooks/')) return true;
 
-  // Skills directory markdown files
-  if (path.includes('/skills/') && path.endsWith('.md')) return true;
+  // Skills directory markdown files - handle both nested and root-level
+  if ((path.includes('/skills/') || path.startsWith('skills/')) && path.endsWith('.md')) return true;
 
   return false;
 }

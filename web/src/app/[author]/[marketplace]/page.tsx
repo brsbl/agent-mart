@@ -132,12 +132,12 @@ export default function MarketplaceDetailPage() {
 
   const [selectedFile, setSelectedFile] = useState<string>("");
 
-  // Set selected file to default when marketplace loads
+  // Set selected file to default when marketplace changes
   useEffect(() => {
-    if (defaultFile && !selectedFile) {
+    if (defaultFile) {
       setSelectedFile(defaultFile);
     }
-  }, [defaultFile, selectedFile]);
+  }, [defaultFile]);
 
   const { copied, copy } = useCopyToClipboard();
 
