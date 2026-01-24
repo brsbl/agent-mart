@@ -16,6 +16,7 @@ import {
 import {
   CopyableCommand,
   PluginComponentsView,
+  PluginCardInline,
   LoadingState,
   ErrorState,
   MarketplaceCard,
@@ -239,6 +240,29 @@ export default function MarketplaceDetailPage() {
             </div>
           </div>
 
+          {/* Plugins */}
+          {marketplace.plugins.length > 0 && (
+            <div className="border border-gray-200 rounded-xl bg-white p-6">
+              <h2 className="text-sm font-semibold text-gray-900 mb-4">
+                Plugins ({marketplace.plugins.length})
+              </h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {marketplace.plugins.map((plugin) => (
+                  <PluginCardInline
+                    key={plugin.name}
+                    plugin={{
+                      name: plugin.name,
+                      description: plugin.description,
+                      version: plugin.version,
+                      keywords: plugin.keywords,
+                      install_command: `/plugin install ${plugin.name}@${marketplace.repo_full_name.replace("/", "-")}`,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Plugin Components */}
           <PluginComponentsView
             marketplace={marketplace}
@@ -288,36 +312,6 @@ export default function MarketplaceDetailPage() {
               </div>
             </div>
 
-            {/* Plugin Installs */}
-            {marketplace.plugins.length > 0 && (
-              <div className="space-y-3">
-                <div className="text-xs text-gray-500 mb-1.5">Install plugins:</div>
-                {marketplace.plugins.map((plugin) => {
-                  const pluginCommand = `/plugin install ${plugin.name}@${marketplace.repo_full_name.replace("/", "-")}`;
-                  return (
-                    <div key={plugin.name}>
-                      <div className="text-xs font-medium text-gray-700 mb-1">
-                        {plugin.name}
-                      </div>
-                      <div className="bg-gray-100 rounded-lg p-2.5">
-                        <div className="flex items-center justify-between gap-2">
-                          <code className="text-gray-800 text-xs font-mono break-all">
-                            {pluginCommand}
-                          </code>
-                          <button
-                            onClick={() => copy(pluginCommand)}
-                            className="p-1 hover:bg-gray-200 rounded transition-colors flex-shrink-0 cursor-pointer"
-                            title="Copy to clipboard"
-                          >
-                            <Copy size={12} className="text-gray-500 hover:text-gray-700" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
 
           {/* GitHub Link */}
