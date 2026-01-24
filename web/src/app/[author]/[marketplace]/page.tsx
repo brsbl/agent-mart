@@ -134,138 +134,156 @@ export default function MarketplaceDetailPage() {
 
   const { author } = authorData;
 
-  return (
-    <div className="max-w-5xl mx-auto px-6 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
-        {/* Main Content */}
-        <div className="space-y-6">
-          {/* Header Card */}
-        <div className="border border-gray-200 rounded-xl bg-white p-6">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div className="flex-1">
-              <h1 className="text-base font-semibold text-gray-900 mb-2">
-                {marketplace.name}
-              </h1>
-              <div className="flex items-center gap-2 mb-4">
-                <Image
-                  src={author.avatar_url}
-                  alt={author.display_name}
-                  width={20}
-                  height={20}
-                  className="w-5 h-5 rounded-full border border-gray-300"
-                />
-                <p className="text-xs text-gray-600 font-mono">@{author.id}</p>
-              </div>
-              <p className="text-xs text-gray-700">
-                {marketplace.description || "No description"}
-              </p>
-            </div>
+  const hasOtherMarketplaces = otherMarketplaces.length > 0;
+
+  // Header card content (reused in both layouts)
+  const headerCard = (
+    <div className="border border-gray-200 rounded-xl bg-white p-6">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex-1">
+          <h1 className="text-base font-semibold text-gray-900 mb-2">
+            {marketplace.name}
+          </h1>
+          <div className="flex items-center gap-2 mb-4">
+            <Image
+              src={author.avatar_url}
+              alt={author.display_name}
+              width={20}
+              height={20}
+              className="w-5 h-5 rounded-full border border-gray-300"
+            />
+            <p className="text-xs text-gray-600 font-mono">@{author.id}</p>
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-600 pt-4 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={handleStarClick}
-              className="flex items-center gap-1 text-xs cursor-pointer hover:opacity-80 transition-opacity"
-              aria-label={starred ? "Unstar this repository" : "Star this repository"}
-            >
-              <Star
-                size={12}
-                className={starred ? "text-yellow-500" : ""}
-                fill={starred ? "currentColor" : "none"}
-              />
-              {formatNumber(marketplace.signals.stars)}
-            </button>
-            <button
-              type="button"
-              onClick={handleForkClick}
-              className="flex items-center gap-1 text-xs cursor-pointer hover:opacity-80 transition-opacity"
-              aria-label={isForked ? "Unfork this repository" : "Fork this repository"}
-            >
-              <GitFork
-                size={12}
-                strokeWidth={isForked ? 1 : 2}
-                className={isForked ? "text-blue-500" : ""}
-                fill={isForked ? "currentColor" : "none"}
-              />
-              {formatNumber(marketplace.signals.forks)}
-            </button>
-            <span className="flex items-center gap-1">
-              <Clock size={12} /> {formatRelativeTime(marketplace.signals.pushed_at)}
+          <p className="text-xs text-gray-700">
+            {marketplace.description || "No description"}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 text-xs text-gray-600 pt-4 border-t border-gray-200">
+        <button
+          type="button"
+          onClick={handleStarClick}
+          className="flex items-center gap-1 text-xs cursor-pointer hover:opacity-80 transition-opacity"
+          aria-label={starred ? "Unstar this repository" : "Star this repository"}
+        >
+          <Star
+            size={12}
+            className={starred ? "text-yellow-500" : ""}
+            fill={starred ? "currentColor" : "none"}
+          />
+          {formatNumber(marketplace.signals.stars)}
+        </button>
+        <button
+          type="button"
+          onClick={handleForkClick}
+          className="flex items-center gap-1 text-xs cursor-pointer hover:opacity-80 transition-opacity"
+          aria-label={isForked ? "Unfork this repository" : "Fork this repository"}
+        >
+          <GitFork
+            size={12}
+            strokeWidth={isForked ? 1 : 2}
+            className={isForked ? "text-blue-500" : ""}
+            fill={isForked ? "currentColor" : "none"}
+          />
+          {formatNumber(marketplace.signals.forks)}
+        </button>
+        <span className="flex items-center gap-1">
+          <Clock size={12} /> {formatRelativeTime(marketplace.signals.pushed_at)}
+        </span>
+        <a
+          href={marketplace.repo_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1 hover:text-gray-900 transition-colors ml-auto"
+        >
+          <Github size={12} />
+          <span>View on GitHub</span>
+          <ExternalLink size={10} />
+        </a>
+      </div>
+    </div>
+  );
+
+  // Install and plugins content (reused in both layouts)
+  const installAndPlugins = (
+    <div className="space-y-6">
+      {/* Install */}
+      <div className="border border-gray-200 rounded-xl bg-white p-6">
+        <h2 className="text-sm font-semibold text-gray-900 mb-4">Install</h2>
+        <InstallCommand command={installCommand} label="Add marketplace" />
+      </div>
+
+      {/* Plugins */}
+      {marketplace.plugins.length > 0 && (
+        <div>
+          <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            Plugins
+            <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-600 text-xs flex items-center justify-center">
+              {marketplace.plugins.length}
             </span>
-            <a
-              href={marketplace.repo_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:text-gray-900 transition-colors ml-auto"
-            >
-              <Github size={12} />
-              <span>View on GitHub</span>
-              <ExternalLink size={10} />
-            </a>
+          </h2>
+          <div className="space-y-4">
+            {marketplace.plugins.map((plugin) => (
+              <PluginCardInline
+                key={plugin.name}
+                plugin={{
+                  name: plugin.name,
+                  description: plugin.description,
+                  version: plugin.version,
+                  keywords: plugin.keywords,
+                  install_command: `/plugin install ${plugin.name}@${marketplace.repo_full_name.replace("/", "-")}`,
+                }}
+              />
+            ))}
           </div>
         </div>
+      )}
+    </div>
+  );
 
-        {/* Install */}
-        <div className="border border-gray-200 rounded-xl bg-white p-6">
-          <h2 className="text-sm font-semibold text-gray-900 mb-4">Install</h2>
-          <InstallCommand command={installCommand} label="Add marketplace" />
-        </div>
+  return (
+    <div className="px-6 py-6">
+      {hasOtherMarketplaces ? (
+        // 2-column layout with header spanning both columns
+        <div className="max-w-5xl mx-auto grid gap-6 grid-cols-1 lg:grid-cols-[1fr_300px]">
+          {/* Header spans both columns */}
+          <div className="lg:col-span-2">
+            {headerCard}
+          </div>
 
-        {/* Plugins */}
-        {marketplace.plugins.length > 0 && (
+          {/* Left column - Install and Plugins */}
+          {installAndPlugins}
+
+          {/* Right column - More from Author */}
           <div>
-            <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              Plugins
-              <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-600 text-xs flex items-center justify-center">
-                {marketplace.plugins.length}
-              </span>
+            <h2 className="text-sm font-semibold text-gray-900 mb-4">
+              More from this author
             </h2>
-            <div className="space-y-4">
-              {marketplace.plugins.map((plugin) => (
-                <PluginCardInline
-                  key={plugin.name}
-                  plugin={{
-                    name: plugin.name,
-                    description: plugin.description,
-                    version: plugin.version,
-                    keywords: plugin.keywords,
-                    install_command: `/plugin install ${plugin.name}@${marketplace.repo_full_name.replace("/", "-")}`,
-                  }}
-                />
+            <div className="space-y-3">
+              {otherMarketplaces.slice(0, 2).map((m) => (
+                <Link
+                  key={m.name}
+                  href={`/${author.id}/${m.name}`}
+                  className="block"
+                >
+                  <MarketplaceCard
+                    marketplace={m}
+                    author_id={author.id}
+                    author_display_name={author.display_name}
+                    author_avatar_url={author.avatar_url}
+                  />
+                </Link>
               ))}
             </div>
           </div>
-        )}
         </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* More from Author */}
-          {otherMarketplaces.length > 0 && (
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900 mb-4">
-                More from this author
-              </h2>
-              <div className="space-y-3">
-                {otherMarketplaces.slice(0, 2).map((m) => (
-                  <Link
-                    key={m.name}
-                    href={`/${author.id}/${m.name}`}
-                    className="block"
-                  >
-                    <MarketplaceCard
-                      marketplace={m}
-                      author_id={author.id}
-                      author_display_name={author.display_name}
-                      author_avatar_url={author.avatar_url}
-                    />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+      ) : (
+        // Single column layout
+        <div className="max-w-4xl mx-auto space-y-6">
+          {headerCard}
+          {installAndPlugins}
         </div>
-      </div>
+      )}
     </div>
   );
 }
