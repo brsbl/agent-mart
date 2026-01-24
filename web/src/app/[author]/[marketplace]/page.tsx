@@ -135,9 +135,11 @@ export default function MarketplaceDetailPage() {
   const { author } = authorData;
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-6">
-      <div className="space-y-6">
-        {/* Header Card */}
+    <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
+        {/* Main Content */}
+        <div className="space-y-6">
+          {/* Header Card */}
         <div className="border border-gray-200 rounded-xl bg-white p-6">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div className="flex-1">
@@ -234,31 +236,35 @@ export default function MarketplaceDetailPage() {
             </div>
           </div>
         )}
+        </div>
 
-        {/* More from Author */}
-        {otherMarketplaces.length > 0 && (
-          <div className="border border-gray-200 rounded-xl bg-white p-6">
-            <h2 className="text-sm font-semibold text-gray-900 mb-4">
-              More from this author
-            </h2>
-            <div className="space-y-3">
-              {otherMarketplaces.slice(0, 2).map((m) => (
-                <Link
-                  key={m.name}
-                  href={`/${author.id}/${m.name}`}
-                  className="block"
-                >
-                  <MarketplaceCard
-                    marketplace={m}
-                    author_id={author.id}
-                    author_display_name={author.display_name}
-                    author_avatar_url={author.avatar_url}
-                  />
-                </Link>
-              ))}
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* More from Author */}
+          {otherMarketplaces.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-gray-900 mb-4">
+                More from this author
+              </h2>
+              <div className="space-y-3">
+                {otherMarketplaces.slice(0, 2).map((m) => (
+                  <Link
+                    key={m.name}
+                    href={`/${author.id}/${m.name}`}
+                    className="block"
+                  >
+                    <MarketplaceCard
+                      marketplace={m}
+                      author_id={author.id}
+                      author_display_name={author.display_name}
+                      author_avatar_url={author.avatar_url}
+                    />
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
