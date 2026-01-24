@@ -37,6 +37,34 @@ function countSkills(files) {
 }
 
 /**
+ * Filter file tree to only include files we have content for
+ * Keeps directory entries that have at least one file descendant
+ */
+function filterTreeToFetchedFiles(tree, files) {
+  const fetchedPaths = new Set(Object.keys(files));
+
+  // First pass: identify which directories have fetched files
+  const dirsWithContent = new Set();
+  for (const path of fetchedPaths) {
+    const parts = path.split('/');
+    let current = '';
+    for (let i = 0; i < parts.length - 1; i++) {
+      current = current ? `${current}/${parts[i]}` : parts[i];
+      dirsWithContent.add(current);
+    }
+  }
+
+  // Second pass: filter tree entries
+  return tree.filter(entry => {
+    if (entry.type === 'blob') {
+      return fetchedPaths.has(entry.path);
+    }
+    // Keep directory if it contains fetched files
+    return dirsWithContent.has(entry.path);
+  });
+}
+
+/**
  * Build enriched data model
  */
 export function enrich({ onProgress: _onProgress } = {}) {
@@ -122,10 +150,11 @@ export function enrich({ onProgress: _onProgress } = {}) {
       // Extract categories for this plugin
       const categories = extractPluginCategories(pluginForCategorization);
 
+      // Preserve all original fields from marketplace.json, add/override computed fields
       return {
-        name: pluginDef.name,
+        ...pluginDef,
+        // Ensure description is normalized (null if missing)
         description: pluginDef.description || null,
-        source: pluginDef.source,
         categories,
         install_commands: generateInstallCommands(full_name, marketplaceName, pluginDef.name)
       };
@@ -153,7 +182,7 @@ export function enrich({ onProgress: _onProgress } = {}) {
       repo_description: repo.repo.description,
       homepage: repo.repo.homepage,
       signals: repo.repo.signals,
-      file_tree: tree,
+      file_tree: filterTreeToFetchedFiles(tree, repoFiles),
       files: repoFiles,
       plugins
     };
@@ -180,6 +209,14 @@ export function enrich({ onProgress: _onProgress } = {}) {
 
   return output;
 }
+
+// Export helper functions for testing
+export {
+  generateInstallCommands,
+  countCommands,
+  countSkills,
+  filterTreeToFetchedFiles
+};
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
