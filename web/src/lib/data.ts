@@ -10,6 +10,7 @@ import type {
   ComponentType,
   PluginComponent,
   PluginWithComponents,
+  PluginSource,
 } from "./types";
 
 // ============================================
@@ -270,7 +271,12 @@ export function getComponentName(path: string, type: ComponentType): string {
  * Check if a file belongs to a plugin based on its source path
  * Handles root source ("./") and .claude-plugin/ prefix correctly
  */
-export function isFileInPlugin(filePath: string, pluginSource: string): boolean {
+export function isFileInPlugin(filePath: string, pluginSource: PluginSource): boolean {
+  // Object sources (GitHub, URL) have no local files - they're external plugins
+  if (typeof pluginSource !== 'string') {
+    return false;
+  }
+
   // Normalize plugin source - remove leading ./ and trailing /
   const normalizedSource = pluginSource.replace(/^\.\//, '').replace(/\/$/, '');
 

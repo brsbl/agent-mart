@@ -152,7 +152,7 @@ export default function PluginPage() {
             <h2 className="section-title mb-4">Files</h2>
             <FileTree
               entries={marketplace.file_tree}
-              basePath={plugin.source.replace(/^\.\//, "")}
+              basePath={typeof plugin.source === 'string' ? plugin.source.replace(/^\.\//, "") : ""}
             />
           </section>
         </div>

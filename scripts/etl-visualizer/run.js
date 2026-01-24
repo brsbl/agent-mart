@@ -46,7 +46,7 @@ const STAGES = [
     id: '03-fetch-trees',
     name: 'Fetch Trees',
     fn: fetchTrees,
-    description: 'Fetches the full file tree for each repository to identify plugin directories and files.',
+    description: 'Fetches the full file tree for each repository to identify plugin directories and discover available files.',
     outputFile: './data/03-trees.json',
     getMetrics: (data, prev) => ({
       'Trees fetched': { current: data?.total || 0, previous: prev?.total || 0 }
@@ -56,7 +56,7 @@ const STAGES = [
     id: '04-fetch-files',
     name: 'Fetch Files',
     fn: fetchFiles,
-    description: 'Fetches .claude-plugin/ manifests and plugin component files (skills, commands, agents, hooks) from source directories.',
+    description: 'Selectively fetches .claude-plugin/ manifests and plugin component files (skills, commands, agents, hooks). Only these files will have content available.',
     outputFile: './data/04-files.json',
     getMetrics: (data, prev) => {
       // Count files by type from the files array
@@ -102,7 +102,7 @@ const STAGES = [
     id: '06-enrich',
     name: 'Enrich',
     fn: enrich,
-    description: 'Builds author-centric data model, extracts plugin-level categories, aggregates statistics, and generates install commands.',
+    description: 'Builds author-centric data model, extracts plugin-level categories, aggregates statistics, generates install commands, and filters file trees to only include files with fetched content.',
     outputFile: './data/06-enriched.json',
     getMetrics: (data, prev) => {
       const sumStats = (d) => {

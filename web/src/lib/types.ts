@@ -84,12 +84,37 @@ export interface FileTreeEntry {
   size: number | null;
 }
 
+// Plugin source can be a simple path string or an object for external sources
+export type PluginSource = string | {
+  source: 'github' | 'url';
+  repo?: string;
+  url?: string;
+  ref?: string;
+  sha?: string;
+  path?: string;
+};
+
 export interface Plugin {
   name: string;
   description: string | null;
-  source: string;
+  source: PluginSource;
   categories: Category[];
   install_commands: string[];
+  // Optional fields that may be present from marketplace.json
+  version?: string;
+  author?: { name: string; email?: string } | string;
+  homepage?: string;
+  repository?: string;
+  license?: string;
+  keywords?: string[];
+  displayName?: string;
+  commands?: string | string[];
+  agents?: string | string[];
+  hooks?: string | object;
+  mcpServers?: string | object;
+  lspServers?: string | object;
+  skills?: string | string[];
+  strict?: boolean;
 }
 
 // Flattened plugin type for search/display
