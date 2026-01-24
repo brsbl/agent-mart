@@ -13,3 +13,4 @@ export { ExpandableSection } from "./ExpandableSection";
 export { PluginSection } from "./PluginSection";
 export { PluginCard, PluginCardCompact } from "./PluginCard";
 export { PluginCardInline } from "./PluginCardInline";
+export { InstallCommand } from "./InstallCommand";

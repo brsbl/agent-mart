@@ -7,8 +7,8 @@ import { organizePluginComponents } from "@/lib/data";
 
 interface PluginComponentsViewProps {
   marketplace: Marketplace;
-  selectedFile: string;
-  onSelectFile: (path: string) => void;
+  selectedFile?: string;
+  onSelectFile?: (path: string) => void;
 }
 
 const COMPONENT_CONFIG: Record<ComponentType, { label: string; icon: React.ReactNode }> = {
@@ -125,7 +125,7 @@ function PluginSection({ plugin, selectedFile, onSelectFile, defaultExpanded = t
   );
 }
 
-export function PluginComponentsView({ marketplace, selectedFile, onSelectFile }: PluginComponentsViewProps) {
+export function PluginComponentsView({ marketplace, selectedFile = "", onSelectFile = () => {} }: PluginComponentsViewProps) {
   const pluginsWithComponents = useMemo(
     () => organizePluginComponents(marketplace),
     [marketplace]
@@ -156,7 +156,7 @@ export function PluginComponentsView({ marketplace, selectedFile, onSelectFile }
     return (
       <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
         <div className="px-5 py-3 border-b border-gray-200 bg-gray-50">
-          <h2 className="text-sm font-semibold text-gray-900">Plugins</h2>
+          <h2 className="text-sm font-semibold text-gray-900">{plugin.name}</h2>
         </div>
         <div className="p-4">
           {hasComponents ? (

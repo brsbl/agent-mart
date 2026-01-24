@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { Github } from "lucide-react";
 
 export function NavBar() {
   return (
@@ -9,7 +9,7 @@ export function NavBar() {
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="hover:opacity-80 transition-opacity">
-            <pre className="text-gray-900 leading-none font-mono text-[10px] tracking-tight">
+            <pre className="text-gray-900 leading-none font-mono text-[7px] tracking-tight">
 {`  █████╗  ██████╗ ███████╗███╗   ██╗████████╗    ███╗   ███╗ █████╗ ██████╗ ████████╗
  ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝    ████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
  ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║       ██╔████╔██║███████║██████╔╝   ██║
@@ -19,15 +19,13 @@ export function NavBar() {
             </pre>
           </Link>
           <a
-            href="https://github.com/anthropics/claude-code"
+            href="https://github.com/anthropics/agent-mart"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 text-sm font-medium transition-all bg-gray-900 text-white border-2 border-gray-900 hover:bg-gray-800 hover:border-gray-800 active:bg-gray-700 active:border-gray-700 font-mono rounded-md"
+            className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="View on GitHub"
           >
-            <div className="flex items-center gap-2">
-              <span>View on GitHub</span>
-              <ExternalLink size={16} />
-            </div>
+            <Github size={20} />
           </a>
         </div>
       </div>

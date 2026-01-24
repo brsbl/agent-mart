@@ -1,7 +1,4 @@
-"use client";
-
-import { Copy, Check } from "lucide-react";
-import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
+import { InstallCommand } from "./InstallCommand";
 
 interface PluginCardInlineProps {
   plugin: {
@@ -16,8 +13,6 @@ interface PluginCardInlineProps {
 const MAX_KEYWORDS = 4;
 
 export function PluginCardInline({ plugin }: PluginCardInlineProps) {
-  const { copied, copy } = useCopyToClipboard();
-
   const displayedKeywords = plugin.keywords?.slice(0, MAX_KEYWORDS) ?? [];
   const remainingCount = (plugin.keywords?.length ?? 0) - MAX_KEYWORDS;
 
@@ -58,24 +53,7 @@ export function PluginCardInline({ plugin }: PluginCardInlineProps) {
       )}
 
       {/* Install Command */}
-      <div className="bg-gray-50 rounded-md p-2">
-        <div className="flex items-center justify-between gap-2">
-          <code className="text-xs text-gray-700 font-mono truncate flex-1">
-            {plugin.install_command}
-          </code>
-          <button
-            onClick={() => copy(plugin.install_command)}
-            className="p-1 hover:bg-gray-200 rounded transition-colors flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
-            aria-label={copied ? "Copied!" : "Copy install command"}
-          >
-            {copied ? (
-              <Check size={12} className="text-green-600" aria-hidden="true" />
-            ) : (
-              <Copy size={12} className="text-gray-500 hover:text-gray-700" aria-hidden="true" />
-            )}
-          </button>
-        </div>
-      </div>
+      <InstallCommand command={plugin.install_command} label="Install plugin" />
     </div>
   );
 }
