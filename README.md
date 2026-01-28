@@ -56,9 +56,6 @@ npm run test:web       # Run web frontend tests
 npm run test:all       # Run all tests (ETL + web)
 npm run lint           # Check code style
 npm run lint:fix       # Auto-fix lint issues
-
-# Web frontend (in web/ directory)
-cd web && npm run build  # Build Next.js frontend (separate from ETL)
 ```
 
 ## Output
@@ -76,48 +73,6 @@ public/
     ...
 ```
 
-## Pipeline Steps
-
-| Step | Description | Output |
-|------|-------------|--------|
-| 01-discover | Find repos with `marketplace.json` | Discovered repos |
-| 02-fetch-repos | Fetch repo & owner metadata | Repo details |
-| 03-fetch-trees | Download file structures | File trees |
-| 04-fetch-files | Fetch specific files | File contents |
-| 05-parse | Parse & validate files | Parsed data |
-| 06-enrich | Build owner-centric model | Enriched data |
-| 07-output | Generate public JSON | Final output |
-| 08-categorize | Extract categories via rules | Categorized data |
-
-## Categorization System
-
-The pipeline uses a rules-based categorization system with 12 unified categories. Categories are extracted by matching patterns and keywords in marketplace descriptions, plugin names, command descriptions, and skill descriptions.
-
-| Category | Label | Example Patterns |
-|----------|-------|------------------|
-| `knowledge-base` | Agent Memory | memory, rag, retrieval, embeddings |
-| `templates` | Templates | template, scaffold, boilerplate, starter |
-| `devops` | DevOps | ci/cd, kubernetes, terraform, docker |
-| `code-quality` | Code Quality | lint, format, refactor, eslint |
-| `code-review` | Code Review | code review, pr review |
-| `testing` | Testing | test, jest, vitest, pytest, e2e |
-| `data-analytics` | Data & Analytics | analytics, sql, etl, visualization |
-| `design` | Design | ui/ux, figma, design system, tailwind |
-| `documentation` | Documentation | docs, readme, jsdoc, typedoc |
-| `planning` | Planning | plan, spec, prd, roadmap |
-| `security` | Security | security, auth, vulnerability |
-| `orchestration` | Orchestration | multi-agent, swarm, crew |
-
-For complete pattern definitions, see [`src/lib/categorizer.js`](./src/lib/categorizer.js).
-
-## Performance
-
-| Metric | Value |
-|--------|-------|
-| API calls (3 repos) | ~15 (vs ~229 without batching) |
-| Build time (3 repos) | ~15 seconds |
-| Cache hit rebuild | ~11 seconds |
-
 ## Project Structure
 
 ```
@@ -125,87 +80,22 @@ agent-mart/
 ├── src/
 │   ├── lib/              # GitHub client, cache, parsers, validators, categorizer
 │   └── pipeline/         # 8-step ETL pipeline (01-discover to 08-categorize)
-├── scripts/
-│   ├── build.js          # Pipeline orchestrator
-│   └── etl-visualizer/   # Real-time HTML visualization
-│       ├── run.js        # Runs pipeline with visualization
-│       ├── md-to-html.js # HTML report generator
-│       └── output/       # Generated reports
+├── scripts/              # Pipeline orchestrator and visualizer
 ├── tests/                # ETL unit tests
 ├── data/                 # Intermediate pipeline files (gitignored)
 ├── public/               # Generated JSON output
 └── web/                  # Next.js frontend application
-    ├── src/app/          # App router pages
-    ├── src/components/   # React components
-    ├── src/lib/          # Utilities and data fetching
-    └── tests/            # Frontend tests
 ```
 
-## Development
+## Documentation
 
-### Using the Visualizer
-
-For local development, use the visualizer to monitor pipeline progress in real-time:
-
-```bash
-npm run pipeline:dev
-```
-
-This opens a browser with a live-updating HTML report showing:
-- Stage progress with timing
-- Metrics before/after each stage
-- Validation errors
-- Data previews
-
-The report is saved to `scripts/etl-visualizer/output/pipeline-status.html`.
-
-### Running Tests
-
-```bash
-# Run all tests
-npm run test:all
-
-# Run only ETL tests
-npm test
-
-# Run only web tests
-npm run test:web
-
-# Run web tests in watch mode
-cd web && npm test
-```
-
-## GitHub Actions
-
-### CI Workflow
-
-Runs on every push and pull request:
-- Linting
-- ETL tests
-- Web frontend tests
-
-### Nightly Build
-
-Runs daily at 2 AM UTC:
-- Full ETL pipeline with visualization
-- Uploads `public/` directory as artifact
-- Uploads visualization report as artifact
-- Creates PR with updated data
-
-To set up:
-
-1. Go to **Settings → Secrets and variables → Actions**
-2. Create a secret named `PIPELINE_GITHUB_TOKEN` with a GitHub PAT that has `public_repo` scope
-3. The workflow will run automatically, or trigger manually from **Actions → Nightly Build → Run workflow**
-
-## Architecture
-
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation of:
-- Data flow and pipeline design
-- GitHub API usage patterns
-- Caching strategy
-- Security measures
-- Output schemas
+- [Pipeline Architecture](./src/pipeline/README.md) - 8-step ETL process
+- [Core Libraries](./src/lib/README.md) - Utilities, schemas, and categorization
+- [Build Scripts](./scripts/README.md) - Pipeline orchestration and visualizer
+- [Testing Guide](./tests/README.md) - Test patterns and running tests
+- [CI/CD Workflows](./.github/workflows/README.md) - GitHub Actions setup
+- [Web Frontend](./web/README.md) - Next.js application
+- [Contributing](./CONTRIBUTING.md) - Development guidelines
 
 ## Security
 
@@ -225,8 +115,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to browse the marketplace.
-
-See [web/README.md](./web/README.md) for frontend-specific documentation.
 
 ## Contributing
 
