@@ -1,6 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { extractCategories, generateTaxonomy, CATEGORY_RULES } from '../lib/categorizer.js';
 
 const DATA_DIR = join(process.cwd(), 'data');
 
@@ -33,14 +32,11 @@ export async function categorize({ onProgress: _onProgress } = {}) {
     }
   }
 
-  console.log(`Processing ${allMarketplaces.length} marketplaces with rules-based categorization...`);
+  console.log(`Processing ${allMarketplaces.length} marketplaces...`);
 
-  // Categorize each marketplace using extraction rules
+  // Aggregate categories from all plugins for each marketplace
   const categorized = allMarketplaces.map(marketplace => {
-    // Get marketplace-level categories from text matching
-    const marketplaceLevelCategories = extractCategories(marketplace);
-
-    // Aggregate categories from all plugins (union)
+    // Collect all unique categories from plugins
     const pluginCategories = new Set();
     for (const plugin of marketplace.plugins || []) {
       for (const cat of plugin.categories || []) {
@@ -48,15 +44,9 @@ export async function categorize({ onProgress: _onProgress } = {}) {
       }
     }
 
-    // Combine marketplace-level and plugin-level categories
-    const allCategories = new Set([
-      ...marketplaceLevelCategories,
-      ...pluginCategories
-    ]);
-
     return {
       ...marketplace,
-      categories: Array.from(allCategories).sort()
+      categories: Array.from(pluginCategories).sort()
     };
   });
 
@@ -90,11 +80,10 @@ export async function categorize({ onProgress: _onProgress } = {}) {
     JSON.stringify(stats, null, 2)
   );
 
-  // Write taxonomy for reference
-  const taxonomy = generateTaxonomy();
+  // Write empty taxonomy (categories are now dynamic)
   await writeFile(
     join(DATA_DIR, 'category-taxonomy.json'),
-    JSON.stringify(taxonomy, null, 2)
+    JSON.stringify({ categories: {} }, null, 2)
   );
 
   console.log('\nCategorization complete!');
@@ -106,8 +95,7 @@ export async function categorize({ onProgress: _onProgress } = {}) {
 
   console.log('\nCategory distribution:');
   for (const [cat, count] of Object.entries(stats.categoryCounts)) {
-    const label = CATEGORY_RULES[cat]?.label || cat;
-    console.log(`  ${label}: ${count}`);
+    console.log(`  ${cat}: ${count}`);
   }
 
   console.log('\nOutput files:');

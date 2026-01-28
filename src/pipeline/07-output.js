@@ -1,5 +1,4 @@
 import { saveJson, loadJson, ensureDir, log, sanitizeFilename } from '../lib/utils.js';
-import { generateTaxonomy } from '../lib/categorizer.js';
 
 const INPUT_PATH = './data/06-enriched.json';
 const CATEGORIZED_PATH = './data/marketplaces-categorized.json';
@@ -173,17 +172,26 @@ export function output({ onProgress: _onProgress } = {}) {
   saveJson(MARKETPLACES_BROWSE_PATH, { meta, marketplaces: marketplacesBrowse });
   log(`Generated ${MARKETPLACES_BROWSE_PATH} (${marketplacesBrowse.length} marketplaces)`);
 
-  // Generate categories.json for frontend filtering (new format)
-  const taxonomy = generateTaxonomy();
+  // Generate categories.json with dynamic category list from actual data
+  // Build category list explicitly sorted by count (most used first)
+  const allCategories = categoryStats?.categoryCounts
+    ? Object.entries(categoryStats.categoryCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([cat]) => cat)
+    : [];
+
   const categoriesData = {
     meta: {
       ...meta,
       stats: categoryStats
     },
-    taxonomy
+    // List of all categories sorted by usage count
+    categories: allCategories,
+    // Counts for reference
+    counts: categoryStats?.categoryCounts || {}
   };
   saveJson(CATEGORIES_PATH, categoriesData);
-  log(`Generated ${CATEGORIES_PATH}`);
+  log(`Generated ${CATEGORIES_PATH} (${allCategories.length} categories)`);
 
   // Summary
   log('');
@@ -193,6 +201,7 @@ export function output({ onProgress: _onProgress } = {}) {
   log(`Plugins: ${totals.plugins}`);
   log(`Commands: ${totals.commands}`);
   log(`Skills: ${totals.skills}`);
+  log(`Categories: ${allCategories.length}`);
 
   return indexData;
 }

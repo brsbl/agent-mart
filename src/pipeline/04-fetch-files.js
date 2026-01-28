@@ -48,10 +48,13 @@ function isWithinDirectory(filePath, dirPath) {
 }
 
 /**
- * Check if a file is a plugin component (skills, commands, agents, hooks, plugin.json)
+ * Check if a file is a plugin component (skills, commands, agents, hooks, plugin.json, README)
  * We only fetch these files, not arbitrary source code
  */
 function isPluginComponentFile(path) {
+  // README files (at repo root or in plugin directories)
+  if (path === 'README.md' || path.endsWith('/README.md')) return true;
+
   // .claude-plugin/ files (plugin.json, etc.)
   if (path.includes('.claude-plugin/')) return true;
 

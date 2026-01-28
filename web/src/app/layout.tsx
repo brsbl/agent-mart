@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, IBM_Plex_Mono, JetBrains_Mono } from "next/font/google";
-import { NavBar } from "@/components";
+import { ThemeProvider } from "next-themes";
+import { NavBar, AgentationWrapper } from "@/components";
 import "./globals.css";
 
 const inter = Inter({
@@ -40,21 +41,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${sourceSerif.variable} ${ibmPlexMono.variable} ${jetbrainsMono.variable} ${inter.className}`}>
-        <div
-          className="min-h-screen bg-gray-50"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px)
-            `,
-            backgroundSize: "32px 32px",
-          }}
-        >
-          <NavBar />
-          <main>{children}</main>
-        </div>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <div
+            className="min-h-screen bg-[#f5f5f0] dark:bg-[#0a0a0a] grid-background"
+          >
+            <NavBar />
+            <main>{children}</main>
+          </div>
+          <AgentationWrapper />
+        </ThemeProvider>
       </body>
     </html>
   );

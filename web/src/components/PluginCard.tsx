@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { Star, Copy, Check } from "lucide-react";
 import type { BrowsePlugin, FlatPlugin } from "@/lib/types";
-import { formatNumber, getCategoryBadgeClass, normalizeCategory, getCategoryDisplayName } from "@/lib/data";
+import { formatNumber, getCategoryBadgeClass, getCategoryDisplayName } from "@/lib/data";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 
 // Accept both browse (lightweight) and full plugin types
@@ -27,33 +26,26 @@ function getOwnerAvatarUrl(plugin: PluginCardPlugin): string {
   return 'owner_avatar_url' in plugin ? plugin.owner_avatar_url : plugin.author_avatar_url;
 }
 
+// Max categories to display on plugin cards
+const MAX_CATEGORIES = 3;
+
 export function PluginCard({ plugin }: PluginCardProps) {
   const { copied, copy } = useCopyToClipboard();
-  const category = plugin.categories?.[0] ?? 'orchestration';
-  const normalizedCategory = normalizeCategory(category);
+  const categories = plugin.categories ?? [];
+  const displayCategories = categories.slice(0, MAX_CATEGORIES);
+  const remainingCount = categories.length - MAX_CATEGORIES;
   const ownerId = getOwnerId(plugin);
   const ownerDisplayName = getOwnerDisplayName(plugin);
   const ownerAvatarUrl = getOwnerAvatarUrl(plugin);
 
-  const handleCopy = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleCopy = () => {
     copy(plugin.install_commands.join("\n"));
   };
 
-  const pluginUrl = `/plugin/${ownerId}/${plugin.name}`;
-
   return (
-    <div className="card p-4 h-full flex flex-col relative">
-      {/* Link covers the card content but not the copy button */}
-      <Link
-        href={pluginUrl}
-        className="absolute inset-0 z-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-lg"
-        aria-label={`View ${plugin.name} by ${ownerId}`}
-      />
-
+    <div className="card p-4 h-full flex flex-col">
       {/* Header: Avatar + Name */}
-      <div className="flex items-start gap-3 mb-3 relative z-10 pointer-events-none">
+      <div className="flex items-start gap-3 mb-3">
         <Image
           src={ownerAvatarUrl}
           alt={ownerDisplayName}
@@ -73,23 +65,32 @@ export function PluginCard({ plugin }: PluginCardProps) {
       </div>
 
       {/* Description */}
-      <p className="text-sm text-[var(--foreground-secondary)] line-clamp-2 mb-3 flex-1 relative z-10 pointer-events-none">
+      <p className="text-sm text-[var(--foreground-secondary)] line-clamp-2 mb-3 flex-1">
         {plugin.description || "No description"}
       </p>
 
       {/* Stats */}
-      <div className="flex items-center gap-4 text-sm text-[var(--foreground-secondary)] mb-3 relative z-10 pointer-events-none">
+      <div className="flex items-center gap-4 text-sm text-[var(--foreground-secondary)] mb-3">
         <span className="flex items-center gap-1">
           <Star className="w-4 h-4" aria-hidden="true" />
           {formatNumber(plugin.signals.stars)}
         </span>
       </div>
 
-      {/* Footer: Category + Copy button */}
-      <div className="flex items-center justify-between gap-2 relative z-10">
-        <span className={`badge ${getCategoryBadgeClass(normalizedCategory)} pointer-events-none`}>
-          {getCategoryDisplayName(normalizedCategory)}
-        </span>
+      {/* Footer: Categories + Copy button */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+          {displayCategories.map((cat) => (
+            <span key={cat} className={`badge ${getCategoryBadgeClass(cat)}`}>
+              {getCategoryDisplayName(cat)}
+            </span>
+          ))}
+          {remainingCount > 0 && (
+            <span className="text-xs text-[var(--foreground-muted)]">
+              +{remainingCount}
+            </span>
+          )}
+        </div>
         <button
           onClick={handleCopy}
           className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]"
@@ -119,10 +120,7 @@ export function PluginCardCompact({ plugin }: PluginCardProps) {
   const ownerAvatarUrl = getOwnerAvatarUrl(plugin);
 
   return (
-    <Link
-      href={`/plugin/${ownerId}/${plugin.name}`}
-      className="card p-3 flex items-center gap-3 min-w-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-lg"
-    >
+    <div className="card p-3 flex items-center gap-3 min-w-[280px]">
       <Image
         src={ownerAvatarUrl}
         alt={ownerDisplayName}
@@ -143,6 +141,6 @@ export function PluginCardCompact({ plugin }: PluginCardProps) {
         <Star className="w-3 h-3" aria-hidden="true" />
         {formatNumber(plugin.signals.stars)}
       </div>
-    </Link>
+    </div>
   );
 }

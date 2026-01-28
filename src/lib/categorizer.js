@@ -1,215 +1,76 @@
 /**
- * Rules-based categorization system for marketplaces
- * Single unified category dimension (12 categories)
+ * Simple category normalization system
+ * Preserves original category values with basic cleanup
  */
 
 // ============================================
-// CATEGORY RULES (Single Dimension)
+// CATEGORY VARIANTS (normalize similar spellings)
 // ============================================
 
-/**
- * Category rules with patterns and keywords
- * Each category has:
- * - label: Display name
- * - patterns: Regex patterns to match
- * - keywords: Exact keyword matches (case-insensitive)
- */
-export const CATEGORY_RULES = {
-  'knowledge-base': {
-    label: 'Agent Memory',
-    patterns: [/\bmemory\b/i, /\bknowledge\s*base/i, /\brag\b/i, /\bretrieval/i],
-    keywords: ['memory', 'knowledge', 'context', 'embedding', 'vector']
-  },
-  templates: {
-    label: 'Templates',
-    patterns: [/\btemplate/i, /\bscaffold/i, /\bboilerplate/i, /\bstarter/i, /\btutor/i, /\blearn/i, /\bteach/i, /\bcourse/i, /\blesson/i],
-    keywords: ['template', 'scaffold', 'boilerplate', 'starter', 'generator', 'education', 'tutorial', 'learning', 'training']
-  },
-  devops: {
-    label: 'DevOps',
-    patterns: [/\bci\/?cd\b/i, /\bkubernetes\b/i, /\bhelm\b/i, /\bterraform/i],
-    keywords: ['devops', 'deploy', 'infrastructure', 'docker', 'aws', 'cloud']
-  },
-  'code-quality': {
-    label: 'Code Quality',
-    patterns: [/\blint/i, /\bformat/i, /\brefactor/i, /\bclean\s*code/i],
-    keywords: ['lint', 'format', 'quality', 'refactor', 'eslint', 'prettier']
-  },
-  'code-review': {
-    label: 'Code Review',
-    patterns: [/\bcode\s*review/i, /\bpr\s*review/i, /\breview\s*code/i],
-    keywords: ['pr', 'pull-request', 'code-feedback']
-  },
-  testing: {
-    label: 'Testing',
-    patterns: [/\btest(?:s|ing)?\b/i, /\bspec\b/i, /\bjest\b/i, /\bvitest\b/i, /\bpytest\b/i],
-    keywords: ['test', 'testing', 'tdd', 'unit', 'integration', 'e2e']
-  },
-  'data-analytics': {
-    label: 'Data & Analytics',
-    patterns: [/\banalytics/i, /\bdata\s*pipeline/i, /\betl\b/i, /\bsql\b/i],
-    keywords: ['data', 'analytics', 'database', 'sql', 'visualization', 'chart']
-  },
-  design: {
-    label: 'Design',
-    patterns: [/\bui\/?ux\b/i, /\bfigma\b/i, /\bdesign\s*system/i],
-    keywords: ['design', 'ui', 'ux', 'figma', 'css', 'styling', 'tailwind']
-  },
-  documentation: {
-    label: 'Documentation',
-    patterns: [/\bdoc(?:s|umentation)\b/i, /\breadme\b/i, /\bapi\s*docs/i],
-    keywords: ['docs', 'documentation', 'readme', 'jsdoc', 'typedoc']
-  },
-  planning: {
-    label: 'Planning',
-    patterns: [/\bplan(?:ning)?\b/i, /\bspec(?:ification)?s?\b/i, /\bprd\b/i],
-    keywords: ['plan', 'planning', 'roadmap', 'spec', 'requirements']
-  },
-  security: {
-    label: 'Security',
-    patterns: [/\bsecurity\b/i, /\bvulnerabil/i, /\bauth(?:entication)?\b/i],
-    keywords: ['security', 'auth', 'vulnerability', 'pentest', 'encryption']
-  },
-  orchestration: {
-    label: 'Orchestration',
-    patterns: [/\bmulti[- ]?agent/i, /\borchestrat/i, /\bswarm\b/i, /\bcrew\b/i],
-    keywords: ['orchestration', 'multi-agent', 'agent-workflow', 'pipeline', 'swarm']
-  }
+const CATEGORY_VARIANTS = {
+  'cicd': 'ci-cd',
+  'ci/cd': 'ci-cd',
+  'dev-ops': 'devops',
+  'front-end': 'frontend',
+  'back-end': 'backend',
 };
 
 // ============================================
-// EXTRACTION FUNCTIONS
+// NORMALIZATION
 // ============================================
 
 /**
- * Build searchable text from marketplace data
- * Concatenates all relevant text fields for pattern matching
+ * Normalize a category value
+ * - lowercase
+ * - trim whitespace
+ * - convert spaces to hyphens
+ * - apply common variant mappings
+ * @param {string|null|undefined} value - Original category value
+ * @returns {string|null} Normalized category or null if invalid
  */
-export function buildSearchText(marketplace) {
-  const parts = [];
+export function normalizeCategory(value) {
+  if (!value || typeof value !== 'string') return null;
+  const normalized = value.toLowerCase().trim().replace(/\s+/g, '-');
+  if (!normalized) return null;
+  return CATEGORY_VARIANTS[normalized] || normalized;
+}
 
-  // Marketplace-level fields
-  if (marketplace.description) parts.push(marketplace.description);
-  if (marketplace.repo_description) parts.push(marketplace.repo_description);
-  if (marketplace.keywords?.length) parts.push(marketplace.keywords.join(' '));
-  if (marketplace.name) parts.push(marketplace.name);
+/**
+ * Collect and normalize categories from all possible source fields
+ * @param {object} pluginDef - Plugin definition from marketplace.json
+ * @returns {string[]} Array of normalized category strings
+ */
+export function collectPluginCategories(pluginDef) {
+  if (!pluginDef || typeof pluginDef !== 'object') return [];
 
-  // Plugin-level fields
-  if (marketplace.plugins?.length) {
-    for (const plugin of marketplace.plugins) {
-      if (plugin.description) parts.push(plugin.description);
-      if (plugin.name) parts.push(plugin.name);
+  const categories = new Set();
 
-      // Command descriptions
-      if (plugin.commands?.length) {
-        for (const cmd of plugin.commands) {
-          if (cmd.description) parts.push(cmd.description);
-        }
+  // Helper to add normalized category
+  const add = (value) => {
+    const normalized = normalizeCategory(value);
+    if (normalized) categories.add(normalized);
+  };
+
+  // Handle singular fields
+  add(pluginDef.category);
+  add(pluginDef.tag);
+
+  // Handle array fields
+  const arrayFields = [
+    pluginDef.categories,
+    pluginDef.tags,
+    pluginDef.keywords
+  ];
+
+  for (const arr of arrayFields) {
+    if (Array.isArray(arr)) {
+      for (const item of arr) {
+        add(item);
       }
-
-      // Skill descriptions
-      if (plugin.skills?.length) {
-        for (const skill of plugin.skills) {
-          if (skill.description) parts.push(skill.description);
-        }
-      }
     }
   }
 
-  return parts.join(' ');
-}
-
-/**
- * Build searchable text from a single plugin
- */
-export function buildPluginSearchText(plugin) {
-  if (!plugin) return '';
-  const parts = [];
-
-  if (plugin.name) parts.push(plugin.name);
-  if (plugin.description) parts.push(plugin.description);
-
-  // Command names and descriptions
-  if (plugin.commands?.length) {
-    for (const cmd of plugin.commands) {
-      if (cmd.name) parts.push(cmd.name);
-      if (cmd.description) parts.push(cmd.description);
-    }
-  }
-
-  // Skill names and descriptions
-  if (plugin.skills?.length) {
-    for (const skill of plugin.skills) {
-      if (skill.name) parts.push(skill.name);
-      if (skill.description) parts.push(skill.description);
-    }
-  }
-
-  return parts.join(' ');
-}
-
-/**
- * Check if any pattern matches the text
- */
-function matchesPatterns(text, patterns) {
-  for (const pattern of patterns) {
-    if (pattern.test(text)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Check if any keyword matches in the text (case-insensitive, word boundaries)
- */
-function matchesKeywords(text, keywords) {
-  const lowerText = text.toLowerCase();
-  for (const keyword of keywords) {
-    const regex = new RegExp(`\\b${keyword.toLowerCase()}\\b`);
-    if (regex.test(lowerText)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Extract categories from text
- * Returns array of category IDs that match
- */
-export function extractCategoriesFromText(text) {
-  const matched = new Set();
-
-  for (const [categoryId, rule] of Object.entries(CATEGORY_RULES)) {
-    const hasPatternMatch = matchesPatterns(text, rule.patterns);
-    const hasKeywordMatch = matchesKeywords(text, rule.keywords);
-
-    if (hasPatternMatch || hasKeywordMatch) {
-      matched.add(categoryId);
-    }
-  }
-
-  return Array.from(matched).sort();
-}
-
-/**
- * Extract categories for a single plugin
- * @param {object} plugin - Plugin object with name, description, commands, skills
- * @returns {string[]} Array of category IDs
- */
-export function extractPluginCategories(plugin) {
-  const text = buildPluginSearchText(plugin);
-  return extractCategoriesFromText(text);
-}
-
-/**
- * Main extraction function - categorize a marketplace
- * Returns single array of categories (union of all plugin categories + marketplace-level matches)
- */
-export function extractCategories(marketplace) {
-  const text = buildSearchText(marketplace);
-  return extractCategoriesFromText(text);
+  return Array.from(categories).sort();
 }
 
 // ============================================
@@ -217,13 +78,9 @@ export function extractCategories(marketplace) {
 // ============================================
 
 /**
- * Generate taxonomy data for category-taxonomy.json
+ * Generate taxonomy data for categories.json
+ * Returns empty object - categories are now dynamic from data
  */
 export function generateTaxonomy() {
-  const categories = {};
-  for (const [id, rule] of Object.entries(CATEGORY_RULES)) {
-    categories[id] = { label: rule.label };
-  }
-
-  return { categories };
+  return { categories: {} };
 }

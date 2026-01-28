@@ -1,4 +1,12 @@
 import { InstallCommand } from "./InstallCommand";
+import {
+  getCategoryBadgeClass,
+  getCategoryDisplayName,
+} from "@/lib/data";
+import type { Category } from "@/lib/types";
+
+// Max categories to display on inline plugin cards
+const MAX_CATEGORIES = 3;
 
 interface PluginCardInlineProps {
   plugin: {
@@ -6,47 +14,49 @@ interface PluginCardInlineProps {
     description: string | null;
     version?: string;
     keywords?: string[];
+    categories?: Category[];
     install_command: string;
   };
 }
 
-const MAX_KEYWORDS = 4;
-
 export function PluginCardInline({ plugin }: PluginCardInlineProps) {
-  const displayedKeywords = plugin.keywords?.slice(0, MAX_KEYWORDS) ?? [];
-  const remainingCount = (plugin.keywords?.length ?? 0) - MAX_KEYWORDS;
+  const categories = plugin.categories ?? [];
+  const displayCategories = categories.slice(0, MAX_CATEGORIES);
+  const remainingCount = categories.length - MAX_CATEGORIES;
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white p-4">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 p-4 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all">
       {/* Header: Name + Version */}
       <div className="flex items-center gap-2 mb-2">
-        <h3 className="text-sm font-semibold text-gray-900">{plugin.name}</h3>
+        <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+          {plugin.name}
+        </h3>
         {plugin.version && (
-          <span className="px-1.5 py-0.5 text-[10px] font-medium text-gray-600 bg-gray-100 rounded">
+          <span className="px-1.5 py-0.5 text-[10px] font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded">
             v{plugin.version}
           </span>
         )}
       </div>
 
       {/* Description */}
-      <p className="text-xs text-gray-600 truncate mb-3">
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
         {plugin.description || "No description"}
       </p>
 
-      {/* Keywords */}
-      {displayedKeywords.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5 mb-3">
-          {displayedKeywords.map((keyword) => (
+      {/* Category Badges */}
+      {displayCategories.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {displayCategories.map((cat) => (
             <span
-              key={keyword}
-              className="px-2 py-0.5 text-[10px] font-medium text-gray-500 bg-gray-50 border border-gray-200 rounded-full"
+              key={cat}
+              className={`badge ${getCategoryBadgeClass(cat)}`}
             >
-              {keyword}
+              {getCategoryDisplayName(cat)}
             </span>
           ))}
           {remainingCount > 0 && (
-            <span className="text-[10px] text-gray-400">
-              +{remainingCount} more
+            <span className="text-xs text-gray-500 dark:text-gray-400 self-center">
+              +{remainingCount}
             </span>
           )}
         </div>

@@ -113,78 +113,222 @@ export function formatBytes(bytes: number | null): string {
 }
 
 // ============================================
-// UNIFIED CATEGORY SYSTEM (12 categories)
+// DYNAMIC CATEGORY SYSTEM
 // ============================================
 
-// Category order for display
-export const CATEGORY_ORDER = [
-  'templates',
-  'knowledge-base',
-  'devops',
-  'code-quality',
-  'code-review',
-  'testing',
-  'data-analytics',
-  'design',
-  'documentation',
-  'planning',
-  'security',
-  'orchestration',
-] as const satisfies readonly Category[];
+// Words that should be displayed in full uppercase
+const UPPERCASE_WORDS = new Set([
+  // Common acronyms
+  'ai', 'api', 'aws', 'bdd', 'ci', 'cd', 'cli', 'cms', 'cpu', 'crm', 'css',
+  'csv', 'db', 'ddd', 'dns', 'dsl', 'dx', 'e2e', 'ec2', 'ecs', 'eks', 'elk',
+  'emr', 'erd', 'etl', 'ftp', 'gcp', 'gpu', 'gui', 'hcl', 'hr', 'html', 'http',
+  'https', 'iac', 'id', 'ide', 'io', 'ip', 'it', 'jit', 'js', 'json', 'jwt',
+  'k8s', 'kms', 'kpi', 'llm', 'lsp', 'ml', 'mcp', 'mvc', 'mvp', 'nlp', 'npm',
+  'oauth', 'ocr', 'oop', 'orm', 'os', 'otp', 'pdf', 'php', 'png', 'poc', 'pr',
+  'prd', 'qa', 'rag', 'rds', 'rest', 'rfc', 'rpc', 's3', 'saas', 'sdk', 'seo',
+  'sns', 'soc', 'sop', 'sql', 'sqs', 'sre', 'ssh', 'ssl', 'ssr', 'svg', 'tcp',
+  'tdd', 'tls', 'tui', 'udp', 'ui', 'uri', 'url', 'ux', 'vm', 'vpn', 'vps',
+  'wasm', 'wcag', 'xml', 'yaml',
+]);
 
-// Category display names
-const CATEGORY_DISPLAY: Record<Category, string> = {
-  'knowledge-base': 'Agent Memory',
-  'templates': 'Templates',
+// Words with specific capitalization (mixed case, special syntax)
+const SPECIAL_CASE_WORDS: Record<string, string> = {
+  // Operating systems
+  'ios': 'iOS',
+  'macos': 'macOS',
+  'tvos': 'tvOS',
+  'watchos': 'watchOS',
+  'ipados': 'iPadOS',
+  'visionos': 'visionOS',
+  // Databases
+  'mongodb': 'MongoDB',
+  'postgresql': 'PostgreSQL',
+  'mysql': 'MySQL',
+  'mariadb': 'MariaDB',
+  'sqlite': 'SQLite',
+  'dynamodb': 'DynamoDB',
+  'couchdb': 'CouchDB',
+  'timescaledb': 'TimescaleDB',
+  'influxdb': 'InfluxDB',
+  'neo4j': 'Neo4j',
+  'nosql': 'NoSQL',
+  // Languages & runtimes
+  'javascript': 'JavaScript',
+  'typescript': 'TypeScript',
+  'nodejs': 'Node.js',
+  'node.js': 'Node.js',
+  'deno': 'Deno',
+  'golang': 'Go',
+  'csharp': 'C#',
+  'c#': 'C#',
+  'cpp': 'C++',
+  'c++': 'C++',
+  'objc': 'Objective-C',
+  'fsharp': 'F#',
+  'dotnet': '.NET',
+  '.net': '.NET',
+  'aspnet': 'ASP.NET',
+  // Frameworks & libraries
+  'nextjs': 'Next.js',
+  'nuxtjs': 'Nuxt.js',
+  'vuejs': 'Vue.js',
+  'reactjs': 'React.js',
+  'angularjs': 'AngularJS',
+  'expressjs': 'Express.js',
+  'nestjs': 'NestJS',
+  'fastapi': 'FastAPI',
+  'openapi': 'OpenAPI',
+  'graphql': 'GraphQL',
+  'postgrest': 'PostgREST',
+  'grpc': 'gRPC',
+  'websocket': 'WebSocket',
+  'websockets': 'WebSockets',
+  'webrtc': 'WebRTC',
+  'webassembly': 'WebAssembly',
+  'webgl': 'WebGL',
+  'tensorflow': 'TensorFlow',
+  'pytorch': 'PyTorch',
+  'langchain': 'LangChain',
+  'langgraph': 'LangGraph',
+  'tailwindcss': 'Tailwind CSS',
+  'shadcn': 'shadcn/ui',
+  'swiftui': 'SwiftUI',
+  'uikit': 'UIKit',
+  'rxjs': 'RxJS',
+  'typeorm': 'TypeORM',
+  'sqlalchemy': 'SQLAlchemy',
+  // Platforms & services
+  'github': 'GitHub',
+  'gitlab': 'GitLab',
+  'bitbucket': 'Bitbucket',
+  'openai': 'OpenAI',
+  'supabase': 'Supabase',
+  'firebase': 'Firebase',
+  'vercel': 'Vercel',
+  'netlify': 'Netlify',
+  'cloudflare': 'Cloudflare',
+  'elasticsearch': 'Elasticsearch',
+  'opensearch': 'OpenSearch',
+  'chatgpt': 'ChatGPT',
+  'deepmind': 'DeepMind',
+  'dall-e': 'DALL-E',
+  'wordpress': 'WordPress',
+  'hubspot': 'HubSpot',
+  'sendgrid': 'SendGrid',
+  'clickup': 'ClickUp',
+  // DevOps & practices
   'devops': 'DevOps',
-  'code-quality': 'Code Quality',
-  'code-review': 'Code Review',
-  'testing': 'Testing',
-  'data-analytics': 'Data & Analytics',
-  'design': 'Design',
-  'documentation': 'Documentation',
-  'planning': 'Planning',
-  'security': 'Security',
-  'orchestration': 'Orchestration',
+  'devsecops': 'DevSecOps',
+  'mlops': 'MLOps',
+  'gitops': 'GitOps',
+  'finops': 'FinOps',
+  'aiops': 'AIOps',
+  'dataops': 'DataOps',
+  'argocd': 'ArgoCD',
+  'circleci': 'CircleCI',
+  // Tools
+  'vscode': 'VS Code',
+  'neovim': 'Neovim',
+  'intellij': 'IntelliJ',
+  'jetbrains': 'JetBrains',
+  'xcode': 'Xcode',
+  'cocoapods': 'CocoaPods',
+  'webpack': 'webpack',
+  'rollup': 'Rollup',
+  'esbuild': 'esbuild',
+  'pnpm': 'pnpm',
+  // Testing
+  'pytest': 'pytest',
+  'vitest': 'Vitest',
+  'jest': 'Jest',
+  'rspec': 'RSpec',
+  'junit': 'JUnit',
+  'testng': 'TestNG',
+  'cypress': 'Cypress',
+  'playwright': 'Playwright',
+  // Claude-specific
+  'claude.md': 'CLAUDE.md',
+  // Other
+  'oauth2': 'OAuth 2.0',
+  'jsonschema': 'JSON Schema',
+  'i18n': 'i18n',
+  'a11y': 'a11y',
+  'oauth': 'OAuth',
 };
 
+/**
+ * Format a category to proper display case
+ * Handles acronyms (AI, API), mixed case (iOS, GraphQL), and title case
+ * Splits on hyphens, underscores, and periods
+ */
+export function formatCategoryDisplay(category: Category): string {
+  if (!category) return '';
+
+  // Check full match first (handles special cases like "node.js", "claude.md")
+  const lowerFull = category.toLowerCase();
+  if (SPECIAL_CASE_WORDS[lowerFull]) {
+    return SPECIAL_CASE_WORDS[lowerFull];
+  }
+
+  // Split on hyphens, underscores, and periods
+  return category
+    .split(/[-_.]/)
+    .filter(word => word.length > 0) // Remove empty strings from consecutive separators
+    .map(word => {
+      const lower = word.toLowerCase();
+      // Check special cases first
+      if (SPECIAL_CASE_WORDS[lower]) {
+        return SPECIAL_CASE_WORDS[lower];
+      }
+      // Then check uppercase acronyms
+      if (UPPERCASE_WORDS.has(lower)) {
+        return word.toUpperCase();
+      }
+      // Default to title case
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+}
+
+// Alias for formatCategoryDisplay
 export function getCategoryDisplay(category: Category): string {
-  return CATEGORY_DISPLAY[category] ?? category;
+  return formatCategoryDisplay(category);
 }
 
 // Alias for getCategoryDisplay
 export function getCategoryDisplayName(category: Category): string {
-  return getCategoryDisplay(category);
+  return formatCategoryDisplay(category);
 }
 
-// Normalize a category string (handles unknown categories)
-export function normalizeCategory(category: string | null | undefined): Category {
-  if (!category) return 'orchestration';
-  const normalized = category.toLowerCase().trim();
-  if (CATEGORY_ORDER.includes(normalized as Category)) {
-    return normalized as Category;
-  }
-  return 'orchestration';
-}
+// Badge color palette for hash-based assignment
+const BADGE_COLORS = [
+  'badge-purple',
+  'badge-blue',
+  'badge-orange',
+  'badge-green',
+  'badge-cyan',
+  'badge-yellow',
+  'badge-pink',
+  'badge-indigo',
+  'badge-teal',
+  'badge-rose',
+  'badge-red',
+  'badge-gray',
+];
 
-// Category badge styling
-const CATEGORY_BADGE_CLASSES: Record<Category, string> = {
-  'knowledge-base': 'badge-purple',
-  'templates': 'badge-blue',
-  'devops': 'badge-orange',
-  'code-quality': 'badge-green',
-  'code-review': 'badge-cyan',
-  'testing': 'badge-yellow',
-  'data-analytics': 'badge-pink',
-  'design': 'badge-indigo',
-  'documentation': 'badge-teal',
-  'planning': 'badge-rose',
-  'security': 'badge-red',
-  'orchestration': 'badge-gray',
-};
-
+/**
+ * Get a badge class for a category using hash-based color selection
+ * This ensures consistent colors for the same category across the app
+ */
 export function getCategoryBadgeClass(category: Category): string {
-  return CATEGORY_BADGE_CLASSES[category] ?? 'badge-gray';
+  if (!category) return 'badge-gray';
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) {
+    hash = ((hash << 5) - hash) + category.charCodeAt(i);
+  }
+  // Double-modulo pattern for guaranteed non-negative index (handles bit-shift overflow)
+  const index = ((hash % BADGE_COLORS.length) + BADGE_COLORS.length) % BADGE_COLORS.length;
+  return BADGE_COLORS[index];
 }
 
 // ============================================

@@ -1,5 +1,5 @@
 import { saveJson, loadJson, log } from '../lib/utils.js';
-import { extractPluginCategories } from '../lib/categorizer.js';
+import { collectPluginCategories } from '../lib/categorizer.js';
 
 const REPOS_PATH = './data/02-repos.json';
 const TREES_PATH = './data/03-trees.json';
@@ -139,16 +139,8 @@ export function enrich({ onProgress: _onProgress } = {}) {
     const marketplaceName = marketplaceData.name || full_name.split('/')[1];
 
     const plugins = (marketplaceData.plugins || []).map(pluginDef => {
-      // Build plugin object for categorization (using available data)
-      const pluginForCategorization = {
-        name: pluginDef.name,
-        description: pluginDef.description || null,
-        commands: [],
-        skills: []
-      };
-
-      // Extract categories for this plugin
-      const categories = extractPluginCategories(pluginForCategorization);
+      // Collect categories from all source fields with basic normalization
+      const categories = collectPluginCategories(pluginDef);
 
       // Preserve all original fields from marketplace.json, add/override computed fields
       return {

@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Check } from "lucide-react";
-import type { Category } from "@/lib/types";
+import * as Popover from "@radix-ui/react-popover";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { ChevronDown, Check, X } from "lucide-react";
 import { getCategoryDisplay } from "@/lib/data";
+import type { Category } from "@/lib/types";
 
-export interface MultiSelectDropdownProps {
-  options: Category[];
+interface CategoryOption {
+  category: Category;
+  count: number;
+}
+
+interface MultiSelectDropdownProps {
+  options: CategoryOption[];
   selectedOptions: Category[];
   onToggle: (option: Category) => void;
   onClear: () => void;
@@ -20,99 +26,135 @@ export function MultiSelectDropdown({
   onClear,
   placeholder,
 }: MultiSelectDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Close dropdown when clicking outside
+  // Focus input when popover opens
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+    if (open && inputRef.current) {
+      inputRef.current.focus();
     }
+  }, [open]);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Close dropdown on Escape key
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape" && isOpen) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+  const filteredOptions = useMemo(() => {
+    if (!search.trim()) return options;
+    const query = search.toLowerCase();
+    return options.filter(opt =>
+      opt.category.toLowerCase().includes(query) ||
+      getCategoryDisplay(opt.category).toLowerCase().includes(query)
+    );
+  }, [options, search]);
 
   const displayText = selectedOptions.length === 0
     ? placeholder
     : `${selectedOptions.length} selected`;
 
   return (
-    <div ref={dropdownRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-3 py-2.5 border rounded-lg text-sm bg-white cursor-pointer transition-colors min-w-[160px] ${
-          isOpen
-            ? "border-gray-400 ring-1 ring-gray-400"
-            : "border-gray-200 hover:border-gray-300"
-        }`}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-      >
-        <span className={selectedOptions.length === 0 ? "text-gray-500" : "text-gray-900"}>
-          {displayText}
-        </span>
-        <ChevronDown
-          size={16}
-          className="ml-auto text-gray-400"
-        />
-      </button>
+    <Popover.Root open={open} onOpenChange={(isOpen) => {
+      setOpen(isOpen);
+      if (!isOpen) setSearch("");
+    }}>
+      <Popover.Trigger asChild>
+        <div className={`relative transition-all duration-150 ${open ? "w-[260px]" : "w-auto"}`}>
+          {/* When closed: show pill button */}
+          {!open && (
+            <button
+              type="button"
+              className="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white hover:border-gray-300 whitespace-nowrap"
+              aria-haspopup="listbox"
+            >
+              <span className={selectedOptions.length === 0 ? "text-gray-500" : "text-gray-900"}>
+                {displayText}
+              </span>
+              <ChevronDown size={16} className="text-gray-400" />
+            </button>
+          )}
+          {/* When open: show search input expanded */}
+          {open && (
+            <div className="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white w-full">
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search categories..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="flex-1 bg-transparent text-sm placeholder-gray-400 min-w-0 focus-none"
+                onClick={(e) => e.stopPropagation()}
+              />
+              {search ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSearch("");
+                  }}
+                  className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+                >
+                  <X size={14} />
+                </button>
+              ) : (
+                <ChevronDown size={16} className="text-gray-400 flex-shrink-0" />
+              )}
+            </div>
+          )}
+        </div>
+      </Popover.Trigger>
 
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1 max-h-64 overflow-auto">
+      <Popover.Portal>
+        <Popover.Content
+          className="w-[260px] bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+          sideOffset={4}
+          align="start"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          {/* Clear all */}
           {selectedOptions.length > 0 && (
             <button
               type="button"
-              onClick={() => {
-                onClear();
-              }}
-              className="w-full px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-50 border-b border-gray-100"
+              onClick={onClear}
+              className="w-full px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-50 border-b border-gray-100 rounded-t-lg"
               aria-label="Clear all selected categories"
             >
               Clear all
             </button>
           )}
-          {options.map((option) => {
-            const isSelected = selectedOptions.includes(option);
-            return (
-              <button
-                key={option}
-                type="button"
-                onClick={() => onToggle(option)}
-                className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
-                role="option"
-                aria-selected={isSelected}
-              >
-                <div
-                  className={`w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 ${
-                    isSelected
-                      ? "bg-gray-700 border-gray-700"
-                      : "border-gray-300"
-                  }`}
+
+          {/* Options list - with inset scrollbar to avoid corner clipping */}
+          <div
+            className="max-h-64 overflow-y-auto my-2 mx-1 pr-1 category-dropdown-scroll"
+            role="listbox"
+          >
+            {filteredOptions.map(({ category, count }) => {
+              const isSelected = selectedOptions.includes(category);
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => onToggle(category)}
+                  className="w-full px-2 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 cursor-pointer rounded"
+                  role="option"
+                  aria-selected={isSelected}
                 >
-                  {isSelected && <Check size={12} className="text-white" />}
-                </div>
-                <span className="text-gray-900">{getCategoryDisplay(option)}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </div>
+                  <div className={`w-4 h-4 border rounded flex items-center justify-center flex-shrink-0 ${
+                    isSelected ? "bg-gray-700 border-gray-700" : "border-gray-300"
+                  }`}>
+                    {isSelected && <Check size={12} className="text-white" />}
+                  </div>
+                  <span className="flex-1 text-gray-900 truncate">{getCategoryDisplay(category)}</span>
+                  <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full min-w-[1.5rem] text-center flex-shrink-0">
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+
+            {filteredOptions.length === 0 && (
+              <div className="px-2 py-2 text-sm text-gray-500">No categories found</div>
+            )}
+          </div>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Category } from "@/lib/types";
-import { getCategoryDisplay } from "@/lib/data";
+import { getCategoryDisplay, getCategoryBadgeClass } from "@/lib/data";
 
 export interface CategoryPillProps {
   category: Category;
@@ -38,7 +38,10 @@ export function CategoryPill({
     );
   }
 
+  // For non-interactive pills, use hash-based badge colors
+  const badgeClass = getCategoryBadgeClass(category);
+
   return (
-    <span className={`rounded-full ${sizeClasses} ${baseClasses}`}>{displayName}</span>
+    <span className={`badge ${badgeClass} ${sizeClasses}`}>{displayName}</span>
   );
 }

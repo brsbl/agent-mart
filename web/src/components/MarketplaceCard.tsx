@@ -84,7 +84,7 @@ export function MarketplaceCard({
   return (
     <Link
       href={marketplaceUrl}
-      className="border border-gray-200 rounded-xl hover:border-gray-400 hover:shadow-md transition-all bg-white flex flex-col h-full card-hover-scroll cursor-pointer group"
+      className="border border-gray-200 rounded-xl hover:border-gray-400 hover:shadow-md transition-all bg-white flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden"
     >
       <div className="p-4 flex flex-col flex-1">
         <div className="flex-1 min-w-0 mb-3">

@@ -53,22 +53,11 @@ export interface Marketplace {
 }
 
 // ============================================
-// UNIFIED CATEGORY SYSTEM (12 categories)
+// CATEGORY SYSTEM (dynamic from data)
 // ============================================
 
-export type Category =
-  | 'knowledge-base'
-  | 'templates'
-  | 'devops'
-  | 'code-quality'
-  | 'code-review'
-  | 'testing'
-  | 'data-analytics'
-  | 'design'
-  | 'documentation'
-  | 'planning'
-  | 'security'
-  | 'orchestration';
+// Categories are now dynamic strings from marketplace data
+export type Category = string;
 
 export interface Signals {
   stars: number;
