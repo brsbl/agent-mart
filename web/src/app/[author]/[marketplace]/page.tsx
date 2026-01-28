@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import {
   Star,
   GitFork,
@@ -118,22 +119,29 @@ function getPluginReadme(
 
   const pluginLower = pluginName.toLowerCase();
 
-  // Try to find plugin-specific README first
+  // 1. First: README in .claude-plugin folder (plugin-specific or general)
   let key = Object.keys(files).find((k) => {
     const lower = k.toLowerCase();
-    return (
-      (lower.includes(`plugins/${pluginLower}/readme`) ||
-        lower.includes(`/${pluginLower}/readme`)) &&
-      lower.endsWith(".md")
-    );
+    return lower.startsWith(".claude-plugin/") &&
+      lower.endsWith("readme.md") &&
+      (lower.includes(`/${pluginLower}/`) || !lower.includes("/plugins/"));
   });
 
-  // Fallback to root README if no plugin-specific one found
+  // 2. Second: Plugin-specific README
   if (!key) {
     key = Object.keys(files).find((k) => {
       const lower = k.toLowerCase();
-      return lower.endsWith("readme.md") && !lower.includes("/plugins/");
+      return (
+        (lower.includes(`plugins/${pluginLower}/readme`) ||
+          lower.includes(`/${pluginLower}/readme`)) &&
+        lower.endsWith(".md")
+      );
     });
+  }
+
+  // 3. Last: Root README.md only
+  if (!key) {
+    key = Object.keys(files).find((k) => k.toLowerCase() === "readme.md");
   }
 
   return key ? files[key] : null;
@@ -411,7 +419,20 @@ export default function MarketplaceDetailPage() {
                   </h2>
                 </div>
                 <div className="p-6 prose prose-sm dark:prose-invert max-w-none max-h-[48rem] overflow-y-auto scrollbar-auto-hide">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                      img: ({ src, alt, ...props }) => {
+                        // Transform relative URLs to GitHub raw URLs
+                        let imgSrc = typeof src === "string" ? src : "";
+                        if (imgSrc && !imgSrc.startsWith("http") && !imgSrc.startsWith("data:")) {
+                          imgSrc = `https://raw.githubusercontent.com/${marketplace.repo_full_name}/HEAD/${imgSrc.replace(/^\.?\//, "")}`;
+                        }
+                        return <img src={imgSrc} alt={alt || ""} {...props} />;
+                      },
+                    }}
+                  >
                     {currentPluginReadme}
                   </ReactMarkdown>
                 </div>
