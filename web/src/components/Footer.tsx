@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 
-function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+// Use useSyncExternalStore for hydration-safe mounting detection
+const subscribe = () => () => {};
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+function ThemeToggle() {
+  const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const { theme, setTheme } = useTheme();
 
   if (!mounted) {
     return (

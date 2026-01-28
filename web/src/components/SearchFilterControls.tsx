@@ -98,7 +98,9 @@ function SearchFilterControlsContent() {
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Ref to store current filter state to avoid stale closures in debounced callbacks
   const filterStateRef = useRef({ selectedCategories, sortBy, sortDirection });
-  filterStateRef.current = { selectedCategories, sortBy, sortDirection };
+  useEffect(() => {
+    filterStateRef.current = { selectedCategories, sortBy, sortDirection };
+  }, [selectedCategories, sortBy, sortDirection]);
   const updateURL = useCallback((
     cats: Category[],
     sort: MarketplaceSortOption,

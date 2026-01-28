@@ -205,7 +205,7 @@ export default function MarketplaceDetailPage() {
   }, [marketplace]);
 
   // Get plugins array
-  const plugins = marketplace?.plugins ?? [];
+  const plugins = useMemo(() => marketplace?.plugins ?? [], [marketplace]);
 
   // Get README for currently selected plugin
   const currentPluginReadme = useMemo(() => {
@@ -429,6 +429,7 @@ export default function MarketplaceDetailPage() {
                         if (imgSrc && !imgSrc.startsWith("http") && !imgSrc.startsWith("data:")) {
                           imgSrc = `https://raw.githubusercontent.com/${marketplace.repo_full_name}/HEAD/${imgSrc.replace(/^\.?\//, "")}`;
                         }
+                        // eslint-disable-next-line @next/next/no-img-element
                         return <img src={imgSrc} alt={alt || ""} {...props} />;
                       },
                     }}
