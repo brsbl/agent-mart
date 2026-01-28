@@ -1,0 +1,229 @@
+"use client";
+
+import { Suspense, useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Search, X } from "lucide-react";
+import { MultiSelectDropdown } from "./MultiSelectDropdown";
+import { SortDropdown } from "./SortDropdown";
+import type { MarketplaceSortOption, Category } from "@/lib/types";
+import { useFetch } from "@/hooks";
+import { DATA_URLS } from "@/lib/constants";
+import type { BrowseMarketplace, Meta } from "@/lib/types";
+
+interface MarketplacesData {
+  meta: Meta;
+  marketplaces: BrowseMarketplace[];
+}
+
+export function SearchFilterControls() {
+  return (
+    <Suspense fallback={<SearchFilterControlsSkeleton />}>
+      <SearchFilterControlsContent />
+    </Suspense>
+  );
+}
+
+function SearchFilterControlsSkeleton() {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex-1 h-[38px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+      <div className="w-[140px] h-[38px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+      <div className="w-[160px] h-[38px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+    </div>
+  );
+}
+
+function SearchFilterControlsContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Search state
+  const searchQuery = searchParams.get("q") || "";
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+
+  // Filter state from URL
+  const categoriesParam = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
+  const sortByParam = (searchParams.get("sort") as MarketplaceSortOption) || "recent";
+  const sortDirParam = (searchParams.get("dir") as "asc" | "desc") || "desc";
+
+  const [sortBy, setSortBy] = useState<MarketplaceSortOption>(sortByParam);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">(sortDirParam);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>(categoriesParam);
+
+  // Fetch marketplaces to get available categories
+  const { data: marketplacesData } = useFetch<MarketplacesData>(
+    DATA_URLS.MARKETPLACES_BROWSE,
+    "Failed to load marketplaces."
+  );
+
+  const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
+
+  // Minimum count for a category to be shown in the dropdown
+  const MINIMUM_CATEGORY_COUNT = 2;
+
+  // Get categories with counts, filtered by minimum count, sorted by count descending
+  const categoriesWithCounts = useMemo(() => {
+    const counts = new Map<Category, number>();
+
+    allMarketplaces.forEach(m => {
+      if (Array.isArray(m.categories)) {
+        m.categories.forEach(c => {
+          counts.set(c, (counts.get(c) || 0) + 1);
+        });
+      }
+    });
+
+    return Array.from(counts.entries())
+      .filter(([_, count]) => count >= MINIMUM_CATEGORY_COUNT)
+      .sort((a, b) => b[1] - a[1])
+      .map(([category, count]) => ({ category, count }));
+  }, [allMarketplaces]);
+
+  // Sync local search with URL
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
+
+  // Sync state from URL on browser navigation
+  useEffect(() => {
+    const cats = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
+    setSelectedCategories(cats);
+    setSortBy((searchParams.get("sort") as MarketplaceSortOption) || "recent");
+    setSortDirection((searchParams.get("dir") as "asc" | "desc") || "desc");
+  }, [searchParams]);
+
+  // Debounced URL update
+  const urlUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const updateURL = useCallback((
+    cats: Category[],
+    sort: MarketplaceSortOption,
+    dir: "asc" | "desc",
+    query?: string
+  ) => {
+    if (urlUpdateTimeoutRef.current) {
+      clearTimeout(urlUpdateTimeoutRef.current);
+    }
+
+    urlUpdateTimeoutRef.current = setTimeout(() => {
+      // Read fresh searchParams from window.location to avoid stale closure state
+      const params = new URLSearchParams(window.location.search);
+
+      if (query !== undefined) {
+        if (query.trim()) {
+          params.set("q", query.trim());
+        } else {
+          params.delete("q");
+        }
+      }
+
+      if (cats.length > 0) {
+        params.set("cat", cats.join(","));
+      } else {
+        params.delete("cat");
+      }
+
+      if (sort !== "recent") {
+        params.set("sort", sort);
+      } else {
+        params.delete("sort");
+      }
+
+      if (dir !== "desc") {
+        params.set("dir", dir);
+      } else {
+        params.delete("dir");
+      }
+
+      const newURL = params.toString() ? `/?${params.toString()}` : "/";
+      router.replace(newURL, { scroll: false });
+    }, 50);
+  }, [router]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (urlUpdateTimeoutRef.current) {
+        clearTimeout(urlUpdateTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateURL(selectedCategories, sortBy, sortDirection, localSearchQuery);
+  };
+
+  const handleCategoryToggle = (cat: Category) => {
+    setSelectedCategories(prev => {
+      const next = prev.includes(cat)
+        ? prev.filter(c => c !== cat)
+        : [...prev, cat];
+      updateURL(next, sortBy, sortDirection);
+      return next;
+    });
+  };
+
+  const clearFilters = () => {
+    setSelectedCategories([]);
+    updateURL([], sortBy, sortDirection);
+  };
+
+  const handleSortChange = (newSort: MarketplaceSortOption) => {
+    setSortBy(newSort);
+    updateURL(selectedCategories, newSort, sortDirection);
+  };
+
+  const handleSortDirectionChange = (newDir: "asc" | "desc") => {
+    setSortDirection(newDir);
+    updateURL(selectedCategories, sortBy, newDir);
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      {/* Search Bar - expands to fill available space */}
+      <div className="flex-1 min-w-0">
+        <form onSubmit={handleSearch}>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={localSearchQuery}
+              onChange={(e) => setLocalSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-8 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-800 dark:text-gray-100"
+            />
+            {localSearchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setLocalSearchQuery("");
+                  updateURL(selectedCategories, sortBy, sortDirection, "");
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      {/* Category Multi-Select Dropdown */}
+      <MultiSelectDropdown
+        options={categoriesWithCounts}
+        selectedOptions={selectedCategories}
+        onToggle={handleCategoryToggle}
+        onClear={clearFilters}
+        placeholder="Categories"
+      />
+
+      {/* Sort Dropdown */}
+      <SortDropdown
+        sortField={sortBy}
+        sortDirection={sortDirection}
+        onSortFieldChange={handleSortChange}
+        onSortDirectionChange={handleSortDirectionChange}
+      />
+    </div>
+  );
+}

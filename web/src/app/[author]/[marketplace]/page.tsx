@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
@@ -10,8 +10,8 @@ import {
   GitFork,
   ExternalLink,
   Clock,
-  ChevronDown,
-  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   Check,
 } from "lucide-react";
@@ -109,28 +109,42 @@ function getUniqueCategories(marketplace: Marketplace): Category[] {
   return Array.from(categories).slice(0, 5);
 }
 
-// Find README content from marketplace files
-function findReadmeContent(
-  files: Record<string, string> | undefined
+// Get README content for a specific plugin
+function getPluginReadme(
+  files: Record<string, string> | undefined,
+  pluginName: string
 ): string | null {
-  if (!files) return null;
+  if (!files || !pluginName) return null;
 
-  const readmeKey = Object.keys(files).find((k) => {
+  const pluginLower = pluginName.toLowerCase();
+
+  // Try to find plugin-specific README first
+  let key = Object.keys(files).find((k) => {
     const lower = k.toLowerCase();
-    return lower.includes("readme") && lower.endsWith(".md");
+    return (
+      (lower.includes(`plugins/${pluginLower}/readme`) ||
+        lower.includes(`/${pluginLower}/readme`)) &&
+      lower.endsWith(".md")
+    );
   });
 
-  return readmeKey ? files[readmeKey] : null;
-}
+  // Fallback to root README if no plugin-specific one found
+  if (!key) {
+    key = Object.keys(files).find((k) => {
+      const lower = k.toLowerCase();
+      return lower.endsWith("readme.md") && !lower.includes("/plugins/");
+    });
+  }
 
-const INITIAL_PLUGINS_VISIBLE = 5;
+  return key ? files[key] : null;
+}
 
 export default function MarketplaceDetailPage() {
   const params = useParams();
   const authorId = validateUrlParam(params.author);
   const marketplaceName = validateUrlParam(params.marketplace);
   const { isStarred, toggleStar } = useStarredRepos();
-  const [showAllPlugins, setShowAllPlugins] = useState(false);
+  const [selectedPluginIndex, setSelectedPluginIndex] = useState(0);
 
   // Build URL conditionally - null if params are invalid
   const url = authorId ? DATA_URLS.AUTHOR(authorId) : null;
@@ -151,6 +165,11 @@ export default function MarketplaceDetailPage() {
       authorData.marketplaces.find((m) => m.name === marketplaceName) ?? null
     );
   }, [authorData, marketplaceName]);
+
+  // Reset selected plugin index when marketplace changes
+  useEffect(() => {
+    setSelectedPluginIndex(0);
+  }, [marketplace?.name]);
 
   // Get other marketplaces from the same author
   const otherMarketplaces = useMemo(() => {
@@ -177,11 +196,14 @@ export default function MarketplaceDetailPage() {
     return getUniqueCategories(marketplace);
   }, [marketplace]);
 
-  // Get README content
-  const readmeContent = useMemo(() => {
-    if (!marketplace) return null;
-    return findReadmeContent(marketplace.files);
-  }, [marketplace]);
+  // Get plugins array
+  const plugins = marketplace?.plugins ?? [];
+
+  // Get README for currently selected plugin
+  const currentPluginReadme = useMemo(() => {
+    if (!marketplace || plugins.length === 0) return null;
+    return getPluginReadme(marketplace.files, plugins[selectedPluginIndex]?.name);
+  }, [marketplace, plugins, selectedPluginIndex]);
 
   const repoId = marketplace?.repo_full_name || "";
   const starred = isStarred(repoId);
@@ -219,17 +241,25 @@ export default function MarketplaceDetailPage() {
 
   const { author } = authorData;
   const hasOtherMarketplaces = otherMarketplaces.length > 0;
-  const plugins = marketplace.plugins;
-  const visiblePlugins = showAllPlugins
-    ? plugins
-    : plugins.slice(0, INITIAL_PLUGINS_VISIBLE);
-  const hiddenPluginsCount = plugins.length - INITIAL_PLUGINS_VISIBLE;
+  const currentPlugin = plugins[selectedPluginIndex];
+
+  const handlePrevPlugin = () => {
+    setSelectedPluginIndex((prev) =>
+      prev === 0 ? plugins.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextPlugin = () => {
+    setSelectedPluginIndex((prev) => (prev + 1) % plugins.length);
+  };
 
   return (
     <div className="px-6 py-6">
       <div className="max-w-6xl mx-auto">
-        {/* Two-column layout: Main (left) + Sidebar (right) */}
-        <div className="lg:grid lg:grid-cols-[1fr_400px] lg:gap-8">
+        {/* Two-column layout: Main (left) + Sidebar (right), or centered if no sidebar */}
+        <div className={hasOtherMarketplaces
+          ? "lg:grid lg:grid-cols-[1fr_400px] lg:gap-8"
+          : "max-w-3xl mx-auto"}>
           {/* Main Column - Hero, Terminal, README */}
           <div>
             {/* Hero Header - glass */}
@@ -327,75 +357,70 @@ export default function MarketplaceDetailPage() {
               <TerminalInstallCommand command={installCommand} />
             </div>
 
-            {/* README Section */}
-            {readmeContent && (
+            {/* Plugin Carousel */}
+            {plugins.length > 0 && currentPlugin && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    Plugins
+                    <span className="px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
+                      {plugins.length}
+                    </span>
+                  </h2>
+                  {/* Navigation arrows - compact */}
+                  {plugins.length > 1 && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={handlePrevPlugin}
+                        className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                        aria-label="Previous plugin"
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleNextPlugin}
+                        className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                        aria-label="Next plugin"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <PluginCardInline
+                  plugin={{
+                    name: currentPlugin.name,
+                    description: currentPlugin.description,
+                    version: currentPlugin.version,
+                    keywords: currentPlugin.keywords,
+                    categories: currentPlugin.categories,
+                    install_command: `/plugin install ${currentPlugin.name}@${marketplace.repo_full_name.replace("/", "-")}`,
+                  }}
+                />
+              </div>
+            )}
+
+            {/* README Section - shows selected plugin's README */}
+            {currentPluginReadme && (
               <section className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
                 <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                   <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     README
                   </h2>
                 </div>
-                <div className="p-6 prose prose-sm dark:prose-invert max-w-none max-h-[48rem] overflow-y-auto">
+                <div className="p-6 prose prose-sm dark:prose-invert max-w-none max-h-[48rem] overflow-y-auto scrollbar-auto-hide">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {readmeContent}
+                    {currentPluginReadme}
                   </ReactMarkdown>
                 </div>
               </section>
             )}
           </div>
 
-          {/* Right Sidebar - Plugins + More from Author */}
+          {/* Right Sidebar - More from Author */}
           <aside className="mt-8 lg:mt-0 space-y-6">
-            {/* Plugins Section */}
-            {plugins.length > 0 && (
-              <section className="glass-card border border-white/50 dark:border-gray-600 rounded-2xl p-4 shadow-lg">
-                <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-                  Plugins
-                  <span className="px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
-                    {plugins.length}
-                  </span>
-                </h2>
-
-                {/* Plugin List - single column in sidebar */}
-                <div className="space-y-3">
-                  {visiblePlugins.map((plugin) => (
-                    <PluginCardInline
-                      key={plugin.name}
-                      plugin={{
-                        name: plugin.name,
-                        description: plugin.description,
-                        version: plugin.version,
-                        keywords: plugin.keywords,
-                        categories: plugin.categories,
-                        install_command: `/plugin install ${plugin.name}@${marketplace.repo_full_name.replace("/", "-")}`,
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Show more/less button */}
-                {hiddenPluginsCount > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllPlugins(!showAllPlugins)}
-                    className="w-full mt-4 py-2 px-3 text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    {showAllPlugins ? (
-                      <>
-                        Show less
-                        <ChevronUp size={14} />
-                      </>
-                    ) : (
-                      <>
-                        Show {hiddenPluginsCount} more
-                        <ChevronDown size={14} />
-                      </>
-                    )}
-                  </button>
-                )}
-              </section>
-            )}
-
             {/* More from Author */}
             {hasOtherMarketplaces && (
               <section className="glass-card border border-white/50 dark:border-gray-600 rounded-2xl p-4 shadow-lg">
