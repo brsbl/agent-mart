@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4, IBM_Plex_Mono, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import { NavBar, AgentationWrapper } from "@/components";
+import { NavBar, Footer, AgentationWrapper } from "@/components";
 import "./globals.css";
 
 const inter = Inter({
@@ -44,11 +44,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${sourceSerif.variable} ${ibmPlexMono.variable} ${jetbrainsMono.variable} ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div
-            className="min-h-screen bg-[#f5f5f0] dark:bg-[#0a0a0a] grid-background"
-          >
+          <div className="min-h-screen flex flex-col bg-[#f5f5f0] dark:bg-[#0a0a0a] grid-background">
             <NavBar />
-            <main>{children}</main>
+            <main className="flex-1">{children}</main>
+            <Footer />
           </div>
           <AgentationWrapper />
         </ThemeProvider>

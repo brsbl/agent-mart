@@ -1,5 +1,6 @@
 export { NavBar } from "./NavBar";
 export { SearchFilter } from "./SearchFilter";
+export { SearchFilterControls } from "./SearchFilterControls";
 export { MarketplaceCard } from "./MarketplaceCard";
 export { CopyableCommand } from "./CopyableCommand";
 export { FileTree } from "./FileTree";
@@ -16,3 +17,4 @@ export { PluginCard, PluginCardCompact } from "./PluginCard";
 export { PluginCardInline } from "./PluginCardInline";
 export { InstallCommand } from "./InstallCommand";
 export { AgentationWrapper } from "./AgentationWrapper";
+export { Footer } from "./Footer";

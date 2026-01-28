@@ -2,7 +2,7 @@
 
 import { Suspense, useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { MarketplaceCard, LoadingState, ErrorState, ErrorBoundary, SearchFilter } from "@/components";
+import { MarketplaceCard, LoadingState, ErrorState, ErrorBoundary } from "@/components";
 import { useFetch } from "@/hooks";
 import type { BrowseMarketplace, Meta, MarketplaceSortOption, Category } from "@/lib/types";
 import { sortMarketplaces, getCategoryDisplay } from "@/lib/data";
@@ -56,28 +56,26 @@ function HomePageContent() {
 
   const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
 
-  // Search filter for marketplaces
-  const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return null;
-    const query = searchQuery.toLowerCase();
-
-    const matchedMarketplaces = allMarketplaces.filter((m) =>
-      m.name.toLowerCase().includes(query) ||
-      m.description?.toLowerCase().includes(query) ||
-      m.author_id.toLowerCase().includes(query) ||
-      m.author_display_name.toLowerCase().includes(query) ||
-      (Array.isArray(m.keywords) && m.keywords.some(k => k.toLowerCase().includes(query))) ||
-      (Array.isArray(m.categories) && m.categories.some(c => c.toLowerCase().includes(query) || getCategoryDisplay(c).toLowerCase().includes(query)))
-    );
-
-    return matchedMarketplaces.sort((a, b) => (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0));
-  }, [allMarketplaces, searchQuery]);
-
-  // Filter and sort marketplaces for browse view
+  // Combined filter and sort for marketplaces (search + categories + sort)
   const filteredAndSortedMarketplaces = useMemo(() => {
     let result = allMarketplaces;
 
-    // Categories filter (OR logic - must have ANY of the selected categories)
+    // 1. Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((m) =>
+        m.name.toLowerCase().includes(query) ||
+        m.description?.toLowerCase().includes(query) ||
+        m.author_id.toLowerCase().includes(query) ||
+        m.author_display_name.toLowerCase().includes(query) ||
+        (Array.isArray(m.keywords) && m.keywords.some(k => k.toLowerCase().includes(query))) ||
+        (Array.isArray(m.categories) && m.categories.some(c =>
+          c.toLowerCase().includes(query) || getCategoryDisplay(c).toLowerCase().includes(query)
+        ))
+      );
+    }
+
+    // 2. Apply categories filter (OR logic - must have ANY of the selected categories)
     if (selectedCategories.length > 0) {
       result = result.filter(m =>
         Array.isArray(m.categories) && selectedCategories.some(cat =>
@@ -86,7 +84,7 @@ function HomePageContent() {
       );
     }
 
-    // Sort
+    // 3. Apply sort
     let sorted = sortMarketplaces(result, sortBy);
 
     // Apply sort direction (sortMarketplaces defaults to desc, so reverse for asc)
@@ -95,7 +93,7 @@ function HomePageContent() {
     }
 
     return sorted;
-  }, [allMarketplaces, selectedCategories, sortBy, sortDirection]);
+  }, [allMarketplaces, searchQuery, selectedCategories, sortBy, sortDirection]);
 
   const displayedMarketplaces = filteredAndSortedMarketplaces.slice(0, displayCount);
   const hasMore = displayCount < filteredAndSortedMarketplaces.length;
@@ -160,42 +158,22 @@ function HomePageContent() {
     );
   }
 
-  // Search results view - show when there's a search query
-  if (searchQuery.trim() && searchResults) {
-    return (
-      <>
-        <SearchFilter />
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Search results for &quot;{searchQuery}&quot;
-            </h2>
-            <p className="text-sm text-gray-500 mb-6">
-              {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} found
-            </p>
-
-            {searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {searchResults.map(renderMarketplaceCard)}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500">
-                  No results found matching your search.
-                </p>
-              </div>
-            )}
-          </section>
-        </div>
-      </>
-    );
-  }
-
-  // Browse view
+  // Unified view for both search and browse
   return (
-    <>
-      <SearchFilter />
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Header - show search context when searching */}
+      {searchQuery.trim() && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+            Results for &quot;{searchQuery}&quot;
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {filteredAndSortedMarketplaces.length} result{filteredAndSortedMarketplaces.length !== 1 ? "s" : ""} found
+            {selectedCategories.length > 0 && ` in selected categories`}
+          </p>
+        </div>
+      )}
+
       {/* Grid */}
       {displayedMarketplaces.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -203,10 +181,14 @@ function HomePageContent() {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-500">No plugins found matching your criteria.</p>
-          {hasActiveFilters && (
+          <p className="text-gray-500 dark:text-gray-400">
+            {searchQuery.trim()
+              ? "No results found matching your search."
+              : "No plugins found matching your criteria."}
+          </p>
+          {(hasActiveFilters || searchQuery.trim()) && (
             <p className="mt-2 text-sm text-gray-400">
-              Try adjusting your category filters in the navbar.
+              Try adjusting your {searchQuery.trim() ? "search terms or " : ""}category filters.
             </p>
           )}
         </div>
@@ -223,13 +205,13 @@ function HomePageContent() {
           <button
             type="button"
             onClick={() => setDisplayCount(c => c + LOAD_MORE_COUNT)}
-            className="px-6 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-lg transition-colors border border-gray-300 hover:border-gray-400"
+            className="px-6 py-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors border border-gray-300 dark:border-gray-600 hover:border-gray-400"
           >
             See more ({remainingCount} remaining)
           </button>
         </div>
       )}
+
     </div>
-    </>
   );
 }

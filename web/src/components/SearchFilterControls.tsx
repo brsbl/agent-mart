@@ -94,6 +94,11 @@ function SearchFilterControlsContent() {
 
   // Debounced URL update
   const urlUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Debounce ref for typeahead search
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Ref to store current filter state to avoid stale closures in debounced callbacks
+  const filterStateRef = useRef({ selectedCategories, sortBy, sortDirection });
+  filterStateRef.current = { selectedCategories, sortBy, sortDirection };
   const updateURL = useCallback((
     cats: Category[],
     sort: MarketplaceSortOption,
@@ -139,17 +144,38 @@ function SearchFilterControlsContent() {
     }, 50);
   }, [router]);
 
-  // Cleanup timeout on unmount
+  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       if (urlUpdateTimeoutRef.current) {
         clearTimeout(urlUpdateTimeoutRef.current);
       }
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current);
+      }
     };
   }, []);
 
+  // Debounced search handler for typeahead
+  const handleSearchInput = (value: string) => {
+    setLocalSearchQuery(value);
+
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+
+    searchDebounceRef.current = setTimeout(() => {
+      const { selectedCategories: cats, sortBy: sort, sortDirection: dir } = filterStateRef.current;
+      updateURL(cats, sort, dir, value);
+    }, 300); // 300ms debounce for typeahead
+  };
+
+  // Form submit handler for Enter key (instant, no debounce)
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
     updateURL(selectedCategories, sortBy, sortDirection, localSearchQuery);
   };
 
@@ -189,13 +215,14 @@ function SearchFilterControlsContent() {
               type="text"
               placeholder="Search..."
               value={localSearchQuery}
-              onChange={(e) => setLocalSearchQuery(e.target.value)}
+              onChange={(e) => handleSearchInput(e.target.value)}
               className="w-full pl-8 pr-8 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-800 dark:text-gray-100"
             />
             {localSearchQuery && (
               <button
                 type="button"
                 onClick={() => {
+                  if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
                   setLocalSearchQuery("");
                   updateURL(selectedCategories, sortBy, sortDirection, "");
                 }}
