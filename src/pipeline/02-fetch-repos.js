@@ -8,7 +8,7 @@ const OUTPUT_PATH = './data/02-repos.json';
  * Fetch repository and owner metadata for all discovered repos
  * Uses GraphQL batching for efficiency (90% fewer API calls)
  */
-export async function fetchRepos() {
+export async function fetchRepos({ onProgress: _onProgress } = {}) {
   log('Starting repo metadata fetch...');
 
   const data = loadJson(INPUT_PATH);

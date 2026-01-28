@@ -1,5 +1,5 @@
-import { normalizeSourcePath } from '../lib/parser.js';
 import { saveJson, loadJson, log } from '../lib/utils.js';
+import { collectPluginCategories } from '../lib/categorizer.js';
 
 const REPOS_PATH = './data/02-repos.json';
 const TREES_PATH = './data/03-trees.json';
@@ -17,18 +17,57 @@ function generateInstallCommands(ownerRepo, marketplaceName, pluginName) {
 }
 
 /**
- * Check if a file path belongs to a plugin
+ * Count commands in a file map (files matching commands/*.md pattern)
  */
-function pathBelongsToPlugin(filePath, pluginSource) {
-  const normalizedSource = normalizeSourcePath(pluginSource);
-  if (!normalizedSource) return false;
-  return filePath.startsWith(normalizedSource + '/') || filePath === normalizedSource;
+function countCommands(files) {
+  if (!files) return 0;
+  return Object.keys(files).filter(path =>
+    (path.startsWith('commands/') || path.includes('/commands/')) && path.endsWith('.md')
+  ).length;
+}
+
+/**
+ * Count skills in a file map (files ending with /SKILL.md)
+ */
+function countSkills(files) {
+  if (!files) return 0;
+  return Object.keys(files).filter(path =>
+    path === 'SKILL.md' || path.endsWith('/SKILL.md')
+  ).length;
+}
+
+/**
+ * Filter file tree to only include files we have content for
+ * Keeps directory entries that have at least one file descendant
+ */
+function filterTreeToFetchedFiles(tree, files) {
+  const fetchedPaths = new Set(Object.keys(files));
+
+  // First pass: identify which directories have fetched files
+  const dirsWithContent = new Set();
+  for (const path of fetchedPaths) {
+    const parts = path.split('/');
+    let current = '';
+    for (let i = 0; i < parts.length - 1; i++) {
+      current = current ? `${current}/${parts[i]}` : parts[i];
+      dirsWithContent.add(current);
+    }
+  }
+
+  // Second pass: filter tree entries
+  return tree.filter(entry => {
+    if (entry.type === 'blob') {
+      return fetchedPaths.has(entry.path);
+    }
+    // Keep directory if it contains fetched files
+    return dirsWithContent.has(entry.path);
+  });
 }
 
 /**
  * Build enriched data model
  */
-export function enrich() {
+export function enrich({ onProgress: _onProgress } = {}) {
   log('Starting data enrichment...');
 
   const reposData = loadJson(REPOS_PATH);
@@ -43,35 +82,18 @@ export function enrich() {
     treesData.trees.map(t => [t.full_name, t])
   );
 
-  // Pre-index commands by repo for O(1) lookup (fixes O(n²) scaling issue)
-  const commandsByRepo = new Map();
-  for (const cmd of parsedData.commands) {
-    if (!commandsByRepo.has(cmd.full_name)) {
-      commandsByRepo.set(cmd.full_name, []);
-    }
-    commandsByRepo.get(cmd.full_name).push(cmd);
-  }
+  // Files are now indexed by repo full_name
+  const filesMap = parsedData.files || {};
 
-  // Pre-index skills by repo for O(1) lookup
-  const skillsByRepo = new Map();
-  for (const skill of parsedData.skills) {
-    if (!skillsByRepo.has(skill.full_name)) {
-      skillsByRepo.set(skill.full_name, []);
-    }
-    skillsByRepo.get(skill.full_name).push(skill);
-  }
-
-  log(`Indexed ${parsedData.commands.length} commands and ${parsedData.skills.length} skills`);
-
-  const enrichedOwners = new Map();
+  const enrichedAuthors = new Map();
 
   for (const repo of reposData.repos) {
     const { full_name, owner: ownerInfo } = repo;
 
-    // Get or create owner entry
-    if (!enrichedOwners.has(ownerInfo.id)) {
+    // Get or create author entry
+    if (!enrichedAuthors.has(ownerInfo.id)) {
       const ownerProfile = reposData.owners[ownerInfo.id] || {};
-      enrichedOwners.set(ownerInfo.id, {
+      enrichedAuthors.set(ownerInfo.id, {
         id: ownerInfo.id,
         display_name: ownerProfile.display_name || ownerInfo.id,
         type: ownerInfo.type,
@@ -79,18 +101,18 @@ export function enrich() {
         url: ownerProfile.url || `https://github.com/${ownerInfo.id}`,
         bio: ownerProfile.bio || null,
         stats: {
-          total_repos: 0,
+          total_marketplaces: 0,
           total_plugins: 0,
           total_commands: 0,
           total_skills: 0,
           total_stars: 0,
           total_forks: 0
         },
-        repos: []
+        marketplaces: []
       });
     }
 
-    const ownerData = enrichedOwners.get(ownerInfo.id);
+    const authorData = enrichedAuthors.get(ownerInfo.id);
 
     // Find marketplace.json for this repo
     const marketplace = marketplaceMap.get(full_name);
@@ -103,6 +125,9 @@ export function enrich() {
     const treeEntry = treeMap.get(full_name);
     const tree = treeEntry?.tree || [];
 
+    // Get files for this repo
+    const repoFiles = filesMap[full_name] || {};
+
     // Build plugins array
     const marketplaceData = marketplace.data;
 
@@ -114,86 +139,76 @@ export function enrich() {
     const marketplaceName = marketplaceData.name || full_name.split('/')[1];
 
     const plugins = (marketplaceData.plugins || []).map(pluginDef => {
-      const pluginSource = pluginDef.source || '';
+      // Collect categories from all source fields with basic normalization
+      const categories = collectPluginCategories(pluginDef);
 
-      // Find commands for this plugin (O(1) repo lookup + filter within repo)
-      const repoCommands = commandsByRepo.get(full_name) || [];
-      const commands = repoCommands
-        .filter(c => pathBelongsToPlugin(c.path, pluginSource))
-        .map(c => ({
-          name: c.name,
-          description: c.description,
-          path: c.path,
-          frontmatter: c.frontmatter,
-          content: c.content
-        }));
-
-      // Find skills for this plugin (O(1) repo lookup + filter within repo)
-      const repoSkills = skillsByRepo.get(full_name) || [];
-      const skills = repoSkills
-        .filter(s => pathBelongsToPlugin(s.path, pluginSource))
-        .map(s => ({
-          name: s.name,
-          description: s.description,
-          path: s.path,
-          frontmatter: s.frontmatter,
-          content: s.content
-        }));
-
+      // Preserve all original fields from marketplace.json, add/override computed fields
       return {
-        name: pluginDef.name,
+        ...pluginDef,
+        // Ensure description is normalized (null if missing)
         description: pluginDef.description || null,
-        source: pluginDef.source,
-        category: pluginDef.category || null,
-        version: pluginDef.version || null,
-        author: pluginDef.author || null,
-        install_commands: generateInstallCommands(full_name, marketplaceName, pluginDef.name),
-        signals: repo.repo.signals,
-        commands,
-        skills
+        categories,
+        install_commands: generateInstallCommands(full_name, marketplaceName, pluginDef.name)
       };
     });
 
-    // Build repo entry
-    const repoEntry = {
-      full_name,
-      url: `https://github.com/${full_name}`,
-      description: repo.repo.description,
+    // Count commands and skills from file paths
+    const commandsCount = countCommands(repoFiles);
+    const skillsCount = countSkills(repoFiles);
+
+    // Get description: marketplace level > first plugin description > null
+    const firstPluginDescription = marketplaceData.plugins?.[0]?.description || null;
+    const description = marketplaceData.description ||
+                       marketplaceData.metadata?.description ||
+                       firstPluginDescription;
+
+    // Build marketplace entry (merged repo + marketplace fields)
+    const marketplaceEntry = {
+      name: marketplaceName,
+      version: marketplaceData.version || null,
+      description,
+      owner_info: marketplaceData.owner || null,
+      keywords: marketplaceData.keywords || [],
+      repo_full_name: full_name,
+      repo_url: `https://github.com/${full_name}`,
+      repo_description: repo.repo.description,
       homepage: repo.repo.homepage,
       signals: repo.repo.signals,
-      file_tree: tree,
-      marketplace: {
-        name: marketplaceName,
-        version: marketplaceData.version || null,
-        description: marketplaceData.description || null,
-        owner_info: marketplaceData.owner || null,
-        keywords: marketplaceData.keywords || [],
-        plugins
-      }
+      file_tree: filterTreeToFetchedFiles(tree, repoFiles),
+      files: repoFiles,
+      plugins
     };
 
-    // Update owner stats
-    ownerData.stats.total_repos++;
-    ownerData.stats.total_plugins += plugins.length;
-    ownerData.stats.total_commands += plugins.reduce((sum, p) => sum + p.commands.length, 0);
-    ownerData.stats.total_skills += plugins.reduce((sum, p) => sum + p.skills.length, 0);
-    ownerData.stats.total_stars += (repo.repo.signals?.stars || 0);
-    ownerData.stats.total_forks += (repo.repo.signals?.forks || 0);
+    // Update author stats
+    authorData.stats.total_marketplaces++;
+    authorData.stats.total_plugins += plugins.length;
+    authorData.stats.total_commands += commandsCount;
+    authorData.stats.total_skills += skillsCount;
+    authorData.stats.total_stars += (repo.repo.signals?.stars || 0);
+    authorData.stats.total_forks += (repo.repo.signals?.forks || 0);
 
-    ownerData.repos.push(repoEntry);
+    authorData.marketplaces.push(marketplaceEntry);
   }
 
   const output = {
     enriched_at: new Date().toISOString(),
-    total_owners: enrichedOwners.size,
-    owners: Object.fromEntries(enrichedOwners)
+    total_authors: enrichedAuthors.size,
+    authors: Object.fromEntries(enrichedAuthors)
   };
 
   saveJson(OUTPUT_PATH, output);
-  log(`Enriched ${enrichedOwners.size} owners with full data`);
+  log(`Enriched ${enrichedAuthors.size} authors with full data`);
 
   return output;
 }
+
+// Export helper functions for testing
+export {
+  generateInstallCommands,
+  countCommands,
+  countSkills,
+  filterTreeToFetchedFiles
+};
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>feat-web-frontend-2026-01-20</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #24292f;
+      --border-color: #d0d7de;
+      --code-bg: #f6f8fa;
+      --link-color: #0969da;
+      --blockquote-color: #57606a;
+      --meta-bg: #f6f8fa;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #0d1117;
+        --text-color: #c9d1d9;
+        --border-color: #30363d;
+        --code-bg: #161b22;
+        --link-color: #58a6ff;
+        --blockquote-color: #8b949e;
+        --meta-bg: #161b22;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      line-height: 1.6;
+      color: var(--text-color);
+      background: var(--bg-color);
+    }
+
+    h1 {
+      font-size: 2em;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.3em;
+      margin-top: 24px;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.3em;
+      margin-top: 24px;
+    }
+
+    h3 {
+      font-size: 1.25em;
+      margin-top: 24px;
+    }
+
+    code {
+      background: var(--code-bg);
+      padding: 0.2em 0.4em;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 85%;
+    }
+
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: 6px;
+      overflow-x: auto;
+      line-height: 1.45;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      font-size: 100%;
+    }
+
+    blockquote {
+      border-left: 4px solid var(--border-color);
+      margin: 0;
+      padding: 0 16px;
+      color: var(--blockquote-color);
+    }
+
+    a {
+      color: var(--link-color);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul, ol {
+      padding-left: 2em;
+    }
+
+    li {
+      margin: 4px 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--code-bg);
+      font-weight: 600;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border-color);
+      margin: 24px 0;
+    }
+
+    .metadata {
+      background: var(--meta-bg);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+
+    /* Highlight.js overrides for dark mode */
+    @media (prefers-color-scheme: dark) {
+      .hljs-keyword, .hljs-selector-tag, .hljs-title, .hljs-section,
+      .hljs-doctag, .hljs-name, .hljs-strong { color: #ff7b72; }
+      .hljs-string, .hljs-attr { color: #a5d6ff; }
+      .hljs-comment, .hljs-quote, .hljs-deletion { color: #8b949e; }
+      .hljs-number, .hljs-literal, .hljs-type { color: #79c0ff; }
+      .hljs-built_in, .hljs-builtin-name { color: #ffa657; }
+    }
+  </style>
+</head>
+<body>
+<div class="metadata"><strong>Date:</strong> 2026-01-20 <strong>Branch:</strong> feat/web-frontend (34 commits) <strong>Total Files:</strong> 1003 files changed (<span style="color:#22863a">+24422</span>/<span style="color:#cb2431">-2308533</span>)</div><h2>High-Level Summary</h2>
+<p>This branch transforms Agent Mart from a static data repository into a full-stack application with a Next.js frontend and significantly improved ETL pipeline. The massive line deletion (-2.3M) reflects migrating from embedded JSON data files to a dynamic data architecture, while the additions establish a modern React-based marketplace browser with category filtering, search, and detailed plugin views.</p>
+<h2>Summary for Different Audiences</h2>
+<ul>
+<li><p><strong>For developers:</strong> The codebase now has a clear separation between ETL pipeline (<code>src/pipeline/</code>), shared libraries (<code>src/lib/</code>), and Next.js frontend (<code>web/</code>). The pipeline outputs JSON to <code>web/public/data/</code> which the frontend consumes via client-side fetching. A rules-based categorizer replaces the previous LLM-based approach, and a new visualizer provides real-time ETL progress monitoring.</p>
+</li>
+<li><p><strong>For reviewers:</strong> Focus on the ETL pipeline data flow (stages 01-07 plus categorizer), the new type definitions in <code>web/src/lib/types.ts</code>, and the security-related changes in cache path validation and URL parameter sanitization. The shift from embedded owner JSON files to a consolidated author-based data model is a significant architectural change.</p>
+</li>
+<li><p><strong>For product/non-technical stakeholders:</strong> Agent Mart now has a browsable web interface where users can discover Claude Code plugins by category, search by keywords, view detailed plugin information with install commands, and track starred repositories. The marketplace data updates automatically via GitHub Actions.</p>
+</li>
+</ul>
+<h2>Changes by Component</h2>
+<h3><a href="https://github.com/brsbl/agent-mart/blob/feat/web-frontend/ETL Pipeline (<code>src/pipeline/</code>)">ETL Pipeline (<code>src/pipeline/</code>)</a></h3>
+<ul>
+<li><p><strong>Purpose of changes:</strong> Complete rewrite of the data processing pipeline to support the new frontend data requirements and improve reliability with better error handling.</p>
+</li>
+<li><p><strong>Behavioral changes:</strong> Pipeline now produces author-centric JSON files instead of owner-centric files. New stages include file content fetching (04), parsing with validation (05), enrichment with category extraction (06), and optimized output generation (07). Added ETL visualizer for monitoring.</p>
+</li>
+<li><p><strong>Data flow impact:</strong> Data flows through 7 sequential stages producing intermediate JSON files in <code>data/</code> and final outputs in <code>web/public/data/</code>. The enriched data model now includes file trees, command counts, skill counts, and categorization metadata.</p>
+</li>
+<li><p><strong>Dependencies affected:</strong> Frontend depends on the output JSON structure. Changes to field names or data shapes require coordinated updates to <code>web/src/lib/types.ts</code>.</p>
+</li>
+</ul>
+<h3><a href="https://github.com/brsbl/agent-mart/blob/feat/web-frontend/Rules-Based Categorizer (<code>src/lib/categorizer.js</code>)">Rules-Based Categorizer (<code>src/lib/categorizer.js</code>)</a></h3>
+<ul>
+<li><p><strong>Purpose of changes:</strong> Replaces LLM-based categorization with deterministic rules-based extraction, making categorization fast, reproducible, and free.</p>
+</li>
+<li><p><strong>Behavioral changes:</strong> 12 categories defined with regex patterns and keyword lists. Categories extracted from marketplace descriptions, plugin names, command descriptions, and skill descriptions.</p>
+</li>
+<li><p><strong>Data flow impact:</strong> Categorization happens in the enrich stage (06) for plugins and separately in stage 08 for marketplaces. Results stored in <code>categories</code> arrays throughout the data model.</p>
+</li>
+<li><p><strong>Dependencies affected:</strong> Frontend category filters depend on the category ID strings. Adding/removing categories requires updating both categorizer and frontend display mappings.</p>
+</li>
+</ul>
+<h3><a href="https://github.com/brsbl/agent-mart/blob/feat/web-frontend/Next.js Frontend (<code>web/</code>)">Next.js Frontend (<code>web/</code>)</a></h3>
+<ul>
+<li><p><strong>Purpose of changes:</strong> Provides a user-facing interface for browsing, searching, and discovering Claude Code plugins and marketplaces.</p>
+</li>
+<li><p><strong>Behavioral changes:</strong> Users can filter by category, sort by stars/date, paginate with infinite scroll, view detailed marketplace pages with file trees, and copy install commands. Starred repos persist in localStorage.</p>
+</li>
+<li><p><strong>Data flow impact:</strong> Frontend fetches JSON from <code>/data/</code> endpoints on the client side. No server-side data fetching or API routes - purely static data consumption.</p>
+</li>
+<li><p><strong>Dependencies affected:</strong> Requires <code>web/public/data/</code> files to be generated by the ETL pipeline before build/deployment.</p>
+</li>
+</ul>
+<h3><a href="https://github.com/brsbl/agent-mart/blob/feat/web-frontend/Components (<code>web/src/components/</code>)">Components (<code>web/src/components/</code>)</a></h3>
+<ul>
+<li><p><strong>Purpose of changes:</strong> 11 reusable React components implementing the marketplace UI with consistent styling and accessibility.</p>
+</li>
+<li><p><strong>Behavioral changes:</strong> Components include <code>MarketplaceCard</code>, <code>PluginSection</code>, <code>CategoryPill</code>, <code>FileTree</code>, <code>CopyableCommand</code>, loading/error states. All support dark mode via CSS variables.</p>
+</li>
+<li><p><strong>Data flow impact:</strong> Components receive typed props from parent pages. Shared hooks (<code>useFetch</code>, <code>useStarredRepos</code>, <code>useCopyToClipboard</code>) handle common data fetching and state patterns.</p>
+</li>
+<li><p><strong>Dependencies affected:</strong> Changes to component APIs require updates to consuming pages.</p>
+</li>
+</ul>
+<h3>Security &amp; Validation Fixes</h3>
+<ul>
+<li><p><strong>Purpose of changes:</strong> Address security issues identified in code review including path traversal, XSS, and input validation.</p>
+</li>
+<li><p><strong>Behavioral changes:</strong> Cache path validation uses proper path separator checking. URL parameters sanitized with <code>validateUrlParam()</code>. GraphQL strings properly escaped.</p>
+</li>
+<li><p><strong>Data flow impact:</strong> Invalid inputs now fail safely rather than causing undefined behavior.</p>
+</li>
+<li><p><strong>Dependencies affected:</strong> All pipeline stages benefit from improved input validation in shared utilities.</p>
+</li>
+</ul>
+<h3><a href="https://github.com/brsbl/agent-mart/blob/feat/web-frontend/CI/CD &amp; Developer Experience">CI/CD &amp; Developer Experience</a></h3>
+<ul>
+<li><p><strong>Purpose of changes:</strong> Add pre-commit hooks, improve GitHub Actions, and establish consistent code quality enforcement.</p>
+</li>
+<li><p><strong>Behavioral changes:</strong> Husky runs lint and tests on pre-commit/pre-push. New workflow for auto-updating marketplace categories. PR creation workflow instead of direct pushes.</p>
+</li>
+<li><p><strong>Data flow impact:</strong> Data updates now create PRs for review rather than auto-merging.</p>
+</li>
+<li><p><strong>Dependencies affected:</strong> All contributors must pass lint/test checks before committing.</p>
+</li>
+</ul>
+<h2>Recent Bug Fixes (Current Session)</h2>
+<p>The following issues from code review were fixed in this session:</p>
+<ol>
+<li><strong>Command/skill counting patterns</strong> (<code>06-enrich.js:22-36</code>) - Fixed to match root-level <code>commands/</code> and <code>SKILL.md</code> paths</li>
+<li><strong>Sort mutation</strong> (<code>07-output.js:90</code>) - Now uses spread operator to avoid mutating source array</li>
+<li><strong>Size check</strong> (<code>04-fetch-files.js:28</code>) - Changed from <code>!== null</code> to <code>typeof === &#39;number&#39;</code> to handle undefined</li>
+<li><strong>Date validation in sort</strong> (<code>07-output.js:165-170</code>) - Added NaN check for invalid date strings</li>
+</ol>
+
+</body>
+</html>

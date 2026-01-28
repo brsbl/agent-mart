@@ -1,33 +1,113 @@
-import { batchGetFiles, getFileContent, safeApiCall } from '../lib/github.js';
-import { saveJson, loadJson, decodeBase64, log, applyRepoLimit } from '../lib/utils.js';
+import { batchGetFiles } from '../lib/github.js';
+import { saveJson, loadJson, log, applyRepoLimit } from '../lib/utils.js';
+import { parseJson } from '../lib/parser.js';
 
 const TREES_PATH = './data/03-trees.json';
 const OUTPUT_PATH = './data/04-files.json';
 
-// Patterns for files we want to fetch
-export const FILE_PATTERNS = [
-  // Marketplace config (always fetch)
-  /^\.claude-plugin\/marketplace\.json$/,
-  // Plugin configs (root or nested)
-  /(^|\/)?\.claude-plugin\/plugin\.json$/,
-  // Commands (root or nested)
-  /(^|\/)commands\/[^/]+\.md$/,
-  // Skills - must be in skills/<skill-name>/SKILL.md format
-  /(^|\/)skills\/[^/]+\/SKILL\.md$/
-];
+// Maximum file size to fetch (100KB)
+const MAX_FILE_SIZE = 100000;
+
+// File extensions to skip (binary/large files)
+const SKIP_EXTENSIONS = new Set([
+  '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.webp',
+  '.woff', '.woff2', '.ttf', '.eot', '.otf',
+  '.zip', '.tar', '.gz', '.rar', '.7z',
+  '.pdf', '.doc', '.docx', '.xls', '.xlsx',
+  '.mp3', '.mp4', '.wav', '.avi', '.mov',
+  '.exe', '.dll', '.so', '.dylib',
+  '.lock'
+]);
 
 /**
- * Check if a file path matches our patterns
+ * Check if file should be skipped based on extension/size
  */
-function shouldFetchFile(path) {
-  return FILE_PATTERNS.some(pattern => pattern.test(path));
+function shouldSkipFile(entry) {
+  if (entry.type !== 'blob') return true;
+  if (typeof entry.size === 'number' && entry.size > MAX_FILE_SIZE) return true;
+
+  const ext = entry.path.toLowerCase().match(/\.[^.]+$/)?.[0];
+  if (ext && SKIP_EXTENSIONS.has(ext)) return true;
+
+  return false;
 }
 
 /**
- * Fetch specific file contents for all repos
- * Uses GraphQL batching for efficiency (95% fewer API calls)
+ * Check if a path is within a directory (handles ./ prefix)
  */
-export async function fetchFiles() {
+function isWithinDirectory(filePath, dirPath) {
+  // Normalize dirPath - remove leading ./ and trailing /
+  const normalizedDir = dirPath.replace(/^\.\//, '').replace(/\/$/, '');
+
+  // Handle root directory case - all files are within root; let isPluginComponentFile filter
+  if (normalizedDir === '.' || normalizedDir === '') {
+    return true;
+  }
+
+  return filePath.startsWith(normalizedDir + '/') || filePath === normalizedDir;
+}
+
+/**
+ * Check if a file is a plugin component (skills, commands, agents, hooks, plugin.json, README)
+ * We only fetch these files, not arbitrary source code
+ */
+function isPluginComponentFile(path) {
+  // README files (at repo root or in plugin directories)
+  if (path === 'README.md' || path.endsWith('/README.md')) return true;
+
+  // .claude-plugin/ files (plugin.json, etc.)
+  if (path.includes('.claude-plugin/')) return true;
+
+  // SKILL.md files (skills/<name>/SKILL.md or just SKILL.md)
+  if (path.endsWith('/SKILL.md') || path === 'SKILL.md') return true;
+
+  // Commands (commands/*.md) - handle both nested and root-level
+  if ((path.includes('/commands/') || path.startsWith('commands/')) && path.endsWith('.md')) return true;
+
+  // Agents (agents/*.md) - handle both nested and root-level
+  if ((path.includes('/agents/') || path.startsWith('agents/')) && path.endsWith('.md')) return true;
+
+  // Hooks directory (hooks/**) - handle both nested and root-level
+  if (path.includes('/hooks/') || path.startsWith('hooks/')) return true;
+
+  // Skills directory markdown files - handle both nested and root-level
+  if ((path.includes('/skills/') || path.startsWith('skills/')) && path.endsWith('.md')) return true;
+
+  return false;
+}
+
+/**
+ * Extract plugin source paths from marketplace.json content
+ */
+function extractPluginSourcePaths(marketplaceContent) {
+  const data = parseJson(marketplaceContent, 'marketplace.json');
+  if (!data || !Array.isArray(data.plugins)) return [];
+
+  const paths = [];
+  for (const plugin of data.plugins) {
+    if (!plugin.source) continue;
+
+    // Handle string source (local path)
+    if (typeof plugin.source === 'string') {
+      paths.push(plugin.source);
+    }
+    // Handle object source with path property
+    else if (typeof plugin.source === 'object' && plugin.source.path) {
+      paths.push(plugin.source.path);
+    }
+    // Skip URL-based sources (source.source === 'url')
+  }
+
+  return paths;
+}
+
+/**
+ * Two-pass file fetching:
+ * 1. First fetch .claude-plugin/ files (including marketplace.json)
+ * 2. Parse marketplace.json to find plugin source paths
+ * 3. Fetch files from those source directories
+ */
+export async function fetchFiles({ onProgress } = {}) {
   log('Starting file content fetch...');
 
   const { trees } = loadJson(TREES_PATH);
@@ -44,63 +124,100 @@ export async function fetchFiles() {
     }
 
     const [owner, repo] = full_name.split('/');
+    const branch = default_branch || 'main';
 
-    // Filter to files we want
-    const filesToFetch = tree.filter(entry =>
-      entry.type === 'blob' && shouldFetchFile(entry.path)
+    onProgress?.(i + 1, reposToProcess.length);
+
+    // Pass 1: Find and fetch .claude-plugin/ files
+    const claudePluginFiles = tree.filter(entry =>
+      !shouldSkipFile(entry) && entry.path.startsWith('.claude-plugin/')
     );
 
-    if (filesToFetch.length === 0) {
-      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: no matching files`);
+    if (claudePluginFiles.length === 0) {
+      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: no .claude-plugin/ files`);
       continue;
     }
 
-    log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${filesToFetch.length} files`);
-
-    // Use GraphQL batch fetching
-    const paths = filesToFetch.map(entry => entry.path);
-    const branch = default_branch || 'main';
+    // Fetch .claude-plugin/ files
+    const pass1Paths = claudePluginFiles.map(e => e.path);
+    let pass1Results = {};
 
     try {
-      const batchResults = await batchGetFiles(owner, repo, branch, paths);
-
-      // Process results
-      for (const entry of filesToFetch) {
-        const fileData = batchResults[entry.path];
-        if (fileData && fileData.content) {
-          files.push({
-            full_name,
-            path: entry.path,
-            size: fileData.size || entry.size,
-            sha: null, // GraphQL doesn't return SHA, not critical
-            content: fileData.content
-          });
-        }
-      }
+      pass1Results = await batchGetFiles(owner, repo, branch, pass1Paths);
     } catch (error) {
-      // Fall back to individual REST calls if batch fails
-      log(`Batch failed for ${full_name}, falling back to REST: ${error.message}`);
-      for (const entry of filesToFetch) {
-        const fileData = await safeApiCall(
-          () => getFileContent(owner, repo, entry.path),
-          `file ${full_name}/${entry.path}`
-        );
+      log(`Batch failed for ${full_name} pass 1: ${error.message}`);
+      continue;
+    }
 
-        if (!fileData || !fileData.content) continue;
-
-        // Decode base64 content if encoding is base64
-        const content = fileData.encoding === 'base64'
-          ? decodeBase64(fileData.content)
-          : fileData.content;
-
+    // Store fetched files and find marketplace.json
+    let marketplaceContent = null;
+    for (const entry of claudePluginFiles) {
+      const fileData = pass1Results[entry.path];
+      if (fileData && fileData.content) {
         files.push({
           full_name,
           path: entry.path,
-          size: entry.size,
-          sha: fileData.sha,
-          content
+          size: fileData.size || entry.size,
+          sha: null,
+          content: fileData.content
         });
+
+        if (entry.path.endsWith('marketplace.json')) {
+          marketplaceContent = fileData.content;
+        }
       }
+    }
+
+    // Pass 2: Parse marketplace.json and fetch plugin source directories
+    if (marketplaceContent) {
+      const sourcePaths = extractPluginSourcePaths(marketplaceContent);
+
+      if (sourcePaths.length > 0) {
+        // Find plugin component files in source directories (only skills, commands, agents, hooks)
+        const sourceFiles = tree.filter(entry => {
+          if (shouldSkipFile(entry)) return false;
+          if (entry.path.startsWith('.claude-plugin/')) return false;
+
+          // Must be within a plugin source directory
+          const inSourceDir = sourcePaths.some(srcPath => isWithinDirectory(entry.path, srcPath));
+          if (!inSourceDir) return false;
+
+          // Only fetch plugin component files, not arbitrary source code
+          return isPluginComponentFile(entry.path);
+        });
+
+        if (sourceFiles.length > 0) {
+          const pass2Paths = sourceFiles.map(e => e.path);
+
+          try {
+            const pass2Results = await batchGetFiles(owner, repo, branch, pass2Paths);
+
+            for (const entry of sourceFiles) {
+              const fileData = pass2Results[entry.path];
+              if (fileData && fileData.content) {
+                files.push({
+                  full_name,
+                  path: entry.path,
+                  size: fileData.size || entry.size,
+                  sha: null,
+                  content: fileData.content
+                });
+              }
+            }
+
+            log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} + ${pass2Paths.length} files`);
+          } catch (error) {
+            log(`Batch failed for ${full_name} pass 2: ${error.message}`);
+            log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
+          }
+        } else {
+          log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
+        }
+      } else {
+        log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
+      }
+    } else {
+      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files (no marketplace.json)`);
     }
   }
 

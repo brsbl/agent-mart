@@ -34,54 +34,63 @@ describe('Parser: Input Validation', () => {
   });
 });
 
-describe('Pipeline: File Pattern Matching', () => {
-  // Test the regex patterns used in 04-fetch-files.js
-  const FILE_PATTERNS = [
-    /^\.claude-plugin\/marketplace\.json$/,
-    /(^|\/)?\.claude-plugin\/plugin\.json$/,
-    /(^|\/)commands\/[^/]+\.md$/,
-    /(^|\/)skills\/[^/]+\/SKILL\.md$/
-  ];
+describe('Pipeline: File Fetching', () => {
+  // Test the file fetching logic used in 04-fetch-files.js
+  const MAX_FILE_SIZE = 100000;
+  const SKIP_EXTENSIONS = new Set([
+    '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.webp',
+    '.woff', '.woff2', '.ttf', '.eot', '.otf',
+    '.zip', '.tar', '.gz', '.rar', '.7z',
+    '.pdf', '.doc', '.docx', '.xls', '.xlsx',
+    '.mp3', '.mp4', '.wav', '.avi', '.mov',
+    '.exe', '.dll', '.so', '.dylib',
+    '.lock'
+  ]);
 
-  function shouldFetchFile(path) {
-    return FILE_PATTERNS.some(pattern => pattern.test(path));
+  function shouldFetchFile(entry) {
+    if (entry.type !== 'blob') return false;
+    if (entry.size !== null && entry.size > MAX_FILE_SIZE) return false;
+    const path = entry.path.toLowerCase();
+    if (path.endsWith('.min.js') || path.endsWith('.min.css')) return false;
+    const ext = path.match(/\.[^.]+$/)?.[0];
+    if (ext && SKIP_EXTENSIONS.has(ext)) return false;
+    if (path.includes('node_modules/') ||
+        path.includes('vendor/') ||
+        path.includes('.git/')) return false;
+    return true;
   }
 
-  it('should match marketplace.json at root', () => {
-    assert.strictEqual(shouldFetchFile('.claude-plugin/marketplace.json'), true);
+  it('should fetch text files', () => {
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'README.md', size: 1000 }), true);
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'src/index.js', size: 5000 }), true);
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: '.claude-plugin/marketplace.json', size: 500 }), true);
   });
 
-  it('should not match nested marketplace.json', () => {
-    assert.strictEqual(shouldFetchFile('nested/.claude-plugin/marketplace.json'), false);
+  it('should skip directories', () => {
+    assert.strictEqual(shouldFetchFile({ type: 'tree', path: 'src', size: null }), false);
   });
 
-  it('should match plugin.json at root', () => {
-    assert.strictEqual(shouldFetchFile('.claude-plugin/plugin.json'), true);
+  it('should skip large files', () => {
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'large-file.txt', size: 150000 }), false);
   });
 
-  it('should match plugin.json in nested plugin', () => {
-    assert.strictEqual(shouldFetchFile('plugins/foo/.claude-plugin/plugin.json'), true);
+  it('should skip binary extensions', () => {
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'image.png', size: 1000 }), false);
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'font.woff2', size: 1000 }), false);
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'archive.zip', size: 1000 }), false);
   });
 
-  it('should match commands/*.md', () => {
-    assert.strictEqual(shouldFetchFile('commands/my-command.md'), true);
-    assert.strictEqual(shouldFetchFile('plugins/foo/commands/bar.md'), true);
+  it('should skip node_modules', () => {
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'node_modules/lodash/index.js', size: 1000 }), false);
   });
 
-  it('should not match non-.md files in commands', () => {
-    assert.strictEqual(shouldFetchFile('commands/readme.txt'), false);
+  it('should skip minified files', () => {
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'dist/bundle.min.js', size: 1000 }), false);
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'styles.min.css', size: 1000 }), false);
   });
 
-  it('should match skills/*/SKILL.md', () => {
-    assert.strictEqual(shouldFetchFile('skills/my-skill/SKILL.md'), true);
-    assert.strictEqual(shouldFetchFile('plugins/foo/skills/bar/SKILL.md'), true);
-  });
-
-  it('should NOT match arbitrary SKILL.md files', () => {
-    // This was the bug - /SKILL\.md$/ was too broad
-    assert.strictEqual(shouldFetchFile('SKILL.md'), false);
-    assert.strictEqual(shouldFetchFile('random/SKILL.md'), false);
-    assert.strictEqual(shouldFetchFile('docs/MY-SKILL.md'), false);
+  it('should fetch files with unknown size', () => {
+    assert.strictEqual(shouldFetchFile({ type: 'blob', path: 'unknown.txt', size: null }), true);
   });
 });
 

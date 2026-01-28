@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronRight, ChevronDown, File, Folder } from "lucide-react";
+import { ChevronRight, ChevronDown, FileText, Folder } from "lucide-react";
 import type { FileTreeEntry } from "@/lib/types";
 import { formatBytes } from "@/lib/data";
 
@@ -13,6 +13,8 @@ const BASE_PADDING = 8;
 interface FileTreeProps {
   entries: FileTreeEntry[];
   basePath?: string;
+  selectedFile?: string;
+  onSelectFile?: (path: string) => void;
 }
 
 interface TreeNode {
@@ -80,66 +82,69 @@ function buildTree(entries: FileTreeEntry[], basePath: string): TreeNode[] {
 interface TreeNodeComponentProps {
   node: TreeNode;
   level: number;
+  selectedFile?: string;
+  onSelectFile?: (path: string) => void;
 }
 
-function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
+function TreeNodeComponent({ node, level, selectedFile, onSelectFile }: TreeNodeComponentProps) {
   const [expanded, setExpanded] = useState(() => level < DEFAULT_EXPAND_DEPTH);
   const isFolder = node.type === "tree";
   const hasChildren = node.children.length > 0;
+  const isSelected = !isFolder && selectedFile === node.path;
+
+  const handleClick = () => {
+    if (isFolder && hasChildren) {
+      setExpanded(!expanded);
+    } else if (!isFolder && onSelectFile) {
+      onSelectFile(node.path);
+    }
+  };
 
   return (
     <div>
       <div
-        className={`flex items-center gap-1 py-1 px-2 rounded hover:bg-[var(--background-secondary)] transition-colors ${
-          isFolder && hasChildren ? "cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-[-2px]" : ""
-        }`}
+        className={`flex items-center gap-1 py-1.5 px-2 rounded hover:bg-gray-100 transition-colors cursor-pointer ${
+          isFolder && hasChildren ? "focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-400 focus-visible:outline-offset-[-2px]" : ""
+        } ${isSelected ? "bg-gray-100 border-l-2 border-gray-600" : ""}`}
         style={{ paddingLeft: `${level * INDENT_PER_LEVEL + BASE_PADDING}px` }}
-        onClick={() => {
-          if (isFolder && hasChildren) {
-            setExpanded(!expanded);
+        onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isFolder && hasChildren ? expanded : undefined}
+        aria-label={isFolder && hasChildren ? `${expanded ? "Collapse" : "Expand"} ${node.name} folder` : `Select ${node.name}`}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleClick();
           }
         }}
-        {...(isFolder && hasChildren
-          ? {
-              role: "button",
-              tabIndex: 0,
-              "aria-expanded": expanded,
-              "aria-label": `${expanded ? "Collapse" : "Expand"} ${node.name} folder`,
-              onKeyDown: (e: React.KeyboardEvent) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setExpanded(!expanded);
-                }
-              },
-            }
-          : {})}
       >
         {/* Expand/collapse icon for folders */}
         {isFolder && hasChildren ? (
           expanded ? (
-            <ChevronDown className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" aria-hidden="true" />
+            <ChevronDown size={14} className="text-gray-500 flex-shrink-0" aria-hidden="true" />
           ) : (
-            <ChevronRight className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" aria-hidden="true" />
+            <ChevronRight size={14} className="text-gray-500 flex-shrink-0" aria-hidden="true" />
           )
         ) : (
-          <span className="w-4" aria-hidden="true" />
+          <span className="w-3.5" aria-hidden="true" />
         )}
 
         {/* Icon */}
         {isFolder ? (
-          <Folder className="w-4 h-4 text-[var(--accent)] flex-shrink-0" aria-hidden="true" />
+          <Folder size={14} className="text-gray-500 flex-shrink-0" fill="currentColor" aria-hidden="true" />
         ) : (
-          <File className="w-4 h-4 text-[var(--foreground-muted)] flex-shrink-0" aria-hidden="true" />
+          <FileText size={14} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
         )}
 
         {/* Name */}
-        <span className="text-sm text-[var(--foreground)] truncate flex-1">
+        <span className={`text-sm truncate flex-1 ${isSelected ? "text-gray-900 font-medium" : "text-gray-700"}`}>
           {node.name}
         </span>
 
         {/* Size for files */}
         {!isFolder && node.size !== null && (
-          <span className="text-xs text-[var(--foreground-muted)] flex-shrink-0">
+          <span className="text-xs text-gray-400 flex-shrink-0">
             {formatBytes(node.size)}
           </span>
         )}
@@ -153,6 +158,8 @@ function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
               key={child.path}
               node={child}
               level={level + 1}
+              selectedFile={selectedFile}
+              onSelectFile={onSelectFile}
             />
           ))}
         </div>
@@ -161,27 +168,33 @@ function TreeNodeComponent({ node, level }: TreeNodeComponentProps) {
   );
 }
 
-export function FileTree({ entries, basePath = "" }: FileTreeProps) {
+export function FileTree({ entries, basePath = "", selectedFile, onSelectFile }: FileTreeProps) {
   const tree = useMemo(() => buildTree(entries, basePath), [entries, basePath]);
 
   if (tree.length === 0) {
     return (
-      <div className="text-sm text-[var(--foreground-muted)] py-2">
+      <div className="text-sm text-gray-500 py-2">
         No files found
       </div>
     );
   }
 
   return (
-    <div className="border border-[var(--border)] rounded-lg overflow-hidden">
-      <div className="bg-[var(--background-secondary)] px-3 py-2 border-b border-[var(--border)]">
-        <span className="text-sm font-medium text-[var(--foreground)]">
-          Files
+    <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
+      <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
+        <span className="text-sm font-semibold text-gray-900 font-mono">
+          Plugin Marketplace Files
         </span>
       </div>
-      <div className="py-1 max-h-[300px] overflow-y-auto">
+      <div className="p-4 max-h-[400px] overflow-y-auto">
         {tree.map((node) => (
-          <TreeNodeComponent key={node.path} node={node} level={0} />
+          <TreeNodeComponent
+            key={node.path}
+            node={node}
+            level={0}
+            selectedFile={selectedFile}
+            onSelectFile={onSelectFile}
+          />
         ))}
       </div>
     </div>

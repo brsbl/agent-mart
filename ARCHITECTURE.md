@@ -1,429 +1,572 @@
 # Architecture
 
-This document describes the architecture of Agent Mart, a pipeline for building a directory of Claude Code plugins.
+This document describes the technical architecture of Agent Mart, including the ETL pipeline, categorization system, data schemas, and frontend application.
 
 ## Overview
 
-Agent Mart is a 7-step ETL (Extract, Transform, Load) pipeline that:
-1. Discovers Claude Code marketplaces on GitHub
-2. Fetches repository and owner metadata
-3. Downloads and parses plugin definitions
-4. Generates static JSON for a public directory
+Agent Mart is a static-site generator that crawls GitHub for Claude Code marketplace definitions, processes them through an 8-step ETL pipeline, and outputs JSON files consumed by a Next.js frontend.
 
 ```
-GitHub API
-    │
-    ▼
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│ 01-discover │ ──► │ 02-fetch-    │ ──► │ 03-fetch-   │
-│             │     │    repos     │     │    trees    │
-└─────────────┘     └──────────────┘     └─────────────┘
-                                               │
-    ┌──────────────────────────────────────────┘
-    ▼
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│ 04-fetch-   │ ──► │ 05-parse     │ ──► │ 06-enrich   │
-│    files    │     │              │     │             │
-└─────────────┘     └──────────────┘     └─────────────┘
-                                               │
-    ┌──────────────────────────────────────────┘
-    ▼
-┌─────────────┐
-│ 07-output   │ ──► public/index.json
-│             │     public/owners/*.json
-└─────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           GitHub API                                     │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         ETL Pipeline                                     │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │ 01       │  │ 02       │  │ 03       │  │ 04       │  │ 05       │  │
+│  │ Discover │─▶│ Fetch    │─▶│ Fetch    │─▶│ Fetch    │─▶│ Parse    │  │
+│  │          │  │ Repos    │  │ Trees    │  │ Files    │  │          │  │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
+│                                                              │          │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐                    │          │
+│  │ 07       │◀─│ 08       │◀─│ 06       │◀───────────────────┘          │
+│  │ Output   │  │ Categorize│  │ Enrich   │                              │
+│  └──────────┘  └──────────┘  └──────────┘                              │
+│                                                                         │
+│  Note: Steps execute in order 06 → 08 → 07 (numbering is historical)   │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      Static JSON Output                                  │
+│  web/public/data/: index.json, authors/*.json, categories.json,         │
+│                    marketplaces-browse.json, plugins-browse.json        │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      Next.js Frontend                                    │
+│  web/src/app/                                                           │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Directory Structure
+## Pipeline Stages
 
-```
-agent-mart/
-├── scripts/
-│   └── build.js           # Pipeline orchestrator
-├── src/
-│   ├── lib/
-│   │   ├── github.js      # GitHub API client (GraphQL + REST)
-│   │   ├── cache.js       # File-based caching
-│   │   ├── parser.js      # JSON/YAML/Markdown parsing
-│   │   ├── validator.js   # Schema validation
-│   │   └── utils.js       # General utilities
-│   └── pipeline/
-│       ├── 01-discover.js
-│       ├── 02-fetch-repos.js
-│       ├── 03-fetch-trees.js
-│       ├── 04-fetch-files.js
-│       ├── 05-parse.js
-│       ├── 06-enrich.js
-│       └── 07-output.js
-├── tests/
-│   ├── smoke.test.js      # Validator and parser tests
-│   └── pipeline.test.js   # Security and pattern tests
-├── data/                  # Intermediate files (gitignored)
-│   ├── .cache/            # SHA-based cache
-│   ├── 01-discovered.json
-│   ├── 02-repos.json
-│   └── ...
-└── public/                # Final output (tracked in git)
-    ├── index.json
-    └── owners/
-        └── *.json
-```
+### Stage 01: Discover (`src/pipeline/01-discover.js`)
 
-## Pipeline Steps
+Searches GitHub for repositories containing `marketplace.json` files using the code search API.
 
-### Step 1: Discover
+**Input:** None
+**Output:** `data/01-discovered.json`
 
-**File:** `src/pipeline/01-discover.js`
-
-Uses GitHub code search to find repositories containing marketplace definitions:
-
-```javascript
-// Search query
-path:.claude-plugin filename:marketplace.json
-```
-
-**Rate Limiting:** 10 requests per minute (GitHub's strictest limit)
-
-**Output:** List of `{owner, repo, full_name, marketplace_path}`
-
-### Step 2: Fetch Repos
-
-**File:** `src/pipeline/02-fetch-repos.js`
-
-Fetches repository and owner metadata using GraphQL batching:
-
-```graphql
-query batchRepos {
-  repo0: repository(owner: "vercel", name: "next.js") {
-    name, description, stargazerCount, forkCount, pushedAt
-    owner { login, avatarUrl, ... }
-    defaultBranchRef { name, target { oid } }
-  }
-  repo1: repository(...) { ... }
-  # Up to 15 repos per query
+```json
+{
+  "repos": [
+    { "full_name": "owner/repo", "path": "marketplace.json" }
+  ]
 }
 ```
 
-**Optimization:** 90% fewer API calls vs individual REST requests
+### Stage 02: Fetch Repos (`src/pipeline/02-fetch-repos.js`)
 
-### Step 3: Fetch Trees
+Fetches repository and owner metadata using GraphQL batching.
 
-**File:** `src/pipeline/03-fetch-trees.js`
+**Input:** `data/01-discovered.json`
+**Output:** `data/02-repos.json`
 
-Downloads full file structure for each repository:
-
-```javascript
-// Uses REST API (GraphQL doesn't support recursive trees)
-octokit.rest.git.getTree({ owner, repo, tree_sha, recursive: true })
-```
-
-**Caching:** By commit SHA (immutable, never expires)
-
-### Step 4: Fetch Files
-
-**File:** `src/pipeline/04-fetch-files.js`
-
-Downloads specific files matching patterns:
-
-```javascript
-const FILE_PATTERNS = [
-  /^\.claude-plugin\/marketplace\.json$/,
-  /(^|\/)?\.claude-plugin\/plugin\.json$/,
-  /(^|\/)commands\/[^/]+\.md$/,
-  /(^|\/)skills\/[^/]+\/SKILL\.md$/
-];
-```
-
-**Optimization:** GraphQL batching (20 files per query)
-
-### Step 5: Parse
-
-**File:** `src/pipeline/05-parse.js`
-
-Parses and validates all fetched files:
-
-| File Type | Parser | Validation |
-|-----------|--------|------------|
-| marketplace.json | JSON | Requires `name` and `plugins` array |
-| plugin.json | JSON | Requires `name` |
-| SKILL.md | YAML frontmatter | Requires `name` and `description` |
-| commands/*.md | YAML frontmatter | Optional (per Claude Code spec) |
-
-### Step 6: Enrich
-
-**File:** `src/pipeline/06-enrich.js`
-
-Builds owner-centric data model:
-
-```javascript
+```json
 {
-  owner: {
-    id: "vercel",
-    display_name: "Vercel",
-    stats: { total_stars, total_plugins, ... }
-  },
-  repos: [{
-    full_name: "vercel/next.js",
-    marketplace: {
-      plugins: [{
-        name: "cache-handler",
-        install_commands: [...],
-        commands: [...],
-        skills: [...]
-      }]
+  "repos": [{
+    "full_name": "owner/repo",
+    "default_branch": "main",
+    "description": "...",
+    "stars": 100,
+    "forks": 10,
+    "owner": {
+      "login": "owner",
+      "type": "User",
+      "avatar_url": "https://..."
     }
   }]
 }
 ```
 
-### Step 7: Output
+### Stage 03: Fetch Trees (`src/pipeline/03-fetch-trees.js`)
 
-**File:** `src/pipeline/07-output.js`
+Downloads file tree structures for each repository.
 
-Generates public JSON files:
-- `public/index.json` - Directory homepage with all owners
-- `public/owners/<id>.json` - Per-owner detail pages
+**Input:** `data/02-repos.json`
+**Output:** `data/03-trees.json`
+
+### Stage 04: Fetch Files (`src/pipeline/04-fetch-files.js`)
+
+Fetches specific files (marketplace.json, SKILL.md, README.md, etc.).
+
+**Input:** `data/03-trees.json`
+**Output:** `data/04-files.json`
+
+### Stage 05: Parse (`src/pipeline/05-parse.js`)
+
+Parses and validates marketplace definitions, plugins, skills, and commands.
+
+**Input:** `data/04-files.json`
+**Output:** `data/05-parsed.json`
+
+### Stage 06: Enrich (`src/pipeline/06-enrich.js`)
+
+Builds the owner-centric data model, aggregating marketplaces under authors.
+
+**Input:** `data/05-parsed.json`
+**Output:** `data/06-enriched.json`
+
+```json
+{
+  "authors": {
+    "owner-id": {
+      "id": "owner-id",
+      "display_name": "Owner Name",
+      "avatar_url": "https://...",
+      "marketplaces": [...]
+    }
+  }
+}
+```
+
+### Stage 08: Categorize (`src/pipeline/08-categorize.js`)
+
+Applies rules-based categorization to extract tech stack and capabilities.
+
+**Input:** `data/06-enriched.json`
+**Output:**
+- `data/marketplaces-categorized.json` - Marketplaces with categories
+- `data/category-stats.json` - Category distribution statistics
+- `data/category-taxonomy.json` - Category labels for frontend
+
+### Stage 07: Output (`src/pipeline/07-output.js`)
+
+Generates final static JSON files for the frontend.
+
+**Input:** `data/06-enriched.json`, `data/marketplaces-categorized.json`
+**Output:**
+- `web/public/data/index.json` - Homepage data with author list
+- `web/public/data/authors/*.json` - Per-author detail pages
+- `web/public/data/categories.json` - Category taxonomy and stats
+- `web/public/data/marketplaces-browse.json` - Browse page marketplace data
+- `web/public/data/plugins-browse.json` - Browse page plugin data
+
+---
+
+## Categorization System
+
+The categorization system uses rules-based extraction to classify marketplaces across two orthogonal dimensions.
+
+### Design Principles
+
+1. **Rules-based, not LLM-based** - Deterministic, fast, and debuggable
+2. **Two dimensions** - Tech Stack (what you use) + Capabilities (what it does)
+3. **Multi-select** - Marketplaces can have multiple categories in each dimension
+4. **Anti-patterns** - Reduce false positives with exclusion rules
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    src/lib/categorizer.js                        │
+├─────────────────────────────────────────────────────────────────┤
+│  TECH_STACK_RULES                                                │
+│  ├── patterns: RegExp[]     (text matching)                     │
+│  ├── files: string[]        (file tree detection)               │
+│  └── excludeIf: string[]    (mutual exclusion)                  │
+│                                                                  │
+│  CAPABILITIES_RULES                                              │
+│  ├── patterns: RegExp[]     (text matching)                     │
+│  └── antiPatterns: RegExp[] (false positive prevention)         │
+├─────────────────────────────────────────────────────────────────┤
+│  buildSearchText(marketplace) → string                          │
+│  extractTechStack(text, fileTree) → TechStack[]                 │
+│  extractCapabilities(text) → Capability[]                       │
+│  extractCategories(marketplace) → { techStack, capabilities }   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Tech Stack Rules
+
+Tech stack detection combines text pattern matching with file tree analysis.
+
+```javascript
+{
+  nextjs: {
+    label: 'Next.js',
+    patterns: [/\bnext\.?js\b/i, /\bapp\s*router\b/i, /\bpages\s*router\b/i],
+    files: ['next.config.js', 'next.config.ts', 'next.config.mjs']
+  },
+  react: {
+    label: 'React',
+    patterns: [/\breact\b/i, /\breact\s*components?\b/i],
+    files: [],
+    excludeIf: ['nextjs']  // Don't show React if Next.js is present
+  },
+  python: {
+    label: 'Python',
+    patterns: [/\bdjango\b/i, /\bfastapi\b/i, /\bflask\b/i, /\bpytest\b/i],
+    files: ['requirements.txt', 'pyproject.toml', 'setup.py', 'Pipfile']
+  }
+  // ... more rules
+}
+```
+
+**Detection logic:**
+1. Build searchable text from marketplace description, plugin descriptions, command descriptions, keywords
+2. Match patterns against text (word boundaries prevent partial matches)
+3. Check file tree for indicator files (e.g., `tsconfig.json` → TypeScript)
+4. Apply exclusion rules (e.g., React excluded when Next.js detected)
+
+### Capabilities Rules
+
+Capability detection uses patterns with anti-patterns to reduce false positives.
+
+```javascript
+{
+  memory: {
+    label: 'Memory',
+    patterns: [
+      /\brag\b/i,
+      /\bvector\s*(?:store|database|db|search)\b/i,
+      /\bembeddings?\b/i,
+      /\blong[- ]?term\s*(?:memory|context)\b/i
+    ],
+    antiPatterns: [
+      /\bmemory\s*leak/i,      // Programming context
+      /\bout\s*of\s*memory/i,  // Error context
+      /\bmemory\s*usage/i      // Performance context
+    ]
+  },
+  'browser-automation': {
+    label: 'Browser Automation',
+    // Only tool names - removed broad patterns that caused false positives
+    patterns: [
+      /\bplaywright\b/i,
+      /\bpuppeteer\b/i,
+      /\bselenium\b/i,
+      /\bcypress\b/i
+    ],
+    antiPatterns: []
+  }
+}
+```
+
+**Detection logic:**
+1. Check if any anti-pattern matches → skip this category
+2. Check if any pattern matches → add category
+
+### Category Statistics
+
+The categorization stage outputs statistics for monitoring:
+
+```json
+{
+  "totalMarketplaces": 982,
+  "withTechStack": 515,
+  "withCapabilities": 487,
+  "withAnyCategory": 698,
+  "techStackCounts": {
+    "node": 210,
+    "python": 198,
+    "typescript": 194
+  },
+  "capabilityCounts": {
+    "testing": 237,
+    "review": 192,
+    "documentation": 182
+  }
+}
+```
+
+---
+
+## Data Schemas
+
+### Marketplace (Internal)
+
+```typescript
+interface Marketplace {
+  name: string;
+  version: string | null;
+  description: string | null;
+  owner_info: { name: string; email: string } | null;
+  keywords: string[];
+  repo_full_name: string;
+  repo_url: string;
+  homepage: string | null;
+  plugins: Plugin[];
+  file_tree: FileTreeEntry[];
+  signals: {
+    stars: number;
+    forks: number;
+    pushed_at: string | null;
+    created_at: string | null;
+    license: string | null;
+  };
+  categories: {
+    techStack: TechStack[];
+    capabilities: Capability[];
+  };
+}
+```
+
+### Category Types
+
+```typescript
+type TechStack =
+  | 'nextjs' | 'react' | 'vue' | 'python' | 'node'
+  | 'typescript' | 'go' | 'rust' | 'supabase'
+  | 'aws' | 'docker' | 'postgres';
+
+type Capability =
+  | 'orchestration' | 'memory' | 'browser-automation' | 'boilerplate'
+  | 'review' | 'testing' | 'devops' | 'documentation';
+```
+
+### Output: `categories.json`
+
+```json
+{
+  "meta": {
+    "total_authors": 900,
+    "total_marketplaces": 982,
+    "generated_at": "2026-01-20T06:25:33.660Z",
+    "stats": {
+      "totalMarketplaces": 982,
+      "withTechStack": 515,
+      "withCapabilities": 487,
+      "techStackCounts": { ... },
+      "capabilityCounts": { ... }
+    }
+  },
+  "taxonomy": {
+    "techStack": {
+      "nextjs": { "label": "Next.js" },
+      "python": { "label": "Python" }
+    },
+    "capabilities": {
+      "testing": { "label": "Testing" },
+      "review": { "label": "Code Review" }
+    }
+  }
+}
+```
+
+### Output: `marketplaces-browse.json`
+
+```json
+{
+  "marketplaces": [{
+    "name": "my-marketplace",
+    "description": "...",
+    "author_id": "owner",
+    "author_display_name": "Owner Name",
+    "author_avatar_url": "https://...",
+    "categories": {
+      "techStack": ["typescript", "node"],
+      "capabilities": ["testing", "review"]
+    },
+    "signals": {
+      "stars": 100,
+      "forks": 10,
+      "pushed_at": "2026-01-15T..."
+    }
+  }]
+}
+```
+
+---
+
+## Frontend Architecture
+
+The frontend is a Next.js 14+ application using the App Router.
+
+### Pages
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/` | `app/page.tsx` | Homepage with category filters |
+| `/[author]` | `app/[author]/page.tsx` | Author detail page |
+| `/[author]/[marketplace]` | `app/[author]/[marketplace]/page.tsx` | Marketplace detail |
+
+### Data Flow
+
+```
+┌──────────────────────┐
+│ web/public/data/     │
+│  ├── index.json      │
+│  ├── categories.json │
+│  ├── marketplaces-   │
+│  │   browse.json     │
+│  ├── plugins-        │
+│  │   browse.json     │
+│  └── authors/*.json  │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│ web/src/lib/data.ts  │
+│  loadMarketplaces()  │
+│  loadCategories()    │
+│  loadAuthorData()    │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│ Server Components    │
+│  ├── page.tsx        │
+│  ├── [author]/       │
+│  └── [marketplace]/  │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│ Client Components    │
+│  ├── MarketplaceCard │
+│  └── CategoryPill    │
+└──────────────────────┘
+```
+
+Note: Filters are implemented inline in `page.tsx`, not as a separate component.
+
+### Filter System
+
+The homepage implements two-dimensional filtering:
+
+```typescript
+// State
+const [selectedTechStack, setSelectedTechStack] = useState<Set<TechStack>>(new Set());
+const [selectedCapabilities, setSelectedCapabilities] = useState<Set<Capability>>(new Set());
+
+// Filter logic (AND within each dimension)
+const filtered = marketplaces.filter(m => {
+  // Must have ALL selected tech stack
+  for (const tech of selectedTechStack) {
+    if (!m.categories?.techStack?.includes(tech)) return false;
+  }
+  // Must have ALL selected capabilities
+  for (const cap of selectedCapabilities) {
+    if (!m.categories?.capabilities?.includes(cap)) return false;
+  }
+  return true;
+});
+```
+
+---
+
+## Caching Strategy
+
+### SHA-Based Cache
+
+The pipeline uses content-addressable caching based on Git commit SHAs:
+
+```
+.cache/
+├── repos/
+│   └── {owner}/{repo}/{sha}.json
+├── trees/
+│   └── {owner}/{repo}/{sha}.json
+└── files/
+    └── {owner}/{repo}/{sha}/{path}.json
+```
+
+**Cache hit:** If the repository SHA hasn't changed, skip fetching.
+**Cache invalidation:** New commits produce new SHAs, automatically invalidating stale cache.
+
+### Security Measures
+
+1. **Path traversal prevention** - Cache paths validated against base directory
+2. **Prototype pollution prevention** - Forbidden keys (`__proto__`, `constructor`) blocked
+3. **GraphQL injection prevention** - All inputs sanitized before queries
+
+---
 
 ## GitHub API Usage
 
-### Authentication
-
-```javascript
-// Required environment variable
-process.env.GITHUB_TOKEN
-```
-
 ### Rate Limiting
 
-| API | Limit | Strategy |
-|-----|-------|----------|
-| Code Search | 10/min | Bottleneck queue |
-| REST API | 5000/hr | Bottleneck queue |
-| GraphQL | 5000 pts/hr | Per-query tracking |
+- REST API: 5,000 requests/hour (authenticated)
+- GraphQL API: 5,000 points/hour
+- Code Search: 10 requests/minute
 
-### Batching
+### Batching Strategy
 
-```javascript
-// Repo batching (15 per query)
-const REPO_BATCH_SIZE = 15;
+GraphQL batching reduces API calls by ~90%:
 
-// File batching (20 per query)
-const FILE_BATCH_SIZE = 20;
-```
-
-### Retry Strategy
-
-```javascript
-const MAX_RETRIES = 3;
-const RETRY_DELAYS = [1000, 5000, 15000]; // Exponential backoff
-
-// Retries on: 5xx errors, network failures
-// No retry on: 404, 403 (rate limit without reset)
-```
-
-## Caching
-
-### Strategy
-
-| Data | Cache Key | TTL |
-|------|-----------|-----|
-| Trees | Commit SHA | Never expires (immutable) |
-
-### Implementation
-
-```javascript
-// Cache location
-const CACHE_DIR = './data/.cache';
-
-// Cache format
-tree_<sha>.json
-```
-
-### Security
-
-- **Path validation:** Prevents directory traversal
-- **Forbidden keys:** Blocks `__proto__`, `constructor`, `prototype`
-- **Filename sanitization:** Replaces special characters
-
-## Security Measures
-
-### Input Sanitization
-
-```javascript
-// GraphQL injection prevention
-function sanitizeForGraphQL(str) {
-  return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+```graphql
+query {
+  repo1: repository(owner: "a", name: "b") { ...fields }
+  repo2: repository(owner: "c", name: "d") { ...fields }
+  # Up to 100 repos per query
 }
 ```
 
-### Cache Security
+---
 
-```javascript
-// Path traversal protection
-function validateCachePath(filepath) {
-  const resolved = resolve(filepath);
-  if (!resolved.startsWith(resolve(CACHE_DIR) + '/')) {
-    throw new Error('Path traversal detected');
-  }
-}
+## Adding New Categories
 
-// Prototype pollution prevention
-const FORBIDDEN_IDS = ['__proto__', 'constructor', 'prototype'];
+### Tech Stack
+
+1. Add rule to `TECH_STACK_RULES` in `src/lib/categorizer.js`:
+   ```javascript
+   newtech: {
+     label: 'New Tech',
+     patterns: [/\bnewtech\b/i],
+     files: ['newtech.config.js'],
+     excludeIf: []  // optional
+   }
+   ```
+
+2. Add type to `web/src/lib/types.ts`:
+   ```typescript
+   export type TechStack = ... | 'newtech';
+   ```
+
+3. Add display info to `web/src/lib/data.ts`:
+   ```typescript
+   export const TECH_STACK_ORDER: TechStack[] = [..., 'newtech'];
+   ```
+
+4. Run pipeline: `npm run pipeline`
+
+### Capabilities
+
+1. Add rule to `CAPABILITIES_RULES` in `src/lib/categorizer.js`:
+   ```javascript
+   'new-capability': {
+     label: 'New Capability',
+     patterns: [/\bnew capability\b/i],
+     antiPatterns: [/\bnot this\b/i]
+   }
+   ```
+
+2. Add type and display info to frontend (same as tech stack).
+
+---
+
+## Troubleshooting
+
+### False Positives
+
+If a category has too many false positives:
+1. Check `data/category-stats.json` for distribution
+2. Tighten patterns with word boundaries: `/\bword\b/i`
+3. Add anti-patterns to exclude common false matches
+4. Re-run: `node src/pipeline/08-categorize.js`
+
+### Missing Categories
+
+If marketplaces aren't being categorized:
+1. Check if patterns match the marketplace text
+2. Verify file indicators are in the expected paths
+3. Check `buildSearchText()` includes the relevant fields
+
+### Debugging
+
+Run categorization with verbose output:
+```bash
+node --input-type=module -e "
+  import { extractCategories, buildSearchText } from './src/lib/categorizer.js';
+  import { readFileSync } from 'fs';
+  const data = JSON.parse(readFileSync('data/06-enriched.json'));
+  const marketplace = data.authors['some-author'].marketplaces[0];
+  console.log('Text:', buildSearchText(marketplace));
+  console.log('Categories:', extractCategories(marketplace));
+"
 ```
-
-### Token Handling
-
-```javascript
-// Lazy initialization prevents crashes on import
-function getOctokit() {
-  if (!_octokit) {
-    validateToken(); // Throws if missing
-    _octokit = new ThrottledOctokit({ auth: process.env.GITHUB_TOKEN });
-  }
-  return _octokit;
-}
-```
-
-## Data Models
-
-### Marketplace (input)
-
-```json
-{
-  "name": "my-marketplace",
-  "plugins": [
-    {
-      "name": "my-plugin",
-      "source": "./plugins/my-plugin"
-    }
-  ]
-}
-```
-
-### Plugin (enriched output)
-
-```json
-{
-  "name": "my-plugin",
-  "description": "...",
-  "source": ".claude-plugin/plugins/my-plugin",
-  "install_commands": [
-    "/plugin marketplace add owner/repo",
-    "/plugin install my-plugin@my-marketplace"
-  ],
-  "signals": {
-    "stars": 1000,
-    "forks": 100,
-    "pushed_at": "2026-01-12T00:00:00Z"
-  },
-  "commands": [...],
-  "skills": [...]
-}
-```
-
-### Owner (output)
-
-```json
-{
-  "id": "vercel",
-  "display_name": "Vercel",
-  "type": "Organization",
-  "avatar_url": "https://...",
-  "stats": {
-    "total_repos": 1,
-    "total_plugins": 3,
-    "total_stars": 137000
-  }
-}
-```
-
-## Error Handling
-
-### Soft Failures (logged, continue)
-
-- Missing optional files
-- Invalid JSON/YAML (marked invalid)
-- Binary files (skipped)
-- 404 responses
-
-### Hard Failures (exit)
-
-- Missing `GITHUB_TOKEN`
-- File I/O errors
-- Pipeline step crashes
-
-### Validation Reporting
-
-```javascript
-// Included in 05-parsed.json
-{
-  "validation": {
-    "marketplaces": { "valid": 3, "invalid": 1 },
-    "errors": [
-      {
-        "context": "owner/repo/.claude-plugin/marketplace.json",
-        "errors": ["marketplace.json requires 'plugins' field"]
-      }
-    ]
-  }
-}
-```
-
-## Performance
-
-### Typical Run (3 repos)
-
-| Metric | Value |
-|--------|-------|
-| Total time | ~15 seconds |
-| API calls | ~15 (vs ~229 without batching) |
-| Cache hit rebuild | ~11 seconds |
-
-### Scaling
-
-| Repos | Estimated Time | API Calls |
-|-------|----------------|-----------|
-| 10 | ~30 seconds | ~50 |
-| 100 | ~5 minutes | ~200 |
-| 1000 | ~30 minutes | ~1500 |
-
-## Design Decisions
-
-### Why marketplace.json as source of truth?
-
-- Explicit plugin boundaries
-- Lower spam risk (curated by maintainers)
-- Canonical install commands
-
-### Why owner-centric model?
-
-- Users follow creators, not categories
-- Natural social proof aggregation
-- Better discoverability
-
-### Why static JSON output?
-
-- No database required
-- CDN-friendly
-- Easy to version control
-- Schema changes are explicit
-
-### Why GraphQL batching?
-
-- 90% fewer API calls
-- Better rate limit efficiency
-- Simpler to manage quotas
-
-## Limitations
-
-1. Only indexes repos with `marketplace.json`
-2. No real-time updates (regenerated periodically)
-3. No search by command/skill name
-4. No ratings or reviews
-
-## Future Improvements
-
-1. Standalone skill repo discovery
-2. Real-time webhook updates
-3. Search index generation
-4. Dependency tracking between plugins

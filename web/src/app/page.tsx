@@ -1,28 +1,25 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { Suspense, useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { Package, Terminal, Sparkles } from "lucide-react";
-import { PluginCard, PluginCardCompact, LoadingState, ErrorState } from "@/components";
+import { MarketplaceCard, LoadingState, ErrorState, ErrorBoundary } from "@/components";
 import { useFetch } from "@/hooks";
-import type { BrowsePlugin, Meta } from "@/lib/types";
-import {
-  sortPlugins,
-  formatNumber,
-  groupPluginsByCategory,
-} from "@/lib/data";
-import { DATA_URLS, MAX_CATEGORY_PLUGINS } from "@/lib/constants";
+import type { BrowseMarketplace, Meta, MarketplaceSortOption, Category } from "@/lib/types";
+import { sortMarketplaces, getCategoryDisplay } from "@/lib/data";
+import { DATA_URLS, INITIAL_DISPLAY_COUNT, LOAD_MORE_COUNT } from "@/lib/constants";
 
-interface PluginsData {
+interface MarketplacesData {
   meta: Meta;
-  plugins: BrowsePlugin[];
+  marketplaces: BrowseMarketplace[];
 }
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<LoadingState />}>
-      <HomePageContent />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<LoadingState />}>
+        <HomePageContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 
@@ -30,42 +27,119 @@ function HomePageContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q") || "";
 
-  const { data, loading, error } = useFetch<PluginsData>(
-    DATA_URLS.PLUGINS_BROWSE,
-    "Failed to load plugins. Please try refreshing the page."
+  // Read filter state from URL (single dimension: ?cat=testing,devops)
+  const categoriesParam = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
+  // Categories are now dynamic strings from data
+  const selectedCategories = categoriesParam as Category[];
+  const sortBy = (searchParams.get("sort") as MarketplaceSortOption) || "recent";
+  const sortDirection = (searchParams.get("dir") as "asc" | "desc") || "desc";
+
+  // State for pagination
+  const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Reset pagination when search query or filters change
+  const catParam = searchParams.get("cat") || "";
+  const sortParam = searchParams.get("sort") || "";
+  const dirParam = searchParams.get("dir") || "";
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resetting pagination when URL params change is valid
+    setDisplayCount(INITIAL_DISPLAY_COUNT);
+  }, [searchQuery, catParam, sortParam, dirParam]);
+
+  // Fetch only marketplaces data
+  const { data: marketplacesData, loading, error } = useFetch<MarketplacesData>(
+    DATA_URLS.MARKETPLACES_BROWSE,
+    "Failed to load marketplaces."
   );
 
-  const meta = data?.meta ?? null;
-  const allPlugins = useMemo(() => data?.plugins ?? [], [data?.plugins]);
+  const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
 
-  // Search filter
-  const searchResults = useMemo(() => {
-    if (!searchQuery) return null;
-    const query = searchQuery.toLowerCase();
-    const filtered = allPlugins.filter(
-      (p) =>
-        p.name.toLowerCase().includes(query) ||
-        p.description?.toLowerCase().includes(query) ||
-        p.owner_id.toLowerCase().includes(query)
+  // Combined filter and sort for marketplaces (search + categories + sort)
+  const filteredAndSortedMarketplaces = useMemo(() => {
+    let result = allMarketplaces;
+
+    // 1. Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((m) =>
+        m.name.toLowerCase().includes(query) ||
+        m.description?.toLowerCase().includes(query) ||
+        m.author_id.toLowerCase().includes(query) ||
+        m.author_display_name.toLowerCase().includes(query) ||
+        (Array.isArray(m.keywords) && m.keywords.some(k => k.toLowerCase().includes(query))) ||
+        (Array.isArray(m.categories) && m.categories.some(c =>
+          c.toLowerCase().includes(query) || getCategoryDisplay(c).toLowerCase().includes(query)
+        ))
+      );
+    }
+
+    // 2. Apply categories filter (OR logic - must have ANY of the selected categories)
+    if (selectedCategories.length > 0) {
+      result = result.filter(m =>
+        Array.isArray(m.categories) && selectedCategories.some(cat =>
+          m.categories.includes(cat)
+        )
+      );
+    }
+
+    // 3. Apply sort
+    let sorted = sortMarketplaces(result, sortBy);
+
+    // Apply sort direction (sortMarketplaces defaults to desc, so reverse for asc)
+    if (sortDirection === "asc") {
+      sorted = [...sorted].reverse();
+    }
+
+    return sorted;
+  }, [allMarketplaces, searchQuery, selectedCategories, sortBy, sortDirection]);
+
+  const displayedMarketplaces = filteredAndSortedMarketplaces.slice(0, displayCount);
+  const hasMore = displayCount < filteredAndSortedMarketplaces.length;
+  const remainingCount = filteredAndSortedMarketplaces.length - displayCount;
+
+  // Infinite scroll - load more when sentinel is visible
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setDisplayCount(c => c + LOAD_MORE_COUNT);
+        }
+      },
+      { rootMargin: '100px' } // Trigger 100px before reaching bottom
     );
-    return sortPlugins(filtered, "stars");
-  }, [allPlugins, searchQuery]);
 
-  // Get new & recently updated plugins
-  const recentPlugins = useMemo(() => {
-    return [...allPlugins]
-      .sort(
-        (a, b) =>
-          new Date(b.signals.pushed_at).getTime() -
-          new Date(a.signals.pushed_at).getTime()
-      )
-      .slice(0, MAX_CATEGORY_PLUGINS);
-  }, [allPlugins]);
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore]);
 
-  // Group plugins by category
-  const categoryGroups = useMemo(() => {
-    return groupPluginsByCategory(allPlugins);
-  }, [allPlugins]);
+  const hasActiveFilters = selectedCategories.length > 0;
+
+  // Helper to render marketplace cards consistently
+  const renderMarketplaceCard = (marketplace: BrowseMarketplace) => (
+    <MarketplaceCard
+      key={`${marketplace.author_id}-${marketplace.name}`}
+      marketplace={{
+        name: marketplace.name,
+        description: marketplace.description,
+        keywords: marketplace.keywords ?? [],
+        categories: marketplace.categories ?? [],
+        repo_full_name: marketplace.repo_full_name ?? undefined,
+        signals: {
+          stars: marketplace.signals?.stars ?? 0,
+          forks: marketplace.signals?.forks ?? 0,
+          pushed_at: marketplace.signals?.pushed_at ?? null,
+        },
+      }}
+      author_id={marketplace.author_id}
+      author_display_name={marketplace.author_display_name}
+      author_avatar_url={marketplace.author_avatar_url}
+    />
+  );
 
   if (loading) {
     return <LoadingState />;
@@ -84,117 +158,60 @@ function HomePageContent() {
     );
   }
 
-  // Search results view
-  if (searchQuery && searchResults) {
-    return (
-      <div className="container py-8">
-        <section>
-          <h2 className="section-title mb-4">
-            Search results for &quot;{searchQuery}&quot;
-          </h2>
-          <p className="text-sm text-[var(--foreground-muted)] mb-6">
-            {searchResults.length} plugin{searchResults.length !== 1 ? "s" : ""} found
-          </p>
-
-          {searchResults.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {searchResults.map((plugin) => (
-                <PluginCard
-                  key={`${plugin.owner_id}-${plugin.name}`}
-                  plugin={plugin}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-[var(--foreground-muted)]">
-                No plugins found matching your search.
-              </p>
-            </div>
-          )}
-        </section>
-      </div>
-    );
-  }
-
-  // Browse view (category sections)
+  // Unified view for both search and browse
   return (
-    <div className="container py-8">
-      {/* Stats Bar */}
-      {meta && (
-        <div className="flex flex-wrap items-center justify-center gap-6 mb-8 py-4 px-6 bg-[var(--background-secondary)] rounded-lg">
-          <div className="flex items-center gap-2">
-            <Package className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
-            <span className="font-semibold">
-              {formatNumber(meta.total_plugins)}
-            </span>
-            <span className="text-[var(--foreground-secondary)]">plugins</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Terminal className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
-            <span className="font-semibold">
-              {formatNumber(meta.total_commands)}
-            </span>
-            <span className="text-[var(--foreground-secondary)]">commands</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
-            <span className="font-semibold">
-              {formatNumber(meta.total_skills)}
-            </span>
-            <span className="text-[var(--foreground-secondary)]">skills</span>
-          </div>
+    <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Header - show search context when searching */}
+      {searchQuery.trim() && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+            Results for &quot;{searchQuery}&quot;
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {filteredAndSortedMarketplaces.length} result{filteredAndSortedMarketplaces.length !== 1 ? "s" : ""} found
+            {selectedCategories.length > 0 && ` in selected categories`}
+          </p>
         </div>
       )}
 
-      {/* Recently Updated Section */}
-      <CategorySection
-        title="Recently Updated"
-        plugins={recentPlugins}
-      />
-
-      {/* Category Sections */}
-      {categoryGroups.map((group) => (
-        <CategorySection
-          key={group.category}
-          title={group.displayName}
-          count={group.plugins.length}
-          plugins={group.plugins.slice(0, MAX_CATEGORY_PLUGINS)}
-        />
-      ))}
-    </div>
-  );
-}
-
-interface CategorySectionProps {
-  title: string;
-  count?: number;
-  plugins: BrowsePlugin[];
-}
-
-function CategorySection({ title, count, plugins }: CategorySectionProps) {
-  if (plugins.length === 0) return null;
-
-  return (
-    <section className="mb-10">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-[var(--foreground)]">
-          {title}
-          {count !== undefined && (
-            <span className="ml-2 text-sm font-normal text-[var(--foreground-muted)]">
-              ({count})
-            </span>
+      {/* Grid */}
+      {displayedMarketplaces.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {displayedMarketplaces.map(renderMarketplaceCard)}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gray-500 dark:text-gray-400">
+            {searchQuery.trim()
+              ? "No results found matching your search."
+              : "No plugins found matching your criteria."}
+          </p>
+          {(hasActiveFilters || searchQuery.trim()) && (
+            <p className="mt-2 text-sm text-gray-400">
+              Try adjusting your {searchQuery.trim() ? "search terms or " : ""}category filters.
+            </p>
           )}
-        </h2>
-      </div>
-      <div className="category-scroll">
-        {plugins.map((plugin) => (
-          <PluginCardCompact
-            key={`${plugin.owner_id}-${plugin.name}`}
-            plugin={plugin}
-          />
-        ))}
-      </div>
-    </section>
+        </div>
+      )}
+
+      {/* Screen reader announcement for filter changes */}
+      <span className="sr-only" aria-live="polite">
+        {displayedMarketplaces.length} of {filteredAndSortedMarketplaces.length} marketplaces shown
+      </span>
+
+      {/* Load more - triggers on scroll or button click */}
+      {hasMore && (
+        <div ref={loadMoreRef} className="text-center mt-8">
+          <button
+            type="button"
+            onClick={() => setDisplayCount(c => c + LOAD_MORE_COUNT)}
+            className="px-6 py-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors border border-gray-300 dark:border-gray-600 hover:border-gray-400"
+          >
+            See more ({remainingCount} remaining)
+          </button>
+        </div>
+      )}
+
+    </div>
   );
 }

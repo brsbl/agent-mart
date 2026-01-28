@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* ============================================
    AGENT MART DESIGN SYSTEM
@@ -79,8 +80,9 @@
 }
 
 /* --- Dark Mode --- */
+/* Support both system preference and class-based (next-themes) */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     /* Background layers */
     --background: #0a0a0a;
     --background-secondary: #111111;
@@ -122,6 +124,50 @@
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
   }
+}
+
+/* Class-based dark mode for next-themes */
+:root.dark {
+  /* Background layers */
+  --background: #0a0a0a;
+  --background-secondary: #111111;
+  --background-tertiary: #1a1a1a;
+
+  /* Foreground/Text */
+  --foreground: #f5f5f5;
+  --foreground-secondary: #a3a3a3;
+  --foreground-muted: #737373;
+
+  /* Accent - Green (slightly brighter for dark mode) */
+  --accent: #4ade80;
+  --accent-hover: #22c55e;
+  --accent-muted: #166534;
+  --accent-foreground: #052e16;
+
+  /* Borders */
+  --border: #262626;
+  --border-hover: #404040;
+
+  /* Cards */
+  --card: #141414;
+  --card-hover: #1a1a1a;
+
+  /* Terminal/Code */
+  --terminal-bg: #0a0a0a;
+  --terminal-text: #e5e7eb;
+
+  /* Category badges - darker variants */
+  --badge-development: #1e3a5f;
+  --badge-development-text: #93c5fd;
+  --badge-productivity: #451a03;
+  --badge-productivity-text: #fcd34d;
+  --badge-learning: #2e1065;
+  --badge-learning-text: #c4b5fd;
+
+  /* Shadows (more subtle in dark mode) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
 }
 
 /* --- Tailwind Theme Integration --- */
@@ -181,12 +227,77 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin-bottom: 60px !important;
+}
+
+/* Subtle grid background pattern */
+.grid-background {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
+}
+
+.grid-background::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, var(--background) 70%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* --- Focus States --- */
 *:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #9ca3af;
   outline-offset: 2px;
+}
+
+/* Remove focus outline when cursor is sufficient */
+.focus-none:focus,
+.focus-none:focus-visible {
+  outline: none !important;
+}
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass-card {
+    background: rgba(30, 30, 30, 0.6);
+  }
+}
+
+.dark .glass-card {
+  background: rgba(30, 30, 30, 0.6);
+}
+
+/* Category dropdown scrollbar - just the bar, no track */
+.category-dropdown-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-dropdown-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-dropdown-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.category-dropdown-scroll::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.category-dropdown-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
 }
 
 /* --- Selection --- */
@@ -195,22 +306,32 @@ body {
   color: var(--foreground);
 }
 
-/* --- Scrollbar (Webkit) --- */
-::-webkit-scrollbar {
+/* --- Hide main page scrollbar --- */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+}
+
+/* --- Scrollbar for other elements (Webkit) --- */
+*:not(html)::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
+*:not(html)::-webkit-scrollbar-track {
   background: var(--background-secondary);
 }
 
-::-webkit-scrollbar-thumb {
+*:not(html)::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: var(--radius-full);
 }
 
-::-webkit-scrollbar-thumb:hover {
+*:not(html)::-webkit-scrollbar-thumb:hover {
   background: var(--border-hover);
 }
 
@@ -226,9 +347,99 @@ body {
 }
 
 .card:hover {
-  background: var(--card-hover);
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow);
+  border-color: #9ca3af; /* gray-400 */
+  box-shadow: var(--shadow-md);
+}
+
+/* Chevron animation on card hover */
+.card .chevron-icon {
+  transition: transform 0.2s ease;
+}
+
+.card:hover .chevron-icon {
+  transform: translateX(4px);
+}
+
+/* Card with clickable styling */
+.card-clickable {
+  cursor: pointer;
+}
+
+.card-clickable:focus-visible {
+  outline: 2px solid #9ca3af;
+  outline-offset: 2px;
+}
+
+/* Thin scrollbar - hidden by default, shown on hover */
+.description-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.description-scroll:hover {
+  scrollbar-color: rgb(209 213 219) transparent;
+}
+
+.description-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.description-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.description-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 2px;
+}
+
+.description-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgb(209 213 219);
+}
+
+/* Card hover scrollbar - visible only when card is hovered */
+.card-hover-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+.group\/card:hover .card-hover-scroll,
+.card:hover .card-hover-scroll {
+  scrollbar-color: rgb(156 163 175) transparent; /* gray-400 */
+}
+
+.card-hover-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.card-hover-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-hover-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+.group\/card:hover .card-hover-scroll::-webkit-scrollbar-thumb,
+.card:hover .card-hover-scroll::-webkit-scrollbar-thumb {
+  background: rgb(156 163 175); /* gray-400 */
+}
+
+@media (prefers-color-scheme: dark) {
+  .card-hover-scroll:hover::-webkit-scrollbar-thumb,
+  .group\/card:hover .card-hover-scroll::-webkit-scrollbar-thumb,
+  .card:hover .card-hover-scroll::-webkit-scrollbar-thumb {
+    background: rgb(82 82 82); /* neutral-600 */
+  }
+}
+
+.dark .card-hover-scroll:hover::-webkit-scrollbar-thumb,
+.dark .group\/card:hover .card-hover-scroll::-webkit-scrollbar-thumb,
+.dark .card:hover .card-hover-scroll::-webkit-scrollbar-thumb {
+  background: rgb(82 82 82); /* neutral-600 */
 }
 
 /* Terminal/Code block */
@@ -457,6 +668,67 @@ body {
   color: #db2777;
 }
 
+/* Category badge variants (12-category system) */
+.badge-purple {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.badge-blue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.badge-orange {
+  background: #ffedd5;
+  color: #ea580c;
+}
+
+.badge-green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.badge-cyan {
+  background: #cffafe;
+  color: #0891b2;
+}
+
+.badge-yellow {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge-pink {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.badge-indigo {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.badge-teal {
+  background: #ccfbf1;
+  color: #0d9488;
+}
+
+.badge-rose {
+  background: #ffe4e6;
+  color: #e11d48;
+}
+
+.badge-red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge-gray {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
 @media (prefers-color-scheme: dark) {
   .badge-ai-ml {
     background: #4a044e;
@@ -552,4 +824,336 @@ body {
     background: #831843;
     color: #f9a8d4;
   }
+
+  /* Category badge variants - dark mode */
+  .badge-purple {
+    background: #3b0764;
+    color: #c4b5fd;
+  }
+
+  .badge-blue {
+    background: #1e3a8a;
+    color: #93c5fd;
+  }
+
+  .badge-orange {
+    background: #7c2d12;
+    color: #fdba74;
+  }
+
+  .badge-green {
+    background: #052e16;
+    color: #86efac;
+  }
+
+  .badge-cyan {
+    background: #083344;
+    color: #67e8f9;
+  }
+
+  .badge-yellow {
+    background: #713f12;
+    color: #fcd34d;
+  }
+
+  .badge-pink {
+    background: #831843;
+    color: #f9a8d4;
+  }
+
+  .badge-indigo {
+    background: #312e81;
+    color: #a5b4fc;
+  }
+
+  .badge-teal {
+    background: #134e4a;
+    color: #5eead4;
+  }
+
+  .badge-rose {
+    background: #881337;
+    color: #fda4af;
+  }
+
+  .badge-red {
+    background: #7f1d1d;
+    color: #fca5a5;
+  }
+
+  .badge-gray {
+    background: #374151;
+    color: #9ca3af;
+  }
+}
+
+/* Class-based dark mode for badges (next-themes) */
+.dark .badge-ai-ml {
+  background: #4a044e;
+  color: #f0abfc;
+}
+
+.dark .badge-devops {
+  background: #431407;
+  color: #fdba74;
+}
+
+.dark .badge-security {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+.dark .badge-testing {
+  background: #052e16;
+  color: #86efac;
+}
+
+.dark .badge-quality {
+  background: #082f49;
+  color: #7dd3fc;
+}
+
+.dark .badge-database {
+  background: #451a03;
+  color: #fcd34d;
+}
+
+.dark .badge-automation {
+  background: #3b0764;
+  color: #d8b4fe;
+}
+
+.dark .badge-infrastructure {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+.dark .badge-integration {
+  background: #083344;
+  color: #67e8f9;
+}
+
+.dark .badge-uncategorized {
+  background: var(--background-tertiary);
+  color: var(--foreground-muted);
+}
+
+.dark .badge-documentation {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+.dark .badge-api {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.dark .badge-design {
+  background: #701a75;
+  color: #f0abfc;
+}
+
+.dark .badge-git {
+  background: #7c2d12;
+  color: #fdba74;
+}
+
+.dark .badge-frameworks {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+
+.dark .badge-languages {
+  background: #713f12;
+  color: #fde047;
+}
+
+.dark .badge-utilities {
+  background: #134e4a;
+  color: #5eead4;
+}
+
+.dark .badge-business {
+  background: #4c1d95;
+  color: #c4b5fd;
+}
+
+.dark .badge-marketing {
+  background: #831843;
+  color: #f9a8d4;
+}
+
+.dark .badge-purple {
+  background: #3b0764;
+  color: #c4b5fd;
+}
+
+.dark .badge-blue {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+
+.dark .badge-orange {
+  background: #7c2d12;
+  color: #fdba74;
+}
+
+.dark .badge-green {
+  background: #052e16;
+  color: #86efac;
+}
+
+.dark .badge-cyan {
+  background: #083344;
+  color: #67e8f9;
+}
+
+.dark .badge-yellow {
+  background: #713f12;
+  color: #fcd34d;
+}
+
+.dark .badge-pink {
+  background: #831843;
+  color: #f9a8d4;
+}
+
+.dark .badge-indigo {
+  background: #312e81;
+  color: #a5b4fc;
+}
+
+.dark .badge-teal {
+  background: #134e4a;
+  color: #5eead4;
+}
+
+.dark .badge-rose {
+  background: #881337;
+  color: #fda4af;
+}
+
+.dark .badge-red {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.dark .badge-gray {
+  background: #374151;
+  color: #9ca3af;
+}
+
+/* Custom scrollbar styling for description areas - from reference theme.css */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+}
+
+/* Show scrollbar only on card hover */
+.card-hover-scroll:hover .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+.card-hover-scroll:hover .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Firefox scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.card-hover-scroll:hover .scrollbar-thin {
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Fade effect for overflowing descriptions - from reference theme.css */
+.description-fade {
+  position: relative;
+}
+
+.description-fade::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(to bottom, rgba(243, 244, 246, 0), rgba(243, 244, 246, 0.6) 50%, rgba(243, 244, 246, 0.95));
+  pointer-events: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.description-fade.no-overflow::after {
+  display: none;
+}
+
+/* Star button styling */
+.star-button {
+  transition: all 0.15s ease;
+}
+
+.star-button:hover {
+  transform: scale(1.1);
+}
+
+.star-button.starred {
+  color: #eab308; /* yellow-500 */
+}
+
+/* ASCII art logo styling */
+.ascii-logo {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  white-space: pre;
+  user-select: none;
+}
+
+@media (min-width: 640px) {
+  .ascii-logo {
+    font-size: 0.7rem;
+  }
+}
+
+/* Scrollbar auto-hide - shows on hover */
+.scrollbar-auto-hide::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-auto-hide::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-auto-hide::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: var(--radius-full);
+}
+
+.scrollbar-auto-hide:hover::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+.scrollbar-auto-hide:hover::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Firefox support */
+.scrollbar-auto-hide {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scrollbar-auto-hide:hover {
+  scrollbar-color: var(--border) transparent;
 }

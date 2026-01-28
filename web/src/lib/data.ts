@@ -1,31 +1,48 @@
 import type {
-  OwnerDetail,
+  AuthorDetail,
+  Marketplace,
   FlatPlugin,
   BrowsePlugin,
+  BrowseMarketplace,
   SortOption,
+  MarketplaceSortOption,
+  Category,
+  ComponentType,
+  PluginComponent,
+  PluginWithComponents,
+  PluginSource,
 } from "./types";
 
 // ============================================
 // DATA FLATTENING (for search/display)
 // ============================================
 
-export function flattenPlugins(ownerDetail: OwnerDetail): FlatPlugin[] {
+export function flattenPlugins(authorDetail: AuthorDetail): FlatPlugin[] {
   const plugins: FlatPlugin[] = [];
 
-  for (const repo of ownerDetail.repos) {
-    const repoPlugins = repo.marketplace?.plugins || [];
-    for (const plugin of repoPlugins) {
+  for (const marketplace of authorDetail.marketplaces) {
+    const marketplacePlugins = marketplace.plugins || [];
+    for (const plugin of marketplacePlugins) {
       plugins.push({
         ...plugin,
-        owner_id: ownerDetail.owner.id,
-        owner_display_name: ownerDetail.owner.display_name,
-        owner_avatar_url: ownerDetail.owner.avatar_url,
-        repo_full_name: repo.full_name,
+        owner_id: authorDetail.author.id,
+        owner_display_name: authorDetail.author.display_name,
+        owner_avatar_url: authorDetail.author.avatar_url,
+        repo_full_name: marketplace.repo_full_name,
+        signals: marketplace.signals,
       });
     }
   }
 
   return plugins;
+}
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+export function isSinglePluginMarketplace(marketplace: Marketplace): boolean {
+  return marketplace.plugins.length === 1;
 }
 
 // ============================================
@@ -39,11 +56,11 @@ export function sortPlugins(
   return [...plugins].sort((a, b) => {
     switch (sortBy) {
       case "stars":
-        return b.signals.stars - a.signals.stars;
+        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
       case "recent":
         return (
-          new Date(b.signals.pushed_at).getTime() -
-          new Date(a.signals.pushed_at).getTime()
+          new Date(b.signals?.pushed_at ?? 0).getTime() -
+          new Date(a.signals?.pushed_at ?? 0).getTime()
         );
       default:
         return 0;
@@ -95,242 +112,399 @@ export function formatBytes(bytes: number | null): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function getCategoryBadgeClass(category: string): string {
-  // Validate category is in CATEGORY_ORDER to avoid arbitrary class names
-  const validCategories = new Set(CATEGORY_ORDER);
-  if (validCategories.has(category as NormalizedCategory)) {
-    return `badge-${category}`;
+// ============================================
+// DYNAMIC CATEGORY SYSTEM
+// ============================================
+
+// Words that should be displayed in full uppercase
+const UPPERCASE_WORDS = new Set([
+  // Common acronyms
+  'ai', 'api', 'aws', 'bdd', 'ci', 'cd', 'cli', 'cms', 'cpu', 'crm', 'css',
+  'csv', 'db', 'ddd', 'dns', 'dsl', 'dx', 'e2e', 'ec2', 'ecs', 'eks', 'elk',
+  'emr', 'erd', 'etl', 'ftp', 'gcp', 'gpu', 'gui', 'hcl', 'hr', 'html', 'http',
+  'https', 'iac', 'id', 'ide', 'io', 'ip', 'it', 'jit', 'js', 'json', 'jwt',
+  'k8s', 'kms', 'kpi', 'llm', 'lsp', 'ml', 'mcp', 'mvc', 'mvp', 'nlp', 'npm',
+  'oauth', 'ocr', 'oop', 'orm', 'os', 'otp', 'pdf', 'php', 'png', 'poc', 'pr',
+  'prd', 'qa', 'rag', 'rds', 'rest', 'rfc', 'rpc', 's3', 'saas', 'sdk', 'seo',
+  'sns', 'soc', 'sop', 'sql', 'sqs', 'sre', 'ssh', 'ssl', 'ssr', 'svg', 'tcp',
+  'tdd', 'tls', 'tui', 'udp', 'ui', 'uri', 'url', 'ux', 'vm', 'vpn', 'vps',
+  'wasm', 'wcag', 'xml', 'yaml',
+]);
+
+// Words with specific capitalization (mixed case, special syntax)
+const SPECIAL_CASE_WORDS: Record<string, string> = {
+  // Operating systems
+  'ios': 'iOS',
+  'macos': 'macOS',
+  'tvos': 'tvOS',
+  'watchos': 'watchOS',
+  'ipados': 'iPadOS',
+  'visionos': 'visionOS',
+  // Databases
+  'mongodb': 'MongoDB',
+  'postgresql': 'PostgreSQL',
+  'mysql': 'MySQL',
+  'mariadb': 'MariaDB',
+  'sqlite': 'SQLite',
+  'dynamodb': 'DynamoDB',
+  'couchdb': 'CouchDB',
+  'timescaledb': 'TimescaleDB',
+  'influxdb': 'InfluxDB',
+  'neo4j': 'Neo4j',
+  'nosql': 'NoSQL',
+  // Languages & runtimes
+  'javascript': 'JavaScript',
+  'typescript': 'TypeScript',
+  'nodejs': 'Node.js',
+  'node.js': 'Node.js',
+  'deno': 'Deno',
+  'golang': 'Go',
+  'csharp': 'C#',
+  'c#': 'C#',
+  'cpp': 'C++',
+  'c++': 'C++',
+  'objc': 'Objective-C',
+  'fsharp': 'F#',
+  'dotnet': '.NET',
+  '.net': '.NET',
+  'aspnet': 'ASP.NET',
+  // Frameworks & libraries
+  'nextjs': 'Next.js',
+  'nuxtjs': 'Nuxt.js',
+  'vuejs': 'Vue.js',
+  'reactjs': 'React.js',
+  'angularjs': 'AngularJS',
+  'expressjs': 'Express.js',
+  'nestjs': 'NestJS',
+  'fastapi': 'FastAPI',
+  'openapi': 'OpenAPI',
+  'graphql': 'GraphQL',
+  'postgrest': 'PostgREST',
+  'grpc': 'gRPC',
+  'websocket': 'WebSocket',
+  'websockets': 'WebSockets',
+  'webrtc': 'WebRTC',
+  'webassembly': 'WebAssembly',
+  'webgl': 'WebGL',
+  'tensorflow': 'TensorFlow',
+  'pytorch': 'PyTorch',
+  'langchain': 'LangChain',
+  'langgraph': 'LangGraph',
+  'tailwindcss': 'Tailwind CSS',
+  'shadcn': 'shadcn/ui',
+  'swiftui': 'SwiftUI',
+  'uikit': 'UIKit',
+  'rxjs': 'RxJS',
+  'typeorm': 'TypeORM',
+  'sqlalchemy': 'SQLAlchemy',
+  // Platforms & services
+  'github': 'GitHub',
+  'gitlab': 'GitLab',
+  'bitbucket': 'Bitbucket',
+  'openai': 'OpenAI',
+  'supabase': 'Supabase',
+  'firebase': 'Firebase',
+  'vercel': 'Vercel',
+  'netlify': 'Netlify',
+  'cloudflare': 'Cloudflare',
+  'elasticsearch': 'Elasticsearch',
+  'opensearch': 'OpenSearch',
+  'chatgpt': 'ChatGPT',
+  'deepmind': 'DeepMind',
+  'dall-e': 'DALL-E',
+  'wordpress': 'WordPress',
+  'hubspot': 'HubSpot',
+  'sendgrid': 'SendGrid',
+  'clickup': 'ClickUp',
+  // DevOps & practices
+  'devops': 'DevOps',
+  'devsecops': 'DevSecOps',
+  'mlops': 'MLOps',
+  'gitops': 'GitOps',
+  'finops': 'FinOps',
+  'aiops': 'AIOps',
+  'dataops': 'DataOps',
+  'argocd': 'ArgoCD',
+  'circleci': 'CircleCI',
+  // Tools
+  'vscode': 'VS Code',
+  'neovim': 'Neovim',
+  'intellij': 'IntelliJ',
+  'jetbrains': 'JetBrains',
+  'xcode': 'Xcode',
+  'cocoapods': 'CocoaPods',
+  'webpack': 'webpack',
+  'rollup': 'Rollup',
+  'esbuild': 'esbuild',
+  'pnpm': 'pnpm',
+  // Testing
+  'pytest': 'pytest',
+  'vitest': 'Vitest',
+  'jest': 'Jest',
+  'rspec': 'RSpec',
+  'junit': 'JUnit',
+  'testng': 'TestNG',
+  'cypress': 'Cypress',
+  'playwright': 'Playwright',
+  // Claude-specific
+  'claude.md': 'CLAUDE.md',
+  // Other
+  'oauth2': 'OAuth 2.0',
+  'jsonschema': 'JSON Schema',
+  'i18n': 'i18n',
+  'a11y': 'a11y',
+  'oauth': 'OAuth',
+};
+
+/**
+ * Format a category to proper display case
+ * Handles acronyms (AI, API), mixed case (iOS, GraphQL), and title case
+ * Splits on hyphens, underscores, and periods
+ */
+export function formatCategoryDisplay(category: Category): string {
+  if (!category) return '';
+
+  // Check full match first (handles special cases like "node.js", "claude.md")
+  const lowerFull = category.toLowerCase();
+  if (SPECIAL_CASE_WORDS[lowerFull]) {
+    return SPECIAL_CASE_WORDS[lowerFull];
   }
-  return "badge-development"; // fallback
+
+  // Split on hyphens, underscores, and periods
+  return category
+    .split(/[-_.]/)
+    .filter(word => word.length > 0) // Remove empty strings from consecutive separators
+    .map(word => {
+      const lower = word.toLowerCase();
+      // Check special cases first
+      if (SPECIAL_CASE_WORDS[lower]) {
+        return SPECIAL_CASE_WORDS[lower];
+      }
+      // Then check uppercase acronyms
+      if (UPPERCASE_WORDS.has(lower)) {
+        return word.toUpperCase();
+      }
+      // Default to title case
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+}
+
+// Alias for formatCategoryDisplay
+export function getCategoryDisplay(category: Category): string {
+  return formatCategoryDisplay(category);
+}
+
+// Alias for getCategoryDisplay
+export function getCategoryDisplayName(category: Category): string {
+  return formatCategoryDisplay(category);
+}
+
+// Badge color palette for hash-based assignment
+const BADGE_COLORS = [
+  'badge-purple',
+  'badge-blue',
+  'badge-orange',
+  'badge-green',
+  'badge-cyan',
+  'badge-yellow',
+  'badge-pink',
+  'badge-indigo',
+  'badge-teal',
+  'badge-rose',
+  'badge-red',
+  'badge-gray',
+];
+
+/**
+ * Get a badge class for a category using hash-based color selection
+ * This ensures consistent colors for the same category across the app
+ */
+export function getCategoryBadgeClass(category: Category): string {
+  if (!category) return 'badge-gray';
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) {
+    hash = ((hash << 5) - hash) + category.charCodeAt(i);
+  }
+  // Double-modulo pattern for guaranteed non-negative index (handles bit-shift overflow)
+  const index = ((hash % BADGE_COLORS.length) + BADGE_COLORS.length) % BADGE_COLORS.length;
+  return BADGE_COLORS[index];
 }
 
 // ============================================
-// CATEGORY NORMALIZATION
+// MARKETPLACE SORTING
 // ============================================
 
-// Non-obvious category aliases (case variations handled by normalizeCategory)
-const CATEGORY_ALIASES: Record<string, string> = {
-  // Development aliases
-  "developer-tools": "development",
-  "development-tools": "development",
-  "development-engineering": "development",
-  "development-utilities": "development",
-  "development-workflow": "development",
-  "development-skills": "development",
-  "coding": "development",
-  "programming": "development",
+export function sortMarketplaces(
+  marketplaces: BrowseMarketplace[],
+  sortBy: MarketplaceSortOption
+): BrowseMarketplace[] {
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-  // DevOps aliases
-  "automation-devops": "devops",
-  "deployment": "devops",
-  "cicd": "devops",
-  "ci-cd": "devops",
+  return [...marketplaces].sort((a, b) => {
+    switch (sortBy) {
+      case "popular":
+        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
 
-  // AI/ML aliases
-  "ai": "ai-ml",
-  "ai-agents": "ai-ml",
-  "ai-agency": "ai-ml",
-  "agents": "ai-ml",
-  "machine-learning": "ai-ml",
-  "personalities": "ai-ml",
+      case "trending": {
+        // Trending: pushed within last 7 days, sorted by stars
+        const aTime = new Date(a.signals?.pushed_at ?? 0).getTime();
+        const bTime = new Date(b.signals?.pushed_at ?? 0).getTime();
+        const aRecent = aTime > sevenDaysAgo;
+        const bRecent = bTime > sevenDaysAgo;
 
-  // Productivity aliases
-  "productivity-organization": "productivity",
+        // Recent items first
+        if (aRecent !== bRecent) return bRecent ? 1 : -1;
 
-  // Automation aliases
-  "workflows": "automation",
-  "workflow": "automation",
-  "workflow-orchestration": "automation",
-  "orchestration": "automation",
+        // Within same recency tier, sort by stars
+        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
+      }
 
-  // Testing aliases
-  "code-quality-testing": "testing",
-  "testing-qa": "testing",
-  "qa": "testing",
+      case "recent":
+        return (
+          new Date(b.signals?.pushed_at ?? 0).getTime() -
+          new Date(a.signals?.pushed_at ?? 0).getTime()
+        );
 
-  // Quality aliases
-  "code-quality": "quality",
-  "code-review": "quality",
-
-  // Security aliases
-  "security-compliance-legal": "security",
-  "security-testing": "security",
-
-  // Database aliases
-  "databases": "database",
-
-  // Documentation aliases
-  "docs": "documentation",
-
-  // API aliases
-  "api-development": "api",
-
-  // Design aliases
-  "design-ux": "design",
-  "ui-design": "design",
-  "ux-ui": "design",
-  "ui-development": "design",
-
-  // Business aliases
-  "business-sales": "business",
-  "business-tools": "business",
-  "business-marketing": "business",
-  "finance": "business",
-  "payments": "business",
-  "ecommerce": "business",
-
-  // Marketing aliases
-  "marketing-growth": "marketing",
-
-  // Infrastructure aliases
-  "operations": "infrastructure",
-  "cloud": "infrastructure",
-  "cloud-infrastructure": "infrastructure",
-  "monitoring": "infrastructure",
-
-  // Languages aliases
-  "language": "languages",
-
-  // Utilities aliases
-  "tools": "utilities",
-  "utility": "utilities",
-  "tooling": "utilities",
-  "skill-enhancers": "utilities",
-
-  // Integration aliases
-  "integrations": "integration",
-  "mcp": "integration",
-  "mcp-servers": "integration",
-  "mcp-integrations": "integration",
-
-  // Learning aliases
-  "education": "learning",
-
-  // Git aliases
-  "git-workflow": "git",
-  "git-operations": "git",
-  "version-control": "git",
-
-  // Frameworks aliases
-  "framework": "frameworks",
-};
-
-// Ordered list of categories for display
-export const CATEGORY_ORDER = [
-  "development",
-  "ai-ml",
-  "productivity",
-  "automation",
-  "devops",
-  "testing",
-  "quality",
-  "security",
-  "database",
-  "api",
-  "infrastructure",
-  "integration",
-  "design",
-  "documentation",
-  "git",
-  "frameworks",
-  "languages",
-  "utilities",
-  "business",
-  "marketing",
-  "learning",
-  "uncategorized",
-] as const;
-
-export type NormalizedCategory = typeof CATEGORY_ORDER[number];
-
-// Display names for categories
-const CATEGORY_DISPLAY_NAMES: Record<NormalizedCategory, string> = {
-  development: "Development",
-  "ai-ml": "AI & Machine Learning",
-  productivity: "Productivity",
-  automation: "Automation & Workflows",
-  devops: "DevOps",
-  testing: "Testing",
-  quality: "Code Quality",
-  security: "Security",
-  database: "Database",
-  api: "API",
-  infrastructure: "Infrastructure",
-  integration: "Integrations",
-  design: "Design",
-  documentation: "Documentation",
-  git: "Git & Version Control",
-  frameworks: "Frameworks",
-  languages: "Languages",
-  utilities: "Utilities",
-  business: "Business",
-  marketing: "Marketing",
-  learning: "Learning",
-  uncategorized: "Other",
-};
-
-export function normalizeCategory(category: string | null | undefined): string {
-  if (!category) return "uncategorized";
-
-  // Normalize: lowercase, trim, replace spaces/underscores with hyphens
-  const normalized = category.toLowerCase().trim().replace(/[\s_]+/g, "-");
-
-  // Remove special characters like commas, ampersands, slashes
-  const cleaned = normalized.replace(/[,&/]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-
-  // Check if it's already a valid category
-  if (CATEGORY_ORDER.includes(cleaned as NormalizedCategory)) {
-    return cleaned;
-  }
-
-  // Check aliases
-  return CATEGORY_ALIASES[cleaned] || "uncategorized";
+      default: {
+        // Exhaustiveness check - will cause compile error if new sort option is added
+        const _exhaustiveCheck: never = sortBy;
+        return 0;
+      }
+    }
+  });
 }
 
-export function getCategoryDisplayName(category: string): string {
-  if (CATEGORY_ORDER.includes(category as NormalizedCategory)) {
-    return CATEGORY_DISPLAY_NAMES[category as NormalizedCategory];
-  }
-  return category;
+// ============================================
+// PLUGIN COMPONENT UTILITIES
+// ============================================
+
+/**
+ * Categorize a file path by its component type
+ */
+export function getComponentType(path: string): ComponentType | null {
+  if (path.includes('/agents/') && path.endsWith('.md')) return 'agent';
+  if (path.includes('/commands/') && path.endsWith('.md')) return 'command';
+  if (path.includes('/skills/') && path.endsWith('.md')) return 'skill';
+  if (path.endsWith('/SKILL.md') || path === 'SKILL.md') return 'skill';
+  if (path.includes('/hooks/')) return 'hook';
+  return null;
 }
 
-export interface CategoryGroup {
-  category: NormalizedCategory;
-  displayName: string;
-  plugins: BrowsePlugin[];
+/**
+ * Extract display name from file path
+ */
+export function getComponentName(path: string, type: ComponentType): string {
+  const filename = path.split('/').pop() || path;
+
+  switch (type) {
+    case 'agent':
+    case 'command':
+    case 'skill':
+      // Remove .md extension
+      return filename.replace(/\.md$/i, '');
+    case 'hook':
+      // Keep full filename for hooks (may include extension like .ts, .js)
+      return filename;
+    default:
+      return filename;
+  }
 }
 
-export function groupPluginsByCategory(plugins: BrowsePlugin[]): CategoryGroup[] {
-  const groups = new Map<string, BrowsePlugin[]>();
-
-  // Group plugins by normalized category
-  for (const plugin of plugins) {
-    const normalizedCat = normalizeCategory(plugin.category);
-    if (!groups.has(normalizedCat)) {
-      groups.set(normalizedCat, []);
-    }
-    const categoryPlugins = groups.get(normalizedCat);
-    if (categoryPlugins) {
-      categoryPlugins.push(plugin);
-    }
+/**
+ * Check if a file belongs to a plugin based on its source path
+ * Handles root source ("./") and .claude-plugin/ prefix correctly
+ */
+export function isFileInPlugin(filePath: string, pluginSource: PluginSource): boolean {
+  // Object sources (GitHub, URL) have no local files - they're external plugins
+  if (typeof pluginSource !== 'string') {
+    return false;
   }
 
-  // Sort plugins within each group by stars
-  for (const [, categoryPlugins] of groups) {
-    categoryPlugins.sort((a, b) => (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0));
+  // Normalize plugin source - remove leading ./ and trailing /
+  const normalizedSource = pluginSource.replace(/^\.\//, '').replace(/\/$/, '');
+
+  // Root source means all files belong to this plugin
+  if (normalizedSource === '.' || normalizedSource === '') {
+    return true;
   }
 
-  // Convert to array and sort by CATEGORY_ORDER
-  const result: CategoryGroup[] = [];
-  for (const category of CATEGORY_ORDER) {
-    const categoryPlugins = groups.get(category);
-    if (categoryPlugins && categoryPlugins.length > 0) {
-      result.push({
-        category,
-        displayName: getCategoryDisplayName(category),
-        plugins: categoryPlugins,
-      });
+  // Check both direct path and .claude-plugin/ prefixed path
+  // Some repos have plugin files at root (stripe), others inside .claude-plugin/ (vercel)
+  return (
+    filePath.startsWith(normalizedSource + '/') ||
+    filePath === normalizedSource ||
+    filePath.startsWith('.claude-plugin/' + normalizedSource + '/') ||
+    filePath === '.claude-plugin/' + normalizedSource
+  );
+}
+
+/**
+ * Organize marketplace files by plugin and component type
+ */
+export function organizePluginComponents(marketplace: Marketplace): PluginWithComponents[] {
+  const result: PluginWithComponents[] = [];
+
+  for (const plugin of marketplace.plugins) {
+    const components: PluginWithComponents['components'] = {
+      agents: [],
+      commands: [],
+      skills: [],
+      hooks: [],
+    };
+
+    // Get all file paths that belong to this plugin
+    const filePaths = Object.keys(marketplace.files || {});
+
+    for (const filePath of filePaths) {
+      // Skip config files (marketplace.json, plugin.json, README)
+      if (filePath.endsWith('/marketplace.json') || filePath.endsWith('/plugin.json')) continue;
+      if (filePath === '.claude-plugin/marketplace.json') continue;
+
+      // Check if file belongs to this plugin
+      if (!isFileInPlugin(filePath, plugin.source)) continue;
+
+      // Determine component type
+      const componentType = getComponentType(filePath);
+      if (!componentType) continue;
+
+      // Find file size from file_tree
+      const treeEntry = marketplace.file_tree.find(e => e.path === filePath);
+
+      const component: PluginComponent = {
+        type: componentType,
+        name: getComponentName(filePath, componentType),
+        path: filePath,
+        size: treeEntry?.size ?? null,
+      };
+
+      // Add to appropriate array
+      switch (componentType) {
+        case 'agent':
+          components.agents.push(component);
+          break;
+        case 'command':
+          components.commands.push(component);
+          break;
+        case 'skill':
+          components.skills.push(component);
+          break;
+        case 'hook':
+          components.hooks.push(component);
+          break;
+      }
     }
+
+    // Sort each component array by name
+    components.agents.sort((a, b) => a.name.localeCompare(b.name));
+    components.commands.sort((a, b) => a.name.localeCompare(b.name));
+    components.skills.sort((a, b) => a.name.localeCompare(b.name));
+    components.hooks.sort((a, b) => a.name.localeCompare(b.name));
+
+    result.push({
+      ...plugin,
+      components,
+    });
   }
 
   return result;

@@ -9,7 +9,7 @@ const OUTPUT_PATH = './data/03-trees.json';
  * Fetch full file trees for all repos
  * Uses caching by commit SHA (immutable, never expires)
  */
-export async function fetchTrees() {
+export async function fetchTrees({ onProgress } = {}) {
   log('Starting file tree fetch...');
 
   const { repos: allRepos } = loadJson(INPUT_PATH);
@@ -30,6 +30,7 @@ export async function fetchTrees() {
     const [owner, repo] = full_name.split('/');
 
     log(`[${i + 1}/${repos.length}] Fetching tree for ${full_name}`);
+    onProgress?.(i + 1, repos.length);
 
     // Try to get from cache using SHA (immutable)
     if (default_branch_sha) {
