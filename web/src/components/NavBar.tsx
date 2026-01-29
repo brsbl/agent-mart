@@ -25,7 +25,7 @@ export function NavBar() {
   const isHomePage = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-[#F5F5F1]/30 dark:bg-[#1A1A1A]/30 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/30 backdrop-blur-md">
       <div className="relative px-6 py-3">
         {/* Logo - far left */}
         <Link href="/" className="absolute left-6 top-1/2 -translate-y-1/2 hover:opacity-80 transition-opacity">

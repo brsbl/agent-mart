@@ -52,6 +52,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_GITHUB_TOKEN }}
         run: npm run pipeline:dev
 
+      - name: Save signals history
+        uses: actions/cache/save@v4
+        with:
+          path: data/signals-history.json
+          key: signals-history-${{ github.run_number }}
+
       - name: Upload web data
         if: always()
         uses: actions/upload-artifact@v6

@@ -63,7 +63,7 @@ function ThemeToggle() {
 
 export function Footer() {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-[#F5F5F1]/30 dark:bg-[#1A1A1A]/30 backdrop-blur-md py-4">
+    <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/30 backdrop-blur-md py-4">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-foreground-muted">
           <div className="flex items-center gap-4">

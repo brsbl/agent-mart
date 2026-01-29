@@ -3,7 +3,7 @@ import { loadJson, saveJson, log, logError } from '../lib/utils.js';
 
 const DATA_DIR = join(process.cwd(), 'data');
 
-export async function aggregate({ onProgress: _onProgress } = {}) {
+export function aggregate({ onProgress: _onProgress } = {}) {
   log('Loading enriched marketplace data...');
 
   const enrichedRaw = loadJson(join(DATA_DIR, '06-enriched.json'));
