@@ -20,7 +20,7 @@ interface PluginCardInlineProps {
 export function PluginCardInline({ plugin }: PluginCardInlineProps) {
   const categories = plugin.categories ?? [];
   const displayCategories = categories.slice(0, MAX_CATEGORIES);
-  const remainingCount = categories.length - MAX_CATEGORIES;
+  const remainingCount = Math.max(0, categories.length - MAX_CATEGORIES);
 
   return (
     <div className="border border-border rounded-lg bg-card p-4 hover:border-border-hover hover:shadow-sm transition-all">
