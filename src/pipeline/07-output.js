@@ -1,4 +1,4 @@
-import { saveJson, loadJson, ensureDir, log, sanitizeFilename } from '../lib/utils.js';
+import { saveJson, loadJson, ensureDir, log, logError, sanitizeFilename } from '../lib/utils.js';
 
 const INPUT_PATH = './data/06-enriched.json';
 const CATEGORIZED_PATH = './data/marketplaces-categorized.json';
@@ -211,6 +211,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     output();
   } catch (error) {
-    console.error(error);
+    logError('Output error', error);
   }
 }

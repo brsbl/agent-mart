@@ -1,5 +1,5 @@
 import { batchGetRepos } from '../lib/github.js';
-import { saveJson, loadJson, log, applyRepoLimit } from '../lib/utils.js';
+import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
 
 const INPUT_PATH = './data/01-discovered.json';
 const OUTPUT_PATH = './data/02-repos.json';
@@ -88,5 +88,5 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  fetchRepos().catch(console.error);
+  fetchRepos().catch(err => logError('Fetch repos failed', err));
 }

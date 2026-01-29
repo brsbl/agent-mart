@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import {
   Star,
   GitFork,
@@ -34,9 +34,10 @@ import { validateUrlParam } from "@/lib/validation";
 import { DATA_URLS } from "@/lib/constants";
 
 // Format relative time (e.g., "2d ago", "3mo ago")
-function formatRelativeTime(dateString: string | null | undefined): string {
+function formatRelativeTime(dateString?: string | null): string {
   if (!dateString) return "";
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -421,7 +422,7 @@ export default function MarketplaceDetailPage() {
                 <div className="p-6 prose prose-sm dark:prose-invert max-w-none max-h-[48rem] overflow-y-auto scrollbar-auto-hide">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeRaw]}
+                    rehypePlugins={[rehypeSanitize]}
                     components={{
                       img: ({ src, alt, ...props }) => {
                         // Transform relative URLs to GitHub raw URLs

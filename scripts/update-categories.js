@@ -110,7 +110,11 @@ function updateCategories() {
   // Load current categories
   let categoriesData;
   try {
-    categoriesData = JSON.parse(readFileSync(CATEGORIES_PATH, 'utf-8'));
+    if (!existsSync(CATEGORIES_PATH)) {
+      categoriesData = { marketplaces: {}, distribution: {} };
+    } else {
+      categoriesData = JSON.parse(readFileSync(CATEGORIES_PATH, 'utf-8'));
+    }
   } catch (error) {
     console.error(`Error parsing ${CATEGORIES_PATH}: ${error.message}`);
     process.exit(1);
@@ -144,7 +148,7 @@ function updateCategories() {
     distribution[cat] = 0;
   }
   for (const entry of Object.values(categoriesData.marketplaces)) {
-    const cats = Array.isArray(entry) ? entry : entry.categories;
+    const cats = Array.isArray(entry) ? entry : (entry.categories || []);
     for (const cat of cats) {
       distribution[cat] = (distribution[cat] || 0) + 1;
     }

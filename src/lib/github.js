@@ -53,9 +53,7 @@ function validateToken() {
 
   if (!process.env.GITHUB_TOKEN) {
     throw new Error(
-      'GITHUB_TOKEN environment variable is not set. ' +
-      'Please set GITHUB_TOKEN in your .env file or environment. ' +
-      'You can create a token at: https://github.com/settings/tokens'
+      `GITHUB_TOKEN environment variable is not set. Please set GITHUB_TOKEN in your .env file or environment. You can create a token at: https://github.com/settings/tokens`
     );
   }
   _tokenValidated = true;
@@ -299,10 +297,10 @@ export async function batchGetRepos(repos) {
             created_at: repoData.createdAt,
             archived: repoData.isArchived,
             fork: repoData.isFork,
-            language: repoData.primaryLanguage?.name || null,
+            language: repoData.primaryLanguage?.name ?? null,
             license: repoData.licenseInfo ? { spdx_id: repoData.licenseInfo.spdxId, name: repoData.licenseInfo.name } : null,
-            default_branch: repoData.defaultBranchRef?.name || 'main',
-            default_branch_sha: repoData.defaultBranchRef?.target?.oid || null,
+            default_branch: repoData.defaultBranchRef?.name ?? 'main',
+            default_branch_sha: repoData.defaultBranchRef?.target?.oid ?? null,
             owner: { login: repoData.owner.login }
           };
 
@@ -313,11 +311,11 @@ export async function batchGetRepos(repos) {
               login: owner.login,
               avatar_url: owner.avatarUrl,
               html_url: owner.url,
-              name: owner.name || owner.login,
-              bio: owner.bio || owner.description || null,
-              company: owner.company || null,
+              name: owner.name ?? owner.login,
+              bio: owner.bio ?? owner.description ?? null,
+              company: owner.company ?? null,
               type: owner.membersWithRole ? 'Organization' : 'User',
-              followers: owner.followers?.totalCount || owner.membersWithRole?.totalCount || 0
+              followers: owner.followers?.totalCount ?? owner.membersWithRole?.totalCount ?? 0
             };
           }
         }

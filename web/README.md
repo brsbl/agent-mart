@@ -1,5 +1,7 @@
 # Agent Mart Web Frontend
 
+[Back to main README](../README.md)
+
 A Next.js application for browsing the Claude Code plugin marketplace.
 
 ## Tech Stack
@@ -46,6 +48,7 @@ npm run start
 | `npm run build` | Create production build |
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint |
+| `npm test` | Run tests in watch mode |
 
 ## Project Structure
 
@@ -74,13 +77,82 @@ src/
     └── useFetch.ts         # Data fetching hook
 ```
 
-## Data Flow
+---
 
-The frontend fetches static JSON from the pipeline output:
+## Architecture
 
-1. **Index data** - `public/index.json` provides the marketplace overview
-2. **Author data** - `public/authors/<id>.json` provides author details
-3. **Plugin data** - Nested within author JSON files
+### Data Flow
+
+```
+┌──────────────────────┐
+│ web/public/data/     │
+│  ├── index.json      │
+│  ├── categories.json │
+│  ├── marketplaces-   │
+│  │   browse.json     │
+│  ├── plugins-        │
+│  │   browse.json     │
+│  └── authors/*.json  │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│ web/src/lib/data.ts  │
+│  loadMarketplaces()  │
+│  loadCategories()    │
+│  loadAuthorData()    │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│ Server Components    │
+│  ├── page.tsx        │
+│  ├── [author]/       │
+│  └── [marketplace]/  │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│ Client Components    │
+│  ├── MarketplaceCard │
+│  └── CategoryPill    │
+└──────────────────────┘
+```
+
+### Pages
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/` | `app/page.tsx` | Homepage with category filters |
+| `/[author]` | `app/[author]/page.tsx` | Author detail page |
+| `/[author]/[marketplace]` | `app/[author]/[marketplace]/page.tsx` | Marketplace detail |
+
+### Filter System
+
+The homepage implements two-dimensional filtering:
+
+```typescript
+// State
+const [selectedTechStack, setSelectedTechStack] = useState<Set<TechStack>>(new Set());
+const [selectedCapabilities, setSelectedCapabilities] = useState<Set<Capability>>(new Set());
+
+// Filter logic (AND within each dimension)
+const filtered = marketplaces.filter(m => {
+  // Must have ALL selected tech stack
+  for (const tech of selectedTechStack) {
+    if (!m.categories?.techStack?.includes(tech)) return false;
+  }
+  // Must have ALL selected capabilities
+  for (const cap of selectedCapabilities) {
+    if (!m.categories?.capabilities?.includes(cap)) return false;
+  }
+  return true;
+});
+```
+
+Note: Filters are implemented inline in `page.tsx`, not as a separate component.
+
+---
 
 ## Development Notes
 
@@ -107,8 +179,27 @@ Common patterns:
 - Dark mode: `dark:` prefix (if enabled)
 - Hover states: `hover:` prefix
 
+---
+
+## Testing
+
+```bash
+# Run tests in watch mode
+npm test
+
+# Run tests once
+npm run test:ci
+
+# Run with coverage
+npm run test:coverage
+```
+
+See [tests/README.md](../tests/README.md) for more details on test patterns.
+
+---
+
 ## Related Documentation
 
 - [Root README](../README.md) - Project overview
-- [ARCHITECTURE.md](../ARCHITECTURE.md) - Pipeline architecture
-- [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution guidelines
+- [Core Libraries](../src/lib/README.md) - Data schemas and types
+- [Contributing](../CONTRIBUTING.md) - Contribution guidelines

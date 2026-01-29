@@ -1,5 +1,7 @@
 # Pipeline Architecture
 
+[Back to main README](../../README.md)
+
 This document describes the ETL pipeline for Agent Mart, which builds a directory of Claude Code plugins.
 
 ## Overview
