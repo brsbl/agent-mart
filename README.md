@@ -2,7 +2,9 @@
 
 # Agent Mart
 
-A marketplace-first directory builder for Claude Code plugins, skills, and commands. Crawls GitHub for repositories containing Claude Code marketplace definitions, enriches them with metadata, and generates static JSON artifacts.
+A marketplace directory of Claude Code plugins.
+
+**GitHub as the source of truth** - All marketplace data is crawled directly from GitHub repositories, specifically from Claude Code `marketplace.json` files. No manual curation or separate database.
 
 ## Features
 
