@@ -6,7 +6,7 @@ This document describes the ETL pipeline for Agent Mart, which builds a director
 
 ## Overview
 
-Agent Mart is a 7-step ETL (Extract, Transform, Load) pipeline that:
+The pipeline has 9 steps that:
 1. Discovers Claude Code marketplaces on GitHub
 2. Fetches repository and author metadata
 3. Downloads and parses plugin definitions
@@ -30,10 +30,10 @@ GitHub API
                                                │
     ┌──────────────────────────────────────────┘
     ▼
-┌─────────────┐
-│ 07-output   │ ──► web/public/data/index.json
-│             │     web/public/data/authors/*.json
-└─────────────┘     web/public/data/*-browse.json
+┌─────────────┐     ┌───────────────┐     ┌─────────────┐
+│ 07-snapshot │ ──► │ 08-aggregate │ ──► │ 09-output   │ ──► web/public/data/
+│             │     │               │     │             │     index.json, etc.
+└─────────────┘     └───────────────┘     └─────────────┘
 ```
 
 ## Directory Structure
@@ -54,7 +54,9 @@ src/
     ├── 04-fetch-files.js
     ├── 05-parse.js
     ├── 06-enrich.js
-    └── 07-output.js
+    ├── 07-snapshot.js
+    ├── 08-aggregate.js
+    └── 09-output.js
 
 data/                  # Intermediate files (gitignored)
 ├── .cache/            # SHA-based cache
@@ -169,14 +171,32 @@ Builds the author-centric data model:
 - Generates install commands
 - Calculates stats
 
-### Step 7: Output
-**File:** `07-output.js`
+### Step 7: Snapshot
+**File:** `07-snapshot.js`
+
+Records current star/fork counts to `data/signals-history.json` for trending score calculation:
+- Loads current marketplace data
+- Skips if already recorded today
+- Records snapshot for each repository
+- Prunes entries older than 90 days
+
+### Step 8: Aggregate
+**File:** `08-aggregate.js`
+
+Aggregates categories from plugins for each marketplace:
+- Collects unique categories from all plugins
+- Generates category statistics
+- Outputs `marketplaces-categorized.json` and `category-stats.json`
+
+### Step 9: Output
+**File:** `09-output.js`
 
 Generates public JSON files:
 - `index.json` - Author list with stats
 - `authors/*.json` - Full author detail
 - `plugins-browse.json` - Lightweight plugin list for search
-- `marketplaces-browse.json` - Lightweight marketplace list
+- `marketplaces-browse.json` - Lightweight marketplace list with trending scores
+- `categories.json` - Category list with usage counts
 
 ## Category Normalization
 
@@ -213,7 +233,9 @@ npm run pipeline
 
 # Individual steps
 node src/pipeline/06-enrich.js
-node src/pipeline/07-output.js
+node src/pipeline/07-snapshot.js
+node src/pipeline/08-aggregate.js
+node src/pipeline/09-output.js
 ```
 
 Requires `GITHUB_TOKEN` environment variable.

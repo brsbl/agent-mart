@@ -167,7 +167,14 @@ export interface BrowseMarketplace {
   author_display_name: string;
   author_avatar_url: string;
   repo_full_name: string;
-  signals: { stars: number; forks: number; pushed_at: string | null };
+  signals: {
+    stars: number;
+    forks: number;
+    pushed_at: string | null;
+    trending_score?: number;
+    stars_gained_7d?: number;
+    stars_velocity?: number;
+  };
   plugins_count: number;
   first_plugin_name: string | null;
   keywords: string[];

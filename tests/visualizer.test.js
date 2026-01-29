@@ -143,7 +143,7 @@ describe('generatePipelineHtml', () => {
       startTime: new Date('2026-01-20T10:00:00Z'),
       stages: [
         {
-          id: '07-output',
+          id: '09-output',
           name: 'Output',
           status: 'completed',
           metrics: {

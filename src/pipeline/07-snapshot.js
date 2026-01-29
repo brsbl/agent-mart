@@ -64,6 +64,26 @@ export function snapshot({ onProgress: _onProgress } = {}) {
     }
   }
 
+  // Prune orphaned repositories (no longer in enriched data)
+  const currentRepos = new Set();
+  for (const author of Object.values(enriched.authors || {})) {
+    for (const marketplace of author.marketplaces || []) {
+      if (marketplace.repo_full_name) {
+        currentRepos.add(marketplace.repo_full_name);
+      }
+    }
+  }
+  let prunedCount = 0;
+  for (const repo of Object.keys(history.repositories)) {
+    if (!currentRepos.has(repo)) {
+      delete history.repositories[repo];
+      prunedCount++;
+    }
+  }
+  if (prunedCount > 0) {
+    log(`Pruned ${prunedCount} orphaned repositories from history`);
+  }
+
   // Update metadata
   updateMeta(history, today);
 

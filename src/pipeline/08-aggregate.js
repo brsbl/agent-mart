@@ -3,7 +3,7 @@ import { loadJson, saveJson, log, logError } from '../lib/utils.js';
 
 const DATA_DIR = join(process.cwd(), 'data');
 
-export async function categorize({ onProgress: _onProgress } = {}) {
+export async function aggregate({ onProgress: _onProgress } = {}) {
   log('Loading enriched marketplace data...');
 
   const enrichedRaw = loadJson(join(DATA_DIR, '06-enriched.json'));
@@ -63,7 +63,6 @@ export async function categorize({ onProgress: _onProgress } = {}) {
   // Write outputs
   saveJson(join(DATA_DIR, 'marketplaces-categorized.json'), categorized);
   saveJson(join(DATA_DIR, 'category-stats.json'), stats);
-  saveJson(join(DATA_DIR, 'category-taxonomy.json'), { categories: {} });
 
   log('Categorization complete!');
   log(`  Total marketplaces: ${stats.totalMarketplaces}`);
@@ -80,7 +79,6 @@ export async function categorize({ onProgress: _onProgress } = {}) {
   log('Output files:');
   log('  - data/marketplaces-categorized.json');
   log('  - data/category-stats.json');
-  log('  - data/category-taxonomy.json');
 
   // Return categorized data for visualizer metrics
   return categorized;
@@ -88,5 +86,5 @@ export async function categorize({ onProgress: _onProgress } = {}) {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  categorize().catch(err => logError('Categorization failed', err));
+  aggregate().catch(err => logError('Aggregation failed', err));
 }

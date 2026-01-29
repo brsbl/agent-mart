@@ -44,7 +44,11 @@ export function calculateTrendingScore(repoHistory, currentStars) {
     const daysDiff = (currDate.getTime() - prevDate.getTime()) / (24 * 60 * 60 * 1000);
 
     if (daysDiff > 0) {
-      const gain = sortedSnapshots[i].stars - sortedSnapshots[i - 1].stars;
+      const currStars = sortedSnapshots[i].stars ?? 0;
+      const prevStars = sortedSnapshots[i - 1].stars ?? 0;
+      const gain = currStars - prevStars;
+      // Skip if values are not valid numbers
+      if (!Number.isFinite(gain)) continue;
       // Normalize to weekly equivalent
       const weeklyEquivalent = (gain / daysDiff) * 7;
       weeklyGains.push(weeklyEquivalent);
@@ -64,20 +68,21 @@ export function calculateTrendingScore(repoHistory, currentStars) {
   // Calculate mean of weekly gains
   const mean = weeklyGains.reduce((sum, g) => sum + g, 0) / weeklyGains.length;
 
-  // Calculate variance and standard deviation
-  const variance = weeklyGains.reduce((sum, g) => sum + Math.pow(g - mean, 2), 0) / weeklyGains.length;
+  // Calculate variance and standard deviation (using sample std dev for small datasets)
+  const divisor = weeklyGains.length > 1 ? weeklyGains.length - 1 : weeklyGains.length;
+  const variance = weeklyGains.reduce((sum, g) => sum + Math.pow(g - mean, 2), 0) / divisor;
   const stdDev = Math.sqrt(variance);
 
   // Find stars gained in the last 7 days
   // Look for the snapshot closest to (but not after) 7 days ago
   const sevenDaysAgoMs = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  const sevenDaysAgoDate = new Date(sevenDaysAgoMs).toISOString().split('T')[0];
 
   // Find the most recent snapshot that is at least 7 days old
   // or the oldest snapshot if none are 7+ days old
   let referenceSnapshot = null;
   for (let i = sortedSnapshots.length - 1; i >= 0; i--) {
-    if (sortedSnapshots[i].date <= sevenDaysAgoDate) {
+    const snapshotMs = new Date(sortedSnapshots[i].date).getTime();
+    if (snapshotMs <= sevenDaysAgoMs) {
       referenceSnapshot = sortedSnapshots[i];
       break;
     }
