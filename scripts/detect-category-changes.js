@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 import { readFileSync, existsSync } from 'fs';
+import { log, logError } from '../src/lib/utils.js';
 
 const CATEGORIES_PATH = './data/marketplace-categories.json';
 const ENRICHED_PATH = './data/06-enriched.json';
@@ -27,7 +28,7 @@ async function detectChanges() {
 
   // Load latest enriched data
   if (!existsSync(ENRICHED_PATH)) {
-    console.log('No enriched data found. Run the pipeline first.');
+    log('No enriched data found. Run the pipeline first.');
     process.exit(1);
   }
   const enrichedData = JSON.parse(readFileSync(ENRICHED_PATH, 'utf-8'));
@@ -86,24 +87,24 @@ async function detectChanges() {
   // Output results
   const hasChanges = needsUpdate.length > 0;
 
-  console.log(`\nCategory Change Detection Results:`);
-  console.log(`  New marketplaces: ${newMarketplaces.length}`);
-  console.log(`  Changed marketplaces: ${changedMarketplaces.length}`);
-  console.log(`  Total needing update: ${needsUpdate.length}`);
+  log(`\nCategory Change Detection Results:`);
+  log(`  New marketplaces: ${newMarketplaces.length}`);
+  log(`  Changed marketplaces: ${changedMarketplaces.length}`);
+  log(`  Total needing update: ${needsUpdate.length}`);
 
   if (newMarketplaces.length > 0) {
-    console.log(`\nNew marketplaces:`);
-    newMarketplaces.slice(0, 10).forEach(r => console.log(`  - ${r}`));
+    log(`\nNew marketplaces:`);
+    newMarketplaces.slice(0, 10).forEach(r => log(`  - ${r}`));
     if (newMarketplaces.length > 10) {
-      console.log(`  ... and ${newMarketplaces.length - 10} more`);
+      log(`  ... and ${newMarketplaces.length - 10} more`);
     }
   }
 
   if (changedMarketplaces.length > 0) {
-    console.log(`\nChanged marketplaces:`);
-    changedMarketplaces.slice(0, 10).forEach(r => console.log(`  - ${r}`));
+    log(`\nChanged marketplaces:`);
+    changedMarketplaces.slice(0, 10).forEach(r => log(`  - ${r}`));
     if (changedMarketplaces.length > 10) {
-      console.log(`  ... and ${changedMarketplaces.length - 10} more`);
+      log(`  ... and ${changedMarketplaces.length - 10} more`);
     }
   }
 
@@ -124,4 +125,4 @@ async function detectChanges() {
 }
 
 // Run
-detectChanges().catch(console.error);
+detectChanges().catch(err => logError('Category detection failed', err));

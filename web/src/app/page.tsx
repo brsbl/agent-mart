@@ -31,7 +31,11 @@ function HomePageContent() {
   const categoriesParam = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
   // Categories are now dynamic strings from data
   const selectedCategories = categoriesParam as Category[];
-  const sortBy = (searchParams.get("sort") as MarketplaceSortOption) || "recent";
+  const validSorts: MarketplaceSortOption[] = ["popular", "trending", "recent"];
+  const rawSort = searchParams.get("sort");
+  const sortBy: MarketplaceSortOption = validSorts.includes(rawSort as MarketplaceSortOption)
+    ? (rawSort as MarketplaceSortOption)
+    : "recent";
   const sortDirection = (searchParams.get("dir") as "asc" | "desc") || "desc";
 
   // State for pagination
