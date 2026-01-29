@@ -43,7 +43,7 @@ export function PluginCard({ plugin }: PluginCardProps) {
   };
 
   return (
-    <div className="card p-4 h-full flex flex-col">
+    <div className="bg-card border border-border rounded-md shadow-sm hover:border-border-hover hover:shadow-md transition-all p-4 h-full flex flex-col">
       {/* Header: Avatar + Name */}
       <div className="flex items-start gap-3 mb-3">
         <Image
@@ -55,22 +55,22 @@ export function PluginCard({ plugin }: PluginCardProps) {
           className="rounded-full flex-shrink-0"
         />
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-[var(--foreground)] truncate">
+          <h3 className="font-semibold text-foreground truncate">
             {plugin.name}
           </h3>
-          <p className="text-xs text-[var(--foreground-muted)] truncate">
+          <p className="text-xs text-foreground-muted truncate">
             by @{ownerId}
           </p>
         </div>
       </div>
 
       {/* Description */}
-      <p className="text-sm text-[var(--foreground-secondary)] line-clamp-2 mb-3 flex-1">
+      <p className="text-sm text-foreground-secondary line-clamp-2 mb-3 flex-1">
         {plugin.description || "No description"}
       </p>
 
       {/* Stats */}
-      <div className="flex items-center gap-4 text-sm text-[var(--foreground-secondary)] mb-3">
+      <div className="flex items-center gap-4 text-sm text-foreground-secondary mb-3">
         <span className="flex items-center gap-1">
           <Star className="w-4 h-4" aria-hidden="true" />
           {formatNumber(plugin.signals.stars)}
@@ -86,19 +86,19 @@ export function PluginCard({ plugin }: PluginCardProps) {
             </span>
           ))}
           {remainingCount > 0 && (
-            <span className="text-xs text-[var(--foreground-muted)]">
+            <span className="text-xs text-foreground-muted">
               +{remainingCount}
             </span>
           )}
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-secondary)] rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]"
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-foreground-muted hover:text-foreground hover:bg-background-secondary rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-background"
           aria-label={copied ? "Copied!" : "Copy install command"}
         >
           {copied ? (
             <>
-              <Check className="w-3 h-3 text-[var(--success)]" aria-hidden="true" />
+              <Check className="w-3 h-3 text-success" aria-hidden="true" />
               Copied
             </>
           ) : (
@@ -120,7 +120,7 @@ export function PluginCardCompact({ plugin }: PluginCardProps) {
   const ownerAvatarUrl = getOwnerAvatarUrl(plugin);
 
   return (
-    <div className="card p-3 flex items-center gap-3 min-w-[280px]">
+    <div className="bg-card border border-border rounded-md shadow-sm hover:border-border-hover hover:shadow-md transition-all p-3 flex items-center gap-3 min-w-[280px]">
       <Image
         src={ownerAvatarUrl}
         alt={ownerDisplayName}
@@ -130,14 +130,14 @@ export function PluginCardCompact({ plugin }: PluginCardProps) {
         className="rounded-full flex-shrink-0"
       />
       <div className="min-w-0 flex-1">
-        <h3 className="font-medium text-sm text-[var(--foreground)] truncate">
+        <h3 className="font-medium text-sm text-foreground truncate">
           {plugin.name}
         </h3>
-        <p className="text-xs text-[var(--foreground-muted)] truncate">
+        <p className="text-xs text-foreground-muted truncate">
           {plugin.description || "No description"}
         </p>
       </div>
-      <div className="flex items-center gap-1 text-xs text-[var(--foreground-muted)] flex-shrink-0">
+      <div className="flex items-center gap-1 text-xs text-foreground-muted flex-shrink-0">
         <Star className="w-3 h-3" aria-hidden="true" />
         {formatNumber(plugin.signals.stars)}
       </div>
