@@ -8,20 +8,15 @@ Discover and install plugins for [Claude Code](https://docs.anthropic.com/en/doc
 
 ## Browse Plugins
 
-Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub. Browse by category, search by keyword, or sort by popularity and recency.
+Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub. Search by name, author, or keyword. Filter by category. Sort by most popular, trending, or recently updated.
 
 ## Install a Plugin
 
-Copy the install command from any plugin page:
+Copy the install commands from any plugin page and run them in Claude Code:
 
-```bash
-claude mcp add-json <plugin-name> '<json-config>'
 ```
-
-Or install directly from a GitHub repository:
-
-```bash
-claude mcp add-from-claude-plugin https://github.com/<owner>/<repo>
+/plugin marketplace add <owner>/<repo>
+/plugin install <plugin-name>@<marketplace-name>
 ```
 
 ## How It Works
