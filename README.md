@@ -24,27 +24,6 @@ Or install directly from a GitHub repository:
 claude mcp add-from-claude-plugin https://github.com/<owner>/<repo>
 ```
 
-## Publish Your Plugin
-
-Add a `marketplace.json` file to your repository's `.claude-plugin/` directory:
-
-```json
-{
-  "$schema": "https://agentmart.dev/schemas/marketplace.v1.json",
-  "plugins": [
-    {
-      "name": "my-plugin",
-      "description": "What your plugin does",
-      "source": "./"
-    }
-  ]
-}
-```
-
-Your plugin will appear in Agent Mart once it's indexed.
-
-See the [Claude Code plugin documentation](https://docs.anthropic.com/en/docs/claude-code/plugins) for details on plugin structure.
-
 ## How It Works
 
 Agent Mart crawls GitHub repositories for `marketplace.json` files and builds a searchable directory. All data comes directly from GitHub - no manual curation or separate database.
