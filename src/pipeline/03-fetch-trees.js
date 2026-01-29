@@ -1,6 +1,6 @@
 import { getTree, safeApiCall } from '../lib/github.js';
 import { getCached, setCache } from '../lib/cache.js';
-import { saveJson, loadJson, log, applyRepoLimit } from '../lib/utils.js';
+import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
 
 const INPUT_PATH = './data/02-repos.json';
 const OUTPUT_PATH = './data/03-trees.json';
@@ -104,5 +104,5 @@ export async function fetchTrees({ onProgress } = {}) {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  fetchTrees().catch(console.error);
+  fetchTrees().catch(err => logError('Fetch trees failed', err));
 }

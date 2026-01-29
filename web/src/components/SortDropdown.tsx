@@ -24,7 +24,7 @@ export function SortDropdown({
   onSortFieldChange,
   onSortDirectionChange,
 }: SortDropdownProps) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const currentOption = SORT_OPTIONS.find((opt) => opt.value === sortField);
   const ArrowIcon = sortDirection === "asc" ? ArrowUp : ArrowDown;
 
@@ -34,7 +34,7 @@ export function SortDropdown({
 
   const handleSelect = (value: MarketplaceSortOption) => {
     onSortFieldChange(value);
-    setOpen(false);
+    setIsOpen(false);
   };
 
   return (
@@ -50,14 +50,14 @@ export function SortDropdown({
       </button>
 
       {/* Field dropdown using Popover */}
-      <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
         <Popover.Trigger asChild>
           <button
             type="button"
             className="h-[42px] flex items-center gap-2 px-3 border border-gray-200 dark:border-gray-700 rounded-r-lg text-sm bg-white dark:bg-gray-800 cursor-pointer transition-colors min-w-[140px] hover:border-gray-300 dark:hover:border-gray-600"
             aria-label="Sort by"
             aria-haspopup="listbox"
-            aria-expanded={open}
+            aria-expanded={isOpen}
           >
             <span className="text-gray-900 dark:text-gray-100">{currentOption?.label}</span>
             <ChevronDown size={16} className="ml-auto text-gray-400" />

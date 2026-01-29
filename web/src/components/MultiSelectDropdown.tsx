@@ -26,16 +26,16 @@ export function MultiSelectDropdown({
   onClear,
   placeholder,
 }: MultiSelectDropdownProps) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Focus input when popover opens
   useEffect(() => {
-    if (open && inputRef.current) {
+    if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [open]);
+  }, [isOpen]);
 
   const filteredOptions = useMemo(() => {
     if (!search.trim()) return options;
@@ -51,14 +51,14 @@ export function MultiSelectDropdown({
     : `${selectedOptions.length} selected`;
 
   return (
-    <Popover.Root open={open} onOpenChange={(isOpen) => {
-      setOpen(isOpen);
-      if (!isOpen) setSearch("");
+    <Popover.Root open={isOpen} onOpenChange={(newOpen) => {
+      setIsOpen(newOpen);
+      if (!newOpen) setSearch("");
     }}>
       <Popover.Trigger asChild>
-        <div className={`relative transition-all duration-150 ${open ? "w-[260px]" : "w-auto"}`}>
+        <div className={`relative transition-all duration-150 ${isOpen ? "w-[260px]" : "w-auto"}`}>
           {/* When closed: show pill button */}
-          {!open && (
+          {!isOpen && (
             <button
               type="button"
               className="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white hover:border-gray-300 whitespace-nowrap"
@@ -71,7 +71,7 @@ export function MultiSelectDropdown({
             </button>
           )}
           {/* When open: show search input expanded */}
-          {open && (
+          {isOpen && (
             <div className="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white w-full">
               <input
                 ref={inputRef}

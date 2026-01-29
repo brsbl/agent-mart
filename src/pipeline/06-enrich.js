@@ -1,4 +1,4 @@
-import { saveJson, loadJson, log } from '../lib/utils.js';
+import { saveJson, loadJson, log, logError } from '../lib/utils.js';
 import { collectPluginCategories } from '../lib/categorizer.js';
 
 const REPOS_PATH = './data/02-repos.json';
@@ -215,6 +215,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     enrich();
   } catch (error) {
-    console.error(error);
+    logError('Enrichment error', error);
   }
 }
