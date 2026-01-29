@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Star, GitFork, Clock, ChevronRight } from "lucide-react";
 import { formatNumber } from "@/lib/data";
 import type { Category } from "@/lib/types";
-import { useStarredRepos } from "@/hooks/useStarredRepos";
 
 // Format relative time (e.g., "2d ago", "3mo ago")
 function formatRelativeTime(dateString: string | null): string {
@@ -58,9 +57,6 @@ export function MarketplaceCard({
   const [hasOverflow, setHasOverflow] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
   const marketplaceUrl = `/${author_id}/${marketplace.name}`;
-  const repoId = marketplace.repo_full_name || `${author_id}/${marketplace.name}`;
-  const { isStarred, toggleStar } = useStarredRepos();
-  const starred = isStarred(repoId);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -74,12 +70,6 @@ export function MarketplaceCard({
     window.addEventListener("resize", checkOverflow);
     return () => window.removeEventListener("resize", checkOverflow);
   }, [marketplace.description]);
-
-  const handleStarClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleStar(repoId);
-  };
 
   return (
     <Link
@@ -126,18 +116,9 @@ export function MarketplaceCard({
           </div>
         </div>
         <div className="flex items-center gap-3 text-xs text-gray-600">
-          <button
-            type="button"
-            onClick={handleStarClick}
-            className="flex items-center gap-1 text-xs cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            <Star
-              size={12}
-              className={starred ? "text-yellow-500" : ""}
-              fill={starred ? "currentColor" : "none"}
-            />
-            {formatNumber(marketplace.signals.stars)}
-          </button>
+          <span className="flex items-center gap-1">
+            <Star size={12} /> {formatNumber(marketplace.signals.stars)}
+          </span>
           <span className="flex items-center gap-1">
             <GitFork size={12} /> {formatNumber(marketplace.signals.forks)}
           </span>
