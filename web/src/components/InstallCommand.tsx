@@ -12,27 +12,36 @@ export function InstallCommand({ command, label }: InstallCommandProps) {
   const { copied, copy } = useCopyToClipboard();
 
   return (
-    <div>
+    <div className="bg-terminal-bg rounded-lg overflow-hidden">
+      {/* Terminal header */}
       {label && (
-        <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5 pt-2">{label}</div>
-      )}
-      <div className="bg-gray-800 rounded-md overflow-hidden">
-        <div className="px-2.5 py-1.5 flex items-center justify-between gap-2">
-          <code className="text-green-400 text-xs font-mono break-all">
-            <span className="text-gray-500">$</span> {command}
-          </code>
-          <button
-            onClick={() => copy(command)}
-            className="p-1 hover:bg-gray-700 rounded transition-colors flex-shrink-0 cursor-pointer"
-            title="Copy to clipboard"
-          >
-            {copied ? (
-              <Check size={12} className="text-green-400" />
-            ) : (
-              <Copy size={12} className="text-gray-400 hover:text-gray-200" />
-            )}
-          </button>
+        <div className="px-3 py-1.5 bg-card/10 border-b border-card/10">
+          <span className="text-[10px] text-terminal-text font-mono opacity-60">{label}</span>
         </div>
+      )}
+      {/* Command line */}
+      <div className="px-3 py-2 flex items-center justify-between gap-3">
+        <code className="text-terminal-text text-xs font-mono break-all">
+          <span className="opacity-50">$</span> {command}
+        </code>
+        <button
+          type="button"
+          onClick={() => copy(command)}
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-terminal-text hover:text-accent-foreground bg-card/10 hover:bg-card/20 rounded transition-colors flex-shrink-0 cursor-pointer"
+          aria-label={copied ? "Copied!" : "Copy to clipboard"}
+        >
+          {copied ? (
+            <>
+              <Check size={12} className="text-success" />
+              <span>Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy size={12} />
+              <span>Copy</span>
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

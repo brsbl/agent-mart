@@ -11,7 +11,7 @@ function GitHubLink() {
       href="https://github.com/brsbl/agent-mart"
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-md"
       aria-label="View source on GitHub"
     >
       <span>View Source</span>
@@ -25,11 +25,11 @@ export function NavBar() {
   const isHomePage = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-[#0a0a0a] border-b border-gray-200 dark:border-gray-800 shadow-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-[#F5F5F1]/30 dark:bg-[#1A1A1A]/30 backdrop-blur-md">
       <div className="relative px-6 py-3">
         {/* Logo - far left */}
         <Link href="/" className="absolute left-6 top-1/2 -translate-y-1/2 hover:opacity-80 transition-opacity">
-          <pre className="text-gray-900 dark:text-gray-100 leading-none font-mono text-[5px] tracking-tight">
+          <pre className="text-foreground leading-none font-mono text-[5px] tracking-tight">
 {`  █████╗  ██████╗ ███████╗███╗   ██╗████████╗    ███╗   ███╗ █████╗ ██████╗ ████████╗
  ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝    ████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
  ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║       ██╔████╔██║███████║██████╔╝   ██║
