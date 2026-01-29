@@ -8,7 +8,11 @@ Discover and install plugins for [Claude Code](https://docs.anthropic.com/en/doc
 
 ## Browse Plugins
 
-Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub. Search by name, author, or keyword. Filter by category. Sort by most popular, trending, or recently updated.
+Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub.
+
+- **Search** - Find plugins by name, description, author, or keyword
+- **Filter** - Narrow results by selecting one or more categories
+- **Sort** - Order by popularity (GitHub stars), trending (recently active), or last updated
 
 ## Install a Plugin
 
