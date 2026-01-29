@@ -1,4 +1,6 @@
 import { saveJson, loadJson, ensureDir, log, logError, sanitizeFilename } from '../lib/utils.js';
+import { loadSignalsHistory } from '../lib/signalsHistory.js';
+import { calculateTrendingScore } from '../lib/trending.js';
 
 const INPUT_PATH = './data/06-enriched.json';
 const CATEGORIZED_PATH = './data/marketplaces-categorized.json';
@@ -29,7 +31,16 @@ export function output({ onProgress: _onProgress } = {}) {
     categoryStats = loadJson(CATEGORY_STATS_PATH);
     log(`Loaded ${categorized.length} categorized marketplaces`);
   } catch {
-    log('Warning: Categorized data not found. Run 08-categorize.js first.');
+    log('Warning: Categorized data not found. Run 08-aggregate.js first.');
+  }
+
+  // Load signals history for trending calculation
+  const signalsHistory = loadSignalsHistory();
+  const hasHistory = signalsHistory.meta.snapshot_count > 0;
+  if (hasHistory) {
+    log(`Loaded signals history with ${signalsHistory.meta.snapshot_count} snapshots`);
+  } else {
+    log('No signals history available, trending scores will be 0');
   }
 
   // Build author summaries for index (sorted by stars)
@@ -142,6 +153,11 @@ export function output({ onProgress: _onProgress } = {}) {
       // Use flat category array from categorizer
       const categories = catData?.categories || [];
 
+      // Calculate trending score from history
+      const repoHistory = signalsHistory.repositories[marketplace.repo_full_name];
+      const currentStars = marketplace.signals?.stars || 0;
+      const trendingData = calculateTrendingScore(repoHistory, currentStars);
+
       marketplacesBrowse.push({
         name: marketplace.name,
         description: marketplace.description || null,
@@ -150,9 +166,12 @@ export function output({ onProgress: _onProgress } = {}) {
         author_avatar_url: author.avatar_url,
         repo_full_name: marketplace.repo_full_name,
         signals: {
-          stars: marketplace.signals?.stars || 0,
+          stars: currentStars,
           forks: marketplace.signals?.forks || 0,
-          pushed_at: marketplace.signals?.pushed_at || null
+          pushed_at: marketplace.signals?.pushed_at || null,
+          trending_score: trendingData.trending_score,
+          stars_gained_7d: trendingData.stars_gained_7d,
+          stars_velocity: trendingData.stars_velocity
         },
         plugins_count: marketplace.plugins?.length || 0,
         first_plugin_name: firstPlugin?.name || null,

@@ -74,17 +74,17 @@ export function MarketplaceCard({
   return (
     <Link
       href={marketplaceUrl}
-      className="border border-gray-200 rounded-xl hover:border-gray-400 hover:shadow-md transition-all bg-white flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden"
+      className="border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden"
     >
       <div className="p-4 flex flex-col flex-1">
         <div className="flex-1 min-w-0 mb-3">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <h3 className="text-base font-semibold text-gray-900 group-hover:text-gray-700 transition-colors truncate">
+            <h3 className="text-base font-semibold text-foreground group-hover:text-foreground-secondary transition-colors truncate">
               {marketplace.name}
             </h3>
             <ChevronRight
               size={18}
-              className="text-gray-400 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all flex-shrink-0"
+              className="text-foreground-muted group-hover:text-foreground-secondary group-hover:translate-x-0.5 transition-all flex-shrink-0"
             />
           </div>
           <div className="flex items-center gap-1.5">
@@ -95,12 +95,12 @@ export function MarketplaceCard({
                 width={20}
                 height={20}
                 loading="lazy"
-                className="w-5 h-5 rounded-full border border-gray-300"
+                className="w-5 h-5 rounded-full border border-border"
               />
             ) : (
-              <div className="w-5 h-5 rounded-full bg-gray-200 border border-gray-300" />
+              <div className="w-5 h-5 rounded-full bg-background-secondary border border-border" />
             )}
-            <p className="text-xs text-gray-600 font-mono">@{author_id}</p>
+            <p className="text-xs text-foreground-secondary font-mono">@{author_id}</p>
           </div>
         </div>
         <div
@@ -108,14 +108,14 @@ export function MarketplaceCard({
         >
           <div
             ref={descriptionRef}
-            className="h-20 overflow-y-auto pr-2 scrollbar-thin bg-gray-50 rounded-lg p-3"
+            className="h-20 overflow-y-auto pr-2 scrollbar-thin bg-background-secondary/40 rounded-lg p-3"
           >
-            <p className="text-xs text-gray-700">
+            <p className="text-xs text-foreground-secondary">
               {marketplace.description || "No description"}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-600">
+        <div className="flex items-center gap-3 text-xs text-foreground-secondary">
           <span className="flex items-center gap-1">
             <Star size={12} /> {formatNumber(marketplace.signals.stars)}
           </span>

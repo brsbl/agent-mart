@@ -18,7 +18,7 @@ function ThemeToggle() {
     return (
       <button
         type="button"
-        className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="p-1.5 text-foreground-muted hover:text-foreground-secondary transition-colors rounded hover:bg-background-secondary"
         aria-label="Toggle theme"
       >
         <Monitor size={16} />
@@ -52,7 +52,7 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={cycleTheme}
-      className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="p-1.5 text-foreground-muted hover:text-foreground-secondary transition-colors rounded hover:bg-background-secondary"
       aria-label={getLabel()}
       title={getLabel()}
     >
@@ -63,13 +63,13 @@ function ThemeToggle() {
 
 export function Footer() {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0a] py-4">
+    <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/30 backdrop-blur-md py-4">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-foreground-muted">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+              className="hover:text-foreground-secondary transition-colors"
             >
               Home
             </Link>
@@ -77,13 +77,13 @@ export function Footer() {
               href="https://github.com/brsbl/agent-mart"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+              className="hover:text-foreground-secondary transition-colors"
             >
               GitHub
             </a>
             <ThemeToggle />
           </div>
-          <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
+          <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-foreground-muted">
             <span>&copy; Agent Mart 2026. All rights reserved.</span>
             <span className="hidden sm:inline">&middot;</span>
             <span>Not affiliated with Anthropic.</span>

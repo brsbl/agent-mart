@@ -80,14 +80,14 @@ export default function OwnerPage() {
               href={author.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 hover:bg-[var(--background-secondary)] rounded-lg transition-colors"
+              className="p-2 hover:bg-background-secondary rounded-lg transition-colors"
               title="View on GitHub"
               aria-label="View on GitHub"
             >
-              <ExternalLink className="w-5 h-5 text-[var(--foreground-muted)]" aria-hidden="true" />
+              <ExternalLink className="w-5 h-5 text-foreground-muted" aria-hidden="true" />
             </a>
           </div>
-          <div className="flex items-center gap-2 text-[var(--foreground-muted)] mb-4">
+          <div className="flex items-center gap-2 text-foreground-muted mb-4">
             {author.type === "Organization" ? (
               <Building2 className="w-4 h-4" aria-hidden="true" />
             ) : (
@@ -99,7 +99,7 @@ export default function OwnerPage() {
           </div>
 
           {author.bio && (
-            <p className="text-[var(--foreground-secondary)] mb-4 max-w-2xl">
+            <p className="text-foreground-secondary mb-4 max-w-2xl">
               {author.bio}
             </p>
           )}
@@ -107,29 +107,29 @@ export default function OwnerPage() {
           {/* Stats */}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-[var(--accent)]" aria-hidden="true" />
+              <Star className="w-4 h-4 text-accent" aria-hidden="true" />
               <span className="font-semibold">
                 {formatNumber(author.stats.total_stars)}
               </span>
-              <span className="text-[var(--foreground-muted)]">total stars</span>
+              <span className="text-foreground-muted">total stars</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <GitFork className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
+              <GitFork className="w-4 h-4 text-foreground-muted" aria-hidden="true" />
               <span className="font-semibold">
                 {formatNumber(author.stats.total_forks)}
               </span>
-              <span className="text-[var(--foreground-muted)]">forks</span>
+              <span className="text-foreground-muted">forks</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Package className="w-4 h-4" aria-hidden="true" />
               <span className="font-semibold">{author.stats.total_marketplaces}</span>
-              <span className="text-[var(--foreground-muted)]">
+              <span className="text-foreground-muted">
                 repo{author.stats.total_marketplaces !== 1 ? "s" : ""}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="font-semibold">{author.stats.total_plugins}</span>
-              <span className="text-[var(--foreground-muted)]">
+              <span className="text-foreground-muted">
                 plugin{author.stats.total_plugins !== 1 ? "s" : ""}
               </span>
             </div>
@@ -142,7 +142,7 @@ export default function OwnerPage() {
         <h2 className="section-title mb-6">Repositories</h2>
         <div className="space-y-4">
           {marketplaces.map((marketplace) => (
-            <div key={marketplace.repo_full_name} className="card p-4">
+            <div key={marketplace.repo_full_name} className="bg-card border border-border rounded-md shadow-sm hover:border-border-hover hover:shadow-md transition-all p-4">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
@@ -150,16 +150,16 @@ export default function OwnerPage() {
                       href={marketplace.repo_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-lg hover:text-[var(--accent)] transition-colors"
+                      className="font-semibold text-lg hover:text-accent transition-colors"
                     >
                       {marketplace.repo_full_name}
                     </a>
-                    <ExternalLink className="w-4 h-4 text-[var(--foreground-muted)]" aria-hidden="true" />
+                    <ExternalLink className="w-4 h-4 text-foreground-muted" aria-hidden="true" />
                   </div>
-                  <p className="text-[var(--foreground-secondary)] text-sm mb-3">
+                  <p className="text-foreground-secondary text-sm mb-3">
                     {marketplace.description || "No description"}
                   </p>
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--foreground-muted)]">
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-muted">
                     <span className="flex items-center gap-1">
                       <Star className="w-4 h-4" aria-hidden="true" />
                       {formatNumber(marketplace.signals.stars)}

@@ -4,7 +4,9 @@ import { fetchTrees } from '../src/pipeline/03-fetch-trees.js';
 import { fetchFiles } from '../src/pipeline/04-fetch-files.js';
 import { parse } from '../src/pipeline/05-parse.js';
 import { enrich } from '../src/pipeline/06-enrich.js';
-import { output } from '../src/pipeline/07-output.js';
+import { snapshot } from '../src/pipeline/07-snapshot.js';
+import { aggregate } from '../src/pipeline/08-aggregate.js';
+import { output } from '../src/pipeline/09-output.js';
 import { ensureDir, log } from '../src/lib/utils.js';
 
 // Pipeline steps configuration (exported for use by visualizer)
@@ -15,6 +17,8 @@ export const PIPELINE_STEPS = [
   { name: 'Fetch Files', fn: fetchFiles },
   { name: 'Parse', fn: parse },
   { name: 'Enrich', fn: enrich },
+  { name: 'Snapshot', fn: snapshot },
+  { name: 'Aggregate', fn: aggregate },
   { name: 'Output', fn: output }
 ];
 

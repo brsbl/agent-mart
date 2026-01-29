@@ -18,19 +18,19 @@ export function PluginSection({ plugin, defaultExpanded = false }: PluginSection
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <div id={plugin.name} className="card scroll-mt-24">
+    <div id={plugin.name} className="bg-card border border-border rounded-md shadow-sm hover:border-border-hover hover:shadow-md transition-all scroll-mt-24">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full p-4 text-left flex items-start gap-4 cursor-pointer"
         aria-expanded={isExpanded}
       >
-        <div className="w-10 h-10 rounded-lg bg-[var(--background-secondary)] flex items-center justify-center flex-shrink-0">
-          <Puzzle className="w-5 h-5 text-[var(--accent)]" aria-hidden="true" />
+        <div className="w-10 h-10 rounded-lg bg-background-secondary flex items-center justify-center flex-shrink-0">
+          <Puzzle className="w-5 h-5 text-accent" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold truncate">{plugin.name}</h3>
-            <span className="text-[var(--foreground-muted)]">
+            <span className="text-foreground-muted">
               {isExpanded ? (
                 <ChevronDown className="w-4 h-4" aria-hidden="true" />
               ) : (
@@ -38,7 +38,7 @@ export function PluginSection({ plugin, defaultExpanded = false }: PluginSection
               )}
             </span>
           </div>
-          <p className="text-sm text-[var(--foreground-secondary)] mt-1 line-clamp-2">
+          <p className="text-sm text-foreground-secondary mt-1 line-clamp-2">
             {plugin.description || "No description"}
           </p>
         </div>

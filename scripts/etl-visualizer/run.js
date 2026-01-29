@@ -9,8 +9,9 @@ import { fetchTrees } from '../../src/pipeline/03-fetch-trees.js';
 import { fetchFiles } from '../../src/pipeline/04-fetch-files.js';
 import { parse } from '../../src/pipeline/05-parse.js';
 import { enrich } from '../../src/pipeline/06-enrich.js';
-import { output } from '../../src/pipeline/07-output.js';
-import { categorize } from '../../src/pipeline/08-categorize.js';
+import { snapshot } from '../../src/pipeline/07-snapshot.js';
+import { aggregate } from '../../src/pipeline/08-aggregate.js';
+import { output } from '../../src/pipeline/09-output.js';
 import { ensureDir, loadJson } from '../../src/lib/utils.js';
 import { generatePipelineHtml } from './md-to-html.js';
 
@@ -122,24 +123,22 @@ const STAGES = [
     }
   },
   {
-    id: '07-output',
-    name: 'Output',
-    fn: output,
-    description: 'Generates web-ready JSON files: index, plugins-browse, marketplaces-browse, categories, and per-author files.',
-    outputFile: './web/public/data/index.json',
+    id: '07-snapshot',
+    name: 'Snapshot',
+    fn: snapshot,
+    description: 'Records current star/fork counts to signals-history.json for trending score calculation.',
+    outputFile: './data/signals-history.json',
     getMetrics: (data, prev) => ({
-      'Authors': { current: data?.meta?.total_authors || 0, previous: prev?.meta?.total_authors || 0 },
-      'Marketplaces': { current: data?.meta?.total_marketplaces || 0, previous: prev?.meta?.total_marketplaces || 0 },
-      'Plugins': { current: data?.meta?.total_plugins || 0, previous: prev?.meta?.total_plugins || 0 },
-      'Commands': { current: data?.meta?.total_commands || 0, previous: prev?.meta?.total_commands || 0 },
-      'Skills': { current: data?.meta?.total_skills || 0, previous: prev?.meta?.total_skills || 0 }
+      'Repositories': { current: data?.repo_count || 0, previous: prev?.repo_count || 0 },
+      'Snapshots': { current: data?.snapshot_count || 0, previous: prev?.snapshot_count || 0 },
+      'Skipped': { current: data?.skipped ? 'Yes' : 'No', previous: prev?.skipped ? 'Yes' : 'No' }
     })
   },
   {
-    id: '08-categorize',
-    name: 'Categorize',
-    fn: categorize,
-    description: 'Applies rules-based categorization using pattern and keyword matching across 12 categories.',
+    id: '08-aggregate',
+    name: 'Aggregate',
+    fn: aggregate,
+    description: 'Aggregates plugin categories to marketplace level and generates category statistics.',
     outputFile: './data/marketplaces-categorized.json',
     getMetrics: (data, prev) => {
       // data is an array of categorized marketplaces with flat categories array
@@ -159,6 +158,20 @@ const STAGES = [
       };
     }
   },
+  {
+    id: '09-output',
+    name: 'Output',
+    fn: output,
+    description: 'Generates web-ready JSON files: index, plugins-browse, marketplaces-browse, categories, and per-author files.',
+    outputFile: './web/public/data/index.json',
+    getMetrics: (data, prev) => ({
+      'Authors': { current: data?.meta?.total_authors || 0, previous: prev?.meta?.total_authors || 0 },
+      'Marketplaces': { current: data?.meta?.total_marketplaces || 0, previous: prev?.meta?.total_marketplaces || 0 },
+      'Plugins': { current: data?.meta?.total_plugins || 0, previous: prev?.meta?.total_plugins || 0 },
+      'Commands': { current: data?.meta?.total_commands || 0, previous: prev?.meta?.total_commands || 0 },
+      'Skills': { current: data?.meta?.total_skills || 0, previous: prev?.meta?.total_skills || 0 }
+    })
+  }
 ];
 
 // State tracking
@@ -261,13 +274,15 @@ function getDataPreview(stageId, data) {
       }));
     }
 
-    case '07-output':
-      return data.authors?.slice(0, PREVIEW_LIMIT).map(a => ({
-        id: a.id,
-        stars: a.stats?.total_stars
-      }));
+    case '07-snapshot':
+      return {
+        date: data?.date,
+        repo_count: data?.repo_count,
+        snapshot_count: data?.snapshot_count,
+        skipped: data?.skipped
+      };
 
-    case '08-categorize':
+    case '08-aggregate':
       if (Array.isArray(data)) {
         return data.slice(0, PREVIEW_LIMIT).map(m => ({
           name: m.name,
@@ -275,6 +290,12 @@ function getDataPreview(stageId, data) {
         }));
       }
       return null;
+
+    case '09-output':
+      return data.authors?.slice(0, PREVIEW_LIMIT).map(a => ({
+        id: a.id,
+        stars: a.stats?.total_stars
+      }));
 
     default:
       return null;

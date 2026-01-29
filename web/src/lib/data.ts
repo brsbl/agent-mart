@@ -300,7 +300,7 @@ export function getCategoryDisplayName(category: Category): string {
   return formatCategoryDisplay(category);
 }
 
-// Badge color palette for hash-based assignment
+// Badge color palette for hash-based assignment (18 colors)
 const BADGE_COLORS = [
   'badge-purple',
   'badge-blue',
@@ -314,6 +314,12 @@ const BADGE_COLORS = [
   'badge-rose',
   'badge-red',
   'badge-gray',
+  'badge-mint',
+  'badge-coral',
+  'badge-amber',
+  'badge-sand',
+  'badge-slate',
+  'badge-charcoal',
 ];
 
 /**
@@ -339,25 +345,22 @@ export function sortMarketplaces(
   marketplaces: BrowseMarketplace[],
   sortBy: MarketplaceSortOption
 ): BrowseMarketplace[] {
-  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-
   return [...marketplaces].sort((a, b) => {
     switch (sortBy) {
       case "popular":
         return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
 
       case "trending": {
-        // Trending: pushed within last 7 days, sorted by stars
-        const aTime = new Date(a.signals?.pushed_at ?? 0).getTime();
-        const bTime = new Date(b.signals?.pushed_at ?? 0).getTime();
-        const aRecent = aTime > sevenDaysAgo;
-        const bRecent = bTime > sevenDaysAgo;
+        // Sort by trending_score (z-score), with stars_gained_7d as tiebreaker
+        const aScore = a.signals?.trending_score ?? 0;
+        const bScore = b.signals?.trending_score ?? 0;
+        const scoreDiff = bScore - aScore;
+        if (Math.abs(scoreDiff) > 0.001) return scoreDiff;
 
-        // Recent items first
-        if (aRecent !== bRecent) return bRecent ? 1 : -1;
-
-        // Within same recency tier, sort by stars
-        return (b.signals?.stars ?? 0) - (a.signals?.stars ?? 0);
+        // Tiebreaker: raw stars gained this week
+        const aGain = a.signals?.stars_gained_7d ?? 0;
+        const bGain = b.signals?.stars_gained_7d ?? 0;
+        return bGain - aGain;
       }
 
       case "recent":

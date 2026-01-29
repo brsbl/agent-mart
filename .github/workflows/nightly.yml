@@ -33,13 +33,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Cache pipeline data
+      - name: Restore signals history
         uses: actions/cache@v5
         with:
-          path: data/
-          key: pipeline-data-${{ github.run_number }}
+          path: data/signals-history.json
+          key: signals-history-${{ github.run_number }}
           restore-keys: |
-            pipeline-data-
+            signals-history-
 
       - name: Run linting
         run: npm run lint
@@ -52,12 +52,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_GITHUB_TOKEN }}
         run: npm run pipeline:dev
 
-      - name: Upload public directory
+      - name: Save signals history
+        uses: actions/cache/save@v4
+        with:
+          path: data/signals-history.json
+          key: signals-history-${{ github.run_number }}
+
+      - name: Upload web data
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: public-directory
-          path: public/
+          name: web-public-data
+          path: web/public/data/
           retention-days: 30
 
       - name: Upload ETL visualization report
@@ -73,7 +79,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # Check if there are changes to commit
-          if [ -z "$(git status public/ --porcelain)" ]; then
+          if [ -z "$(git status web/public/data/ --porcelain)" ]; then
             echo "No changes to commit"
             exit 0
           fi
@@ -85,7 +91,7 @@ jobs:
           BRANCH="data/update-$(date +%Y-%m-%d)"
           git checkout -b "$BRANCH"
 
-          git add public/
+          git add web/public/data/
           git commit -m "chore: update directory data $(date +%Y-%m-%d)"
           git push --force-with-lease -u origin "$BRANCH"
 
@@ -102,8 +108,9 @@ jobs:
             --body "Automated data update from nightly pipeline run.
 
           ## Changes
-          - Updated \`public/index.json\`
-          - Updated \`public/plugins-browse.json\`
+          - Updated \`web/public/data/index.json\`
+          - Updated \`web/public/data/marketplaces-browse.json\`
+          - Updated \`web/public/data/plugins-browse.json\`
 
           ---
           *This PR was automatically created by the nightly workflow.*" \

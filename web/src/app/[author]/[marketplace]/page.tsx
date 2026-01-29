@@ -21,6 +21,7 @@ import {
   LoadingState,
   ErrorState,
   MarketplaceCard,
+  InstallCommand,
 } from "@/components";
 import { useFetch, useStarredRepos } from "@/hooks";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
@@ -62,30 +63,25 @@ function TerminalInstallCommand({ command }: { command: string }) {
   const { copied, copy } = useCopyToClipboard();
 
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden">
-      {/* Terminal header with dots */}
-      <div className="flex items-center justify-between px-3 py-1.5 bg-gray-700 border-b border-gray-600">
-        <div className="flex gap-1">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-        </div>
-        <span className="text-[10px] text-gray-400 font-mono">Add marketplace</span>
+    <div className="bg-terminal-bg rounded-lg overflow-hidden">
+      {/* Terminal header */}
+      <div className="px-3 py-1.5 bg-card/10 border-b border-card/10">
+        <span className="text-[10px] text-terminal-text font-mono opacity-60">Add marketplace</span>
       </div>
       {/* Command line */}
       <div className="px-3 py-2.5 flex items-center justify-between gap-3">
-        <code className="text-green-400 font-mono text-sm flex-1 overflow-x-auto">
-          <span className="text-gray-500">$</span> {command}
+        <code className="text-terminal-text font-mono text-sm flex-1 overflow-x-auto">
+          <span className="opacity-50">$</span> {command}
         </code>
         <button
           type="button"
           onClick={() => copy(command)}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-300 hover:text-white bg-gray-700 hover:bg-gray-600 rounded transition-colors flex-shrink-0"
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-terminal-text hover:text-accent-foreground bg-card/10 hover:bg-card/20 rounded transition-colors flex-shrink-0 cursor-pointer"
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >
           {copied ? (
             <>
-              <Check size={12} className="text-green-400" />
+              <Check size={12} className="text-success" />
               <span>Copied</span>
             </>
           ) : (
@@ -272,7 +268,7 @@ export default function MarketplaceDetailPage() {
           {/* Main Column - Hero, Terminal, README */}
           <div>
             {/* Hero Header - glass */}
-            <div className="glass-card border border-white/50 dark:border-gray-600 rounded-2xl p-6 mb-6 shadow-xl">
+            <div className="glass-card border border-white/50 rounded-2xl p-6 mb-6 shadow-xl">
               <div className="flex items-start gap-4">
                 {/* Avatar */}
                 <Image
@@ -280,27 +276,27 @@ export default function MarketplaceDetailPage() {
                   alt={author.display_name}
                   width={48}
                   height={48}
-                  className="w-12 h-12 rounded-xl border border-gray-200 dark:border-gray-700 flex-shrink-0"
+                  className="w-12 h-12 rounded-xl border border-border flex-shrink-0"
                 />
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <h1 className="text-2xl font-bold text-foreground">
                       {marketplace.name}
                     </h1>
                     {marketplace.version && (
-                      <span className="px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded">
+                      <span className="px-2 py-0.5 text-xs font-medium text-foreground-secondary bg-background-secondary rounded">
                         v{marketplace.version}
                       </span>
                     )}
                   </div>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-mono mt-0.5">
+                  <p className="text-sm text-foreground-muted font-mono mt-0.5">
                     @{author.id}
                   </p>
 
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                  <p className="text-sm text-foreground-secondary mt-3">
                     {marketplace.description || "No description"}
                   </p>
 
@@ -319,18 +315,18 @@ export default function MarketplaceDetailPage() {
                   )}
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 mt-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-4 mt-4 text-sm text-foreground-secondary">
                     <button
                       type="button"
                       onClick={handleStarClick}
-                      className="flex items-center gap-1.5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                      className="flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors"
                       aria-label={
                         starred ? "Unstar this repository" : "Star this repository"
                       }
                     >
                       <Star
                         size={14}
-                        className={starred ? "text-yellow-500" : ""}
+                        className={starred ? "text-warning" : ""}
                         fill={starred ? "currentColor" : "none"}
                       />
                       {formatNumber(marketplace.signals.stars)}
@@ -353,69 +349,91 @@ export default function MarketplaceDetailPage() {
                   href={marketplace.repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors flex-shrink-0"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground-secondary bg-card border border-border rounded-lg hover:bg-background-secondary hover:border-border-hover transition-colors flex-shrink-0"
                 >
-                  <span>View on GitHub</span>
+                  <span>Learn more on GitHub</span>
                   <ExternalLink size={14} />
                 </a>
               </div>
             </div>
 
             {/* Terminal Install Command */}
-            <div className="mb-6">
-              <TerminalInstallCommand command={installCommand} />
+            <div className="flex items-center -mx-6 mb-6">
+              <div className="w-8 flex-shrink-0" />
+              <div className="flex-1">
+                <TerminalInstallCommand command={installCommand} />
+              </div>
+              <div className="w-8 flex-shrink-0" />
             </div>
 
             {/* Plugin Carousel */}
             {plugins.length > 0 && currentPlugin && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                    Plugins
-                    <span className="px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
-                      {plugins.length}
-                    </span>
-                  </h2>
-                  {/* Navigation arrows - compact */}
-                  {plugins.length > 1 && (
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={handlePrevPlugin}
-                        className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-                        aria-label="Previous plugin"
-                      >
-                        <ChevronLeft size={16} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleNextPlugin}
-                        className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-                        aria-label="Next plugin"
-                      >
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
+              <div className="mb-6 mt-10">
+                <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                  Plugins
+                  <span className="px-2 py-0.5 text-xs font-medium bg-card/60 backdrop-blur-sm text-foreground rounded-full border border-border">
+                    {plugins.length}
+                  </span>
+                </h2>
+                <div className="flex items-center -mx-6">
+                  {/* Left arrow */}
+                  {plugins.length > 1 ? (
+                    <button
+                      type="button"
+                      onClick={handlePrevPlugin}
+                      className="p-1.5 text-foreground-muted hover:text-foreground-secondary hover:bg-background-secondary rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                      aria-label="Previous plugin"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                  ) : (
+                    <div className="w-8 flex-shrink-0" />
+                  )}
+                  {/* Plugin card */}
+                  <div className="flex-1">
+                    <PluginCardInline
+                      plugin={{
+                        name: currentPlugin.name,
+                        description: currentPlugin.description,
+                        version: currentPlugin.version,
+                        keywords: currentPlugin.keywords,
+                        categories: currentPlugin.categories,
+                      }}
+                    />
+                  </div>
+                  {/* Right arrow */}
+                  {plugins.length > 1 ? (
+                    <button
+                      type="button"
+                      onClick={handleNextPlugin}
+                      className="p-1.5 text-foreground-muted hover:text-foreground-secondary hover:bg-background-secondary rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                      aria-label="Next plugin"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  ) : (
+                    <div className="w-8 flex-shrink-0" />
                   )}
                 </div>
-                <PluginCardInline
-                  plugin={{
-                    name: currentPlugin.name,
-                    description: currentPlugin.description,
-                    version: currentPlugin.version,
-                    keywords: currentPlugin.keywords,
-                    categories: currentPlugin.categories,
-                    install_command: `/plugin install ${currentPlugin.name}@${marketplace.repo_full_name.replace("/", "-")}`,
-                  }}
-                />
+                {/* Install command - same width as plugin card */}
+                <div className="flex items-center -mx-6 mt-4">
+                  <div className="w-8 flex-shrink-0" />
+                  <div className="flex-1">
+                    <InstallCommand
+                      command={`/plugin install ${currentPlugin.name}@${marketplace.repo_full_name.replace("/", "-")}`}
+                      label="Install plugin"
+                    />
+                  </div>
+                  <div className="w-8 flex-shrink-0" />
+                </div>
               </div>
             )}
 
             {/* README Section - shows selected plugin's README */}
             {currentPluginReadme && (
-              <section className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
-                <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                  <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <section className="mt-10 border border-border rounded-xl overflow-hidden bg-card">
+                <div className="px-6 py-3 border-b border-border bg-background-secondary">
+                  <h2 className="text-sm font-semibold text-foreground">
                     README
                   </h2>
                 </div>
@@ -446,8 +464,8 @@ export default function MarketplaceDetailPage() {
           <aside className="mt-8 lg:mt-0 space-y-6">
             {/* More from Author */}
             {hasOtherMarketplaces && (
-              <section className="glass-card border border-white/50 dark:border-gray-600 rounded-2xl p-4 shadow-lg">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              <section className="glass-card border border-white/50 rounded-2xl p-4 shadow-lg">
+                <h3 className="text-sm font-semibold text-foreground mb-4">
                   More from @{author.id}
                 </h3>
                 <div className="space-y-3">
