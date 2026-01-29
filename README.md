@@ -4,7 +4,7 @@
 
 Discover and install plugins for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
-**[agentmart.dev](https://agentmart.dev)**
+**[agentmart.cc](https://agentmart.cc)**
 
 ## Browse Plugins
 
