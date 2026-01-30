@@ -1,6 +1,5 @@
 import { discover } from '../src/pipeline/01-discover.js';
 import { fetchRepos } from '../src/pipeline/02-fetch-repos.js';
-import { fetchTrees } from '../src/pipeline/03-fetch-trees.js';
 import { fetchFiles } from '../src/pipeline/04-fetch-files.js';
 import { parse } from '../src/pipeline/05-parse.js';
 import { enrich } from '../src/pipeline/06-enrich.js';
@@ -13,7 +12,6 @@ import { ensureDir, log } from '../src/lib/utils.js';
 export const PIPELINE_STEPS = [
   { name: 'Discover', fn: discover },
   { name: 'Fetch Repos', fn: fetchRepos },
-  { name: 'Fetch Trees', fn: fetchTrees },
   { name: 'Fetch Files', fn: fetchFiles },
   { name: 'Parse', fn: parse },
   { name: 'Enrich', fn: enrich },

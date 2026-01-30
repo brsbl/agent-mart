@@ -47,7 +47,7 @@ function SearchFilterContent() {
 
   // Filter state from URL
   const categoriesParam = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
-  const sortByParam = (searchParams.get("sort") as MarketplaceSortOption) || "recent";
+  const sortByParam = (searchParams.get("sort") as MarketplaceSortOption) || "trending";
   const sortDirParam = (searchParams.get("dir") as "asc" | "desc") || "desc";
 
   const [sortBy, setSortBy] = useState<MarketplaceSortOption>(sortByParam);
@@ -92,7 +92,7 @@ function SearchFilterContent() {
   useEffect(() => {
     const cats = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
     setSelectedCategories(cats);
-    setSortBy((searchParams.get("sort") as MarketplaceSortOption) || "recent");
+    setSortBy((searchParams.get("sort") as MarketplaceSortOption) || "trending");
     setSortDirection((searchParams.get("dir") as "asc" | "desc") || "desc");
   }, [searchParams]);
 
@@ -125,7 +125,7 @@ function SearchFilterContent() {
         params.delete("cat");
       }
 
-      if (sort !== "recent") {
+      if (sort !== "trending") {
         params.set("sort", sort);
       } else {
         params.delete("sort");

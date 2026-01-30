@@ -50,7 +50,7 @@ describe('generatePipelineHtml', () => {
     stages: [
       { id: '01-discover', name: 'Discover', status: 'completed', duration: 1500 },
       { id: '02-fetch-repos', name: 'Fetch Repos', status: 'running' },
-      { id: '03-fetch-trees', name: 'Fetch Trees', status: 'pending' }
+      { id: '04-fetch-files', name: 'Fetch Files', status: 'pending' }
     ],
     ...overrides
   });
@@ -85,7 +85,7 @@ describe('generatePipelineHtml', () => {
 
     assert.ok(html.includes('Discover'));
     assert.ok(html.includes('Fetch Repos'));
-    assert.ok(html.includes('Fetch Trees'));
+    assert.ok(html.includes('Fetch Files'));
   });
 
   it('includes progress calculation', () => {

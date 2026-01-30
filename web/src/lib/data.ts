@@ -471,14 +471,11 @@ export function organizePluginComponents(marketplace: Marketplace): PluginWithCo
       const componentType = getComponentType(filePath);
       if (!componentType) continue;
 
-      // Find file size from file_tree
-      const treeEntry = marketplace.file_tree.find(e => e.path === filePath);
-
       const component: PluginComponent = {
         type: componentType,
         name: getComponentName(filePath, componentType),
         path: filePath,
-        size: treeEntry?.size ?? null,
+        size: null,
       };
 
       // Add to appropriate array

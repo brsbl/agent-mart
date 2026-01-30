@@ -215,7 +215,7 @@ interface Marketplace {
   repo_url: string;
   homepage: string | null;
   plugins: Plugin[];
-  file_tree: FileTreeEntry[];
+  files: Record<string, string>;
   signals: {
     stars: number;
     forks: number;

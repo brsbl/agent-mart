@@ -34,13 +34,13 @@ export interface MarketplaceCardProps {
   marketplace: {
     name: string;
     description: string | null;
-    keywords: string[];
     categories?: Category[];
     repo_full_name?: string;
     signals: {
       stars: number;
       forks: number;
       pushed_at?: string | null;
+      stars_gained_7d?: number;
     };
   };
   author_id: string;
@@ -79,9 +79,11 @@ export function MarketplaceCard({
       <div className="p-4 flex flex-col flex-1">
         <div className="flex-1 min-w-0 mb-3">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <h3 className="text-base font-semibold text-foreground group-hover:text-foreground-secondary transition-colors truncate">
-              {marketplace.name}
-            </h3>
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="text-base font-semibold text-foreground group-hover:text-foreground-secondary transition-colors truncate">
+                {marketplace.name}
+              </h3>
+            </div>
             <ChevronRight
               size={18}
               className="text-foreground-muted group-hover:text-foreground-secondary group-hover:translate-x-0.5 transition-all flex-shrink-0"
@@ -115,9 +117,9 @@ export function MarketplaceCard({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-foreground-secondary">
+        <div className="flex items-center gap-3 text-xs font-medium text-foreground-secondary">
           <span className="flex items-center gap-1">
-            <Star size={12} /> {formatNumber(marketplace.signals.stars)}
+            <Star size={12} className="text-yellow-500" fill="currentColor" /> {formatNumber(marketplace.signals.stars)}
           </span>
           <span className="flex items-center gap-1">
             <GitFork size={12} /> {formatNumber(marketplace.signals.forks)}

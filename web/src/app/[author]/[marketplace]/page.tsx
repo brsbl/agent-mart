@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Copy,
   Check,
+  TrendingUp,
 } from "lucide-react";
 import {
   PluginCardInline,
@@ -315,22 +316,20 @@ export default function MarketplaceDetailPage() {
                   )}
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 mt-4 text-sm text-foreground-secondary">
-                    <button
-                      type="button"
-                      onClick={handleStarClick}
-                      className="flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors"
-                      aria-label={
-                        starred ? "Unstar this repository" : "Star this repository"
-                      }
-                    >
-                      <Star
-                        size={14}
-                        className={starred ? "text-warning" : ""}
-                        fill={starred ? "currentColor" : "none"}
-                      />
+                  <div className="flex items-center gap-4 mt-4 text-sm font-medium text-foreground-secondary">
+                    <span className="flex items-center gap-1.5">
+                      <Star size={14} className="text-yellow-500" fill="currentColor" />
                       {formatNumber(marketplace.signals.stars)}
-                    </button>
+                      {marketplace.signals.stars_gained_7d != null && marketplace.signals.stars_gained_7d > 0 && (
+                        <sup
+                          className="inline-flex items-center gap-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400"
+                          title={`+${formatNumber(marketplace.signals.stars_gained_7d)} stars this week`}
+                        >
+                          <TrendingUp size={12} />
+                          {formatNumber(marketplace.signals.stars_gained_7d)}
+                        </sup>
+                      )}
+                    </span>
                     <span className="flex items-center gap-1.5">
                       <GitFork size={14} />
                       {formatNumber(marketplace.signals.forks)}
@@ -420,7 +419,7 @@ export default function MarketplaceDetailPage() {
                   <div className="w-8 flex-shrink-0" />
                   <div className="flex-1">
                     <InstallCommand
-                      command={`/plugin install ${currentPlugin.name}@${marketplace.repo_full_name.replace("/", "-")}`}
+                      command={`/plugin install ${currentPlugin.name}@${marketplace.name}`}
                       label="Install plugin"
                     />
                   </div>

@@ -5,7 +5,6 @@ import { dirname, join } from 'path';
 
 import { discover } from '../../src/pipeline/01-discover.js';
 import { fetchRepos } from '../../src/pipeline/02-fetch-repos.js';
-import { fetchTrees } from '../../src/pipeline/03-fetch-trees.js';
 import { fetchFiles } from '../../src/pipeline/04-fetch-files.js';
 import { parse } from '../../src/pipeline/05-parse.js';
 import { enrich } from '../../src/pipeline/06-enrich.js';
@@ -44,20 +43,10 @@ const STAGES = [
     })
   },
   {
-    id: '03-fetch-trees',
-    name: 'Fetch Trees',
-    fn: fetchTrees,
-    description: 'Fetches the full file tree for each repository to identify plugin directories and discover available files.',
-    outputFile: './data/03-trees.json',
-    getMetrics: (data, prev) => ({
-      'Trees fetched': { current: data?.total || 0, previous: prev?.total || 0 }
-    })
-  },
-  {
     id: '04-fetch-files',
     name: 'Fetch Files',
     fn: fetchFiles,
-    description: 'Selectively fetches .claude-plugin/ manifests and plugin component files (skills, commands, agents, hooks). Only these files will have content available.',
+    description: 'Fetches .claude-plugin/ manifests and README files directly without requiring file tree data.',
     outputFile: './data/04-files.json',
     getMetrics: (data, prev) => {
       // Count files by type from the files array
@@ -162,14 +151,12 @@ const STAGES = [
     id: '09-output',
     name: 'Output',
     fn: output,
-    description: 'Generates web-ready JSON files: index, plugins-browse, marketplaces-browse, categories, and per-author files.',
-    outputFile: './web/public/data/index.json',
+    description: 'Generates web-ready JSON files: marketplaces-browse and per-author files.',
+    outputFile: './web/public/data/marketplaces-browse.json',
     getMetrics: (data, prev) => ({
       'Authors': { current: data?.meta?.total_authors || 0, previous: prev?.meta?.total_authors || 0 },
       'Marketplaces': { current: data?.meta?.total_marketplaces || 0, previous: prev?.meta?.total_marketplaces || 0 },
-      'Plugins': { current: data?.meta?.total_plugins || 0, previous: prev?.meta?.total_plugins || 0 },
-      'Commands': { current: data?.meta?.total_commands || 0, previous: prev?.meta?.total_commands || 0 },
-      'Skills': { current: data?.meta?.total_skills || 0, previous: prev?.meta?.total_skills || 0 }
+      'Plugins': { current: data?.meta?.total_plugins || 0, previous: prev?.meta?.total_plugins || 0 }
     })
   }
 ];
@@ -244,13 +231,6 @@ function getDataPreview(stageId, data) {
         forks: r.repo?.signals?.forks
       }));
 
-    case '03-fetch-trees':
-      return data.trees?.slice(0, PREVIEW_LIMIT).map(t => ({
-        full_name: t.full_name,
-        file_count: t.tree?.length || 0,
-        truncated: t.truncated
-      }));
-
     case '04-fetch-files':
       return data.files?.slice(0, PREVIEW_LIMIT).map(f => ({
         full_name: f.full_name,
@@ -292,9 +272,10 @@ function getDataPreview(stageId, data) {
       return null;
 
     case '09-output':
-      return data.authors?.slice(0, PREVIEW_LIMIT).map(a => ({
-        id: a.id,
-        stars: a.stats?.total_stars
+      return data.marketplaces?.slice(0, PREVIEW_LIMIT).map(m => ({
+        name: m.name,
+        author_id: m.author_id,
+        stars: m.signals?.stars
       }));
 
     default:
