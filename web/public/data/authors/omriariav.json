@@ -2,135 +2,25 @@
   "author": {
     "id": "omriariav",
     "display_name": "Omri Ariav",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/6891042?u=1332f3654ed991b801b6a06cdb4454879498396f&v=4",
-    "url": "https://github.com/omriariav",
-    "bio": "Product Director @ Taboola",
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 9,
-      "total_skills": 0,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/6891042?u=1332f3654ed991b801b6a06cdb4454879498396f&v=4"
   },
   "marketplaces": [
     {
       "name": "omri-cc-stuff",
       "version": null,
       "description": "Personal Claude Code commands and utilities. Currently includes /copy for formatting output to different destinations.",
-      "owner_info": {
-        "name": "Omri Ariav",
-        "email": "omriariav@gmail.com"
-      },
-      "keywords": [],
       "repo_full_name": "omriariav/omri-cc-stuff",
       "repo_url": "https://github.com/omriariav/omri-cc-stuff",
       "repo_description": "Public Claude Code Skills/Agents/Commands that I built for my PM day-to-day work",
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-28T10:14:34Z",
-        "created_at": "2025-12-23T17:55:12Z",
-        "license": null
+        "pushed_at": "2026-01-28T10:14:34Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 715
-        },
-        {
-          "path": ".claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 239
-        },
-        {
-          "path": ".claude",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude/commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude/commands/copy.md",
-          "type": "blob",
-          "size": 4636
-        },
-        {
-          "path": ".claude/commands/setup-pulse.md",
-          "type": "blob",
-          "size": 1686
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 2279
-        },
-        {
-          "path": "commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "commands/cleartext.md",
-          "type": "blob",
-          "size": 1477
-        },
-        {
-          "path": "commands/gchat.md",
-          "type": "blob",
-          "size": 1309
-        },
-        {
-          "path": "commands/gdocs.md",
-          "type": "blob",
-          "size": 1358
-        },
-        {
-          "path": "commands/gmail.md",
-          "type": "blob",
-          "size": 1758
-        },
-        {
-          "path": "commands/jira.md",
-          "type": "blob",
-          "size": 1273
-        },
-        {
-          "path": "commands/richformat.md",
-          "type": "blob",
-          "size": 1337
-        },
-        {
-          "path": "commands/slack.md",
-          "type": "blob",
-          "size": 1540
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"omri-cc-stuff\",\n  \"owner\": {\n    \"name\": \"Omri Ariav\",\n    \"email\": \"omriariav@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code commands and utilities. Currently includes /copy for formatting output to different destinations.\",\n    \"version\": \"2.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"copy\",\n      \"source\": \"./\",\n      \"description\": \"Format and copy Claude output to clipboard for Slack, Email, Google Chat, Google Docs, or Jira.\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"Omri Ariav\",\n        \"email\": \"omriariav@gmail.com\"\n      },\n      \"category\": \"utilities\",\n      \"keywords\": [\"copy\", \"clipboard\", \"slack\", \"email\", \"formatting\"]\n    }\n  ]\n}\n",
         ".claude-plugin/plugin.json": "{\n  \"name\": \"copy\",\n  \"version\": \"2.0.1\",\n  \"description\": \"Format and copy Claude output to clipboard for Slack, Email, Google Chat, Google Docs, or Jira.\",\n  \"author\": {\n    \"name\": \"Omri Ariav\",\n    \"email\": \"omriariav@gmail.com\"\n  }\n}\n",
-        ".claude/commands/copy.md": "---\ndescription: Format and copy output to clipboard. Guesses what to copy from context. Optional destination (slack/email/gchat/jira/gdocs) and what to copy.\nargument-hint: \"[destination] [what to copy]\"\n---\n\n# /copy - Format Output for Destination\n\nCopy data/tables/text to clipboard, formatted for the destination.\n\n## Arguments (all optional)\n\n```\n/copy                     → Clear text, guess what to copy\n/copy slack               → Format for Slack\n/copy email               → Format for Gmail/email\n/copy gchat               → Format for Google Chat\n/copy gdocs               → Format for Google Docs\n/copy jira                → Format for Jira\n/copy slack the summary   → Format specific content for Slack\n/copy the findings        → Clear text, copy specific content\n```\n\n**$ARGUMENTS** = `[destination] [what to copy]`\n\n- If no destination: output clear text (universal)\n- If no \"what to copy\": find most recent table/data/output in conversation\n\n## Workflow\n\n1. **Parse arguments**: Extract destination (if any) and content reference (if any)\n2. **Find content**:\n   - If content specified → find that specific content in conversation\n   - If not specified → find most recent table, data, or significant output\n3. **Format for destination** (or clear text if none specified)\n4. **Copy to clipboard**:\n   - **Email**: Write HTML to temp file → `textutil` convert to RTF → `osascript` to copy RTF (rich text paste)\n   - **All others**: `pbcopy` (plain text)\n5. **Confirm**: Show preview of what was copied\n\n## Destination Formatting Rules\n\n### Clear Text (default - no destination)\n- Plain text, no special formatting\n- Tables as simple aligned columns\n- Numbers formatted readably ($2.45M not 2450000)\n- Universal - works anywhere\n\n### Slack\n- Tables in triple backticks (```) with ASCII art (│ and ─)\n- Bold: single `*text*`\n- Links: `<url|text>`\n- Generate QuickChart URL for numeric comparisons\n\n### GChat (Google Chat)\n- **Same as Slack** - GChat doesn't render markdown tables\n- Tables in triple backticks with ASCII art (│ and ─)\n- Bold: `*text*`\n- No image embedding - use URL link instead\n\n### Email (Gmail)\n- HTML `<table>` with inline styles\n- Bold: `<b>` tags\n- Embed chart as `<img src=\"QuickChart URL\">`\n- **IMPORTANT: Rich text copy** — Gmail pastes raw HTML as text. You MUST copy as rich text:\n  1. Write HTML to a temp file (e.g., `/tmp/claude-email.html`)\n  2. Convert to RTF: `textutil -convert rtf -inputencoding UTF-8 /tmp/claude-email.html -output /tmp/claude-email.rtf`\n  3. Copy RTF to clipboard: `osascript -e 'set the clipboard to (read (POSIX file \"/tmp/claude-email.rtf\") as «class RTF »)'`\n- Do NOT use `pbcopy` for email — it copies plain text only\n\n### Jira\n- Tables: `||header||` and `|cell|`\n- Bold: `*text*`\n- Image: `!url!`\n\n### Google Docs (gdocs)\n- Full Markdown formatting (tables, bold, links, headers)\n- User pastes via **Edit → Paste from Markdown**\n- Tables as Markdown `| col |` syntax\n- Bold: `**text**`\n- Links: `[text](url)`\n\n## ASCII Table Format (Slack & GChat)\n\n```\n*Title*\n\n```\nColumn 1     │ Column 2  │ Column 3\n─────────────┼───────────┼──────────\nValue 1      │ Value 2   │ Value 3\nValue 4      │ Value 5   │ Value 6\n```\n```\n\n## Content Detection Priority\n\nWhen guessing what to copy, look for (in order):\n1. Most recent table/data output\n2. Most recent code block\n3. Most recent bulleted list\n4. Most recent structured content\n5. Summary or key findings\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## QuickChart (for Slack/Email only)\n\nGenerate chart URL when data has numeric comparisons:\n```python\nimport json, urllib.parse\nconfig = {\"type\": \"bar\", \"data\": {\"labels\": [...], \"datasets\": [{\"data\": [...]}]}}\nurl = f\"https://quickchart.io/chart?c={urllib.parse.quote(json.dumps(config))}&w=600&h=400\"\n```\n\n## Examples\n\n### `/copy`\nFind last output, copy as clear text.\n\n### `/copy slack`\nFind last output, format for Slack with ASCII table + chart URL.\n\n### `/copy gchat`\nFind last output, format same as Slack (ASCII table in code block).\n\n### `/copy gdocs`\nFind last output, format as Markdown. User pastes via Edit → Paste from Markdown.\n\n### `/copy the summary`\nFind \"summary\" in conversation, copy as clear text.\n\n### `/copy email the comparison`\nFind \"comparison\", format as HTML table for email.\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: [destination or \"clear text\"])\n\nPreview:\n[first 5-10 lines of copied content]\n```\n",
-        ".claude/commands/setup-pulse.md": "# /setup-pulse\n\nInstall claude-pulse statusline for real-time token usage monitoring.\n\n## Usage\n\n```\n/setup-pulse\n```\n\n## Description\n\nInstalls [claude-pulse](https://github.com/omriariav/claude-pulse) - a statusline script that shows your context usage as `72k/200k (36%)` with color-coded warnings.\n\n## Instructions\n\nWhen the user runs `/setup-pulse`:\n\n1. Clone or update the claude-pulse repository:\n   ```bash\n   if [ -d \"$HOME/Code/claude-pulse\" ]; then\n     cd \"$HOME/Code/claude-pulse\" && git pull\n   else\n     mkdir -p \"$HOME/Code\"\n     git clone https://github.com/omriariav/claude-pulse.git \"$HOME/Code/claude-pulse\"\n   fi\n   ```\n\n2. Run the install script:\n   ```bash\n   cd \"$HOME/Code/claude-pulse\" && ./install.sh\n   ```\n\n3. Tell the user to add this to their Claude Code `settings.json`:\n   ```json\n   {\n     \"statusLine\": {\n       \"type\": \"command\",\n       \"command\": \"~/.claude/statusline-command.sh\"\n     }\n   }\n   ```\n\n   For Windows users:\n   ```json\n   {\n     \"statusLine\": {\n       \"type\": \"command\",\n       \"command\": \"powershell -ExecutionPolicy Bypass -File C:/Users/USERNAME/.claude/statusline-command.ps1\"\n     }\n   }\n   ```\n\n4. Tell them to restart Claude Code to see the statusline.\n\n## Example Output\n\nAfter installation:\n```\nclaude-pulse installed successfully!\n\nAdd to your settings.json:\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"~/.claude/statusline-command.sh\"\n  }\n\nThen restart Claude Code to see: 72k/200k (36%)\n```\n\n## What It Shows\n\n- Real-time token usage matching `/context`\n- Color-coded: Green (<50%) | Yellow (50-79%) | Red (80%+)\n- Works with all Claude models\n- >100% is normal when context is full (Claude will auto-compact)\n",
-        "README.md": "# Omri's Claude Code Stuff\n\nPersonal collection of Claude Code commands and utilities.\n\n## Installation\n\nIn Claude Code:\n```\n/plugins → Marketplace → Add → omriariav/omri-cc-stuff\n```\n\nThen install the `copy` plugin from the marketplace.\n\n## Commands\n\n### `/copy:*` - Format & Copy to Clipboard\n\nCopy data/tables/text to clipboard, formatted for your destination.\n\n| Command | Description |\n|---------|-------------|\n| `/copy:slack` | Format for Slack (ASCII tables, `*bold*`) |\n| `/copy:gchat` | Format for Google Chat (same as Slack) |\n| `/copy:gmail` | Format for Gmail/email (HTML tables) |\n| `/copy:gdocs` | Format for Google Docs (Markdown, paste via Edit → Paste from Markdown) |\n| `/copy:jira` | Format for Jira Cloud (Markdown) |\n| `/copy:cleartext` | Plain text (universal) |\n| `/copy:richformat` | Rich Text Format (RTF) for Word, Pages |\n\n**Usage:**\n```\n/copy:slack                    → Auto-detect what to copy, format for Slack\n/copy:slack the summary table  → Copy specific content for Slack\n/copy:gmail                    → Auto-detect, format as HTML for email\n```\n\n**Features:**\n- Auto-detects what to copy from conversation context\n- Formats text, tables, lists, code, summaries\n- Numbers auto-formatted (e.g., `$2.45M` not `2450000`)\n- QuickChart URLs for numeric data visualization\n\n**Example:**\n```\nYou: Compare the top programming languages\n\nClaude: | Language   | Stars  | Growth |\n        |------------|--------|--------|\n        | Python     | 142K   | +18%   |\n        | JavaScript | 128K   | +12%   |\n        | Rust       | 89K    | +31%   |\n\nYou: /copy:slack\n\nClaude: ✓ Copied to clipboard (format: Slack)\n```\n\n## Other Commands\n\n| Command | Description |\n|---------|-------------|\n| `/setup-pulse` | Install [claude-pulse](https://github.com/omriariav/claude-pulse) statusline |\n\n### `/setup-pulse` - Install Token Usage Statusline\n\nInstalls [claude-pulse](https://github.com/omriariav/claude-pulse) - shows real-time context usage in your statusline.\n\n```\n/setup-pulse\n```\n\nAfter running, you'll see: `72k/200k (36%)` with color-coded warnings (green/yellow/red).\n\n## Contributing\n\nContributions welcome! Feel free to open a PR or issue.\n\n## License\n\nFree to use with attribution. Credit: [Omri Ariav](https://github.com/omriariav)\n",
-        "commands/cleartext.md": "---\ndescription: Copy to clipboard as plain text. Specify what to copy, or auto-detects from context.\nargument-hint: [what to copy]\n---\n\n# /copy:cleartext - Format as Clear Text\n\nCopy data/tables/text to clipboard as plain clear text (universal format).\n\n**$ARGUMENTS** = `[what to copy]` (optional - if not specified, finds most recent output)\n\n## Workflow\n\n1. **Find content**: If specified in arguments, find that content. Otherwise, find most recent table/data/output.\n2. **Format as clear text**\n3. **Copy to clipboard**: `pbcopy`\n4. **Confirm**: Show preview\n\n## Clear Text Formatting Rules\n\n- Plain text, no special formatting\n- Tables as simple aligned columns\n- Numbers formatted readably ($2.45M not 2450000)\n- Universal - works anywhere\n\n## Table Format\n\n```\nColumn 1      Column 2      Column 3\n──────────    ──────────    ──────────\nValue 1       Value 2       Value 3\nValue 4       Value 5       Value 6\n```\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## Content Detection Priority\n\nWhen guessing what to copy, look for (in order):\n1. Most recent table/data output\n2. Most recent code block\n3. Most recent bulleted list\n4. Most recent structured content\n5. Summary or key findings\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: Clear Text)\n\nPreview:\n[first 5-10 lines of copied content]\n```\n",
-        "commands/gchat.md": "---\ndescription: Copy to clipboard for Google Chat. Specify what to copy, or auto-detects from context.\nargument-hint: [what to copy]\n---\n\n# /copy:gchat - Format for Google Chat\n\nCopy data/tables/text to clipboard, formatted for Google Chat.\n\n**$ARGUMENTS** = `[what to copy]` (optional - if not specified, finds most recent output)\n\n## Workflow\n\n1. **Find content**: If specified in arguments, find that content. Otherwise, find most recent table/data/output.\n2. **Format for Google Chat**\n3. **Copy to clipboard**: `pbcopy`\n4. **Confirm**: Show preview\n\n## Google Chat Formatting Rules\n\n- **Same as Slack** - GChat doesn't render markdown tables\n- Tables in triple backticks with ASCII art (│ and ─)\n- Bold: `*text*`\n- No image embedding - use URL link instead\n\n## ASCII Table Format\n\n```\n*Title*\n\n```\nColumn 1     │ Column 2  │ Column 3\n─────────────┼───────────┼──────────\nValue 1      │ Value 2   │ Value 3\nValue 4      │ Value 5   │ Value 6\n```\n```\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: Google Chat)\n\nPreview:\n[first 5-10 lines of copied content]\n```\n",
-        "commands/gdocs.md": "---\ndescription: Copy to clipboard for Google Docs (Paste from Markdown). Specify what to copy, or auto-detects from context.\nargument-hint: [what to copy]\n---\n\n# /copy:gdocs - Format for Google Docs\n\nCopy data/tables/text to clipboard, formatted for Google Docs.\n\n**$ARGUMENTS** = `[what to copy]` (optional - if not specified, finds most recent output)\n\n## Workflow\n\n1. **Find content**: If specified in arguments, find that content. Otherwise, find most recent table/data/output.\n2. **Format as Markdown for Google Docs**\n3. **Copy to clipboard**: `pbcopy`\n4. **Confirm**: Show preview and remind user to use \"Paste from Markdown\"\n\n## Google Docs Formatting Rules\n\n- Full Markdown formatting (tables, bold, links, headers)\n- User pastes via **Edit → Paste from Markdown**\n- Tables as Markdown `| col |` syntax\n- Bold: `**text**`\n- Links: `[text](url)`\n\n## Markdown Table Format\n\n```markdown\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Value 1  | Value 2  | Value 3  |\n| Value 4  | Value 5  | Value 6  |\n```\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: Google Docs Markdown)\n\nPaste using: Edit → Paste from Markdown\n\nPreview:\n[first 5-10 lines of copied content]\n```\n",
-        "commands/gmail.md": "---\ndescription: Copy to clipboard for Gmail/email (HTML). Specify what to copy, or auto-detects from context.\nargument-hint: [what to copy]\n---\n\n# /copy:gmail - Format for Gmail/Email\n\nCopy data/tables/text to clipboard, formatted as HTML for Gmail.\n\n**$ARGUMENTS** = `[what to copy]` (optional - if not specified, finds most recent output)\n\n## Workflow\n\n1. **Find content**: If specified in arguments, find that content. Otherwise, find most recent table/data/output.\n2. **Format as HTML for email**\n3. **Copy to clipboard**: `pbcopy`\n4. **Confirm**: Show preview\n\n## Email/Gmail Formatting Rules\n\n- HTML `<table>` with inline styles\n- Bold: `<b>` tags\n- Embed chart as `<img src=\"QuickChart URL\">`\n\n## HTML Table Format\n\n```html\n<table style=\"border-collapse: collapse; font-family: Arial, sans-serif;\">\n  <tr style=\"background-color: #f2f2f2;\">\n    <th style=\"border: 1px solid #ddd; padding: 8px;\">Column 1</th>\n    <th style=\"border: 1px solid #ddd; padding: 8px;\">Column 2</th>\n  </tr>\n  <tr>\n    <td style=\"border: 1px solid #ddd; padding: 8px;\">Value 1</td>\n    <td style=\"border: 1px solid #ddd; padding: 8px;\">Value 2</td>\n  </tr>\n</table>\n```\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## QuickChart\n\nGenerate chart URL when data has numeric comparisons:\n```python\nimport json, urllib.parse\nconfig = {\"type\": \"bar\", \"data\": {\"labels\": [...], \"datasets\": [{\"data\": [...]}]}}\nurl = f\"https://quickchart.io/chart?c={urllib.parse.quote(json.dumps(config))}&w=600&h=400\"\n```\n\nEmbed as: `<img src=\"[chart url]\" alt=\"Chart\">`\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: HTML for Email)\n\nPreview:\n[first 5-10 lines of copied content]\n```\n",
-        "commands/jira.md": "---\ndescription: Copy to clipboard for Jira Cloud (Markdown). Specify what to copy, or auto-detects from context.\nargument-hint: [what to copy]\n---\n\n# /copy:jira - Format for Jira Cloud\n\nCopy data/tables/text to clipboard, formatted as Markdown for Jira Cloud.\n\n**$ARGUMENTS** = `[what to copy]` (optional - if not specified, finds most recent output)\n\n## Workflow\n\n1. **Find content**: If specified in arguments, find that content. Otherwise, find most recent table/data/output.\n2. **Format as Markdown for Jira Cloud**\n3. **Copy to clipboard**: `pbcopy`\n4. **Confirm**: Show preview\n\n## Jira Cloud Formatting Rules (Markdown)\n\n- Tables: Standard Markdown table syntax\n- Bold: `**text**`\n- Italic: `*text*`\n- Code: `` `code` `` or triple backticks for blocks\n- Links: `[text](url)`\n- Headers: `# H1`, `## H2`, etc.\n\n## Markdown Table Format\n\n```markdown\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Value 1  | Value 2  | Value 3  |\n| Value 4  | Value 5  | Value 6  |\n```\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: Jira Cloud Markdown)\n\nPreview:\n[first 5-10 lines of copied content]\n```\n",
-        "commands/richformat.md": "---\ndescription: Copy to clipboard as Rich Text (RTF). Specify what to copy, or auto-detects from context.\nargument-hint: [what to copy]\n---\n\n# /copy:richformat - Format as Rich Text (RTF)\n\nCopy data/tables/text to clipboard as Rich Text Format (RTF) for pasting into Word, Pages, etc.\n\n**$ARGUMENTS** = `[what to copy]` (optional - if not specified, finds most recent output)\n\n## Workflow\n\n1. **Find content**: If specified in arguments, find that content. Otherwise, find most recent table/data/output.\n2. **Format as RTF**\n3. **Copy to clipboard with RTF type**\n4. **Confirm**: Show preview\n\n## RTF Formatting\n\nUse `pbcopy` with RTF content type, or generate RTF markup:\n\n```bash\n# Copy as RTF on macOS\necho '{\\rtf1\\ansi Your formatted text here}' | pbcopy -Prefer rtf\n```\n\n## RTF Table Format\n\n```rtf\n{\\rtf1\\ansi\n\\trowd\n\\cellx3000\\cellx6000\\cellx9000\n\\intbl Column 1\\cell Column 2\\cell Column 3\\cell\\row\n\\intbl Value 1\\cell Value 2\\cell Value 3\\cell\\row\n}\n```\n\n## Formatting Elements\n\n- Bold: `\\b text\\b0`\n- Italic: `\\i text\\i0`\n- Tables: `\\trowd`, `\\cell`, `\\row`\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: Rich Text/RTF)\n\nPreview:\n[first 5-10 lines of copied content]\n```\n",
-        "commands/slack.md": "---\ndescription: Copy to clipboard for Slack. Specify what to copy, or auto-detects from context.\nargument-hint: [what to copy]\n---\n\n# /copy:slack - Format for Slack\n\nCopy data/tables/text to clipboard, formatted for Slack.\n\n**$ARGUMENTS** = `[what to copy]` (optional - if not specified, finds most recent output)\n\n## Workflow\n\n1. **Find content**: If specified in arguments, find that content. Otherwise, find most recent table/data/output.\n2. **Format for Slack**\n3. **Copy to clipboard**: `pbcopy`\n4. **Confirm**: Show preview\n\n## Slack Formatting Rules\n\n- Tables in triple backticks (```) with ASCII art (│ and ─)\n- Bold: single `*text*`\n- Links: `<url|text>`\n- Generate QuickChart URL for numeric comparisons\n\n## ASCII Table Format\n\n```\n*Title*\n\n```\nColumn 1     │ Column 2  │ Column 3\n─────────────┼───────────┼──────────\nValue 1      │ Value 2   │ Value 3\nValue 4      │ Value 5   │ Value 6\n```\n```\n\n## Number Formatting\n\nAlways format numbers for readability:\n- `2450000` → `$2.45M`\n- `15.7894` → `15.8%`\n- `1247` → `1,247`\n\n## QuickChart\n\nGenerate chart URL when data has numeric comparisons:\n```python\nimport json, urllib.parse\nconfig = {\"type\": \"bar\", \"data\": {\"labels\": [...], \"datasets\": [{\"data\": [...]}]}}\nurl = f\"https://quickchart.io/chart?c={urllib.parse.quote(json.dumps(config))}&w=600&h=400\"\n```\n\n## Output\n\nAfter copying, show:\n```\n✓ Copied to clipboard (format: Slack)\n\nPreview:\n[first 5-10 lines of copied content]\n```\n"
+        "README.md": "# Omri's Claude Code Stuff\n\nPersonal collection of Claude Code commands and utilities.\n\n## Installation\n\nIn Claude Code:\n```\n/plugins → Marketplace → Add → omriariav/omri-cc-stuff\n```\n\nThen install the `copy` plugin from the marketplace.\n\n## Commands\n\n### `/copy:*` - Format & Copy to Clipboard\n\nCopy data/tables/text to clipboard, formatted for your destination.\n\n| Command | Description |\n|---------|-------------|\n| `/copy:slack` | Format for Slack (ASCII tables, `*bold*`) |\n| `/copy:gchat` | Format for Google Chat (same as Slack) |\n| `/copy:gmail` | Format for Gmail/email (HTML tables) |\n| `/copy:gdocs` | Format for Google Docs (Markdown, paste via Edit → Paste from Markdown) |\n| `/copy:jira` | Format for Jira Cloud (Markdown) |\n| `/copy:cleartext` | Plain text (universal) |\n| `/copy:richformat` | Rich Text Format (RTF) for Word, Pages |\n\n**Usage:**\n```\n/copy:slack                    → Auto-detect what to copy, format for Slack\n/copy:slack the summary table  → Copy specific content for Slack\n/copy:gmail                    → Auto-detect, format as HTML for email\n```\n\n**Features:**\n- Auto-detects what to copy from conversation context\n- Formats text, tables, lists, code, summaries\n- Numbers auto-formatted (e.g., `$2.45M` not `2450000`)\n- QuickChart URLs for numeric data visualization\n\n**Example:**\n```\nYou: Compare the top programming languages\n\nClaude: | Language   | Stars  | Growth |\n        |------------|--------|--------|\n        | Python     | 142K   | +18%   |\n        | JavaScript | 128K   | +12%   |\n        | Rust       | 89K    | +31%   |\n\nYou: /copy:slack\n\nClaude: ✓ Copied to clipboard (format: Slack)\n```\n\n## Other Commands\n\n| Command | Description |\n|---------|-------------|\n| `/setup-pulse` | Install [claude-pulse](https://github.com/omriariav/claude-pulse) statusline |\n\n### `/setup-pulse` - Install Token Usage Statusline\n\nInstalls [claude-pulse](https://github.com/omriariav/claude-pulse) - shows real-time context usage in your statusline.\n\n```\n/setup-pulse\n```\n\nAfter running, you'll see: `72k/200k (36%)` with color-coded warnings (green/yellow/red).\n\n## Contributing\n\nContributions welcome! Feel free to open a PR or issue.\n\n## License\n\nFree to use with attribution. Credit: [Omri Ariav](https://github.com/omriariav)\n"
       },
       "plugins": [
         {

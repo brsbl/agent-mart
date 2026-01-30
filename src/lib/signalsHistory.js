@@ -89,11 +89,15 @@ export function addSnapshot(history, repoFullName, stars, forks, date) {
     history.repositories[repoFullName] = { snapshots: [] };
   }
 
-  history.repositories[repoFullName].snapshots.push({
-    date,
-    stars,
-    forks
-  });
+  // Check for existing snapshot on this date to prevent duplicates on re-runs
+  const existing = history.repositories[repoFullName].snapshots.find(s => s.date === date);
+  if (!existing) {
+    history.repositories[repoFullName].snapshots.push({
+      date,
+      stars,
+      forks
+    });
+  }
 }
 
 /**

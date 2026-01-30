@@ -93,7 +93,8 @@ export function calculateTrendingScore(repoHistory, currentStars) {
     referenceSnapshot = sortedSnapshots[0];
   }
 
-  const starsGained7d = currentStars - referenceSnapshot.stars;
+  // Clamp to 0 - negative gains (star removals) aren't meaningful for trending
+  const starsGained7d = Math.max(0, currentStars - referenceSnapshot.stars);
 
   // Calculate actual days elapsed since reference snapshot
   const actualDays = Math.max(1, (Date.now() - new Date(referenceSnapshot.date).getTime()) / (24 * 60 * 60 * 1000));

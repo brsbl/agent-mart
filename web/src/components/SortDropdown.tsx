@@ -43,10 +43,10 @@ export function SortDropdown({
       <button
         type="button"
         onClick={toggleDirection}
-        className="h-[42px] w-[42px] flex items-center justify-center border border-r-0 border-gray-200 dark:border-gray-700 rounded-l-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+        className="h-[42px] w-[42px] flex items-center justify-center border border-r-0 border-border rounded-l-lg bg-card hover:bg-card-hover cursor-pointer transition-colors"
         aria-label={`Sort ${sortDirection === "asc" ? "ascending" : "descending"}`}
       >
-        <ArrowIcon size={16} className="text-gray-600 dark:text-gray-400" />
+        <ArrowIcon size={16} className="text-foreground-secondary" />
       </button>
 
       {/* Field dropdown using Popover */}
@@ -54,19 +54,19 @@ export function SortDropdown({
         <Popover.Trigger asChild>
           <button
             type="button"
-            className="h-[42px] flex items-center gap-2 px-3 border border-gray-200 dark:border-gray-700 rounded-r-lg text-sm bg-white dark:bg-gray-800 cursor-pointer transition-colors min-w-[140px] hover:border-gray-300 dark:hover:border-gray-600"
+            className="h-[42px] flex items-center gap-2 px-3 border border-border rounded-r-lg text-sm bg-card cursor-pointer transition-colors min-w-[140px] hover:border-border-hover"
             aria-label="Sort by"
             aria-haspopup="listbox"
             aria-expanded={isOpen}
           >
-            <span className="text-gray-900 dark:text-gray-100">{currentOption?.label}</span>
-            <ChevronDown size={16} className="ml-auto text-gray-400" />
+            <span className="text-foreground">{currentOption?.label}</span>
+            <ChevronDown size={16} className="ml-auto text-foreground-muted" />
           </button>
         </Popover.Trigger>
 
         <Popover.Portal>
           <Popover.Content
-            className="w-[140px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-1"
+            className="w-[140px] bg-card border border-border rounded-lg shadow-lg z-50 py-1"
             sideOffset={4}
             align="start"
           >
@@ -80,8 +80,8 @@ export function SortDropdown({
                     onClick={() => handleSelect(option.value)}
                     className={`w-full px-3 py-2 text-left text-sm cursor-pointer ${
                       isSelected
-                        ? "bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        ? "bg-background-hover text-foreground"
+                        : "text-foreground-secondary hover:bg-background-hover"
                     }`}
                     role="option"
                     aria-selected={isSelected}

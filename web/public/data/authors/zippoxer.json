@@ -2,80 +2,24 @@
   "author": {
     "id": "zippoxer",
     "display_name": "Zippo",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/859015?v=4",
-    "url": "https://github.com/zippoxer",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 0,
-      "total_stars": 272,
-      "total_forks": 23
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/859015?v=4"
   },
   "marketplaces": [
     {
       "name": "subtask",
       "version": null,
       "description": "Parallel task orchestration for AI coding agents",
-      "owner_info": {
-        "name": "zippoxer"
-      },
-      "keywords": [],
       "repo_full_name": "zippoxer/subtask",
       "repo_url": "https://github.com/zippoxer/subtask",
       "repo_description": "Claude Skill to do your tasks with subagents in Git worktrees",
-      "homepage": "",
       "signals": {
-        "stars": 272,
-        "forks": 23,
-        "pushed_at": "2026-01-29T18:32:30Z",
-        "created_at": "2026-01-11T11:17:02Z",
-        "license": "MIT"
+        "stars": 273,
+        "forks": 24,
+        "pushed_at": "2026-01-29T23:32:38Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 524
-        },
-        {
-          "path": "plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugin/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugin/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 345
-        },
-        {
-          "path": "plugin/hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugin/hooks/hooks.json",
-          "type": "blob",
-          "size": 715
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"subtask\",\n  \"owner\": {\n    \"name\": \"zippoxer\"\n  },\n  \"metadata\": {\n    \"description\": \"Parallel task orchestration for AI coding agents\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"subtask\",\n      \"source\": \"./plugin\",\n      \"description\": \"Dispatch work to parallel Codex workers in isolated git workspaces\",\n      \"version\": \"1.0.0\",\n      \"repository\": \"https://github.com/zippoxer/subtask\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"orchestration\", \"parallel\", \"codex\", \"tasks\", \"git-worktrees\"]\n    }\n  ]\n}\n",
-        "plugin/.claude-plugin/plugin.json": "{\n  \"name\": \"subtask\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Parallel task orchestration for AI coding agents - dispatch work to Codex or Claude Code workers in isolated git workspaces\",\n  \"repository\": \"https://github.com/zippoxer/subtask\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"orchestration\", \"parallel\", \"codex\", \"tasks\", \"git-worktrees\"]\n}\n",
-        "plugin/hooks/hooks.json": "{\n  \"description\": \"Reminds Claude to use the subtask skill\",\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh\"\n          }\n        ]\n      }\n    ],\n    \"UserPromptSubmit\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/skill-reminder.sh\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/skill-required.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+        "README.md": "# Subtask ✨\n\nSubtask gives Claude Code a Skill and CLI to create tasks, spawn subagents, track progress, review and request changes.\n\n* Each task gets a Git worktree, so they can be **done in parallel** safely\n* **Claude can interrupt and talk with subagents**!\n* TUI shows progress, diffs & conversations\n* Tasks are persisted in folders\n* Codex subagents supported\n* Ralph not needed\n\n### Spawning Tasks\n```makefile\nYou: fix the auth bug and add API metrics with Subtask\n\nClaude:\n  ├─► Skill(Subtask)\n  ├─► Bash(subtask draft fix/auth-bug ...)\n  ├─► Bash(subtask draft feat/api-metrics ...)\n  └─⏺ Tasks are in progress! I'll get notified when they're done.\n```\n\n### Tracking & Merging\n```makefile\nYou: which tasks are open?\n\nClaude:\n  ├─► Bash(subtask list)\n  │   ┌──────────────────┬─────────┬────────────────────────┐\n  │   │ TASK             │ STATUS  │ TITLE                  │\n  │   ├──────────────────┼─────────┼────────────────────────┤\n  │   │ fix/auth-bug     │ replied │ Fix auth token refresh │\n  │   │ feat/api-metrics │ working │ Add API metrics        │\n  │   │ feat/ui-redesign │ draft   │ Redesign dashboard     │\n  │   └──────────────────┴─────────┴────────────────────────┘\n  │\n  └─⏺ ui-redesign hasn't started yet — want me to kick it off?\n\nYou: lets merge fix/auth-bug.\n```\n\n### TUI\nRun `subtask` in your terminal to see everything:\n<table>\n  <tr>\n    <td><img width=\"983\" height=\"603\" alt=\"image (2)\" src=\"https://github.com/user-attachments/assets/fcc4686a-afa1-4168-b141-e54d9286ad4c\" /></td>\n    <td><img width=\"985\" height=\"603\" alt=\"image\" src=\"https://github.com/user-attachments/assets/9d6cd9a2-ba80-4e4e-9fdc-fd0f675b124a\" />\n</td>\n  </tr>\n</table>\n\n## Setup\n\n> [!NOTE]\n> Subtask is in early development. Upcoming releases will simplify installation, solve known bugs, and improve Claude's proficiency.\n\n### Install the CLI\n\n#### Mac/Linux\n\n```bash\ncurl -fsSL https://subtask.dev/install.sh | bash\n```\n\n#### Windows (PowerShell)\n\n```powershell\nirm https://subtask.dev/install.ps1 | iex\n```\n\n<details>\n<summary>Other install methods…</summary>\n\n#### Homebrew\n\n```bash\nbrew install zippoxer/tap/subtask\n```\n\n#### Go\n\n```bash\ngo install github.com/zippoxer/subtask/cmd/subtask@latest\n```\n\n#### Binary\n\n[GitHub Releases](https://github.com/zippoxer/subtask/releases)\n\n</details>\n\n### Install the Skill\n\nTell Claude Code:\n```md\nSetup Subtask with `subtask install --guide`.\n```\nClaude will install the Subtask skill at `~/.claude/skills`, and ask you whether subagents should run Claude, Codex or OpenCode.\n\n<details>\n<summary>Or install manually…</summary>\n\n```bash\nsubtask install\n\n# Tip: Uninstall later with `subtask uninstall`.\n```\n\n</details>\n\n### Install the Plugin (Optional)\n\nIn Claude Code:\n```\n/plugin marketplace add zippoxer/subtask\n/plugin install subtask@subtask\n```\nThis reminds Claude to use the Subtask skill when it invokes the CLI.\n\n## Use\n\nTalk with Claude Code about what you want done, and then ask it to use Subtask.\n\nExamples:\n- `\"fix the login bug with Subtask\"`\n- `\"lets do these 3 features with Subtask\"`\n- `\"plan and implement the new API endpoint with Subtask\"`\n\nWhat happens next:\n1. Claude Code creates tasks and runs subagents to do them simultaneously.<br/>\n2. Claude gets notified when they're done, and reviews the code.<br/>\n3. Claude asks if you want to merge, or ask for changes.\n\n## Updating\n```bash\nsubtask update --check\nsubtask update\n```\n\n## Subtask is Built with Subtask\n- I use Claude Code to lead the development (i talk, it creates tasks and tracks everything)\n- I use Codex for subagents (just preference, Claude Code works too)\n- ~60 tasks merged in the past week\n- [Proof](https://github.com/user-attachments/assets/6c71e34f-b3c6-4372-ac25-dd3eea15932e)\n\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

@@ -86,11 +86,7 @@ src/
 ```
 ┌──────────────────────┐
 │ web/public/data/     │
-│  ├── index.json      │
-│  ├── categories.json │
 │  ├── marketplaces-   │
-│  │   browse.json     │
-│  ├── plugins-        │
 │  │   browse.json     │
 │  └── authors/*.json  │
 └──────────┬───────────┘
@@ -99,7 +95,6 @@ src/
 ┌──────────────────────┐
 │ web/src/lib/data.ts  │
 │  loadMarketplaces()  │
-│  loadCategories()    │
 │  loadAuthorData()    │
 └──────────┬───────────┘
            │

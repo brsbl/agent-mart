@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Copy,
   Check,
+  TrendingUp,
 } from "lucide-react";
 import {
   PluginCardInline,
@@ -23,65 +24,42 @@ import {
   MarketplaceCard,
   InstallCommand,
 } from "@/components";
-import { useFetch, useStarredRepos } from "@/hooks";
+import { useFetch } from "@/hooks";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import type { AuthorDetail, Marketplace, Category } from "@/lib/types";
 import {
   formatNumber,
+  formatRelativeTime,
   getCategoryBadgeClass,
   getCategoryDisplayName,
 } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
 import { DATA_URLS } from "@/lib/constants";
 
-// Format relative time (e.g., "2d ago", "3mo ago")
-function formatRelativeTime(dateString?: string | null): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 1) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
-    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
-  }
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return `${months} month${months === 1 ? "" : "s"} ago`;
-  }
-  const years = Math.floor(diffDays / 365);
-  return `${years} year${years === 1 ? "" : "s"} ago`;
-}
-
 // Terminal-style install command component
 function TerminalInstallCommand({ command }: { command: string }) {
   const { copied, copy } = useCopyToClipboard();
 
   return (
-    <div className="bg-terminal-bg rounded-lg overflow-hidden">
+    <div className="bg-terminal-bg dark:bg-gray-800 rounded-lg overflow-hidden">
       {/* Terminal header */}
-      <div className="px-3 py-1.5 bg-card/10 border-b border-card/10">
-        <span className="text-[10px] text-terminal-text font-mono opacity-60">Add marketplace</span>
+      <div className="px-3 py-1 bg-card/10 border-b border-white/15 dark:bg-gray-900">
+        <span className="text-[10px] text-terminal-text font-mono opacity-60 dark:opacity-80">Add marketplace</span>
       </div>
       {/* Command line */}
-      <div className="px-3 py-2.5 flex items-center justify-between gap-3">
+      <div className="px-3 py-2 flex items-center justify-between gap-3">
         <code className="text-terminal-text font-mono text-sm flex-1 overflow-x-auto">
           <span className="opacity-50">$</span> {command}
         </code>
         <button
           type="button"
           onClick={() => copy(command)}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-terminal-text hover:text-accent-foreground bg-card/10 hover:bg-card/20 rounded transition-colors flex-shrink-0 cursor-pointer"
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-terminal-text bg-white/10 hover:bg-white/20 rounded transition-colors flex-shrink-0 cursor-pointer"
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >
           {copied ? (
             <>
-              <Check size={12} className="text-success" />
+              <Check size={12} className="text-accent" />
               <span>Copied</span>
             </>
           ) : (
@@ -148,7 +126,6 @@ export default function MarketplaceDetailPage() {
   const params = useParams();
   const authorId = validateUrlParam(params.author);
   const marketplaceName = validateUrlParam(params.marketplace);
-  const { isStarred, toggleStar } = useStarredRepos();
   const [selectedPluginIndex, setSelectedPluginIndex] = useState(0);
 
   // Build URL conditionally - null if params are invalid
@@ -210,15 +187,6 @@ export default function MarketplaceDetailPage() {
     return getPluginReadme(marketplace.files, plugins[selectedPluginIndex]?.name);
   }, [marketplace, plugins, selectedPluginIndex]);
 
-  const repoId = marketplace?.repo_full_name || "";
-  const starred = isStarred(repoId);
-
-  const handleStarClick = () => {
-    if (repoId) {
-      toggleStar(repoId);
-    }
-  };
-
   if (loading) {
     return <LoadingState />;
   }
@@ -263,12 +231,12 @@ export default function MarketplaceDetailPage() {
       <div className="max-w-6xl mx-auto">
         {/* Two-column layout: Main (left) + Sidebar (right), or centered if no sidebar */}
         <div className={hasOtherMarketplaces
-          ? "lg:grid lg:grid-cols-[1fr_400px] lg:gap-8"
+          ? "lg:grid lg:grid-cols-[1fr_380px] lg:gap-8 lg:pl-12"
           : "max-w-3xl mx-auto"}>
           {/* Main Column - Hero, Terminal, README */}
           <div>
             {/* Hero Header - glass */}
-            <div className="glass-card border border-white/50 rounded-2xl p-6 mb-6 shadow-xl">
+            <div className="glass-card border border-border rounded-2xl p-6 mb-6 shadow-xl">
               <div className="flex items-start gap-4">
                 {/* Avatar */}
                 <Image
@@ -315,22 +283,20 @@ export default function MarketplaceDetailPage() {
                   )}
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 mt-4 text-sm text-foreground-secondary">
-                    <button
-                      type="button"
-                      onClick={handleStarClick}
-                      className="flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors"
-                      aria-label={
-                        starred ? "Unstar this repository" : "Star this repository"
-                      }
-                    >
-                      <Star
-                        size={14}
-                        className={starred ? "text-warning" : ""}
-                        fill={starred ? "currentColor" : "none"}
-                      />
+                  <div className="flex items-center gap-4 mt-4 text-sm font-medium text-foreground-secondary">
+                    <span className="flex items-center gap-1.5">
+                      <Star size={14} className="text-yellow-500" fill="currentColor" />
                       {formatNumber(marketplace.signals.stars)}
-                    </button>
+                      {marketplace.signals.stars_gained_7d != null && marketplace.signals.stars_gained_7d > 0 && (
+                        <sup
+                          className="inline-flex items-center gap-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400"
+                          title={`+${formatNumber(marketplace.signals.stars_gained_7d)} stars this week`}
+                        >
+                          <TrendingUp size={12} />
+                          {formatNumber(marketplace.signals.stars_gained_7d)}
+                        </sup>
+                      )}
+                    </span>
                     <span className="flex items-center gap-1.5">
                       <GitFork size={14} />
                       {formatNumber(marketplace.signals.forks)}
@@ -351,7 +317,7 @@ export default function MarketplaceDetailPage() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground-secondary bg-card border border-border rounded-lg hover:bg-background-secondary hover:border-border-hover transition-colors flex-shrink-0"
                 >
-                  <span>Learn more on GitHub</span>
+                  <span>View on GitHub</span>
                   <ExternalLink size={14} />
                 </a>
               </div>
@@ -381,7 +347,7 @@ export default function MarketplaceDetailPage() {
                     <button
                       type="button"
                       onClick={handlePrevPlugin}
-                      className="p-1.5 text-foreground-muted hover:text-foreground-secondary hover:bg-background-secondary rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                      className="p-1.5 text-foreground-muted hover:text-foreground hover:bg-background-secondary rounded-full transition-colors flex-shrink-0 cursor-pointer"
                       aria-label="Previous plugin"
                     >
                       <ChevronLeft size={20} />
@@ -406,7 +372,7 @@ export default function MarketplaceDetailPage() {
                     <button
                       type="button"
                       onClick={handleNextPlugin}
-                      className="p-1.5 text-foreground-muted hover:text-foreground-secondary hover:bg-background-secondary rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                      className="p-1.5 text-foreground-muted hover:text-foreground hover:bg-background-secondary rounded-full transition-colors flex-shrink-0 cursor-pointer"
                       aria-label="Next plugin"
                     >
                       <ChevronRight size={20} />
@@ -420,7 +386,7 @@ export default function MarketplaceDetailPage() {
                   <div className="w-8 flex-shrink-0" />
                   <div className="flex-1">
                     <InstallCommand
-                      command={`/plugin install ${currentPlugin.name}@${marketplace.repo_full_name.replace("/", "-")}`}
+                      command={`/plugin install ${currentPlugin.name}@${marketplace.name}`}
                       label="Install plugin"
                     />
                   </div>
@@ -464,9 +430,9 @@ export default function MarketplaceDetailPage() {
           <aside className="mt-8 lg:mt-0 space-y-6">
             {/* More from Author */}
             {hasOtherMarketplaces && (
-              <section className="glass-card border border-white/50 rounded-2xl p-4 shadow-lg">
+              <section className="glass-card border border-border rounded-2xl p-4 shadow-lg">
                 <h3 className="text-sm font-semibold text-foreground mb-4">
-                  More from @{author.id}
+                  More marketplaces from <span className="font-mono text-foreground-muted">@{author.id}</span>
                 </h3>
                 <div className="space-y-3">
                   {otherMarketplaces.map((m) => (

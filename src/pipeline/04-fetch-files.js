@@ -1,122 +1,59 @@
 import { batchGetFiles } from '../lib/github.js';
 import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
-import { parseJson } from '../lib/parser.js';
 
-const TREES_PATH = './data/03-trees.json';
+const REPOS_PATH = './data/02-repos.json';
 const OUTPUT_PATH = './data/04-files.json';
 
-// Maximum file size to fetch (100KB)
-const MAX_FILE_SIZE = 100000;
-
-// File extensions to skip (binary/large files)
-const SKIP_EXTENSIONS = new Set([
-  '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.webp',
-  '.woff', '.woff2', '.ttf', '.eot', '.otf',
-  '.zip', '.tar', '.gz', '.rar', '.7z',
-  '.pdf', '.doc', '.docx', '.xls', '.xlsx',
-  '.mp3', '.mp4', '.wav', '.avi', '.mov',
-  '.exe', '.dll', '.so', '.dylib',
-  '.lock'
-]);
+// Base file paths to fetch from each repository
+const BASE_PATHS = [
+  '.claude-plugin/marketplace.json',
+  '.claude-plugin/plugin.json',
+  'README.md' // Fallback README at repo root
+];
 
 /**
- * Check if file should be skipped based on extension/size
+ * Extract plugin README paths from marketplace.json content
+ * Returns paths like 'plugins/git/README.md' for each plugin with a source
  */
-function shouldSkipFile(entry) {
-  if (entry.type !== 'blob') return true;
-  if (typeof entry.size === 'number' && entry.size > MAX_FILE_SIZE) return true;
+function getPluginReadmePaths(marketplaceContent) {
+  try {
+    const data = JSON.parse(marketplaceContent);
+    const plugins = data.plugins || [];
+    const paths = [];
 
-  const ext = entry.path.toLowerCase().match(/\.[^.]+$/)?.[0];
-  if (ext && SKIP_EXTENSIONS.has(ext)) return true;
-
-  return false;
-}
-
-/**
- * Check if a path is within a directory (handles ./ prefix)
- */
-function isWithinDirectory(filePath, dirPath) {
-  // Normalize dirPath - remove leading ./ and trailing /
-  const normalizedDir = dirPath.replace(/^\.\//, '').replace(/\/$/, '');
-
-  // Handle root directory case - all files are within root; let isPluginComponentFile filter
-  if (normalizedDir === '.' || normalizedDir === '') {
-    return true;
-  }
-
-  return filePath.startsWith(normalizedDir + '/') || filePath === normalizedDir;
-}
-
-/**
- * Check if a file is a plugin component (skills, commands, agents, hooks, plugin.json, README)
- * We only fetch these files, not arbitrary source code
- */
-function isPluginComponentFile(path) {
-  // README files (at repo root or in plugin directories)
-  if (path === 'README.md' || path.endsWith('/README.md')) return true;
-
-  // .claude-plugin/ files (plugin.json, etc.)
-  if (path.includes('.claude-plugin/')) return true;
-
-  // SKILL.md files (skills/<name>/SKILL.md or just SKILL.md)
-  if (path.endsWith('/SKILL.md') || path === 'SKILL.md') return true;
-
-  // Commands (commands/*.md) - handle both nested and root-level
-  if ((path.includes('/commands/') || path.startsWith('commands/')) && path.endsWith('.md')) return true;
-
-  // Agents (agents/*.md) - handle both nested and root-level
-  if ((path.includes('/agents/') || path.startsWith('agents/')) && path.endsWith('.md')) return true;
-
-  // Hooks directory (hooks/**) - handle both nested and root-level
-  if (path.includes('/hooks/') || path.startsWith('hooks/')) return true;
-
-  // Skills directory markdown files - handle both nested and root-level
-  if ((path.includes('/skills/') || path.startsWith('skills/')) && path.endsWith('.md')) return true;
-
-  return false;
-}
-
-/**
- * Extract plugin source paths from marketplace.json content
- */
-function extractPluginSourcePaths(marketplaceContent) {
-  const data = parseJson(marketplaceContent, 'marketplace.json');
-  if (!data || !Array.isArray(data.plugins)) return [];
-
-  const paths = [];
-  for (const plugin of data.plugins) {
-    if (!plugin.source) continue;
-
-    // Handle string source (local path)
-    if (typeof plugin.source === 'string') {
-      paths.push(plugin.source);
+    for (const plugin of plugins) {
+      if (plugin.source && typeof plugin.source === 'string') {
+        // Normalize: remove leading ./ and trailing /
+        const sourcePath = plugin.source.replace(/^\.?\//, '').replace(/\/$/, '');
+        if (sourcePath && sourcePath !== '.') {
+          paths.push(`${sourcePath}/README.md`);
+        }
+      }
     }
-    // Handle object source with path property
-    else if (typeof plugin.source === 'object' && plugin.source.path) {
-      paths.push(plugin.source.path);
-    }
-    // Skip URL-based sources (source.source === 'url')
-  }
 
-  return paths;
+    return paths;
+  } catch (error) {
+    log(`Failed to parse marketplace.json: ${error.message}`);
+    return [];
+  }
 }
 
 /**
- * Two-pass file fetching:
- * 1. First fetch .claude-plugin/ files (including marketplace.json)
- * 2. Parse marketplace.json to find plugin source paths
- * 3. Fetch files from those source directories
+ * Fetch essential plugin files from repositories
+ * Two-pass approach:
+ * 1. Fetch base files (marketplace.json, plugin.json, repo README)
+ * 2. Parse marketplace.json and fetch README from each plugin's source directory
  */
 export async function fetchFiles({ onProgress } = {}) {
   log('Starting file content fetch...');
 
-  const { trees } = loadJson(TREES_PATH);
+  const { repos: allRepos } = loadJson(REPOS_PATH);
   const files = [];
 
-  const reposToProcess = applyRepoLimit(trees);
+  const reposToProcess = applyRepoLimit(allRepos);
 
   for (let i = 0; i < reposToProcess.length; i++) {
-    const { full_name, default_branch, tree } = reposToProcess[i];
+    const { full_name, default_branch } = reposToProcess[i];
 
     if (!full_name || !full_name.includes('/')) {
       log(`Invalid full_name: ${full_name}, skipping`);
@@ -128,96 +65,63 @@ export async function fetchFiles({ onProgress } = {}) {
 
     onProgress?.(i + 1, reposToProcess.length);
 
-    // Pass 1: Find and fetch .claude-plugin/ files
-    const claudePluginFiles = tree.filter(entry =>
-      !shouldSkipFile(entry) && entry.path.startsWith('.claude-plugin/')
-    );
-
-    if (claudePluginFiles.length === 0) {
-      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: no .claude-plugin/ files`);
-      continue;
-    }
-
-    // Fetch .claude-plugin/ files
-    const pass1Paths = claudePluginFiles.map(e => e.path);
-    let pass1Results = {};
-
+    // Pass 1: Fetch base files
+    let baseResults = {};
     try {
-      pass1Results = await batchGetFiles(owner, repo, branch, pass1Paths);
+      baseResults = await batchGetFiles(owner, repo, branch, BASE_PATHS);
     } catch (error) {
-      log(`Batch failed for ${full_name} pass 1: ${error.message}`);
+      log(`Batch failed for ${full_name}: ${error.message}`);
       continue;
     }
 
-    // Store fetched files and find marketplace.json
-    let marketplaceContent = null;
-    for (const entry of claudePluginFiles) {
-      const fileData = pass1Results[entry.path];
+    // Store base files
+    let fetchedCount = 0;
+    for (const path of BASE_PATHS) {
+      const fileData = baseResults[path];
       if (fileData && fileData.content) {
         files.push({
           full_name,
-          path: entry.path,
-          size: fileData.size || entry.size,
+          path,
+          size: fileData.size,
           sha: null,
           content: fileData.content
         });
+        fetchedCount++;
+      }
+    }
 
-        if (entry.path.endsWith('marketplace.json')) {
-          marketplaceContent = fileData.content;
+    // Pass 2: Fetch per-plugin READMEs if marketplace.json exists
+    const marketplaceFile = baseResults['.claude-plugin/marketplace.json'];
+    if (marketplaceFile && marketplaceFile.content) {
+      const pluginReadmePaths = getPluginReadmePaths(marketplaceFile.content);
+
+      if (pluginReadmePaths.length > 0) {
+        try {
+          const readmeResults = await batchGetFiles(owner, repo, branch, pluginReadmePaths);
+
+          for (const path of pluginReadmePaths) {
+            const fileData = readmeResults[path];
+            if (fileData && fileData.content) {
+              files.push({
+                full_name,
+                path,
+                size: fileData.size,
+                sha: null,
+                content: fileData.content
+              });
+              fetchedCount++;
+            }
+          }
+        } catch (error) {
+          log(`Plugin README fetch failed for ${full_name}: ${error.message}`);
         }
       }
     }
 
-    // Pass 2: Parse marketplace.json and fetch plugin source directories
-    if (marketplaceContent) {
-      const sourcePaths = extractPluginSourcePaths(marketplaceContent);
-
-      if (sourcePaths.length > 0) {
-        // Find plugin component files in source directories (only skills, commands, agents, hooks)
-        const sourceFiles = tree.filter(entry => {
-          if (shouldSkipFile(entry)) return false;
-          if (entry.path.startsWith('.claude-plugin/')) return false;
-
-          // Must be within a plugin source directory
-          const inSourceDir = sourcePaths.some(srcPath => isWithinDirectory(entry.path, srcPath));
-          if (!inSourceDir) return false;
-
-          // Only fetch plugin component files, not arbitrary source code
-          return isPluginComponentFile(entry.path);
-        });
-
-        if (sourceFiles.length > 0) {
-          const pass2Paths = sourceFiles.map(e => e.path);
-
-          try {
-            const pass2Results = await batchGetFiles(owner, repo, branch, pass2Paths);
-
-            for (const entry of sourceFiles) {
-              const fileData = pass2Results[entry.path];
-              if (fileData && fileData.content) {
-                files.push({
-                  full_name,
-                  path: entry.path,
-                  size: fileData.size || entry.size,
-                  sha: null,
-                  content: fileData.content
-                });
-              }
-            }
-
-            log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} + ${pass2Paths.length} files`);
-          } catch (error) {
-            log(`Batch failed for ${full_name} pass 2: ${error.message}`);
-            log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
-          }
-        } else {
-          log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
-        }
-      } else {
-        log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files`);
-      }
+    if (fetchedCount > 0) {
+      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetched ${fetchedCount} files`);
     } else {
-      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: fetching ${pass1Paths.length} files (no marketplace.json)`);
+      log(`[${i + 1}/${reposToProcess.length}] ${full_name}: no files found`);
     }
   }
 

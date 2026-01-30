@@ -2,85 +2,24 @@
   "author": {
     "id": "irbull",
     "display_name": "Ian Bull",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/196883?u=4cbbc925f830c5899fc49f27069b1dcfd5a528ec&v=4",
-    "url": "https://github.com/irbull",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 0,
-      "total_stars": 5,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/196883?u=4cbbc925f830c5899fc49f27069b1dcfd5a528ec&v=4"
   },
   "marketplaces": [
     {
       "name": "irbull-plugins",
       "version": null,
       "description": "Records each change Claude makes",
-      "owner_info": {
-        "name": "Ian Bull"
-      },
-      "keywords": [],
       "repo_full_name": "irbull/lisas-notes",
       "repo_url": "https://github.com/irbull/lisas-notes",
       "repo_description": "Claude Code Plugin that records each completed interaction in jujutsu",
-      "homepage": null,
       "signals": {
         "stars": 5,
         "forks": 0,
-        "pushed_at": "2026-01-08T23:20:57Z",
-        "created_at": "2026-01-08T05:32:36Z",
-        "license": null
+        "pushed_at": "2026-01-08T23:20:57Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 230
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/lisas-notes",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/lisas-notes/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/lisas-notes/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 116
-        },
-        {
-          "path": "plugins/lisas-notes/hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/lisas-notes/hooks/hooks.json",
-          "type": "blob",
-          "size": 554
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"irbull-plugins\",\n  \"owner\": {\n    \"name\": \"Ian Bull\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lisas-notes\",\n      \"source\": \"./plugins/lisas-notes\",\n      \"description\": \"Records each change Claude makes\"\n    }\n  ]\n}\n",
-        "plugins/lisas-notes/.claude-plugin/plugin.json": "{\n  \"name\": \"lisas-notes\",\n  \"description\": \"Records each completed interaction in jujutsu\",\n  \"version\": \"1.0.8\"\n}\n",
-        "plugins/lisas-notes/hooks/hooks.json": "{\n  \"description\": \"Auto-commit on Stop and prepare new commit on UserPromptSubmit\",\n  \"hooks\": {\n    \"UserPromptSubmit\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/prepare-commit.sh\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/auto-commit.sh\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+        "README.md": "# Lisa's Notes\n\nA Claude Code plugin that automatically records each completed Claude interaction as a commit in [Jujutsu](https://github.com/martinvonz/jj) version control.\n\n## Why \"Lisa's Notes\"?\n\nJust like Lisa Simpson meticulously documents everything in her diary, this plugin keeps a detailed record of every change Claude makes to your codebase. Each time you finish working with Claude, the plugin automatically creates a Jujutsu commit using Claude's final response as the commit message—ensuring nothing gets lost or forgotten.\n\n## How It Works\n\nThe plugin hooks into Claude's \"Stop\" event. When you end a Claude session:\n\n1. The plugin reads Claude's conversation transcript (a JSON Lines file)\n2. It parses each line looking for assistant messages\n3. It extracts the **full text content** from the last assistant message (combining all text blocks)\n4. It creates a Jujutsu commit using that complete message as the commit message\n5. All operations are logged to `/tmp/lisas-notes-debug.log` for troubleshooting\n\nThis means every interaction with Claude results in a discrete, well-documented commit in your version history.\n\n## Requirements\n\n- [Jujutsu (jj)](https://github.com/martinvonz/jj) installed and available in PATH\n- [jq](https://stedolan.github.io/jq/) for JSON parsing\n- Your project must be a Jujutsu repository\n\n## Installation\n\n1. Clone this repository:\n   ```bash\n   git clone <repository-url> lisas-notes\n   ```\n\n2. Register the marketplace with Claude using the path to `.claude-plugin/marketplace.json`\n\n3. Enable the lisas-notes plugin from the marketplace\n\n## Usage\n\nOnce enabled, the plugin works automatically:\n\n1. Work with Claude in a Jujutsu-managed repository\n2. When you stop the Claude session (Ctrl+C or `/exit`), the plugin triggers\n3. Your changes are committed with Claude's final response as the message\n\nNo manual intervention needed—just work with Claude and let Lisa keep the records.\n\n## Project Structure\n\n```\nlisas-notes/\n├── .claude-plugin/\n│   └── marketplace.json      # Marketplace configuration\n├── plugins/\n│   └── lisas-notes/\n│       ├── .claude-plugin/\n│       │   └── plugin.json   # Plugin metadata (v1.0.5)\n│       ├── hooks/\n│       │   └── hooks.json    # Stop hook definition\n│       └── scripts/\n│           └── auto-commit.sh # The commit automation script\n└── README.md\n```\n\n## Debugging\n\nIf commits aren't being created as expected, check the debug log:\n\n```bash\ntail -f /tmp/lisas-notes-debug.log\n```\n\nThis log shows:\n- When the hook starts and finishes\n- The transcript path being read\n- The extracted commit message\n- Any errors from the `jj commit` command\n\n## Author\n\nIan Bull\n"
       },
       "plugins": [
         {

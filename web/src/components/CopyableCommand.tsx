@@ -19,7 +19,7 @@ export function CopyableCommand({
   const isMultiLine = commands.length > 1;
 
   return (
-    <div className={`bg-gray-100 rounded-lg p-2.5 group relative ${className}`}>
+    <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg p-2.5 group relative ${className}`}>
       <div
         className={`flex ${isMultiLine ? "items-start" : "items-center"} justify-between gap-3`}
       >
@@ -28,26 +28,26 @@ export function CopyableCommand({
             commands.map((cmd, i) => (
               <div
                 key={`cmd-${i}-${cmd.slice(0, 20)}`}
-                className="whitespace-nowrap text-gray-800 text-xs font-mono"
+                className="whitespace-nowrap text-gray-800 dark:text-gray-200 text-xs font-mono"
               >
                 {cmd}
               </div>
             ))
           ) : (
-            <code className="whitespace-nowrap text-gray-800 text-xs font-mono">
+            <code className="whitespace-nowrap text-gray-800 dark:text-gray-200 text-xs font-mono">
               {commands[0]}
             </code>
           )}
         </div>
         <button
           onClick={() => copy(textToCopy)}
-          className="flex-shrink-0 p-1 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 transition-colors"
+          className="flex-shrink-0 p-1 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 transition-colors"
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >
           {copied ? (
             <Check size={12} className="text-green-600" aria-hidden="true" />
           ) : (
-            <Copy size={12} className="text-gray-500" aria-hidden="true" />
+            <Copy size={12} className="text-gray-500 dark:text-gray-400" aria-hidden="true" />
           )}
         </button>
       </div>

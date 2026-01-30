@@ -6,7 +6,7 @@ This document describes the ETL pipeline for Agent Mart, which builds a director
 
 ## Overview
 
-The pipeline has 9 steps that:
+The pipeline has 8 steps that:
 1. Discovers Claude Code marketplaces on GitHub
 2. Fetches repository and author metadata
 3. Downloads and parses plugin definitions
@@ -17,23 +17,23 @@ GitHub API
     │
     ▼
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│ 01-discover │ ──► │ 02-fetch-    │ ──► │ 03-fetch-   │
-│             │     │    repos     │     │    trees    │
+│ 01-discover │ ──► │ 02-fetch-    │ ──► │ 04-fetch-   │
+│             │     │    repos     │     │    files    │
 └─────────────┘     └──────────────┘     └─────────────┘
                                                │
     ┌──────────────────────────────────────────┘
     ▼
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│ 04-fetch-   │ ──► │ 05-parse     │ ──► │ 06-enrich   │
-│    files    │     │              │     │             │
+│ 05-parse    │ ──► │ 06-enrich    │ ──► │ 07-snapshot │
+│             │     │              │     │             │
 └─────────────┘     └──────────────┘     └─────────────┘
                                                │
     ┌──────────────────────────────────────────┘
     ▼
-┌─────────────┐     ┌───────────────┐     ┌─────────────┐
-│ 07-snapshot │ ──► │ 08-aggregate │ ──► │ 09-output   │ ──► web/public/data/
-│             │     │               │     │             │     index.json, etc.
-└─────────────┘     └───────────────┘     └─────────────┘
+┌───────────────┐     ┌─────────────┐
+│ 08-aggregate  │ ──► │ 09-output   │ ──► web/public/data/
+│               │     │             │     authors/, marketplaces-browse.json
+└───────────────┘     └─────────────┘
 ```
 
 ## Directory Structure
@@ -50,7 +50,6 @@ src/
 └── pipeline/
     ├── 01-discover.js
     ├── 02-fetch-repos.js
-    ├── 03-fetch-trees.js
     ├── 04-fetch-files.js
     ├── 05-parse.js
     ├── 06-enrich.js
@@ -65,9 +64,7 @@ data/                  # Intermediate files (gitignored)
 └── ...
 
 web/public/data/       # Final output (served by Next.js)
-├── index.json
 ├── authors/*.json
-├── plugins-browse.json
 └── marketplaces-browse.json
 ```
 
@@ -93,8 +90,8 @@ Author
   "stats": {
     "total_marketplaces": 1,
     "total_plugins": 5,
-    "total_commands": 12,
-    "total_skills": 8
+    "total_stars": 55000,
+    "total_forks": 3000
   }
 }
 ```
@@ -108,7 +105,7 @@ Author
   "repo_url": "https://github.com/anthropics/claude-code",
   "signals": { "stars": 55000, "forks": 3000, "pushed_at": "..." },
   "keywords": ["claude", "plugins"],
-  "file_tree": [...],
+  "files": {...},
   "plugins": [...]
 }
 ```
@@ -143,26 +140,21 @@ path:.claude-plugin filename:marketplace.json
 
 Fetches repository and author metadata using GraphQL batching (15 repos per query).
 
-### Step 3: Fetch Trees
-**File:** `03-fetch-trees.js`
+### Step 3: Fetch Files
+**File:** `04-fetch-files.js` (note: file numbering has a gap since step 03 was removed)
 
-Downloads full file structure for each repository. Cached by commit SHA.
+Two-pass file fetching:
+1. Fetches base files: `.claude-plugin/marketplace.json`, `.claude-plugin/plugin.json`, `README.md`
+2. Parses marketplace.json to find plugin source paths, then fetches `{source}/README.md` for each plugin
 
-### Step 4: Fetch Files
-**File:** `04-fetch-files.js`
+The repo-level README serves as a fallback when plugins don't have their own README.
 
-Downloads specific files matching patterns:
-- `marketplace.json`
-- `plugin.json`
-- `commands/*.md`
-- `skills/*/SKILL.md`
-
-### Step 5: Parse
+### Step 4: Parse
 **File:** `05-parse.js`
 
 Parses and validates all fetched files (JSON, YAML frontmatter).
 
-### Step 6: Enrich
+### Step 5: Enrich
 **File:** `06-enrich.js`
 
 Builds the author-centric data model:
@@ -171,7 +163,7 @@ Builds the author-centric data model:
 - Generates install commands
 - Calculates stats
 
-### Step 7: Snapshot
+### Step 6: Snapshot
 **File:** `07-snapshot.js`
 
 Records current star/fork counts to `data/signals-history.json` for trending score calculation:
@@ -180,7 +172,7 @@ Records current star/fork counts to `data/signals-history.json` for trending sco
 - Records snapshot for each repository
 - Prunes entries older than 90 days
 
-### Step 8: Aggregate
+### Step 7: Aggregate
 **File:** `08-aggregate.js`
 
 Aggregates categories from plugins for each marketplace:
@@ -188,15 +180,12 @@ Aggregates categories from plugins for each marketplace:
 - Generates category statistics
 - Outputs `marketplaces-categorized.json` and `category-stats.json`
 
-### Step 9: Output
+### Step 8: Output
 **File:** `09-output.js`
 
 Generates public JSON files:
-- `index.json` - Author list with stats
 - `authors/*.json` - Full author detail
-- `plugins-browse.json` - Lightweight plugin list for search
 - `marketplaces-browse.json` - Lightweight marketplace list with trending scores
-- `categories.json` - Category list with usage counts
 
 ## Category Normalization
 
@@ -223,7 +212,7 @@ See `src/lib/categories.js` for alias mappings.
 
 ### Caching
 
-Trees are cached by commit SHA (immutable, never expires).
+File content is fetched via GraphQL batching for efficiency.
 
 ## Running the Pipeline
 

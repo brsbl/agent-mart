@@ -2,76 +2,24 @@
   "author": {
     "id": "X-Zero-L",
     "display_name": "Zero",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/98764734?u=bce45809658cf84f7cd06c61c42e55c1fd85e1a5&v=4",
-    "url": "https://github.com/X-Zero-L",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 1,
-      "total_stars": 1,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/98764734?u=bce45809658cf84f7cd06c61c42e55c1fd85e1a5&v=4"
   },
   "marketplaces": [
     {
       "name": "gemini-cli-skill",
       "version": null,
       "description": "A Claude Skill for using the local Gemini CLI (no MCP).",
-      "owner_info": {
-        "name": "unknown",
-        "email": "unknown@example.com"
-      },
-      "keywords": [],
       "repo_full_name": "X-Zero-L/gemini-cli-skill",
       "repo_url": "https://github.com/X-Zero-L/gemini-cli-skill",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 1,
         "forks": 0,
-        "pushed_at": "2026-01-26T07:15:13Z",
-        "created_at": "2026-01-26T07:13:56Z",
-        "license": null
+        "pushed_at": "2026-01-26T07:15:13Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 497
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 1549
-        },
-        {
-          "path": "skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/gemini-cli",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/gemini-cli/SKILL.md",
-          "type": "blob",
-          "size": 3230
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"gemini-cli-skill\",\n  \"owner\": {\n    \"name\": \"unknown\",\n    \"email\": \"unknown@example.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A Claude Skill for using the local Gemini CLI (no MCP).\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"gemini-cli\",\n      \"description\": \"Use Gemini CLI for analysis, brainstorming, and structured change-mode edits with chunk caching.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\"./skills/gemini-cli\"]\n    }\n  ]\n}\n",
-        "README.md": "# Gemini CLI Skill (No MCP)\n\nA standalone Agent Skill that teaches coding agents how to use the local `gemini` CLI for:\n\n- Large-context analysis (including `@file` / `@dir` references supported by Gemini CLI)\n- Sandbox execution (`-s`)\n- Structured “change mode” edit suggestions (with chunking + cache to handle long outputs)\n- Brainstorming prompts\n\nSkills follow the [Agent Skills](https://agentskills.io/) format.\n\n## Available Skills\n\n### gemini-cli\n\nUse Gemini CLI for second opinions, large-context `@path` analysis, sandbox runs, and structured change-mode edits.\n\n## Installation (Recommended)\n\nThis repo is designed to be installed with Vercel’s `add-skill` CLI:\n\n```bash\nnpx add-skill X-Zero-L/gemini-cli-skill\n```\n\nExamples:\n\n```bash\n# List skills in this repository\nnpx add-skill X-Zero-L/gemini-cli-skill --list\n\n# Install only this skill\nnpx add-skill X-Zero-L/gemini-cli-skill --skill gemini-cli\n\n# Install globally to Codex + Claude Code (no prompts)\nnpx add-skill X-Zero-L/gemini-cli-skill --skill gemini-cli -g -a codex -a claude-code -y\n```\n\n## Repository Layout\n\n- `skills/gemini-cli/SKILL.md`: the skill instructions + examples\n- `skills/gemini-cli/scripts/gemini-tool.mjs`: helper wrapper around `gemini` CLI (no dependencies)\n\n## Quick Smoke Test\n\n```bash\ngit clone https://github.com/X-Zero-L/gemini-cli-skill\ncd gemini-cli-skill\n\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --prompt \"Say OK only.\"\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --prompt \"@README.md Summarize this file in 3 bullets.\"\n```\n",
-        "skills/gemini-cli/SKILL.md": "---\nname: gemini-cli\ndescription: Ask Gemini via the local `gemini` CLI (no MCP). Use when the user says \"ask gemini\" / \"use gemini\", wants a second opinion, needs large-context `@path` analysis, sandbox runs, or structured change-mode edits.\n---\n\n# Gemini CLI Skill\n\nUse Google’s `gemini` CLI as an external “second brain” when you need a very large context window, a second opinion, or safe sandbox execution. This skill does **not** use MCP; it runs the local CLI directly.\n\n## When To Use\n\nUse this skill when the user asks to:\n\n- “Ask Gemini” / “Use Gemini”\n- Analyze or summarize large files or directories (especially with `@path` references)\n- Brainstorm options with a specific framework (SCAMPER, design thinking, etc.)\n- Generate structured edit suggestions (“change mode”) that can be applied deterministically\n\n## Prerequisites\n\n- `gemini` CLI is installed and configured (e.g. `gemini --version` works)\n- You are allowed to run local shell commands in this environment\n- For sandbox execution, Gemini CLI supports `-s/--sandbox` (see `gemini --help`)\n\n## Core Commands\n\n### One-shot query (plain)\n\n```bash\ngemini \"Explain what this code does: @src/main.ts\"\n```\n\n### Choose a model\n\n```bash\ngemini -m gemini-2.5-pro \"...\"\ngemini -m gemini-2.5-flash \"...\"\n```\n\n### Sandbox mode\n\n```bash\ngemini -s \"Safely test @scripts/example.py and explain the results.\"\n```\n\n## Helper Script (Recommended)\n\nThis skill ships with a dependency-free wrapper that mirrors the core behavior of `gemini-mcp-tool` without MCP:\n\n`skills/gemini-cli/scripts/gemini-tool.mjs`\n\nImportant: Gemini CLI can only read files under its current “project directory” (typically the process working directory). Run the wrapper from the repo you want Gemini to read, or pass `--cwd`.\n\n```bash\nnode skills/gemini-cli/scripts/gemini-tool.mjs help\n```\n\n### Ask Gemini (wrapper)\n\n```bash\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --prompt \"Summarize @. in 5 bullets.\"\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --cwd /path/to/project --prompt \"Summarize @. in 5 bullets.\"\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --prompt \"...\" --model gemini-2.5-pro\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --prompt \"...\" --sandbox\n```\n\n### Brainstorm (wrapper)\n\n```bash\nnode skills/gemini-cli/scripts/gemini-tool.mjs brainstorm --prompt \"How should we design onboarding?\" --methodology scamper --ideaCount 12\n```\n\n### Change Mode (structured edits + chunk caching)\n\nUse change mode when you want Gemini to output **deterministic** OLD/NEW blocks that can be applied by exact string matching.\n\n```bash\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --changeMode --prompt \"In @src/foo.ts, rename Foo to Bar and update call sites.\"\n```\n\nIf the response is chunked, the output includes a `cacheKey`. Fetch the next chunk:\n\n```bash\nnode skills/gemini-cli/scripts/gemini-tool.mjs fetch-chunk --cacheKey <key> --chunkIndex 2\n```\n\n## Safety Rules\n\n- Never execute destructive commands from Gemini output without explicit user approval.\n- In change mode, the `OLD` block must match the file content **exactly**; otherwise, do not apply the edit.\n- Prefer read-only analysis unless the user explicitly requests changes.\n"
+        "README.md": "# Gemini CLI Skill (No MCP)\n\nA standalone Agent Skill that teaches coding agents how to use the local `gemini` CLI for:\n\n- Large-context analysis (including `@file` / `@dir` references supported by Gemini CLI)\n- Sandbox execution (`-s`)\n- Structured “change mode” edit suggestions (with chunking + cache to handle long outputs)\n- Brainstorming prompts\n\nSkills follow the [Agent Skills](https://agentskills.io/) format.\n\n## Available Skills\n\n### gemini-cli\n\nUse Gemini CLI for second opinions, large-context `@path` analysis, sandbox runs, and structured change-mode edits.\n\n## Installation (Recommended)\n\nThis repo is designed to be installed with Vercel’s `add-skill` CLI:\n\n```bash\nnpx add-skill X-Zero-L/gemini-cli-skill\n```\n\nExamples:\n\n```bash\n# List skills in this repository\nnpx add-skill X-Zero-L/gemini-cli-skill --list\n\n# Install only this skill\nnpx add-skill X-Zero-L/gemini-cli-skill --skill gemini-cli\n\n# Install globally to Codex + Claude Code (no prompts)\nnpx add-skill X-Zero-L/gemini-cli-skill --skill gemini-cli -g -a codex -a claude-code -y\n```\n\n## Repository Layout\n\n- `skills/gemini-cli/SKILL.md`: the skill instructions + examples\n- `skills/gemini-cli/scripts/gemini-tool.mjs`: helper wrapper around `gemini` CLI (no dependencies)\n\n## Quick Smoke Test\n\n```bash\ngit clone https://github.com/X-Zero-L/gemini-cli-skill\ncd gemini-cli-skill\n\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --prompt \"Say OK only.\"\nnode skills/gemini-cli/scripts/gemini-tool.mjs ask --prompt \"@README.md Summarize this file in 3 bullets.\"\n```\n"
       },
       "plugins": [
         {

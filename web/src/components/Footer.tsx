@@ -81,6 +81,14 @@ export function Footer() {
             >
               GitHub
             </a>
+            <a
+              href="https://x.com/brsabel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground-secondary transition-colors"
+            >
+              Twitter
+            </a>
             <ThemeToggle />
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-foreground-muted">

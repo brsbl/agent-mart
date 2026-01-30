@@ -47,7 +47,7 @@ function SearchFilterContent() {
 
   // Filter state from URL
   const categoriesParam = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
-  const sortByParam = (searchParams.get("sort") as MarketplaceSortOption) || "recent";
+  const sortByParam = (searchParams.get("sort") as MarketplaceSortOption) || "trending";
   const sortDirParam = (searchParams.get("dir") as "asc" | "desc") || "desc";
 
   const [sortBy, setSortBy] = useState<MarketplaceSortOption>(sortByParam);
@@ -92,7 +92,7 @@ function SearchFilterContent() {
   useEffect(() => {
     const cats = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
     setSelectedCategories(cats);
-    setSortBy((searchParams.get("sort") as MarketplaceSortOption) || "recent");
+    setSortBy((searchParams.get("sort") as MarketplaceSortOption) || "trending");
     setSortDirection((searchParams.get("dir") as "asc" | "desc") || "desc");
   }, [searchParams]);
 
@@ -125,7 +125,7 @@ function SearchFilterContent() {
         params.delete("cat");
       }
 
-      if (sort !== "recent") {
+      if (sort !== "trending") {
         params.set("sort", sort);
       } else {
         params.delete("sort");
@@ -195,7 +195,7 @@ function SearchFilterContent() {
                   placeholder="Search repositories..."
                   value={localSearchQuery}
                   onChange={(e) => setLocalSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent bg-white"
+                  className="w-full pl-10 pr-10 py-2.5 border border-border rounded-lg text-sm outline-none focus:outline-none ring-0 focus:ring-0 focus:border-border-hover bg-card text-foreground"
                 />
                 {localSearchQuery && (
                   <button

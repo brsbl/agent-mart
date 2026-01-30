@@ -4,43 +4,20 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, GitFork, Clock, ChevronRight } from "lucide-react";
-import { formatNumber } from "@/lib/data";
+import { formatNumber, formatRelativeTime } from "@/lib/data";
 import type { Category } from "@/lib/types";
-
-// Format relative time (e.g., "2d ago", "3mo ago")
-function formatRelativeTime(dateString: string | null): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 1) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
-    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
-  }
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return `${months} month${months === 1 ? "" : "s"} ago`;
-  }
-  const years = Math.floor(diffDays / 365);
-  return `${years} year${years === 1 ? "" : "s"} ago`;
-}
 
 export interface MarketplaceCardProps {
   marketplace: {
     name: string;
     description: string | null;
-    keywords: string[];
     categories?: Category[];
     repo_full_name?: string;
     signals: {
       stars: number;
       forks: number;
       pushed_at?: string | null;
+      stars_gained_7d?: number;
     };
   };
   author_id: string;
@@ -74,14 +51,16 @@ export function MarketplaceCard({
   return (
     <Link
       href={marketplaceUrl}
-      className="border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden"
+      className="relative border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[4px] before:bg-transparent before:rounded-l-xl before:transition-colors hover:before:bg-accent"
     >
       <div className="p-4 flex flex-col flex-1">
         <div className="flex-1 min-w-0 mb-3">
           <div className="flex items-center justify-between gap-2 mb-1">
-            <h3 className="text-base font-semibold text-foreground group-hover:text-foreground-secondary transition-colors truncate">
-              {marketplace.name}
-            </h3>
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="text-base font-semibold text-foreground group-hover:text-foreground-secondary transition-colors truncate">
+                {marketplace.name}
+              </h3>
+            </div>
             <ChevronRight
               size={18}
               className="text-foreground-muted group-hover:text-foreground-secondary group-hover:translate-x-0.5 transition-all flex-shrink-0"
@@ -104,7 +83,7 @@ export function MarketplaceCard({
           </div>
         </div>
         <div
-          className={`relative mb-4 flex-1 description-fade ${!hasOverflow ? "no-overflow" : ""}`}
+          className={`relative mb-4 flex-1 ${hasOverflow ? "after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-t after:from-background-secondary/80 after:to-transparent after:rounded-b-lg after:pointer-events-none" : ""}`}
         >
           <div
             ref={descriptionRef}
@@ -115,9 +94,9 @@ export function MarketplaceCard({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs text-foreground-secondary">
+        <div className="flex items-center gap-3 text-xs font-medium text-foreground-secondary">
           <span className="flex items-center gap-1">
-            <Star size={12} /> {formatNumber(marketplace.signals.stars)}
+            <Star size={12} className="text-yellow-500" fill="currentColor" /> {formatNumber(marketplace.signals.stars)}
           </span>
           <span className="flex items-center gap-1">
             <GitFork size={12} /> {formatNumber(marketplace.signals.forks)}

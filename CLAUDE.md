@@ -490,6 +490,62 @@ Follow conventional commits:
 
 ---
 
+## Frontend Development Practices
+
+### Styling with Tailwind
+
+- **Use Tailwind utilities exclusively** - No raw CSS for component styling
+- CSS variables are defined in `globals.css` and exposed via `@theme inline`
+- Use design system colors: `text-foreground`, `bg-background`, `border-border`, etc.
+- For custom values, use arbitrary value syntax: `w-[4px]`, `text-[10px]`
+
+```tsx
+// Good - Tailwind utilities with design system colors
+<div className="bg-card border border-border rounded-lg p-4 hover:border-border-hover">
+
+// Bad - Raw CSS or hardcoded colors
+<div style={{ backgroundColor: '#fff', border: '1px solid #e5e5e5' }}>
+```
+
+### Dark Mode Support
+
+- Always include dark mode variants for colors
+- Use semantic color names that adapt: `bg-background`, `text-foreground`
+- For hardcoded colors, add `dark:` variants: `bg-white dark:bg-gray-800`
+- Test both light and dark modes when making UI changes
+
+```tsx
+// Good - adapts to theme
+<button className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+
+// Bad - only works in light mode
+<button className="bg-gray-200 text-gray-900">
+```
+
+### Design System Colors
+
+Key CSS variables (defined in `globals.css`):
+- `--background`, `--foreground` - Base page colors
+- `--card`, `--card-hover` - Card backgrounds
+- `--border`, `--border-hover` - Border colors
+- `--accent`, `--accent-foreground` - Accent/brand color (mint green)
+- `--foreground-muted`, `--foreground-secondary` - Text hierarchy
+
+### Component Patterns
+
+- Use `"use client"` directive only when needed (hooks, interactivity)
+- Prefer composition over large monolithic components
+- Use Radix UI primitives for accessible dropdowns, popovers, etc.
+- Handle loading and error states explicitly
+
+### Responsive Design
+
+- Mobile-first approach with Tailwind breakpoints
+- Use `sm:`, `md:`, `lg:` prefixes for responsive styles
+- Test at common breakpoints: 375px (mobile), 768px (tablet), 1024px+ (desktop)
+
+---
+
 ## File Naming
 
 | Directory | Convention | Example |

@@ -215,7 +215,7 @@ interface Marketplace {
   repo_url: string;
   homepage: string | null;
   plugins: Plugin[];
-  file_tree: FileTreeEntry[];
+  files: Record<string, string>;
   signals: {
     stars: number;
     forks: number;
@@ -241,35 +241,6 @@ type TechStack =
 type Capability =
   | 'orchestration' | 'memory' | 'browser-automation' | 'boilerplate'
   | 'review' | 'testing' | 'devops' | 'documentation';
-```
-
-### Output: `categories.json`
-
-```json
-{
-  "meta": {
-    "total_authors": 900,
-    "total_marketplaces": 982,
-    "generated_at": "2026-01-20T06:25:33.660Z",
-    "stats": {
-      "totalMarketplaces": 982,
-      "withTechStack": 515,
-      "withCapabilities": 487,
-      "techStackCounts": { ... },
-      "capabilityCounts": { ... }
-    }
-  },
-  "taxonomy": {
-    "techStack": {
-      "nextjs": { "label": "Next.js" },
-      "python": { "label": "Python" }
-    },
-    "capabilities": {
-      "testing": { "label": "Testing" },
-      "review": { "label": "Code Review" }
-    }
-  }
-}
 ```
 
 ### Output: `marketplaces-browse.json`

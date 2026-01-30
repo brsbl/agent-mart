@@ -6,18 +6,6 @@ export interface Meta {
   total_authors: number;
   total_marketplaces: number;
   total_plugins: number;
-  total_commands: number;
-  total_skills: number;
-  generated_at: string;
-}
-
-export interface AuthorStats {
-  total_marketplaces: number;
-  total_plugins: number;
-  total_commands: number;
-  total_skills: number;
-  total_stars: number;
-  total_forks: number;
 }
 
 // Author detail (from public/data/authors/{id}.json)
@@ -29,25 +17,17 @@ export interface AuthorDetail {
 export interface Author {
   id: string;
   display_name: string;
-  type: "Organization" | "User";
   avatar_url: string;
-  url: string;
-  bio?: string | null;
-  stats: AuthorStats;
 }
 
 export interface Marketplace {
   name: string;
   version: string | null;
   description: string | null;
-  owner_info: { name: string; email: string } | null;
-  keywords: string[];
-  categories: Category[];
   repo_full_name: string;
   repo_url: string;
-  homepage: string | null;
+  repo_description: string | null;
   signals: Signals;
-  file_tree: FileTreeEntry[];
   files: Record<string, string>; // path -> content
   plugins: Plugin[];
 }
@@ -63,14 +43,7 @@ export interface Signals {
   stars: number;
   forks: number;
   pushed_at: string | null;
-  created_at: string | null;
-  license: string | null;
-}
-
-export interface FileTreeEntry {
-  path: string;
-  type: "blob" | "tree";
-  size: number | null;
+  stars_gained_7d?: number;
 }
 
 // Plugin source can be a simple path string or an object for external sources
@@ -175,8 +148,6 @@ export interface BrowseMarketplace {
     stars_gained_7d?: number;
     stars_velocity?: number;
   };
-  plugins_count: number;
-  first_plugin_name: string | null;
-  keywords: string[];
   categories: Category[];
+  keywords: string[];
 }

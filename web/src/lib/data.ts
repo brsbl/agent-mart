@@ -72,6 +72,29 @@ export function sortPlugins(
 // UTILITIES
 // ============================================
 
+export function formatRelativeTime(dateString?: string | null): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 1) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
+  }
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months} month${months === 1 ? "" : "s"} ago`;
+  }
+  const years = Math.floor(diffDays / 365);
+  return `${years} year${years === 1 ? "" : "s"} ago`;
+}
+
 export function formatNumber(num: number): string {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
@@ -133,6 +156,8 @@ const UPPERCASE_WORDS = new Set([
 
 // Words with specific capitalization (mixed case, special syntax)
 const SPECIAL_CASE_WORDS: Record<string, string> = {
+  // Claude Code specific
+  'claude-md': 'CLAUDE.md',
   // Operating systems
   'ios': 'iOS',
   'macos': 'macOS',
@@ -355,7 +380,7 @@ export function sortMarketplaces(
         const aScore = a.signals?.trending_score ?? 0;
         const bScore = b.signals?.trending_score ?? 0;
         const scoreDiff = bScore - aScore;
-        if (Math.abs(scoreDiff) > 0.001) return scoreDiff;
+        if (scoreDiff !== 0) return scoreDiff;
 
         // Tiebreaker: raw stars gained this week
         const aGain = a.signals?.stars_gained_7d ?? 0;
@@ -471,14 +496,11 @@ export function organizePluginComponents(marketplace: Marketplace): PluginWithCo
       const componentType = getComponentType(filePath);
       if (!componentType) continue;
 
-      // Find file size from file_tree
-      const treeEntry = marketplace.file_tree.find(e => e.path === filePath);
-
       const component: PluginComponent = {
         type: componentType,
         name: getComponentName(filePath, componentType),
         path: filePath,
-        size: treeEntry?.size ?? null,
+        size: null,
       };
 
       // Add to appropriate array

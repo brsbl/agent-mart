@@ -141,15 +141,15 @@ describe('Data Quality: Marketplace Field Validation (10% Sample)', () => {
     }
   });
 
-  it('should validate file_tree array exists', function() {
+  it('should validate files object exists', function() {
     if (!enrichedData) return this.skip();
 
     const sample = sampleArray(allMarketplaces, 0.1, 42);
 
     for (const marketplace of sample) {
       assert.ok(
-        Array.isArray(marketplace.file_tree),
-        `Marketplace missing file_tree array: ${marketplace.repo_full_name}`
+        marketplace.files !== undefined && typeof marketplace.files === 'object',
+        `Marketplace missing files object: ${marketplace.repo_full_name}`
       );
     }
   });

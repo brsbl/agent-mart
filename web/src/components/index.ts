@@ -3,7 +3,6 @@ export { SearchFilter } from "./SearchFilter";
 export { SearchFilterControls } from "./SearchFilterControls";
 export { MarketplaceCard } from "./MarketplaceCard";
 export { CopyableCommand } from "./CopyableCommand";
-export { FileTree } from "./FileTree";
 export { PluginComponentsView } from "./PluginComponentsView";
 export { LoadingState } from "./LoadingState";
 export { ErrorState } from "./ErrorState";

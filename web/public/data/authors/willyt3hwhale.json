@@ -2,94 +2,25 @@
   "author": {
     "id": "willyt3hwhale",
     "display_name": "Wilhelm Åkermark",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/1234672?v=4",
-    "url": "https://github.com/willyt3hwhale",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 0,
-      "total_stars": 3,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/1234672?v=4"
   },
   "marketplaces": [
     {
       "name": "cc-limit-guard",
       "version": null,
       "description": "Claude Code plugins for rate limit management",
-      "owner_info": {
-        "name": "willyt3hwhale"
-      },
-      "keywords": [],
       "repo_full_name": "willyt3hwhale/cc-limit-guard",
       "repo_url": "https://github.com/willyt3hwhale/cc-limit-guard",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 3,
         "forks": 0,
-        "pushed_at": "2026-01-20T15:28:34Z",
-        "created_at": "2026-01-16T12:02:32Z",
-        "license": null
+        "pushed_at": "2026-01-20T15:28:34Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 532
-        },
-        {
-          "path": ".claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 353
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 2608
-        },
-        {
-          "path": "hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "hooks/hooks.json",
-          "type": "blob",
-          "size": 321
-        },
-        {
-          "path": "hooks/pretool-hook.sh",
-          "type": "blob",
-          "size": 3533
-        },
-        {
-          "path": "hooks/prompt-hook.sh",
-          "type": "blob",
-          "size": 1177
-        },
-        {
-          "path": "hooks/stop-hook.sh",
-          "type": "blob",
-          "size": 932
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"cc-limit-guard\",\n  \"description\": \"Claude Code plugins for rate limit management\",\n  \"owner\": {\n    \"name\": \"willyt3hwhale\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"rate-limit-guard\",\n      \"source\": \"./\",\n      \"description\": \"Automatically pauses Claude Code when usage exceeds 90% to avoid hitting rate limits\",\n      \"version\": \"1.5.1\",\n      \"author\": {\n        \"name\": \"willyt3hwhale\"\n      },\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
         ".claude-plugin/plugin.json": "{\n  \"name\": \"rate-limit-guard\",\n  \"version\": \"1.7.0\",\n  \"description\": \"Automatically pauses Claude Code when usage exceeds 90% to avoid hitting rate limits\",\n  \"author\": {\n    \"name\": \"willyt3hwhale\"\n  },\n  \"repository\": \"https://github.com/willyt3hwhale/cc-limit-guard\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"rate-limit\", \"usage\", \"monitor\", \"pause\"]\n}\n",
-        "README.md": "# Rate Limit Guard\n\nA Claude Code plugin that monitors your usage and automatically pauses when approaching rate limits.\n\n## Features\n\n- Monitors both session (5-hour) and weekly (7-day) usage limits\n- Checks usage before each tool call\n- Automatically sleeps when usage exceeds thresholds\n- Resumes automatically when the billing window resets\n- Cross-platform (macOS, Linux, Windows)\n- Bypass option for when you need to use all your tokens\n\n## Thresholds\n\n| Limit | Threshold | Reset Period |\n|-------|-----------|--------------|\n| Session | 90% | Every 5 hours |\n| Weekly | 95% | Every 7 days |\n\n## Installation\n\n### Via marketplace\n\nIn Claude Code, run:\n```\n/plugin marketplace add willyt3hwhale/cc-limit-guard\n/plugin add rate-limit-guard@cc-limit-guard\n```\n\n### Via --plugin-dir (alternative)\n\n```bash\ngit clone https://github.com/willyt3hwhale/cc-limit-guard ~/.claude/plugins/local/cc-limit-guard\n```\n\nThen add an alias to your shell config:\n```bash\nalias claude='claude --plugin-dir ~/.claude/plugins/local/cc-limit-guard'\n```\n\n## Configuration\n\n### 1. Get your session key\n\n1. Go to [claude.ai](https://claude.ai) and log in\n2. Open browser DevTools (F12) → Application → Cookies\n3. Find the `sessionKey` cookie and copy its value\n\n### 2. Find your organization ID\n\n1. Go to [claude.ai](https://claude.ai) and open DevTools (F12)\n2. Go to Network tab, filter by \"usage\"\n3. Look for a request to `/api/organizations/{org-id}/usage`\n4. Copy the org ID from the URL\n\n### 3. Create secrets file\n\nCreate `~/.claude/secrets`:\n```bash\nexport CLAUDE_SESSION_KEY=sk-ant-sid01-YOUR_KEY_HERE\nexport CLAUDE_ORG_ID=your-org-id-here\n```\n\nSecure the file:\n```bash\nchmod 600 ~/.claude/secrets\n```\n\n## Usage\n\nOnce configured, the plugin runs automatically. You'll see usage info as a system message:\n\n```\nSession: 29% | Weekly: 12%\n```\n\nWhen either threshold is exceeded, the plugin will:\n1. Display a warning message\n2. Sleep until the billing window resets\n3. Resume automatically\n\n### Bypass\n\nTo temporarily bypass the rate limit guard:\n\n```bash\nCLAUDE_NO_LIMIT=1 claude\n```\n\n## Requirements\n\n- Node.js 18+ (uses built-in fetch)\n- Claude Pro/Max subscription\n- `jq` installed (`brew install jq` / `apt install jq`)\n\n## How it works\n\nThe plugin uses a PreToolUse hook that runs before each tool call. It:\n\n1. Fetches usage data from the Claude.ai API using Node.js\n2. Compares session and weekly usage against thresholds\n3. If above threshold, calculates time until reset and sleeps\n4. Outputs status via JSON systemMessage for display\n5. Caches results for 30 seconds to minimize API calls\n\n## License\n\nMIT\n",
-        "hooks/hooks.json": "{\n  \"description\": \"Rate limit guard - pauses when usage exceeds threshold\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/pretool-hook.sh\",\n            \"timeout\": 18000\n          }\n        ]\n      }\n    ]\n  }\n}\n",
-        "hooks/pretool-hook.sh": "#!/bin/bash\n\n# Rate Limit Guard - PreToolUse Hook\n# Uses stale-while-revalidate: always returns cached values immediately,\n# refreshes cache in background if stale\n\n# Check for bypass\nif [[ \"$CLAUDE_NO_LIMIT\" == \"1\" ]]; then\n  exit 0\nfi\n\n# Load secrets file\nSECRETS_FILE=\"$HOME/.claude/secrets\"\nif [[ -f \"$SECRETS_FILE\" ]]; then\n  source \"$SECRETS_FILE\"\nfi\n\n# Check for required env vars\nif [[ -z \"$CLAUDE_SESSION_KEY\" ]] || [[ -z \"$CLAUDE_ORG_ID\" ]]; then\n  exit 0\nfi\n\nCACHE_FILE=\"/tmp/cc-limit-guard-usage-cache\"\nLOCK_FILE=\"/tmp/cc-limit-guard-updating\"\nCACHE_MAX_AGE=30\nSESSION_THRESHOLD=90\nWEEKLY_THRESHOLD=95\nSCRIPT_DIR=\"$(cd \"$(dirname \"$0\")/..\" && pwd)\"\n\n# Function to refresh cache in background\nrefresh_cache_background() {\n  # Check lock file - skip if another refresh is in progress\n  # Lock file older than 60s is considered stale (refresh crashed/hung)\n  if [[ -f \"$LOCK_FILE\" ]]; then\n    if [[ \"$(uname)\" == \"Darwin\" ]]; then\n      LOCK_MTIME=$(stat -f %m \"$LOCK_FILE\" 2>/dev/null || echo 0)\n    else\n      LOCK_MTIME=$(stat -c %Y \"$LOCK_FILE\" 2>/dev/null || echo 0)\n    fi\n    LOCK_AGE=$(($(date +%s) - LOCK_MTIME))\n    if [[ $LOCK_AGE -lt 60 ]]; then\n      return 0\n    fi\n  fi\n\n  # Create lock file\n  echo $$ > \"$LOCK_FILE\"\n\n  # Fetch fresh data\n  OUTPUT=$(node \"${SCRIPT_DIR}/rate_limit_guard.js\" --verbose --no-sleep 2>/dev/null)\n  SESSION=$(echo \"$OUTPUT\" | grep -oE 'Session: [0-9]+' | grep -oE '[0-9]+')\n  WEEKLY=$(echo \"$OUTPUT\" | grep -oE 'Weekly: [0-9]+' | grep -oE '[0-9]+')\n\n  # Update cache\n  if [[ -n \"$SESSION\" ]]; then\n    echo \"${SESSION}|${WEEKLY}\" > \"$CACHE_FILE\"\n  fi\n\n  # Remove lock file\n  rm -f \"$LOCK_FILE\"\n}\n\n# Check cache age\nCACHE_STALE=true\nif [[ -f \"$CACHE_FILE\" ]]; then\n  if [[ \"$(uname)\" == \"Darwin\" ]]; then\n    CACHE_MTIME=$(stat -f %m \"$CACHE_FILE\" 2>/dev/null || echo 0)\n  else\n    CACHE_MTIME=$(stat -c %Y \"$CACHE_FILE\" 2>/dev/null || echo 0)\n  fi\n  CACHE_AGE=$(($(date +%s) - CACHE_MTIME))\n  if [[ $CACHE_AGE -lt $CACHE_MAX_AGE ]]; then\n    CACHE_STALE=false\n  fi\nfi\n\n# If cache exists, use it (stale or fresh)\nif [[ -f \"$CACHE_FILE\" ]]; then\n  CACHED=$(cat \"$CACHE_FILE\")\n  CACHED_SESSION=$(echo \"$CACHED\" | cut -d'|' -f1)\n  CACHED_WEEKLY=$(echo \"$CACHED\" | cut -d'|' -f2)\n\n  if [[ -n \"$CACHED_SESSION\" ]]; then\n    # Output usage info\n    jq -n --arg msg \"Session: ${CACHED_SESSION}% | Weekly: ${CACHED_WEEKLY}%\" '{\"systemMessage\": $msg}'\n\n    # If stale, trigger background refresh\n    if [[ \"$CACHE_STALE\" == \"true\" ]]; then\n      refresh_cache_background &\n      disown\n    fi\n\n    # Check thresholds - if under, exit fast\n    if [[ \"$CACHED_SESSION\" -lt \"$SESSION_THRESHOLD\" ]] && [[ \"$CACHED_WEEKLY\" -lt \"$WEEKLY_THRESHOLD\" ]]; then\n      exit 0\n    fi\n\n    # Above threshold - need to sleep (blocking call)\n    node \"${SCRIPT_DIR}/rate_limit_guard.js\" --verbose 2>/dev/null\n    exit 0\n  fi\nfi\n\n# No cache exists - must fetch synchronously (first run)\nOUTPUT=$(node \"${SCRIPT_DIR}/rate_limit_guard.js\" --verbose --no-sleep 2>/dev/null)\nSESSION=$(echo \"$OUTPUT\" | grep -oE 'Session: [0-9]+' | grep -oE '[0-9]+')\nWEEKLY=$(echo \"$OUTPUT\" | grep -oE 'Weekly: [0-9]+' | grep -oE '[0-9]+')\n\n# Update cache\nif [[ -n \"$SESSION\" ]]; then\n  echo \"${SESSION}|${WEEKLY}\" > \"$CACHE_FILE\"\n  jq -n --arg msg \"Session: ${SESSION}% | Weekly: ${WEEKLY}%\" '{\"systemMessage\": $msg}'\n\n  # Check if above threshold\n  if [[ \"$SESSION\" -ge \"$SESSION_THRESHOLD\" ]] || [[ \"$WEEKLY\" -ge \"$WEEKLY_THRESHOLD\" ]]; then\n    node \"${SCRIPT_DIR}/rate_limit_guard.js\" --verbose 2>/dev/null\n  fi\nfi\n\nexit 0\n",
-        "hooks/prompt-hook.sh": "#!/bin/bash\n\n# Rate Limit Guard - UserPromptSubmit Hook\n# Checks usage before Claude processes a prompt\n\n# Check for bypass\nif [[ \"$CLAUDE_NO_LIMIT\" == \"1\" ]]; then\n  exit 0\nfi\n\n# Load secrets file\nSECRETS_FILE=\"$HOME/.claude/secrets\"\nif [[ -f \"$SECRETS_FILE\" ]]; then\n  source \"$SECRETS_FILE\"\nfi\n\n# Check for session key\nif [[ -z \"$CLAUDE_SESSION_KEY\" ]]; then\n  exit 0\nfi\n\n# Check cached usage first (fast path)\nCACHE_FILE=\"/tmp/cc-limit-guard-usage-cache\"\nTHRESHOLD=90\n\nif [[ -f \"$CACHE_FILE\" ]]; then\n  CACHED_USAGE=$(cat \"$CACHE_FILE\" | grep -o '[0-9]*' | head -1)\n  if [[ -n \"$CACHED_USAGE\" ]]; then\n    # Output usage info via JSON\n    jq -n --arg msg \"Usage: ${CACHED_USAGE}% (threshold: ${THRESHOLD}%)\" '{\"systemMessage\": $msg}'\n\n    # If below threshold, exit without sleeping\n    if [[ \"$CACHED_USAGE\" -lt \"$THRESHOLD\" ]]; then\n      exit 0\n    fi\n  fi\nfi\n\n# Above threshold or no cache - run Swift to get fresh data and potentially sleep\nSCRIPT_DIR=\"$(cd \"$(dirname \"$0\")/..\" && pwd)\"\nOUTPUT=$(swift \"${SCRIPT_DIR}/rate_limit_guard.swift\" --verbose 2>&1)\n\n# Output result\nif [[ -n \"$OUTPUT\" ]]; then\n  jq -n --arg msg \"$OUTPUT\" '{\"systemMessage\": $msg}'\nfi\n\nexit 0\n",
-        "hooks/stop-hook.sh": "#!/bin/bash\n\n# Rate Limit Guard Stop Hook\n# Checks usage and pauses if above threshold\n\n# Check for bypass\nif [[ \"$CLAUDE_NO_LIMIT\" == \"1\" ]]; then\n  exit 0\nfi\n\n# Load secrets file\nSECRETS_FILE=\"$HOME/.claude/secrets\"\nif [[ -f \"$SECRETS_FILE\" ]]; then\n  source \"$SECRETS_FILE\"\nfi\n\n# Check for session key\nif [[ -z \"$CLAUDE_SESSION_KEY\" ]]; then\n  exit 0\nfi\n\n# Check cached usage first (from statusline) - much faster than running Swift\nCACHE_FILE=\"/tmp/cc-limit-guard-usage-cache\"\nTHRESHOLD=90\n\nif [[ -f \"$CACHE_FILE\" ]]; then\n  CACHED_USAGE=$(cat \"$CACHE_FILE\" | grep -o '[0-9]*' | head -1)\n  if [[ -n \"$CACHED_USAGE\" ]] && [[ \"$CACHED_USAGE\" -lt \"$THRESHOLD\" ]]; then\n    # Below threshold - exit immediately without running slow Swift\n    exit 0\n  fi\nfi\n\n# Above threshold or no cache - run Swift to handle sleep\nSCRIPT_DIR=\"$(cd \"$(dirname \"$0\")/..\" && pwd)\"\nswift \"${SCRIPT_DIR}/rate_limit_guard.swift\" >/dev/null 2>&1\n\nexit 0\n"
+        "README.md": "# Rate Limit Guard\n\nA Claude Code plugin that monitors your usage and automatically pauses when approaching rate limits.\n\n## Features\n\n- Monitors both session (5-hour) and weekly (7-day) usage limits\n- Checks usage before each tool call\n- Automatically sleeps when usage exceeds thresholds\n- Resumes automatically when the billing window resets\n- Cross-platform (macOS, Linux, Windows)\n- Bypass option for when you need to use all your tokens\n\n## Thresholds\n\n| Limit | Threshold | Reset Period |\n|-------|-----------|--------------|\n| Session | 90% | Every 5 hours |\n| Weekly | 95% | Every 7 days |\n\n## Installation\n\n### Via marketplace\n\nIn Claude Code, run:\n```\n/plugin marketplace add willyt3hwhale/cc-limit-guard\n/plugin add rate-limit-guard@cc-limit-guard\n```\n\n### Via --plugin-dir (alternative)\n\n```bash\ngit clone https://github.com/willyt3hwhale/cc-limit-guard ~/.claude/plugins/local/cc-limit-guard\n```\n\nThen add an alias to your shell config:\n```bash\nalias claude='claude --plugin-dir ~/.claude/plugins/local/cc-limit-guard'\n```\n\n## Configuration\n\n### 1. Get your session key\n\n1. Go to [claude.ai](https://claude.ai) and log in\n2. Open browser DevTools (F12) → Application → Cookies\n3. Find the `sessionKey` cookie and copy its value\n\n### 2. Find your organization ID\n\n1. Go to [claude.ai](https://claude.ai) and open DevTools (F12)\n2. Go to Network tab, filter by \"usage\"\n3. Look for a request to `/api/organizations/{org-id}/usage`\n4. Copy the org ID from the URL\n\n### 3. Create secrets file\n\nCreate `~/.claude/secrets`:\n```bash\nexport CLAUDE_SESSION_KEY=sk-ant-sid01-YOUR_KEY_HERE\nexport CLAUDE_ORG_ID=your-org-id-here\n```\n\nSecure the file:\n```bash\nchmod 600 ~/.claude/secrets\n```\n\n## Usage\n\nOnce configured, the plugin runs automatically. You'll see usage info as a system message:\n\n```\nSession: 29% | Weekly: 12%\n```\n\nWhen either threshold is exceeded, the plugin will:\n1. Display a warning message\n2. Sleep until the billing window resets\n3. Resume automatically\n\n### Bypass\n\nTo temporarily bypass the rate limit guard:\n\n```bash\nCLAUDE_NO_LIMIT=1 claude\n```\n\n## Requirements\n\n- Node.js 18+ (uses built-in fetch)\n- Claude Pro/Max subscription\n- `jq` installed (`brew install jq` / `apt install jq`)\n\n## How it works\n\nThe plugin uses a PreToolUse hook that runs before each tool call. It:\n\n1. Fetches usage data from the Claude.ai API using Node.js\n2. Compares session and weekly usage against thresholds\n3. If above threshold, calculates time until reset and sleeps\n4. Outputs status via JSON systemMessage for display\n5. Caches results for 30 seconds to minimize API calls\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

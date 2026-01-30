@@ -35,7 +35,7 @@ function HomePageContent() {
   const rawSort = searchParams.get("sort");
   const sortBy: MarketplaceSortOption = validSorts.includes(rawSort as MarketplaceSortOption)
     ? (rawSort as MarketplaceSortOption)
-    : "recent";
+    : "trending";
   const sortDirection = (searchParams.get("dir") as "asc" | "desc") || "desc";
 
   // State for pagination
@@ -58,7 +58,17 @@ function HomePageContent() {
     "Failed to load marketplaces."
   );
 
-  const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
+  const allMarketplaces = useMemo(() => {
+    const marketplaces = marketplacesData?.marketplaces ?? [];
+    // Dedupe by repo_full_name to avoid duplicate key errors
+    const seen = new Set<string>();
+    return marketplaces.filter(m => {
+      const key = m.repo_full_name || `${m.author_id}-${m.name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [marketplacesData?.marketplaces]);
 
   // Combined filter and sort for marketplaces (search + categories + sort)
   const filteredAndSortedMarketplaces = useMemo(() => {
@@ -126,17 +136,17 @@ function HomePageContent() {
   // Helper to render marketplace cards consistently
   const renderMarketplaceCard = (marketplace: BrowseMarketplace) => (
     <MarketplaceCard
-      key={`${marketplace.author_id}-${marketplace.name}`}
+      key={marketplace.repo_full_name || `${marketplace.author_id}-${marketplace.name}`}
       marketplace={{
         name: marketplace.name,
         description: marketplace.description,
-        keywords: marketplace.keywords ?? [],
         categories: marketplace.categories ?? [],
         repo_full_name: marketplace.repo_full_name ?? undefined,
         signals: {
           stars: marketplace.signals?.stars ?? 0,
           forks: marketplace.signals?.forks ?? 0,
           pushed_at: marketplace.signals?.pushed_at ?? null,
+          stars_gained_7d: marketplace.signals?.stars_gained_7d,
         },
       }}
       author_id={marketplace.author_id}
@@ -209,7 +219,7 @@ function HomePageContent() {
           <button
             type="button"
             onClick={() => setDisplayCount(c => c + LOAD_MORE_COUNT)}
-            className="px-6 py-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors border border-gray-300 dark:border-gray-600 hover:border-gray-400"
+            className="px-6 py-2.5 bg-card hover:bg-card-hover text-foreground-secondary rounded-lg transition-colors border border-border hover:border-border-hover"
           >
             See more ({remainingCount} remaining)
           </button>

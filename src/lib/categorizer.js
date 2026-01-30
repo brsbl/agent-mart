@@ -13,6 +13,7 @@ const CATEGORY_VARIANTS = {
   'dev-ops': 'devops',
   'front-end': 'frontend',
   'back-end': 'backend',
+  'claude.md': 'claude-md',
 };
 
 // ============================================
