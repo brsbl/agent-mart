@@ -32,7 +32,7 @@ GitHub API
     ▼
 ┌───────────────┐     ┌─────────────┐
 │ 08-aggregate  │ ──► │ 09-output   │ ──► web/public/data/
-│               │     │             │     index.json, etc.
+│               │     │             │     authors/, marketplaces-browse.json
 └───────────────┘     └─────────────┘
 ```
 
@@ -64,9 +64,7 @@ data/                  # Intermediate files (gitignored)
 └── ...
 
 web/public/data/       # Final output (served by Next.js)
-├── index.json
 ├── authors/*.json
-├── plugins-browse.json
 └── marketplaces-browse.json
 ```
 
@@ -186,11 +184,8 @@ Aggregates categories from plugins for each marketplace:
 **File:** `09-output.js`
 
 Generates public JSON files:
-- `index.json` - Author list with stats
 - `authors/*.json` - Full author detail
-- `plugins-browse.json` - Lightweight plugin list for search
 - `marketplaces-browse.json` - Lightweight marketplace list with trending scores
-- `categories.json` - Category list with usage counts
 
 ## Category Normalization
 
