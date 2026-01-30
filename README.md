@@ -6,49 +6,31 @@ Discover and install plugins for [Claude Code](https://docs.anthropic.com/en/doc
 
 **[agentmart.cc](https://agentmart.cc)**
 
-## Features
+<img width="1687" height="971" alt="Screenshot 2026-01-30 at 1 50 09 PM" src="https://github.com/user-attachments/assets/5be5d24c-15f6-480e-bbbc-f60551889acb" />
+
+### Home Page
+
+Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub. The home page displays all indexed marketplaces as cards. Each card shows:
+
+- Marketplace name and description
+- Author name and avatar
+- GitHub stars, forks and last updated time
 
 ### Browse Plugins
-
-Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub.
-
-- **Search** - Find plugins by name, description, author, or keyword
+- **Search** - Find plugins by name, description, author, or category keyword/tag
 - **Filter** - Narrow results by selecting one or more categories
 - **Sort** - Order by popularity, trending, or last updated
   - **Popularity** - Total GitHub stars
   - **Trending** - Recent star velocity compared to historical average (z-score algorithm)
   - **Last Updated** - Most recently pushed to GitHub
 
-### Install Plugins
-
-Copy the install commands from any plugin page and run them in Claude Code:
-
-```
-/plugin marketplace add <owner>/<repo>
-/plugin install <plugin-name>@<marketplace-name>
-```
-
-## Pages
-
-### Home Page
-
-The home page displays all indexed marketplaces as cards. Each card shows:
-
-- Marketplace name and description
-- Author name and avatar
-- GitHub stars and trending indicator (when applicable)
-- Category tags
-
-Use the search bar to find plugins by text, filter by categories, and sort results.
+<img width="1689" height="974" alt="Screenshot 2026-01-30 at 1 51 36 PM" src="https://github.com/user-attachments/assets/53d3b6dc-dba4-4d54-8846-6f8b7e398afb" />
 
 ### Marketplace Detail Page
 
 Click any card to view the full marketplace details:
-
-- **Plugin list** - All plugins in the marketplace with descriptions and install commands
-- **README preview** - Documentation from the repository
-- **Quick install** - One-click copy for install commands
-- **GitHub link** - Direct link to the source repository
+- **Marketplace hero** - Core details from the home page: marketplace name and description, author name and avatar, GitHub stars, forks, last updated time, and direct link to the source repository.
+- **Plugin carousel** - Cycle through all plugins in the marketplace to see their descriptions, install commands, and READMEs for quick documentation.
 
 ## How It Works
 
