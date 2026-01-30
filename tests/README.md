@@ -29,7 +29,8 @@ cd web && npm test
 | `data-flow.test.js` | Tests data transformation between stages |
 | `data-quality.test.js` | Validates output data quality and completeness |
 | `enrich.test.js` | Tests the enrichment stage (06-enrich.js) |
-| `categorizer.test.js` | Tests rules-based categorization logic |
+| `categorizer.test.js` | Tests category normalization logic |
+| `trending.test.js` | Tests z-score trending algorithm |
 | `visualizer.test.js` | Tests the ETL visualizer components |
 
 ## Test Patterns

@@ -76,21 +76,18 @@ Validates marketplace files against expected schemas.
 - `validateMarketplace(data)` - Validate marketplace.json structure
 - `validatePlugin(data)` - Validate plugin.json structure
 
-### `categorizer.js` - Rules-Based Categorization
+### `categorizer.js` - Category Normalization
 
-Classifies marketplaces across two orthogonal dimensions using deterministic rules.
-
-**Design Principles:**
-1. **Rules-based, not LLM-based** - Deterministic, fast, and debuggable
-2. **Two dimensions** - Tech Stack (what you use) + Capabilities (what it does)
-3. **Multi-select** - Marketplaces can have multiple categories in each dimension
-4. **Anti-patterns** - Reduce false positives with exclusion rules
+Simple category normalization that preserves plugin-defined categories with basic cleanup.
 
 **Key Functions:**
-- `buildSearchText(marketplace)` - Build searchable text from marketplace data
-- `extractTechStack(text, fileTree)` - Extract tech stack categories
-- `extractCapabilities(text)` - Extract capability categories
-- `extractCategories(marketplace)` - Main entry point
+- `normalizeCategory(value)` - Normalize a single category value (lowercase, trim, hyphenate)
+- `collectPluginCategories(pluginDef)` - Collect categories from all source fields in a plugin definition
+
+**Normalization:**
+- Lowercase and trim whitespace
+- Convert spaces to hyphens
+- Apply common variant mappings (e.g., `cicd` → `ci-cd`)
 
 ### `utils.js` - General Utilities
 
@@ -103,103 +100,6 @@ Logging and file I/O helper functions.
 
 ---
 
-## Categorization System
-
-The categorization system uses rules-based extraction to classify marketplaces across two orthogonal dimensions.
-
-### Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    src/lib/categorizer.js                        │
-├─────────────────────────────────────────────────────────────────┤
-│  TECH_STACK_RULES                                                │
-│  ├── patterns: RegExp[]     (text matching)                     │
-│  ├── files: string[]        (file tree detection)               │
-│  └── excludeIf: string[]    (mutual exclusion)                  │
-│                                                                  │
-│  CAPABILITIES_RULES                                              │
-│  ├── patterns: RegExp[]     (text matching)                     │
-│  └── antiPatterns: RegExp[] (false positive prevention)         │
-├─────────────────────────────────────────────────────────────────┤
-│  buildSearchText(marketplace) → string                          │
-│  extractTechStack(text, fileTree) → TechStack[]                 │
-│  extractCapabilities(text) → Capability[]                       │
-│  extractCategories(marketplace) → { techStack, capabilities }   │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Tech Stack Rules
-
-Tech stack detection combines text pattern matching with file tree analysis.
-
-```javascript
-{
-  nextjs: {
-    label: 'Next.js',
-    patterns: [/\bnext\.?js\b/i, /\bapp\s*router\b/i, /\bpages\s*router\b/i],
-    files: ['next.config.js', 'next.config.ts', 'next.config.mjs']
-  },
-  react: {
-    label: 'React',
-    patterns: [/\breact\b/i, /\breact\s*components?\b/i],
-    files: [],
-    excludeIf: ['nextjs']  // Don't show React if Next.js is present
-  },
-  python: {
-    label: 'Python',
-    patterns: [/\bdjango\b/i, /\bfastapi\b/i, /\bflask\b/i, /\bpytest\b/i],
-    files: ['requirements.txt', 'pyproject.toml', 'setup.py', 'Pipfile']
-  }
-  // ... more rules in categorizer.js
-}
-```
-
-**Detection Logic:**
-1. Build searchable text from marketplace description, plugin descriptions, command descriptions, keywords
-2. Match patterns against text (word boundaries prevent partial matches)
-3. Check file tree for indicator files (e.g., `tsconfig.json` → TypeScript)
-4. Apply exclusion rules (e.g., React excluded when Next.js detected)
-
-### Capabilities Rules
-
-Capability detection uses patterns with anti-patterns to reduce false positives.
-
-```javascript
-{
-  memory: {
-    label: 'Memory',
-    patterns: [
-      /\brag\b/i,
-      /\bvector\s*(?:store|database|db|search)\b/i,
-      /\bembeddings?\b/i,
-      /\blong[- ]?term\s*(?:memory|context)\b/i
-    ],
-    antiPatterns: [
-      /\bmemory\s*leak/i,      // Programming context
-      /\bout\s*of\s*memory/i,  // Error context
-      /\bmemory\s*usage/i      // Performance context
-    ]
-  },
-  'browser-automation': {
-    label: 'Browser Automation',
-    patterns: [
-      /\bplaywright\b/i,
-      /\bpuppeteer\b/i,
-      /\bselenium\b/i,
-      /\bcypress\b/i
-    ],
-    antiPatterns: []
-  }
-}
-```
-
-**Detection Logic:**
-1. Check if any anti-pattern matches → skip this category
-2. Check if any pattern matches → add category
-
----
-
 ## Data Schemas
 
 ### Marketplace (Internal)
@@ -209,58 +109,42 @@ interface Marketplace {
   name: string;
   version: string | null;
   description: string | null;
-  owner_info: { name: string; email: string } | null;
   keywords: string[];
   repo_full_name: string;
   repo_url: string;
-  homepage: string | null;
   plugins: Plugin[];
   files: Record<string, string>;
   signals: {
     stars: number;
     forks: number;
     pushed_at: string | null;
-    created_at: string | null;
-    license: string | null;
   };
-  categories: {
-    techStack: TechStack[];
-    capabilities: Capability[];
-  };
+  categories: string[];  // Dynamic categories from plugins
 }
-```
-
-### Category Types
-
-```typescript
-type TechStack =
-  | 'nextjs' | 'react' | 'vue' | 'python' | 'node'
-  | 'typescript' | 'go' | 'rust' | 'supabase'
-  | 'aws' | 'docker' | 'postgres';
-
-type Capability =
-  | 'orchestration' | 'memory' | 'browser-automation' | 'boilerplate'
-  | 'review' | 'testing' | 'devops' | 'documentation';
 ```
 
 ### Output: `marketplaces-browse.json`
 
 ```json
 {
+  "meta": {
+    "total_authors": 921,
+    "total_marketplaces": 979,
+    "total_plugins": 3493
+  },
   "marketplaces": [{
     "name": "my-marketplace",
     "description": "...",
     "author_id": "owner",
     "author_display_name": "Owner Name",
     "author_avatar_url": "https://...",
-    "categories": {
-      "techStack": ["typescript", "node"],
-      "capabilities": ["testing", "review"]
-    },
+    "categories": ["testing", "automation"],
     "signals": {
       "stars": 100,
       "forks": 10,
-      "pushed_at": "2026-01-15T..."
+      "pushed_at": "2026-01-15T...",
+      "trending_score": 1.5,
+      "stars_gained_7d": 25
     }
   }]
 }
@@ -272,80 +156,5 @@ type Capability =
 
 | Metric | Value |
 |--------|-------|
-| API calls (3 repos) | ~15 (vs ~229 without batching) |
-| Build time (3 repos) | ~15 seconds |
-| Cache hit rebuild | ~11 seconds |
-
----
-
-## Adding New Categories
-
-### Tech Stack
-
-1. Add rule to `TECH_STACK_RULES` in `src/lib/categorizer.js`:
-   ```javascript
-   newtech: {
-     label: 'New Tech',
-     patterns: [/\bnewtech\b/i],
-     files: ['newtech.config.js'],
-     excludeIf: []  // optional
-   }
-   ```
-
-2. Add type to `web/src/lib/types.ts`:
-   ```typescript
-   export type TechStack = ... | 'newtech';
-   ```
-
-3. Add display info to `web/src/lib/data.ts`:
-   ```typescript
-   export const TECH_STACK_ORDER: TechStack[] = [..., 'newtech'];
-   ```
-
-4. Run pipeline: `npm run pipeline`
-
-### Capabilities
-
-1. Add rule to `CAPABILITIES_RULES` in `src/lib/categorizer.js`:
-   ```javascript
-   'new-capability': {
-     label: 'New Capability',
-     patterns: [/\bnew capability\b/i],
-     antiPatterns: [/\bnot this\b/i]
-   }
-   ```
-
-2. Add type and display info to frontend (same as tech stack).
-
----
-
-## Troubleshooting
-
-### False Positives
-
-If a category has too many false positives:
-1. Check `data/category-stats.json` for distribution
-2. Tighten patterns with word boundaries: `/\bword\b/i`
-3. Add anti-patterns to exclude common false matches
-4. Re-run: `node src/pipeline/08-categorize.js`
-
-### Missing Categories
-
-If marketplaces aren't being categorized:
-1. Check if patterns match the marketplace text
-2. Verify file indicators are in the expected paths
-3. Check `buildSearchText()` includes the relevant fields
-
-### Debugging
-
-Run categorization with verbose output:
-```bash
-node --input-type=module -e "
-  import { extractCategories, buildSearchText } from './src/lib/categorizer.js';
-  import { readFileSync } from 'fs';
-  const data = JSON.parse(readFileSync('data/06-enriched.json'));
-  const marketplace = data.authors['some-author'].marketplaces[0];
-  console.log('Text:', buildSearchText(marketplace));
-  console.log('Categories:', extractCategories(marketplace));
-"
-```
+| API calls (full pipeline) | ~500 (with GraphQL batching) |
+| Build time (full pipeline) | ~10 minutes |

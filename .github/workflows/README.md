@@ -29,12 +29,12 @@ Continuous integration workflow for code quality and testing.
 
 ---
 
-### Nightly Build (`nightly.yml`)
+### Scheduled Build (`scheduled.yml`)
 
-Automated daily pipeline run with data updates.
+Automated pipeline run for data updates and trending score calculation.
 
 **Triggers:**
-- Schedule: Daily at 2 AM UTC (`0 2 * * *`)
+- Schedule: Every 4 hours (`0 */4 * * *`)
 - Manual dispatch
 
 **Jobs:**
@@ -105,7 +105,7 @@ All workflows support manual triggering:
 Workflows use concurrency groups to prevent parallel runs:
 
 - **CI:** `ci-${{ github.ref }}` - Cancels in-progress runs for same branch
-- **Nightly:** `nightly-build` - Only one nightly run at a time
+- **Scheduled:** `scheduled-pipeline` - Only one scheduled run at a time
 
 ---
 

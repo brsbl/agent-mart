@@ -55,26 +55,28 @@ npm run start
 ```
 src/
 ├── app/                    # Next.js App Router pages
-│   ├── page.tsx            # Homepage - marketplace overview
+│   ├── page.tsx            # Homepage - marketplace browsing
 │   ├── layout.tsx          # Root layout with navigation
 │   ├── globals.css         # Global styles and Tailwind
-│   ├── author/[id]/        # Author detail page
-│   ├── authors/            # Authors listing page
-│   ├── marketplace/        # Marketplace browsing
-│   │   └── [author]/       # Author's marketplace
-│   └── plugin/[author]/[marketplace]/  # Plugin detail page
+│   └── [author]/
+│       └── [marketplace]/
+│           └── page.tsx    # Marketplace detail page
 ├── components/             # Reusable UI components
 │   ├── CopyableCommand.tsx # Command with copy button
 │   ├── ErrorState.tsx      # Error display component
-│   ├── FileTree.tsx        # Repository file tree
 │   ├── LoadingState.tsx    # Loading spinner
 │   ├── MarketplaceCard.tsx # Marketplace preview card
 │   ├── NavBar.tsx          # Navigation header
-│   └── PluginCard.tsx      # Plugin preview card
+│   ├── PluginCard.tsx      # Plugin preview card
+│   ├── SearchFilterControls.tsx  # Search, filter, sort controls
+│   ├── MultiSelectDropdown.tsx   # Category filter dropdown
+│   └── SortDropdown.tsx    # Sort options dropdown
+├── hooks/                  # Custom React hooks
+│   └── useFetch.ts         # Data fetching hook
 └── lib/                    # Utilities and types
     ├── constants.ts        # API URLs, config
     ├── types.ts            # TypeScript interfaces
-    └── useFetch.ts         # Data fetching hook
+    └── data.ts             # Data utilities
 ```
 
 ---
@@ -118,34 +120,18 @@ src/
 
 | Route | Component | Description |
 |-------|-----------|-------------|
-| `/` | `app/page.tsx` | Homepage with category filters |
-| `/[author]` | `app/[author]/page.tsx` | Author detail page |
-| `/[author]/[marketplace]` | `app/[author]/[marketplace]/page.tsx` | Marketplace detail |
+| `/` | `app/page.tsx` | Homepage with search, filter, and sort |
+| `/[author]/[marketplace]` | `app/[author]/[marketplace]/page.tsx` | Marketplace detail with plugins |
 
-### Filter System
+### Search and Filter System
 
-The homepage implements two-dimensional filtering:
+The homepage implements search, category filtering, and sorting:
 
-```typescript
-// State
-const [selectedTechStack, setSelectedTechStack] = useState<Set<TechStack>>(new Set());
-const [selectedCapabilities, setSelectedCapabilities] = useState<Set<Capability>>(new Set());
+- **Search** - Text search across name, description, author, and keywords
+- **Categories** - Multi-select dropdown filtering by category (OR logic)
+- **Sort** - Order by popularity (stars), trending (z-score), or last updated
 
-// Filter logic (AND within each dimension)
-const filtered = marketplaces.filter(m => {
-  // Must have ALL selected tech stack
-  for (const tech of selectedTechStack) {
-    if (!m.categories?.techStack?.includes(tech)) return false;
-  }
-  // Must have ALL selected capabilities
-  for (const cap of selectedCapabilities) {
-    if (!m.categories?.capabilities?.includes(cap)) return false;
-  }
-  return true;
-});
-```
-
-Note: Filters are implemented inline in `page.tsx`, not as a separate component.
+Filter state is synced to URL parameters for shareable links.
 
 ---
 

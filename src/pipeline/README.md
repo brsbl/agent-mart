@@ -189,16 +189,12 @@ Generates public JSON files:
 
 ## Category Normalization
 
-Categories are normalized to 21 canonical values during enrichment:
+Categories are collected from plugin definitions and normalized with basic cleanup:
+- Lowercase and trim whitespace
+- Convert spaces to hyphens
+- Apply common variant mappings (e.g., `cicd` → `ci-cd`)
 
-```
-development, ai-ml, productivity, automation, devops,
-testing, quality, security, database, api,
-infrastructure, integration, design, documentation, git,
-frameworks, languages, utilities, business, marketing, learning
-```
-
-See `src/lib/categories.js` for alias mappings.
+Categories are dynamic - whatever values plugins define are preserved. See `src/lib/categorizer.js` for normalization logic.
 
 ## GitHub API Usage
 
