@@ -1,0 +1,73 @@
+{
+  "author": {
+    "id": "auge2u",
+    "display_name": "Agustin M.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/750093?u=3b5d8648c35dd084ba3a1b082b8c8d91d76708b4&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ralph-it-up",
+      "version": null,
+      "description": "AI skills marketplace for orchestrated product maturity planning (MVP → next major stage).",
+      "repo_full_name": "auge2u/ralph-it-up",
+      "repo_url": "https://github.com/auge2u/ralph-it-up",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-23T11:57:46Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ralph-it-up\",\n  \"description\": \"AI skills marketplace for orchestrated product maturity planning (MVP → next major stage).\",\n  \"owner\": {\n    \"name\": \"auge2u\",\n    \"email\": \"auge2u@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ralph-it-up-roadmap\",\n      \"description\": \"Roadmap ScopeCraft: scan PRDs/docs + legacy scope and generate a comprehensive maturity roadmap.\",\n      \"version\": \"1.2.0\",\n      \"author\": { \"name\": \"auge2u\" },\n      \"source\": \"./plugins/ralph-it-up-roadmap\",\n      \"category\": \"productivity\",\n      \"tags\": [\"product\", \"roadmap\", \"planning\", \"prd\", \"mvp\", \"maturity\", \"orchestration\"],\n      \"keywords\": [\"roadmap\", \"scope\", \"prd\", \"backlog\", \"maturity\", \"orchestrated\"]\n    }\n  ]\n}",
+        "README.md": "# ralph-it-up\n\n**ralph-it-up** is a public marketplace of AI skills for turning real, messy software projects into\n**clear, product-owner scoped roadmaps** — from **MVP/early release → next major stage**.\n\nIt is designed to work **one-shot** or in an **orchestrated loop** with [ralph-orchestrator](https://github.com/mikeyobrien/ralph-orchestrator).\n\n## What's included\n\n### Plugin: `ralph-it-up-roadmap`\nA skill-driven workflow that:\n- scans `/docs` for PRDs (including older/legacy PRDs),\n- inventories pending/legacy tasks (wherever they live),\n- reconciles conflicting requirements,\n- outputs a maturity roadmap, epics/stories, risks, and metrics.\n\n## Install (Claude Code)\n\n```txt\n/plugin marketplace add auge2u/ralph-it-up\n/plugin install ralph-it-up-roadmap@ralph-it-up\n```\n\n### Pin to specific version (optional)\n\nClaude Code supports pinning plugins to specific git commit SHAs for reproducible installs:\n\n```txt\n/plugin marketplace add auge2u/ralph-it-up#a309247\n```\n\n## Run\n\n### One-shot (Claude Code)\n\n```txt\n/ralph-it-up-roadmap:roadmap\n```\n\n### Orchestrated loop (Claude Code)\n\n```txt\n/ralph-it-up-roadmap:roadmap-orchestrated\n```\n\n### With ralph-orchestrator (v2.2.0)\n\nFor fully autonomous iteration with [ralph-orchestrator v2](https://github.com/mikeyobrien/ralph-orchestrator):\n\n```bash\n# Install ralph-orchestrator\npip install ralph-orchestrator\n\n# Copy templates to your project\ncp plugins/ralph-it-up-roadmap/templates/ralph.yml ./ralph.yml\nmkdir -p .agent\ncp plugins/ralph-it-up-roadmap/templates/scratchpad.md ./.agent/scratchpad.md\n\n# Run (v2 uses hat-based config, no -a flag needed)\nralph run\n\n# New in v2.0.8+: structured session workflows\nralph plan    # Plan mode for structured planning\nralph task    # Task mode for focused execution\n```\n\n> **Note:** v2 uses hat-based orchestration with instructions embedded in `ralph.yml`. The separate `PROMPT.md` is optional and provided for standalone use.\n\n## Outputs\n\nThe skill writes files to:\n- `./scopecraft/`\n\nIncluding:\n- `VISION_AND_STAGE_DEFINITION.md`\n- `ROADMAP.md`\n- `EPICS_AND_STORIES.md`\n- `RISKS_AND_DEPENDENCIES.md`\n- `METRICS_AND_PMF.md`\n- `OPEN_QUESTIONS.md`\n\n## ralph-orchestrator Compatibility (v2.2.0)\n\nThis plugin is fully compatible with [ralph-orchestrator v2](https://github.com/mikeyobrien/ralph-orchestrator):\n\n| Feature | Support |\n|---------|---------|\n| Completion promise | `LOOP_COMPLETE` |\n| Scratchpad | `.agent/scratchpad.md` |\n| Hat-based orchestration | `product_owner` hat with embedded instructions |\n| ralph.yml | v2 config template included |\n| Multi-backend | claude, gemini, codex, qchat, aider, opencode, copilot |\n| Quality gates | Embedded in hat instructions |\n| Session workflows | `ralph plan` / `ralph task` (v2.0.8+) |\n\n## License\n\nMIT\n",
+        "plugins/ralph-it-up-roadmap/README.md": "# ralph-it-up-roadmap\n\nGenerate a full-scope product roadmap from an existing repository by scanning docs/PRDs and legacy tasks.\n\n**ralph-orchestrator compatible** — works standalone or with [ralph-orchestrator](https://github.com/mikeyobrien/ralph-orchestrator) for autonomous iteration.\n\n## Commands\n\n### Roadmap (one-shot)\n```txt\n/ralph-it-up-roadmap:roadmap\n```\n\n### Roadmap (orchestrated loop)\n```txt\n/ralph-it-up-roadmap:roadmap-orchestrated\n```\n\n## What it produces\n\nCreates a `./scopecraft/` directory containing:\n- Vision + definition of \"next major stage\"\n- Roadmap phases with outcomes/KRs\n- Epics & stories with acceptance criteria\n- Risk register + dependencies\n- PMF metrics + instrumentation outline\n- Open questions / decisions needed\n\n## Examples\n\nSee `examples/scopecraft/` for sample outputs demonstrating expected format and detail level.\n\n## Quality Gates\n\nQuality gates are validation checks that **MUST pass** before `LOOP_COMPLETE` can be issued.\n\n### Default Gates\n\n| Gate | Type | Requirement |\n|------|------|-------------|\n| `all_outputs_exist` | file_count | 6 files in scopecraft/ |\n| `phases_in_range` | pattern_count | 3-5 `## Phase` headers |\n| `epics_have_stories` | pattern_count | 5+ `#### Story` headers |\n| `stories_have_acceptance_criteria` | pattern_count | 5+ \"Acceptance Criteria\" |\n| `risks_documented` | pattern_count | 3+ risk table rows |\n| `metrics_defined` | pattern_exists | \"North Star Metric\" section |\n| `no_todo_placeholders` | pattern_count | 0 `[TODO]`/`[TBD]` markers |\n\n### Running Validation\n\n```bash\n# Validate outputs manually\npython hooks/validate_quality_gates.py\n\n# With verbose output\npython hooks/validate_quality_gates.py --verbose\n\n# Append to scratchpad\npython hooks/validate_quality_gates.py --scratchpad .agent/scratchpad.md\n```\n\n### Customizing Gates\n\nEdit `ralph.yml` to adjust thresholds or add custom gates:\n\n```yaml\nquality_gates:\n  - id: my_custom_gate\n    name: \"Custom validation\"\n    check: \"pattern_count\"\n    path: \"scopecraft/*.md\"\n    pattern: \"my-pattern\"\n    min: 1\n    severity: blocker\n```\n\n## ralph-orchestrator Integration\n\nFor autonomous iteration with [ralph-orchestrator](https://github.com/mikeyobrien/ralph-orchestrator):\n\n### Quick Start\n\n```bash\n# Install ralph-orchestrator\npip install ralph-orchestrator\n\n# Copy templates to your project\ncp templates/PROMPT.md ./PROMPT.md\ncp templates/ralph.yml ./ralph.yml\nmkdir -p .agent && cp templates/scratchpad.md ./.agent/scratchpad.md\n\n# Run orchestrated roadmap generation\nralph run -a claude\n```\n\n### Configuration\n\nEdit `ralph.yml` to adjust:\n- `max_iterations` — default 15, increase for complex projects\n- `max_runtime` — default 1 hour\n- `max_cost` — default $25 USD ceiling\n- `checkpoint_interval` — git commits every N iterations\n- `quality_gates` — validation rules for outputs\n\n### Completion Promise\n\nThe skill uses `LOOP_COMPLETE` as its completion marker, compatible with ralph-orchestrator defaults.\n\n**Quality gates MUST pass before LOOP_COMPLETE is issued.**\n\n### Scratchpad\n\nProgress is tracked in `.agent/scratchpad.md` between iterations, enabling:\n- Incremental improvement (not full rewrites)\n- Quality gate status tracking\n- Recovery from interruptions\n- Visibility into agent progress\n"
+      },
+      "plugins": [
+        {
+          "name": "ralph-it-up-roadmap",
+          "description": "Roadmap ScopeCraft: scan PRDs/docs + legacy scope and generate a comprehensive maturity roadmap.",
+          "version": "1.2.0",
+          "author": {
+            "name": "auge2u"
+          },
+          "source": "./plugins/ralph-it-up-roadmap",
+          "category": "productivity",
+          "tags": [
+            "product",
+            "roadmap",
+            "planning",
+            "prd",
+            "mvp",
+            "maturity",
+            "orchestration"
+          ],
+          "keywords": [
+            "roadmap",
+            "scope",
+            "prd",
+            "backlog",
+            "maturity",
+            "orchestrated"
+          ],
+          "categories": [
+            "backlog",
+            "maturity",
+            "mvp",
+            "orchestrated",
+            "orchestration",
+            "planning",
+            "prd",
+            "product",
+            "productivity",
+            "roadmap",
+            "scope"
+          ],
+          "install_commands": [
+            "/plugin marketplace add auge2u/ralph-it-up",
+            "/plugin install ralph-it-up-roadmap@ralph-it-up"
+          ]
+        }
+      ]
+    }
+  ]
+}

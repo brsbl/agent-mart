@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "richard-gyiko",
+    "display_name": "Richárd Gyikó",
+    "avatar_url": "https://avatars.githubusercontent.com/u/36221820?u=1261329c25adf400a7a6fe78e7977fc53e3a65c5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "data-wrangler-marketplace",
+      "version": null,
+      "description": "Data Wrangler plugin for Claude Code - Transform and export data using DuckDB SQL",
+      "repo_full_name": "richard-gyiko/data-wrangler-plugin",
+      "repo_url": "https://github.com/richard-gyiko/data-wrangler-plugin",
+      "repo_description": "Claude Code plugin for SQL analytics over CSV, Parquet, JSON, Excel, and databases using DuckDB",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-02T09:13:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"data-wrangler-marketplace\",\n  \"owner\": {\n    \"name\": \"Richard Gyiko\"\n  },\n  \"metadata\": {\n    \"description\": \"Data Wrangler plugin for Claude Code - Transform and export data using DuckDB SQL\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"data-wrangler\",\n      \"source\": \"./\",\n      \"description\": \"Transform and export data using DuckDB SQL. Read CSV/Parquet/JSON/Excel/databases, apply SQL transformations, and write results to files.\",\n      \"version\": \"2.0.0\",\n      \"keywords\": [\"duckdb\", \"sql\", \"data-wrangling\", \"etl\", \"parquet\", \"csv\", \"transform\", \"export\"],\n      \"category\": \"data-analysis\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"data-wrangler\",\n  \"description\": \"Transform and export data using DuckDB SQL. Read CSV/Parquet/JSON/Excel/databases, apply SQL transformations (joins, aggregations, PIVOT/UNPIVOT, sampling), and write results to Parquet/CSV/JSON files.\",\n  \"version\": \"1.1.0\",\n  \"author\": {\n    \"name\": \"Richard Gyiko\"\n  },\n  \"homepage\": \"https://github.com/richard-gyiko/data-wrangler-plugin\",\n  \"repository\": \"https://github.com/richard-gyiko/data-wrangler-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"duckdb\",\n    \"sql\",\n    \"data-wrangling\",\n    \"etl\",\n    \"csv\",\n    \"parquet\",\n    \"json\",\n    \"transform\",\n    \"export\",\n    \"pivot\",\n    \"sampling\"\n  ]\n}\n",
+        "README.md": "# Data Wrangler Plugin for Claude Code\n\nA Claude Code plugin that enables powerful data transformation and export using DuckDB SQL.\n\n## Features\n\n- **Multiple file formats**: CSV, Parquet, JSON/NDJSON, Excel (.xlsx)\n- **Database connections**: Postgres, MySQL, SQLite, S3\n- **Cloud storage**: AWS S3, Azure Blob, Google Cloud Storage, Cloudflare R2\n- **Secrets management**: Secure credential storage with environment variable substitution\n- **Direct file queries**: Query files directly by path\n- **Aliased sources**: Join multiple datasets with clean SQL\n- **Write mode**: Export results to Parquet, CSV, or JSON\n- **Partitioning**: Create Hive-style partitioned datasets\n- **Advanced SQL**: PIVOT/UNPIVOT, sampling, window functions\n\n## Installation\n\n### From GitHub\n\nAdd the marketplace and install:\n\n```\n/plugin marketplace add richard-gyiko/data-wrangler-plugin\n/plugin install data-wrangler@data-wrangler-marketplace\n```\n\n### Local Development\n\n```\n/plugin marketplace add ./path/to/data-wrangler-plugin\n/plugin install data-wrangler@data-wrangler-marketplace\n```\n\n## Usage\n\nOnce installed, Claude will automatically use this skill when you ask data transformation questions.\n\n### Examples\n\n**Simple file query:**\n> \"What are the top 10 products by revenue in sales.csv?\"\n\n**Join multiple files:**\n> \"Join orders.parquet with customers.csv and show total orders per customer\"\n\n**Export to Parquet:**\n> \"Filter active users from users.csv and save as users_active.parquet\"\n\n**Create partitioned dataset:**\n> \"Convert events.json to Parquet partitioned by year and month\"\n\n## Secrets Management\n\nStore database and cloud credentials securely using a YAML secrets file with environment variable substitution.\n\n**Create `secrets.yaml`:**\n```yaml\nsecrets:\n  my_postgres:\n    type: postgres\n    host: db.example.com\n    user: analyst\n    password: \"${PGPASSWORD}\"  # Uses environment variable\n    database: analytics\n```\n\n**Supported secret types:**\n- **Databases**: PostgreSQL, MySQL\n- **Cloud storage**: AWS S3, Azure Blob, Google Cloud Storage, Cloudflare R2\n- **HTTP**: Bearer token authentication\n- **Other**: HuggingFace, Iceberg, DuckLake\n\nSee [SECRETS.md](skills/data-wrangler/SECRETS.md) for full configuration options.\n\n## How It Works\n\nThe skill uses DuckDB, an embedded analytical database that excels at:\n- Columnar storage and vectorized execution\n- Direct querying of files without loading into memory\n- Automatic format detection\n- Efficient aggregations on large datasets\n\n## Requirements\n\n- Python 3.11+\n- `uv` package manager (for running the script)\n\nDependencies are automatically installed via the inline script metadata:\n- `duckdb>=1.4.3`\n- `polars[pyarrow]>=1.36.1`\n\n## File Structure\n\n```\ndata-wrangler-plugin/\n├── .claude-plugin/\n│   ├── plugin.json          # Plugin manifest\n│   └── marketplace.json     # Marketplace definition\n├── skills/\n│   └── data-wrangler/\n│       ├── SKILL.md         # Skill instructions for Claude\n│       ├── SECRETS.md       # Secrets management docs\n│       ├── TRANSFORMS.md    # Advanced SQL patterns\n│       └── scripts/\n│           └── query_duckdb.py  # DuckDB query engine\n├── tests/                   # Test suite\n└── README.md\n```\n\n## License\n\nMIT License - see LICENSE file for details.\n\n## Contributing\n\nContributions welcome! Please open an issue or pull request.\n"
+      },
+      "plugins": [
+        {
+          "name": "data-wrangler",
+          "source": "./",
+          "description": "Transform and export data using DuckDB SQL. Read CSV/Parquet/JSON/Excel/databases, apply SQL transformations, and write results to files.",
+          "version": "2.0.0",
+          "keywords": [
+            "duckdb",
+            "sql",
+            "data-wrangling",
+            "etl",
+            "parquet",
+            "csv",
+            "transform",
+            "export"
+          ],
+          "category": "data-analysis",
+          "categories": [
+            "csv",
+            "data-analysis",
+            "data-wrangling",
+            "duckdb",
+            "etl",
+            "export",
+            "parquet",
+            "sql",
+            "transform"
+          ],
+          "install_commands": [
+            "/plugin marketplace add richard-gyiko/data-wrangler-plugin",
+            "/plugin install data-wrangler@data-wrangler-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

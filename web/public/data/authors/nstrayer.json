@@ -1,0 +1,45 @@
+{
+  "author": {
+    "id": "nstrayer",
+    "display_name": "Nick Strayer",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6764693?u=1fe7374a32992bc00db9c998d8d065bd26d25783&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bootandshoe-claude-planning",
+      "version": "1.1.4",
+      "description": "Various Plugins for Claude Code",
+      "repo_full_name": "nstrayer/claude-planning",
+      "repo_url": "https://github.com/nstrayer/claude-planning",
+      "repo_description": "A claude code plugin related to research and planning. Inspired heavily by humanlayer ",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-14T22:36:58Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"bootandshoe-claude-planning\",\n  \"version\": \"1.1.4\",\n  \"description\": \"Various Plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"Nick Strayer\",\n    \"email\": \"nick.strayer@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"bootandshoe\",\n      \"description\": \"Commands and agents for codebase research, planning, and implementation workflows\",\n      \"source\": \"./bootandshoe\",\n      \"category\": \"development\",\n      \"version\": \"2026-01-12\",\n      \"author\": {\n        \"name\": \"nstrayer\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Planning Plugin\n\nA plugin for [Claude Code](https://claude.ai/code) that provides structured planning and implementation workflows with minimal context overhead.\n\n**Key benefit**: Parallel sub-agents research your codebase and return precise `file:line` references, keeping your main context lean while gathering comprehensive information.\n\n## Installation\n\n```bash\n# Add marketplace\n/plugin marketplace add nstrayer/claude-planning\n\n# Install plugin\n/plugin install bootandshoe@bootandshoe-claude-planning\n```\n\n## Workflow Overview\n\nThe plugin provides a phased workflow from research through implementation and validation:\n\n```mermaid\nflowchart TD\n    A[\"/research_codebase<br/>(optional understanding)\"] --> B[\"/create_plan<br/>(interactive planning)\"]\n    B --> C[\"/iterate_plan<br/>(refine based on feedback)\"]\n    C --> D[\"/implement_plan<br/>(phase-by-phase execution)\"]\n    D --> E[\"/validate_plan<br/>(verify correctness)\"]\n```\n\n## Commands Reference\n\n| Command | Description | Workflow Position |\n|---------|-------------|-------------------|\n| `/create_plan` | Interactive planning with codebase research. Generates phased implementation plans with success criteria. | Start of workflow |\n| `/create_plan_nt` | Same as `/create_plan` but works without a `thoughts/` directory | Start (no thoughts) |\n| `/create_plan_generic` | Simplified plan creation with minimal project assumptions | Start (generic) |\n| `/iterate_plan` | Update existing plans based on feedback or new requirements | After `/create_plan` |\n| `/iterate_plan_nt` | Same as `/iterate_plan` but works without a `thoughts/` directory | After `/create_plan` |\n| `/implement_plan` | Execute plans phase-by-phase with automated and manual verification | After plan approval |\n| `/validate_plan` | Verify implementation against plan's success criteria | After implementation |\n| `/research_codebase` | Spawn parallel agents to research and document codebase comprehensively | Any time |\n| `/research_codebase_nt` | Same as `/research_codebase` but works without a `thoughts/` directory | Any time |\n| `/research_codebase_generic` | Minimal assumptions research for unfamiliar codebases | Any time |\n\n## Command Variants\n\nCommands have variants indicated by suffixes:\n\n| Suffix | Meaning | Use When |\n|--------|---------|----------|\n| *(none)* | Full-featured with `thoughts/` directory support | You have a `thoughts/` directory for storing plans and research |\n| `_nt` | \"No Thoughts\" - works without `thoughts/` directory | Project doesn't use a thoughts directory |\n| `_generic` | Minimal project-specific assumptions | Working with unfamiliar codebases or want no assumptions |\n\n## Agents\n\nThe plugin includes specialized agents that research your codebase in parallel:\n\n| Agent | Purpose |\n|-------|---------|\n| `codebase-locator` | Finds WHERE files and components live by topic or feature |\n| `codebase-analyzer` | Understands HOW code works, explains implementations |\n| `codebase-pattern-finder` | Finds similar implementations and patterns to model after |\n| `thoughts-locator` | Discovers relevant documents in the `thoughts/` directory |\n| `thoughts-analyzer` | Extracts insights and decisions from `thoughts/` documents |\n| `web-search-researcher` | Researches external documentation and APIs |\n\nAgents are **documentarians** - they describe what exists without suggesting improvements. They return precise `file:line` references rather than full file contents, keeping your context efficient.\n\n## Usage Examples\n\n### Planning Workflow\n\n```bash\n# Start with research to understand the codebase (optional)\n/research_codebase\n# Then describe what you want to understand\n\n# Create a plan interactively\n/create_plan\n# Claude will ask clarifying questions and research the codebase\n\n# Create plan from a requirements file\n/create_plan path/to/requirements.md\n\n# Iterate on an existing plan after feedback\n/iterate_plan thoughts/shared/plans/2025-01-08-feature.md\n\n# Implement the plan\n/implement_plan thoughts/shared/plans/2025-01-08-feature.md\n\n# Validate the implementation\n/validate_plan thoughts/shared/plans/2025-01-08-feature.md\n```\n\n### Research Only\n\n```bash\n# Research without planning\n/research_codebase\n# Then: \"How does authentication work in this codebase?\"\n\n# Without thoughts directory\n/research_codebase_nt\n```\n\n## Output Structure\n\nPlans and research are stored in the `thoughts/` directory:\n\n```\nthoughts/\n└── shared/\n    ├── plans/      # YYYY-MM-DD-description.md (from /create_plan)\n    └── research/   # YYYY-MM-DD-description.md (from /research_codebase)\n```\n\nUse `_nt` variants if your project doesn't have a `thoughts/` directory, or specify custom output paths.\n\n## Key Principles\n\n1. **Parallel research**: Multiple agents research concurrently for efficiency\n2. **Precise references**: Agents return `file:line` references, not full file contents\n3. **Document, don't critique**: Agents describe what exists without suggesting changes\n4. **Separated verification**: Plans distinguish automated checks (tests, linting) from manual testing\n5. **Phased implementation**: Execute plans step-by-step with verification at each phase\n"
+      },
+      "plugins": [
+        {
+          "name": "bootandshoe",
+          "description": "Commands and agents for codebase research, planning, and implementation workflows",
+          "source": "./bootandshoe",
+          "category": "development",
+          "version": "2026-01-12",
+          "author": {
+            "name": "nstrayer"
+          },
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add nstrayer/claude-planning",
+            "/plugin install bootandshoe@bootandshoe-claude-planning"
+          ]
+        }
+      ]
+    }
+  ]
+}

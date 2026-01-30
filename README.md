@@ -6,15 +6,20 @@ Discover and install plugins for [Claude Code](https://docs.anthropic.com/en/doc
 
 **[agentmart.cc](https://agentmart.cc)**
 
-## Browse Plugins
+## Features
+
+### Browse Plugins
 
 Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub.
 
 - **Search** - Find plugins by name, description, author, or keyword
 - **Filter** - Narrow results by selecting one or more categories
-- **Sort** - Order by popularity (GitHub stars), trending (recently active), or last updated
+- **Sort** - Order by popularity, trending, or last updated
+  - **Popularity** - Total GitHub stars
+  - **Trending** - Recent star velocity compared to historical average (z-score algorithm)
+  - **Last Updated** - Most recently pushed to GitHub
 
-## Install a Plugin
+### Install Plugins
 
 Copy the install commands from any plugin page and run them in Claude Code:
 
@@ -22,6 +27,28 @@ Copy the install commands from any plugin page and run them in Claude Code:
 /plugin marketplace add <owner>/<repo>
 /plugin install <plugin-name>@<marketplace-name>
 ```
+
+## Pages
+
+### Home Page
+
+The home page displays all indexed marketplaces as cards. Each card shows:
+
+- Marketplace name and description
+- Author name and avatar
+- GitHub stars and trending indicator (when applicable)
+- Category tags
+
+Use the search bar to find plugins by text, filter by categories, and sort results.
+
+### Marketplace Detail Page
+
+Click any card to view the full marketplace details:
+
+- **Plugin list** - All plugins in the marketplace with descriptions and install commands
+- **README preview** - Documentation from the repository
+- **Quick install** - One-click copy for install commands
+- **GitHub link** - Direct link to the source repository
 
 ## How It Works
 

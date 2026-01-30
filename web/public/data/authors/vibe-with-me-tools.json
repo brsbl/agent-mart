@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "vibe-with-me-tools",
+    "display_name": "Vibe With Me",
+    "avatar_url": "https://avatars.githubusercontent.com/u/254069310?u=6bc9a316b20d04078dcd6b5f0834b39320b031ba&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-reachout",
+      "version": null,
+      "description": null,
+      "repo_full_name": "vibe-with-me-tools/agent-reachout",
+      "repo_url": "https://github.com/vibe-with-me-tools/agent-reachout",
+      "repo_description": "Let Claude Code reach you on Telegram when it finishes work or needs decisions",
+      "signals": {
+        "stars": 35,
+        "forks": 3,
+        "pushed_at": "2026-01-11T00:48:19Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-reachout\",\n  \"owner\": {\n    \"name\": \"vibe-with-me-tools\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-reachout\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agent-reachout\",\n  \"version\": \"1.0.2\",\n  \"description\": \"Multi-provider notification plugin for Claude Code\",\n  \"author\": {\n    \"name\": \"vibe-with-me-tools\",\n    \"url\": \"https://github.com/vibe-with-me-tools\"\n  },\n  \"repository\": \"https://github.com/vibe-with-me-tools/agent-reachout\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"notifications\", \"telegram\", \"messaging\", \"alerts\", \"claude-code-plugin\", \"llm-notifications\"],\n  \"mcpServers\": {\n    \"agent-reachout\": {\n      \"command\": \"bun\",\n      \"args\": [\"run\", \"${CLAUDE_PLUGIN_ROOT}/server/src/index.ts\"],\n      \"env\": {\n        \"AGENT_REACHOUT_TELEGRAM_BOT_TOKEN\": \"${TELEGRAM_BOT_TOKEN}\",\n        \"AGENT_REACHOUT_TELEGRAM_CHAT_ID\": \"${TELEGRAM_CHAT_ID}\"\n      }\n    }\n  }\n}\n",
+        "README.md": "# Agent Reachout\n\nLet your Claude Code message you on Telegram when it needs decisions or finishes work, even when you’re away from your desk.\n\n<p align=\"center\">\n  <img src=\"assets/agent-reachout-flow.png\" alt=\"Agent Reachout – Claude Code to Telegram flow\" width=\"800\">\n</p>\n\n> Claude Code → Agent Reachout → Telegram → Human reply → Agent continues\n\n---\n\n## Why?\n\nAI agents are great at doing work, but real workflows still need **human judgment**.\n\nIn practice, agents:\n- hit ambiguous decisions\n- need approval before destructive actions\n- finish long tasks while you’re not watching the terminal\n\nDashboards assume you go check them.  \n**Messaging flips the model** — the agent comes to you only when needed.\n\nAgent Reachout turns agent workflows into something asynchronous and interrupt-driven, without babysitting the CLI.\n\n---\n\n## What it does\n\n- Sends notifications to Telegram when an agent:\n  - finishes a task\n  - hits a blocker\n  - needs a decision\n- Supports one-way notifications or two-way conversations\n- Lets the agent pause → ask → resume\n- Designed for human-in-the-loop agent workflows\n\nCurrently implemented as a **Claude Code plugin**.\n\n---\n\n## Why Telegram first?\n\nThis started as a **personal workflow tool**, not a team platform.\n\nTelegram was chosen because:\n- it’s already on my phone\n- fast setup and low friction\n- feels like a push notification, not another dashboard\n- works well for solo devs and small setups\n\nThe concept is **channel-agnostic** — Telegram is just the first integration.\n\n---\n\n## What it’s not\n\n- Not a workflow engine\n- Not a chatbot framework\n- Not a full agent orchestration system\n\nIt’s a small bridge between agents and humans.\n\n---\n\n## Use cases\n\n- Approving file changes or deletions\n- Answering clarification questions mid-task\n- Getting notified when long-running tasks complete\n- Running agents asynchronously without monitoring logs\n\n---\n\n## Installation\n\n### Prerequisites\n\n- Claude Code CLI installed\n- Bun installed (https://bun.com/docs/installation)\n- A Telegram account\n\n---\n\n### 1. Create a Telegram Bot\n\n1. Open Telegram and search for [@BotFather](https://t.me/botfather)\n2. Send `/newbot` and follow the prompts to create your bot\n3. Copy the **bot token** (looks like `123456789:ABCdefGHIjklMNOpqrsTUVwxyz`)\n\n---\n\n### 2. Get Your Telegram Chat ID\n\n1. Search for [@userinfobot](https://t.me/userinfobot) on Telegram\n2. Start a chat with it\n3. Copy your **chat ID** (a number like `123456789`)\n\n> **Tip:** Start a conversation with your newly created bot first by searching for it and clicking \"Start\".\n\n---\n\n### 3. Configure Environment Variables\n\nSet the following environment variables. You can add them to your shell profile (`.zshrc`, `.bashrc`) or set them before running Claude Code:\n\n**Shell format:**\n\n```bash\nexport TELEGRAM_BOT_TOKEN=your_bot_token_here\nexport TELEGRAM_CHAT_ID=your_chat_id_here\n```\n\n**Or in your Claude Code settings** (`~/.claude/settings.json`):\n\n```json\n{\n  \"env\": {\n    \"TELEGRAM_BOT_TOKEN\": \"your_bot_token_here\",\n    \"TELEGRAM_CHAT_ID\": \"your_chat_id_here\"\n  }\n}\n```\n\n<details>\n<summary><strong>Environment Variables Reference</strong></summary>\n\n| Variable | Required | Description |\n|----------|----------|-------------|\n| `TELEGRAM_BOT_TOKEN` | Yes | Bot token from @BotFather |\n| `TELEGRAM_CHAT_ID` | Yes | Your personal chat ID from @userinfobot |\n| `AGENT_REACHOUT_NOTIFY_DEFAULT_TIMEOUT_MS` | No | Timeout for waiting for responses (default: 300000ms / 5 min) |\n\n</details>\n\n---\n\n### 4. Install the Plugin\n\nRun these commands in Claude Code:\n\n```\n/plugin marketplace add vibe-with-me-tools/agent-reachout\n/plugin install agent-reachout@agent-reachout\n```\n\nRestart Claude Code. Done!\n\n## Roadmap\n\n- Slack integration\n- WhatsApp / Discord support\n- Model-agnostic agent support\n- Better conversation state handling\n\nFeedback will shape this.\n\n---\n\n## Feedback & Contributions\n\nThis is early and intentionally small.\n\nIf you:\n- hit similar problems\n- have strong opinions on human-in-the-loop agents\n- want a specific notification channel\n\nIssues, discussions, and PRs are very welcome.\n\n---\n\n## Repo\n\nhttps://github.com/vibe-with-me-tools/agent-reachout\n\n---\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "agent-reachout",
+          "source": "./",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add vibe-with-me-tools/agent-reachout",
+            "/plugin install agent-reachout@agent-reachout"
+          ]
+        }
+      ]
+    }
+  ]
+}

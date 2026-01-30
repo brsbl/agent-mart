@@ -1,0 +1,81 @@
+{
+  "author": {
+    "id": "chrisallenlane",
+    "display_name": "Chris Allen Lane",
+    "avatar_url": "https://avatars.githubusercontent.com/u/623723?u=6f9812d0cc0426e9c73d95019aefc269fc725974&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "chrisallenlane",
+      "version": null,
+      "description": "Chris Allen Lane's Claude Code plugins",
+      "repo_full_name": "chrisallenlane/claude-plugins",
+      "repo_url": "https://github.com/chrisallenlane/claude-plugins",
+      "repo_description": "Personal Claude Code plugins (MIRROR)",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-29T01:29:49Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"chrisallenlane\",\n  \"description\": \"Chris Allen Lane's Claude Code plugins\",\n  \"owner\": {\n    \"name\": \"Chris Allen Lane\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"deliberate\",\n      \"description\": \"Adversarial deliberation process for making decisions by spawning advocate agents to argue different options\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Chris Allen Lane\"\n      },\n      \"source\": \"./deliberate\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"tea\",\n      \"description\": \"Reference for the Gitea CLI interface (tea)\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Chris Allen Lane\"\n      },\n      \"source\": \"./tea\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"swe\",\n      \"description\": \"Software engineering workflow with iterate/scope skills and specialist agents\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Chris Allen Lane\"\n      },\n      \"source\": \"./swe\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nA cohesive software engineering workflow for Claude Code.\n\n## Workflow\n\nThese plugins form a three-stage development workflow:\n\n```\n/deliberate  →  /scope  →  /iterate\n   decide        plan      implement\n```\n\n1. **`/deliberate`** - Arrive at technical decisions through adversarial\n   deliberation. Advocate agents argue for each option before a judge renders\n   a verdict.\n\n2. **`/scope`** - Explore the problem space through dialogue and codebase\n   analysis. Creates detailed tickets for implementation.\n\n3. **`/iterate`** - Execute the work through specialist agents: planning →\n   implementation → QA → security review → documentation.\n\nEach stage feeds into the next. Use `/deliberate` to resolve architectural\nquestions, `/scope` to break decisions into actionable tickets, and `/iterate`\nto implement them systematically.\n\nFor straightforward work, enter the workflow at any stage. Simple features can\ngo directly to `/iterate`. Clear requirements can skip `/deliberate`.\n\n## Installation\n\nAdd this repository as a marketplace:\n\n```bash\nclaude plugin marketplace add https://github.com/chrisallenlane/claude-plugins\n```\n\nThen install plugins:\n\n```bash\nclaude plugin install deliberate@chrisallenlane\nclaude plugin install swe@chrisallenlane\n```\n\n## Plugins\n\n### deliberate\n\nAdversarial decision-making. Spawns advocate agents for each option who argue\ntheir cases before a judge (Claude) renders a verdict.\n\n**Good for:** Vendor selection, architectural decisions, build vs buy,\ntechnology choices.\n\n[Documentation](deliberate/README.md)\n\n---\n\n### swe\n\nSoftware engineering workflow with specialist agents.\n\n**Skills:**\n- `/iterate` - Full development cycle through specialist agents\n- `/scope` - Problem exploration and ticket creation\n\n**Agents:** Specialists for Go, GraphQL, Docker, Makefile, Ansible, Zig, plus\nQA, security, performance, refactoring, and documentation.\n\n[Documentation](swe/README.md)\n\n---\n\n### tea\n\nReference for the Gitea CLI (`tea`). Supports ticket creation in `/scope`.\n\n**Usage:** `/tea` for command syntax.\n\n## Development\n\nTest a plugin locally:\n\n```bash\nclaude --plugin-dir ./deliberate\n```\n",
+        "deliberate/README.md": "# deliberate\n\nAdversarial deliberation process for making decisions. Spawns advocate agents\nfor each option who argue their cases before a judge (Claude) who renders a\nverdict.\n\nInspired by the legal adversarial system where truth emerges from the collision\nof well-argued positions.\n\n## Installation\n\n```bash\nclaude plugin install deliberate@chrisallenlane\n```\n\nOr for development:\n\n```bash\nclaude --plugin-dir /path/to/deliberate\n```\n\n## Usage\n\n```\n/deliberate <decision and options>\n```\n\nExamples:\n\n```\n/deliberate Should we use PostgreSQL or MongoDB for our new project?\n\n/deliberate Pick a web framework: Django, FastAPI, or Flask\n\n/deliberate Build vs buy for our authentication system\n```\n\n## How It Works\n\n### Roles\n\n**Judge (Claude):** The main Claude instance running the skill. Identifies\noptions, spawns advocates, asks probing questions, and renders final judgment.\n\n**Advocates:** Subagents spawned for each option. They argue vigorously for\ntheir assigned option, research and gather evidence, rebut opposing arguments,\nand acknowledge genuine weaknesses when challenged (good faith requirement).\n\n### Workflow\n\n1. **Parse the Decision** - Identify options, criteria, and context\n2. **Fact-Finding** - Proactively gather context through clarifying questions\n3. **Spawn Advocates** - Launch one advocate agent per option (parallel)\n4. **Initial Arguments** - Advocates present their cases\n5. **Rebuttal Round** - Advocates counter opposing arguments\n6. **Judge's Questions** - Probe weaknesses and test claims\n7. **Pre-Judgment Disclosure** - Judge shares current thinking; final responses\n8. **Iterate or Conclude** - Return to questioning or proceed to judgment\n9. **Render Judgment** - Present recommendation with reasoning and trade-offs\n\nThe judge may iterate through steps 5-7 up to 10 times before rendering\njudgment.\n\n## When to Use\n\n**Good fit:**\n- Vendor/tool/library selection\n- Architectural decisions with multiple valid approaches\n- Build vs buy decisions\n- Technology stack choices\n- Strategic decisions with trade-offs\n\n**Poor fit:**\n- Decisions with a clearly correct answer\n- Simple preferences (just ask directly)\n- Decisions requiring real-world testing to resolve\n- Ethical dilemmas (advocacy framing may be inappropriate)\n\n## Output\n\nThe judgment includes:\n\n- **Recommendation** - The winning option\n- **Reasoning** - Why this option wins (2-3 key factors)\n- **Trade-offs** - What you're sacrificing by not choosing alternatives\n- **Confidence** - High/Medium/Low with explanation\n- **Key factors** - What most influenced the decision\n\nIf the judge cannot decide (options are genuinely equivalent, or critical\ninformation is unavailable), it will present the key factors and explain what\nthe decision hinges on.\n\n## Philosophy\n\nThe adversarial process ensures:\n\n- **All options get their best case made** - no option dismissed prematurely\n- **Weaknesses are exposed** - advocates attack each other's positions\n- **Evidence is gathered** - advocates research to support their cases\n- **Trade-offs are explicit** - the collision of arguments reveals what you're giving up\n\nAdvocates argue in good faith: they may emphasize strengths and frame facts\nfavorably, but they must not fabricate evidence, deny clear weaknesses, or use\nfallacious reasoning.\n\n## Workflow Integration\n\nThis plugin is the first stage of a three-stage workflow:\n\n```\n/deliberate  →  /scope  →  /iterate\n   decide        plan      implement\n```\n\nUse `/deliberate` to resolve architectural questions, then hand off decisions\nto `/scope` (from the swe plugin) to create implementation tickets.\n\n## License\n\nMIT\n",
+        "swe/README.md": "# SWE Plugin\n\nSoftware engineering workflow plugin providing skills and specialist agents for systematic development.\n\n## Skills\n\n### /iterate - Automated Development Workflow\n\nOrchestrates a complete development cycle through specialist agents: requirements → planning → implementation → QA → code review → documentation.\n\n**Use when:**\n- Building non-trivial features requiring multiple files\n- You want quality gates (testing, security review, refactoring suggestions)\n- Changes benefit from specialist review (Go, GraphQL, Docker, etc.)\n- Practical verification matters (CLI tools, MCP servers, APIs)\n\n**Don't use when:**\n- Simple one-line fixes or typos\n- Quick prototyping or throwaway code\n- Overhead outweighs benefit\n\n[Detailed documentation](skills/iterate/README.md)\n\n### /scope - Problem Space Exploration\n\nExplores problem spaces through iterative dialogue and codebase analysis, then creates detailed tickets in Gitea/GitHub.\n\n**Use when:**\n- Planning a complex feature before implementation\n- Investigating a bug and documenting findings\n- Exploring refactoring opportunities\n- Creating well-specified tickets for later implementation\n\n**Key principle:** `/scope` explores and documents. It does NOT implement.\n\n[Detailed documentation](skills/scope/README.md)\n\n## Agents\n\nSpecialist agents spawned by the skills above:\n\n| Agent | Purpose |\n|-------|---------|\n| `swe-planner` | Decomposes complex tasks into implementation plans |\n| `swe-sme-golang` | Go implementation specialist |\n| `swe-sme-graphql` | GraphQL schema and resolver specialist |\n| `swe-sme-docker` | Dockerfile and container specialist |\n| `swe-sme-makefile` | Makefile and build system specialist |\n| `swe-sme-ansible` | Ansible automation specialist |\n| `swe-sme-zig` | Zig implementation specialist |\n| `swe-refactor` | Code quality and refactoring reviewer |\n| `swe-perf-engineer` | Performance testing and optimization |\n| `qa-engineer` | Practical verification and test coverage |\n| `sec-reviewer` | Security vulnerability analysis |\n| `doc-maintainer` | Documentation updates and verification |\n\n## Workflow Integration\n\nThis plugin is part of a three-stage workflow:\n\n```\n/deliberate  →  /scope  →  /iterate\n   decide        plan      implement\n```\n\nUse `/deliberate` (from the deliberate plugin) to resolve architectural\nquestions, `/scope` to explore and create tickets, and `/iterate` to implement.\n\nEnter at any stage. Complex decisions benefit from the full workflow.\nStraightforward changes can go directly to `/iterate`.\n\n## Requirements\n\n- `git` repository\n- For ticket creation: `tea` (Gitea) or `gh` (GitHub) CLI\n"
+      },
+      "plugins": [
+        {
+          "name": "deliberate",
+          "description": "Adversarial deliberation process for making decisions by spawning advocate agents to argue different options",
+          "version": "1.0.0",
+          "author": {
+            "name": "Chris Allen Lane"
+          },
+          "source": "./deliberate",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add chrisallenlane/claude-plugins",
+            "/plugin install deliberate@chrisallenlane"
+          ]
+        },
+        {
+          "name": "tea",
+          "description": "Reference for the Gitea CLI interface (tea)",
+          "version": "1.0.0",
+          "author": {
+            "name": "Chris Allen Lane"
+          },
+          "source": "./tea",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add chrisallenlane/claude-plugins",
+            "/plugin install tea@chrisallenlane"
+          ]
+        },
+        {
+          "name": "swe",
+          "description": "Software engineering workflow with iterate/scope skills and specialist agents",
+          "version": "1.0.0",
+          "author": {
+            "name": "Chris Allen Lane"
+          },
+          "source": "./swe",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add chrisallenlane/claude-plugins",
+            "/plugin install swe@chrisallenlane"
+          ]
+        }
+      ]
+    }
+  ]
+}

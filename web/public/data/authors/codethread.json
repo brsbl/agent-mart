@@ -1,0 +1,98 @@
+{
+  "author": {
+    "id": "codethread",
+    "display_name": "Adam Hall",
+    "avatar_url": "https://avatars.githubusercontent.com/u/10004500?u=306347349d17553322bff5cb01307e3f080eb0f6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "codethread-plugins",
+      "version": null,
+      "description": null,
+      "repo_full_name": "codethread/claude-code-plugins",
+      "repo_url": "https://github.com/codethread/claude-code-plugins",
+      "repo_description": "my own little marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-14T10:53:53Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"codethread-plugins\",\n  \"owner\": {\n    \"name\": \"PersonalConfigs\",\n    \"email\": \"[email protected]\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"spec-dev\",\n      \"source\": \"./plugins/spec-dev\",\n      \"category\": \"development-workflow\"\n    },\n    {\n      \"name\": \"mcp-builder\",\n      \"source\": \"./plugins/mcp-builder\",\n      \"category\": \"development-tools\"\n    },\n    {\n      \"name\": \"doc-writer\",\n      \"source\": \"./plugins/doc-writer\",\n      \"category\": \"development-tools\"\n    },\n    {\n      \"name\": \"claude-code-knowledge\",\n      \"source\": \"./plugins/claude-code-knowledge\",\n      \"category\": \"development-tools\"\n    },\n    {\n      \"name\": \"langs\",\n      \"source\": \"./plugins/langs\",\n      \"category\": \"development-tools\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugin Marketplace\n\nA local plugin marketplace for Claude Code providing development workflows and document processing.\n\n## What\n\nExtends Claude Code with:\n\n- **Development Workflows**: spec-dev, mcp-builder, doc-writer, langs\n- **Claude Code Knowledge**: Documentation access and skill creation tools\n\n## Why\n\n- Systematic development with specifications and reviews (spec-dev)\n- Build MCP servers with best practices (mcp-builder)\n- Write quality documentation (doc-writer)\n- Language-specific patterns (langs: React, TypeScript)\n- Official Claude Code docs at your fingertips (claude-code-knowledge)\n\n## How\n\n### Install\n\n```bash\n# Add marketplace\n/plugin marketplace add git@github.com:codethread/claude-code-plugins.git\n\n# Install dependencies (run once after adding marketplace)\ncd ~/.claude/plugins/marketplaces/codethread-plugins\nbun install\n\n# Install plugins\n/plugin install spec-dev@codethread-plugins\n/plugin install doc-writer@codethread-plugins\n/plugin install claude-code-knowledge@codethread-plugins\n/plugin install mcp-builder@codethread-plugins\n/plugin install langs@codethread-plugins\n```\n\n**Note:** The `bun install` command installs all dependencies needed by plugin scripts and hooks. You only need to run this once after adding the marketplace.\n\n### Use\n\nAfter installation, plugins provide slash commands, agents, and skills. See individual plugin READMEs for usage:\n\n- `plugins/spec-dev/README.md` - Spec-driven development workflows\n- `plugins/doc-writer/README.md` - Documentation writing guidance\n- `plugins/claude-code-knowledge/README.md` - Claude Code docs and skill creation\n- `plugins/mcp-builder/README.md` - MCP server development\n- `plugins/langs/README.md` - Language-specific patterns\n\n### Ask Claude\n\nFor detailed information, ask Claude:\n\n```\nWhat can the spec-dev plugin do?\nHow do I create a new plugin?\nShow me the plugin directory structure\n```\n\nClaude will reference CLAUDE.md files for comprehensive architecture details.\n\n## Development\n\n### Repository maintenance\n\nProject-level slash commands for maintaining this repository:\n\n- `/release` - Prepare plugin releases with version bumps, changelog updates, and git tags\n  - Safety checks for accidental commits (`.env`, `node_modules`, hidden files)\n  - Detects and squashes WIP commits\n  - Processes plugins in parallel (version bump, SKILL.md updates, CHANGELOG.md)\n  - Creates single conventional commit: `type(plugin1,plugin2): description`\n  - Creates git tags: `<plugin-name>-v<version>`\n  - Does NOT push (review with `git show` first)\n\n## Plugin Suggestions\n\nPlugins provide automatic suggestions via hooks using structured XML tags. All plugin suggestions follow the pattern `<plugin-PLUGINNAME-suggestion>`, allowing you to control Claude's attention to these recommendations in your project's `CLAUDE.md`.\n\n**Example 1: Emphasize all plugin suggestions**\n\n```markdown\n# CLAUDE.md\n\nALWAYS follow `<plugin-*-suggestion>` tags closely. These provide\ncontext-specific recommendations from installed plugins.\n```\n\n**Example 2: Emphasize specific plugins**\n\n```markdown\n# CLAUDE.md\n\n- ALWAYS follow `<plugin-doc-writer-suggestion>` recommendations when\n  writing documentation\n- ALWAYS follow `<plugin-langs-suggestion>` when test files are detected\n- Consider `<plugin-claude-code-knowledge-suggestion>` for Claude Code questions\n```\n\n**Example 3: Ignore specific suggestions**\n\n```markdown\n# CLAUDE.md\n\nFollow all `<plugin-*-suggestion>` tags except `<plugin-langs-suggestion>`\n(I prefer to manage test files manually).\n```\n\nThe XML tag format ensures Claude treats these suggestions as structured prompts rather than visual formatting, improving reliability with Anthropic models.\n\n## Attribution\n\nSeveral plugins sourced from [Anthropic's skills repository](https://github.com/anthropics/skills):\n\n- MCP builder guidance\n- Skill creation scripts\n\n## Reference\n\n- [Official Plugin Marketplace Docs](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)\n- [Anthropic Skills Repository](https://github.com/anthropics/skills)\n",
+        "plugins/spec-dev/README.md": "# Spec-Driven Development\n\nSystematic feature development: specifications → validation → implementation → review → QA.\n\n## What\n\nMulti-agent workflow that creates specifications, validates them, implements task-by-task with code review and QA testing.\n\n## Why\n\n- Clear requirements before coding\n- Validates specs before implementation\n- Code review on every task\n- QA testing against requirements\n- Automatic session resumption\n\n## How\n\n### Install\n\n```bash\n/plugin install spec-dev@codethread-plugins\n```\n\n### Use\n\n**Start a feature:**\n```bash\n/build Add OAuth2 authentication with GitHub provider\n```\n\n**Continue work:**\n```bash\n/iterate                         # Resume latest spec\n/iterate specs/001-oauth-auth/   # Work on specific spec\n```\n\n### What Gets Created\n\n```\nspecs/\n├── PROJECT.md       # Project-wide agent instructions (optional)\n└── 001-feature-name/\n    ├── interview.md # User's original request and Q&A\n    ├── feature.md   # Requirements (FR-1, NFR-1)\n    ├── tech.md      # Implementation guidance (patterns, integration points, tasks)\n    └── notes.md     # Research notes (optional)\n```\n\n**Ask Claude for details:**\n```\nWhat does PROJECT.md do?\nShow me an example workflow\nHow does session resumption work?\n```\n",
+        "plugins/mcp-builder/README.md": "# MCP Server Development\n\nBuild high-quality Model Context Protocol (MCP) servers for AI agents.\n\n## What\n\n**Skill**: `mcp-builder` - 4-phase process (research, implement, review, evaluate)\n**Reference Docs**: Best practices, Python/TypeScript patterns, evaluation guides\n**Scripts**: Evaluation testing harness\n\n## Why\n\n- Design tools for AI agents, not just API wrappers\n- Workflow-focused (complete tasks, respect token limits)\n- Evaluation-driven development\n- Supports Python (FastMCP) and TypeScript (MCP SDK)\n- Agent-centric design principles\n\n## How\n\n### Install\n\n```bash\n/plugin install mcp-builder@codethread-plugins\n```\n\n### Use\n\n```bash\ninvoke mcp-builder skill\n\n\"Build an MCP server for GitHub: search repos, read files, list issues\"\n```\n\n**Ask Claude for details:**\n```\nWhat are agent-centric design principles?\nShow me the 4-phase process\nWhat evaluation scripts are included?\n```\n",
+        "plugins/doc-writer/README.md": "# Documentation Writing\n\nWrite clear, effective documentation using industry-proven patterns.\n\n## What\n\nProvides documentation expertise from React, Rust, Stripe, Twilio docs and authoritative style guides (Diátaxis, Google, Microsoft).\n\n**Skill**: `writing-documentation` - API verification, security patterns, production-ready examples\n**Agent**: `docs-reviewer` - Ruthlessly simplifies documentation\n\n## Why\n\n- Verify APIs before documenting (researcher agent + Context7)\n- Security patterns built in (parameterized queries, safe YAML)\n- Production-ready code examples with all imports\n- Test Claude's knowledge first, document only unique patterns\n- Eliminate unnecessary content\n\n## How\n\n### Install\n\n```bash\n/plugin install doc-writer@codethread-plugins\n```\n\n### Use\n\n**Load skill before writing:**\n```bash\n/skill writing-documentation\n```\n\n**Review existing docs:**\n```\nUse docs-reviewer agent to review this README\n```\n\n**Ask Claude for details:**\n```\nWhat documentation patterns should I follow?\nHow do you verify APIs?\nShow me the research foundation\n```\n",
+        "plugins/claude-code-knowledge/README.md": "# Claude Code Documentation\n\nOfficial Claude Code documentation access with skill creation tools.\n\n## What\n\n**Skill**: `claude-code-knowledge` - 45+ documentation topics (hooks, MCP, skills, settings, CLI, plugins)\n**Auto-sync**: Documentation fetches on first skill load (transparent, lazy)\n**Hook**: Auto-suggests skill when you ask Claude Code questions\n**Scripts**: Skill creation helpers (init, validate, package)\n\n## Why\n\n- Official documentation at your fingertips\n- Automatically stays up-to-date (syncs transparently when loaded)\n- Claude automatically uses it when you ask about Claude Code\n- No guessing - authoritative answers\n- Skill creation tools included\n- Fast local access, no network delay\n\n## How\n\n### Install\n\n```bash\n/plugin install claude-code-knowledge@codethread-plugins\n\n# Install hook dependencies (required)\ncd ~/.claude/plugins/marketplaces/codethread-plugins/plugins/claude-code-knowledge/hooks && bun install\n\n# Install script dependencies (optional, for skill creation tools)\ncd ~/.claude/plugins/marketplaces/codethread-plugins/plugins/claude-code-knowledge/skills/claude-code-knowledge/scripts && bun install\n```\n\n### Use\n\n**Just ask:**\n```\nHow do I create a hook?\nHow do I create a skill?\nWhat MCP servers are available?\n```\n\nClaude automatically loads the skill and uses official docs.\n\n**Ask Claude for details:**\n```\nWhat documentation topics are available?\nShow me the skill creation workflow\nHow does the auto-suggestion hook work?\n```\n",
+        "plugins/langs/README.md": "# Language-Specific Patterns\n\nOPINIONATED coding patterns for React and TypeScript with automatic test file detection.\n\n## What\n\n**Skills**: `lang-react`, `lang-typescript`\n\n**Hook**: Suggests test files for `.ts`/`.tsx` files\n\n## Why\n\n**React**:\n- Components consume external state, no internal logic\n- Test stores/machines, not components\n- Inline actions unless repeated\n\n**TypeScript**:\n- Type safety + runtime validation\n- Discriminated unions for state\n- Strict configuration\n- No `any` types\n\n## How\n\n### Install\n\n```bash\n/plugin install langs@codethread-plugins\n```\n\n### Use\n\n```bash\n/skill lang-react      # Load before writing React code\n/skill lang-typescript # Load before writing TypeScript code\n```\n\n**Ask Claude for details:**\n```\nWhat's the React philosophy?\nShow me TypeScript patterns\nWhat's in the best-practices reference?\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "spec-dev",
+          "source": "./plugins/spec-dev",
+          "category": "development-workflow",
+          "description": null,
+          "categories": [
+            "development-workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add codethread/claude-code-plugins",
+            "/plugin install spec-dev@codethread-plugins"
+          ]
+        },
+        {
+          "name": "mcp-builder",
+          "source": "./plugins/mcp-builder",
+          "category": "development-tools",
+          "description": null,
+          "categories": [
+            "development-tools"
+          ],
+          "install_commands": [
+            "/plugin marketplace add codethread/claude-code-plugins",
+            "/plugin install mcp-builder@codethread-plugins"
+          ]
+        },
+        {
+          "name": "doc-writer",
+          "source": "./plugins/doc-writer",
+          "category": "development-tools",
+          "description": null,
+          "categories": [
+            "development-tools"
+          ],
+          "install_commands": [
+            "/plugin marketplace add codethread/claude-code-plugins",
+            "/plugin install doc-writer@codethread-plugins"
+          ]
+        },
+        {
+          "name": "claude-code-knowledge",
+          "source": "./plugins/claude-code-knowledge",
+          "category": "development-tools",
+          "description": null,
+          "categories": [
+            "development-tools"
+          ],
+          "install_commands": [
+            "/plugin marketplace add codethread/claude-code-plugins",
+            "/plugin install claude-code-knowledge@codethread-plugins"
+          ]
+        },
+        {
+          "name": "langs",
+          "source": "./plugins/langs",
+          "category": "development-tools",
+          "description": null,
+          "categories": [
+            "development-tools"
+          ],
+          "install_commands": [
+            "/plugin marketplace add codethread/claude-code-plugins",
+            "/plugin install langs@codethread-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

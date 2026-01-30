@@ -2,82 +2,24 @@
   "author": {
     "id": "eanair",
     "display_name": "Chris Ko",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/97097306?u=a0e159262cd207df8f47c45911c54378a8076cda&v=4",
-    "url": "https://github.com/eanair",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 2,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/97097306?u=a0e159262cd207df8f47c45911c54378a8076cda&v=4"
   },
   "marketplaces": [
     {
       "name": "chris-agent-skills",
       "version": null,
       "description": "Chris's agent skills collection",
-      "owner_info": {
-        "name": "Chris Ko",
-        "email": "chris@mensakorea.org"
-      },
-      "keywords": [],
       "repo_full_name": "eanair/agent-skills",
       "repo_url": "https://github.com/eanair/agent-skills",
       "repo_description": "MacOS Markdown editor Bear read, modify, and create new documents Claude Agent Skills.",
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-12-28T07:39:46Z",
-        "created_at": "2025-12-19T10:37:19Z",
-        "license": null
+        "pushed_at": "2025-12-28T07:39:46Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 439
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 113
-        },
-        {
-          "path": "bear",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "bear/SKILL.md",
-          "type": "blob",
-          "size": 4404
-        },
-        {
-          "path": "commit-message",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "commit-message/SKILL.md",
-          "type": "blob",
-          "size": 2383
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"chris-agent-skills\",\n  \"owner\": {\n    \"name\": \"Chris Ko\",\n    \"email\": \"chris@mensakorea.org\"\n  },\n  \"metadata\": {\n    \"description\": \"Chris's agent skills collection\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-skills\",\n      \"description\": \"Collection of agent skills\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./bear\",\n        \"./commit-message\"\n      ]\n    }\n  ]\n}",
-        "README.md": "# Agent Skills\n\n\n\n## Bear\n\nMacOS Markdown editor Bear read, modify, and create new documents Claude Agent Skills.",
-        "bear/SKILL.md": "---\nname: bear\ndescription: Interacts with Bear note-taking app on macOS via X-Callback-URL. Use when user asks to create Bear notes, search notes, add text to notes, manage tags, capture web pages to Bear, or perform any other Bear note management tasks. Supports note creation, text appending, tag management, note search, and web page capture.\n---\n\n# Bear Note Integration\n\nIntegrates Claude with the Bear note-taking app on macOS, enabling automated note creation, searching, editing, and tag management through X-Callback-URL.\n\n## Quick Start\n\n### Prerequisites\n\n1. **Bear app installed** on macOS\n2. **API Token** (optional, for search/tags features):\n   - Help > Advanced > API Token > Copy Token\n   - Set environment variable: `export BEAR_API_TOKEN=\"your-token\"`\n3. **xcall tool** (optional, for response handling):\n   - Download from [xcall releases](https://github.com/martinfinke/xcall/releases)\n   - Install to `/Applications/xcall.app`\n\n### Basic Usage\n\nCreate a note:\n\n```python\nfrom scripts.bear import create_note\n\n# Create note without response\ncreate_note(title=\"My Note\", text=\"Content here\", tags=\"work,important\")\n\n# Get response with note ID (requires xcall)\nresult = create_note(title=\"My Note\", text=\"Content\", return_id=True)\nprint(result['identifier'])\n```\n\nSearch notes:\n\n```python\nfrom scripts.bear import search_notes\n\n# Requires xcall and token\nresults = search_notes(term=\"project-x\", tag=\"work\")\nfor note in results:\n    print(f\"{note['title']} - {note['identifier']}\")\n```\n\n## Core Tasks\n\n### 1. Create Notes\n\nCreate new notes in Bear with optional tags and timestamps.\n\n```python\nfrom scripts.bear import create_note\n\n# Basic note creation\ncreate_note(\n    title=\"Daily Standup\",\n    text=\"## Progress\\n- Task 1 complete\\n- Task 2 in progress\",\n    tags=\"work,standup\"\n)\n\n# With timestamp\ncreate_note(\n    title=\"Meeting Notes\",\n    text=\"Key discussion points...\",\n    tags=\"meetings\",\n    add_timestamp=True\n)\n\n# With response (returns note ID)\nresult = create_note(\n    title=\"Important Note\",\n    text=\"Critical information\",\n    return_id=True\n)\nnote_id = result['identifier']\n```\n\n### 2. Search Notes\n\nFind notes by keywords with optional tag filtering.\n\n```python\nfrom scripts.bear import search_notes\n\n# Keyword search\nresults = search_notes(term=\"Python\")\n\n# Tag filtering\nresults = search_notes(term=\"bug\", tag=\"development\")\n\n# Process results\nfor note in results:\n    print(f\"Title: {note['title']}\")\n    print(f\"ID: {note['identifier']}\")\n    print(f\"Modified: {note['modificationDate']}\")\n```\n\n### 3. Add Text to Notes\n\nAppend or replace text in existing notes.\n\n```python\nfrom scripts.bear import add_text\n\n# Append text\nadd_text(\n    note_id=\"7E4B681B\",\n    text=\"\\n\\n## Update\\nNew content added\",\n    mode=\"append\"\n)\n\n# Append to specific header\nadd_text(\n    note_id=\"7E4B681B\",\n    text=\"- New item\",\n    mode=\"append\",\n    header=\"TODO\"\n)\n\n# Replace all content\nadd_text(\n    note_id=\"7E4B681B\",\n    text=\"New complete content\",\n    mode=\"replace_all\"\n)\n```\n\n### 4. Manage Tags\n\nList, rename, and delete tags.\n\n```python\nfrom scripts.bear import get_tags, rename_tag, delete_tag\n\n# List all tags\ntags = get_tags()\nfor tag in tags:\n    print(tag['name'])\n\n# Rename tag\nrename_tag(old_name=\"todo\", new_name=\"inbox\")\n\n# Delete tag\ndelete_tag(name=\"archive\")\n```\n\n### 5. Capture Web Pages\n\nSave web page content as new Bear notes.\n\n```python\nfrom scripts.bear import grab_url\n\n# Capture URL as note\nresult = grab_url(\n    url=\"https://example.com/article\",\n    tags=\"reference,articles\"\n)\n\n# With response\nresult = grab_url(\n    url=\"https://docs.python.org\",\n    tags=\"docs\",\n    return_id=True\n)\nnote_id = result['identifier']\n```\n\n## Bundled Resources\n\n### scripts/\n\nPython module `bear.py` provides functions for all Bear X-Callback-URL actions:\n\n- `create_note()` - Create notes\n- `search_notes()` - Search notes\n- `add_text()` - Append/replace text\n- `open_note()` - Open notes\n- `get_tags()` - List all tags\n- `rename_tag()` - Rename tags\n- `delete_tag()` - Delete tags\n- `grab_url()` - Capture web pages\n- `trash_note()`, `archive_note()` - Organize notes\n\n### references/\n\n- **actions.md**: Complete X-Callback-URL API reference with all parameters\n- **workflows.md**: Common workflows and integration patterns\n- **troubleshooting.md**: Setup help and common issues\n\nSee these files for detailed API documentation and advanced usage patterns.\n",
-        "commit-message/SKILL.md": "---\nname: commit-message\ndescription: A skill used when users request to write a commit message.\n---\n\n# Commit Message Writing\n\nCheck the changes in staged files, write only the commit message, and provide it to the user. The user must execute the Commit and Push commands themselves.\n\n## Basic Usage\n\n```bash\n# Checking staging status\ngit status\n\n# Staged changes check\ngit diff --staged\n\n# Check the last 5 commit messages for style reference\ngit log --oneline -5\n```\n\n## Commit Message Example\n\n### Example 1 (Low Complexity)\n\n```text\nAPI 라우팅 및 인증 설정 수정\n  - nginx 백엔드 프록시 포트 수정 (13000 → 3000)\n  - 프론트엔드 API 경로 prefix 수정 (/api → /api/v1)\n  - 상품 조회 API 공개 접근 설정 (@Public 데코레이터)\n```\n\n### Example 2 (Medium Complexity)\n\n```text\nCLAUDE.md 프로덕션 환경 정보 업데이트\n  - Docker 명령어 수정 (ENV=production)\n  - Production Environment 섹션 추가\n    - SSL 인증서 경로, NAS 스토리지, 네트워크 설정\n    - Toss Payments 결제 시스템 정보\n```\n\n### Example 3 (High Complexity)\n\n```text\n1. LoginButton 수정 (frontend/src/features/auth/ui/LoginButton.tsx)\n  - 로그인 상태에 따라 조건부 렌더링\n  - 비로그인: 기존 로그인 버튼\n  - 로그인: 프로필 아이콘 + 드롭다운 메뉴 (마이페이지, 주문내역, 로그아웃)\n2. 마이페이지 생성\n  - frontend/src/routes/_layout/mypage.tsx - 메인 라우트\n  - frontend/src/routes/_layout/mypage/index.tsx - 인덱스 라우트\n  - frontend/src/routes/_layout/mypage/orders.tsx - 주문내역 라우트\n  - frontend/src/routes/_layout/mypage/profile.tsx - 프로필 수정 라우트\n  - frontend/src/pages/mypage/ui/mypage.page.tsx - 마이페이지 컴포넌트\n  - frontend/src/pages/mypage/ui/profile-edit.page.tsx - 프로필 수정 컴포넌트\n3. 백엔드 프로필 이미지 업로드 API\n  - backend/src/users/services/profile-upload.service.ts - 업로드 서비스\n  - backend/src/users/controllers/users.controller.ts - 엔드포인트 추가\n      - POST /api/v1/users/profile-image - 업로드\n    - DELETE /api/v1/users/profile-image - 삭제\n  - backend/src/users/users.module.ts - 모듈 등록\n4. 프로필 이미지 업로드 컴포넌트\n  - frontend/src/shared/ui/profile-image-upload.tsx\n  - 이미지 선택, 미리보기, 업로드, 삭제 기능\n```\n"
+        "README.md": "# Agent Skills\n\n\n\n## Bear\n\nMacOS Markdown editor Bear read, modify, and create new documents Claude Agent Skills."
       },
       "plugins": [
         {

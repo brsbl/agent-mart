@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "jo-minjun",
+    "display_name": "조민준",
+    "avatar_url": "https://avatars.githubusercontent.com/u/62829284?u=7e0c75c2ebeee410e7ad988bd0b73dcd6d00219e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jo-minjun",
+      "version": null,
+      "description": "Claude Code 확장을 위한 에이전트, 스킬, 훅 개발 키트",
+      "repo_full_name": "jo-minjun/claude-devkit",
+      "repo_url": "https://github.com/jo-minjun/claude-devkit",
+      "repo_description": null,
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-01-18T10:03:30Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jo-minjun\",\n  \"owner\": {\n    \"name\": \"minjun\",\n    \"email\": \"alswns9288@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code 확장을 위한 에이전트, 스킬, 훅 개발 키트\",\n    \"version\": \"2.0.0\",\n    \"repository\": \"https://github.com/jo-minjun/claude-devkit\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"orchestrator\",\n      \"source\": \"./plugins/orchestrator\",\n      \"description\": \"TDD 오케스트레이션, 에이전트/스킬 생성, MCP 빌더 등 AI 개발 도구 모음\"\n    },\n    {\n      \"name\": \"plan-boost\",\n      \"source\": \"./plugins/plan-boost\",\n      \"description\": \"플랜모드 코드 개발 후 code-simplifier 자동 리팩터링\"\n    }\n  ]\n}",
+        "README.md": "# orchestrator\n\nClaude Code의 AI 개발 능력을 확장하는 플러그인입니다.\n\n## Quick Start\n\n### 1. 설치\n\n```bash\n/plugin marketplace add jo-minjun/orchestrator\n/plugin install orchestrator@jo-minjun\n```\n\n### 2. 바로 사용하기\n\n```\n# TDD 기반 자동 개발\n로그인 기능 추가해줘\n\n# 에이전트 생성\n코드 리뷰 에이전트 만들어줘\n\n# MCP 서버 생성\nGitHub API MCP 서버 만들어줘\n\n# 프롬프트 생성\n코드 리뷰 프롬프트 만들어줘\n```\n\n설치 후 자연어로 요청하면 자동으로 적절한 도구가 실행됩니다.\n\n---\n\n## 선택적 의존성\n\n### claude-mem (메모리 플러그인)\n\n세션 간 컨텍스트를 유지하려면 [claude-mem](https://github.com/thedotmack/claude-mem) 플러그인을 함께 설치하세요.\n\n```bash\n> /plugin marketplace add thedotmack/claude-mem\n> /plugin install claude-mem\n```\n\n**claude-mem 없이도 모든 기능이 정상 작동합니다.** claude-mem을 설치하면:\n- 이전 세션의 작업 내용을 기억\n- 프로젝트별 학습 내용 축적\n- 세션 시작 시 관련 컨텍스트 자동 주입\n\n---\n\n## 주요 기능\n\n### 오케스트레이터 - TDD 기반 자동 개발\n\n복잡한 기능을 자동으로 분석, 설계, 테스트, 구현합니다.\n\n```\n# 슬래시 명령어\n/orchestrator 로그인 기능 추가해줘\n\n# 자연어 (자동 트리거)\n회원가입 만들어줘\n장바구니 기능 구현해줘\n```\n\n**자동 실행 흐름:**\n```\n요청 → 프로젝트 분석 → 작업 분해 → 설계 → 테스트 작성 → 구현 → 검증\n```\n\n**세션 관리:**\n```\n/orchestrator resume    # 중단된 작업 재개\n/orchestrator learn     # 프로젝트 패턴 학습\n```\n\n### 에이전트 생성기\n\n커스텀 에이전트를 쉽게 만들 수 있습니다.\n\n```\n/agent-creator\n또는: 코드 리뷰 에이전트 만들어줘\n```\n\n생성 위치: `.claude/agents/{name}.md`\n\n### 스킬 생성기\n\n반복 작업을 자동화하는 스킬을 만듭니다.\n\n```\n/skill-creator\n또는: 배포 스킬 만들어줘\n```\n\n### MCP 서버 빌더\n\n외부 API와 연동하는 MCP 서버를 생성합니다.\n\n```\n/mcp-builder\n또는: GitHub API MCP 서버 만들어줘\n```\n\n지원 언어: Python (FastMCP), Node.js (MCP SDK)\n\n### 프롬프트 생성기\n\n효과적인 프롬프트를 자동 생성합니다.\n\n```\n/prompt-generator\n또는: 코드 리뷰 프롬프트 만들어줘\n```\n\n### Hook 생성기\n\nClaude Code 이벤트에 반응하는 훅을 만듭니다.\n\n```\n/hook-generator\n또는: 파일 보호 훅 만들어줘\n```\n\n---\n\n## 생성 파일\n\n오케스트레이터 사용 시 다음 파일들이 생성됩니다:\n\n```\n.claude/orchestrator/\n├── sessions/{hash}/          # 세션 상태\n│   ├── state.json\n│   └── contracts/            # 에이전트 산출물\n└── knowledge/{hash}/\n    └── knowledge.yaml        # 학습된 패턴\n```\n\n> `.gitignore`에 `.claude/orchestrator/` 추가 권장\n\n---\n\n## 문서\n\n- [에이전트 가이드](./docs/AGENTS.md)\n- [스킬 가이드](./docs/SKILLS.md)\n\n## 라이선스\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "orchestrator",
+          "source": "./plugins/orchestrator",
+          "description": "TDD 오케스트레이션, 에이전트/스킬 생성, MCP 빌더 등 AI 개발 도구 모음",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jo-minjun/claude-devkit",
+            "/plugin install orchestrator@jo-minjun"
+          ]
+        },
+        {
+          "name": "plan-boost",
+          "source": "./plugins/plan-boost",
+          "description": "플랜모드 코드 개발 후 code-simplifier 자동 리팩터링",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jo-minjun/claude-devkit",
+            "/plugin install plan-boost@jo-minjun"
+          ]
+        }
+      ]
+    }
+  ]
+}

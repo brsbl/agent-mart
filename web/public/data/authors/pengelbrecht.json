@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "pengelbrecht",
+    "display_name": "Peter Engelbrecht",
+    "avatar_url": "https://avatars.githubusercontent.com/u/248807?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ticker-marketplace",
+      "version": null,
+      "description": "Ticker - AI agent loop runner with Ticks issue tracker",
+      "repo_full_name": "pengelbrecht/ticker",
+      "repo_url": "https://github.com/pengelbrecht/ticker",
+      "repo_description": "Go-based Ralph runner with TUI, multi-agent support, and parallel epic execution",
+      "signals": {
+        "stars": 1,
+        "forks": 1,
+        "pushed_at": "2026-01-19T20:17:06Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ticker-marketplace\",\n  \"description\": \"Ticker - AI agent loop runner with Ticks issue tracker\",\n  \"owner\": {\n    \"name\": \"Peter Engelbrecht\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ticker\",\n      \"source\": \"./\",\n      \"description\": \"Create specs, generate ticks, run autonomous coding agents on epics\",\n      \"version\": \"0.3.3\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ticker\",\n  \"description\": \"AI agent loop runner with Ticks issue tracker - create specs, generate ticks, run autonomous coding agents\",\n  \"version\": \"0.3.3\",\n  \"author\": {\n    \"name\": \"Peter Engelbrecht\",\n    \"url\": \"https://github.com/pengelbrecht\"\n  },\n  \"repository\": \"https://github.com/pengelbrecht/ticker\",\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/pengelbrecht/ticker\",\n  \"keywords\": [\n    \"ticker\",\n    \"ticks\",\n    \"issue-tracker\",\n    \"ai-agents\",\n    \"automation\",\n    \"epic\",\n    \"task-runner\"\n  ]\n}\n",
+        "README.md": "# Ticker\n\nAutonomous AI agent loop runner for completing epics with Claude Code.\n\nTicker implements the \"Ralph Wiggum technique\" - running AI agents in continuous loops until tasks are complete. It orchestrates Claude Code CLI to autonomously work through tasks in an epic, detecting completion signals, managing budgets, and providing checkpointing for long-running sessions.\n\n## Installation\n\n### Quick Install (Recommended)\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/pengelbrecht/ticker/main/scripts/install.sh | sh\n```\n\nThis script will:\n- Detect your OS (Linux, macOS, Windows) and architecture (amd64, arm64)\n- Download the latest release from GitHub\n- Install to `/usr/local/bin` (or `~/.local/bin` if not writable)\n- Skip installation if already up to date\n\nYou can also specify a custom install directory:\n\n```bash\nTICKER_INSTALL_DIR=/opt/bin curl -fsSL https://raw.githubusercontent.com/pengelbrecht/ticker/main/scripts/install.sh | sh\n```\n\n### Manual Installation\n\nDownload the appropriate binary from the [releases page](https://github.com/pengelbrecht/ticker/releases) and add it to your PATH.\n\n### Build from Source\n\n```bash\ngit clone https://github.com/pengelbrecht/ticker.git\ncd ticker\ngo build -o ticker ./cmd/ticker\n```\n\n### Upgrading\n\n```bash\nticker upgrade\n```\n\nOr re-run the install script.\n\n## Requirements\n\n- [Claude Code CLI](https://github.com/anthropics/claude-code) - The AI agent that performs the actual work\n- [Ticks](https://github.com/pengelbrecht/ticks) (`tk`) - Issue tracker CLI for task management\n\n## Usage\n\n### Basic Commands\n\n```bash\n# Interactive epic picker (TUI mode)\nticker run\n\n# Run a specific epic\nticker run <epic-id>\n\n# Auto-select next ready epic\nticker run --auto\n\n# Run in headless mode (no TUI)\nticker run <epic-id> --headless\n\n# Resume from a checkpoint\nticker resume <checkpoint-id>\n\n# List checkpoints\nticker checkpoints [epic-id]\n\n# Self-update\nticker upgrade\n```\n\n### Budget Controls\n\n```bash\n# Set maximum iterations (default: 50)\nticker run <epic-id> -n 100\n\n# Set maximum cost in USD (default: $20)\nticker run <epic-id> --max-cost 50.0\n\n# Set checkpoint interval (default: every 5 iterations)\nticker run <epic-id> --checkpoint-interval 10\n\n# Disable checkpointing\nticker run <epic-id> --checkpoint-interval 0\n```\n\n### TUI Controls\n\nWhen running in TUI mode:\n\n| Key | Action |\n|-----|--------|\n| `p` | Pause/Resume execution |\n| `q` / `Ctrl+C` | Quit |\n| `j` / `Down` | Scroll down |\n| `k` / `Up` | Scroll up |\n| `g` | Scroll to top |\n| `G` | Scroll to bottom |\n\n## How It Works\n\n1. **Epic Selection**: Choose an epic to work on (interactively or via `--auto`)\n2. **Task Loop**: For each iteration:\n   - Get the next task from the epic using `tk next`\n   - Build a prompt with task details and acceptance criteria\n   - Execute Claude Code CLI with the prompt\n   - Parse output for control signals\n   - Close completed tasks and continue\n3. **Signal Detection**: The agent can emit signals to control flow:\n   - `<promise>COMPLETE</promise>` - Task completed successfully\n   - `<promise>EJECT: reason</promise>` - Agent needs human intervention\n   - `<promise>BLOCKED: reason</promise>` - Task is blocked\n4. **Budget Enforcement**: Stops when iteration or cost limits are reached\n5. **Checkpointing**: Saves state periodically for resume capability\n\n## Exit Codes\n\n| Code | Meaning |\n|------|---------|\n| 0 | Success - epic completed |\n| 1 | Max iterations reached |\n| 2 | Agent ejected (EJECT signal) |\n| 3 | Agent blocked (BLOCKED signal) |\n| 4 | Error occurred |\n\n## Configuration\n\n### Environment Variables\n\n| Variable | Description |\n|----------|-------------|\n| `TICKER_INSTALL_DIR` | Custom installation directory for the install script |\n| `XDG_CONFIG_HOME` | Config directory for update cache (default: `~/.config`) |\n\n### Checkpoints\n\nCheckpoints are stored in `.ticker/checkpoints/` relative to the working directory. Each checkpoint contains:\n- Epic ID and iteration number\n- Token usage and cost\n- Completed tasks\n- Git commit SHA at time of checkpoint\n\n## Development\n\n### Building\n\n```bash\ngo build -o ticker ./cmd/ticker\n```\n\n### Testing\n\n```bash\ngo test ./...\n```\n\n### Release\n\nReleases are automated via GoReleaser on git tag push:\n\n```bash\ngit tag v1.0.0\ngit push origin v1.0.0\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "ticker",
+          "source": "./",
+          "description": "Create specs, generate ticks, run autonomous coding agents on epics",
+          "version": "0.3.3",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add pengelbrecht/ticker",
+            "/plugin install ticker@ticker-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

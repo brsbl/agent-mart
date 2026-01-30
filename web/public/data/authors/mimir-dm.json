@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "mimir-dm",
+    "display_name": "mimir-dm",
+    "avatar_url": "https://avatars.githubusercontent.com/u/250598059?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mimir",
+      "version": null,
+      "description": "Mimir D&D 5e campaign management tools for Claude Code",
+      "repo_full_name": "mimir-dm/mimir",
+      "repo_url": "https://github.com/mimir-dm/mimir",
+      "repo_description": null,
+      "signals": {
+        "stars": 4,
+        "forks": 1,
+        "pushed_at": "2026-01-30T03:55:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mimir\",\n  \"owner\": {\n    \"name\": \"Colliery\",\n    \"email\": \"contact@colliery.io\"\n  },\n  \"metadata\": {\n    \"description\": \"Mimir D&D 5e campaign management tools for Claude Code\",\n    \"version\": \"0.5.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mimir-dm\",\n      \"source\": \"./crates/mimir-mcp/plugin\",\n      \"description\": \"D&D 5e campaign authoring tools for Mimir. Create campaigns, modules, NPCs, and documents.\",\n      \"version\": \"0.5.0\",\n      \"author\": {\n        \"name\": \"Colliery\",\n        \"email\": \"contact@colliery.io\"\n      },\n      \"homepage\": \"https://github.com/mimir-dm/mimir\",\n      \"repository\": \"https://github.com/mimir-dm/mimir\",\n      \"license\": \"MIT\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"dnd\", \"5e\", \"campaign\", \"ttrpg\", \"dungeon-master\", \"mimir\"]\n    }\n  ]\n}\n",
+        "README.md": "# Mimir\n\n<p align=\"center\">\n  <img src=\"assets/hyper-mimir.png\" alt=\"Mimir\" width=\"512\" height=\"512\">\n</p>\n\nMimir is a local-first desktop application for managing D&D campaigns. Built with Rust and Tauri, it provides campaign workflow management, a searchable D&D 5e catalog, and PDF export capabilities. All data stays on your machine.\n\n## Installation\n\n**macOS / Linux**:\n```bash\ncurl -sSL https://raw.githubusercontent.com/mimir-dm/mimir/main/scripts/install.sh | sh\n```\n\n**Windows**: Download and run the `.msi` installer from [GitHub Releases](https://github.com/mimir-dm/mimir/releases).\n\n## Claude Code Plugin\n\nMimir includes a [Claude Code](https://claude.ai/code) plugin for AI-assisted campaign authoring directly from the terminal.\n\n**Install from GitHub:**\n```bash\nclaude plugins add github:mimir-dm/mimir/crates/mimir-mcp/plugin\n```\n\n**Or manually:**\n```bash\n# Build the MCP server\ncargo build --release -p mimir-mcp\n\n# Set your database path\nexport MIMIR_DATABASE_PATH=\"$HOME/Library/Application Support/com.mimir.app/data/mimir.db\"\n```\n\nOnce installed, use natural language or slash commands:\n- `/mimir-campaigns` - List your campaigns\n- `/create-module \"The Haunted Manor\" mystery` - Create a new module\n- `/search-monsters undead CR 5` - Search the monster catalog\n\nSee [plugin documentation](crates/mimir-mcp/plugin/README.md) for full setup instructions.\n\n## Documentation\n\nFull documentation is available at [mimir-dm.github.io](https://mimir-dm.github.io).\n\n## Contributing\n\nWe welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on getting started, code style, and the pull request process.\n",
+        "crates/mimir-mcp/plugin/README.md": "# Mimir DM - D&D 5e Campaign Management\n\nMimir is a campaign management tool for Dungeon Masters running D&D 5e games. This Claude Code plugin provides MCP tools for authoring modules, managing NPCs, and searching the 5etools catalog.\n\n## Installation\n\n### Prerequisites\n\n1. **Mimir Desktop App**: Install from [mimir releases](https://github.com/mimir-dm/mimir/releases)\n2. **mimir-mcp binary**: Build from source or install via the Mimir installer\n\n### Building from Source\n\n```bash\ncargo build --release -p mimir-mcp\n```\n\nThe binary will be at `target/release/mimir-mcp`.\n\n### Environment Setup\n\nThe MCP server **requires** the `MIMIR_DATABASE_PATH` environment variable pointing to your Mimir database file:\n\n```bash\n# macOS (production)\nexport MIMIR_DATABASE_PATH=\"$HOME/Library/Application Support/com.mimir.app/data/mimir.db\"\n\n# macOS (dev mode)\nexport MIMIR_DATABASE_PATH=\"$HOME/Library/Application Support/com.mimir.app/dev/data/mimir.db\"\n```\n\nYou can find your exact database path in Mimir's Settings > Integrations tab.\n\n### Claude Code Plugin Installation\n\n```bash\nclaude plugin add /path/to/mimir/crates/mimir-mcp/plugin\n```\n\nOr add the MCP server directly:\n```bash\nclaude mcp add mimir \\\n  -e MIMIR_DATABASE_PATH=\"$HOME/Library/Application Support/com.mimir.app/data/mimir.db\" \\\n  -- mimir-mcp\n```\n\n## Available Commands\n\n- `/mimir-campaigns` - List all available campaigns\n- `/create-module <name>` - Create a new module in the active campaign\n- `/search-monsters [query] [--cr <rating>]` - Search the monster catalog\n\n## Getting Started\n\n1. **List campaigns**: Use `list_campaigns` to see available campaigns\n2. **Set active campaign**: Use `set_active_campaign` with the campaign ID\n3. **Start authoring**: Create modules, add NPCs, populate encounters\n\n## Tool Categories\n\n### Campaign Management\n- `list_campaigns` - List all available campaigns\n- `set_active_campaign` - Set the active campaign for subsequent operations\n- `get_campaign_details` - Get full campaign info including modules and characters\n- `get_campaign_sources` - Get enabled source books for the campaign\n- `export_campaign` - Export campaign as a shareable archive\n- `import_campaign` - Import a campaign from an archive\n- `preview_archive` - Preview archive contents without importing\n\n### Module Management\n- `create_module` - Create a new module (adventure chapter)\n- `list_modules` - List all modules in the active campaign\n- `get_module_details` - Get module with documents, monsters, and items\n- `add_monster_to_module` - Add a monster from the catalog to a module\n- `add_item_to_module` - Add an item from the catalog as module loot\n\n### Document Management\n- `list_documents` - List all documents in a module\n- `read_document` - Read the full content of a document\n- `create_document` - Create a new document in a module\n- `edit_document` - Edit a document using search and replace\n\n### Character Management\n- `list_characters` - List characters (filter by PC/NPC)\n- `get_character` - Get full character details with classes and inventory\n- `create_character` - Create a new PC or NPC\n- `edit_character` - Update character fields (name, role, location, etc.)\n- `add_item_to_character` - Add an item to a character's inventory\n\n### Catalog Search\n- `search_monsters` - Search monsters by name, CR, type\n- `search_items` - Search items by name, rarity, type\n- `search_spells` - Search spells by name, level, school\n\n## Common Workflows\n\n### Creating a New Module\n\n```\n1. set_active_campaign(campaign_id)\n2. create_module(name=\"The Haunted Manor\", module_type=\"horror\")\n3. edit_document(document_id, search=\"# Module Overview\", replace=\"...\")\n```\n\n### Populating an Encounter\n\n```\n1. search_monsters(name=\"goblin\", cr=\"1/4\")\n2. add_monster_to_module(module_id, monster_name=\"Goblin\", count=6)\n3. add_monster_to_module(module_id, monster_name=\"Bugbear\", count=1, notes=\"Leader\")\n```\n\n### Creating an NPC\n\n```\n1. create_character(name=\"Sildar Hallwinter\", character_type=\"npc\", race_name=\"Human\")\n2. edit_character(character_id, npc_role=\"Quest Giver\", npc_location=\"Phandalin\")\n3. add_item_to_character(character_id, item_name=\"Longsword\", equipped=true)\n```\n\n### Adding Treasure to a Module\n\n```\n1. search_items(rarity=\"rare\", item_type=\"wondrous item\")\n2. add_item_to_character(npc_id, item_name=\"Cloak of Protection\")\n```\n\n## Source Filtering\n\nWhen a campaign is active, catalog searches are automatically filtered to only include content from the campaign's enabled source books. This ensures monsters, items, and spells match the campaign's allowed content.\n\n## Document Types\n\nModules support various document types for organizing content:\n- `module_overview` - Main module description and structure\n- `play_notes` - Session tracking and notes\n- `backstory` - Background and history\n- `read_aloud` - Text to read to players\n- `dm_notes` - DM-only information\n- `description` - Location or encounter descriptions\n- `custom` - Custom documents\n\n## Tips\n\n- Always set an active campaign before using module/character tools\n- Use `get_module_details` to see the full structure before editing\n- Monsters and items reference the 5etools catalog - search first to find exact names\n- NPCs can be assigned roles and locations for organization\n- Documents support markdown formatting\n"
+      },
+      "plugins": [
+        {
+          "name": "mimir-dm",
+          "source": "./crates/mimir-mcp/plugin",
+          "description": "D&D 5e campaign authoring tools for Mimir. Create campaigns, modules, NPCs, and documents.",
+          "version": "0.5.0",
+          "author": {
+            "name": "Colliery",
+            "email": "contact@colliery.io"
+          },
+          "homepage": "https://github.com/mimir-dm/mimir",
+          "repository": "https://github.com/mimir-dm/mimir",
+          "license": "MIT",
+          "category": "productivity",
+          "keywords": [
+            "dnd",
+            "5e",
+            "campaign",
+            "ttrpg",
+            "dungeon-master",
+            "mimir"
+          ],
+          "categories": [
+            "5e",
+            "campaign",
+            "dnd",
+            "dungeon-master",
+            "mimir",
+            "productivity",
+            "ttrpg"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mimir-dm/mimir",
+            "/plugin install mimir-dm@mimir"
+          ]
+        }
+      ]
+    }
+  ]
+}

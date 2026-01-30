@@ -1,0 +1,147 @@
+{
+  "author": {
+    "id": "grailautomation",
+    "display_name": "Grail Automation",
+    "avatar_url": "https://avatars.githubusercontent.com/u/181300473?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "grail-automation",
+      "version": "0.0.1",
+      "description": "Claude Plugins by Grail Automation",
+      "repo_full_name": "grailautomation/claude-plugins",
+      "repo_url": "https://github.com/grailautomation/claude-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-27T16:59:00Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"grail-automation\",\n  \"version\": \"0.0.1\",\n  \"description\": \"Claude Plugins by Grail Automation\",\n  \"owner\": {\n    \"name\": \"dave\",\n    \"email\": \"dave@grailautomation.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"issue-solver\",\n      \"source\": \"./issue-solver\",\n      \"category\": \"automation\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"scraper-generator\",\n      \"source\": \"./scraper-generator\",\n      \"category\": \"automation\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"cloudflare\",\n      \"source\": \"./cloudflare\",\n      \"category\": \"deployment\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"namecheap\",\n      \"source\": \"./namecheap\",\n      \"category\": \"deployment\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"workato-sdk\",\n      \"source\": \"./workato-sdk\",\n      \"category\": \"development\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"salesforce-soql\",\n      \"source\": \"./salesforce-soql\",\n      \"description\": \"Run SOQL queries against Salesforce using the sf CLI\",\n      \"category\": \"integrations\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"jq-for-clawd\",\n      \"source\": \"./jq-for-clawd\",\n      \"description\": \"Query Claude Code session history using jq to find past conversations and user messages\",\n      \"category\": \"utilities\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"terminal-tidbits\",\n      \"source\": \"./terminal-tidbits\",\n      \"description\": \"Personal reference system for terminal commands and concepts you're learning\",\n      \"category\": \"reference\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        "issue-solver/README.md": "# Issue Solver\n\nA Claude Code plugin for analyzing GitHub issues and implementing AI-generated solution plans.\n\n## Features\n\n- **Solve**: Analyze GitHub issues and generate 2-4 solution plans\n- **Implement**: Execute solution plans by creating branches and implementing changes\n- **Parallel Processing**: Solve multiple issues concurrently using Task tool\n\n## Requirements\n\n- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code)\n- [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated\n- [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) for code search\n\n## Installation\n\n### Via Plugin Marketplace\n\n```bash\n# Install from marketplace (when published)\n/plugin install issue-solver@claude-plugins\n```\n\n### Manual Installation\n\n```bash\ngit clone https://github.com/kreitter/issue-solver ~/.claude-plugins/issue-solver\n```\n\nThen add to your Claude Code settings.\n\n## Usage\n\n### Solve Issues\n\n```bash\n# Solve a single issue\n/issue-solver:solve 123\n\n# Solve multiple issues in parallel\n/issue-solver:solve 1 2 3\n\n# Specify repository explicitly\n/issue-solver:solve 123 --repo owner/repo\n```\n\n### Implement Plans\n\n```bash\n# Implement by issue and option number\n/issue-solver:implement 123 1\n\n# Implement by plan path\n/issue-solver:implement plans/issue-123/option-1-fix.md\n```\n\n## Output Structure\n\n```\nplans/\n└── issue-123/\n    ├── option-1-minimal-fix.md\n    ├── option-2-refactor.md\n    └── option-3-new-abstraction.md\n```\n\nEach plan file contains:\n- YAML frontmatter with metadata (issue number, effort, breaking changes)\n- Issue summary and research findings\n- Step-by-step implementation plan\n- Pros/cons analysis\n\n## Agents\n\nThis plugin provides two agents:\n\n| Agent | Description | Trigger Phrases |\n|-------|-------------|-----------------|\n| `issue-solver` | Analyzes issues and generates plans | \"solve issue\", \"analyze issue\", \"create plan for\" |\n| `plan-implementer` | Executes solution plans | \"implement plan\", \"execute option\", \"go with option\" |\n\n## License\n\nMIT\n",
+        "scraper-generator/README.md": "# Scraper Generator\n\nA Claude Code plugin that automates the creation of API documentation scrapers.\n\n## What It Does\n\nGiven an API documentation URL, this plugin guides Claude through:\n\n1. **Analyzing** the documentation site structure and patterns\n2. **Designing** a scraper architecture tailored to that structure\n3. **Generating** a complete Python scraper package\n4. **Validating** the generated code works correctly\n\nThe result is a standalone scraper that runs forever without AI assistance.\n\n## Usage\n\n```\n/create-scraper https://docs.example.com/api/users.html\n```\n\nThis generates a complete Python scraper package similar to the [workato_scraper reference implementation](https://github.com/kreitter/workato-api-docs/tree/main/workato_scraper).\n\n## Components\n\n### Skills\n\n| Skill | Purpose |\n|-------|---------|\n| `doc-site-analysis` | How to analyze API documentation structure |\n| `scraper-architecture` | How to design scraper components |\n| `code-generation` | How to write Python scraper code |\n\n### Agents\n\n| Agent | Role |\n|-------|------|\n| `site-analyzer` | Discovers documentation structure |\n| `code-generator` | Writes the Python code |\n| `scraper-validator` | Tests generated scraper |\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/create-scraper <url>` | Generate a scraper for the given documentation URL |\n\n## Output\n\nThe plugin generates a complete Python package:\n\n```\n{name}_scraper/\n├── __init__.py\n├── models.py         # Pydantic data models\n├── scraper.py        # HTTP fetching\n├── parser.py         # HTML parsing\n├── sections.py       # Section registry\n├── cli.py            # Command-line interface\n└── formatters/       # JSON, Markdown, OpenAPI output\n```\n\n## Installation\n\nAdd this plugin via the Claude Code marketplace or install directly:\n\n```bash\nclaude plugins install kreitter/scraper-generator\n```\n\n## License\n\nMIT\n",
+        "cloudflare/README.md": "# Cloudflare Plugin for Claude Code\n\nManage your Cloudflare domains, DNS records, Workers, and storage services directly from Claude Code.\n\n## Features\n\n- **Zone Management**: List and manage domains in your Cloudflare account\n- **DNS Records**: Create, update, and delete DNS records (A, AAAA, CNAME, TXT, MX, etc.)\n- **Workers**: Deploy, view, and manage Cloudflare Workers scripts\n- **Worker Routes**: Map URL patterns to Worker scripts\n- **KV Storage**: Manage KV namespaces and key-value pairs\n- **R2 Storage**: Create and manage R2 buckets\n- **D1 Databases**: Create databases and execute SQL queries\n- **Cloudflare Pages**: List and view Pages projects\n- **Proactive Assistance**: Claude suggests Cloudflare actions when relevant\n\n## Prerequisites\n\n1. **Node.js**: Required to run the MCP server\n2. **Cloudflare Account**: With domains/zones configured\n3. **API Token**: With appropriate permissions\n\n## Setup\n\n### 1. Create a Cloudflare API Token\n\n1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens)\n2. Click \"Create Token\"\n3. Use \"Custom token\" with these permissions:\n   - **Account**: Workers Pipelines (Edit), Queues (Edit), D1 (Edit), Cloudflare Pages (Read), Workers R2 Storage (Edit), Workers KV Storage (Edit), Workers Scripts (Edit), Account Settings (Read)\n   - **Zone (All zones)**: DNS Settings (Read), Zone (Read), Workers Routes (Edit), DNS (Edit)\n4. Copy the token\n\n### 2. Get Your Account ID\n\n1. Go to any zone in Cloudflare Dashboard\n2. Find \"Account ID\" in the right sidebar (API section)\n3. Copy the ID\n\n### 3. Set Environment Variables\n\nAdd to your shell profile (`~/.zshrc` or `~/.bashrc`):\n\n```bash\nexport CLOUDFLARE_API_TOKEN=\"your-api-token-here\"\nexport CLOUDFLARE_ACCOUNT_ID=\"your-account-id-here\"\n```\n\nThen reload your shell:\n```bash\nsource ~/.zshrc  # or ~/.bashrc\n```\n\n### 4. Install Dependencies\n\n```bash\ncd /path/to/cloudflare/mcp-server\npnpm install\n```\n\n### 5. Enable the Plugin\n\n```bash\n# Test the plugin\nclaude --plugin-dir /path/to/cloudflare\n\n# Or add to your Claude Code settings\n```\n\n## Available Tools\n\n### Zones (Domains)\n| Tool | Description |\n|------|-------------|\n| `zones-list` | List all zones in your account |\n| `zones-get` | Get details for a specific zone |\n\n### DNS Records\n| Tool | Description |\n|------|-------------|\n| `dns-records-list` | List DNS records for a zone |\n| `dns-records-create` | Create a new DNS record |\n| `dns-records-update` | Update an existing record |\n| `dns-records-delete` | Delete a DNS record |\n\n### Workers\n| Tool | Description |\n|------|-------------|\n| `workers-list` | List all Worker scripts |\n| `workers-get` | Get a Worker script content |\n| `workers-put` | Deploy/update a Worker script |\n| `workers-delete` | Delete a Worker script |\n| `worker-routes-list` | List routes for a zone |\n| `worker-route-create` | Create a Worker route |\n| `worker-route-delete` | Delete a Worker route |\n\n### KV Storage\n| Tool | Description |\n|------|-------------|\n| `kv-namespaces-list` | List KV namespaces |\n| `kv-namespace-create` | Create a KV namespace |\n| `kv-keys-list` | List keys in a namespace |\n| `kv-get` | Get a value |\n| `kv-put` | Store a value |\n| `kv-delete` | Delete a value |\n\n### R2 Storage\n| Tool | Description |\n|------|-------------|\n| `r2-buckets-list` | List R2 buckets |\n| `r2-bucket-create` | Create an R2 bucket |\n| `r2-bucket-delete` | Delete an R2 bucket |\n\n### D1 Databases\n| Tool | Description |\n|------|-------------|\n| `d1-databases-list` | List D1 databases |\n| `d1-database-create` | Create a D1 database |\n| `d1-database-delete` | Delete a D1 database |\n| `d1-query` | Execute SQL query |\n\n### Pages\n| Tool | Description |\n|------|-------------|\n| `pages-projects-list` | List Pages projects |\n| `pages-project-get` | Get project details |\n\n## Usage Examples\n\nOnce enabled, Claude will proactively suggest Cloudflare actions. You can also ask directly:\n\n- \"List my Cloudflare domains\"\n- \"Show DNS records for example.com\"\n- \"Add a CNAME record pointing www to my site\"\n- \"Deploy this Worker script\"\n- \"Create a KV namespace for my app\"\n- \"Run a query against my D1 database\"\n\n## Components\n\n- **MCP Server**: Custom implementation using `@modelcontextprotocol/sdk` v1.x\n- **Skill**: `cloudflare-domains` for proactive guidance and workflows\n\n## Troubleshooting\n\n### MCP Server Not Starting\n\nVerify environment variables are set:\n```bash\necho $CLOUDFLARE_API_TOKEN\necho $CLOUDFLARE_ACCOUNT_ID\n```\n\n### Testing the MCP Server\n\n```bash\ncd mcp-server\necho '{\"jsonrpc\":\"2.0\",\"method\":\"tools/list\",\"id\":1}' | node index.js\n```\n\n### API Errors\n\n- Check that your API token has the required permissions\n- Verify the account ID is correct\n- Ensure the token hasn't expired\n\n### Zone Not Found\n\n- Confirm the domain is added to your Cloudflare account\n- Check that DNS is properly configured at your registrar\n",
+        "namecheap/README.md": "# Namecheap Plugin for Claude Code\n\nInteract with the Namecheap API for domain and DNS management directly from Claude Code.\n\n## Features\n\n- List all domains in your Namecheap account\n- View and update DNS host records\n- Transfer nameservers to external providers (e.g., Cloudflare)\n- Get domain information (expiry, status, lock status)\n\n## Prerequisites\n\n1. **Namecheap API Access**: Enable API access in your Namecheap account at Account → Profile → Tools → API Access\n2. **Whitelisted IP**: Add your IP address to the API whitelist in Namecheap\n\n## Installation\n\n1. Clone or copy this plugin to your plugins directory\n2. Set the required environment variables (see below)\n3. Enable the plugin in Claude Code\n\n## Environment Variables\n\nSet these environment variables before starting Claude Code:\n\n```bash\nexport NAMECHEAP_API_USER=\"your-api-username\"\nexport NAMECHEAP_API_KEY=\"your-api-key\"\nexport NAMECHEAP_USERNAME=\"your-namecheap-username\"\n```\n\nTypically `NAMECHEAP_API_USER` and `NAMECHEAP_USERNAME` are the same value.\n\n## Available Tools\n\n| Tool | Description |\n|------|-------------|\n| `list-domains` | Get all domains in your account |\n| `get-domain-info` | Get details for a specific domain |\n| `get-dns-hosts` | List DNS host records for a domain |\n| `set-dns-host` | Add or update a DNS host record |\n| `delete-dns-host` | Remove a DNS host record |\n| `get-nameservers` | Get current nameservers for a domain |\n| `set-nameservers` | Change nameservers (e.g., to Cloudflare) |\n| `set-default-nameservers` | Reset to Namecheap default nameservers |\n\n## Common Workflows\n\n### Point domain to Cloudflare Pages\n\n1. List your domains to find the one to configure\n2. Set nameservers to Cloudflare's (ns1.cloudflare.com, ns2.cloudflare.com)\n3. Configure DNS in Cloudflare to point to your Pages project\n\n### Update DNS records\n\n1. Get current DNS hosts for the domain\n2. Set or update the desired host record\n3. Verify the change with get-dns-hosts\n\n## Troubleshooting\n\n- **API Access Denied**: Ensure your IP is whitelisted in Namecheap\n- **Invalid Credentials**: Verify environment variables are set correctly\n- **Domain Not Found**: Check the domain is registered under your account\n",
+        "workato-sdk/README.md": "# Workato SDK Plugin\n\nComprehensive Workato Connector SDK documentation and best practices for Claude Code.\n\n## Overview\n\nThis plugin provides expertise for building Workato custom connectors, covering:\n\n- **Complete SDK Documentation** — All SDK blocks, methods, and patterns\n- **Authentication** — OAuth 2.0, API key, JWT, AWS Signature, multi-auth\n- **Actions & Triggers** — Building operations with proper schemas\n- **CLI & Testing** — Local development with workato gem and RSpec\n- **Best Practices** — UX patterns, error handling, performance\n\n## Skills\n\n### Core Documentation\n\n| Skill | Triggers When User Asks About |\n|-------|------------------------------|\n| **workato-sdk-quickstart** | \"getting started\", \"first connector\", \"connector examples\", \"walkthrough\" |\n| **workato-sdk-reference** | \"sdk reference\", \"actions block\", \"triggers block\", \"object_definitions\", \"methods block\" |\n| **workato-sdk-cli** | \"workato cli\", \"workato gem\", \"rspec test\", \"vcr cassettes\", \"workato exec\" |\n\n### Building Connectors\n\n| Skill | Triggers When User Asks About |\n|-------|------------------------------|\n| **workato-sdk-authentication** | \"oauth workato\", \"api key auth\", \"jwt authentication\", \"connection block\" |\n| **workato-sdk-actions** | \"build action\", \"execute block\", \"streaming action\", \"multistep action\" |\n| **workato-sdk-triggers** | \"poll trigger\", \"webhook trigger\", \"dynamic webhook\", \"dedup\", \"closure\" |\n| **workato-sdk-data-formats** | \"request_format\", \"xml format\", \"multipart form\", \"parse xml\" |\n\n### Advanced Topics\n\n| Skill | Triggers When User Asks About |\n|-------|------------------------------|\n| **workato-sdk-advanced** | \"connector planning\", \"code patterns\", \"best practices\", \"error handling\" |\n| **workato-connector-ux** | \"sticky fields\", \"extends_schema\", \"ngIf\", \"input field UX\" |\n\n## Installation\n\nThis plugin is part of the local-plugins marketplace. Enable it in Claude Code settings.\n\n## Contents\n\n```\nworkato-sdk/\n├── .claude-plugin/\n│   └── plugin.json\n├── skills/\n│   ├── workato-connector-ux/      # UX patterns & field visibility\n│   ├── workato-sdk-quickstart/    # Getting started guide\n│   ├── workato-sdk-reference/     # SDK API reference\n│   ├── workato-sdk-cli/           # CLI & local testing\n│   ├── workato-sdk-authentication/ # Auth implementations\n│   ├── workato-sdk-actions/       # Building actions\n│   ├── workato-sdk-triggers/      # Building triggers\n│   ├── workato-sdk-data-formats/  # Request/response formats\n│   └── workato-sdk-advanced/      # Advanced patterns\n└── README.md\n```\n\nEach skill contains:\n- `SKILL.md` — Core guidance and common patterns\n- `references/` — Detailed documentation from Workato SDK docs\n\n## Usage Examples\n\nSkills activate automatically based on context:\n\n- \"How do I authenticate with OAuth 2.0?\" → workato-sdk-authentication\n- \"How do I build a polling trigger?\" → workato-sdk-triggers\n- \"How do I test my connector locally?\" → workato-sdk-cli\n- \"How do I handle XML responses?\" → workato-sdk-data-formats\n- \"How do I make a field always visible?\" → workato-connector-ux\n\n## Documentation Coverage\n\nThe plugin includes 90+ SDK documentation pages covering:\n\n- SDK Reference (actions, triggers, connection, methods, streams, etc.)\n- Authentication guides (OAuth variants, API key, JWT, AWS, multi-auth)\n- Building actions (CRUD patterns, streaming, multistep, wait-for-resume)\n- Building triggers (poll, static/dynamic webhooks, hybrid)\n- CLI guides (installation, testing, actions, triggers, RSpec)\n- Data formats (JSON, XML, multipart, form-encoded)\n- Advanced patterns (planning, code patterns, error handling, best practices)\n",
+        "salesforce-soql/README.md": "# Salesforce SOQL Plugin for Claude Code\n\nRun SOQL queries against Salesforce orgs using the `sf` CLI directly from Claude Code.\n\n## Features\n\n- **Query Execution**: Run SOQL queries with `/query`\n- **Schema Discovery**: Describe objects with `/describe`\n- **Object Reference**: Built-in documentation for standard Salesforce objects\n- **SOQL Syntax Guide**: Complete reference for SOQL clauses and functions\n- **Query Patterns**: Common query patterns and examples\n- **Org-Specific Schemas**: Add custom object documentation per org\n\n## Prerequisites\n\n- Salesforce CLI (`sf`) installed: `npm install -g @salesforce/cli`\n- At least one authenticated Salesforce org: `sf org login web`\n\n## Quick Start\n\n```bash\n# List connected orgs\nsf org list\n\n# Run a query\n/query SELECT Id, Name FROM Account LIMIT 10\n\n# Describe an object\n/describe Account\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/query <SOQL>` | Execute a SOQL query |\n| `/describe <Object>` | Get object schema and fields |\n| `/explore-schema` | Interactive schema exploration |\n\n## Skills (Auto-Invoked)\n\n| Skill | Purpose |\n|-------|---------|\n| `salesforce-reference` | Object and field reference |\n| `soql-syntax` | SOQL language syntax |\n| `query-patterns` | Common query patterns |\n| `sf-cli-execution` | CLI execution and authentication |\n\n## Adding Org-Specific Schemas\n\nCreate a folder under `org-schemas/` for your org:\n\n```\norg-schemas/\n└── my-org/\n    ├── manifest.md      # Org metadata\n    ├── custom-obj.md    # Custom object docs\n    └── ...\n```\n\nSee `org-schemas/mural-production/` for an example.\n\n## Directory Structure\n\n```\nsalesforce-soql/\n├── .claude-plugin/plugin.json\n├── commands/\n│   ├── query.md\n│   ├── describe.md\n│   └── explore-schema.md\n├── skills/\n│   ├── salesforce-reference/\n│   ├── soql-syntax/\n│   ├── query-patterns/\n│   └── sf-cli-execution/\n├── org-schemas/\n│   └── mural-production/\n└── README.md\n```\n",
+        "jq-for-clawd/README.md": "# jq-for-clawd\n\nA Claude Code plugin that provides knowledge for querying session history using jq.\n\n## Purpose\n\nWhen users ask about past conversations, previous sessions, or want to search their conversation history, this skill teaches Claude how to:\n\n- Locate session files in `~/.claude/projects/`\n- Parse JSONL session format with jq\n- Extract user messages with timestamps\n- Filter by date, content, or message type\n- Present results in a clean format\n\n## Trigger Phrases\n\n- \"JQ for Claude\"\n- \"jq4clawd\"\n- \"jq-for-clawd\"\n- \"find my past sessions\"\n- \"what did I ask before\"\n- \"search conversation history\"\n\n## Installation\n\nAdd this plugin to Claude Code:\n\n```bash\nclaude --plugin-dir ~/Documents/DEV/claude-plugins/jq-for-clawd\n```\n\nOr symlink into your plugins directory.\n\n## Requirements\n\n- `jq` command-line JSON processor\n- `bash` shell\n\n## Usage\n\nSimply ask Claude about your past conversations:\n\n> \"Can you find what I asked you in our last few sessions?\"\n\n> \"Search my conversation history for mentions of 'API'\"\n\n> \"What were my first messages from yesterday's sessions?\"\n\nClaude will use jq to query the session files and present the results.\n",
+        "terminal-tidbits/README.md": "# Terminal Tidbits\n\nA personal reference system for terminal commands and concepts you're learning. Store explanations for commands, syntax, and shell concepts in a searchable collection.\n\n**Ships with 10 pre-populated tidbits** covering common terminal concepts like `2>&1`, `xargs`, `grep`, `chmod`, and more.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/terminal-tidbits:add` | Add a new tidbit |\n| `/terminal-tidbits:rm` | Remove a tidbit |\n| `/terminal-tidbits:show` | Display all tidbits |\n| `/terminal-tidbits:search` | Search tidbits |\n| `/terminal-tidbits:delete-all` | Clear all tidbits (or reset to defaults) |\n\n## Usage Examples\n\n### Show all tidbits\n\n```\n/terminal-tidbits:show\n```\n\n### Search tidbits\n\n```\n/terminal-tidbits:search stderr\n/terminal-tidbits:search redirect\n```\n\n### Add a tidbit\n\n```\n/terminal-tidbits:add \"2>&1\" \"Redirects stderr to stdout...\"\n```\n\nOr use natural language:\n```\n/terminal-tidbits:add\n> What's the tidbit for? xargs\n> Claude will help you write the explanation\n```\n\n### Remove a tidbit\n\n```\n/terminal-tidbits:rm \"2>&1\"\n```\n\n### Reset to defaults\n\n```\n/terminal-tidbits:delete-all --reset-to-defaults\n```\n\n## Data Storage\n\nTidbits are stored within the plugin directory:\n\n- **Default tidbits**: `data/default-terminal-tidbits.json` (ships with plugin)\n- **Your tidbits**: `data/terminal-tidbits.json` (created when you add/modify)\n\nThe working file (`terminal-tidbits.json`) is gitignored, so your custom tidbits won't be overwritten when the plugin updates.\n\n## Pre-populated Tidbits\n\nThe plugin ships with explanations for:\n\n- `2>&1` - Redirecting stderr to stdout\n- `set -euo pipefail` - Bash strict mode\n- `xargs` - Building commands from stdin\n- `&&` - Chaining commands\n- `chmod` - File permissions\n- `$?` - Exit status variable\n- `curl` - HTTP requests\n- `grep` - Text searching\n- `/dev/null` - Discarding output\n- `!!` - History expansion\n\n## Installation\n\nAdd to your Claude Code plugins or install from the plugin marketplace.\n"
+      },
+      "plugins": [
+        {
+          "name": "issue-solver",
+          "source": "./issue-solver",
+          "category": "automation",
+          "strict": true,
+          "description": null,
+          "categories": [
+            "automation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install issue-solver@grail-automation"
+          ]
+        },
+        {
+          "name": "scraper-generator",
+          "source": "./scraper-generator",
+          "category": "automation",
+          "strict": true,
+          "description": null,
+          "categories": [
+            "automation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install scraper-generator@grail-automation"
+          ]
+        },
+        {
+          "name": "cloudflare",
+          "source": "./cloudflare",
+          "category": "deployment",
+          "strict": true,
+          "description": null,
+          "categories": [
+            "deployment"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install cloudflare@grail-automation"
+          ]
+        },
+        {
+          "name": "namecheap",
+          "source": "./namecheap",
+          "category": "deployment",
+          "strict": true,
+          "description": null,
+          "categories": [
+            "deployment"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install namecheap@grail-automation"
+          ]
+        },
+        {
+          "name": "workato-sdk",
+          "source": "./workato-sdk",
+          "category": "development",
+          "strict": true,
+          "description": null,
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install workato-sdk@grail-automation"
+          ]
+        },
+        {
+          "name": "salesforce-soql",
+          "source": "./salesforce-soql",
+          "description": "Run SOQL queries against Salesforce using the sf CLI",
+          "category": "integrations",
+          "strict": true,
+          "categories": [
+            "integrations"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install salesforce-soql@grail-automation"
+          ]
+        },
+        {
+          "name": "jq-for-clawd",
+          "source": "./jq-for-clawd",
+          "description": "Query Claude Code session history using jq to find past conversations and user messages",
+          "category": "utilities",
+          "strict": true,
+          "categories": [
+            "utilities"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install jq-for-clawd@grail-automation"
+          ]
+        },
+        {
+          "name": "terminal-tidbits",
+          "source": "./terminal-tidbits",
+          "description": "Personal reference system for terminal commands and concepts you're learning",
+          "category": "reference",
+          "strict": true,
+          "categories": [
+            "reference"
+          ],
+          "install_commands": [
+            "/plugin marketplace add grailautomation/claude-plugins",
+            "/plugin install terminal-tidbits@grail-automation"
+          ]
+        }
+      ]
+    }
+  ]
+}

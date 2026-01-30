@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "daamitt",
+    "display_name": "Amit B",
+    "avatar_url": "https://avatars.githubusercontent.com/u/147169947?u=f9224183ba836cbc1406b4993f2d061c5b7e66c4&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "1xn-plugins",
+      "version": null,
+      "description": "A marketplace for Claude Plugins developed by 1xn.ai",
+      "repo_full_name": "daamitt/skill-issue",
+      "repo_url": "https://github.com/daamitt/skill-issue",
+      "repo_description": "A plugin/skill to search other plugins/skills",
+      "signals": {
+        "stars": 18,
+        "forks": 0,
+        "pushed_at": "2025-12-26T13:34:51Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"1xn-plugins\",\n    \"metadata\": {\n        \"description\": \"A marketplace for Claude Plugins developed by 1xn.ai\"\n    },\n    \"description\": \"A marketplace for Claude Plugins developed by 1xn.ai\",\n    \"owner\": {\n        \"name\": \"AmitB\",\n        \"url\": \"https://1xn.ai\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"SkillIssue\",\n            \"description\": \"Skill to search for Claude Plugins and Skills\",\n            \"source\": \"./\",\n            \"version\": \"0.2.1\",\n            \"author\": {\n                \"name\": \"AmitB\",\n                \"email\": \"amit@1xn.ai\",\n                \"url\": \"https://github.com/daamitt\"\n            },\n            \"license\": \"MIT\",\n            \"homepage\": \"https://1xn.ai\",\n            \"keywords\": [\n                \"plugin\",\n                \"skill\",\n                \"plugin\",\n                \"search\"\n            ]\n        }\n    ]\n}",
+        ".claude-plugin/plugin.json": "{\n    \"name\": \"SkillIssue\",\n    \"description\": \"Skill to search for Claude Plugins and Skills\",\n    \"version\": \"0.2.1\",\n    \"author\": {\n        \"name\": \"AmitB\",\n        \"email\": \"amit@1xn.ai\",\n        \"url\": \"https://github.com/daamitt\"\n    },\n    \"license\": \"MIT\",\n    \"homepage\": \"https://1xn.ai\",\n    \"keywords\": [\n        \"claude-plugin\",\n        \"skill-search\",\n        \"plugin\",\n        \"search\"\n    ]\n}",
+        "README.md": "# SkillIssue - Claude Plugin & Skill Search\n\nA Claude Code skill for discovering and recommending plugins and skills from multiple marketplaces with analysis and installation instructions.\n\n## Overview\n\nSkillIssue helps users find the right Claude Code plugins and skills for their needs by searching across multiple marketplaces, analyzing plugin capabilities, and providing ready-to-use installation commands.\n\n**Currently indexes 52 plugins and 100s of skills across 3 marketplaces!**\nAdd your marketplace with a [Pull Request](#adding-more-marketplaces)\n\n## Features\n\n- 🔍 **Smart Search** - Search across name, description, category, tags, and keywords\n- 🌐 **Multi-Marketplace** - Searches official and community marketplaces (claude-plugins-official, anthropics-skills, claude-code-templates)\n- 📊 **Comprehensive Analysis** - Shows GitHub stats, MCP support, commands, and skills in one line\n- 📥 **Installation Ready** - Copy-paste installation commands with correct marketplace URLs\n- ⚡ **Token Optimized** - Compact output format by default, detailed mode on demand\n- 🔄 **Auto-Update** - Fresh marketplace data every 60 minutes via GitHub API\n\n## Installation\n\n```bash\nclaude plugin marketplace add daamitt/skill-issue\nclaude plugin i SkillIssue\n```\n\n### Requirements\n- Python 3.6+\n- `curl` (for downloading marketplace data via GitHub API)\n\n## Usage\n\n### As a Skill\nThe skill is invoked automatically when you ask Claude to search for plugins:\n\n```\n> Find me plugins for database management\n```\n\nOr use the `/search` command:\n```\n> /SkillIssue:search notion meetings\n```\n\n## Example Output \n\n```\n================================================================================\n📦 Notion\n================================================================================\nCategory: productivity\nDescription: Notion workspace integration. Search pages, create and update documents...\n\n⭐ Stars: 6 | 🔌 MCP: Yes | 📜 Commands: 6 | 🎯 Skills: 4 | 🕐 Last Updated: 2025-12-22\n\nCommands:\n  - notion-create-page.md\n  - notion-database-query.md\n  - notion-create-task.md\n  ...\n\nSkills:\n  - notion/knowledge-capture\n  - notion/meeting-intelligence\n  - notion/research-documentation\n  ...\n\n────────────────────────────────────────────────────────────────────────────────\n📥 Installation:\n  /plugin marketplace add anthropics/claude-plugins-official\n  /plugin install Notion@claude-plugins-official\n\nHomepage: https://github.com/makenotion/claude-code-notion-plugin\n```\n\n\n### Adding More Marketplaces\n\nEdit `skills/plugin-search/scripts/marketplaces.json`:\n\n```json\n{\n  \"marketplaces\": [\n    {\n      \"name\": \"marketplace-name\",\n      \"base_url\": \"https://github.com/owner/repo\"\n    }\n  ]\n}\n```\n\n## Directory Structure\n\n```\nskill-issue/\n├── README.md                           # This file\n├── commands/\n│   └── search.md                       # /search command definition\n├── skills/\n│   └── plugin-search/\n│       ├── SKILL.md                    # Skill definition for Claude\n│       ├── reference.md                # Detailed documentation\n│       └── scripts/\n│           ├── search_plugins.py       # Main search script\n│           ├── marketplaces.json       # Marketplace config\n│           └── data/                   # Cached marketplace data (auto-created)\n└── .claude-plugin/\n    ├── plugin.json                     # Plugin metadata\n    └── marketplace.json                # Marketplace entry for this plugin\n```\n\n## Technical Details\n\n### Search Script Features\nThe Python script at `skills/plugin-search/scripts/search_plugins.py` provides:\n- Multi-marketplace data loading and caching (60-minute cache)\n- GitHub API integration for repository stats\n- Repository tree analysis for commands/skills/MCP detection\n- OR logic search across multiple fields\n- Token-optimized output formats\n\n### GitHub API Integration\n- Fetches marketplace.json via GitHub API \n- Automatically decodes base64 content\n- Extracts repository stats (stars, last updated)\n- Analyzes repository structure for MCP, commands, and skills\n\n### Available Options\n\n```\n-q, --query QUERY         Search query (OR logic for multiple terms)\n-c, --category CATEGORY   Filter by category\n-t, --tags TAGS          Filter by tags (space-separated)\n-d, --detailed           Show detailed information with installation\n--all                    List all plugins (compact format)\n-m, --marketplace        Filter by marketplace name\n--list                   List all marketplaces and categories\n```\n\n## Examples\n\n```bash\n# Find database plugins\npython scripts/search_plugins.py -q \"database\"\n\n# Find plugins for git workflow\npython scripts/search_plugins.py -q \"git github workflow\"\n\n# See all productivity plugins with details\npython scripts/search_plugins.py --all -c productivity -d\n\n# Explore claude-code-templates marketplace\npython scripts/search_plugins.py --all -m claude-code-templates\n\n# Get installation instructions for Notion\npython scripts/search_plugins.py -q \"notion\" -d\n```\n\n## License\n\nMIT License - This tool is provided as-is for searching Claude Code plugin marketplaces.\n"
+      },
+      "plugins": [
+        {
+          "name": "SkillIssue",
+          "description": "Skill to search for Claude Plugins and Skills",
+          "source": "./",
+          "version": "0.2.1",
+          "author": {
+            "name": "AmitB",
+            "email": "amit@1xn.ai",
+            "url": "https://github.com/daamitt"
+          },
+          "license": "MIT",
+          "homepage": "https://1xn.ai",
+          "keywords": [
+            "plugin",
+            "skill",
+            "plugin",
+            "search"
+          ],
+          "categories": [
+            "plugin",
+            "search",
+            "skill"
+          ],
+          "install_commands": [
+            "/plugin marketplace add daamitt/skill-issue",
+            "/plugin install SkillIssue@1xn-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

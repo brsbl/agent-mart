@@ -1,0 +1,107 @@
+{
+  "author": {
+    "id": "masseater",
+    "display_name": "masseater",
+    "avatar_url": "https://avatars.githubusercontent.com/u/62135405?u=4c0924fcab404ce54917e610879d0595585417bb&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "masseater-plugins",
+      "version": null,
+      "description": "masseater's utils",
+      "repo_full_name": "masseater/claude-code-plugin",
+      "repo_url": "https://github.com/masseater/claude-code-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-29T03:39:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n\t\"name\": \"masseater-plugins\",\n\t\"owner\": {\n\t\t\"name\": \"masseater\"\n\t},\n\t\"plugins\": [\n\t\t{\n\t\t\t\"name\": \"mutils\",\n\t\t\t\"source\": \"./plugins/mutils\",\n\t\t\t\"description\": \"masseater's utils\",\n\t\t\t\"version\": \"0.7.25\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"sdd\",\n\t\t\t\"source\": \"./plugins/sdd\",\n\t\t\t\"description\": \"Spec Driven Development (SDD) ワークフロー支援コマンド集\",\n\t\t\t\"version\": \"0.5.4\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"debug\",\n\t\t\t\"source\": \"./plugins/debug\",\n\t\t\t\"description\": \"plugin debug 用\",\n\t\t\t\"version\": \"0.0.8\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"eslint-lsp\",\n\t\t\t\"source\": \"./plugins/eslint-lsp\",\n\t\t\t\"description\": \"ESLint 9 Language Server integration for Claude Code\",\n\t\t\t\"version\": \"0.1.2\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"use-codex\",\n\t\t\t\"source\": \"./plugins/use-codex\",\n\t\t\t\"description\": \"Codex CLI integration\",\n\t\t\t\"version\": \"0.1.1\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"psp\",\n\t\t\t\"source\": \"./plugins/psp\",\n\t\t\t\"description\": \"Personal Project Setup - Cloudflare向け個人開発Webアプリのセットアップ\",\n\t\t\t\"version\": \"0.0.7\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"progress-tracker\",\n\t\t\t\"source\": \"./plugins/progress-tracker\",\n\t\t\t\"description\": \"セッション進捗ファイルの自動作成・管理\",\n\t\t\t\"version\": \"0.1.0\"\n\t\t}\n\t]\n}\n",
+        "README.md": "# masseater/claude-code-plugin\n\nClaude Code 用のプラグインマーケットプレイス。\n\n## インストール\n\n```bash\n# マーケットプレイスを追加\n/plugin marketplace add https://github.com/masseater/claude-code-plugin\n\n# プラグインをインストール\n/plugin install mutils\n```\n\n## 含まれるプラグイン\n\n| プラグイン | 説明 |\n|-----------|------|\n| **mutils** | 汎用ユーティリティコマンド集（Hooks付き） |\n| **sdd** | Spec Driven Development ワークフロー支援 |\n| **debug** | プラグインデバッグ用 |\n\n詳細は各プラグインの README を参照:\n- [plugins/mutils/README.md](./plugins/mutils/README.md)\n- [plugins/sdd/README.md](./plugins/sdd/README.md)\n- [plugins/debug/](./plugins/debug/)\n\n## 開発者向け\n\n開発ガイドは [AGENTS.md](./AGENTS.md) を参照。\n\n## 参考資料\n\n- [Claude Code プラグインドキュメント](https://code.claude.com/docs/en/plugins)\n",
+        "plugins/mutils/README.md": "# mutils - masseater's utils\n\n開発支援コマンド・スキル・Hooksを提供するプラグイン。\n\n## インストール\n\n```bash\n/plugin marketplace add https://github.com/masseater/claude-code-plugin\n/plugin install mutils\n```\n\n初回インストール後は `/mutils:setup` でセットアップを実行してください。\n\n---\n\n## Hooks\n\n| イベント | フック | 説明 |\n|----------|--------|------|\n| SessionStart | bun install | 依存関係の自動インストール |\n| SessionStart | check-context-version | コンテキストファイルのバージョン確認 |\n| PreToolUse | redirect-claude-md-edit | CLAUDE.md編集のリダイレクト |\n| PreToolUse | block-unsafe-type-assertion | 危険な型アサーションのブロック |\n| PreToolUse | show-knowledge-on-read | ファイル読み込み時の知見表示 |\n| PreToolUse | redirect-figma-screenshot | Figmaスクリーンショットのリダイレクト |\n| PostToolUse | suggest-knowledge-file | 知見ファイルの提案 |\n| PostToolUse | post-push-review | git push後のレビュー指示 |\n| Stop | stop-send-notification | 完了通知の送信 |\n| Stop | stop-self-review | セルフレビューの実行 |\n\n---\n\n## コマンド一覧\n\n| コマンド | 説明 |\n|----------|------|\n| `/mutils:add-agent [説明]` | 新しいサブエージェントを作成 |\n| `/mutils:add-command [説明]` | 新しいスラッシュコマンドを作成 |\n| `/mutils:add-rule [説明]` | 新しいルールを作成 |\n| `/mutils:add-skill [説明]` | 新しいAgent Skillを作成 |\n| `/mutils:check-pr` | PRの未解決スレッドを確認・対応 |\n| `/mutils:cli-compliance <CLIツールパス>` | AGENTS.md規約への準拠チェック |\n| `/mutils:dig <テーマ>` | 深掘り調査（Question Generation） |\n| `/mutils:incremental-research <テーマ>` | 構造化調査を実施 |\n| `/mutils:issue-plan <issue番号/URL>` | GitHub Issueから実装計画を自動生成 |\n| `/mutils:knowledge-to-rules` | Knowledgeファイルからルールを生成 |\n| `/mutils:migrate-to-agents-md` | CLAUDE.mdをAGENTS.mdにマイグレーション |\n| `/mutils:multi-angle-perspectives <テーマ>` | 3つの観点から合計6つの提案を生成 |\n| `/mutils:organize-commits` | 変更を関心ごと単位でコミットに整理 |\n| `/mutils:pls-auq` | 効果的な質問の仕方ガイド |\n| `/mutils:recommended` | おすすめの設定・プラグイン・MCPサーバーを紹介 |\n| `/mutils:refactor-context-file <ファイルパス>` | コンテキストファイルをClaude Code機能に分解 |\n| `/mutils:refactor-project-context` | プロジェクト全体のコンテキスト整理 |\n| `/mutils:reflection` | 作業振り返り・知見抽出 |\n| `/mutils:self-review [ファイルパス]` | 成果物に対してセルフレビューを実施 |\n| `/mutils:setup` | 初回セットアップ |\n| `/mutils:init-project` | techstackに合わせてプロジェクトをセットアップ |\n| `/mutils:update-markdown <ファイルパス>` | Markdownファイルのセクション別レビュー・更新 |\n\n---\n\n## スキル\n\n| スキル | 説明 |\n|--------|------|\n| **cc-hooks-ts** | TypeScriptで型安全なClaude Code Hooksを作成するためのガイド |\n| **cli-tech-stack** | CLIツール開発の技術スタック・規約定義 |\n| **claude-code-features** | Claude Codeの各機能（commands, agents, skills, rules, hooks）の分類基準 |\n| **figma-screenshot** | Figma Desktop MCPを使用したスクリーンショットのエクスポート |\n| **github-pr** | GitHub PR操作のユーティリティ（レビューコメント、未解決スレッド管理など） |\n| **image-analyze** | Gemini APIを使用した画像分析・比較 |\n| **incremental-research** | 構造化された調査ワークフローの実行 |\n| **semtools** | セマンティック検索ツールの使用ガイド |\n| **should-be-project-context** | プロジェクトコンテキストファイルの分析と整合性維持 |\n\n---\n\n## エージェント\n\n| エージェント | 説明 |\n|--------------|------|\n| **hook-creator** | cc-hooks-tsを使用してTypeScriptで型安全なClaude Code Hooksを作成 |\n| **ci-watcher** | pushされたブランチのCIをバックグラウンドで監視 |\n| **design-reviewer** | 設計・アーキテクチャ観点でコードをレビュー |\n| **implementation-reviewer** | 実装品質をレビュー（可読性、命名、重複コードなど） |\n| **type-safety-reviewer** | TypeScriptの型安全性をレビュー |\n| **goal-validator** | 変更内容が当初の目的を満たしているか検証 |\n\n---\n\n## ロギング\n\nHooks は `$XDG_STATE_HOME/masseater-plugins/` にログを出力します（デフォルト: `~/.local/state/masseater-plugins/`）。\n\n```\n~/.local/state/masseater-plugins/\n├── check-context-version/\n│   └── 2025-12-17.log\n└── ...\n```\n\n- 日付ごとにログファイルを作成\n- 7日以上前のログは自動削除\n\n---\n\n## 参考資料\n\n- [Claude Code プラグインドキュメント](https://code.claude.com/docs/en/plugins)\n- [Claude Code Hooksドキュメント](https://code.claude.com/docs/en/hooks)\n- [cc-hooks-ts GitHub](https://github.com/sushichan044/cc-hooks-ts)\n",
+        "plugins/debug/README.md": "# debug - プラグインデバッグ用\n\nClaude Code プラグイン開発時のデバッグ用プラグイン。\n\n## インストール\n\n```bash\n/plugin marketplace add https://github.com/masseater/claude-code-plugin\n/plugin install debug\n```\n\n---\n\n## Hooks\n\nSessionStart 時に以下のデバッグ出力を行います：\n\n| 出力先 | 内容 |\n|--------|------|\n| stdout (exit 0) | \"Debug plugin session started\" |\n| stdout (exit 0) | `CLAUDE_PLUGIN_ROOT` の値 |\n| stderr (exit 2) | \"Debug plugin session started\" |\n| stderr (exit 2) | `CLAUDE_PLUGIN_ROOT` の値 |\n| ファイル | `~/claude_plugin_debug.txt` に `CLAUDE_PLUGIN_ROOT` を書き込み |\n\n---\n\n## 用途\n\n- プラグインのインストール・読み込み確認\n- `CLAUDE_PLUGIN_ROOT` 環境変数の確認\n- Hooks の stdout/stderr 出力の動作確認\n- exit code による Hooks の挙動確認\n"
+      },
+      "plugins": [
+        {
+          "name": "mutils",
+          "source": "./plugins/mutils",
+          "description": "masseater's utils",
+          "version": "0.7.25",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add masseater/claude-code-plugin",
+            "/plugin install mutils@masseater-plugins"
+          ]
+        },
+        {
+          "name": "sdd",
+          "source": "./plugins/sdd",
+          "description": "Spec Driven Development (SDD) ワークフロー支援コマンド集",
+          "version": "0.5.4",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add masseater/claude-code-plugin",
+            "/plugin install sdd@masseater-plugins"
+          ]
+        },
+        {
+          "name": "debug",
+          "source": "./plugins/debug",
+          "description": "plugin debug 用",
+          "version": "0.0.8",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add masseater/claude-code-plugin",
+            "/plugin install debug@masseater-plugins"
+          ]
+        },
+        {
+          "name": "eslint-lsp",
+          "source": "./plugins/eslint-lsp",
+          "description": "ESLint 9 Language Server integration for Claude Code",
+          "version": "0.1.2",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add masseater/claude-code-plugin",
+            "/plugin install eslint-lsp@masseater-plugins"
+          ]
+        },
+        {
+          "name": "use-codex",
+          "source": "./plugins/use-codex",
+          "description": "Codex CLI integration",
+          "version": "0.1.1",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add masseater/claude-code-plugin",
+            "/plugin install use-codex@masseater-plugins"
+          ]
+        },
+        {
+          "name": "psp",
+          "source": "./plugins/psp",
+          "description": "Personal Project Setup - Cloudflare向け個人開発Webアプリのセットアップ",
+          "version": "0.0.7",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add masseater/claude-code-plugin",
+            "/plugin install psp@masseater-plugins"
+          ]
+        },
+        {
+          "name": "progress-tracker",
+          "source": "./plugins/progress-tracker",
+          "description": "セッション進捗ファイルの自動作成・管理",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add masseater/claude-code-plugin",
+            "/plugin install progress-tracker@masseater-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,48 +6,36 @@
   },
   "marketplaces": [
     {
-      "name": "infinite-moves-marketplace",
-      "version": null,
-      "description": "Plugins for autonomous task generation and execution",
-      "repo_full_name": "mastra-ai/infinite-moves",
-      "repo_url": "https://github.com/mastra-ai/infinite-moves",
-      "repo_description": "Skills for task decomposition and agent execution",
+      "name": "mastra-agent-skills",
+      "version": "1.0.0",
+      "description": "Skills for building AI applications with Mastra: look up APIs from embedded docs and follow documented patterns for agents, workflows, and project setup",
+      "repo_full_name": "mastra-ai/skills",
+      "repo_url": "https://github.com/mastra-ai/skills",
+      "repo_description": "Official agent skills for coding agents working with the Mastra AI framework",
       "signals": {
-        "stars": 0,
-        "forks": 1,
-        "pushed_at": "2026-01-20T08:41:24Z"
+        "stars": 14,
+        "forks": 0,
+        "pushed_at": "2026-01-30T16:37:25Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"infinite-moves-marketplace\",\n  \"owner\": {\n    \"name\": \"Abhiram Aiyer\"\n  },\n  \"description\": \"Plugins for autonomous task generation and execution\",\n  \"plugins\": [\n    {\n      \"name\": \"infinite-moves\",\n      \"source\": \"./plugins/infinite-moves\",\n      \"description\": \"Multiple loops for infinite task generation and execution\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Abhiram Aiyer\"\n      },\n      \"repository\": \"https://github.com/mastra-ai/infinite-moves\",\n      \"keywords\": [\"automation\", \"tasks\", \"loops\", \"ideation\", \"execution\"]\n    }\n  ]\n}\n",
-        "README.md": "# Infinite Moves\n\nMultiple loops for infinite task generation and execution.\n\n## Why \"Infinite\"?\n\nMost agent loops work like this:\n\n```\nGet task → Execute → Verify → Repeat → Stop (backlog empty)\n```\n\nThey execute a predefined backlog until it's empty. **Infinite Moves is different** - it generates its own work:\n\n```\n┌───────────────────────────────────────────────────┐\n│                                                   │\n│   Ideation ───→ Execution ───→ Debt Sweep         │\n│       ↑               │             │             │\n│       └───────────────┴─────────────┘             │\n│                                                   │\n│   The loops feed each other. Work never ends.     │\n└───────────────────────────────────────────────────┘\n```\n\n| Aspect | Typical Agent Loop | Infinite Moves |\n|--------|-------------------|----------------|\n| Work source | Predefined backlog | Self-generated via ideation |\n| Loops | 1 (execution) | 3 (ideation, execution, debt) |\n| Ends when | Backlog empty | Never - ideates more work |\n| Maintenance | Manual | Self-maintaining via debt sweep |\n\n**Ideation** scans docs, code, and your ideas to generate tasks. **Execution** works through them. **Debt sweep** keeps quality high. When the backlog runs low, ideation finds more. It's perpetual, self-sustaining development.\n\n## Supported Platforms\n\n| Platform | Location | Status |\n|----------|----------|--------|\n| **Claude Code** | `skills/` + `plugins/` | ✓ Full support |\n| **OpenCode** | `opencode/` | ✓ Full support |\n\nSee platform-specific READMEs for installation instructions.\n\n## Architecture (Claude Code)\n\nTwo components working together:\n\n| Component | Purpose |\n|-----------|---------|\n| **Skill** | Makes Claude aware of the plugin, enables autonomous invocation |\n| **Plugin** | Provides the commands and agents |\n\n```\nUser: \"Help me with my backlog\"\n        ↓\nSkill activates (matches \"backlog\")\n        ↓\nClaude knows to use /moves commands\n        ↓\nInvokes /moves status, /moves run automatically\n        ↓\nSpawns task-executor agents\n```\n\n## Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/moves run` | Execute tasks (single, parallel, continuous) |\n| `/moves ideate` | Generate tasks from topics or gap analysis |\n| `/moves status` | View pipeline, manage tasks |\n| `/moves sweep` | Scan for technical debt |\n\n## Quick Start\n\n```bash\n# Initialize the data directory\nmkdir -p .infinite-moves/tasks .infinite-moves/designs\necho '{\"tasks\": []}' > .infinite-moves/manifest.json\n\n# Let Claude work autonomously\n\"Generate tasks for user authentication and start working on them\"\n\n# Or use commands explicitly\n/moves ideate --topic \"user authentication\"\n/moves run --continuous --parallel 2\n```\n\n## Data Directory\n\nAll artifacts are stored in `.infinite-moves/` at the project root:\n\n```\n.infinite-moves/\n├── manifest.json           # Task manifest\n├── tasks/                  # Task spec files\n│   └── G17-health-sync.md\n├── designs/                # Design docs from ideation\n│   └── push-notifications.md\n├── debt-manifest.json      # Technical debt tracking\n└── debt-report.md          # Human-readable debt report\n```\n\n## Structure\n\n```\ninfinite-moves/\n│\n├── skills/infinite-moves/          # Claude Code skill\n│   └── SKILL.md\n│\n├── plugins/infinite-moves/         # Claude Code plugin\n│   ├── plugin.json\n│   ├── commands/\n│   │   ├── run.md\n│   │   ├── ideate.md\n│   │   ├── status.md\n│   │   └── sweep.md\n│   └── agents/\n│       ├── task-executor.md\n│       └── verifier.md\n│\n└── opencode/                       # OpenCode support\n    ├── README.md\n    ├── plugins/\n    │   └── infinite-moves.ts       # TypeScript plugin\n    └── agents/\n        ├── task-executor.md\n        └── verifier.md\n```\n\n## The Loops\n\n**Ideation Loop**\n- Generate from topic: design doc → tasks\n- Gap analysis: docs vs code → tasks\n- Code scan: TODOs, untested code → tasks\n\n**Execution Loop**\n- Pick highest priority available\n- Execute (or spawn agent)\n- Verify build\n- Update manifest, purge completed\n\n**Debt Loop**\n- Scan for complexity, TODOs, type issues\n- Track in debt manifest\n- Auto-fix trivial items during continuous runs\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mastra-agent-skills\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Mastra\",\n    \"email\": \"team@mastra.ai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mastra-skills\",\n      \"description\": \"Skills for building AI applications with Mastra: look up APIs from embedded docs and follow documented patterns for agents, workflows, and project setup\",\n      \"skills\": [\n        \"./skills/mastra-embedded-docs-look-up\",\n        \"./skills/mastra\",\n        \"./skills/create-mastra\"\n      ],\n      \"source\": \"./\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# Mastra Agent Skills\n\nOfficial agent skills for coding agents working with the [Mastra AI framework](https://mastra.ai).\n\n## Installation\n\n```bash\nnpx skills add mastra-ai/skills\n```\n\n## Included Skills\n\n### 📚 mastra-embedded-docs-look-up\n\nLook up Mastra API signatures from embedded documentation in `node_modules/@mastra/*/dist/docs/`. Ensures docs match installed version.\n\n### ✨ mastra\n\nComprehensive guide for building AI applications with Mastra. Includes 27+ production-ready code patterns for agents, workflows, memory, tools, storage, and RAG. Covers troubleshooting, v1 migration, and best practices.\n\n### 🚀 create-mastra\n\nSetup guide for new or existing projects. Includes installation, configuration, framework integration, and troubleshooting.\n\n---\n\n## Manual Installation\n\n```bash\ngit clone https://github.com/mastra-ai/skills.git\n```\n\nThen configure your coding agent to load skills from the cloned directory.\n\n---\n\n## Contributing\n\nContributions welcome!\n\n1. Fork the repository\n2. Make improvements to SKILL.md files\n3. Test with actual development workflows\n4. Submit a pull request\n\n---\n\n## Resources\n\n- [Mastra Docs](https://mastra.ai/docs)\n- [Mastra GitHub](https://github.com/mastra-ai/mastra)\n- [Agent Skills Spec](https://agentskills.io)\n- [Discord](https://discord.gg/BTYqqHKUrf)\n\n---\n\n## License\n\nApache-2.0 - See [LICENSE](LICENSE) for details\n\n---\n\nBuilt with ❤️ by the [Mastra](https://mastra.ai) team\n"
       },
       "plugins": [
         {
-          "name": "infinite-moves",
-          "source": "./plugins/infinite-moves",
-          "description": "Multiple loops for infinite task generation and execution",
-          "version": "1.0.0",
-          "author": {
-            "name": "Abhiram Aiyer"
-          },
-          "repository": "https://github.com/mastra-ai/infinite-moves",
-          "keywords": [
-            "automation",
-            "tasks",
-            "loops",
-            "ideation",
-            "execution"
+          "name": "mastra-skills",
+          "description": "Skills for building AI applications with Mastra: look up APIs from embedded docs and follow documented patterns for agents, workflows, and project setup",
+          "skills": [
+            "./skills/mastra-embedded-docs-look-up",
+            "./skills/mastra",
+            "./skills/create-mastra"
           ],
-          "categories": [
-            "automation",
-            "execution",
-            "ideation",
-            "loops",
-            "tasks"
-          ],
+          "source": "./",
+          "strict": false,
+          "categories": [],
           "install_commands": [
-            "/plugin marketplace add mastra-ai/infinite-moves",
-            "/plugin install infinite-moves@infinite-moves-marketplace"
+            "/plugin marketplace add mastra-ai/skills",
+            "/plugin install mastra-skills@mastra-agent-skills"
           ]
         }
       ]

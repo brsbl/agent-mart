@@ -2,38 +2,80 @@
   "author": {
     "id": "0xBigBoss",
     "display_name": "Big Boss",
-    "avatar_url": "https://avatars.githubusercontent.com/u/95193764?u=51eef509938b5eda01f8486a6f94bffb80d69255&v=4"
+    "avatar_url": "https://avatars.githubusercontent.com/u/95193764?u=73c0ccbdc96b24a87e65af1a33f478bdc6dd7752&v=4"
   },
   "marketplaces": [
     {
-      "name": "linear-cli-marketplace",
+      "name": "0xbigboss-recall",
       "version": null,
-      "description": "Linear CLI integration for managing issues, teams, and projects",
-      "repo_full_name": "0xBigBoss/linear-cli",
-      "repo_url": "https://github.com/0xBigBoss/linear-cli",
-      "repo_description": "Linear CLI built with Zig",
+      "description": "Session recall and analytics for AI agents",
+      "repo_full_name": "0xBigBoss/recall",
+      "repo_url": "https://github.com/0xBigBoss/recall",
+      "repo_description": "Session recall and analytics for AI agents (Claude Code, Codex)",
       "signals": {
-        "stars": 1,
+        "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-26T20:46:40Z"
+        "pushed_at": "2026-01-24T02:53:43Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"linear-cli-marketplace\",\n  \"owner\": {\n    \"name\": \"0xbigboss\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"linear-cli\",\n      \"description\": \"Linear CLI integration for managing issues, teams, and projects\",\n      \"source\": \"./\",\n      \"skills\": [\n        \"./skills/linear\"\n      ]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"linear-cli\",\n  \"version\": \"0.2.10\",\n  \"description\": \"Linear CLI integration for Claude Code - manage issues, teams, and projects\",\n  \"author\": {\n    \"name\": \"0xbigboss\"\n  },\n  \"repository\": \"https://github.com/0xbigboss/linear-cli\"\n}\n",
-        "README.md": "# Linear CLI (Zig)\n\nSingle-binary Linear client built with Zig 0.15.2. Uses stdlib only, defaults to human-readable tables with a `--json` override, and stores auth securely at `~/.config/linear/config.json` (0600). Use `linear help <command>` to see command-specific flags and examples.\n\n## Build & Test\n- Build: `zig build -Drelease-safe` (debug is default). Binary installs to `zig-out/bin/linear`.\n- Tests: `zig build test`. Online suite runs with `LINEAR_ONLINE_TESTS=1`: `LINEAR_ONLINE_TESTS=1 LINEAR_TEST_TEAM_ID=<TEAM_ID> zig build online` (requires `LINEAR_API_KEY`; optional `LINEAR_TEST_ISSUE_ID`, `LINEAR_TEST_PROJECT_ID`, `LINEAR_TEST_MILESTONE_ID`; opt-in mutations with `LINEAR_TEST_ALLOW_MUTATIONS=1`).\n\n## Manual QA (Live API)\n- Quick start (uses a temp config): \n  ```\n  export LINEAR_API_KEY=<paste key>\n  export LINEAR_ONLINE_TESTS=1\n  export LINEAR_TEST_TEAM_ID=<team-id>\n  # Optional for broader coverage:\n  # export LINEAR_TEST_ISSUE_ID=<identifier like ENG-123>\n  # export LINEAR_TEST_PROJECT_ID=<project id>\n  # export LINEAR_TEST_MILESTONE_ID=<milestone id>\n  # export LINEAR_TEST_ALLOW_MUTATIONS=1  # enables create/delete tests\n  rm -f /tmp/linear-cli-qa.json\n  echo \"$LINEAR_API_KEY\" | ./zig-out/bin/linear --config /tmp/linear-cli-qa.json auth set\n  ./zig-out/bin/linear --config /tmp/linear-cli-qa.json auth test\n  zig build test\n  LINEAR_ONLINE_TESTS=1 LINEAR_TEST_TEAM_ID=$LINEAR_TEST_TEAM_ID zig build online\n  ```\n- Finding IDs quickly:\n  - Team: `./zig-out/bin/linear --config /tmp/linear-cli-qa.json teams list --json | jq -r '.nodes[0].id'`\n  - Issue identifier: `./zig-out/bin/linear --config /tmp/linear-cli-qa.json issues list --limit 1 --quiet`\n  - Project/milestone: `./zig-out/bin/linear --config /tmp/linear-cli-qa.json issues list --include-projects --fields project,milestone --limit 1 --json`\n  - If no suitable issue exists and mutations are allowed: `LINEAR_TEST_ALLOW_MUTATIONS=1 ./zig-out/bin/linear --config /tmp/linear-cli-qa.json issue create --team <TEAM_KEY_OR_ID> --title \"CLI QA seed\" --quiet`\n\n## Config & Auth\n- Config path: `~/.config/linear/config.json` (override with `--config PATH` or env `LINEAR_CONFIG`).\n- Precedence: CLI flags > env (`LINEAR_API_KEY`) > config file. Keys loaded from env are not written back to disk.\n- Keys:\n  - `api_key` (or env `LINEAR_API_KEY`; `auth set` accepts `--api-key`, piped stdin, or an interactive prompt with echo disabled)\n  - `default_team_id` (default ``)\n  - `default_output` (`table`|`json`, default `table`)\n  - `default_state_filter` (default `[\"completed\",\"canceled\"]`)\n  - `team_cache` (auto-populated key->id cache from `issue create`)\n- Manage defaults without editing JSON: `linear config show`, `linear config set default_team_id ENG`, `linear config set default_output json`, `linear config unset default_state_filter`\n- Files are saved with 0600 perms; the CLI warns if permissions drift. `auth show [--redacted]` surfaces the configured key without leaking the full token. `auth test` pings `viewer` to validate the current key.\n\n## CLI Overview\nGlobal flags:\n- `--json` — force JSON output (default follows `config.default_output`)\n- `--config PATH` or env `LINEAR_CONFIG` — choose config file\n- `--endpoint URL` — override the GraphQL endpoint (useful for QA/mocking)\n- `--retries N` — retry 5xx responses up to N times with a small backoff\n- `--timeout-ms MS` — request timeout flag (plumbed for future enforcement)\n- `--no-keepalive` — disable HTTP keep-alive reuse\n- `--help`/`--version` — version includes git hash and build mode\n- `linear help <command>` — show command-specific help with examples\n\nCommands:\n- `auth set [--api-key KEY]` — save key to config (stdin/interactive fallback when the flag is omitted).\n- `auth test` — ping `viewer` to validate the key.\n- `auth show [--redacted]` — view the configured key (masked when requested).\n- `config show|set|unset` — view or update CLI defaults (team/output/state filter) without editing JSON.\n- `me` — show current user.\n- `teams list [--fields id,key,name] [--plain] [--no-truncate]` — list teams with optional column and formatting controls.\n- `search <query> [--team ID|KEY] [--fields title,description,comments,identifier] [--state-type TYPES] [--assignee USER_ID|me] [--limit N] [--case-sensitive]` — server-side search over titles/descriptions/comments or identifiers (identifier filter matches issue numbers; pagination warns when more results remain).\n- `issues list [--team ID|KEY] [--state TYPES] [--created-since TS] [--updated-since TS] [--project ID] [--milestone ID] [--limit N] [--max-items N] [--sub-limit N] [--cursor CURSOR] [--pages N|--all] [--fields ...] [--include-projects] [--plain] [--no-truncate] [--human-time]` — defaults to the config team; excludes completed/canceled unless `--state` is provided; project/milestone filters available; parent/sub-issue columns stay opt-in and can be disabled entirely via `--sub-limit 0`; `--include-projects` (or fields) adds project/milestone context; `--max-items` stops mid-page when needed; paginates with cursor support plus page summaries.\n- `issue view <ID|IDENTIFIER> [--fields LIST] [--quiet] [--data-only] [--human-time] [--sub-limit N]` — show a single issue; `--fields` filters output (identifier,title,state,assignee,priority,url,created_at,updated_at,description,project,milestone,parent,sub_issues); `--sub-limit` controls sub-issue expansion when requested; `--quiet` prints only the identifier, `--data-only` emits tab-separated fields or JSON.\n- `issue create --team ID|KEY --title TITLE [--description TEXT] [--priority N] [--state STATE_ID] [--assignee USER_ID] [--labels ID,ID] [--yes] [--quiet] [--data-only]` — resolves team key to id when needed, caches lookups, and returns identifier/url; requires `--yes`/`--force` to proceed (otherwise exits with a message).\n- `issue delete <ID|IDENTIFIER> [--yes] [--dry-run] [--reason TEXT] [--quiet] [--data-only]` — archives an issue by id/identifier; requires `--yes`/`--force` to proceed; `--dry-run` validates the target without sending the mutation and echoes the reason/title for auditing.\n- `gql [--query FILE] [--vars JSON|--vars-file FILE] [--operation-name NAME] [--fields LIST] [--data-only]` — arbitrary GraphQL; non-zero on HTTP/GraphQL errors.\n\n## Output\n- Tables for lists; key/value blocks for detail views.\n- `--json` prints parsed JSON (gql honors `--fields` when present).\n - `issues list --json` adds top-level `pageInfo` plus limit/sort metadata (and `maxItems` when set); `--data-only --json` emits a nodes array with a sibling `pageInfo`.\n- `--plain` disables padding/truncation; `--no-truncate` keeps full cell text.\n- `--human-time` renders issue timestamps relative to now.\n- `--data-only` on `issue view|create` emits tab-separated fields (or JSON); `--quiet` prints only the identifier. On `gql`, `--data-only` strips the GraphQL envelope.\n\n## GraphQL Client\n- Endpoint: `https://api.linear.app/graphql`.\n- Auth header: `Authorization: <key>` (no Bearer).\n- Shared HTTP client with keep-alive (toggle with `--no-keepalive`).\n- Retries 5xx responses with a small backoff; timeout flag is wired for future use.\n- Surfaces HTTP status and first GraphQL error when available; 401s nudge to set `LINEAR_API_KEY` or run `auth set`.\n\n## Defaults\n- Default team id: ``.\n- Default output: table.\n- Default state exclusion: `completed`, `canceled`.\n- Pagination: 25 items per page; `--cursor`, `--pages`, and `--all` drive additional page fetches, and stderr reports fetched counts with `hasNextPage` status.\n\n## Claude Code Integration\n\nInstall as a Claude Code plugin to let Claude manage Linear issues for you.\n\n### Prerequisites\n\nInstall the `linear` binary first:\n```bash\nnpm install -g @0xbigboss/linear-cli\nlinear auth set  # configure your API key\n```\n\n### Install the Plugin\n\n**1. Add the marketplace:**\n```\n/plugin marketplace add https://github.com/0xbigboss/linear-cli\n```\n\n**2. Install the plugin:**\n```\n/plugin install linear-cli@linear-cli-marketplace\n```\n\n**3. Restart Claude Code** to load the plugin.\n\n### What It Does\n\nThe plugin provides a skill that teaches Claude how to use the Linear CLI. Once installed, Claude will automatically use the CLI when you ask about:\n- Listing, viewing, or creating issues\n- Managing teams and projects\n- Linking issues, adding attachments, or comments\n- Any Linear-related task\n\nExample prompts:\n- \"List my Linear issues\"\n- \"Create an issue in the ENG team titled 'Fix login bug'\"\n- \"Show me issue ENG-123\"\n- \"Link ENG-123 as blocking ENG-456\"\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"0xbigboss-recall\",\n  \"description\": \"Session recall and analytics for AI agents\",\n  \"owner\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"bigboss@metalrodeo.xyz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"recall\",\n      \"description\": \"Search and analyze past Claude Code and Codex sessions\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"recall\",\n  \"description\": \"Session recall and analytics for AI agents\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"bigboss@metalrodeo.xyz\"\n  },\n  \"repository\": \"https://github.com/0xbigboss/recall\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# recall\n\n[![CI](https://github.com/0xBigBoss/recall/actions/workflows/ci.yml/badge.svg)](https://github.com/0xBigBoss/recall/actions/workflows/ci.yml)\n\nSession recall and analytics for AI agents (Claude Code, Codex).\n\nSearch past sessions, analyze tool usage patterns, and generate permission suggestions from your AI coding history.\n\n## Installation\n\n```bash\n# Install from GitHub\nuv tool install \"recall @ git+https://github.com/0xbigboss/recall.git#subdirectory=packages/recall\"\n\n# Or clone and run locally\ngit clone https://github.com/0xbigboss/recall.git\ncd recall\nuv sync\nuv run recall --help\n```\n\n## Quick Start\n\n```bash\n# Index your sessions (run first)\nrecall index\n\n# Search past work\nrecall search \"authentication\"\nrecall search \"git rebase\" --tool Bash\n\n# List recent sessions\nrecall list --since 7d\nrecall list --project /path/to/repo\n\n# View session details\nrecall show <session-id> --tools\n\n# Analytics\nrecall stats tools        # Tool usage counts\nrecall stats bash         # Bash command breakdown\nrecall stats bash --suggest  # Permission suggestions\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `recall index` | Index sessions from Claude Code and Codex |\n| `recall search <query>` | Full-text search across sessions |\n| `recall list` | List sessions with filters |\n| `recall show <id>` | Display session details |\n| `recall stats` | Analytics and usage patterns |\n\n## Claude Code Plugin\n\nInstall as a Claude Code plugin for automatic skill integration:\n\n```bash\nclaude plugin marketplace add 0xbigboss/recall\nclaude plugin install recall@0xbigboss-recall\n```\n\nOr test locally:\n\n```bash\nclaude --plugin-dir /path/to/recall\n```\n\nThe skill auto-triggers on prompts like \"search my past sessions\" or \"suggest permissions to auto-approve\".\n\n## Data Locations\n\n| Data | Path |\n|------|------|\n| Database | `~/.local/share/recall/recall.duckdb` |\n| Claude Code sessions | `~/.claude/projects/**/*.jsonl` |\n| Codex sessions | `~/.codex/sessions/**/rollout*.jsonl` |\n\n## Development\n\n```bash\nuv sync                    # Install dependencies\nuv run pytest              # Run tests\nuv run ruff check .        # Lint\nuvx ty check               # Type check\n```\n\nGit hooks (format, lint, typecheck, test) auto-install via [direnv](https://direnv.net/).\nWithout direnv: `uv run lefthook install`\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
-          "name": "linear-cli",
-          "description": "Linear CLI integration for managing issues, teams, and projects",
+          "name": "recall",
+          "description": "Search and analyze past Claude Code and Codex sessions",
           "source": "./",
-          "skills": [
-            "./skills/linear"
-          ],
           "categories": [],
           "install_commands": [
-            "/plugin marketplace add 0xBigBoss/linear-cli",
-            "/plugin install linear-cli@linear-cli-marketplace"
+            "/plugin marketplace add 0xBigBoss/recall",
+            "/plugin install recall@0xbigboss-recall"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "0xBigBoss-silo",
+      "version": null,
+      "description": "Isolated local development environments for Tilt and k3d projects",
+      "repo_full_name": "0xBigBoss/silo",
+      "repo_url": "https://github.com/0xBigBoss/silo",
+      "repo_description": "Isolated local development environments. silo solves instance isolation and k3d bootstrap sequencing for Tilt-based projects.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-30T19:58:34Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"0xBigBoss-silo\",\n  \"owner\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"github@0xbigboss.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"Isolated local development environments for Tilt and k3d projects\",\n    \"version\": \"0.5.4\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"silo\",\n      \"source\": \"./.claude-plugin/silo\",\n      \"description\": \"CLI skill for managing isolated local development environments\",\n      \"version\": \"0.5.4\",\n      \"keywords\": [\n        \"cli\",\n        \"dev-environment\",\n        \"tilt\",\n        \"k3d\",\n        \"kubernetes\",\n        \"local-development\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# silo\n\nIsolated local development environments. silo solves instance isolation and k3d bootstrap sequencing for Tilt-based projects.\n\n![silo version](docs/screenshot.png)\n\n## Requirements\n\n- Bun (runtime)\n- Tilt\n- k3d (optional, only if `k3d.enabled = true`)\n\n## Install\n\n```bash\nnpm i -g @0xbigboss/silo\n```\n\n### Claude Code Skill\n\nInstall the silo skill in [Claude Code](https://claude.ai/code) so your AI assistant knows how to use silo:\n\n```bash\n/plugin marketplace add 0xBigBoss/silo\n/plugin install silo@0xBigBoss-silo\n```\n\n## Quick start\n\n```bash\nsilo init\n# edit silo.toml\nsilo up dev\n```\n\nPrint the bundled `silo.toml` reference:\n\n```bash\nsilo doc config\n```\n\n## Commands\n\n```bash\nsilo init            # Create silo.toml starter config\nsilo up [name]       # Start environment (creates k3d if needed, starts Tilt)\nsilo down            # Stop environment (stops Tilt, keeps k3d by default)\nsilo status          # Show current instance state\nsilo env [name]      # Generate env file only, don't start anything\nsilo ci [name]       # Run Tilt in CI mode (tilt ci) after env + k3d setup\nsilo profiles        # List available profiles\nsilo doc [topic]     # Print bundled docs (config, profiles, k3d, hooks, etc.)\nsilo version         # Print version\n```\n\n## Configuration\n\n`silo.toml` defines ports, hosts, URLs, k3d settings, and hooks. For the canonical reference, run:\n\n```bash\nsilo doc config\n```\n\nYou can also browse `SPEC.md` for a detailed specification.\n\n## Child process environment\n\nWhen silo launches child processes (Tilt, hooks, k3d, kubectl), it injects:\n\n- `SILO_ACTIVE=1`\n- `SILO_WORKSPACE=<workspace name>`\n- `SILO_ENV_FILE=<absolute path to generated env file>`\n\n## CI usage\n\n`silo env` and `silo ci` auto-export env vars to `$GITHUB_ENV` when running in\nCI (or when `--export-ci` is provided):\n\n```bash\nsilo ci e2e --timeout 300s\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "silo",
+          "source": "./.claude-plugin/silo",
+          "description": "CLI skill for managing isolated local development environments",
+          "version": "0.5.4",
+          "keywords": [
+            "cli",
+            "dev-environment",
+            "tilt",
+            "k3d",
+            "kubernetes",
+            "local-development"
+          ],
+          "categories": [
+            "cli",
+            "dev-environment",
+            "k3d",
+            "kubernetes",
+            "local-development",
+            "tilt"
+          ],
+          "install_commands": [
+            "/plugin marketplace add 0xBigBoss/silo",
+            "/plugin install silo@0xBigBoss-silo"
           ]
         }
       ]
