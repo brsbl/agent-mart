@@ -2,75 +2,24 @@
   "author": {
     "id": "bryanmig",
     "display_name": "Bryan Migliorisi",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/43345?u=ceb19cc33cfbe6bd1b6221b75c929f2615716159&v=4",
-    "url": "https://github.com/bryanmig",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 1,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/43345?u=ceb19cc33cfbe6bd1b6221b75c929f2615716159&v=4"
   },
   "marketplaces": [
     {
       "name": "bryanmig-claude-plugins",
       "version": null,
       "description": "Claude Code plugins and skills",
-      "owner_info": {
-        "name": "Bryan"
-      },
-      "keywords": [],
       "repo_full_name": "bryanmig/claude-plugins",
       "repo_url": "https://github.com/bryanmig/claude-plugins",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-12-29T17:18:01Z",
-        "created_at": "2025-12-29T17:00:31Z",
-        "license": null
+        "pushed_at": "2025-12-29T17:18:01Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 465
-        },
-        {
-          "path": "skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/decision-log",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/decision-log/README.md",
-          "type": "blob",
-          "size": 1857
-        },
-        {
-          "path": "skills/decision-log/SKILL.md",
-          "type": "blob",
-          "size": 3071
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"bryanmig-claude-plugins\",\n  \"owner\": {\n    \"name\": \"Bryan\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins and skills\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"decision-log\",\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"skills/decision-log\"\n      },\n      \"description\": \"Check DECISIONS.md before architectural choices, cite past decisions, and log new ones\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
-        "skills/decision-log/README.md": "# Decision Log Plugin\n\nA Claude Code skill that ensures architectural decisions are checked and documented consistently across projects.\n\n## What It Does\n\n- **Before architectural choices**: Prompts Claude to check `DECISIONS.md` for relevant precedents\n- **When applying decisions**: Ensures past decisions are cited explicitly in code and conversation\n- **After resolving trade-offs**: Offers to log non-obvious decisions for future reference\n\n## Installation\n\n### Option 1: Local Installation\n\nCopy to your personal skills directory:\n\n```bash\ncp -r decision-log-skill ~/.claude/skills/decision-log\n```\n\n### Option 2: Add to a Marketplace\n\nAdd to your marketplace's `marketplace.json`:\n\n```json\n{\n  \"plugins\": [\n    {\n      \"name\": \"decision-log\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/your-username/decision-log-skill.git\"\n      },\n      \"description\": \"Check DECISIONS.md before architectural choices\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n```\n\n## DECISIONS.md Format\n\nThe skill works with any `DECISIONS.md` file. Recommended format:\n\n```markdown\n# Decision Log\n\n## YYYY-MM-DD: Brief Title\n\n**Context:** Why was this decision needed?\n\n**Decision:** What was decided?\n\n**Rationale:** Why this choice over alternatives?\n\n**Trade-offs:** What are the downsides?\n```\n\n## When It Triggers\n\nThe skill activates when:\n- Adding new entities or data models\n- Choosing between implementation patterns\n- Selecting libraries or approaches\n- Any non-obvious technical trade-off\n\n## Example Behavior\n\nWithout the skill:\n```\nUser: Add an ID field to User\nClaude: *adds `id: string`*\n```\n\nWith the skill:\n```\nUser: Add an ID field to User\nClaude: *checks DECISIONS.md, finds UUID requirement*\nClaude: Per DECISIONS.md (2024-11-15), using UUID for the user ID.\n*adds `id: string` with `crypto.randomUUID()`*\n```\n\n## License\n\nMIT\n",
-        "skills/decision-log/SKILL.md": "---\nname: decision-log\ndescription: Use when making architectural choices, adding entities, choosing patterns, or resolving non-obvious technical trade-offs in a project that may have a DECISIONS.md file\n---\n\n# Decision Log\n\nCheck `DECISIONS.md` before making architectural choices. Past decisions exist for reasons that aren't obvious from code alone.\n\n## The Rule\n\n**Before any architectural choice, check for DECISIONS.md.** This includes:\n- Adding new entities or data models\n- Choosing between implementation patterns\n- Selecting libraries or approaches\n- Any non-obvious technical trade-off\n\n## Red Flags - STOP and Check DECISIONS.md\n\n- Adding an ID field to any entity\n- Creating shared behavior (inheritance vs composition?)\n- Adding user-facing changes (feature flags?)\n- Choosing data formats, protocols, or storage\n- \"This is simple, I'll just...\"\n\n**Time pressure is not an excuse.** Urgent tasks still require checking. A wrong choice made quickly creates more work than checking first.\n\n| Rationalization | Reality |\n|-----------------|---------|\n| \"This is too small to check\" | Small choices compound. ID format affects entire codebase. |\n| \"I already know there's nothing relevant\" | You don't know what you don't know. Check anyway. |\n| \"The file probably doesn't exist\" | Takes 2 seconds to verify. Check. |\n| \"Checking will slow me down\" | Wrong choice creates more rework than checking. |\n| \"This is obvious/standard\" | Project-specific decisions override industry defaults. |\n\n## Workflow\n\n```dot\ndigraph decision_flow {\n  \"Architectural choice needed\" [shape=box];\n  \"DECISIONS.md exists?\" [shape=diamond];\n  \"Relevant precedent?\" [shape=diamond];\n  \"Apply and cite decision\" [shape=box];\n  \"Uncertain if applies?\" [shape=diamond];\n  \"Ask user\" [shape=box];\n  \"Proceed with choice\" [shape=box];\n  \"Offer to log if non-obvious\" [shape=box];\n\n  \"Architectural choice needed\" -> \"DECISIONS.md exists?\";\n  \"DECISIONS.md exists?\" -> \"Relevant precedent?\" [label=\"yes\"];\n  \"DECISIONS.md exists?\" -> \"Proceed with choice\" [label=\"no\"];\n  \"Relevant precedent?\" -> \"Apply and cite decision\" [label=\"yes\"];\n  \"Relevant precedent?\" -> \"Uncertain if applies?\" [label=\"no exact match\"];\n  \"Uncertain if applies?\" -> \"Ask user\" [label=\"yes\"];\n  \"Uncertain if applies?\" -> \"Proceed with choice\" [label=\"no\"];\n  \"Proceed with choice\" -> \"Offer to log if non-obvious\";\n}\n```\n\n## When Applying a Decision\n\nCite it explicitly:\n\n> \"Per DECISIONS.md (2024-11-15), using UUID for the product ID rather than auto-increment integer.\"\n\n## After Resolving Non-Obvious Choices\n\nIf you and the user worked through a technical trade-off, offer:\n\n> \"This decision about X might be worth logging in DECISIONS.md for future reference. Want me to add it?\"\n\n## What Belongs in DECISIONS.md\n\n- Foundational architectural choices with rationale\n- Conditional trade-offs (when X, do Y because Z)\n- Domain knowledge not obvious from code\n\n## What Doesn't Belong\n\n- Patterns already visible in existing code\n- Temporary fixes or debugging choices\n- Style preferences (put in CLAUDE.md)\n"
+        "README.md": "# Claude Plugin Marketplace\n\nA collection of Claude Code plugins and skills.\n\n## Installation\n\n```bash\nclaude plugin add https://github.com/bryanmig/claude-plugins.git\n```\n\n## Available Plugins\n\n### decision-log\n\nEnsures Claude checks `DECISIONS.md` before making architectural choices, cites past decisions when applying them, and offers to log new decisions.\n\n**Triggers when:**\n- Adding new entities or data models\n- Choosing between implementation patterns\n- Selecting libraries or approaches\n- Any non-obvious technical trade-off\n\nSee [skills/decision-log/README.md](skills/decision-log/README.md) for details.\n\n## Adding New Skills\n\nCreate a new directory under `skills/` with:\n- `SKILL.md` - The skill definition (required)\n- `README.md` - Documentation (optional)\n\nThen add an entry to `.claude-plugin/marketplace.json`.\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

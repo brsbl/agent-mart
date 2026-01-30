@@ -195,7 +195,7 @@ function SearchFilterContent() {
                   placeholder="Search repositories..."
                   value={localSearchQuery}
                   onChange={(e) => setLocalSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent bg-white"
+                  className="w-full pl-10 pr-10 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-800 dark:text-gray-100"
                 />
                 {localSearchQuery && (
                   <button

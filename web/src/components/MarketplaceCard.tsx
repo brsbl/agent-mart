@@ -74,7 +74,7 @@ export function MarketplaceCard({
   return (
     <Link
       href={marketplaceUrl}
-      className="border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden"
+      className="relative border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[4px] before:bg-transparent before:rounded-l-xl before:transition-colors hover:before:bg-accent"
     >
       <div className="p-4 flex flex-col flex-1">
         <div className="flex-1 min-w-0 mb-3">
@@ -106,7 +106,7 @@ export function MarketplaceCard({
           </div>
         </div>
         <div
-          className={`relative mb-4 flex-1 description-fade ${!hasOverflow ? "no-overflow" : ""}`}
+          className={`relative mb-4 flex-1 ${hasOverflow ? "after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-t after:from-background-secondary/80 after:to-transparent after:rounded-b-lg after:pointer-events-none" : ""}`}
         >
           <div
             ref={descriptionRef}

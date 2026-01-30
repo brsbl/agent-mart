@@ -2,136 +2,24 @@
   "author": {
     "id": "mastra-ai",
     "display_name": "Mastra",
-    "type": "Organization",
-    "avatar_url": "https://avatars.githubusercontent.com/u/149120496?v=4",
-    "url": "https://github.com/mastra-ai",
-    "bio": "Build agents with a modern TypeScript stack. Mastra is an all-in-one framework for building AI-powered applications and agents.",
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 4,
-      "total_skills": 1,
-      "total_stars": 0,
-      "total_forks": 1
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/149120496?v=4"
   },
   "marketplaces": [
     {
       "name": "infinite-moves-marketplace",
       "version": null,
       "description": "Plugins for autonomous task generation and execution",
-      "owner_info": {
-        "name": "Abhiram Aiyer"
-      },
-      "keywords": [],
       "repo_full_name": "mastra-ai/infinite-moves",
       "repo_url": "https://github.com/mastra-ai/infinite-moves",
       "repo_description": "Skills for task decomposition and agent execution",
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 1,
-        "pushed_at": "2026-01-20T08:41:24Z",
-        "created_at": "2026-01-19T17:17:29Z",
-        "license": null
+        "pushed_at": "2026-01-20T08:41:24Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 580
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/infinite-moves",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/infinite-moves/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/infinite-moves/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 178
-        },
-        {
-          "path": "plugins/infinite-moves/agents",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/infinite-moves/agents/task-executor.md",
-          "type": "blob",
-          "size": 1302
-        },
-        {
-          "path": "plugins/infinite-moves/agents/verifier.md",
-          "type": "blob",
-          "size": 1182
-        },
-        {
-          "path": "plugins/infinite-moves/commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/infinite-moves/commands/ideate.md",
-          "type": "blob",
-          "size": 2519
-        },
-        {
-          "path": "plugins/infinite-moves/commands/run.md",
-          "type": "blob",
-          "size": 3101
-        },
-        {
-          "path": "plugins/infinite-moves/commands/status.md",
-          "type": "blob",
-          "size": 1901
-        },
-        {
-          "path": "plugins/infinite-moves/commands/sweep.md",
-          "type": "blob",
-          "size": 1708
-        },
-        {
-          "path": "plugins/infinite-moves/skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/infinite-moves/skills/infinite-moves",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/infinite-moves/skills/infinite-moves/SKILL.md",
-          "type": "blob",
-          "size": 3178
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"infinite-moves-marketplace\",\n  \"owner\": {\n    \"name\": \"Abhiram Aiyer\"\n  },\n  \"description\": \"Plugins for autonomous task generation and execution\",\n  \"plugins\": [\n    {\n      \"name\": \"infinite-moves\",\n      \"source\": \"./plugins/infinite-moves\",\n      \"description\": \"Multiple loops for infinite task generation and execution\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Abhiram Aiyer\"\n      },\n      \"repository\": \"https://github.com/mastra-ai/infinite-moves\",\n      \"keywords\": [\"automation\", \"tasks\", \"loops\", \"ideation\", \"execution\"]\n    }\n  ]\n}\n",
-        "plugins/infinite-moves/.claude-plugin/plugin.json": "{\n  \"name\": \"infinite-moves\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Multiple loops for infinite task generation and execution\",\n  \"author\": {\n    \"name\": \"Abhiram Aiyer\"\n  }\n}\n",
-        "plugins/infinite-moves/agents/task-executor.md": "---\nname: task-executor\ndescription: Execute a single task from the manifest\nallowed-tools: Read, Edit, Write, Bash, Glob, Grep, TodoWrite\n---\n\n# Task Executor\n\nYou execute ONE task completely.\n\n## Input\n\nYou receive:\n- Task ID and title\n- Task spec (acceptance criteria, files to modify)\n- Working directory\n\n## Process\n\n1. **Read spec** - Understand all acceptance criteria\n2. **Plan** - Use TodoWrite to track sub-tasks\n3. **Implement** - Create/modify files per spec\n4. **Verify** - Run build command\n5. **Report** - Output structured summary\n\n## Constraints\n\n- ONLY modify files in your assigned directory\n- Do NOT modify the manifest\n- Do NOT spawn sub-agents\n- Complete the entire task\n\n## Build Verification\n\nRun appropriate build:\n- Backend: `cd server && npm run build`\n- Frontend: `cd web && npm run build`\n- Mobile: `cd mobile && npx tsc --noEmit`\n\nFix TypeScript errors before completing.\n\n## Required Output\n\nEnd with this exact format:\n\n```\n<!-- AGENT_SUMMARY_START -->\n{\n  \"taskId\": \"<task ID>\",\n  \"status\": \"completed|partial|failed\",\n  \"filesCreated\": [\"list\"],\n  \"filesModified\": [\"list\"],\n  \"buildStatus\": \"passed|failed\",\n  \"acceptanceCriteria\": {\n    \"total\": <n>,\n    \"met\": <n>,\n    \"failed\": <n>\n  },\n  \"errors\": [],\n  \"notes\": \"Brief summary\"\n}\n<!-- AGENT_SUMMARY_END -->\n```\n",
-        "plugins/infinite-moves/agents/verifier.md": "---\nname: verifier\ndescription: Verify task completion\nallowed-tools: Read, Bash, Glob, Grep\n---\n\n# Verifier\n\nYou verify a completed task meets requirements.\n\n## Input\n\nYou receive:\n- Task ID\n- Task spec (acceptance criteria)\n- Expected files\n\n## Checks\n\n1. **Files exist** - All files in spec exist and non-empty\n2. **Build passes** - `npm run build` succeeds\n3. **Criteria met** - Code evidence for each criterion\n\n## Verification Commands\n\n```bash\n# File exists\nls -la <filepath>\n\n# Has content\nwc -l <filepath>\n\n# Build\ncd server && npm run build\ncd web && npm run build\n\n# Code search\ngrep -l \"expectedFunction\" <filepath>\n```\n\n## Do NOT\n\n- Modify any files\n- Attempt fixes\n- Run the application\n- Make judgment calls - report facts only\n\n## Required Output\n\n```\n<!-- VERIFICATION_RESULT -->\n{\n  \"taskId\": \"<task ID>\",\n  \"verified\": true|false,\n  \"status\": \"VERIFIED|FAILED|PARTIAL|MANUAL_REVIEW\",\n  \"checks\": {\n    \"filesExist\": {\"pass\": true, \"expected\": 4, \"found\": 4},\n    \"buildPasses\": {\"pass\": true},\n    \"criteriaVerified\": {\"total\": 7, \"verified\": 7, \"failed\": 0}\n  },\n  \"issues\": [],\n  \"recommendation\": \"approve|reject|fix-needed\"\n}\n<!-- VERIFICATION_RESULT -->\n```\n",
-        "plugins/infinite-moves/commands/ideate.md": "---\nname: moves-ideate\ndescription: Generate tasks from topics, gaps, or code analysis\n---\n\n# /moves ideate\n\nGenerate new tasks for the manifest.\n\n## Options\n\n```\n/moves ideate                           # Full gap analysis\n/moves ideate --quick                   # Fast health check (no file changes)\n/moves ideate --topic \"description\"     # Generate from an idea\n/moves ideate --from-spec <file>        # Generate from existing doc\n/moves ideate --focus <area>            # Focus: frontend|backend|mobile|testing\n```\n\n## Topic Mode\n\nWhen given `--topic \"feature idea\"`:\n\n1. **Research** - Web search if unfamiliar tech\n2. **Design doc** - Create in `.infinite-moves/designs/`\n3. **Break down** - Split into 1-4 hour tasks\n4. **Task specs** - Create `.infinite-moves/tasks/G{N}-{slug}.md`\n5. **Update manifest** - Add with dependencies\n\nExample:\n```\n/moves ideate --topic \"Add push notifications for reminders\"\n\nCreates:\n- .infinite-moves/designs/push-notifications.md (design)\n- .infinite-moves/tasks/G48-push-model.md\n- .infinite-moves/tasks/G49-push-api.md\n- .infinite-moves/tasks/G50-push-ui.md\n```\n\n## Gap Analysis Mode\n\nWhen run without topic:\n\n1. **Scan docs** - Find documented features\n2. **Scan code** - Find implementations\n3. **Compare** - Identify gaps:\n   - Documented but not built\n   - Built but not tested\n   - TODOs/FIXMEs in code\n   - Missing error handling\n4. **Generate tasks** - For each gap found\n\n## Quick Mode\n\nWith `--quick`:\n- Read manifest, count tasks by status\n- Quick grep for TODOs\n- Report pipeline health\n- NO file changes\n- ~10 seconds\n\nOutput:\n```\nPipeline: 22 available | 1 in_progress | 0 blocked\nStatus: HEALTHY\nRecommendation: No immediate ideation needed\n```\n\n## Task Spec Template\n\n```markdown\n# G48: Push Notification Model\n\n## Overview\nDatabase model and types for push notifications.\n\n## Acceptance Criteria\n- [ ] NotificationToken model in schema\n- [ ] Migration created and tested\n- [ ] Types exported\n\n## Files to Create/Modify\n| File | Action | Description |\n|------|--------|-------------|\n| src/db/schema/notifications.ts | Create | Token model |\n| src/db/migrations/004_notifications.ts | Create | Migration |\n\n## Definition of Done\n- [ ] All criteria met\n- [ ] Build passes\n```\n\n## Manifest Entry\n\n```json\n{\n  \"id\": \"G48-push-model\",\n  \"title\": \"Push Notification Model\",\n  \"file\": \"G48-push-model.md\",\n  \"priority\": \"P1\",\n  \"complexity\": \"low\",\n  \"status\": \"available\",\n  \"dependencies\": [],\n  \"tags\": [\"backend\", \"database\"],\n  \"source\": \"ideation --topic\"\n}\n```\n",
-        "plugins/infinite-moves/commands/run.md": "---\nname: moves-run\ndescription: Execute tasks from the manifest\n---\n\n# /moves run\n\nExecute tasks from `.infinite-moves/manifest.json`.\n\n## Options\n\n```\n/moves run                          # Single task\n/moves run --parallel <n>           # N concurrent tasks\n/moves run --continuous             # Until all done\n/moves run --infinite               # Never stop - ideate when backlog empties\n/moves run --cycles <n>             # Run n cycles then stop\n/moves run --debt-interval <n>      # Debt sweep every n cycles\n/moves run --debt-fix <level>       # Auto-fix debt (critical|high|medium|low)\n/moves run --ideate-threshold <n>   # Ideate when < n tasks remain (default: 3)\n```\n\n## Execution Flow\n\n1. Read manifest, find highest priority available task\n2. Check dependencies are met\n3. Claim task (update status to \"claimed\")\n4. Read task spec from `.infinite-moves/tasks/<file>`\n5. Execute: create/modify files per acceptance criteria\n6. Verify: run `npm run build` (or project's build command)\n7. Update manifest to \"completed\"\n8. Purge completed tasks from manifest\n\n## Infinite Mode\n\nWith `--infinite`:\n- Runs tasks continuously like `--continuous`\n- When available tasks drop below threshold (default 3), triggers `/moves ideate`\n- Ideation scans for gaps, generates new tasks\n- Resumes execution with fresh backlog\n- Never stops unless manually interrupted or ideation finds nothing new\n\nUse `--ideate-threshold N` to control when ideation triggers:\n```\n/moves run --infinite --ideate-threshold 5   # Ideate when < 5 tasks left\n```\n\n**The Loop:**\n```\n┌─────────────────────────────────────────┐\n│  1. Execute highest priority task       │\n│  2. Mark complete, purge from manifest  │\n│  3. Check: tasks remaining < threshold? │\n│     YES → Run /moves ideate             │\n│     NO  → Continue                      │\n│  4. Repeat forever                      │\n└─────────────────────────────────────────┘\n```\n\n## Parallel Mode\n\nWith `--parallel N`:\n- Select N non-conflicting tasks\n- Conflict = same domain (both backend) or file overlap\n- Safe pair = one backend + one frontend\n- Pre-claim all before spawning agents\n- Spawn via Task tool with `run_in_background: true`\n\n## Agent Spawning\n\n```javascript\nTask({\n  description: \"G17: Implement Health Sync\",\n  prompt: `Execute task G17...\n\n  [task spec contents]\n\n  Output when done:\n  <!-- AGENT_SUMMARY_START -->\n  {\"taskId\": \"G17\", \"status\": \"completed\", \"buildStatus\": \"passed\"}\n  <!-- AGENT_SUMMARY_END -->`,\n  subagent_type: \"general-purpose\",\n  run_in_background: true\n})\n```\n\n## Debt Integration\n\nWith `--debt-interval N`:\n- Every N cycles, pause and run `/moves sweep`\n- If `--debt-fix <level>`, auto-fix trivial items at that severity\n- Resume task execution after sweep\n\n## Manifest Update\n\nAfter completion:\n```json\n{\n  \"status\": \"completed\",\n  \"completedAt\": \"2024-01-19T...\"\n}\n```\n\nThen purge completed tasks to keep manifest lean.\n",
-        "plugins/infinite-moves/commands/status.md": "---\nname: moves-status\ndescription: View pipeline health and manage tasks\n---\n\n# /moves status\n\nView and manage the task pipeline.\n\n## Options\n\n```\n/moves status                       # Summary view\n/moves status --all                 # All tasks with details\n/moves status --available           # Available tasks only\n/moves status --velocity            # Completion trends\n/moves status --next <n>            # Top N recommendations\n/moves status --claim <id>          # Claim for manual work\n/moves status --release <id>        # Release claimed task\n/moves status --complete <id>       # Mark task done\n/moves status --verify <id>         # Verify completion\n```\n\n## Summary View\n\nDefault output:\n```\nTASK STATUS\n═══════════════════════════════════════\n\nProgress: 119/142 tasks (84%)\n████████████████░░░░ 84%\n\nVelocity: 1.7 tasks/day ↑\n\nBy Priority:\n  P0: 2/2 complete\n  P1: 9 available\n  P2: 13 available\n\nTop 3 Available:\n  • [P0] G56-healthkit-integration\n  • [P1] G58-nutrition-backend\n  • [P1] G50-onboarding-ui\n```\n\n## Velocity Analysis\n\nWith `--velocity`:\n- Tasks completed last 7 days\n- Daily average\n- Trend vs prior week\n- Time by complexity (low/medium/high)\n- Projected completion\n\n## Task Management\n\n**Claim** (`--claim <id>`):\n```\n✓ Claimed: G17-health-sync\nTask file: .infinite-moves/tasks/G17-health-sync.md\nWhen done: /moves status --complete G17-health-sync\n```\n\n**Complete** (`--complete <id>`):\n- Update status to \"completed\"\n- Add completedAt timestamp\n- Show newly unblocked tasks\n\n**Verify** (`--verify <id>`):\n- Check expected files exist\n- Run build\n- Check acceptance criteria\n- Report: VERIFIED | FAILED | MANUAL_REVIEW\n\n## Symbols\n\n- `✓` completed\n- `◉` in progress\n- `○` available\n- `◌` blocked\n- `↑` improving\n- `↓` declining\n",
-        "plugins/infinite-moves/commands/sweep.md": "---\nname: moves-sweep\ndescription: Scan for technical debt\n---\n\n# /moves sweep\n\nScan codebase for technical debt.\n\n## Options\n\n```\n/moves sweep                        # Full scan\n/moves sweep --focus <area>         # frontend|backend|types|testing|security\n/moves sweep --severity <level>     # Minimum: critical|high|medium|low\n/moves sweep --scan-only            # Report only, no manifest update\n```\n\n## Categories\n\n| Category | What's Scanned |\n|----------|----------------|\n| Complexity | Functions >50 lines, deep nesting, large files |\n| TODOs | TODO, FIXME, HACK, XXX comments |\n| Types | `any` usage, `@ts-ignore`, missing types |\n| Dependencies | Outdated, unused, security vulnerabilities |\n| Error Handling | Empty catch, unhandled promises |\n| Testing | Missing test files, coverage gaps |\n| Security | Hardcoded secrets, injection vectors |\n\n## Severity Levels\n\n| Level | Description | Action |\n|-------|-------------|--------|\n| critical | Security, data loss | Fix immediately |\n| high | Maintainability | Fix this sprint |\n| medium | Code quality | Fix when touching |\n| low | Style, minor | Backlog |\n\n## Output\n\nCreates/updates:\n- `.infinite-moves/debt-manifest.json` - Structured items\n- `.infinite-moves/debt-report.md` - Human readable\n\nDebt item:\n```json\n{\n  \"id\": \"DEBT-001\",\n  \"category\": \"security\",\n  \"severity\": \"critical\",\n  \"title\": \"Hardcoded API key\",\n  \"file\": \"src/config.ts\",\n  \"line\": 45,\n  \"suggestedFix\": \"Use environment variable\",\n  \"effort\": \"low\"\n}\n```\n\n## Integration with /moves run\n\n```\n/moves run --continuous --debt-interval 5 --debt-fix high\n```\n\nEvery 5 cycles:\n1. Pause execution\n2. Run sweep\n3. Auto-fix trivial/low effort items at high+ severity\n4. Resume\n",
-        "plugins/infinite-moves/skills/infinite-moves/SKILL.md": "---\nname: infinite-moves\ndescription: \"Bridges to the infinite-moves plugin for autonomous task execution. Activates when user mentions tasks, backlog, dev loop, ideate, generate tasks, sweep debt, or wants continuous development. Knows how to invoke /moves commands without user typing them.\"\n---\n\n# Infinite Moves - Plugin Bridge\n\nThis skill makes you aware of the **infinite-moves plugin** so you can use it autonomously.\n\n## When to Use\n\nActivate when user says things like:\n- \"Help me work through my backlog\"\n- \"What tasks are available?\"\n- \"Generate tasks for [feature]\"\n- \"Run the dev loop\"\n- \"Check for technical debt\"\n- \"Execute some tasks\"\n\n## Available Commands\n\nThe plugin provides these commands - invoke them directly:\n\n| Trigger | Command | What it does |\n|---------|---------|--------------|\n| Run/execute tasks | `/moves run` | Execute tasks from manifest |\n| Parallel execution | `/moves run --parallel 2` | Run non-conflicting tasks concurrently |\n| Continuous mode | `/moves run --continuous` | Keep going until manifest empty |\n| **Infinite mode** | `/moves run --infinite` | Never stop - auto-ideate when low |\n| Check status | `/moves status` | Show pipeline health, available tasks |\n| Generate from idea | `/moves ideate --topic \"...\"` | Create design doc + tasks from topic |\n| Find gaps | `/moves ideate` | Scan docs vs code for missing work |\n| Quick health check | `/moves ideate --quick` | Fast pipeline check |\n| Scan debt | `/moves sweep` | Find TODOs, type issues, test gaps |\n| Claim task | `/moves status --claim <id>` | Reserve for manual work |\n| Complete task | `/moves status --complete <id>` | Mark done |\n\n## Autonomous Behavior\n\nWhen user wants to work on tasks, don't wait - invoke the commands:\n\n```\nUser: \"Let's knock out some tasks\"\nYou: [invoke /moves status to see what's available]\nYou: [invoke /moves run to start executing]\n```\n\n```\nUser: \"I have an idea for a meditation feature\"\nYou: [invoke /moves ideate --topic \"meditation feature\"]\n```\n\n```\nUser: \"Run tasks in parallel until done\"\nYou: [invoke /moves run --continuous --parallel 2]\n```\n\n```\nUser: \"Run forever\" / \"Keep working indefinitely\" / \"Infinite loop\"\nYou: [invoke /moves run --infinite --parallel 2]\n```\n\n## Command Details\n\nFor detailed instructions on each command, the plugin contains:\n- `commands/run.md` - Execution options and flow\n- `commands/ideate.md` - Task generation modes\n- `commands/status.md` - Pipeline management\n- `commands/sweep.md` - Debt scanning\n\n## Agents\n\nThe plugin provides agents you can spawn via Task tool:\n- `task-executor` - Executes a single task with build verification\n- `verifier` - Verifies task completion meets criteria\n\n## Data Directory\n\nAll artifacts are stored in `.infinite-moves/` at the project root:\n```\n.infinite-moves/\n├── manifest.json           # Task manifest\n├── tasks/                  # Task spec files\n│   └── G17-health-sync.md\n├── designs/                # Design docs from ideation\n├── debt-manifest.json      # Technical debt tracking\n└── debt-report.md          # Human-readable debt report\n```\n\nCreate this directory if it doesn't exist before running commands.\n"
+        "README.md": "# Infinite Moves\n\nMultiple loops for infinite task generation and execution.\n\n## Why \"Infinite\"?\n\nMost agent loops work like this:\n\n```\nGet task → Execute → Verify → Repeat → Stop (backlog empty)\n```\n\nThey execute a predefined backlog until it's empty. **Infinite Moves is different** - it generates its own work:\n\n```\n┌───────────────────────────────────────────────────┐\n│                                                   │\n│   Ideation ───→ Execution ───→ Debt Sweep         │\n│       ↑               │             │             │\n│       └───────────────┴─────────────┘             │\n│                                                   │\n│   The loops feed each other. Work never ends.     │\n└───────────────────────────────────────────────────┘\n```\n\n| Aspect | Typical Agent Loop | Infinite Moves |\n|--------|-------------------|----------------|\n| Work source | Predefined backlog | Self-generated via ideation |\n| Loops | 1 (execution) | 3 (ideation, execution, debt) |\n| Ends when | Backlog empty | Never - ideates more work |\n| Maintenance | Manual | Self-maintaining via debt sweep |\n\n**Ideation** scans docs, code, and your ideas to generate tasks. **Execution** works through them. **Debt sweep** keeps quality high. When the backlog runs low, ideation finds more. It's perpetual, self-sustaining development.\n\n## Supported Platforms\n\n| Platform | Location | Status |\n|----------|----------|--------|\n| **Claude Code** | `skills/` + `plugins/` | ✓ Full support |\n| **OpenCode** | `opencode/` | ✓ Full support |\n\nSee platform-specific READMEs for installation instructions.\n\n## Architecture (Claude Code)\n\nTwo components working together:\n\n| Component | Purpose |\n|-----------|---------|\n| **Skill** | Makes Claude aware of the plugin, enables autonomous invocation |\n| **Plugin** | Provides the commands and agents |\n\n```\nUser: \"Help me with my backlog\"\n        ↓\nSkill activates (matches \"backlog\")\n        ↓\nClaude knows to use /moves commands\n        ↓\nInvokes /moves status, /moves run automatically\n        ↓\nSpawns task-executor agents\n```\n\n## Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/moves run` | Execute tasks (single, parallel, continuous) |\n| `/moves ideate` | Generate tasks from topics or gap analysis |\n| `/moves status` | View pipeline, manage tasks |\n| `/moves sweep` | Scan for technical debt |\n\n## Quick Start\n\n```bash\n# Initialize the data directory\nmkdir -p .infinite-moves/tasks .infinite-moves/designs\necho '{\"tasks\": []}' > .infinite-moves/manifest.json\n\n# Let Claude work autonomously\n\"Generate tasks for user authentication and start working on them\"\n\n# Or use commands explicitly\n/moves ideate --topic \"user authentication\"\n/moves run --continuous --parallel 2\n```\n\n## Data Directory\n\nAll artifacts are stored in `.infinite-moves/` at the project root:\n\n```\n.infinite-moves/\n├── manifest.json           # Task manifest\n├── tasks/                  # Task spec files\n│   └── G17-health-sync.md\n├── designs/                # Design docs from ideation\n│   └── push-notifications.md\n├── debt-manifest.json      # Technical debt tracking\n└── debt-report.md          # Human-readable debt report\n```\n\n## Structure\n\n```\ninfinite-moves/\n│\n├── skills/infinite-moves/          # Claude Code skill\n│   └── SKILL.md\n│\n├── plugins/infinite-moves/         # Claude Code plugin\n│   ├── plugin.json\n│   ├── commands/\n│   │   ├── run.md\n│   │   ├── ideate.md\n│   │   ├── status.md\n│   │   └── sweep.md\n│   └── agents/\n│       ├── task-executor.md\n│       └── verifier.md\n│\n└── opencode/                       # OpenCode support\n    ├── README.md\n    ├── plugins/\n    │   └── infinite-moves.ts       # TypeScript plugin\n    └── agents/\n        ├── task-executor.md\n        └── verifier.md\n```\n\n## The Loops\n\n**Ideation Loop**\n- Generate from topic: design doc → tasks\n- Gap analysis: docs vs code → tasks\n- Code scan: TODOs, untested code → tasks\n\n**Execution Loop**\n- Pick highest priority available\n- Execute (or spawn agent)\n- Verify build\n- Update manifest, purge completed\n\n**Debt Loop**\n- Scan for complexity, TODOs, type issues\n- Track in debt manifest\n- Auto-fix trivial items during continuous runs\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

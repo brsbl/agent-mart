@@ -212,13 +212,13 @@ function SearchFilterControlsContent() {
       <div className="flex-1 min-w-0">
         <form onSubmit={handleSearch}>
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground-muted" size={16} />
             <input
               type="text"
               placeholder="Search..."
               value={localSearchQuery}
               onChange={(e) => handleSearchInput(e.target.value)}
-              className="w-full pl-8 pr-8 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-800 dark:text-gray-100"
+              className="w-full pl-8 pr-8 py-2 border border-border rounded-lg text-sm outline-none focus:outline-none ring-0 focus:ring-0 focus:border-border-hover bg-card text-foreground focus-none"
             />
             {localSearchQuery && (
               <button
@@ -228,7 +228,7 @@ function SearchFilterControlsContent() {
                   setLocalSearchQuery("");
                   updateURL(selectedCategories, sortBy, sortDirection, "");
                 }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground-secondary cursor-pointer"
               >
                 <X size={16} />
               </button>

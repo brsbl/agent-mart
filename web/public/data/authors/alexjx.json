@@ -2,86 +2,24 @@
   "author": {
     "id": "alexjx",
     "display_name": "XIN JIA",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/2102912?u=dc9d9ce0af530c1c8ba703ec73b445cb2e2bd7d0&v=4",
-    "url": "https://github.com/alexjx",
-    "bio": "I think I like to write some code...",
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 2,
-      "total_commands": 0,
-      "total_skills": 1,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/2102912?u=dc9d9ce0af530c1c8ba703ec73b445cb2e2bd7d0&v=4"
   },
   "marketplaces": [
     {
       "name": "alexjx-skills",
       "version": null,
       "description": "Web crawler that converts URLs to clean markdown for LLM consumption. Use when user wants to crawl a webpage, extract web content, convert URL to markdown, or scrape website content for AI processing.",
-      "owner_info": {
-        "name": "alexjx"
-      },
-      "keywords": [],
       "repo_full_name": "alexjx/skills",
       "repo_url": "https://github.com/alexjx/skills",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-06T03:52:42Z",
-        "created_at": "2025-12-18T02:35:53Z",
-        "license": null
+        "pushed_at": "2026-01-06T03:52:42Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 665
-        },
-        {
-          "path": "agents",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "agents/code-review.md",
-          "type": "blob",
-          "size": 2452
-        },
-        {
-          "path": "agents/document-review.md",
-          "type": "blob",
-          "size": 1017
-        },
-        {
-          "path": "skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/crawl4ai",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/crawl4ai/SKILL.md",
-          "type": "blob",
-          "size": 1816
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"alexjx-skills\",\n  \"owner\": {\n    \"name\": \"alexjx\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"crawl4ai\",\n      \"description\": \"Web crawler that converts URLs to clean markdown for LLM consumption. Use when user wants to crawl a webpage, extract web content, convert URL to markdown, or scrape website content for AI processing.\",\n      \"source\": \"./skills/crawl4ai\",\n      \"strict\": false\n    },\n    {\n      \"name\": \"document-review\",\n      \"description\": \"Reviews documents for correctness, clarity, and readability. Use when user wants to review, proofread, validate, or check a document.\",\n      \"source\": \"./agents\",\n      \"strict\": false\n    }\n  ]\n}\n",
-        "agents/code-review.md": "---\nname: code-review\ndescription: Reviews staged code changes for correctness, performance, and security. Understands change intent from git context and validates implementation against goals.\ntools: Bash, Read, Grep, Glob\nmodel: sonnet\n---\n\nYou are a code review specialist.\n\n## Phase 1: Understand Intent\n\nGather context to understand what the change is trying to achieve:\n\n1. Run `git diff --staged --stat` to see what files are changed\n2. Run `git diff --staged` to see the actual changes\n3. Run `git branch --show-current` to get branch name (often contains intent)\n4. Run `git log -1 --oneline` to see recent commit context\n5. Check for related issue/PR references in branch name or recent commits\n\nFrom this context, derive the **goal** of the change. If the goal is unclear:\n- State what you can infer\n- Ask the user to clarify what the change is meant to accomplish\n\nDo NOT proceed to review until the goal is clear.\n\n## Phase 2: Goal Validation\n\nOnce the goal is understood, evaluate:\n\n1. **Completeness**: Does the change fully address the goal?\n2. **Correctness**: Does the implementation actually achieve the goal?\n3. **Side effects**: Are there unintended consequences?\n\n## Phase 3: Code Quality Review\n\nCheck for issues in these categories:\n\n### Coding Issues\n- Logic errors or bugs\n- Edge cases not handled\n- Error handling gaps\n- Code clarity and maintainability\n- Naming and conventions\n\n### Performance Issues\n- Unnecessary loops or iterations\n- N+1 query patterns\n- Memory leaks or excessive allocation\n- Blocking operations in async context\n- Missing caching opportunities\n\n### Security Issues\n- Injection vulnerabilities (SQL, command, XSS)\n- Sensitive data exposure\n- Authentication/authorization gaps\n- Input validation missing\n- Insecure defaults\n\n## Output Format\n\n```\n## Goal\n[1-2 sentence summary of what this change aims to achieve]\n\n## Verdict\n[PASS | PASS WITH NOTES | NEEDS CHANGES]\n\n## Goal Alignment\n[Does the change achieve its goal? Any gaps?]\n\n## Issues Found\n\n### Critical (must fix)\n- [issue]: [file:line] - [explanation]\n\n### Warnings (should fix)\n- [issue]: [file:line] - [explanation]\n\n### Suggestions (consider)\n- [suggestion]: [file:line] - [explanation]\n```\n\n## Guidelines\n\n- Be specific: quote code, give line numbers\n- Prioritize by severity\n- Don't nitpick style unless egregious\n- If change is good, say so briefly - don't invent problems\n- Focus on the diff, not pre-existing issues in unchanged code\n",
-        "agents/document-review.md": "---\nname: document-review\ndescription: Reviews documents for correctness, clarity, and readability. Use when user wants to review, proofread, validate, or check a document.\ntools: Read, Glob, Grep\nmodel: sonnet\n---\n\nYou are a document review specialist.\n\n## Process\n\n1. Read the entire document\n2. Verify against user's requirements\n3. Validate correctness\n4. Check readability and fluency\n\n## Review Criteria\n\n### Verification\n- Does it meet user's requirements?\n- Are all requested topics covered?\n\n### Correctness\n- Facts accurate?\n- Logic consistent?\n- No contradictions or ambiguities?\n\n### Readability\n- Natural, fluent wording?\n- Follows human reading conventions?\n- Clear sentences?\n- Appropriate tone?\n\n## Output Format\n\n```\n## Summary\n[2-3 sentence assessment]\n\n## Critical Issues\n[Must-fix problems]\n\n## Improvements\n[Suggested enhancements]\n\n## Minor Notes\n[Optional polish]\n```\n\n## Guidelines\n\n- Quote problematic text and suggest fixes\n- Prioritize by impact\n- Don't invent problems if document is good\n",
-        "skills/crawl4ai/SKILL.md": "---\nname: crawl4ai\ndescription: Web crawler that converts URLs to clean markdown. Use when user wants to fetch a webpage, extract web content, convert URL to markdown, or scrape website content.\n---\n\n# Crawl4AI Web Crawler\n\nConverts web pages to clean, LLM-friendly markdown using crawl4ai.\n\n## Requirements\n\n- `uv` must be installed (https://docs.astral.sh/uv/)\n- The skill manages its own isolated Python environment via `uv sync`\n\n## Setup\n\nBefore first use, run the setup script:\n\n```bash\nskills/crawl4ai/scripts/setup.sh\n```\n\nThis will:\n1. Check for `uv` installation\n2. Run `uv sync` to create `.venv/` and install dependencies\n3. Run `crawl4ai-setup` to install playwright browsers\n4. Run `crawl4ai-doctor` to verify installation\n\n## Usage\n\nTo crawl a URL and get markdown (from the skill directory):\n\n```bash\ncd skills/crawl4ai\nuv run python scripts/crawl.py \"https://example.com\"\n```\n\nOptions:\n- `--output FILE` - Save markdown to file instead of stdout\n- `--include-links` - Include hyperlinks in markdown output\n- `--include-images` - Include image references\n- `--no-headless` - Show browser window (default: headless)\n- `--timeout SECONDS` - Page load timeout (default: 30)\n\n## Examples\n\n### Basic crawl\n```bash\ncd skills/crawl4ai\nuv run python scripts/crawl.py \"https://docs.python.org/3/\"\n```\n\n### Save to file\n```bash\nuv run python scripts/crawl.py \"https://example.com\" --output content.md\n```\n\n### With all options\n```bash\nuv run python scripts/crawl.py \"https://example.com\" \\\n  --include-links \\\n  --include-images \\\n  --timeout 60 \\\n  --output result.md\n```\n\n## Troubleshooting\n\nIf crawling fails:\n1. Run `uv run crawl4ai-doctor` to diagnose\n2. Ensure playwright browsers are installed: `uv run python -m playwright install chromium`\n3. Check the URL is accessible and not blocked by robots.txt\n"
+        "README.md": "# Claude Code Extensions\n\nCustom skills, commands, and agents for Claude Code.\n\n## Structure\n\n```\n.claude/\n  commands/       # Slash commands (*.md files)\nagents/           # Agent configurations\nskills/           # Custom skills\n```\n\n## Usage\n\n### Commands\n\nPlace `.md` files in `.claude/commands/`. Each file becomes a slash command.\n\nExample: `.claude/commands/review.md` creates the `/review` command.\n\n### Skills\n\nSkills extend Claude's capabilities with specialized knowledge and workflows.\n\nTo install skills, symlink the `skills/` directory:\n\n```bash\nln -s /path/to/this/repo/skills ~/.claude/skills\n```\n\n#### Available Skills\n\n- **crawl4ai** - Web crawler that converts URLs to clean markdown for LLM consumption\n\n### Agents\n\nAgent configurations for specialized task handling.\n"
       },
       "plugins": [
         {

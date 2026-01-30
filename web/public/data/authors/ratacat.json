@@ -2,54 +2,24 @@
   "author": {
     "id": "ratacat",
     "display_name": "ratacat",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/3517397?u=49b4bf399bf93a22bd9e73a84d0b9c8393e2eec0&v=4",
-    "url": "https://github.com/ratacat",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 2,
-      "total_plugins": 2,
-      "total_commands": 0,
-      "total_skills": 1,
-      "total_stars": 1,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/3517397?u=49b4bf399bf93a22bd9e73a84d0b9c8393e2eec0&v=4"
   },
   "marketplaces": [
     {
       "name": "pair-programmer-ai",
       "version": null,
       "description": "AI pair programming tools for Claude Code",
-      "owner_info": {
-        "name": "ratacat",
-        "url": "https://github.com/ratacat"
-      },
-      "keywords": [],
       "repo_full_name": "ratacat/pair-programmer-ai",
       "repo_url": "https://github.com/ratacat/pair-programmer-ai",
       "repo_description": "A bridge server enabling two AI agents to pair program together",
-      "homepage": null,
       "signals": {
         "stars": 1,
         "forks": 0,
-        "pushed_at": "2026-01-15T05:42:56Z",
-        "created_at": "2026-01-07T21:13:27Z",
-        "license": null
+        "pushed_at": "2026-01-15T05:42:56Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 350
-        }
-      ],
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pair-programmer-ai\",\n  \"description\": \"AI pair programming tools for Claude Code\",\n  \"owner\": {\n    \"name\": \"ratacat\",\n    \"url\": \"https://github.com/ratacat\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pair\",\n      \"source\": \"./skill\",\n      \"description\": \"Launch a pair programming agent to watch your work and catch issues\"\n    }\n  ]\n}\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pair-programmer-ai\",\n  \"description\": \"AI pair programming tools for Claude Code\",\n  \"owner\": {\n    \"name\": \"ratacat\",\n    \"url\": \"https://github.com/ratacat\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pair\",\n      \"source\": \"./skill\",\n      \"description\": \"Launch a pair programming agent to watch your work and catch issues\"\n    }\n  ]\n}\n",
+        "README.md": "# pair-bridge\n\nA system for AI pair programming: two AI agents work together, one coding while the other watches and provides real-time feedback on bugs, security issues, and missed edge cases.\n\n## How It Works\n\n```\n┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐\n│   Main Agent    │         │  Bridge Server  │         │   Pair Agent    │\n│   (Claude)      │────────▶│  Unix Socket    │────────▶│  (Opus/Codex)   │\n│                 │         │                 │         │                 │\n│  Does the work  │         │  Routes msgs    │         │  Watches work   │\n│  Hooks emit     │◀────────│  Queues feedback│◀────────│  Gives feedback │\n│  activity       │         │                 │         │                 │\n└─────────────────┘         └─────────────────┘         └─────────────────┘\n```\n\n- **Main Agent**: The Claude Code instance you're working with\n- **Bridge Server**: Unix socket server that routes messages\n- **Pair Agent**: Another AI (Opus or Codex) watching and providing feedback\n\n## Installation\n\n```bash\n# Clone and install\ngit clone https://github.com/ratacat/pair-programmer-ai.git\ncd pair-programmer-ai\nnpm install\nnpm run build\n\n# Install hooks and CLI\n./skill/install.sh\n```\n\n### Requirements\n\n- Node.js 18+\n- `jq` (for JSON processing in hooks)\n- `claude` CLI (for Claude Opus pair agent)\n- `codex` CLI (optional, for Codex pair agent)\n\n## Usage\n\n### Quick Start\n\n```bash\n# Start the bridge\npair-bridge start\n\n# In another terminal, start a pair agent manually\nclaude \"You are a pair programmer. Run: pair-bridge wait 0, analyze activity, emit feedback if needed.\"\n\n# Your main Claude Code session will now receive feedback\n```\n\n### Within Claude Code\n\nUse the `/pair` skill:\n\n```\nUser: /pair\nAgent: Starting pair programming session...\n       Bridge started, pair agent launched.\n       I'll work on your task while my pair watches for issues.\n\nUser: /pair stop\nAgent: Ending session. 34 tool calls observed, 2 feedback items.\n```\n\n### CLI Commands\n\n```bash\npair-bridge start              # Start bridge server\npair-bridge stop               # Stop bridge server\npair-bridge status             # Show session status\n\npair-bridge emit activity '{...}'   # Emit tool activity (used by hooks)\npair-bridge emit feedback '{...}'   # Emit pair feedback\n\npair-bridge wait [lastSeen]    # Block until activity (for pair agent)\npair-bridge poll               # Check for pending feedback (non-blocking)\npair-bridge history [n]        # Show last n activities\n```\n\n### Feedback Format\n\n```json\n{\n  \"severity\": \"high\",\n  \"message\": \"This SQL query concatenates user input - use parameterized queries\",\n  \"context\": {\n    \"file\": \"src/db/queries.ts\",\n    \"line\": 45\n  }\n}\n```\n\nSeverity levels:\n- **high**: Stop and fix before continuing\n- **medium**: Address soon but can finish current task\n- **low**: Consider for later\n\n## Configuration\n\n### Hooks\n\nThe hooks connect your Claude Code session to the bridge:\n\n- `pair-emit-activity.sh` (PostToolUse): Sends tool calls to bridge\n- `pair-check-feedback.sh` (PreToolUse): Displays pair feedback\n\nInstall to `~/.claude/hooks/` and configure in `~/.claude/settings.json`:\n\n```json\n{\n  \"hooks\": {\n    \"PostToolUse\": [\"pair-emit-activity.sh\"],\n    \"PreToolUse\": [\"pair-check-feedback.sh\"]\n  }\n}\n```\n\n### Pair Agent Backend\n\nChoose your pair agent:\n\n- **claude-opus** (default): Uses Claude Opus via `claude` CLI\n- **codex**: Uses OpenAI Codex via `codex` CLI\n\n```bash\n# Via environment variable\nPAIR_BACKEND=codex pair-bridge start\n\n# Or in the skill\n/pair --backend codex\n```\n\n## Architecture\n\n### Components\n\n| File | Purpose |\n|------|---------|\n| `src/server.ts` | Bridge server with Unix socket |\n| `src/cli.ts` | CLI tool for bridge interaction |\n| `src/session.ts` | Session lifecycle management |\n| `src/adapters/` | Pair agent adapters (Opus, Codex) |\n| `hooks/` | Claude Code hook scripts |\n| `skill/` | `/pair` skill definition |\n\n### Message Flow\n\n1. Main agent uses a tool (Edit, Bash, etc.)\n2. PostToolUse hook emits activity to bridge\n3. Pair agent receives activity via `pair-bridge wait`\n4. Pair agent analyzes and optionally emits feedback\n5. Main agent's PreToolUse hook displays feedback\n6. Main agent sees feedback before next action\n\n## Development\n\n```bash\nnpm install          # Install dependencies\nnpm run build        # Build TypeScript\nnpm run dev          # Watch mode\nnpm test             # Run tests\n```\n\n### Testing the Bridge\n\n```bash\n# Terminal 1: Start bridge\nnode dist/cli.js start\n\n# Terminal 2: Simulate pair agent\nnode dist/cli.js wait 0  # Blocks until activity\n\n# Terminal 3: Emit activity\nnode dist/cli.js emit activity '{\"tool\":\"Edit\",\"input\":{\"file\":\"test.ts\"}}'\n\n# Terminal 2 will receive the activity\n# Then emit feedback:\nnode dist/cli.js emit feedback '{\"severity\":\"high\",\"message\":\"Test feedback\"}'\n\n# Terminal 3: Check for feedback\nnode dist/cli.js poll\n```\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
@@ -60,121 +30,6 @@
           "install_commands": [
             "/plugin marketplace add ratacat/pair-programmer-ai",
             "/plugin install pair@pair-programmer-ai"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "rivet-marketplace",
-      "version": null,
-      "description": "Marketplace for rivet plugin",
-      "owner_info": {
-        "name": "ratacat"
-      },
-      "keywords": [],
-      "repo_full_name": "ratacat/rivet",
-      "repo_url": "https://github.com/ratacat/rivet",
-      "repo_description": null,
-      "homepage": null,
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-01-24T00:54:29Z",
-        "created_at": "2026-01-07T16:26:00Z",
-        "license": "MIT"
-      },
-      "file_tree": [
-        {
-          "path": ".beads",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".beads/README.md",
-          "type": "blob",
-          "size": 2250
-        },
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 328
-        },
-        {
-          "path": ".claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 631
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 2129
-        },
-        {
-          "path": "skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/rivet-harvest",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/rivet-harvest/SKILL.md",
-          "type": "blob",
-          "size": 3841
-        },
-        {
-          "path": "src",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "src/hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "src/hooks/pre-commit.sh",
-          "type": "blob",
-          "size": 623
-        },
-        {
-          "path": "src/hooks/prompt-inject.sh",
-          "type": "blob",
-          "size": 737
-        },
-        {
-          "path": "src/hooks/session-inject.sh",
-          "type": "blob",
-          "size": 605
-        }
-      ],
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rivet-marketplace\",\n  \"description\": \"Marketplace for rivet plugin\",\n  \"owner\": {\n    \"name\": \"ratacat\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"rivet\",\n      \"source\": \"./\",\n      \"description\": \"Lock linguistic decisions in your codebase. Auto-discovers systems on install.\",\n      \"version\": \"0.0.1\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"rivet\",\n  \"version\": \"0.0.2\",\n  \"description\": \"Lock linguistic decisions in your codebase. Living architecture, anchored requirements, locked terminology.\",\n  \"author\": {\n    \"name\": \"ratacat\"\n  },\n  \"repository\": \"https://github.com/ratacat/rivet\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"architecture\", \"terminology\", \"requirements\", \"ai-context\"],\n  \"skills\": \"./skills/\",\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-rivet.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
-        ".beads/README.md": "# Beads - AI-Native Issue Tracking\n\nWelcome to Beads! This repository uses **Beads** for issue tracking - a modern, AI-native tool designed to live directly in your codebase alongside your code.\n\n## What is Beads?\n\nBeads is issue tracking that lives in your repo, making it perfect for AI coding agents and developers who want their issues close to their code. No web UI required - everything works through the CLI and integrates seamlessly with git.\n\n**Learn more:** [github.com/steveyegge/beads](https://github.com/steveyegge/beads)\n\n## Quick Start\n\n### Essential Commands\n\n```bash\n# Create new issues\nbd create \"Add user authentication\"\n\n# View all issues\nbd list\n\n# View issue details\nbd show <issue-id>\n\n# Update issue status\nbd update <issue-id> --status in_progress\nbd update <issue-id> --status done\n\n# Sync with git remote\nbd sync\n```\n\n### Working with Issues\n\nIssues in Beads are:\n- **Git-native**: Stored in `.beads/issues.jsonl` and synced like code\n- **AI-friendly**: CLI-first design works perfectly with AI coding agents\n- **Branch-aware**: Issues can follow your branch workflow\n- **Always in sync**: Auto-syncs with your commits\n\n## Why Beads?\n\n✨ **AI-Native Design**\n- Built specifically for AI-assisted development workflows\n- CLI-first interface works seamlessly with AI coding agents\n- No context switching to web UIs\n\n🚀 **Developer Focused**\n- Issues live in your repo, right next to your code\n- Works offline, syncs when you push\n- Fast, lightweight, and stays out of your way\n\n🔧 **Git Integration**\n- Automatic sync with git commits\n- Branch-aware issue tracking\n- Intelligent JSONL merge resolution\n\n## Get Started with Beads\n\nTry Beads in your own projects:\n\n```bash\n# Install Beads\ncurl -sSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash\n\n# Initialize in your repo\nbd init\n\n# Create your first issue\nbd create \"Try out Beads\"\n```\n\n## Learn More\n\n- **Documentation**: [github.com/steveyegge/beads/docs](https://github.com/steveyegge/beads/tree/main/docs)\n- **Quick Start Guide**: Run `bd quickstart`\n- **Examples**: [github.com/steveyegge/beads/examples](https://github.com/steveyegge/beads/tree/main/examples)\n\n---\n\n*Beads: Issue tracking that moves at the speed of thought* ⚡\n",
-        "README.md": "# Rivet\n\n<p align=\"center\"><em>\"Language is the liquid we're all dissolved in.\"</em><br>— Modest Mouse</p>\n\nThe work of language in programming is rapidly changing.\n\nIt used to be that language only mattered for humans reading your code. Today, with the rise of semi-intelligent AI systems, the linguistic layer of software is suddenly much more involved.\n\nThe tooling hasn't caught up yet.\n\n---\n\nRivet aims to be a seamless, low-maintenance tool that strengthens the connection between your linguistic layer and your implementation layer.\n\nIt operates by scanning and extracting decisions, requirements, and terminology from your transcripts with your coding agent. There's a huge amount of valuable material in those conversations—architecture decisions, naming conventions, requirements you've articulated—that consistently gets wasted. Every time you have to repeat yourself to an AI, every time you re-explain a decision or clarify a term, that's an opportunity for better tooling.\n\nA rivet is a permanent fastener. It holds two layers together without needing attention. It either holds or it doesn't. That's what this does. Once something is riveted, it doesn't drift. It means what you said it means.\n\n---\n\n```yaml\n# .rivet/systems.yaml\nproject:\n  name: MyApp\n  purpose: \"E-commerce platform for handmade goods\"\n\n  glossary:\n    vibe_coding:\n      definition: \"AI handles implementation while human guides direction\"\n    premature_reification:\n      definition: \"When casual language gets formalized before agreement\"\n\nsystems:\n  Router:\n    description: \"Handles URL routing and navigation\"\n\n    requirements:\n      - \"Must support nested routes\"\n      - \"Must handle auth redirects\"\n\n    decisions:\n      - \"Async-first for high-concurrency workloads\"\n\n    terms:\n      createRouter: \"factory function - use instead of new Router()\"\n      useRouter: \"React hook for router context\"\n\n    depends_on:\n      - Config\n```\n\n---\n\n## Commands\n\n`rivet system add|show|list|edit|link|deprecate`\n\n`rivet term define|rename|delete|list`\n\n`rivet context` · `rivet sync` · `rivet check` · `rivet harvest`\n\n---\n\nMIT License\n",
-        "skills/rivet-harvest/SKILL.md": "---\nname: rivet-harvest\ndescription: Capture decisions and requirements from conversation history. Use when user says \"harvest\", \"capture decisions\", or \"save what we discussed\" to persist architectural decisions into .rivet/systems.yaml.\nuser-invocable: true\nallowed-tools: Bash, Read, Glob, Grep, Edit, Write, AskUserQuestion\n---\n\n# Rivet Harvest - Extract Decisions from Transcripts\n\nCapture architectural decisions, requirements, and terminology from Claude Code conversation history and add them to .rivet/systems.yaml.\n\n## Purpose\n\nDuring AI-assisted development, valuable decisions get made in conversation:\n- \"We should use async-first for scale\"\n- \"The Router must support nested routes\"\n- \"Let's call this concept 'vibe coding'\"\n\nThese decisions are valuable but ephemeral. Harvest extracts them and locks them into .rivet/systems.yaml so they persist.\n\n## Prerequisites\n\n- .rivet/systems.yaml must exist with at least one system defined\n- Run scan first if no .rivet/systems.yaml exists\n\n## What to Extract\n\n### Requirements\nStatements about what a system MUST do:\n- \"must support X\"\n- \"needs to handle Y\"\n- \"should always Z\"\n\n### Decisions\nArchitectural choices made during development:\n- \"we're going with X approach\"\n- \"decided to use Y for Z\"\n- \"async-first for scale\"\n\n### Terminology\nNew terms or concepts defined:\n- \"let's call this X\"\n- \"X means Y in this codebase\"\n- Glossary entries\n\n## Harvest Process\n\n### Step 1: Read Current .rivet/systems.yaml\n\n```bash\ncat .rivet/systems.yaml\n```\n\nUnderstand existing systems so extracted items can be assigned correctly.\n\n### Step 2: Locate Transcript History\n\nClaude Code stores transcripts in `~/.claude/projects/<project-hash>/`.\n\n```bash\n# Find recent transcripts for this project\nls -lt ~/.claude/projects/*/transcripts/ 2>/dev/null | head -20\n```\n\n### Step 3: Parse Transcripts\n\nLook for patterns indicating decisions, requirements, or terminology:\n\n**Requirement patterns:**\n- \"must\", \"should\", \"needs to\", \"has to\", \"required\"\n- Context: usually follows discussion of a system or feature\n\n**Decision patterns:**\n- \"decided\", \"going with\", \"we'll use\", \"chosen\", \"approach\"\n- Context: usually resolves a discussion or comparison\n\n**Terminology patterns:**\n- \"let's call\", \"we define\", \"means\", \"refers to\"\n- Context: naming or concept clarification\n\n### Step 4: Present Extracted Items\n\nShow the user what was found:\n\n```\nFound 5 potential items to harvest:\n\nRequirements:\n  1. [Router] must support nested routes\n  2. [API] needs to handle rate limiting\n\nDecisions:\n  3. [Router] async-first approach for scale\n  4. [Database] PostgreSQL over SQLite\n\nTerminology:\n  5. vibe_coding: AI handles implementation while human guides\n\nWhich items should be added to .rivet/systems.yaml? (comma-separated numbers, or 'all')\n```\n\n### Step 5: Assign to Systems\n\nFor each selected item, confirm or reassign the target system:\n\n```\nItem: \"must support nested routes\"\nDetected system: Router\n[Enter] to confirm, or type system name to reassign:\n```\n\n### Step 6: Write to .rivet/systems.yaml\n\nAdd extracted items to the appropriate systems:\n\n```yaml\nsystems:\n  Router:\n    description: URL routing and navigation\n    requirements:\n      - must support nested routes\n    decisions:\n      - async-first approach for scale\n```\n\nAdd glossary terms to the project level:\n\n```yaml\nglossary:\n  vibe_coding: AI handles implementation while human guides\n```\n\n## Usage\n\n```\n/rivet-harvest\n```\n\nThe skill will:\n1. Check for .rivet/systems.yaml (fail if missing)\n2. Scan recent transcripts\n3. Extract potential items\n4. Present interactive selection\n5. Write selected items to .rivet/systems.yaml\n\n## Notes\n\n- Items are deduplicated against existing .rivet/systems.yaml entries\n- Each harvest is atomic - all selected items written in one commit\n- Git auto-commits changes with descriptive message\n",
-        "src/hooks/pre-commit.sh": "#!/bin/bash\n# ABOUTME: Pre-commit hook to output session-harvest prompt\n# ABOUTME: Reminds AI to capture emerging terms/decisions before commit\n\n# Check if rivet CLI is installed\nif ! command -v rivet &> /dev/null; then\n    exit 0\nfi\n\n# Check if .rivet/systems.yaml exists\nfind_rivet() {\n    local dir=\"$PWD\"\n    while [ \"$dir\" != \"/\" ]; do\n        if [ -f \"$dir/.rivet/systems.yaml\" ]; then\n            echo \"$dir/.rivet/systems.yaml\"\n            return 0\n        fi\n        dir=$(dirname \"$dir\")\n    done\n    return 1\n}\n\nRIVET_FILE=$(find_rivet)\n\nif [ -n \"$RIVET_FILE\" ]; then\n    rivet prompt session-harvest\nfi\n\nexit 0\n",
-        "src/hooks/prompt-inject.sh": "#!/bin/bash\n# ABOUTME: UserPromptSubmit hook for rivet initialization\n# ABOUTME: Quick check - only outputs if init needed, otherwise exits silently\n\n# Fast exit if rivet not installed\ncommand -v rivet &> /dev/null || exit 0\n\n# Fast exit if .rivet/systems.yaml exists with systems\nif [ -f \".rivet/systems.yaml\" ]; then\n    # Check if systems section has content (not just empty)\n    if grep -q \"^systems:\" .rivet/systems.yaml 2>/dev/null; then\n        # Has systems key - check if it has actual entries\n        if grep -A1 \"^systems:\" .rivet/systems.yaml | grep -q \"^  [A-Z]\" 2>/dev/null; then\n            # Systems defined, exit silently\n            exit 0\n        fi\n    fi\nfi\n\n# Init needed - output the init prompt\nrivet prompt init\n",
-        "src/hooks/session-inject.sh": "#!/bin/bash\n# ABOUTME: SessionStart hook that injects rivet context once per session\n# ABOUTME: Ensures rivet CLI exists, then runs rivet init to inject context\n\n# Check if rivet CLI is installed\nif ! command -v rivet &> /dev/null; then\n    cat << 'EOF'\n# CRITICAL: Rivet CLI Not Found\n\n**You MUST install the rivet CLI before doing anything else.**\n\nRun this command NOW:\n\n```bash\nnpm install -g @ratacat/rivet\n```\n\nDo not proceed with any other tasks until rivet is installed and available.\nEOF\n    exit 0\nfi\n\n# Inject session context (init prompt if no systems, session-start if configured)\nrivet init\n"
-      },
-      "plugins": [
-        {
-          "name": "rivet",
-          "source": "./",
-          "description": "Lock linguistic decisions in your codebase. Auto-discovers systems on install.",
-          "version": "0.0.1",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add ratacat/rivet",
-            "/plugin install rivet@rivet-marketplace"
           ]
         }
       ]

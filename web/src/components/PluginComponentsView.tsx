@@ -32,7 +32,7 @@ function ComponentList({ type, components, selectedFile, onSelectFile }: Compone
 
   return (
     <div className="mb-4 last:mb-0">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500 mb-1.5 px-2">
+      <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5 px-2">
         {config.icon}
         <span>{config.label}</span>
       </div>
@@ -44,8 +44,8 @@ function ComponentList({ type, components, selectedFile, onSelectFile }: Compone
               onClick={() => onSelectFile(component.path)}
               className={`w-full text-left px-3 py-1.5 rounded-md text-sm font-mono transition-colors cursor-pointer ${
                 selectedFile === component.path
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-gray-700 hover:bg-gray-100"
+                  ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}
             >
               {component.name}
@@ -74,18 +74,18 @@ function PluginSection({ plugin, selectedFile, onSelectFile, defaultExpanded = t
     plugin.components.hooks.length > 0;
 
   return (
-    <div className="border-b border-gray-200 last:border-b-0">
+    <div className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-2 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
+        className="w-full flex items-center gap-2 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
       >
         {expanded ? (
           <ChevronDown size={16} className="text-gray-400" />
         ) : (
           <ChevronRight size={16} className="text-gray-400" />
         )}
-        <span className="text-sm font-medium text-gray-900">{plugin.name}</span>
+        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{plugin.name}</span>
       </button>
       {expanded && (
         <div className="px-4 pb-4">
@@ -117,7 +117,7 @@ function PluginSection({ plugin, selectedFile, onSelectFile, defaultExpanded = t
               />
             </>
           ) : (
-            <p className="text-xs text-gray-400 italic">No browseable components</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 italic">No browseable components</p>
           )}
         </div>
       )}
@@ -138,8 +138,8 @@ export function PluginComponentsView({ marketplace, selectedFile = "", onSelectF
 
   if (pluginsToShow.length === 0) {
     return (
-      <div className="border border-gray-200 rounded-xl bg-white p-6">
-        <p className="text-sm text-gray-500 text-center">No plugin components found</p>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 p-6">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">No plugin components found</p>
       </div>
     );
   }
@@ -154,9 +154,9 @@ export function PluginComponentsView({ marketplace, selectedFile = "", onSelectF
       plugin.components.hooks.length > 0;
 
     return (
-      <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-200 bg-gray-50">
-          <h2 className="text-sm font-semibold text-gray-900">{plugin.name}</h2>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 overflow-hidden">
+        <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{plugin.name}</h2>
         </div>
         <div className="p-4">
           {hasComponents ? (
@@ -187,7 +187,7 @@ export function PluginComponentsView({ marketplace, selectedFile = "", onSelectF
               />
             </>
           ) : (
-            <p className="text-xs text-gray-400 italic">No browseable components</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 italic">No browseable components</p>
           )}
         </div>
       </div>
@@ -196,9 +196,9 @@ export function PluginComponentsView({ marketplace, selectedFile = "", onSelectF
 
   // Multi-plugin layout - collapsible sections
   return (
-    <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
-      <div className="px-5 py-3 border-b border-gray-200 bg-gray-50">
-        <h2 className="text-sm font-semibold text-gray-900">Plugins</h2>
+    <div className="border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 overflow-hidden">
+      <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Plugins</h2>
       </div>
       <div>
         {pluginsToShow.map((plugin) => (

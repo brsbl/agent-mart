@@ -11,7 +11,7 @@ function GitHubLink() {
       href="https://github.com/brsbl/agent-mart"
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-md"
+      className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-neutral-700 text-white hover:bg-neutral-600 transition-colors rounded-md border border-neutral-600"
       aria-label="View source on GitHub"
     >
       <span>View Source</span>

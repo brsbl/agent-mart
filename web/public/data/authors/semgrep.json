@@ -2,91 +2,24 @@
   "author": {
     "id": "semgrep",
     "display_name": "Semgrep",
-    "type": "Organization",
-    "avatar_url": "https://avatars.githubusercontent.com/u/29760937?v=4",
-    "url": "https://github.com/semgrep",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 1,
-      "total_skills": 0,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/29760937?v=4"
   },
   "marketplaces": [
     {
       "name": "semgrep",
       "version": null,
       "description": "Plugin by Semgrep. Allows Claude to use Semgrep via the MCP, hooks, and commands.",
-      "owner_info": {
-        "name": "Semgrep"
-      },
-      "keywords": [],
       "repo_full_name": "semgrep/mcp-marketplace",
       "repo_url": "https://github.com/semgrep/mcp-marketplace",
       "repo_description": "Home for the Semgrep Claude Code Plugin.",
-      "homepage": "",
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-12-19T22:53:14Z",
-        "created_at": "2025-11-21T22:10:02Z",
-        "license": null
+        "pushed_at": "2025-12-19T22:53:14Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 297
-        },
-        {
-          "path": "plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugin/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugin/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 210
-        },
-        {
-          "path": "plugin/commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugin/commands/setup_semgrep_plugin.md",
-          "type": "blob",
-          "size": 725
-        },
-        {
-          "path": "plugin/hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugin/hooks/hooks.json",
-          "type": "blob",
-          "size": 910
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n    \"name\": \"semgrep\",\n    \"owner\": {\n    \"name\": \"Semgrep\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"semgrep-plugin\",\n            \"source\": \"./plugin\",\n            \"description\": \"Plugin by Semgrep. Allows Claude to use Semgrep via the MCP, hooks, and commands.\"\n        }\n    ]\n}\n",
-        "plugin/.claude-plugin/plugin.json": "{\n    \"name\": \"semgrep-plugin\",\n    \"description\": \"Plugin by Semgrep. Allows Claude to use Semgrep via the MCP, hooks, and commands.\",\n    \"version\": \"0.4.0\",\n    \"author\": {\n        \"name\": \"Semgrep\"\n    }\n}\n",
-        "plugin/commands/setup_semgrep_plugin.md": "---\ndescription: setup Claude Code for the Semgrep plugin (semgrep-plugin)\n---\n\nYou are setting up Semgrep for Claude Code. Do the following in order and confirm each step:\n\n1) Install Semgrep:\n- Check if Semgrep is already installed by running: `which semgrep`\n- If not installed, run: `brew install semgrep`\n\n2) Authenticate Semgrep:\n- Run: `semgrep login --login`\n\n3) Install Semgrep Pro:\n- Run: `semgrep install-semgrep-pro || true`\n\n4) Report back:\n- Confirm Semgrep login/install status by running `semgrep --pro --version`\n- Also check the Semgrep version in `${CLAUDE_PLUGIN_ROOT}/semgrep-version` is lower\nthan or equal to the version installed.\n\n5) Tell the user that they are all set for using the Semgrep Plugin!\n",
-        "plugin/hooks/hooks.json": "{\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Write|Edit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"semgrep mcp -k post-tool-cli-scan\"\n          }\n        ]\n      }\n    ],\n    \"UserPromptSubmit\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"semgrep mcp -k inject-secure-defaults-short\"\n          }\n        ]\n      }\n    ],\n    \"SessionStart\": [\n      {\n        \"matcher\": \"startup\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"semgrep mcp -k inject-secure-defaults\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"startup|resume|clear|compact\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/check_version.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}"
+        "README.md": "# Semgrep MCP Marketplace\n\nThis repo is where the Semgrep [Plugin Marketplace](https://code.claude.com/docs/en/plugin-marketplaces) (`semgrep`) and the Semgrep [Plugin](https://code.claude.com/docs/en/plugins) (`semgrep-plugin@semgrep`) live.\n\nTo use the Semgrep plugin:\n1. Start a Claude Code instance by running:\n    ```\n    claude\n    ```\n1. Add the Semgrep marketplace by running the following command in Claude:\n    ```\n    /plugin marketplace add semgrep/mcp-marketplace\n    ```\n1. Install the plugin from the marketplace:\n    ```\n    /plugin install semgrep-plugin@semgrep\n    ```\n1. If it is installed, see if you can run the `/semgrep-plugin:setup_semgrep_plugin` command. If you cannot run the command, try restarting your claude instance by exiting out of the current session and re-running:\n   ```\n   claude\n   ```\n1. If it still doesn't work, try enabling the plugin:\n    ```\n    /plugin enable semgrep-plugin@semgrep\n    ```\n"
       },
       "plugins": [
         {

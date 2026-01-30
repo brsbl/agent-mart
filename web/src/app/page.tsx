@@ -58,7 +58,17 @@ function HomePageContent() {
     "Failed to load marketplaces."
   );
 
-  const allMarketplaces = useMemo(() => marketplacesData?.marketplaces ?? [], [marketplacesData?.marketplaces]);
+  const allMarketplaces = useMemo(() => {
+    const marketplaces = marketplacesData?.marketplaces ?? [];
+    // Dedupe by repo_full_name to avoid duplicate key errors
+    const seen = new Set<string>();
+    return marketplaces.filter(m => {
+      const key = m.repo_full_name || `${m.author_id}-${m.name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [marketplacesData?.marketplaces]);
 
   // Combined filter and sort for marketplaces (search + categories + sort)
   const filteredAndSortedMarketplaces = useMemo(() => {
@@ -125,7 +135,7 @@ function HomePageContent() {
   // Helper to render marketplace cards consistently
   const renderMarketplaceCard = (marketplace: BrowseMarketplace) => (
     <MarketplaceCard
-      key={`${marketplace.author_id}-${marketplace.name}`}
+      key={marketplace.repo_full_name || `${marketplace.author_id}-${marketplace.name}`}
       marketplace={{
         name: marketplace.name,
         description: marketplace.description,
@@ -208,7 +218,7 @@ function HomePageContent() {
           <button
             type="button"
             onClick={() => setDisplayCount(c => c + LOAD_MORE_COUNT)}
-            className="px-6 py-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors border border-gray-300 dark:border-gray-600 hover:border-gray-400"
+            className="px-6 py-2.5 bg-card hover:bg-card-hover text-foreground-secondary rounded-lg transition-colors border border-border hover:border-border-hover"
           >
             See more ({remainingCount} remaining)
           </button>

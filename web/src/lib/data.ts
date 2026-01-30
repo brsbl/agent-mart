@@ -133,6 +133,8 @@ const UPPERCASE_WORDS = new Set([
 
 // Words with specific capitalization (mixed case, special syntax)
 const SPECIAL_CASE_WORDS: Record<string, string> = {
+  // Claude Code specific
+  'claude-md': 'CLAUDE.md',
   // Operating systems
   'ios': 'iOS',
   'macos': 'macOS',

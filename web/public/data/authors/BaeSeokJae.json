@@ -2,76 +2,25 @@
   "author": {
     "id": "BaeSeokJae",
     "display_name": "BaeSeokJae",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/67224427?u=8d7cc37aa862330d27d3f8e93b837da05b76f2da&v=4",
-    "url": "https://github.com/BaeSeokJae",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 1,
-      "total_skills": 0,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/67224427?u=8d7cc37aa862330d27d3f8e93b837da05b76f2da&v=4"
   },
   "marketplaces": [
     {
       "name": "gwts-cc",
       "version": null,
       "description": "Git Worktree Sync for Claude Code",
-      "owner_info": {
-        "name": "BaeSeokJae"
-      },
-      "keywords": [],
       "repo_full_name": "BaeSeokJae/gwts-cc",
       "repo_url": "https://github.com/BaeSeokJae/gwts-cc",
       "repo_description": "This tool creates a Git worktree and automatically synchronizes the untracked files required to run the service.",
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-29T15:04:17Z",
-        "created_at": "2026-01-29T06:14:19Z",
-        "license": "MIT"
+        "pushed_at": "2026-01-29T15:04:17Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 229
-        },
-        {
-          "path": ".claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 312
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 2570
-        },
-        {
-          "path": "commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "commands/worktree.md",
-          "type": "blob",
-          "size": 6043
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"gwts-cc\",\n  \"owner\": {\n    \"name\": \"BaeSeokJae\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"gwts-cc\",\n      \"source\": \"./\",\n      \"description\": \"Git Worktree Sync for Claude Code\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
         ".claude-plugin/plugin.json": "{\n  \"name\": \"gwts-cc\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Create Git worktrees with automatic untracked file synchronization\",\n  \"author\": {\n    \"name\": \"BaeSeokJae\"\n  },\n  \"repository\": \"https://github.com/BaeSeokJae/gwts-cc\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"git\", \"worktree\", \"sync\", \"claude-code\"]\n}\n",
-        "README.md": "# gwts-cc\n\n> Git worktree + untracked file sync for Claude Code\n\n[English](README.md) | [한국어](docs/README.ko.md)\n\n## Why?\n\nGit worktrees are great for parallel development, but untracked files (migrations, .env, scripts) don't come along. This plugin syncs them automatically.\n\n## Installation\n\n```bash\n/plugin marketplace add BaeSeokJae/gwts-cc\n/plugin install gwts-cc@gwts-cc\n```\n\n## Usage\n\n```bash\n/worktree create feat/my-feature              # Create from main (default)\n/worktree create feat/my-feature from dev     # Create from dev branch\n/worktree create feat/my-feature from current # Create from current branch\n/worktree list                                # List worktrees\n/worktree sync                                # Sync files to current worktree\n/worktree clean <path>                        # Remove worktree\n```\n\n## Configuration\n\nCreate `.gwts` in your project root:\n\n```json\n{\n  \"includes\": [\"migrations/\", \".env.example\"],\n  \"mode\": \"symlink\",\n  \"hooks\": { \"postCreate\": \"pnpm install\" }\n}\n```\n\nThat's it. Personal overrides go in `.claude/gwts/worktree.json`.\n\n### Options\n\n| Option | Description | Default |\n|--------|-------------|---------|\n| `includes` | Files/dirs to sync | `[]` |\n| `excludes` | Files/dirs to skip | `[]` |\n| `mode` | `symlink` or `copy` | `symlink` |\n| `hooks.postCreate` | Command after create | - |\n| `defaultPath` | Worktree location | `../worktrees` |\n| `baseBranch` | Base for new branches | `main` |\n\n### Mode\n\n| Mode | Behavior | Use for |\n|------|----------|---------|\n| `symlink` | Links to original, changes sync instantly | migrations, shared configs |\n| `copy` | Independent copy, no sync | .env.local, credentials |\n\n### Base Branch\n\nControl where new branches are created from:\n\n```bash\n/worktree create feat/new              # From baseBranch (main)\n/worktree create feat/new from dev     # From dev\n/worktree create feat/new from current # From current branch\n```\n\nSet default in `.gwts`:\n```json\n{\n  \"baseBranch\": \"develop\"\n}\n```\n\n### Patterns\n\n```json\n{\n  \"includes\": [\n    \"migrations/\",          // directory\n    \".env.example\",         // file\n    \"apps/*/db/\"            // glob\n  ]\n}\n```\n\n## Examples\n\n**Node.js project:**\n```json\n{\n  \"includes\": [\"migrations/\", \".env.example\"],\n  \"hooks\": { \"postCreate\": \"npm install\" }\n}\n```\n\n**Monorepo:**\n```json\n{\n  \"includes\": [\"packages/*/migrations/\", \"apps/*/db/\"],\n  \"hooks\": { \"postCreate\": \"pnpm install\" }\n}\n```\n\n**Personal config** (`.claude/gwts/worktree.json`):\n```json\n{\n  \"includes\": [\".env.local\"],\n  \"mode\": \"copy\"\n}\n```\n\n## License\n\nMIT\n",
-        "commands/worktree.md": "---\nname: worktree\ndescription: Create and manage Git worktrees with automatic untracked file synchronization\nargument-hint: \"<command> [args...]\"\nallowed-tools: Bash, Read, Write, Glob\n---\n\n# Git Worktree Sync\n\nCreate Git worktrees and automatically synchronize untracked files (migrations/, .env.local, etc.).\n\n## Available Commands\n\n- `/worktree create <branch> [path] [from <base>]` - Create new worktree and sync files\n- `/worktree sync [path]` - Sync files to existing worktree\n- `/worktree list` - List all worktrees\n- `/worktree clean <path>` - Remove worktree\n\n---\n\n## Execution Instructions\n\nParse $ARGUMENTS and perform the appropriate action.\n\n### 1. create Command\n\n**Input**: `/worktree create <branch> [path] [from <base>]`\n\n**Examples:**\n- `/worktree create feat/new` - Create from baseBranch (default: main)\n- `/worktree create feat/new from dev` - Create from dev branch\n- `/worktree create feat/new from current` - Create from current branch\n\n**Steps**:\n\n1. **Verify Git Repository**\n   ```bash\n   git rev-parse --git-dir\n   ```\n   - On failure: Output \"Current directory is not a Git repository\" and exit\n\n2. **Load Configuration with Priority**\n   - Start with defaults:\n     ```json\n     {\n       \"includes\": [],\n       \"excludes\": [],\n       \"mode\": \"symlink\",\n       \"hooks\": {},\n       \"defaultPath\": \"../worktrees\",\n       \"baseBranch\": \"main\"\n     }\n     ```\n   - Read `.gwts` (team config, if exists)\n   - Read `.claude/gwts/worktree.json` (personal config, if exists)\n   - Merge rules:\n     - `includes`: Union of all configs\n     - `excludes`: Union of all configs\n     - `mode`: Personal > Team > Default\n     - `hooks`: Personal > Team > Default\n     - `defaultPath`: Personal > Team > Default\n     - `baseBranch`: Personal > Team > Default\n\n3. **Determine Worktree Path**\n   - Use `[path]` argument if provided\n   - Otherwise use `{defaultPath}/{branch}`\n   - Example: `../worktrees/feat/new-feature`\n\n4. **Determine Base Branch**\n   - Parse arguments for \"from <base>\" pattern\n   - If \"from current\": Use current branch\n     ```bash\n     baseBranch=$(git branch --show-current)\n     ```\n   - Else if \"from <base>\": Use specified base\n   - Else: Use config's `baseBranch` (default: \"main\")\n\n5. **Create Worktree**\n   - Check if branch exists:\n     ```bash\n     git rev-parse --verify <branch> 2>/dev/null\n     ```\n   - If exists: Create worktree from existing branch\n     ```bash\n     git worktree add <path> <branch>\n     ```\n   - If not exists: Create new branch from baseBranch\n     ```bash\n     git worktree add -b <branch> <path> <baseBranch>\n     ```\n   - On failure: Output error and exit\n\n6. **Collect Untracked Files**\n   ```bash\n   git ls-files --others --exclude-standard\n   ```\n\n7. **Filter by Pattern Matching**\n   - Using Glob tool or bash:\n   - Select only files matching `includes` patterns\n   - Exclude files matching `excludes` patterns\n   - Example: `includes: [\"migrations/\", \"*.env\"]`, `excludes: [\".claude/\"]`\n\n8. **Sync Files**\n   - Find git root path:\n     ```bash\n     git rev-parse --show-toplevel\n     ```\n   - For each file:\n     - **symlink mode**:\n       ```bash\n       ln -s <source_absolute_path> <target_absolute_path>\n       ```\n     - **copy mode**:\n       ```bash\n       cp -r <source> <target>\n       ```\n   - Process directories recursively\n\n9. **Execute postCreate Hook** (if defined)\n   ```bash\n   cd <worktree_path> && <hook_command>\n   ```\n   - Example: `pnpm install`\n   - Continue on failure (show warning only)\n\n10. **Output Result**\n   ```\n   Worktree created successfully\n   Path: <worktree_path>\n   Branch: <branch>\n   Synced files: <count>\n   ```\n\n---\n\n### 2. sync Command\n\n**Input**: `/worktree sync [path]`\n\n**Steps**:\n\n1. **Determine Target Path**\n   - Use `[path]` argument if provided\n   - Otherwise use current directory\n\n2. **Load Configuration Files** (same as create)\n\n3. **Find Main Worktree Path**\n   ```bash\n   git worktree list --porcelain | grep \"^worktree\" | head -1 | cut -d' ' -f2\n   ```\n\n4. **Collect Untracked Files from Main**\n   ```bash\n   cd <main_worktree> && git ls-files --others --exclude-standard\n   ```\n\n5. **Filter and Sync** (same as create)\n\n6. **Execute postSync Hook** (if defined)\n\n7. **Output Result**\n\n---\n\n### 3. list Command\n\n**Input**: `/worktree list`\n\n**Steps**:\n\n1. **Get Worktree List**\n   ```bash\n   git worktree list --porcelain\n   ```\n\n2. **Parse and Format Output**\n   - Example output:\n   ```\n   Main Worktree:\n     /path/to/main (main) [current]\n\n   Worktrees:\n     /path/to/worktree1 (feat/branch-a)\n     /path/to/worktree2 (feat/branch-b)\n   ```\n\n---\n\n### 4. clean Command\n\n**Input**: `/worktree clean <path>`\n\n**Steps**:\n\n1. **Validate Path**\n   - Verify `<path>` is a valid worktree\n\n2. **Remove Worktree**\n   ```bash\n   git worktree remove <path>\n   ```\n   - Retry with `--force` on failure\n\n3. **Clean Up Directory** (if remaining)\n   ```bash\n   rm -rf <path>\n   ```\n\n4. **Output Result**\n\n---\n\n## Configuration Reference\n\n**Priority:** Personal (`.claude/gwts/worktree.json`) > Team (`.gwts`) > Defaults\n\n**Defaults:**\n```json\n{\n  \"includes\": [],\n  \"excludes\": [],\n  \"mode\": \"symlink\",\n  \"hooks\": {},\n  \"defaultPath\": \"../worktrees\",\n  \"baseBranch\": \"main\"\n}\n```\n\n**Options:**\n\n| Option | Type | Description |\n|--------|------|-------------|\n| `includes` | `string[]` | Patterns to sync (merged across configs) |\n| `excludes` | `string[]` | Patterns to skip (merged across configs) |\n| `mode` | `\"symlink\"` \\| `\"copy\"` | symlink=shared, copy=independent |\n| `hooks.postCreate` | `string` | Command to run after worktree creation |\n| `hooks.postSync` | `string` | Command to run after sync |\n| `defaultPath` | `string` | Where to create worktrees |\n| `baseBranch` | `string` | Base branch for new branches |\n\n**Pattern syntax:** Standard glob (`migrations/`, `*.config.js`, `apps/*/db/`)\n\n---\n\n## Error Handling\n\n- Not a Git repository → Exit with clear message\n- Worktree creation failed → Show git error\n- File sync failed → Log error, continue with others\n- Hook failed → Show warning, continue\n"
+        "README.md": "# gwts-cc\n\n> Git worktree + untracked file sync for Claude Code\n\n[English](README.md) | [한국어](docs/README.ko.md)\n\n## Why?\n\nGit worktrees are great for parallel development, but untracked files (migrations, .env, scripts) don't come along. This plugin syncs them automatically.\n\n## Installation\n\n```bash\n/plugin marketplace add BaeSeokJae/gwts-cc\n/plugin install gwts-cc@gwts-cc\n```\n\n## Usage\n\n```bash\n/worktree create feat/my-feature              # Create from main (default)\n/worktree create feat/my-feature from dev     # Create from dev branch\n/worktree create feat/my-feature from current # Create from current branch\n/worktree list                                # List worktrees\n/worktree sync                                # Sync files to current worktree\n/worktree clean <path>                        # Remove worktree\n```\n\n## Configuration\n\nCreate `.gwts` in your project root:\n\n```json\n{\n  \"includes\": [\"migrations/\", \".env.example\"],\n  \"mode\": \"symlink\",\n  \"hooks\": { \"postCreate\": \"pnpm install\" }\n}\n```\n\nThat's it. Personal overrides go in `.claude/gwts/worktree.json`.\n\n### Options\n\n| Option | Description | Default |\n|--------|-------------|---------|\n| `includes` | Files/dirs to sync | `[]` |\n| `excludes` | Files/dirs to skip | `[]` |\n| `mode` | `symlink` or `copy` | `symlink` |\n| `hooks.postCreate` | Command after create | - |\n| `defaultPath` | Worktree location | `../worktrees` |\n| `baseBranch` | Base for new branches | `main` |\n\n### Mode\n\n| Mode | Behavior | Use for |\n|------|----------|---------|\n| `symlink` | Links to original, changes sync instantly | migrations, shared configs |\n| `copy` | Independent copy, no sync | .env.local, credentials |\n\n### Base Branch\n\nControl where new branches are created from:\n\n```bash\n/worktree create feat/new              # From baseBranch (main)\n/worktree create feat/new from dev     # From dev\n/worktree create feat/new from current # From current branch\n```\n\nSet default in `.gwts`:\n```json\n{\n  \"baseBranch\": \"develop\"\n}\n```\n\n### Patterns\n\n```json\n{\n  \"includes\": [\n    \"migrations/\",          // directory\n    \".env.example\",         // file\n    \"apps/*/db/\"            // glob\n  ]\n}\n```\n\n## Examples\n\n**Node.js project:**\n```json\n{\n  \"includes\": [\"migrations/\", \".env.example\"],\n  \"hooks\": { \"postCreate\": \"npm install\" }\n}\n```\n\n**Monorepo:**\n```json\n{\n  \"includes\": [\"packages/*/migrations/\", \"apps/*/db/\"],\n  \"hooks\": { \"postCreate\": \"pnpm install\" }\n}\n```\n\n**Personal config** (`.claude/gwts/worktree.json`):\n```json\n{\n  \"includes\": [\".env.local\"],\n  \"mode\": \"copy\"\n}\n```\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

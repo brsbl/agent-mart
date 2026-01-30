@@ -2,53 +2,24 @@
   "author": {
     "id": "wayfind",
     "display_name": "Ramond",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/1912371?v=4",
-    "url": "https://github.com/wayfind",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 0,
-      "total_stars": 12,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/1912371?v=4"
   },
   "marketplaces": [
     {
       "name": "intent-engine",
       "version": null,
       "description": "AI Long-Term Task Memory plugins",
-      "owner_info": {
-        "name": "wayfind"
-      },
-      "keywords": [],
       "repo_full_name": "wayfind/intent-engine",
       "repo_url": "https://github.com/wayfind/intent-engine",
       "repo_description": "llm tool",
-      "homepage": null,
       "signals": {
         "stars": 12,
         "forks": 0,
-        "pushed_at": "2026-01-19T10:21:43Z",
-        "created_at": "2025-11-06T17:53:07Z",
-        "license": "Apache-2.0"
+        "pushed_at": "2026-01-19T10:21:43Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 323
-        }
-      ],
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"intent-engine\",\n  \"owner\": {\n    \"name\": \"wayfind\"\n  },\n  \"metadata\": {\n    \"description\": \"AI Long-Term Task Memory plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"intent-engine\",\n      \"source\": \"./claude-plugin\",\n      \"description\": \"Auto-install ie, session hook, and skill for task memory\"\n    }\n  ]\n}\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"intent-engine\",\n  \"owner\": {\n    \"name\": \"wayfind\"\n  },\n  \"metadata\": {\n    \"description\": \"AI Long-Term Task Memory plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"intent-engine\",\n      \"source\": \"./claude-plugin\",\n      \"description\": \"Auto-install ie, session hook, and skill for task memory\"\n    }\n  ]\n}\n",
+        "README.md": "# Intent-Engine\n\n**[中文](Readme.zh.md) | English**\n\n[![CI](https://github.com/wayfind/intent-engine/workflows/CI/badge.svg)](https://github.com/wayfind/intent-engine/actions/workflows/ci.yml)\n[![Crates.io](https://img.shields.io/crates/v/intent-engine.svg)](https://crates.io/crates/intent-engine)\n[![npm](https://img.shields.io/npm/v/@origintask/intent-engine.svg)](https://www.npmjs.com/package/@origintask/intent-engine)\n[![License: MIT OR Apache-2.0](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](./LICENSE-MIT)\n\n**Persistent memory for AI coding assistants.**\n\n---\n\n## AI Forgets. Every Time.\n\n**Without Intent-Engine:**\n```\nDay 1: \"Build authentication\"\n       AI works brilliantly...\n       [session ends]\n\nDay 2: \"Continue auth\"\n       AI: \"What authentication?\"\n```\n\n**With Intent-Engine:**\n```\nDay 1: \"Build authentication\"\n       AI works, saves progress...\n       [session ends]\n\nDay 2: \"Continue auth\"\n       AI: \"Resuming #42: JWT auth.\n            Done: token generation.\n            Next: refresh tokens.\"\n```\n\n**One command restores everything:** `ie status`\n\n---\n\n## Visual Dashboard\n\nSee your entire task structure at a glance:\n\n```bash\nie dashboard\n```\n\n![IE Dashboard](docs/iedashboard.png)\n\n**Features:**\n- **Task Navigator** — Hierarchical tree view with search\n- **Task Detail** — Full spec with markdown rendering (mermaid diagrams, code blocks)\n- **Decision Timeline** — Chronological log of all decisions and notes\n- **Multi-project Support** — Switch between projects via tabs\n\n---\n\n## Not Just Memory — Infrastructure\n\nWhat actually happens when things go wrong:\n\n- **Session ends** → ✓ Persisted\n- **Tool crashes** → ✓ Recoverable\n- **Week later** → ✓ Full history\n- **Multiple agents** → ✓ Isolated\n- **Complex project** → ✓ Focus-driven\n\n---\n\n## Why It Works\n\n**Minimal Footprint** — ~200 tokens overhead, single binary, no daemons\n\n**Battle-Tested Stack** — Rust + SQLite + FTS5, GB-scale in milliseconds, local-only\n\n---\n\n## The Bigger Picture\n\n> **The unsolved problem in AI agents: tasks that span days or weeks.**\n\nIntent-Engine provides the foundation:\n\n```\nWeek-long refactoring:\n\n├── Agent A (session: \"api\")    → focus: #12 REST endpoints\n├── Agent B (session: \"db\")     → focus: #15 Schema migration\n└── Agent C (session: \"test\")   → focus: #18 Integration tests\n                                  depends_on: [#12, #15]\n```\n\n- **Interruptions** → Persistent memory\n- **Multi-agent** → Session isolation\n- **Scheduling** → Dependency graph (`depends_on`)\n- **Context explosion** → Focus-driven retrieval\n\n**Result:** Reliable multi-day, multi-agent workflows.\n\n---\n\n## Get Started\n\n### Claude Code (recommended)\n\n```bash\n/plugin marketplace add wayfind/origin-task\n/plugin install intent-engine\n```\n\n### OpenCode\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/wayfind/intent-engine/main/opencode-plugin/intent-engine.ts \\\n  -o ~/.config/opencode/plugin/intent-engine.ts\n```\n\n### Manual Install\n\n```bash\n# Choose one\nnpm install -g @origintask/intent-engine\nbrew install wayfind/tap/intent-engine\ncargo install intent-engine\n\n# Or use the install script\ncurl -fsSL https://raw.githubusercontent.com/wayfind/intent-engine/main/scripts/install/ie-manager.sh | sh -s install\n```\n\n### Core Commands\n\n```bash\nie status                         # Restore context\nie dashboard                      # Open visual dashboard\necho '{\"tasks\":[...]}' | ie plan  # Create/update tasks\nie log decision \"chose X\"         # Record decisions\nie search \"keyword\"               # Search history\n```\n\n---\n\n## How It Works\n\n```\nSession Start  →  ie status  →  Full context restored\n                                       ↓\nWorking        →  ie plan    →  Tasks tracked\n               →  ie log     →  Decisions recorded\n                                       ↓\nInterruption   →  Auto-persisted\n                                       ↓\nNext Session   →  ie status  →  Continue where you left off\n```\n\n---\n\n## Documentation\n\n- **[Quick Start](docs/en/guide/quickstart.md)** — Get running in 5 minutes\n- **[Dashboard Guide](docs/dashboard-user-guide.md)** — Visual interface walkthrough\n- **[CLAUDE.md](CLAUDE.md)** — AI integration guide\n- **[Commands](docs/en/guide/command-reference-full.md)** — Full reference\n\n---\n\n**MIT OR Apache-2.0** · [GitHub](https://github.com/wayfind/intent-engine)\n\n*Give your AI the memory it deserves.*\n"
       },
       "plugins": [
         {

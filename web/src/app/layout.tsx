@@ -44,7 +44,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${sourceSerif.variable} ${ibmPlexMono.variable} ${jetbrainsMono.variable} ${inter.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-screen flex flex-col bg-[#f5f5f0] dark:bg-[#0a0a0a] grid-background">
+          <div className="min-h-screen flex flex-col bg-background grid-background">
             <NavBar />
             <main className="flex-1">{children}</main>
             <Footer />
