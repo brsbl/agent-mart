@@ -4,31 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, GitFork, Clock, ChevronRight } from "lucide-react";
-import { formatNumber } from "@/lib/data";
+import { formatNumber, formatRelativeTime } from "@/lib/data";
 import type { Category } from "@/lib/types";
-
-// Format relative time (e.g., "2d ago", "3mo ago")
-function formatRelativeTime(dateString: string | null): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 1) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
-    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
-  }
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return `${months} month${months === 1 ? "" : "s"} ago`;
-  }
-  const years = Math.floor(diffDays / 365);
-  return `${years} year${years === 1 ? "" : "s"} ago`;
-}
 
 export interface MarketplaceCardProps {
   marketplace: {

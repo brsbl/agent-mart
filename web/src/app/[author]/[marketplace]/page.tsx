@@ -24,40 +24,17 @@ import {
   MarketplaceCard,
   InstallCommand,
 } from "@/components";
-import { useFetch, useStarredRepos } from "@/hooks";
+import { useFetch } from "@/hooks";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import type { AuthorDetail, Marketplace, Category } from "@/lib/types";
 import {
   formatNumber,
+  formatRelativeTime,
   getCategoryBadgeClass,
   getCategoryDisplayName,
 } from "@/lib/data";
 import { validateUrlParam } from "@/lib/validation";
 import { DATA_URLS } from "@/lib/constants";
-
-// Format relative time (e.g., "2d ago", "3mo ago")
-function formatRelativeTime(dateString?: string | null): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 1) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
-    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
-  }
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return `${months} month${months === 1 ? "" : "s"} ago`;
-  }
-  const years = Math.floor(diffDays / 365);
-  return `${years} year${years === 1 ? "" : "s"} ago`;
-}
 
 // Terminal-style install command component
 function TerminalInstallCommand({ command }: { command: string }) {
@@ -149,7 +126,6 @@ export default function MarketplaceDetailPage() {
   const params = useParams();
   const authorId = validateUrlParam(params.author);
   const marketplaceName = validateUrlParam(params.marketplace);
-  const { isStarred, toggleStar } = useStarredRepos();
   const [selectedPluginIndex, setSelectedPluginIndex] = useState(0);
 
   // Build URL conditionally - null if params are invalid
@@ -210,15 +186,6 @@ export default function MarketplaceDetailPage() {
     if (!marketplace || plugins.length === 0) return null;
     return getPluginReadme(marketplace.files, plugins[selectedPluginIndex]?.name);
   }, [marketplace, plugins, selectedPluginIndex]);
-
-  const repoId = marketplace?.repo_full_name || "";
-  const starred = isStarred(repoId);
-
-  const handleStarClick = () => {
-    if (repoId) {
-      toggleStar(repoId);
-    }
-  };
 
   if (loading) {
     return <LoadingState />;

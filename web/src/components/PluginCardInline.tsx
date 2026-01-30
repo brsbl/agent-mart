@@ -65,6 +65,15 @@ export function PluginCardInline({ plugin }: PluginCardInlineProps) {
               +{remainingCount}
             </button>
           )}
+          {expanded && categories.length > MAX_CATEGORIES && (
+            <button
+              type="button"
+              onClick={() => setExpanded(false)}
+              className="inline-flex items-center text-[0.8rem] font-medium text-foreground-muted hover:text-foreground-secondary self-center cursor-pointer transition-colors px-1.5 py-0.5 border border-border rounded-full hover:border-border-hover"
+            >
+              Show less
+            </button>
+          )}
         </div>
       )}
     </div>
