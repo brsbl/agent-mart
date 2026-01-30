@@ -148,6 +148,11 @@ export default function MarketplaceDetailPage() {
     );
   }, [authorData, marketplaceName]);
 
+  // Scroll to top when navigating to a new marketplace
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [authorId, marketplaceName]);
+
   // Reset selected plugin index when marketplace changes
   useEffect(() => {
     setSelectedPluginIndex(0);
@@ -234,7 +239,7 @@ export default function MarketplaceDetailPage() {
           ? "lg:grid lg:grid-cols-[1fr_380px] lg:gap-8 lg:pl-12"
           : "max-w-3xl mx-auto"}>
           {/* Main Column - Hero, Terminal, README */}
-          <div>
+          <div className="min-w-0">
             {/* Hero Header - glass */}
             <div className="glass-card border border-border rounded-2xl p-6 mb-6 shadow-xl">
               <div className="flex items-start gap-4">
@@ -403,7 +408,7 @@ export default function MarketplaceDetailPage() {
                     README
                   </h2>
                 </div>
-                <div className="p-6 prose prose-sm dark:prose-invert max-w-none max-h-[48rem] overflow-y-auto scrollbar-auto-hide">
+                <div className="p-6 prose prose-sm dark:prose-invert max-w-none max-h-[48rem] overflow-auto scrollbar-auto-hide">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeSanitize]}
