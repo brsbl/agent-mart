@@ -64,25 +64,25 @@ function TerminalInstallCommand({ command }: { command: string }) {
   const { copied, copy } = useCopyToClipboard();
 
   return (
-    <div className="bg-terminal-bg rounded-lg overflow-hidden">
+    <div className="bg-terminal-bg dark:bg-gray-800 rounded-lg overflow-hidden">
       {/* Terminal header */}
-      <div className="px-3 py-1.5 bg-card/10 border-b border-card/10">
-        <span className="text-[10px] text-terminal-text font-mono opacity-60">Add marketplace</span>
+      <div className="px-3 py-1 bg-card/10 border-b border-white/15 dark:bg-gray-900">
+        <span className="text-[10px] text-terminal-text font-mono opacity-60 dark:opacity-80">Add marketplace</span>
       </div>
       {/* Command line */}
-      <div className="px-3 py-2.5 flex items-center justify-between gap-3">
+      <div className="px-3 py-2 flex items-center justify-between gap-3">
         <code className="text-terminal-text font-mono text-sm flex-1 overflow-x-auto">
           <span className="opacity-50">$</span> {command}
         </code>
         <button
           type="button"
           onClick={() => copy(command)}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-terminal-text hover:text-accent-foreground bg-card/10 hover:bg-card/20 rounded transition-colors flex-shrink-0 cursor-pointer"
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-terminal-text bg-white/10 hover:bg-white/20 rounded transition-colors flex-shrink-0 cursor-pointer"
           aria-label={copied ? "Copied!" : "Copy to clipboard"}
         >
           {copied ? (
             <>
-              <Check size={12} className="text-success" />
+              <Check size={12} className="text-accent" />
               <span>Copied</span>
             </>
           ) : (
@@ -264,12 +264,12 @@ export default function MarketplaceDetailPage() {
       <div className="max-w-6xl mx-auto">
         {/* Two-column layout: Main (left) + Sidebar (right), or centered if no sidebar */}
         <div className={hasOtherMarketplaces
-          ? "lg:grid lg:grid-cols-[1fr_400px] lg:gap-8"
+          ? "lg:grid lg:grid-cols-[1fr_380px] lg:gap-8 lg:pl-12"
           : "max-w-3xl mx-auto"}>
           {/* Main Column - Hero, Terminal, README */}
           <div>
             {/* Hero Header - glass */}
-            <div className="glass-card border border-white/50 rounded-2xl p-6 mb-6 shadow-xl">
+            <div className="glass-card border border-border rounded-2xl p-6 mb-6 shadow-xl">
               <div className="flex items-start gap-4">
                 {/* Avatar */}
                 <Image
@@ -350,7 +350,7 @@ export default function MarketplaceDetailPage() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground-secondary bg-card border border-border rounded-lg hover:bg-background-secondary hover:border-border-hover transition-colors flex-shrink-0"
                 >
-                  <span>Learn more on GitHub</span>
+                  <span>View on GitHub</span>
                   <ExternalLink size={14} />
                 </a>
               </div>
@@ -380,7 +380,7 @@ export default function MarketplaceDetailPage() {
                     <button
                       type="button"
                       onClick={handlePrevPlugin}
-                      className="p-1.5 text-foreground-muted hover:text-foreground-secondary hover:bg-background-secondary rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                      className="p-1.5 text-foreground-muted hover:text-foreground hover:bg-background-secondary rounded-full transition-colors flex-shrink-0 cursor-pointer"
                       aria-label="Previous plugin"
                     >
                       <ChevronLeft size={20} />
@@ -405,7 +405,7 @@ export default function MarketplaceDetailPage() {
                     <button
                       type="button"
                       onClick={handleNextPlugin}
-                      className="p-1.5 text-foreground-muted hover:text-foreground-secondary hover:bg-background-secondary rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                      className="p-1.5 text-foreground-muted hover:text-foreground hover:bg-background-secondary rounded-full transition-colors flex-shrink-0 cursor-pointer"
                       aria-label="Next plugin"
                     >
                       <ChevronRight size={20} />
@@ -463,9 +463,9 @@ export default function MarketplaceDetailPage() {
           <aside className="mt-8 lg:mt-0 space-y-6">
             {/* More from Author */}
             {hasOtherMarketplaces && (
-              <section className="glass-card border border-white/50 rounded-2xl p-4 shadow-lg">
+              <section className="glass-card border border-border rounded-2xl p-4 shadow-lg">
                 <h3 className="text-sm font-semibold text-foreground mb-4">
-                  More from @{author.id}
+                  More marketplaces from <span className="font-mono text-foreground-muted">@{author.id}</span>
                 </h3>
                 <div className="space-y-3">
                   {otherMarketplaces.map((m) => (
