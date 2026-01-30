@@ -1,0 +1,150 @@
+{
+  "author": {
+    "id": "natsuume",
+    "display_name": "natsuume",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11755318?u=6dbcd3d381e2bd933f4ce764fd2b2631a32decee&v=4",
+    "url": "https://github.com/natsuume",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "natsuume-plugins",
+      "version": null,
+      "description": "natsuume's personal Claude Code plugins",
+      "owner_info": {
+        "name": "natsuume"
+      },
+      "keywords": [],
+      "repo_full_name": "natsuume/natsuume-cc-marketplace",
+      "repo_url": "https://github.com/natsuume/natsuume-cc-marketplace",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-19T18:54:10Z",
+        "created_at": "2026-01-19T17:51:01Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 467
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/git-guardrails",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/git-guardrails/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/git-guardrails/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 163
+        },
+        {
+          "path": "plugins/git-guardrails/README.md",
+          "type": "blob",
+          "size": 3367
+        },
+        {
+          "path": "plugins/git-guardrails/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/git-guardrails/hooks/hooks.json",
+          "type": "blob",
+          "size": 401
+        },
+        {
+          "path": "plugins/git-guardrails/hooks/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/git-guardrails/hooks/scripts/block-default-branch-push.sh",
+          "type": "blob",
+          "size": 1223
+        },
+        {
+          "path": "plugins/git-guardrails/hooks/scripts/enforce-draft-pr.sh",
+          "type": "blob",
+          "size": 1053
+        },
+        {
+          "path": "plugins/git-guardrails/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/git-guardrails/skills/rebase-workflow",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/git-guardrails/skills/rebase-workflow/SKILL.md",
+          "type": "blob",
+          "size": 3719
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"natsuume-plugins\",\n  \"owner\": {\n    \"name\": \"natsuume\"\n  },\n  \"metadata\": {\n    \"description\": \"natsuume's personal Claude Code plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"git-guardrails\",\n      \"source\": \"./plugins/git-guardrails\",\n      \"description\": \"GitHub Flow に準拠した Git ワークフローを支援・強制するプラグイン\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"git\", \"workflow\", \"github-flow\", \"rebase\"]\n    }\n  ]\n}\n",
+        "plugins/git-guardrails/.claude-plugin/plugin.json": "{\n  \"name\": \"git-guardrails\",\n  \"version\": \"0.1.0\",\n  \"description\": \"GitHub Flow に準拠した Git ワークフローを支援・強制するプラグイン\"\n}\n",
+        "plugins/git-guardrails/README.md": "# git-guardrails プラグイン\n\nGitHub Flow に準拠した Git ワークフローを支援・強制するプラグインです。\n\n## バージョン\n\nv0.1.0\n\n## 概要\n\nこのプラグインは、以下の機能を提供します：\n\n- **デフォルトブランチの保護**: master/main への直接 push を禁止\n- **Draft PR の強制**: PR 作成時に自動で Draft モードに設定\n- **rebase ワークフロー支援**: リモートの変更を安全に取り込むガイド\n\n## インストール\n\n```bash\nclaude plugins:add git-guardrails --path /path/to/plugins/git-guardrails\n```\n\nまたは、`settings.json` の `plugins` 配列にパスを追加します。\n\n## 機能一覧\n\n### Hooks\n\n#### 1. block-default-branch-push\n\n**ファイル**: `hooks/scripts/block-default-branch-push.sh`\n\nデフォルトブランチ（master/main）への直接 push をブロックします。\n\n**動作**:\n- `git push origin master` や `git push origin main` を検知\n- 該当する場合、操作を拒否してエラーメッセージを表示\n- working branch からの PR マージを促す\n\n**例**:\n```\n❌ git push origin master\n   → \"デフォルトブランチ（master/main）への直接 push は禁止されています。\n      working branch を作成し、そこから PR を作成してマージしてください。\"\n\n✅ git push origin feature/my-feature\n   → 通常通り実行\n```\n\n#### 2. enforce-draft-pr\n\n**ファイル**: `hooks/scripts/enforce-draft-pr.sh`\n\nPR 作成時に自動で `--draft` フラグを付与します。\n\n**動作**:\n- `gh pr create` コマンドを検知\n- `--draft` フラグがない場合、自動で追加\n- 既に `--draft` がある場合は何もしない\n\n**例**:\n```\n入力: gh pr create --title \"新機能\"\n出力: gh pr create --draft --title \"新機能\"\n```\n\n### Skills\n\n#### /rebase-workflow\n\n**ファイル**: `skills/rebase-workflow/SKILL.md`\n\nrebase を用いてリモートのデフォルトブランチの変更を作業ブランチに取り込む手順をガイドします。\n\n**使用シーン**:\n- 「リモートの変更を取り込みたい」\n- 「rebase したい」\n- 「master/main を取り込む」\n- 「ブランチを最新にしたい」\n\n**提供する手順**:\n1. デフォルトブランチ名の動的取得\n2. `git fetch origin` でリモートの変更を取得\n3. `git rebase origin/<default-branch>` で変更を取り込み\n4. コンフリクト発生時の対処方法\n5. `git push --force-with-lease` での安全な push\n\n## 設定\n\nこのプラグインは特別な設定なしで動作します。\n\nhooks は `PreToolUse` イベントで `Bash` ツールの使用を監視し、該当するコマンドに対して自動的に介入します。\n\n## ディレクトリ構成\n\n```\ngit-guardrails/\n├── .claude-plugin/\n│   └── plugin.json       # プラグインメタデータ\n├── hooks/\n│   ├── hooks.json        # フック定義\n│   └── scripts/\n│       ├── block-default-branch-push.sh\n│       └── enforce-draft-pr.sh\n├── skills/\n│   └── rebase-workflow/\n│       └── SKILL.md\n└── README.md\n```\n\n## 関連情報\n\n- [GitHub Flow](https://docs.github.com/ja/get-started/quickstart/github-flow)\n- [Claude Code Hooks ドキュメント](https://docs.anthropic.com/claude-code/hooks)\n",
+        "plugins/git-guardrails/hooks/hooks.json": "{\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-default-branch-push.sh\"\n          },\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/enforce-draft-pr.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "plugins/git-guardrails/hooks/scripts/block-default-branch-push.sh": "#!/bin/bash\n# block-default-branch-push.sh\n# デフォルトブランチ（master/main）への直接 push をブロックするフック\n\n# stdin から JSON を読み取る\nINPUT=$(cat)\n\n# tool_input.command を抽出\nCOMMAND=$(echo \"$INPUT\" | jq -r '.tool_input.command // empty')\n\n# コマンドが空なら何もしない\nif [ -z \"$COMMAND\" ]; then\n  exit 0\nfi\n\n# git push コマンドかどうか判定（違えば即座に終了）\nif ! echo \"$COMMAND\" | grep -qE '^\\s*git\\s+push'; then\n  exit 0\nfi\n\n# master または main へのプッシュかどうか判定\n# パターン: git push origin master, git push origin main, git push --force origin master など\nif echo \"$COMMAND\" | grep -qE 'git\\s+push\\s+.*\\s+(master|main)(\\s|$)'; then\n  # デフォルトブランチへの push をブロック\n  jq -n '{\n    \"hookSpecificOutput\": {\n      \"hookEventName\": \"PreToolUse\",\n      \"permissionDecision\": \"deny\",\n      \"permissionDecisionReason\": \"デフォルトブランチ（master/main）への直接 push は禁止されています。working branch を作成し、そこから PR を作成してマージしてください。\"\n    }\n  }'\n  exit 0\nfi\n\n# デフォルトブランチ以外への push は許可\nexit 0\n",
+        "plugins/git-guardrails/hooks/scripts/enforce-draft-pr.sh": "#!/bin/bash\n# enforce-draft-pr.sh\n# PR を draft として作成することを強制するフック\n\n# stdin から JSON を読み取る\nINPUT=$(cat)\n\n# tool_input.command を抽出\nCOMMAND=$(echo \"$INPUT\" | jq -r '.tool_input.command // empty')\n\n# コマンドが空なら何もしない\nif [ -z \"$COMMAND\" ]; then\n  exit 0\nfi\n\n# gh pr create コマンドかどうか判定（違えば即座に終了）\nif ! echo \"$COMMAND\" | grep -qE '^\\s*gh\\s+pr\\s+create'; then\n  exit 0\nfi\n\n# 既に --draft フラグがあれば何もしない\nif echo \"$COMMAND\" | grep -qE '\\s--draft(\\s|$)'; then\n  exit 0\nfi\n\n# --draft フラグを gh pr create の直後に追加\nUPDATED_COMMAND=$(echo \"$COMMAND\" | sed 's/gh pr create/gh pr create --draft/')\n\n# updatedInput を含むレスポンスを返す\njq -n --arg cmd \"$UPDATED_COMMAND\" '{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"PreToolUse\",\n    \"permissionDecision\": \"allow\",\n    \"permissionDecisionReason\": \"PR は draft として作成されます\",\n    \"updatedInput\": {\n      \"command\": $cmd\n    }\n  }\n}'\n",
+        "plugins/git-guardrails/skills/rebase-workflow/SKILL.md": "---\nname: rebase-workflow\ndescription: rebase を用いてリモートのデフォルトブランチの変更を作業ブランチに取り込む\nuser-invocable: true\nwhen-to-use: |\n  ユーザーが以下のようなリクエストをした場合に使用:\n  - 「リモートの変更を取り込みたい」\n  - 「rebase したい」\n  - 「master/main を取り込む」\n  - 「sync」「同期」\n  - 「ブランチを最新にしたい」\n  - 「デフォルトブランチの変更を反映」\n---\n\n# Rebase Workflow\n\nリモートのデフォルトブランチの変更を、rebase を使って安全に作業ブランチに取り込む手順です。\n\n## 前提条件\n\n- 作業ブランチで作業中であること（デフォルトブランチではないこと）\n- コミットしていない変更がないこと（`git status` で確認）\n\n## 手順\n\n### 1. デフォルトブランチ名の取得\n\nデフォルトブランチ名はリポジトリによって異なります（master, main, develop など）。以下のコマンドで動的に取得します：\n\n```bash\ngit symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'\n```\n\n取得できない場合は、以下で設定できます：\n\n```bash\ngit remote set-head origin --auto\n```\n\n### 2. リモートの変更を取得\n\n```bash\ngit fetch origin\n```\n\n### 3. rebase で変更を取り込む\n\n```bash\ngit rebase origin/<default-branch>\n```\n\n例（デフォルトブランチが master の場合）：\n\n```bash\ngit rebase origin/master\n```\n\n### 4. コンフリクト発生時の対処\n\nrebase 中にコンフリクトが発生した場合：\n\n1. **状況確認**\n   ```bash\n   git status\n   ```\n   コンフリクトしているファイルが表示されます。\n\n2. **コンフリクトを解決**\n   - 各ファイルを開き、`<<<<<<<`, `=======`, `>>>>>>>` マーカーを探す\n   - 適切な内容に修正\n   - 修正後、ステージに追加：\n     ```bash\n     git add <file>\n     ```\n\n3. **rebase を継続**\n   ```bash\n   git rebase --continue\n   ```\n\n4. **rebase を中止する場合（元の状態に戻す）**\n   ```bash\n   git rebase --abort\n   ```\n\n### 5. リモートへの push\n\nrebase 後は履歴が書き換わるため、通常の `git push` は失敗します。\n`--force-with-lease` を使って安全に push します：\n\n```bash\ngit push --force-with-lease\n```\n\n> **注意**: `--force-with-lease` は、他の誰かがリモートブランチに push した場合に失敗します。\n> これにより、他人の変更を誤って上書きすることを防げます。\n> 単なる `--force` は絶対に使用しないでください。\n\n## 一連のコマンド例\n\n```bash\n# デフォルトブランチ名を取得\nDEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')\n\n# リモートの変更を取得\ngit fetch origin\n\n# rebase で取り込み\ngit rebase origin/$DEFAULT_BRANCH\n\n# リモートへ push（必要な場合）\ngit push --force-with-lease\n```\n\n## トラブルシューティング\n\n### デフォルトブランチ名が取得できない\n\n```bash\n# リモートの HEAD を自動設定\ngit remote set-head origin --auto\n\n# 再度取得を試みる\ngit symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'\n```\n\n### rebase 中に大量のコンフリクトが発生\n\n小さな単位で rebase を行うか、`git rebase --abort` で中止してマージを検討してください。\n\n### push が拒否された\n\n`--force-with-lease` が失敗する場合、他の誰かがリモートブランチを更新しています。\n再度 `git fetch` して状況を確認してください。\n"
+      },
+      "plugins": [
+        {
+          "name": "git-guardrails",
+          "source": "./plugins/git-guardrails",
+          "description": "GitHub Flow に準拠した Git ワークフローを支援・強制するプラグイン",
+          "version": "0.1.0",
+          "keywords": [
+            "git",
+            "workflow",
+            "github-flow",
+            "rebase"
+          ],
+          "categories": [
+            "git",
+            "github-flow",
+            "rebase",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add natsuume/natsuume-cc-marketplace",
+            "/plugin install git-guardrails@natsuume-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

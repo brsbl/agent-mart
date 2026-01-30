@@ -1,0 +1,122 @@
+{
+  "author": {
+    "id": "HarieshVarshan",
+    "display_name": "Hariesh Varshan",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/58946243?v=4",
+    "url": "https://github.com/HarieshVarshan",
+    "bio": "Dreamer.",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 2,
+      "total_commands": 0,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "vrshn-claude-marketplace",
+      "version": null,
+      "description": "MCP server for Jira, Confluence, and Bitbucket integration - search, read, create, and manage issues, pages, and pull requests",
+      "owner_info": {
+        "name": "Harieshvarshan",
+        "email": "harieshvarshan@example.com"
+      },
+      "keywords": [],
+      "repo_full_name": "HarieshVarshan/Vrshn-Claude-Marketplace",
+      "repo_url": "https://github.com/HarieshVarshan/Vrshn-Claude-Marketplace",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-20T06:14:39Z",
+        "created_at": "2026-01-15T05:37:08Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 662
+        },
+        {
+          "path": "atlassian-mcp",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "atlassian-mcp/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "atlassian-mcp/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 356
+        },
+        {
+          "path": "atlassian-mcp/README.md",
+          "type": "blob",
+          "size": 5661
+        },
+        {
+          "path": "talk2docs",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "talk2docs/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "talk2docs/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 376
+        },
+        {
+          "path": "talk2docs/README.md",
+          "type": "blob",
+          "size": 10237
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"vrshn-claude-marketplace\",\n    \"owner\": {\n        \"name\": \"Harieshvarshan\",\n        \"email\": \"harieshvarshan@example.com\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"atlassian-mcp\",\n            \"description\": \"MCP server for Jira, Confluence, and Bitbucket integration - search, read, create, and manage issues, pages, and pull requests\",\n            \"source\": \"./atlassian-mcp\"\n        },\n        {\n            \"name\": \"talk2docs\",\n            \"description\": \"Local document semantic search - index and search PDF, DOCX, XLSX, PPTX, and more using ChromaDB and Ollama embeddings\",\n            \"source\": \"./talk2docs\"\n        }\n    ]\n}\n",
+        "atlassian-mcp/.claude-plugin/plugin.json": "{\n    \"name\": \"atlassian-mcp\",\n    \"description\": \"MCP server for Jira, Confluence, and Bitbucket integration - enables searching, reading, and managing issues, pages, and pull requests\",\n    \"version\": \"1.0.0\",\n    \"author\": {\n        \"name\": \"Harieshvarshan\",\n        \"email\": \"harieshvarshan@example.com\"\n    },\n    \"mcpServers\": \"./mcp-servers.json\"\n}\n",
+        "atlassian-mcp/README.md": "# Atlassian MCP Server\n\nA Model Context Protocol (MCP) server that provides Claude with access to Jira, Confluence, and Bitbucket. This enables Claude to search, read, create, and manage issues, pages, and pull requests directly from conversations.\n\n## Features\n\n### Jira Tools\n- **jira_get_issue** - Get issue details by key or URL\n- **jira_search** - Search issues using JQL\n- **jira_create_issue** - Create new issues\n- **jira_add_comment** - Add comments to issues\n- **jira_transition_issue** - Change issue status\n\n### Confluence Tools\n- **confluence_get_page** - Get page content by ID or URL\n- **confluence_get_page_by_title** - Get page by space and title\n- **confluence_search** - Search pages using text or CQL\n- **confluence_get_space_pages** - List all pages in a space\n\n### Bitbucket Tools\n- **bitbucket_get_pr** - Get pull request details\n- **bitbucket_get_pr_diff** - Get PR diff/changes\n- **bitbucket_list_prs** - List repository PRs\n- **bitbucket_add_pr_comment** - Add comments to PRs\n- **bitbucket_get_file** - Get file content from repo\n- **bitbucket_list_branches** - List repository branches\n\n## Prerequisites\n\n1. **Python 3.10+**\n2. **Atlassian Personal Access Tokens** for each service you want to use\n\n## Installation\n\n### 1. Set Up Python Virtual Environment\n\nThe plugin requires a Python virtual environment with dependencies installed at a **fixed location** (`~/.local/share/atlassian-mcp/`). This follows the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) for user application data.\n\n```bash\n# Create the directory and virtual environment\nmkdir -p ~/.local/share/atlassian-mcp\ncd ~/.local/share/atlassian-mcp\npython -m venv venv\n\n# Activate and install dependencies\nsource venv/bin/activate\npip install mcp requests python-dotenv\n```\n\n#### Dependencies\n\n| Package | Purpose |\n|---------|---------|\n| `mcp` | Model Context Protocol SDK for building MCP servers |\n| `requests` | HTTP client for Atlassian REST API calls |\n| `python-dotenv` | Load credentials from `.env` configuration file |\n\n### 2. Configure Credentials\n\nCreate `~/.config/atlassian/.env`:\n\n```bash\nmkdir -p ~/.config/atlassian\nchmod 700 ~/.config/atlassian\n\ncat > ~/.config/atlassian/.env << 'EOF'\n# Jira credentials\nJIRA_URL=https://jira.your-company.com\nJIRA_USERNAME=your_username\nJIRA_TOKEN=your_personal_access_token\n\n# Confluence credentials\nCONFLUENCE_URL=https://confluence.your-company.com\nCONFLUENCE_USERNAME=your_username\nCONFLUENCE_TOKEN=your_personal_access_token\n\n# Bitbucket credentials\nBITBUCKET_URL=https://bitbucket.your-company.com\nBITBUCKET_USERNAME=your_username\nBITBUCKET_TOKEN=your_personal_access_token\nEOF\n\nchmod 600 ~/.config/atlassian/.env\n```\n\n### 3. Create Personal Access Tokens\n\n#### Jira\n1. Go to **Avatar > Profile > Personal Access Tokens**\n2. Click **Create token**\n3. Copy the token value\n\n#### Confluence\n1. Go to **Avatar > Settings > Personal Access Tokens**\n2. Click **Create token**\n3. Copy the token value\n\n#### Bitbucket\n1. Go to **Avatar > Manage Account > Personal Access Tokens**\n2. Click **Create token**\n3. Select **Repository Read** permission (and Write if needed)\n4. Copy the token value\n\n## Claude Integration\n\n### Option 1: Plugin Marketplace (Recommended)\n\nIf you have the marketplace configured:\n\n```bash\n# Install the plugin\nclaude plugin install atlassian-mcp\n\n# Restart Claude Code to load the MCP server\n```\n\nThe plugin will automatically use the virtual environment at `~/.local/share/atlassian-mcp/venv/`.\n\n### Option 2: Manual MCP Registration\n\nIf not using the marketplace, register the MCP server manually:\n\n```bash\nclaude mcp add --transport stdio --scope user atlassian \\\n  --env ATLASSIAN_CONFIG=~/.config/atlassian/.env \\\n  -- ~/.local/share/atlassian-mcp/venv/bin/python /path/to/atlassian-mcp/mcp_server.py\n```\n\n## Usage Examples\n\nOnce registered, you can use these tools in conversations with Claude:\n\n### Jira Examples\n\n```\n\"Get the details of PROJ-123\"\n\"Search for all open bugs assigned to me in project MYPROJ\"\n\"Create a new task in PROJ with summary 'Fix login issue'\"\n\"Add a comment to PROJ-456 saying 'This is fixed in PR #789'\"\n\"Move PROJ-123 to 'In Progress'\"\n```\n\n### Confluence Examples\n\n```\n\"Get the page at https://confluence.company.com/pages/viewpage.action?pageId=123456\"\n\"Find all pages about 'deployment guide' in the DOCS space\"\n\"List all pages in the TEAM space\"\n\"Get the page titled 'Getting Started' in space DOCS\"\n```\n\n### Bitbucket Examples\n\n```\n\"Get PR #42 from project MYPROJ repo my-service\"\n\"Show me the diff for that PR\"\n\"List all open PRs in MYPROJ/my-service\"\n\"Add a comment to PR #42 saying 'LGTM!'\"\n\"Get the content of src/main.py from MYPROJ/my-service\"\n```\n\n## Architecture\n\n```\natlassian-mcp/\n├── .claude-plugin/\n│   └── plugin.json         # Plugin metadata\n├── mcp-servers.json        # MCP server configuration\n├── mcp_server.py           # Main MCP server (entry point)\n├── atlassian_client.py     # API clients for Jira, Confluence, Bitbucket\n├── requirements.txt        # Python dependencies\n└── README.md               # This file\n```\n\n## Troubleshooting\n\n### Connection Issues\n\n1. **Check token validity**: Tokens may expire\n2. **Verify URLs**: Ensure URLs don't have trailing slashes in config\n3. **Proxy settings**: If behind a corporate proxy, you may need to set HTTP_PROXY/HTTPS_PROXY\n\n### Authentication Errors\n\n- **Jira/Confluence**: Use Bearer token authentication\n- **Bitbucket Server**: Uses Basic auth with username:token\n\n### Debug Mode\n\nRun the server directly to see errors:\n```bash\npython mcp_server.py\n```\n\n## License\n\nMIT\n",
+        "talk2docs/.claude-plugin/plugin.json": "{\n    \"name\": \"talk2docs\",\n    \"description\": \"Local document semantic search - index and search PDF, DOCX, XLSX, PPTX, ODT, TXT, MD, HTML, CSV and more using ChromaDB vector database and Ollama embeddings\",\n    \"version\": \"1.0.0\",\n    \"author\": {\n        \"name\": \"Harieshvarshan\",\n        \"email\": \"harieshvarshan@example.com\"\n    },\n    \"mcpServers\": \"./mcp-servers.json\"\n}\n",
+        "talk2docs/README.md": "# Document MCP Server\n\nMCP server for semantic search across documents using Ollama embeddings and ChromaDB.\n\n## Supported Formats\n\n| Format | Extension | Description |\n|--------|-----------|-------------|\n| PDF | `.pdf` | PDF documents |\n| Word | `.docx`, `.doc` | Microsoft Word |\n| Excel | `.xlsx`, `.xls` | Microsoft Excel |\n| PowerPoint | `.pptx` | Microsoft PowerPoint |\n| OpenDocument | `.odt`, `.ods`, `.odp` | LibreOffice/OpenOffice |\n| Text | `.txt`, `.md` | Plain text, Markdown |\n| Web | `.html`, `.htm` | HTML pages |\n| Data | `.csv`, `.json`, `.xml` | Structured data |\n\n## Prerequisites\n\n1. **Python 3.10+**\n2. **Ollama** - for local embeddings\n\n## Setup\n\n### 1. Install Ollama\n\n```bash\ncurl -fsSL https://ollama.com/install.sh | sh\n\n# Pull embedding model\nollama pull nomic-embed-text\n\n# Verify\nollama list\n```\n\n**Important:** Ollama must be running for both indexing and searching (it converts text to embeddings).\n\n**Start Ollama:**\n```bash\n# Option 1: Run manually (foreground) - Ctrl+C to stop\nollama serve\n\n# Option 2: Run as background process\nnohup ollama serve > /dev/null 2>&1 &\n\n# Option 3: Run as systemd service (recommended for always-on)\nsudo systemctl enable ollama\nsudo systemctl start ollama\n```\n\n**Stop Ollama:**\n```bash\n# For Option 1: Press Ctrl+C in the terminal\n\n# For Option 2: Kill background process\npkill ollama\n# or find and kill specific PID\npgrep ollama && kill $(pgrep ollama)\n\n# For Option 3: Stop systemd service\nsudo systemctl stop ollama\n# To disable auto-start on boot\nsudo systemctl disable ollama\n\n# Verify no ollama processes remain\npgrep -a ollama\n```\n\n### 2. Create Virtual Environment\n\n```bash\ncd /home/harieshvarshan/ti/SWATI/vrshn-marketplace/ldoc-mcp-server\n\npython -m venv venv\nsource venv/bin/activate\n\npip install -r requirements.txt\n```\n\n### 3. Index Your Documents\n\n```bash\n# Index all supported documents in a folder\npython index.py ./docs\n\n# Index specific files\npython index.py report.pdf data.xlsx presentation.pptx\n\n# Index specific file types only\npython index.py ./docs --ext pdf docx xlsx\n\n# Force re-index\npython index.py --force updated_doc.pdf\npython index.py --force ./docs\n\n# Faster indexing with parallelism (see Performance section below)\npython index.py ./docs -w 16              # 16 embedding workers\npython index.py ./docs -p 4               # 4 documents in parallel\npython index.py ./docs -p 4 -w 8          # Combined: 4 docs × 8 workers\n```\n\n### 4. Configure Claude Code\n\n```bash\nclaude mcp add --transport stdio --scope user ldoc-search \\\n  --env CHROMA_DB_PATH=/home/harieshvarshan/ti/SWATI/vrshn-marketplace/ldoc-mcp-server/chroma_db \\\n  --env PYTHONPATH=/home/harieshvarshan/ti/SWATI/vrshn-marketplace/ldoc-mcp-server \\\n  -- /home/harieshvarshan/ti/SWATI/vrshn-marketplace/ldoc-mcp-server/venv/bin/python \\\n  /home/harieshvarshan/ti/SWATI/vrshn-marketplace/ldoc-mcp-server/mcp_server.py\n```\n\n### 5. Verify & Restart Claude Code\n\n```bash\n# Verify MCP server is registered\nclaude mcp list\n\n# Restart Claude Code and check /mcp\n/exit\nclaude\n/mcp\n```\n\n> For detailed setup instructions, troubleshooting, and what happens after reboot, see [local_mcp_server_claude_integration_guide.md](local_mcp_server_claude_integration_guide.md)\n>\n> To understand the vector embedding system behind the scenes, see [behind_the_scenes.md](behind_the_scenes.md)\n\n## Usage\n\n### CLI Tools\n\n```bash\n# Index files or directories (unified interface)\npython index.py ./docs                        # Index all documents in folder\npython index.py file1.pdf file2.docx          # Index specific files\npython index.py ./docs --ext pdf docx         # Index only specific formats\npython index.py --force updated_doc.pdf       # Force re-index a file\npython index.py --force ./docs                # Force re-index entire folder\n\n# Manage index\npython manage_index.py list              # List all documents\npython manage_index.py stats             # Show statistics\npython manage_index.py search \"query\"    # Search from CLI\npython manage_index.py remove doc.pdf    # Remove a document\npython manage_index.py rename old.pdf new.pdf  # Rename (no re-embedding)\npython manage_index.py clear             # Clear entire index\n\n# Test document extraction\npython document_extractor.py myfile.docx\n```\n\n### In Claude CLI\n\nOnce configured, ask Claude:\n- \"Search the documents for DMA configuration\"\n- \"What do my documents say about clock topology?\"\n- \"List all indexed documents\"\n- \"Search for budget data in the spreadsheets\"\n\n## Do I Need to Restart Claude Code?\n\n**No restart needed** after indexing new documents. The MCP server queries ChromaDB dynamically on each search request.\n\n| Action | Restart Required? |\n|--------|-------------------|\n| Add new documents | No |\n| Update existing documents (re-index) | No |\n| Remove documents | No |\n| Rename documents | No |\n| Change MCP server config | **Yes** |\n| Change MCP server code | **Yes** |\n\nNew/updated documents are searchable immediately after indexing:\n```bash\npython index.py new_report.docx\n# Immediately searchable - no restart needed\n```\n\n## Index Limits & Maintenance\n\nThere's **no hard limit** on documents, but consider these factors:\n\n| Factor | Consideration |\n|--------|---------------|\n| ChromaDB capacity | Can handle millions of chunks |\n| Disk space | `chroma_db/` folder grows with each document |\n| Embedding speed | ~2-5 seconds per chunk during indexing |\n| Query speed | Stays fast (efficient vector indexing) |\n\n### Check Current Usage\n\n```bash\n# See index statistics\npython manage_index.py stats\n\n# Check database size on disk\ndu -sh chroma_db/\n```\n\n### Maintenance Tips\n\n```bash\n# Remove old/outdated documents\npython manage_index.py remove old_doc.pdf\n\n# Rename a document (no re-embedding needed)\npython manage_index.py rename old_name.pdf new_name.pdf\n\n# Re-index updated files\npython index.py --force updated_doc.docx\n\n# Clear and rebuild entire index (if needed)\npython manage_index.py clear\npython index.py ./docs\n```\n\nFor typical use (hundreds to a few thousand documents), you won't hit any issues.\n\n## Performance & Parallelism\n\nIndexing can be slow for large documents. Use these options to speed it up:\n\n### CLI Options\n\n| Option | Description | Default |\n|--------|-------------|---------|\n| `-w, --workers` | Parallel embedding requests per document | 8 |\n| `-p, --parallel` | Number of documents to process simultaneously | 1 |\n\n### Examples\n\n```bash\n# Default: 8 workers, 1 document at a time\npython index.py ./docs\n\n# More embedding workers (good for single large files)\npython index.py large_doc.pdf -w 16\n\n# Multiple documents in parallel (good for many small files)\npython index.py ./docs -p 4\n\n# Maximum parallelism (4 docs × 8 workers = 32 concurrent requests)\npython index.py ./docs -p 4 -w 8\n\n# Using environment variable\nOLLAMA_WORKERS=16 python index.py ./docs\n```\n\n### Recommendations\n\n| Scenario | Recommended Settings |\n|----------|---------------------|\n| Single large document (>10K chunks) | `-w 16` or higher |\n| Many small documents | `-p 4` with default workers |\n| Mixed documents | `-p 2 -w 8` |\n| Limited CPU/RAM | `-w 4 -p 1` (reduce parallelism) |\n\n### Performance Comparison\n\n| Setting | Concurrent Ollama Requests | Use Case |\n|---------|---------------------------|----------|\n| Default (`-w 8 -p 1`) | 8 | Balanced |\n| `-w 16` | 16 | Large single file |\n| `-p 4` | 32 (4 × 8) | Many files |\n| `-p 4 -w 4` | 16 | Memory constrained |\n\n**Note:** If Ollama starts timing out or your system becomes unresponsive, reduce the parallelism.\n\n## MCP Tools Exposed\n\n| Tool | Description |\n|------|-------------|\n| `search_pdfs` | Semantic search across all indexed documents |\n| `list_indexed_documents` | List all indexed documents with chunk counts |\n| `get_index_stats` | Get index statistics |\n\n## Environment Variables\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `CHROMA_DB_PATH` | `./chroma_db` | Vector database directory |\n| `OLLAMA_MODEL` | `nomic-embed-text` | Ollama embedding model |\n| `OLLAMA_WORKERS` | `8` | Parallel embedding requests to Ollama |\n\n## Project Structure\n\n```\nldoc-mcp-server/\n├── index.py              # Unified indexing (files, folders, updates)\n├── document_extractor.py # Multi-format text extraction\n├── chunker.py            # Text chunking\n├── vector_store.py       # ChromaDB + Ollama embeddings\n├── manage_index.py       # Index management (list, search, remove)\n├── mcp_server.py         # MCP server\n├── requirements.txt\n├── chroma_db/            # Vector database (auto-created)\n└── docs/                 # Put documents here\n```\n\n## Troubleshooting\n\n| Issue | Solution |\n|-------|----------|\n| Ollama connection refused | Run `ollama serve` |\n| Model not found | Run `ollama pull nomic-embed-text` |\n| MCP not showing in `/mcp` | Run `claude mcp list` to verify, then restart Claude Code |\n| Import errors | Ensure PYTHONPATH is set in env config |\n| Unsupported format | Check supported formats above |\n| .doc files not extracting | Install `antiword` or `catdoc` for legacy Word support |\n\nSee [local_mcp_server_claude_integration_guide.md](local_mcp_server_claude_integration_guide.md) for detailed troubleshooting.\n\n## Adding New Format Support\n\nTo add support for a new file format:\n\n1. Edit `document_extractor.py`\n2. Add extension to `SUPPORTED_EXTENSIONS` dict\n3. Create `_extract_<format>()` function\n4. Add to `extractors` dict in `extract_text()`\n\n\n## TODOs\n1. ~~since we support multiple file formats instead of pdf-mcp-server can be rename it as ldoc-mcp-server and also update claude mcp as ldoc-mcp so that nothing breaks.~~ ✅ Done\n2. ~~add progress bar and time taken while embedding files. (for each files and also overall)~~ ✅ Done\n3. how to use this standalone without claude?\n4. how to make this the chromadb and mcp-server available to my entire team, I dont want them to know about how to add embeddings, i just want them to use with whatever I have trained and stored in db at any point in time?\n5. I understand where are limitation to how big the db can be? So in large system as it grows how do we scale this?\n6. I have more budget what all can I improve in this project to make it even better or the best?"
+      },
+      "plugins": [
+        {
+          "name": "atlassian-mcp",
+          "description": "MCP server for Jira, Confluence, and Bitbucket integration - search, read, create, and manage issues, pages, and pull requests",
+          "source": "./atlassian-mcp",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add HarieshVarshan/Vrshn-Claude-Marketplace",
+            "/plugin install atlassian-mcp@vrshn-claude-marketplace"
+          ]
+        },
+        {
+          "name": "talk2docs",
+          "description": "Local document semantic search - index and search PDF, DOCX, XLSX, PPTX, and more using ChromaDB and Ollama embeddings",
+          "source": "./talk2docs",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add HarieshVarshan/Vrshn-Claude-Marketplace",
+            "/plugin install talk2docs@vrshn-claude-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

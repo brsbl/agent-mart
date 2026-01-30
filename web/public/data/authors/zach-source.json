@@ -1,0 +1,160 @@
+{
+  "author": {
+    "id": "zach-source",
+    "display_name": "Zachary Taylor",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/61884887?u=a4ac8e948f7f61d1f51920a5850775c5519c2029&v=4",
+    "url": "https://github.com/zach-source",
+    "bio": "I asynchronously build stuff and break things.",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 5,
+      "total_skills": 0,
+      "total_stars": 1,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "claude-marketplace",
+      "version": "1.0.0",
+      "description": "Community plugins for Claude Code including task queues, workflow automation, and productivity tools",
+      "owner_info": {
+        "name": "zach-source",
+        "url": "https://github.com/zach-source"
+      },
+      "keywords": [],
+      "repo_full_name": "zach-source/claude-marketplace",
+      "repo_url": "https://github.com/zach-source/claude-marketplace",
+      "repo_description": "Claude Code plugins marketplace - and-then task queue with fork support",
+      "homepage": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-16T04:22:57Z",
+        "created_at": "2026-01-16T03:40:03Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 726
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/and-then",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/and-then/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/and-then/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 533
+        },
+        {
+          "path": "plugins/and-then/README.md",
+          "type": "blob",
+          "size": 1582
+        },
+        {
+          "path": "plugins/and-then/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/and-then/commands/and-then-add.md",
+          "type": "blob",
+          "size": 648
+        },
+        {
+          "path": "plugins/and-then/commands/and-then-cancel.md",
+          "type": "blob",
+          "size": 406
+        },
+        {
+          "path": "plugins/and-then/commands/and-then-skip.md",
+          "type": "blob",
+          "size": 282
+        },
+        {
+          "path": "plugins/and-then/commands/and-then-status.md",
+          "type": "blob",
+          "size": 286
+        },
+        {
+          "path": "plugins/and-then/commands/and-then.md",
+          "type": "blob",
+          "size": 2687
+        },
+        {
+          "path": "plugins/and-then/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/and-then/hooks/hooks.json",
+          "type": "blob",
+          "size": 238
+        },
+        {
+          "path": "plugins/and-then/hooks/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/and-then/hooks/scripts/and-then-stop-hook.sh",
+          "type": "blob",
+          "size": 7450
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"claude-marketplace\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Community plugins for Claude Code including task queues, workflow automation, and productivity tools\",\n  \"owner\": {\n    \"name\": \"zach-source\",\n    \"url\": \"https://github.com/zach-source\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"and-then\",\n      \"description\": \"Sequential task queue with parallel fork support. Auto-advances when tasks complete via <done/> signal.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ztaylor\",\n        \"url\": \"https://github.com/zach-source\"\n      },\n      \"source\": \"./plugins/and-then\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "plugins/and-then/.claude-plugin/plugin.json": "{\n  \"$schema\": \"https://raw.githubusercontent.com/anthropics/claude-code/main/plugin-schema.json\",\n  \"name\": \"and-then\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Sequential task queue with parallel fork support - auto-advances when tasks complete\",\n  \"author\": {\n    \"name\": \"ztaylor\",\n    \"url\": \"https://github.com/zach-source\"\n  },\n  \"repository\": \"https://github.com/zach-source/claude-marketplace\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"task-queue\", \"automation\", \"workflow\", \"parallel\", \"fork\"],\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "plugins/and-then/README.md": "# And-Then\n\nSequential task queue with parallel fork support for Claude Code.\n\n## Features\n\n- **Sequential tasks** (`--task`): Execute tasks one at a time\n- **Parallel fork tasks** (`--fork`): Spawn multiple subagents concurrently\n- **Auto-completion**: Tasks advance automatically when you output `<done/>`\n- **Dynamic additions**: Add tasks while queue is running\n\n## Usage\n\n```bash\n# Sequential tasks\n/and-then --task \"Build the API\" --task \"Write tests\" --task \"Update docs\"\n\n# Mix sequential and parallel tasks\n/and-then --task \"Build the API\" \\\n          --fork \"Unit tests\" \"Integration tests\" \"E2E tests\" \\\n          --task \"Deploy to staging\"\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/and-then` | Create a new task queue |\n| `/and-then-add` | Add tasks to existing queue |\n| `/and-then-skip` | Skip current task |\n| `/and-then-status` | Show queue progress |\n| `/and-then-cancel` | Cancel the queue |\n\n## How It Works\n\n1. Queue stored in `.claude/and-then-queue.local.md`\n2. Work on current task\n3. Output `<done/>` when complete\n4. Stop hook advances to next task\n5. For forks: launch parallel subagents, wait for all, then `<done/>`\n\n## Examples\n\n### Parallel Testing Pipeline\n\n```bash\n/and-then --task \"Build the application\" \\\n          --fork \"Run unit tests\" \"Run integration tests\" \"Run linting\" \\\n          --task \"Deploy to staging\"\n```\n\n### Research-Then-Implement\n\n```bash\n/and-then --fork \"Research auth libraries\" \"Review security requirements\" \\\n          --task \"Implement authentication\" \\\n          --task \"Write tests\"\n```\n",
+        "plugins/and-then/commands/and-then-add.md": "---\nname: and-then-add\ndescription: Add tasks to an existing and-then queue\narguments:\n  - name: args\n    description: Tasks using --task and optional --fork flags\n    required: true\nallowed_tools:\n  - Bash\n---\n\n# Add Tasks to And-Then Queue\n\nAdd more tasks to an existing queue (even while it's running).\n\n## Usage\n\n```bash\n# Add sequential tasks\n/and-then-add --task \"New task 1\" --task \"New task 2\"\n\n# Add parallel fork task\n/and-then-add --fork \"Subtask A\" \"Subtask B\" \"Subtask C\"\n\n# Mix both\n/and-then-add --task \"Sequential task\" --fork \"Parallel A\" \"Parallel B\"\n```\n\n---\n\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/and-then-add.sh $ARGUMENTS\n```\n",
+        "plugins/and-then/commands/and-then-cancel.md": "---\nname: and-then-cancel\ndescription: Cancel the and-then task queue and allow normal session exit\nallowed_tools:\n  - Bash\n---\n\n# Cancel And-Then Queue\n\nRemove the task queue and allow normal session behavior.\n\n---\n\n```bash\nif [[ -f \".claude/and-then-queue.json\" ]]; then\n    rm \".claude/and-then-queue.json\"\n    echo \"✅ And-then queue cancelled\"\nelse\n    echo \"ℹ️  No active and-then queue\"\nfi\n```\n",
+        "plugins/and-then/commands/and-then-skip.md": "---\nname: and-then-skip\ndescription: Skip the current task and move to the next one in the queue\nallowed_tools:\n  - Bash\n---\n\n# Skip Current Task\n\nSkip the current task in the and-then queue and move to the next one.\n\n---\n\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/and-then-skip.sh\n```\n",
+        "plugins/and-then/commands/and-then-status.md": "---\nname: and-then-status\ndescription: Show the current status of the and-then task queue\nallowed_tools:\n  - Bash\n---\n\n# And-Then Queue Status\n\nShow the current task queue status including progress and remaining tasks.\n\n---\n\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/and-then-status.sh\n```\n",
+        "plugins/and-then/commands/and-then.md": "---\nname: and-then\ndescription: Create a sequential task queue with optional parallel fork tasks\narguments:\n  - name: args\n    description: Tasks using --task and optional --fork flags\n    required: true\nallowed_tools:\n  - Bash\n---\n\n# And-Then Task Queue\n\nExecute a series of tasks sequentially, with optional parallel fork tasks. Automatically advances to the next task when you output `<done/>`.\n\n## Usage\n\n```bash\n# Sequential tasks\n/and-then --task \"Task 1\" --task \"Task 2\" --task \"Task 3\"\n\n# Mix sequential and parallel tasks\n/and-then --task \"Build API\" \\\n          --fork \"Unit tests\" \"Integration tests\" \"E2E tests\" \\\n          --task \"Deploy to staging\"\n\n# Parallel with limited concurrency (2 workers at a time)\n/and-then --fork --workers 2 \"Task A\" \"Task B\" \"Task C\" \"Task D\"\n```\n\n## Task Types\n\n### Standard Tasks (`--task`)\nSequential tasks executed one at a time. Output `<done/>` when complete.\n\n### Fork Tasks (`--fork`)\nParallel tasks that spawn multiple subagents concurrently. All subtasks run simultaneously, then rejoin before continuing.\n\n```bash\n--fork \"Subtask 1\" \"Subtask 2\" \"Subtask 3\"\n```\n\n### Fork with Workers (`--fork --workers N`)\nLimit concurrency to N workers at a time. Useful for resource-intensive tasks.\n\n```bash\n--fork --workers 2 \"Heavy Task A\" \"Heavy Task B\" \"Heavy Task C\" \"Heavy Task D\"\n```\n\n## Signaling Completion\n\nSimply output `<done/>` when each task is complete:\n\n```\n<done/>\n```\n\nNo need to specify custom completion signals - the system auto-detects completion.\n\n## Managing the Queue\n\n- `/and-then-add` - Add more tasks to the queue\n- `/and-then-skip` - Skip current task, move to next\n- `/and-then-status` - Show current queue status\n- `/and-then-cancel` - Clear the queue and exit\n\n## Examples\n\n### Sequential workflow\n```bash\n/and-then --task \"Create database schema\" \\\n          --task \"Build REST API\" \\\n          --task \"Write API documentation\"\n```\n\n### Parallel testing then deploy\n```bash\n/and-then --task \"Build the application\" \\\n          --fork \"Run unit tests\" \"Run integration tests\" \"Run linting\" \\\n          --task \"Deploy to staging\"\n```\n\n### Research then implement\n```bash\n/and-then --fork \"Research auth libraries\" \"Review security requirements\" \\\n          --task \"Implement authentication\" \\\n          --task \"Write tests\"\n```\n\n---\n\n**Setting up the task queue...**\n\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/setup-and-then.sh $ARGUMENTS\n```\n\nOnce the queue is created, I'll begin working on the first task. When I complete it, I'll output `<done/>` and automatically move to the next task.\n\nFor fork tasks, I'll launch parallel subagents for each subtask, wait for all to complete, then output `<done/>` to advance.\n",
+        "plugins/and-then/hooks/hooks.json": "{\n  \"Stop\": [\n    {\n      \"matcher\": \"\",\n      \"hooks\": [\n        {\n          \"type\": \"command\",\n          \"command\": \"bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/and-then-stop-hook.sh\",\n          \"timeout\": 15\n        }\n      ]\n    }\n  ]\n}\n",
+        "plugins/and-then/hooks/scripts/and-then-stop-hook.sh": "#!/usr/bin/env bash\n# and-then-stop-hook.sh - Stop hook for the and-then task queue\n# Detects task completion via <done/> tag and advances to the next task\n# Handles both standard tasks and fork (parallel subagent) tasks\n\nset -euo pipefail\n\n# Read hook input from stdin\nHOOK_INPUT=$(cat)\n\n# Get working directory from hook input (where Claude session is running)\nSESSION_CWD=$(echo \"$HOOK_INPUT\" | jq -r '.cwd // empty' 2>/dev/null || echo \"\")\n\n# Fallback to current directory if not provided\nif [[ -z \"$SESSION_CWD\" ]]; then\n    SESSION_CWD=\"$(pwd)\"\nfi\n\n# State file location (JSON format, in session's working directory)\nQUEUE_FILE=\"${SESSION_CWD}/.claude/and-then-queue.json\"\n\n# Exit early if no queue is active\nif [[ ! -f \"$QUEUE_FILE\" ]]; then\n    exit 0\nfi\n\n# Get transcript path from hook input\nTRANSCRIPT_PATH=$(echo \"$HOOK_INPUT\" | jq -r '.transcript_path // empty' 2>/dev/null || echo \"\")\n\nif [[ -z \"$TRANSCRIPT_PATH\" ]] || [[ ! -f \"$TRANSCRIPT_PATH\" ]]; then\n    echo \"⚠️  And-then queue: No transcript found, allowing exit\" >&2\n    rm -f \"$QUEUE_FILE\"\n    exit 0\nfi\n\n# Parse state file (JSON format - no external dependencies)\nSTATE_JSON=$(cat \"$QUEUE_FILE\" 2>/dev/null || echo '{}')\n\n# Validate JSON\nif ! echo \"$STATE_JSON\" | jq -e '.' >/dev/null 2>&1; then\n    echo \"⚠️  And-then queue: Invalid JSON in state file\" >&2\n    rm -f \"$QUEUE_FILE\"\n    exit 0\nfi\n\n# Extract state values\nCURRENT_INDEX=$(echo \"$STATE_JSON\" | jq -r '.current_index // 0')\nTASKS_JSON=$(echo \"$STATE_JSON\" | jq -c '.tasks // []')\nTASK_COUNT=$(echo \"$TASKS_JSON\" | jq 'length')\n\n# Validate we have tasks\nif [[ \"$TASK_COUNT\" -eq 0 ]]; then\n    echo \"⚠️  And-then queue: No tasks in queue\" >&2\n    rm -f \"$QUEUE_FILE\"\n    exit 0\nfi\n\n# Validate current_index is numeric\nif ! [[ \"$CURRENT_INDEX\" =~ ^[0-9]+$ ]]; then\n    echo \"⚠️  And-then queue: Invalid current_index, resetting\" >&2\n    rm -f \"$QUEUE_FILE\"\n    exit 0\nfi\n\n# Get current task info\nCURRENT_TASK_JSON=$(echo \"$TASKS_JSON\" | jq -c \".[$CURRENT_INDEX] // {}\")\nTASK_TYPE=$(echo \"$CURRENT_TASK_JSON\" | jq -r '.type // \"standard\"')\n\n# Extract last assistant message from transcript\n# Transcript is JSONL format (one JSON object per line)\nLAST_OUTPUT=\"\"\nwhile IFS= read -r line; do\n    ROLE=$(echo \"$line\" | jq -r '.role // empty' 2>/dev/null || echo \"\")\n    if [[ \"$ROLE\" == \"assistant\" ]]; then\n        # Extract text content from message\n        TEXT=$(echo \"$line\" | jq -r '\n            .message.content[]? |\n            select(.type == \"text\") |\n            .text // empty\n        ' 2>/dev/null | head -1)\n        if [[ -n \"$TEXT\" ]]; then\n            LAST_OUTPUT=\"$TEXT\"\n        fi\n    fi\ndone < <(tac \"$TRANSCRIPT_PATH\" 2>/dev/null | head -20)\n\nif [[ -z \"$LAST_OUTPUT\" ]]; then\n    echo \"⚠️  And-then queue: No assistant output found\" >&2\nfi\n\n# Check for completion signal: <done/> or <done></done>\nTASK_COMPLETE=false\nif [[ -n \"$LAST_OUTPUT\" ]]; then\n    if echo \"$LAST_OUTPUT\" | grep -qE '<done\\s*/>' 2>/dev/null || \\\n       echo \"$LAST_OUTPUT\" | grep -qE '<done>\\s*</done>' 2>/dev/null; then\n        TASK_COMPLETE=true\n        echo \"✅ And-then queue: Task $((CURRENT_INDEX + 1))/$TASK_COUNT complete\" >&2\n    fi\nfi\n\n# Function to build prompt for a task\nbuild_task_prompt() {\n    local task_json=\"$1\"\n    local task_type\n    task_type=$(echo \"$task_json\" | jq -r '.type // \"standard\"')\n\n    if [[ \"$task_type\" == \"standard\" ]]; then\n        echo \"$task_json\" | jq -r '.prompt // \"No task description\"'\n    elif [[ \"$task_type\" == \"fork\" ]]; then\n        # Build a prompt that instructs Claude to launch parallel subagents\n        local subtasks workers subtask_count\n        subtasks=$(echo \"$task_json\" | jq -r '.subtasks | join(\"\\n- \")')\n        workers=$(echo \"$task_json\" | jq -r '.workers // 0')\n        subtask_count=$(echo \"$task_json\" | jq '.subtasks | length')\n\n        if [[ \"$workers\" -gt 0 ]] && [[ \"$workers\" -lt \"$subtask_count\" ]]; then\n            cat << FORK_PROMPT\nLaunch the following tasks using the Task tool with LIMITED CONCURRENCY of $workers workers at a time.\n\nSubtasks to run ($subtask_count total, $workers concurrent):\n- $subtasks\n\nIMPORTANT:\n1. Launch up to $workers Task tool calls at a time (not all at once)\n2. Wait for a batch to complete before starting the next batch\n3. Choose appropriate subagent_type for each task (e.g., \"general-purpose\", \"test-automator\", etc.)\n4. Summarize the results from each subagent as they complete\n5. Output <done/> when ALL $subtask_count subtasks have completed successfully\nFORK_PROMPT\n        else\n            cat << FORK_PROMPT\nLaunch the following tasks in PARALLEL using the Task tool. Each subtask should run as a separate subagent concurrently.\n\nSubtasks to run in parallel:\n- $subtasks\n\nIMPORTANT:\n1. Use MULTIPLE Task tool calls in a SINGLE message to run them concurrently\n2. Choose appropriate subagent_type for each task (e.g., \"general-purpose\", \"test-automator\", etc.)\n3. Wait for ALL subagents to complete\n4. Summarize the results from each subagent\n5. Output <done/> when ALL subtasks have completed successfully\nFORK_PROMPT\n        fi\n    else\n        echo \"Unknown task type: $task_type\"\n    fi\n}\n\n# Function to build system message label for fork tasks\nbuild_fork_label() {\n    local task_json=\"$1\"\n    local workers\n    workers=$(echo \"$task_json\" | jq -r '.workers // 0')\n    if [[ \"$workers\" -gt 0 ]]; then\n        echo \"[FORK workers=$workers]\"\n    else\n        echo \"[FORK]\"\n    fi\n}\n\n# Determine next action\nif [[ \"$TASK_COMPLETE\" == true ]]; then\n    NEXT_INDEX=$((CURRENT_INDEX + 1))\n\n    # Check if queue is exhausted\n    if [[ $NEXT_INDEX -ge $TASK_COUNT ]]; then\n        echo \"🎉 And-then queue: All $TASK_COUNT tasks complete!\" >&2\n        rm -f \"$QUEUE_FILE\"\n        exit 0  # Allow session exit\n    fi\n\n    # Get next task info\n    NEXT_TASK_JSON=$(echo \"$TASKS_JSON\" | jq -c \".[$NEXT_INDEX] // {}\")\n    NEXT_TYPE=$(echo \"$NEXT_TASK_JSON\" | jq -r '.type // \"standard\"')\n    NEXT_PROMPT=$(build_task_prompt \"$NEXT_TASK_JSON\")\n\n    # Update state file with new index (using jq - no external deps)\n    echo \"$STATE_JSON\" | jq \".current_index = $NEXT_INDEX\" > \"$QUEUE_FILE\"\n\n    # Build system message for next task\n    if [[ \"$NEXT_TYPE\" == \"fork\" ]]; then\n        FORK_LABEL=$(build_fork_label \"$NEXT_TASK_JSON\")\n        SYSTEM_MSG=\"🔀 Task $((NEXT_INDEX + 1))/$TASK_COUNT $FORK_LABEL | Launch parallel subagents, then <done/> when all complete\"\n    else\n        SYSTEM_MSG=\"📋 Task $((NEXT_INDEX + 1))/$TASK_COUNT | Output <done/> when complete\"\n    fi\n\n    # Block exit and feed next task\n    jq -n \\\n        --arg prompt \"$NEXT_PROMPT\" \\\n        --arg msg \"$SYSTEM_MSG\" \\\n        '{\n            \"decision\": \"block\",\n            \"reason\": $prompt,\n            \"systemMessage\": $msg\n        }'\nelse\n    # Task not complete, re-feed current task\n    CURRENT_PROMPT=$(build_task_prompt \"$CURRENT_TASK_JSON\")\n\n    if [[ \"$TASK_TYPE\" == \"fork\" ]]; then\n        FORK_LABEL=$(build_fork_label \"$CURRENT_TASK_JSON\")\n        SYSTEM_MSG=\"🔀 Task $((CURRENT_INDEX + 1))/$TASK_COUNT $FORK_LABEL | Launch parallel subagents, then <done/> when all complete\"\n    else\n        SYSTEM_MSG=\"📋 Task $((CURRENT_INDEX + 1))/$TASK_COUNT | Output <done/> when complete\"\n    fi\n\n    jq -n \\\n        --arg prompt \"$CURRENT_PROMPT\" \\\n        --arg msg \"$SYSTEM_MSG\" \\\n        '{\n            \"decision\": \"block\",\n            \"reason\": $prompt,\n            \"systemMessage\": $msg\n        }'\nfi\n"
+      },
+      "plugins": [
+        {
+          "name": "and-then",
+          "description": "Sequential task queue with parallel fork support. Auto-advances when tasks complete via <done/> signal.",
+          "version": "1.0.0",
+          "author": {
+            "name": "ztaylor",
+            "url": "https://github.com/zach-source"
+          },
+          "source": "./plugins/and-then",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add zach-source/claude-marketplace",
+            "/plugin install and-then@claude-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

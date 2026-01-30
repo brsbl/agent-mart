@@ -1,0 +1,116 @@
+{
+  "author": {
+    "id": "majjoha",
+    "display_name": "Mathias Jean Johansen",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/233988?v=4",
+    "url": "https://github.com/majjoha",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 2,
+      "total_stars": 1,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "nvim-context",
+      "version": null,
+      "description": "Bridge between running Neovim instances and agentic coding tools.",
+      "owner_info": {
+        "name": "Mathias Jean Johansen"
+      },
+      "keywords": [],
+      "repo_full_name": "majjoha/nvim-context",
+      "repo_url": "https://github.com/majjoha/nvim-context",
+      "repo_description": "Bridge between running Neovim instances and agentic coding tools.",
+      "homepage": "https://github.com/majjoha/nvim-context",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-08T18:22:02Z",
+        "created_at": "2025-12-12T14:58:35Z",
+        "license": "ISC"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 256
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 137
+        },
+        {
+          "path": ".codex",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".codex/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".codex/skills/nvim-context",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".codex/skills/nvim-context/SKILL.md",
+          "type": "blob",
+          "size": 1513
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3301
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/nvim-context",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/nvim-context/SKILL.md",
+          "type": "blob",
+          "size": 1513
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nvim-context\",\n  \"owner\": {\n    \"name\": \"Mathias Jean Johansen\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nvim-context\",\n      \"source\": \"./\",\n      \"description\": \"Bridge between running Neovim instances and agentic coding tools.\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"nvim-context\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Bridge between running Neovim instances and agentic coding tools.\"\n}\n",
+        ".codex/skills/nvim-context/SKILL.md": "---\nname: nvim-context\ndescription: >\n  Get the current Neovim context as JSON (cursor position, current file,\n  visual selection and diagnostics) to help answer questions about code at\n  the current cursor position, visual selections and diagnostics. Use when\n  users ask about \"this line\", \"current file\", \"selection\" or need context\n  about their Neovim editor state.\n---\n\n# Neovim context provider\n## Purpose\nProvides live context from the user's Neovim editor session to help answer\ncontext-aware questions about code.\n\n## How it works\n1. Executes the `nvim-context` tool to get the current editor state.\n2. Returns JSON data including cursor position, open file, visual selection and\n   diagnostics.\n3. Use this information to understand references like \"this line\", \"the\n   selection\", \"current file\", etc.\n\n## Usage examples\n- \"What's wrong with this line?\" → Check diagnostics at cursor\n- \"Explain the selected code\" → Analyze visual selection\n- \"What file am I in?\" → Return current file path\n- \"Show me all errors\" → List all LSP diagnostics\n\n## Technical details\nTo use this skill, execute the `nvim-context` CLI command which outputs JSON:\n```json\n{\n  \"cursor\": {\n    \"line\": 43,\n    \"col\": 3\n  },\n  \"file\": \"/path/to/current/file.rb\",\n  \"selection\": null,\n  \"diagnostics\": []\n}\n```\n\n## Implementation\nWhen this skill is loaded, execute `nvim-context` via Bash and parse the JSON\noutput to understand the current editor state. Use the returned data to answer\nuser questions about their code.\n",
+        "README.md": "# `nvim-context`\n![CI](https://github.com/majjoha/nvim-context/workflows/CI/badge.svg)\n[![Gem Version](https://badge.fury.io/rb/nvim-context.svg)](https://badge.fury.io/rb/nvim-context)\n\n`nvim-context` is a bridge between running Neovim instances and agentic coding\ntools. It extracts context from the editor via a Unix socket connection and\noutputs JSON with the cursor position, current file, visual selection and\ndiagnostics.\n\nIt allows agentic coding tools running outside Neovim to answer questions such\nas:\n- What does this line do?\n- Can you convert the current line to uppercase?\n- What does the method under my cursor do?\n- Are these lines idiomatic Ruby?\n\n## Motivation\nWhile the Neovim community provides several plugins for integrating agentic\ncoding assistants into the editor (see the [AI section in the Awesome Neovim\nrepository](https://github.com/rockerboo/awesome-neovim?tab=readme-ov-file#ai)),\nit seems that few tools offer a way to let any agentic coding tool running\n*outside* Neovim retrieve the state of the editor in an agnostic manner.\n\nThe goal with `nvim-context` is to separate concerns, so Amp Code, Claude Code,\nCodex, etc., can query the current state of a Neovim session by calling\nthis tool. See the [Integration with agentic\ntools](#integration-with-agentic-tools) section below for suggestions on how to\nset this up.\n\n## Installation\n```sh\ngem install nvim-context\n```\n\n## Setup\nWhen starting Neovim ensure that you open it using the `--listen` flag and pass\na path to the socket as follows:\n\n```sh\nnvim --listen $(pwd)/nvim-context.sock\n```\n\nAlternatively, you can set the `NVIM_CONTEXT_SOCKET` environment variable to\nspecify the socket path:\n\n```sh\nexport NVIM_CONTEXT_SOCKET=/tmp/nvim-context.sock\nnvim --listen $NVIM_CONTEXT_SOCKET\n```\n\nIf no environment variable is set, the tool defaults to `nvim-context.sock` in\nthe current directory.\n\n## Usage\nOnce Neovim is running, you can retrieve the current context by running\n`nvim-context`.\n\nThis will output JSON containing the current file, cursor position, visual\nselection (if any), and diagnostics in this format:\n\n```json\n{\n  \"cursor\": {\n    \"line\": 43,\n    \"col\": 3\n  },\n  \"file\": \"/path/to/current/file.rb\",\n  \"selection\": null,\n  \"diagnostics\": []\n}\n```\n\n### Integration with agentic tools\n#### Amp Code\n```sh\namp skill add majjoha/nvim-context/nvim-context\n```\n\n#### Claude Code\n```sh\n# Add the repository as a marketplace\n/plugin marketplace add majjoha/nvim-context\n\n# Install the plugin\n/plugin install nvim-context@nvim-context\n```\n\nThe plugin provides the `nvim-context` skill which gives Claude Code access to\nyour live Neovim editor state.\n\n#### Codex\n```sh\n$skill-installer install https://github.com/majjoha/nvim-context/tree/main/.codex/skills/nvim-context\n```\n\n#### Gemini\nTBD.\n\n#### OpenCode\n<details>\n<summary><code>~/.config/opencode/command/nvim-context.md</code></summary>\n<pre>\n---\ndescription: Show current Neovim context\n---\n\n!`nvim-context`\n</pre>\n</details>\n\n## Disclaimer\nSince building software with AI can still be divisive, it might be worth\npointing out here that `nvim-context` itself has been built using OpenCode and\nClaude Code, but with human guidance and continuous review of its work.\n\n## License\nSee [LICENSE](https://github.com/majjoha/nvim-context/blob/main/LICENSE).\n",
+        "skills/nvim-context/SKILL.md": "---\nname: nvim-context\ndescription: >\n  Get the current Neovim context as JSON (cursor position, current file,\n  visual selection and diagnostics) to help answer questions about code at\n  the current cursor position, visual selections and diagnostics. Use when\n  users ask about \"this line\", \"current file\", \"selection\" or need context\n  about their Neovim editor state.\n---\n\n# Neovim context provider\n## Purpose\nProvides live context from the user's Neovim editor session to help answer\ncontext-aware questions about code.\n\n## How it works\n1. Executes the `nvim-context` tool to get the current editor state.\n2. Returns JSON data including cursor position, open file, visual selection and\n   diagnostics.\n3. Use this information to understand references like \"this line\", \"the\n   selection\", \"current file\", etc.\n\n## Usage examples\n- \"What's wrong with this line?\" → Check diagnostics at cursor\n- \"Explain the selected code\" → Analyze visual selection\n- \"What file am I in?\" → Return current file path\n- \"Show me all errors\" → List all LSP diagnostics\n\n## Technical details\nTo use this skill, execute the `nvim-context` CLI command which outputs JSON:\n```json\n{\n  \"cursor\": {\n    \"line\": 43,\n    \"col\": 3\n  },\n  \"file\": \"/path/to/current/file.rb\",\n  \"selection\": null,\n  \"diagnostics\": []\n}\n```\n\n## Implementation\nWhen this skill is loaded, execute `nvim-context` via Bash and parse the JSON\noutput to understand the current editor state. Use the returned data to answer\nuser questions about their code.\n"
+      },
+      "plugins": [
+        {
+          "name": "nvim-context",
+          "source": "./",
+          "description": "Bridge between running Neovim instances and agentic coding tools.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add majjoha/nvim-context",
+            "/plugin install nvim-context@nvim-context"
+          ]
+        }
+      ]
+    }
+  ]
+}

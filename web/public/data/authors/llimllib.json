@@ -1,0 +1,127 @@
+{
+  "author": {
+    "id": "llimllib",
+    "display_name": "Bill Mill",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7150?v=4",
+    "url": "https://github.com/llimllib",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 1,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "aver",
+      "version": null,
+      "description": "GitHub Actions version checking tools for Claude Code",
+      "owner_info": {
+        "name": "llimllib"
+      },
+      "keywords": [],
+      "repo_full_name": "llimllib/aver",
+      "repo_url": "https://github.com/llimllib/aver",
+      "repo_description": "A GitHub Actions version checker. Scans your workflow files and reports outdated actions.",
+      "homepage": "https://llimllib.github.io/aver/",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-29T21:48:59Z",
+        "created_at": "2026-01-15T17:40:37Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 600
+        },
+        {
+          "path": "plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/github-actions-version-check",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/github-actions-version-check/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/github-actions-version-check/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 354
+        },
+        {
+          "path": "plugin/github-actions-version-check/README.md",
+          "type": "blob",
+          "size": 2312
+        },
+        {
+          "path": "plugin/github-actions-version-check/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/github-actions-version-check/skills/github-actions-version-check",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugin/github-actions-version-check/skills/github-actions-version-check/SKILL.md",
+          "type": "blob",
+          "size": 2717
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aver\",\n  \"owner\": {\n    \"name\": \"llimllib\"\n  },\n  \"metadata\": {\n    \"description\": \"GitHub Actions version checking tools for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"github-actions-version-check\",\n      \"source\": \"./plugin/github-actions-version-check\",\n      \"description\": \"Check and update GitHub Actions versions using aver\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"llimllib\"\n      },\n      \"repository\": \"https://github.com/llimllib/aver\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"github-actions\", \"ci-cd\", \"version-check\", \"aver\"]\n    }\n  ]\n}\n",
+        "plugin/github-actions-version-check/.claude-plugin/plugin.json": "{\n  \"name\": \"github-actions-version-check\",\n  \"description\": \"Check and update GitHub Actions versions using aver\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"llimllib\"\n  },\n  \"repository\": \"https://github.com/llimllib/aver\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"github-actions\", \"ci-cd\", \"version-check\", \"aver\"],\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "plugin/github-actions-version-check/README.md": "# GitHub Actions Version Check Plugin\n\nA Claude Code plugin that helps ensure GitHub Actions in your workflow files use up-to-date versions.\n\n## Features\n\n- **Skill**: Automatically invoked when working with GitHub Actions workflow files\n- **Token Validation**: Blocks `aver` commands if `GITHUB_TOKEN` is not set, with a helpful error message\n\n## Installation\n\n### Prerequisites\n\n1. Install [aver](https://github.com/llimllib/aver) (GitHub Actions version checker):\n   ```bash\n   go install github.com/llimllib/aver/cmd/aver@latest\n   ```\n\n2. Set up your GitHub token for API access:\n   ```bash\n   export GITHUB_TOKEN=ghp_xxxxx\n   ```\n\n### Install the Plugin\n\n#### From the aver Repository\n\nFirst, add the aver repository as a marketplace:\n\n```shell\n/plugin marketplace add llimllib/aver\n```\n\nThen install the plugin:\n\n```shell\n/plugin install github-actions-version-check@aver\n```\n\nOr install directly from the command line:\n\n```bash\nclaude plugin install github-actions-version-check@aver\n```\n\n#### From Local Directory (Development)\n\n```bash\nclaude --plugin-dir /path/to/plugin/github-actions-version-check\n```\n\n## Usage\n\nThe plugin automatically activates when you:\n\n- Create or modify GitHub Actions workflow files (`.github/workflows/*.yml`)\n- Ask Claude to check if actions are up to date\n- Review workflow files for outdated dependencies\n\n### Manual Commands\n\nYou can also run aver directly:\n\n```bash\n# Human-readable output\naver\n\n# JSON output for scripting\naver --json\n\n# Ignore SHA-pinned actions\naver --ignore-sha\n\n# Only report major version updates\naver --ignore-minor\n```\n\n## Configuration\n\n### Environment Variables\n\n| Variable | Required | Description |\n|----------|----------|-------------|\n| `GITHUB_TOKEN` | Recommended | GitHub Personal Access Token for API access. Without it, requests are limited to 60/hour and the plugin will block aver commands. |\n\n## Plugin Structure\n\n```\ngithub-actions-version-check/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin manifest\n├── skills/\n│   └── github-actions-version-check/\n│       └── SKILL.md         # Skill definition\n├── hooks/\n│   ├── hooks.json           # Hook configuration\n│   └── check-github-token.sh # Token validation script\n└── README.md\n```\n\n## License\n\nMIT\n",
+        "plugin/github-actions-version-check/skills/github-actions-version-check/SKILL.md": "---\nname: github-actions-version-check\ndescription: Check and update GitHub Actions versions. Use when creating, modifying, or reviewing GitHub Actions workflow files (.github/workflows/*.yml), or when asked to ensure actions are up to date.\n---\n\n# GitHub Actions Version Check\n\nEnsures GitHub Actions in workflow files use up-to-date versions.\n\n## Prerequisites\n\nInstall aver (GitHub Actions version checker):\n\n```bash\ngo install github.com/llimllib/aver/cmd/aver@latest\n```\n\nOr if aver is already in PATH, skip this step.\n\n## Workflow\n\n### When Creating or Modifying Workflow Files\n\n1. **Before adding any action**, check what the latest version is:\n   ```bash\n   # Search GitHub for the action's latest release\n   # Example: for actions/checkout, check https://github.com/actions/checkout/releases\n   ```\n\n2. **Always use the latest major version** when adding new actions:\n   - Good: `actions/checkout@v4`\n   - Avoid: `actions/checkout@v3` (unless v3 is actually latest)\n\n3. **After making changes**, validate with aver:\n   ```bash\n   aver\n   ```\n\n4. **If outdated actions are found**, update them to the latest versions shown.\n\n### Checking Existing Workflows\n\nRun aver in the project root:\n\n```bash\n# Human-readable output\naver\n\n# JSON output for scripting\naver --json\n\n# Ignore SHA-pinned actions\naver --ignore-sha\n\n# Only report major version updates\naver --ignore-minor\n```\n\n### Understanding Output\n\n```\nFile                        Action            Current  Latest\n--------------------------  ----------------  -------  ------\n.github/workflows/ci.yml    actions/checkout  v3       v4\n```\n\nThis means `actions/checkout@v3` should be updated to `actions/checkout@v4`.\n\n### Exit Codes\n\n| Code | Meaning |\n|------|---------|\n| 0 | All actions up to date |\n| 1 | Outdated actions found |\n| 2 | Error occurred |\n\n## Best Practices\n\n1. **Pin to major versions** (`@v4`) not full semver (`@v4.1.2`) unless you need reproducibility\n2. **Run aver before committing** workflow changes\n3. **For SHA-pinned actions**, aver shows commits behind - update periodically\n4. **Set GITHUB_TOKEN** for higher API rate limits:\n   ```bash\n   export GITHUB_TOKEN=ghp_xxxxx\n   ```\n\n## Common Actions and Their Repos\n\n| Action | Repository |\n|--------|------------|\n| `actions/checkout` | https://github.com/actions/checkout |\n| `actions/setup-node` | https://github.com/actions/setup-node |\n| `actions/setup-python` | https://github.com/actions/setup-python |\n| `actions/setup-go` | https://github.com/actions/setup-go |\n| `actions/cache` | https://github.com/actions/cache |\n| `actions/upload-artifact` | https://github.com/actions/upload-artifact |\n| `actions/download-artifact` | https://github.com/actions/download-artifact |\n"
+      },
+      "plugins": [
+        {
+          "name": "github-actions-version-check",
+          "source": "./plugin/github-actions-version-check",
+          "description": "Check and update GitHub Actions versions using aver",
+          "version": "1.0.0",
+          "author": {
+            "name": "llimllib"
+          },
+          "repository": "https://github.com/llimllib/aver",
+          "license": "MIT",
+          "keywords": [
+            "github-actions",
+            "ci-cd",
+            "version-check",
+            "aver"
+          ],
+          "categories": [
+            "aver",
+            "ci-cd",
+            "github-actions",
+            "version-check"
+          ],
+          "install_commands": [
+            "/plugin marketplace add llimllib/aver",
+            "/plugin install github-actions-version-check@aver"
+          ]
+        }
+      ]
+    }
+  ]
+}

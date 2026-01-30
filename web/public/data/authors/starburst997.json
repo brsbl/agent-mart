@@ -1,0 +1,155 @@
+{
+  "author": {
+    "id": "starburst997",
+    "display_name": "JD Boivin",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/77518?u=ddf984e27ddbbf941a88017cb71872be0429a2e4&v=4",
+    "url": "https://github.com/starburst997",
+    "bio": "\r\n    \r\n    Programmer since a little kid\r\n\r\n",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 4,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "jd",
+      "version": null,
+      "description": "Plugins for Claude Code tailored for my needs",
+      "owner_info": {
+        "name": "JD Boivin",
+        "email": "jd@boiv.in",
+        "url": "https://github.com/starburst997"
+      },
+      "keywords": [],
+      "repo_full_name": "starburst997/claude",
+      "repo_url": "https://github.com/starburst997/claude",
+      "repo_description": "Plugins for Claude Code tailored for my needs",
+      "homepage": "https://claude.jd.boiv.in/",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-25T17:38:11Z",
+        "created_at": "2025-10-29T15:15:46Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 463
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/common",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/common/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/common/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 348
+        },
+        {
+          "path": "plugins/common/README.md",
+          "type": "blob",
+          "size": 2126
+        },
+        {
+          "path": "plugins/common/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/common/commands/gh-pages.md",
+          "type": "blob",
+          "size": 6719
+        },
+        {
+          "path": "plugins/common/commands/hello.md",
+          "type": "blob",
+          "size": 261
+        },
+        {
+          "path": "plugins/common/commands/issue.md",
+          "type": "blob",
+          "size": 3277
+        },
+        {
+          "path": "plugins/common/commands/readme.md",
+          "type": "blob",
+          "size": 1139
+        },
+        {
+          "path": "plugins/common/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/common/hooks/gh-pages-context.sh",
+          "type": "blob",
+          "size": 1926
+        },
+        {
+          "path": "plugins/common/hooks/hooks.json",
+          "type": "blob",
+          "size": 489
+        },
+        {
+          "path": "plugins/common/hooks/session-context.sh",
+          "type": "blob",
+          "size": 1342
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jd\",\n  \"owner\": {\n    \"name\": \"JD Boivin\",\n    \"email\": \"jd@boiv.in\",\n    \"url\": \"https://github.com/starburst997\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugins for Claude Code tailored for my needs\",\n    \"version\": \"1.0.0\",\n    \"homepage\": \"https://claude.jd.boiv.in\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"common\",\n      \"source\": \"./plugins/common\",\n      \"category\": \"jd\",\n      \"tags\": [\"common\"]\n    }\n  ]\n}\n",
+        "plugins/common/.claude-plugin/plugin.json": "{\n  \"name\": \"common\",\n  \"description\": \"Generic plugin useful for all types of projects\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"JD Boivin\",\n    \"email\": \"jd@boiv.in\"\n  },\n  \"hooks\": \"./hooks/hooks.json\",\n  \"commands\": [\n    \"./commands/hello.md\",\n    \"./commands/readme.md\",\n    \"./commands/gh-pages.md\",\n    \"./commands/issue.md\"\n  ]\n}\n",
+        "plugins/common/README.md": "# Common Plugin\n\nGeneric plugin useful for all types of projects. Automatically injects custom context and guidelines at the start of every Claude Code session.\n\n## Features\n\n**Hooks:**\n\n- `SessionStart` - Injects project guidelines with support for project-specific customization\n\n**Commands:**\n\n- `/common:readme [folder_path]` - Create/update professional README files\n- `/common:gh-pages [theme]` - Generate professional GitHub Pages (index.html) in docs/ (theme: dark or light, default: dark)\n- `/common:issue` - Create a PR to fix the current GitHub issue (designed for use with claude-code-action)\n- `/common:hello` - Personalized greeting command\n\n## How It Works\n\n### SessionStart Hook\n\nThis plugin uses a SessionStart hook to automatically inject custom context into Claude's prompts at the beginning of each session. This works similarly to CLAUDE.md files but can be shared across multiple projects via the plugin system.\n\nThe hook executes `hooks/session-context.sh` which supports a flexible context loading system:\n\n1. **Project-specific context** - Checks for `CONTEXT.md` in the current working directory\n2. **Default context** - Falls back to plugin's `context/instructions.md` if no project context exists\n3. **Additional context** - Appends `CONTEXT_ADD.md` from the current directory if it exists (works with both project and default context)\n\n## Customization\n\n### Plugin-level (affects all projects)\n\nEdit `context/instructions.md` in the plugin directory to customize the default guidelines injected at session start.\n\n### Project-level (affects only specific projects)\n\nCreate one or both of these files in your project's root directory:\n\n- **`CONTEXT.md`** - Replaces the plugin's default context entirely for this project\n- **`CONTEXT_ADD.md`** - Appends additional context on top of either the project-specific `CONTEXT.md` or the plugin's default `instructions.md`\n\n**Priority order:**\n1. If `CONTEXT.md` exists in project → use it as base context\n2. Otherwise → use plugin's `context/instructions.md` as base context\n3. If `CONTEXT_ADD.md` exists in project → append it to the base context\n",
+        "plugins/common/commands/gh-pages.md": "---\ndescription: Create a professional GitHub Pages (index.html) in docs/ to showcase the project\narguments:\n  - name: theme\n    description: Theme to use for the page (dark or light)\n    required: false\n    default: dark\n---\n\n# GitHub Pages Generator Command\n\nGenerate a professional, marketing-focused GitHub Pages documentation site for the current project.\n\n## Objective\n\nCreate a professional `index.html` file in the `docs/` directory that serves dual purposes:\n1. **Marketing page**: Attractive showcase of the project with clear value proposition\n2. **Documentation cheatsheet**: Quick reference for features, inputs/outputs, and usage examples\n\n## Theme Inspiration\n\nA theme template will be **automatically injected into the context** when you execute this command. The template is selected based on the `theme` argument:\n\n- **theme=dark** (default): Modern dark theme with gradient accents\n- **theme=light**: Clean light theme with purple gradient\n\n**Important**: The injected template is an inspiration source, not a strict template to copy. Use it to guide the visual style, color palette, and overall aesthetic, but adapt the structure and content to fit the specific project. The goal is to create something that feels similar in style while being tailored to the project's needs.\n\n## Requirements\n\n### Structure & Content\n\n**Note**: Adapt sections based on what's relevant to the project. Not all projects need every section.\n\n1. **Hero Section** (Required)\n   - Project name as main heading with **gradient text** (MUST use CSS gradient)\n   - Clear, concise tagline explaining what the project does\n   - Call-to-action buttons (GitHub repo, documentation, etc.)\n\n2. **Features Section** (Required)\n   - Grid layout showcasing key features\n   - Icons or visual elements for each feature\n   - Brief descriptions (1-2 sentences max)\n\n3. **Usage/Quick Start Section** (Optional - include if project has code examples)\n   - Practical code examples showing real-world usage\n   - Multiple workflow examples if applicable (dev, staging, production)\n   - ALL code examples MUST use syntax highlighting with colored text\n\n4. **Reference Section** (Optional - include if project has inputs/outputs/parameters)\n   - Complete inputs/outputs documentation\n   - Organized in clear categories\n   - Parameter names, descriptions, and defaults\n   - Mark required vs optional parameters clearly\n\n5. **Footer** (Required)\n   - Links to GitHub repo, issues, releases, documentation\n   - Author/creator credit\n\n### Code Highlighting\n\n**CRITICAL**: All code blocks, inline code, and usage examples MUST use colored syntax highlighting:\n\n- Use semantic CSS classes for syntax elements (keywords, strings, variables, comments)\n- Define color schemes in `<style>` that match the chosen theme\n- Examples should be visually distinct and easy to scan\n- Use monospace fonts for all code\n\n### Design Principles\n\n- **Self-contained**: Single HTML file with embedded CSS (no external dependencies)\n- **Responsive**: Mobile-friendly with appropriate media queries\n- **Professional**: Clean, modern design that builds trust\n- **Scannable**: Clear hierarchy, whitespace, and visual structure\n- **Accessible**: Proper semantic HTML, good contrast ratios\n\n### Theme Consistency\n\n- Use the selected theme as visual inspiration, not a strict copy\n- Match the general color palette and aesthetic feel\n- Maintain consistent spacing, typography, and component styling\n- Adapt gradients, borders, shadows to fit the theme aesthetic\n- **CRITICAL**: The project name/logo (h1) MUST always use a gradient effect with `background: linear-gradient(...)` and `background-clip: text`\n\n## Process\n\n1. **Analyze the project**:\n   - Read README.md, action.yml, or relevant configuration files\n   - Identify key features, inputs, outputs, and usage patterns\n   - Understand the target audience and use cases\n\n2. **Study the injected theme template**:\n   - The template has been automatically injected into the context based on the theme argument\n   - Extract color schemes, typography, component patterns as guidance\n   - Note the syntax highlighting approach\n   - Use as inspiration, not as a strict template to copy\n\n3. **Generate content**:\n   - Write clear, benefit-focused copy for features\n   - Create practical, realistic code examples (if relevant)\n   - Document all parameters comprehensively (if the project has inputs/outputs)\n   - Apply colored syntax highlighting to ALL code\n   - Include only sections that make sense for this specific project\n\n4. **Create the file**:\n   - Generate `docs/index.html` in the project root\n   - Ensure all sections are complete and polished\n   - Validate HTML structure and CSS styling\n\n## Output Location\n\nAlways create the file at: `docs/index.html` (relative to project root)\n\nIf the `docs/` directory doesn't exist, create it first.\n\n## Example Invocation\n\n```\n/common:gh-pages theme=dark\n/common:gh-pages theme=light\n/common:gh-pages\n```\n\n## Important Notes\n\n- Focus on clarity and scannability over verbosity\n- Every code snippet should have colored syntax highlighting\n- Balance marketing appeal with technical accuracy\n- Make it easy for users to find the information they need quickly\n- The page should work standalone (no external JS/CSS dependencies)\n- **The project name/title MUST use a gradient effect** - this is non-negotiable\n- Adapt the structure to fit the project - not every project needs usage examples or reference docs\n- Use theme files as inspiration for style, not as rigid templates to copy exactly\n\n## Encoding Guidelines\n\n**CRITICAL**: To prevent encoding issues in generated HTML files:\n\n1. **Use HTML entities for special characters**:\n   - For emojis in HTML: Use decimal HTML entities (e.g., `&#127919;` for 🎯, `&#9889;` for ⚡, `&#128260;` for 🔔)\n   - For bullet separators: Use `&bull;` instead of the • character\n   - For arrows: Use `&rarr;` for → and `&larr;` for ←\n   - For other special symbols: Use HTML entity equivalents\n\n2. **Always include proper charset**:\n   - Ensure `<meta charset=\"UTF-8\" />` is in the `<head>` section\n\n3. **Common HTML entities to use**:\n   - `&bull;` for bullet points (•)\n   - `&rarr;` for right arrow (→)\n   - `&larr;` for left arrow (←)\n   - `&mdash;` for em dash (—)\n   - `&ndash;` for en dash (–)\n   - `&hellip;` for ellipsis (…)\n   - `&copy;` for copyright (©)\n   - `&trade;` for trademark (™)\n\n4. **For emojis**: Convert to decimal HTML entities using the Unicode code point\n   - Find emoji code point (e.g., U+1F3AF for 🎯)\n   - Convert to decimal: `&#127919;`\n   - Or use hex format: `&#x1F3AF;`\n\nThis ensures the HTML file displays correctly across all systems and browsers without encoding corruption.\n",
+        "plugins/common/commands/hello.md": "---\ndescription: Greet the user with a personalized message\n---\n\n# Hello Command\n\nGreet the user warmly and ask how you can help them today. Make the greeting personal and encouraging.\nDon't forget to tell your name and that you are an helpful coding assistant\n",
+        "plugins/common/commands/issue.md": "---\ndescription: Create a PR to fix the current GitHub issue\n---\n\n# GitHub Issue to PR Command\n\nTransform the current GitHub issue into a pull request. This command is designed to work with the `claude-code-action` GitHub Action where issue context is automatically provided.\n\n## Objective\n\n1. Treat the issue description and comments as the implementation request\n2. Implement all necessary changes to address the issue\n3. Create a pull request using the `gh` CLI with proper formatting\n\n## Comment Priority\n\nWhen reviewing the issue context, prioritize information in this order:\n\n1. **First comment (issue description)** - This is the PRIMARY requirement and most important source of truth\n2. **Comments from the repository owner** - Highest priority as they have final authority on requirements and direction\n3. **Follow-up comments from the issue author** - High priority, often contains clarifications or additional requirements\n4. **Comments from other users** - Lower priority but still useful for additional context and edge cases\n\n## Process\n\n1. **Understand the requirements**:\n\n   - Focus primarily on the first comment (issue description) as the main request\n   - Give highest priority to comments from the repository owner\n   - Review follow-up comments from the issue author for clarifications\n   - Consider comments from other users as supplementary context\n   - Identify what needs to be fixed or implemented\n   - Plan the necessary changes\n\n2. **Implement the solution**:\n\n   - Make all necessary code changes to address the issue\n   - Follow existing code patterns and conventions\n   - Ensure changes fully address the requirements\n\n3. **Create the pull request**:\n   - Create a new branch for the changes (if needed)\n   - Commit all changes with a descriptive commit message\n   - Push the branch to remote\n   - Create PR using `gh pr create` with the following body format:\n\n```markdown\n## Summary\n\n[Brief 1-2 sentence summary of what was changed and why]\n\n## Changes\n\n- [Specific change 1]\n- [Specific change 2]\n- [Specific change 3]\n\nFixes #<issue_number>\n```\n\n**IMPORTANT**: Do NOT add any footer text like \"Generated with Claude Code\" or \"Co-Authored-By: Claude\" to the PR body or commit messages. Keep the PR body clean and professional with only the content shown above.\n\n4. **Output**:\n   - Display the URL of the newly created pull request\n\n## Example Invocation\n\n```\n/common:issue\n```\n\n## Important Notes\n\n- **CRITICAL**: You MUST create the pull request using `gh pr create` command - this is a mandatory step that cannot be skipped or deferred\n- **CRITICAL**: The branch name **must** be `jd/issue-####/<brief-title-of-the-pr>`, if branch already exists, append an incremental number, ex: `-#` to make it unique\n- The PR body **must** include `Fixes #<issue_number>` to auto-link and auto-close the issue\n- Changes should fully address all requirements mentioned in the issue\n- The PR summary should be concise but informative (1-2 sentences)\n- All changes must be committed and pushed before creating the PR\n- Follow the repository's existing commit and PR conventions\n- Use `gh pr create` to create the pull request (not manual git operations)\n- **YOU ARE ALLOWED** to \"Modify files in the .github/workflows directory\" and create PR using `gh`\n",
+        "plugins/common/commands/readme.md": "---\ndescription: Create / Update a professional README\narguments:\n  - name: folder_path\n    description: The folder path where the README.md should be created/updated\n    required: false\n    default: repository root\n---\n\n# README Command\n\nCreate or update a professional README.md file.\n\n## Usage\n\n```\n/common:readme\n/common:readme folder_path=./path/to/folder\n/common:readme folder_path=plugins/common\n```\n\n## Instructions\n\n1. If the `folder_path` argument is provided, use that as the target directory. Otherwise, use the repository root.\n2. Analyze the contents of the specified folder to understand the project structure and purpose.\n3. Create or update the README.md file in that folder with:\n   - Clear project title and description\n   - Installation instructions (if applicable)\n   - Usage examples\n   - Key features\n   - Project structure overview\n   - Any other relevant sections based on the folder contents\n4. Ensure the README is well-formatted using proper markdown syntax.\n5. Keep it brief and to the point\n6. DO NOT use emoji unless it is relevant (like ✅, ❌, 🟢, 🔴, etc.)\n7. NO code of conduct and NO contributing\n",
+        "plugins/common/hooks/gh-pages-context.sh": "#!/bin/bash\n\n# This hook detects when /common:gh-pages is called and injects the appropriate theme template file\n\n# Get the user prompt from stdin (UserPromptSubmit hook receives the prompt as input)\nUSER_PROMPT=$(cat)\n\n# Check if the prompt contains /common:gh-pages\nif [[ \"$USER_PROMPT\" =~ /common:gh-pages ]]; then\n  # Default theme is dark\n  THEME=\"dark\"\n\n  # Extract theme argument if present (supports both theme=light and theme=dark)\n  if [[ \"$USER_PROMPT\" =~ theme=([a-z]+) ]]; then\n    THEME=\"${BASH_REMATCH[1]}\"\n  fi\n\n  # Validate theme (only dark or light are allowed)\n  if [[ \"$THEME\" != \"dark\" && \"$THEME\" != \"light\" ]]; then\n    THEME=\"dark\"\n  fi\n\n  # Path to the template file\n  TEMPLATE_FILE=\"${CLAUDE_PLUGIN_ROOT}/context/${THEME}.html\"\n\n  # Check if template file exists\n  if [ -f \"$TEMPLATE_FILE\" ]; then\n    # Read the template file content and escape it properly for JSON\n    TEMPLATE_CONTENT=$(cat \"$TEMPLATE_FILE\")\n\n    # Create the full context message\n    CONTEXT_MESSAGE=\"# GitHub Pages Theme Template\n\nThe following ${THEME} theme template has been automatically loaded for your use as inspiration:\n\n\\`\\`\\`html\n${TEMPLATE_CONTENT}\n\\`\\`\\`\n\nUse this template as visual inspiration for styling, color palette, and component design. Adapt the structure and content to fit the specific project needs.\"\n\n    # Escape the entire message properly for JSON\n    CONTEXT_JSON=$(echo \"$CONTEXT_MESSAGE\" | jq -Rs .)\n\n    # Output in the required JSON format for UserPromptSubmit hook\n    cat << EOF\n{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"UserPromptSubmit\",\n    \"additionalContext\": ${CONTEXT_JSON}\n  }\n}\nEOF\n  else\n    # Template file not found, output empty\n    cat << 'EOF'\n{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"UserPromptSubmit\"\n  }\n}\nEOF\n  fi\nelse\n  # Not a gh-pages command, output empty\n  cat << 'EOF'\n{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"UserPromptSubmit\"\n  }\n}\nEOF\nfi\n",
+        "plugins/common/hooks/hooks.json": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/session-context.sh\"\n          }\n        ]\n      }\n    ],\n    \"UserPromptSubmit\": [\n      {\n        \"matcher\": \"/common:gh-pages\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/gh-pages-context.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "plugins/common/hooks/session-context.sh": "#!/bin/bash\n\n# Define potential context files\nPROJECT_CONTEXT=\"${PWD}/CONTEXT.md\"\nPROJECT_CONTEXT_ADD=\"${PWD}/CONTEXT_ADD.md\"\nDEFAULT_CONTEXT=\"${CLAUDE_PLUGIN_ROOT}/context/instructions.md\"\n\n# Initialize context content\nCONTEXT_CONTENT=\"\"\n\n# Check for project-specific CONTEXT.md first (takes precedence)\nif [ -f \"$PROJECT_CONTEXT\" ]; then\n  CONTEXT_CONTENT=$(cat \"$PROJECT_CONTEXT\")\nelse\n  # Fall back to default plugin context\n  if [ -f \"$DEFAULT_CONTEXT\" ]; then\n    CONTEXT_CONTENT=$(cat \"$DEFAULT_CONTEXT\")\n  fi\nfi\n\n# Append CONTEXT_ADD.md if it exists (works with both project and default context)\nif [ -f \"$PROJECT_CONTEXT_ADD\" ]; then\n  if [ -n \"$CONTEXT_CONTENT\" ]; then\n    CONTEXT_CONTENT=\"${CONTEXT_CONTENT}\"$'\\n\\n'\"$(cat \"$PROJECT_CONTEXT_ADD\")\"\n  else\n    CONTEXT_CONTENT=$(cat \"$PROJECT_CONTEXT_ADD\")\n  fi\nfi\n\n# Output the context\nif [ -n \"$CONTEXT_CONTENT\" ]; then\n  # Escape the content properly for JSON\n  CONTEXT=$(echo \"$CONTEXT_CONTENT\" | jq -Rs .)\n\n  # Output in the required JSON format for SessionStart hook\n  cat << EOF\n{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"SessionStart\",\n    \"additionalContext\": $CONTEXT\n  }\n}\nEOF\nelse\n  # If no context files exist, output empty additionalContext\n  cat << 'EOF'\n{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"SessionStart\",\n    \"additionalContext\": \"\"\n  }\n}\nEOF\nfi\n"
+      },
+      "plugins": [
+        {
+          "name": "common",
+          "source": "./plugins/common",
+          "category": "jd",
+          "tags": [
+            "common"
+          ],
+          "description": null,
+          "categories": [
+            "common",
+            "jd"
+          ],
+          "install_commands": [
+            "/plugin marketplace add starburst997/claude",
+            "/plugin install common@jd"
+          ]
+        }
+      ]
+    }
+  ]
+}

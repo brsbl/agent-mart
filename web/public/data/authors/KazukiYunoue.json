@@ -1,0 +1,140 @@
+{
+  "author": {
+    "id": "KazukiYunoue",
+    "display_name": "Kazuki Yunoue",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/799325?v=4",
+    "url": "https://github.com/KazukiYunoue",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "ia-writer-annotations-marketplace",
+      "version": null,
+      "description": "Claude Code plugin for iA Writer authorship annotations",
+      "owner_info": {
+        "name": "KazukiYunoue",
+        "url": "https://github.com/KazukiYunoue"
+      },
+      "keywords": [],
+      "repo_full_name": "KazukiYunoue/claude-code-ia-writer-annotations",
+      "repo_url": "https://github.com/KazukiYunoue/claude-code-ia-writer-annotations",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-26T07:49:47Z",
+        "created_at": "2025-10-10T07:47:34Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/hooks/hooks.json",
+          "type": "blob",
+          "size": 329
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 781
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 637
+        },
+        {
+          "path": ".claude-plugin/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/scripts/auto-annotate.js",
+          "type": "blob",
+          "size": 5881
+        },
+        {
+          "path": ".claude-plugin/scripts/lib",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/scripts/lib/generator.js",
+          "type": "blob",
+          "size": 5427
+        },
+        {
+          "path": ".claude-plugin/scripts/lib/hash.js",
+          "type": "blob",
+          "size": 1036
+        },
+        {
+          "path": ".claude-plugin/scripts/lib/parser.js",
+          "type": "blob",
+          "size": 4699
+        }
+      ],
+      "files": {
+        ".claude-plugin/hooks/hooks.json": "{\n  \"description\": \"Automatically add iA Writer annotations to edited files\",\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Write|Edit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/auto-annotate.js\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ia-writer-annotations-marketplace\",\n  \"owner\": {\n    \"name\": \"KazukiYunoue\",\n    \"url\": \"https://github.com/KazukiYunoue\"\n  },\n  \"description\": \"Claude Code plugin for iA Writer authorship annotations\",\n  \"plugins\": [\n    {\n      \"name\": \"ia-writer-annotations\",\n      \"description\": \"Automatically add iA Writer authorship annotations to your text files when Claude Code edits them (Terminal version only)\",\n      \"author\": {\n        \"name\": \"Kazuki Yunoue\",\n        \"url\": \"https://github.com/KazukiYunoue\"\n      },\n      \"version\": \"0.2.0\",\n      \"homepage\": \"https://github.com/KazukiYunoue/claude-code-ia-writer-annotations\",\n      \"source\": \"./.claude-plugin\",\n      \"tags\": [\"iA Writer\", \"annotations\", \"authorship\", \"markdown\", \"text\", \"terminal\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ia-writer-annotations\",\n  \"version\": \"0.2.0\",\n  \"description\": \"Automatically add iA Writer authorship annotations to your text files when Claude Code edits them (Terminal version only)\",\n  \"author\": \"Kazuki Yunoue\",\n  \"homepage\": \"https://github.com/KazukiYunoue/claude-code-ia-writer-annotations\",\n  \"config\": {\n    \"authorName\": \"Claude\",\n    \"authorKind\": \"Other\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Write|Edit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/auto-annotate.js\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        ".claude-plugin/scripts/auto-annotate.js": "#!/usr/bin/env node\n\n/**\n * Auto-annotation script for Claude Code PostToolUse hook\n * Automatically adds authorship annotations when Claude edits files\n */\n\nconst fs = require('fs');\nconst path = require('path');\n\n// Import core libraries\nconst { parseAnnotations } = require('./lib/parser');\nconst { addAuthorAnnotation, generateFileContent, calculateNewRanges } = require('./lib/generator');\n\n/**\n * Load plugin configuration\n * @returns {{authorName: string, authorKind: string}} Configuration\n */\nfunction loadConfig() {\n  try {\n    const pluginJsonPath = path.join(process.env.CLAUDE_PLUGIN_ROOT || '.', 'plugin.json');\n    const pluginJson = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));\n\n    return {\n      authorName: pluginJson.config?.authorName || 'Claude',\n      authorKind: pluginJson.config?.authorKind || 'Other'\n    };\n  } catch (error) {\n    // Default configuration if plugin.json cannot be read\n    return {\n      authorName: 'Claude',\n      authorKind: 'Other'\n    };\n  }\n}\n\n/**\n * Check if file should be annotated\n * @param {string} filePath - File path\n * @returns {boolean} True if file should be annotated\n */\nfunction shouldAnnotate(filePath) {\n  const ext = path.extname(filePath).toLowerCase();\n  return ['.md', '.txt', '.text'].includes(ext);\n}\n\n/**\n * Process file and add annotations\n * @param {string} filePath - Path to file\n * @param {string} toolName - Name of tool that was used (Write or Edit)\n * @param {Object} toolInput - Tool input parameters\n */\nfunction annotateFile(filePath, toolName, toolInput) {\n  try {\n    // Check if file should be annotated\n    if (!shouldAnnotate(filePath)) {\n      return;\n    }\n\n    // Read current file content\n    const currentContent = fs.readFileSync(filePath, 'utf8');\n\n    // Parse existing annotations\n    const { text: currentText, annotations: currentAnnotations } = parseAnnotations(currentContent);\n\n    // Load configuration\n    const config = loadConfig();\n    const authorName = config.authorName;\n\n    // Determine what ranges to annotate based on tool\n    let newRanges = [];\n\n    if (toolName === 'Write') {\n      // For Write tool, annotate entire file\n      const { countGraphemes } = require('./lib/parser');\n      const textLength = countGraphemes(currentText);\n      newRanges = [{ start: 0, length: textLength }];\n    } else if (toolName === 'Edit') {\n      // For Edit tool, try to determine what was changed\n      // This is a simplified approach - we annotate the entire file\n      // A more sophisticated implementation would parse the old_string/new_string\n      const { countGraphemes } = require('./lib/parser');\n      const textLength = countGraphemes(currentText);\n\n      // In a real implementation, you would:\n      // 1. Find the position of old_string in the original text\n      // 2. Calculate the position and length of new_string\n      // 3. Only annotate the changed range\n\n      // For now, we'll use a simple heuristic:\n      // If there are existing annotations, assume this is an incremental edit\n      const hasExistingAnnotations = Object.keys(currentAnnotations).length > 0;\n\n      if (!hasExistingAnnotations) {\n        // No existing annotations, annotate entire file\n        newRanges = [{ start: 0, length: textLength }];\n      } else {\n        // Has existing annotations, attempt to calculate new ranges\n        // This is a placeholder - in practice you'd need to implement proper diff\n        // For now, we'll skip auto-annotation for edits with existing annotations\n        // to avoid incorrectly attributing human text to Claude\n        console.log(`Skipping auto-annotation for ${filePath} (existing annotations found)`);\n        return;\n      }\n    }\n\n    // Skip if no new ranges to annotate\n    if (newRanges.length === 0) {\n      return;\n    }\n\n    // Add author annotation with kind from config\n    const authorKind = config.authorKind;\n    const updatedAnnotations = addAuthorAnnotation(currentAnnotations, authorName, newRanges, authorKind);\n\n    // Generate new file content with annotations\n    const newContent = generateFileContent(currentText, updatedAnnotations);\n\n    // Write updated content back to file\n    fs.writeFileSync(filePath, newContent, 'utf8');\n\n    console.log(`Added @${authorName} annotations to ${filePath}`);\n  } catch (error) {\n    console.error(`Error annotating file ${filePath}:`, error.message);\n    // Don't throw - we don't want to break the user's workflow if annotation fails\n  }\n}\n\n/**\n * Main entry point\n */\nfunction main() {\n  try {\n    // Read hook input from stdin\n    const input = fs.readFileSync(0, 'utf8');\n    const hookData = JSON.parse(input);\n\n    // Extract tool information (support both formats)\n    const toolName = hookData.tool_name || hookData.tool?.name;\n    const toolInput = hookData.tool_input || hookData.tool?.input;\n\n    // Only process Write and Edit tools\n    if (!toolName || !['Write', 'Edit'].includes(toolName)) {\n      process.exit(0);\n    }\n\n    // Extract file path from tool input\n    let filePath = null;\n\n    if (toolName === 'Write') {\n      filePath = toolInput?.file_path;\n    } else if (toolName === 'Edit') {\n      filePath = toolInput?.file_path;\n    }\n\n    if (!filePath) {\n      console.error('No file path found in tool input');\n      process.exit(0);\n    }\n\n    // Make path absolute if relative\n    if (!path.isAbsolute(filePath)) {\n      filePath = path.resolve(process.cwd(), filePath);\n    }\n\n    // Check if file exists\n    if (!fs.existsSync(filePath)) {\n      console.error(`File not found: ${filePath}`);\n      process.exit(0);\n    }\n\n    // Process the file\n    annotateFile(filePath, toolName, toolInput);\n\n    // Exit successfully\n    process.exit(0);\n  } catch (error) {\n    console.error('Error in auto-annotate hook:', error.message);\n    // Exit with 0 to not block the workflow\n    process.exit(0);\n  }\n}\n\n// Run main function\nmain();\n",
+        ".claude-plugin/scripts/lib/generator.js": "/**\n * Generator for Markdown Annotations format\n * Creates annotation blocks for text files\n */\n\nconst { calculateHash } = require('./hash');\nconst { countGraphemes, extractByGraphemeRange } = require('./parser');\n\n/**\n * Format ranges as string\n * @param {Array<{start: number, length: number}>} ranges - Character ranges\n * @returns {string} Formatted ranges (e.g., \"0,10 20,5\")\n */\nfunction formatRanges(ranges) {\n  if (!ranges || ranges.length === 0) return '';\n  return ranges.map(r => `${r.start},${r.length}`).join(' ');\n}\n\n/**\n * Merge overlapping or adjacent ranges\n * @param {Array<{start: number, length: number}>} ranges - Ranges to merge\n * @returns {Array<{start: number, length: number}>} Merged ranges\n */\nfunction mergeRanges(ranges) {\n  if (!ranges || ranges.length === 0) return [];\n\n  // Sort by start position\n  const sorted = [...ranges].sort((a, b) => a.start - b.start);\n\n  const merged = [sorted[0]];\n\n  for (let i = 1; i < sorted.length; i++) {\n    const current = sorted[i];\n    const last = merged[merged.length - 1];\n\n    const lastEnd = last.start + last.length;\n    const currentEnd = current.start + current.length;\n\n    // Check if ranges overlap or are adjacent\n    if (current.start <= lastEnd) {\n      // Merge ranges\n      last.length = Math.max(lastEnd, currentEnd) - last.start;\n    } else {\n      // Add as separate range\n      merged.push(current);\n    }\n  }\n\n  return merged;\n}\n\n/**\n * Add author annotation to existing annotations\n * @param {Object} annotations - Existing annotations\n * @param {string} author - Author name (without @ or & prefix)\n * @param {Array<{start: number, length: number}>} ranges - New ranges\n * @param {string} kind - Author kind: 'Human' or 'Other' (default: 'Other' for AI)\n * @returns {Object} Updated annotations\n */\nfunction addAuthorAnnotation(annotations, author, ranges, kind = 'Other') {\n  const updated = { ...annotations };\n\n  // Remove prefix if present\n  let authorName = author;\n  if (author.startsWith('@') || author.startsWith('&')) {\n    authorName = author.substring(1);\n  }\n\n  // Determine prefix based on kind\n  const prefix = kind === 'Human' ? '@' : '&';\n  const authorKey = `${prefix}${authorName}`;\n\n  // Get existing ranges for this author\n  const existingRanges = updated[authorKey] || [];\n\n  // Merge with new ranges\n  const allRanges = [...existingRanges, ...ranges];\n  const mergedRanges = mergeRanges(allRanges);\n\n  updated[authorKey] = mergedRanges;\n\n  return updated;\n}\n\n/**\n * Generate annotation block\n * @param {string} text - Text content\n * @param {Object} annotations - Annotations object (keys are author names with @)\n * @returns {string} Formatted annotation block\n */\nfunction generateAnnotationBlock(text, annotations) {\n  if (!annotations || Object.keys(annotations).filter(k => k !== 'Annotations').length === 0) {\n    return '';\n  }\n\n  const lines = [];\n\n  // Collect all ranges from all authors\n  const allRanges = [];\n  for (const [key, ranges] of Object.entries(annotations)) {\n    if (key === 'Annotations') continue;\n    if (Array.isArray(ranges)) {\n      allRanges.push(...ranges);\n    }\n  }\n\n  // Merge and sort all ranges for the Annotations line\n  const mergedAllRanges = mergeRanges(allRanges);\n\n  // Calculate hash of annotated text\n  let annotatedText = '';\n  for (const range of mergedAllRanges) {\n    annotatedText += extractByGraphemeRange(text, range.start, range.length);\n  }\n\n  const hash = calculateHash(annotatedText, 64);\n\n  // Generate Annotations line\n  const rangesStr = formatRanges(mergedAllRanges);\n  lines.push(`Annotations: ${rangesStr} SHA-256 ${hash}`);\n\n  // Generate author lines\n  for (const [key, ranges] of Object.entries(annotations)) {\n    if (key === 'Annotations') continue;\n\n    const rangesStr = formatRanges(ranges);\n    if (rangesStr) {\n      lines.push(`${key}: ${rangesStr}`);\n    }\n  }\n\n  // Add end marker\n  lines.push('...');\n\n  return lines.join('\\n');\n}\n\n/**\n * Generate full file content with annotations\n * @param {string} text - Text content\n * @param {Object} annotations - Annotations object\n * @returns {string} Full file content with annotation block\n */\nfunction generateFileContent(text, annotations) {\n  const annotationBlock = generateAnnotationBlock(text, annotations);\n\n  if (!annotationBlock) {\n    return text;\n  }\n\n  return `${text}\\n\\n---\\n${annotationBlock}`;\n}\n\n/**\n * Calculate character ranges for new text added to content\n * @param {string} oldText - Original text content (without annotations)\n * @param {string} newText - New text content (without annotations)\n * @returns {Array<{start: number, length: number}>} Ranges of new text\n */\nfunction calculateNewRanges(oldText, newText) {\n  // Simple implementation: if text was appended, return range of appended part\n  // More sophisticated diff algorithm could be used for complex edits\n\n  const oldLength = countGraphemes(oldText);\n  const newLength = countGraphemes(newText);\n\n  if (newLength <= oldLength) {\n    // Text was removed or no change\n    return [];\n  }\n\n  if (newText.startsWith(oldText)) {\n    // Text was appended\n    return [{ start: oldLength, length: newLength - oldLength }];\n  }\n\n  // For now, treat entire new content as new\n  // TODO: Implement proper diff algorithm\n  return [{ start: 0, length: newLength }];\n}\n\nmodule.exports = {\n  formatRanges,\n  mergeRanges,\n  addAuthorAnnotation,\n  generateAnnotationBlock,\n  generateFileContent,\n  calculateNewRanges\n};\n",
+        ".claude-plugin/scripts/lib/hash.js": "/**\n * Hash utilities for Markdown Annotations\n * Provides SHA-256 hashing functionality\n */\n\nconst crypto = require('crypto');\n\n/**\n * Calculate SHA-256 hash of text\n * @param {string} text - Text to hash\n * @param {number} truncate - Optional truncation length (32-64 characters, default 64)\n * @returns {string} Hexadecimal hash string\n */\nfunction calculateHash(text, truncate = 64) {\n  if (truncate < 32 || truncate > 64) {\n    throw new Error('Hash truncation must be between 32 and 64 characters');\n  }\n\n  const hash = crypto.createHash('sha256').update(text, 'utf8').digest('hex');\n  return hash.substring(0, truncate);\n}\n\n/**\n * Verify hash matches text\n * @param {string} text - Text to verify\n * @param {string} expectedHash - Expected hash value\n * @returns {boolean} True if hash matches\n */\nfunction verifyHash(text, expectedHash) {\n  const hashLength = expectedHash.length;\n  const actualHash = calculateHash(text, hashLength);\n  return actualHash === expectedHash;\n}\n\nmodule.exports = {\n  calculateHash,\n  verifyHash\n};\n",
+        ".claude-plugin/scripts/lib/parser.js": "/**\n * Parser for Markdown Annotations format\n * Parses annotation blocks from text files\n */\n\nconst { verifyHash } = require('./hash');\n\n/**\n * Count grapheme clusters in text\n * @param {string} text - Text to count\n * @returns {number} Number of grapheme clusters\n */\nfunction countGraphemes(text) {\n  if (!text) return 0;\n\n  // Use undefined locale to respect user's system locale for proper unicode handling\n  const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });\n  const segments = segmenter.segment(text);\n  return Array.from(segments).length;\n}\n\n/**\n * Extract text by grapheme range\n * @param {string} text - Source text\n * @param {number} start - Start position (grapheme index)\n * @param {number} length - Length (grapheme count)\n * @returns {string} Extracted text\n */\nfunction extractByGraphemeRange(text, start, length) {\n  // Use undefined locale to respect user's system locale for proper unicode handling\n  const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });\n  const segments = Array.from(segmenter.segment(text));\n\n  const startIndex = segments[start]?.index || 0;\n  const endSegment = segments[start + length - 1];\n  const endIndex = endSegment ? endSegment.index + endSegment.segment.length : text.length;\n\n  return text.substring(startIndex, endIndex);\n}\n\n/**\n * Parse character ranges from annotation value\n * @param {string} value - Annotation value (e.g., \"0,10 20,5\")\n * @returns {Array<{start: number, length: number}>} Parsed ranges\n */\nfunction parseRanges(value) {\n  if (!value || !value.trim()) return [];\n\n  return value.trim().split(/\\s+/).map(range => {\n    const [start, length] = range.split(',').map(Number);\n    return { start, length };\n  });\n}\n\n/**\n * Parse annotation block from file content\n * @param {string} content - Full file content\n * @returns {{text: string, annotations: Object, raw: string|null}} Parsed result\n */\nfunction parseAnnotations(content) {\n  if (!content) {\n    return { text: '', annotations: {}, raw: null };\n  }\n\n  // Look for annotation block separator (---)\n  const separatorMatch = content.match(/\\n\\n---\\n(Annotations:.*?)$/s);\n\n  if (!separatorMatch) {\n    // No annotations found\n    return { text: content, annotations: {}, raw: null };\n  }\n\n  // Extract text before the separator (excluding the newlines before ---)\n  const textContent = content.substring(0, separatorMatch.index);\n  const annotationBlock = separatorMatch[1];\n\n  const annotations = {};\n  const lines = annotationBlock.split('\\n');\n\n  for (const line of lines) {\n    const colonIndex = line.indexOf(':');\n    if (colonIndex === -1) continue;\n\n    // Extract key and value\n    let key = line.substring(0, colonIndex).trim();\n    const value = line.substring(colonIndex + 1).trim();\n\n    // Handle escaped colons in key\n    key = key.replace(/\\\\:/g, ':');\n\n    // Parse special Annotations line with hash\n    if (key === 'Annotations') {\n      const parts = value.split(/\\s+/);\n      const ranges = [];\n      let hashAlgorithm = null;\n      let hashValue = null;\n\n      for (let i = 0; i < parts.length; i++) {\n        if (parts[i] === 'SHA-256' && i + 1 < parts.length) {\n          hashAlgorithm = 'SHA-256';\n          hashValue = parts[i + 1];\n          i++; // Skip next part\n        } else if (parts[i].includes(',')) {\n          const [start, length] = parts[i].split(',').map(Number);\n          ranges.push({ start, length });\n        }\n      }\n\n      annotations[key] = {\n        ranges,\n        hash: { algorithm: hashAlgorithm, value: hashValue }\n      };\n    } else {\n      // Parse author annotations\n      annotations[key] = parseRanges(value);\n    }\n  }\n\n  return {\n    text: textContent,\n    annotations,\n    raw: annotationBlock\n  };\n}\n\n/**\n * Verify annotation integrity\n * @param {string} text - Text content\n * @param {Object} annotations - Parsed annotations\n * @returns {{valid: boolean, error: string|null}} Verification result\n */\nfunction verifyAnnotations(text, annotations) {\n  if (!annotations.Annotations) {\n    return { valid: true, error: null };\n  }\n\n  const { ranges, hash } = annotations.Annotations;\n\n  if (!hash || !hash.value) {\n    return { valid: false, error: 'Missing hash in Annotations line' };\n  }\n\n  // Extract text from specified ranges\n  let annotatedText = '';\n  for (const range of ranges) {\n    annotatedText += extractByGraphemeRange(text, range.start, range.length);\n  }\n\n  // Verify hash\n  const isValid = verifyHash(annotatedText, hash.value);\n\n  return {\n    valid: isValid,\n    error: isValid ? null : 'Hash verification failed'\n  };\n}\n\nmodule.exports = {\n  countGraphemes,\n  extractByGraphemeRange,\n  parseRanges,\n  parseAnnotations,\n  verifyAnnotations\n};\n"
+      },
+      "plugins": [
+        {
+          "name": "ia-writer-annotations",
+          "description": "Automatically add iA Writer authorship annotations to your text files when Claude Code edits them (Terminal version only)",
+          "author": {
+            "name": "Kazuki Yunoue",
+            "url": "https://github.com/KazukiYunoue"
+          },
+          "version": "0.2.0",
+          "homepage": "https://github.com/KazukiYunoue/claude-code-ia-writer-annotations",
+          "source": "./.claude-plugin",
+          "tags": [
+            "iA Writer",
+            "annotations",
+            "authorship",
+            "markdown",
+            "text",
+            "terminal"
+          ],
+          "categories": [
+            "annotations",
+            "authorship",
+            "ia-writer",
+            "markdown",
+            "terminal",
+            "text"
+          ],
+          "install_commands": [
+            "/plugin marketplace add KazukiYunoue/claude-code-ia-writer-annotations",
+            "/plugin install ia-writer-annotations@ia-writer-annotations-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

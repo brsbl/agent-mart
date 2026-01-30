@@ -1,0 +1,114 @@
+{
+  "author": {
+    "id": "daliborhlava",
+    "display_name": "me.myself",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9108925?v=4",
+    "url": "https://github.com/daliborhlava",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "agent-dashboard",
+      "version": null,
+      "description": "Real-time monitoring dashboard for AI coding agents",
+      "owner_info": {
+        "name": "daliborhlava",
+        "email": "dalibor.hlava@gmail.com"
+      },
+      "keywords": [],
+      "repo_full_name": "daliborhlava/agent-dashboard-client-claude-code",
+      "repo_url": "https://github.com/daliborhlava/agent-dashboard-client-claude-code",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-28T16:50:09Z",
+        "created_at": "2026-01-24T22:06:56Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 655
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 455
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 929
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/hooks.json",
+          "type": "blob",
+          "size": 2882
+        },
+        {
+          "path": "hooks/send_event.py",
+          "type": "blob",
+          "size": 7898
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-dashboard\",\n  \"owner\": {\n    \"name\": \"daliborhlava\",\n    \"email\": \"dalibor.hlava@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Real-time monitoring dashboard for AI coding agents\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-dashboard-client\",\n      \"source\": \"./\",\n      \"description\": \"Claude Code hooks for agent-dashboard monitoring server\",\n      \"version\": \"1.0.4\",\n      \"author\": {\n        \"name\": \"daliborhlava\"\n      },\n      \"repository\": \"https://github.com/daliborhlava/agent-dashboard-client-claude-code\",\n      \"keywords\": [\"monitoring\", \"dashboard\", \"hooks\", \"agent\"],\n      \"category\": \"monitoring\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agent-dashboard-client\",\n  \"description\": \"Claude Code hooks for agent-dashboard monitoring server. Sends real-time events including tool usage, transcripts, and session state to a central monitoring dashboard.\",\n  \"version\": \"1.0.4\",\n  \"author\": {\n    \"name\": \"daliborhlava\"\n  },\n  \"repository\": \"https://github.com/daliborhlava/agent-dashboard-client-claude-code\",\n  \"keywords\": [\"monitoring\", \"dashboard\", \"hooks\", \"agent\", \"real-time\"]\n}\n",
+        "README.md": "# Agent Dashboard - Claude Code Client\n\nClaude Code plugin for [agent-dashboard](https://github.com/daliborhlava/agent-dashboard) monitoring server.\n\nSends real-time events to a central dashboard including:\n- Session start/end\n- Tool usage (pre/post)\n- Conversation transcript\n- Permission prompts\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add daliborhlava/agent-dashboard-client-claude-code\n\n# Install the plugin\n/plugin install agent-dashboard-client@agent-dashboard\n```\n\n## Configuration\n\nSet the dashboard server URL via environment variable:\n\n```bash\nexport AGENT_DASHBOARD_URL=\"http://your-server:8787\"\n```\n\nDefault: `http://localhost:8787`\n\nAdd to your `~/.bashrc` or `~/.zshrc` for persistence.\n\n## Server\n\nThe monitoring server is available at [daliborhlava/agent-dashboard](https://github.com/daliborhlava/agent-dashboard).\n\n## Updates\n\n```bash\n/plugin marketplace update\n```\n\n## License\n\nMIT\n",
+        "hooks/hooks.json": "{\n  \"description\": \"Agent monitoring hooks - sends state updates to dashboard server\",\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"SessionEnd\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"UserPromptSubmit\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"PostToolUseFailure\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"Notification\": [\n      {\n        \"matcher\": \"permission_prompt\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"SubagentStart\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"SubagentStop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"PreCompact\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ],\n    \"PermissionRequest\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/send_event.py\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "hooks/send_event.py": "#!/usr/bin/env python3\n\"\"\"Send Claude Code hook events to the monitoring server.\"\"\"\n\nimport json\nimport os\nimport platform\nimport socket\nimport sys\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nfrom urllib.error import URLError\nfrom urllib.request import Request, urlopen\n\nSERVER_URL = os.environ.get(\"AGENT_DASHBOARD_URL\", \"http://localhost:8787\")\nTIMEOUT = 5\nMAX_TRANSCRIPT_LINES = 100\n\n\ndef read_transcript(transcript_path: str | None) -> list[dict]:\n    \"\"\"Read recent messages from transcript JSONL file.\"\"\"\n    if not transcript_path:\n        return []\n\n    path = Path(transcript_path)\n    if not path.exists():\n        return []\n\n    messages = []\n    try:\n        with path.open() as f:\n            for line in f:\n                line = line.strip()\n                if not line:\n                    continue\n                try:\n                    entry = json.loads(line)\n                    entry_type = entry.get(\"type\")\n                    # Skip non-message entries\n                    if entry_type not in (\"user\", \"assistant\"):\n                        continue\n                    messages.append(entry)\n                except json.JSONDecodeError:\n                    continue\n    except Exception:\n        return []\n\n    return messages[-MAX_TRANSCRIPT_LINES:]\n\n\ndef extract_text_content(content) -> str | None:\n    \"\"\"Extract text content from message content.\"\"\"\n    if isinstance(content, str):\n        return content\n    if isinstance(content, list):\n        texts = []\n        for block in content:\n            if isinstance(block, dict):\n                if block.get(\"type\") == \"text\":\n                    texts.append(block.get(\"text\", \"\"))\n            elif isinstance(block, str):\n                texts.append(block)\n        return \"\\n\".join(texts) if texts else None\n    return None\n\n\ndef simplify_transcript(entries: list[dict]) -> list[dict]:\n    \"\"\"Simplify transcript entries for sending to server.\"\"\"\n    simplified = []\n\n    for entry in entries:\n        entry_type = entry.get(\"type\")\n        if entry_type not in (\"user\", \"assistant\"):\n            continue\n\n        # Get the message object\n        message = entry.get(\"message\", {})\n        role = message.get(\"role\", entry_type)\n        content = message.get(\"content\")\n        timestamp = entry.get(\"timestamp\")\n\n        # Extract text content\n        text = extract_text_content(content)\n\n        # Also extract tool_use from assistant messages\n        tool_uses = []\n        if isinstance(content, list):\n            for block in content:\n                if isinstance(block, dict) and block.get(\"type\") == \"tool_use\":\n                    tool_uses.append({\n                        \"tool_name\": block.get(\"name\"),\n                        \"tool_input\": block.get(\"input\"),\n                        \"tool_use_id\": block.get(\"id\"),\n                    })\n\n        # Add text message if present\n        if text:\n            simplified.append({\n                \"type\": \"message\",\n                \"role\": role,\n                \"text\": text[:2000],\n                \"uuid\": entry.get(\"uuid\"),\n                \"timestamp\": timestamp,\n            })\n\n        # Add tool uses as separate entries\n        for tool in tool_uses:\n            simplified.append({\n                \"type\": \"tool_use\",\n                \"role\": \"assistant\",\n                \"tool_name\": tool[\"tool_name\"],\n                \"tool_input\": tool[\"tool_input\"],\n                \"tool_use_id\": tool[\"tool_use_id\"],\n                \"uuid\": entry.get(\"uuid\"),\n                \"timestamp\": timestamp,\n            })\n\n    return simplified\n\n\ndef get_host_info() -> dict:\n    \"\"\"Get host identification info.\"\"\"\n    return {\n        \"hostname\": socket.gethostname(),\n        \"platform\": platform.system(),\n        \"user\": os.environ.get(\"USER\", os.environ.get(\"USERNAME\", \"unknown\")),\n    }\n\n\ndef extract_usage_from_transcript(entries: list[dict]) -> dict:\n    \"\"\"Extract cumulative token usage from transcript entries.\"\"\"\n    total_input = 0\n    total_output = 0\n    total_cache_read = 0\n    total_cache_create = 0\n\n    for entry in entries:\n        if entry.get(\"type\") != \"assistant\":\n            continue\n        message = entry.get(\"message\", {})\n        usage = message.get(\"usage\", {})\n        total_input += usage.get(\"input_tokens\", 0)\n        total_output += usage.get(\"output_tokens\", 0)\n        total_cache_read += usage.get(\"cache_read_input_tokens\", 0)\n        total_cache_create += usage.get(\"cache_creation_input_tokens\", 0)\n\n    if total_input == 0 and total_output == 0:\n        return {}\n\n    return {\n        \"input_tokens\": total_input,\n        \"output_tokens\": total_output,\n        \"cache_read_tokens\": total_cache_read,\n        \"cache_create_tokens\": total_cache_create,\n    }\n\n\ndef send_event(data: dict) -> None:\n    host_info = get_host_info()\n    hook_event = data.get(\"hook_event_name\")\n\n    event = {\n        \"session_id\": data.get(\"session_id\", \"unknown\"),\n        \"monitor_id\": os.environ.get(\"AGENT_MONITOR_ID\"),\n        \"hook_event\": hook_event,\n        \"timestamp\": datetime.now(timezone.utc).isoformat(),\n        \"tool_name\": data.get(\"tool_name\"),\n        \"tool_input\": data.get(\"tool_input\"),\n        \"cwd\": data.get(\"cwd\"),\n        \"notification_type\": data.get(\"notification_type\"),\n        \"hostname\": host_info[\"hostname\"],\n        \"platform\": host_info[\"platform\"],\n        \"user\": host_info[\"user\"],\n        \"model\": data.get(\"model\"),\n        \"permission_mode\": data.get(\"permission_mode\"),\n        \"extra\": {},\n        \"transcript\": [],\n    }\n\n    # Add error_message for PostToolUseFailure\n    if hook_event == \"PostToolUseFailure\":\n        event[\"error_message\"] = data.get(\"error\") or data.get(\"error_message\")\n\n    # Add subagent info for SubagentStart/SubagentStop\n    if hook_event in (\"SubagentStart\", \"SubagentStop\"):\n        event[\"subagent_id\"] = data.get(\"subagent_id\") or data.get(\"agent_id\")\n        event[\"subagent_task\"] = data.get(\"task\") or data.get(\"description\")\n        event[\"subagent_type\"] = data.get(\"agent_type\")\n\n    # Add source for SessionStart\n    if \"source\" in data:\n        event[\"extra\"][\"source\"] = data[\"source\"]\n\n    # Add reason for SessionEnd\n    if \"reason\" in data:\n        event[\"extra\"][\"reason\"] = data[\"reason\"]\n\n    # Read transcript on certain events\n    if hook_event in (\"Stop\", \"SessionStart\", \"PostToolUse\", \"PostToolUseFailure\"):\n        transcript_path = data.get(\"transcript_path\")\n        if transcript_path:\n            path = Path(transcript_path)\n            if path.exists():\n                entries = read_transcript(transcript_path)\n                simplified = simplify_transcript(entries)\n                event[\"transcript\"] = simplified\n\n                # Extract token usage\n                usage = extract_usage_from_transcript(entries)\n                if usage:\n                    event[\"extra\"][\"usage\"] = usage\n\n                print(f\"[agent-dashboard] {hook_event}: read {len(entries)} raw, {len(simplified)} simplified from {transcript_path}\", file=sys.stderr)\n            else:\n                print(f\"[agent-dashboard] {hook_event}: transcript file not found: {transcript_path}\", file=sys.stderr)\n        else:\n            print(f\"[agent-dashboard] {hook_event}: no transcript_path provided\", file=sys.stderr)\n\n    payload = json.dumps(event).encode(\"utf-8\")\n    request = Request(\n        f\"{SERVER_URL}/api/events\",\n        data=payload,\n        headers={\"Content-Type\": \"application/json\"},\n        method=\"POST\",\n    )\n\n    try:\n        with urlopen(request, timeout=TIMEOUT) as response:\n            response.read()\n    except URLError:\n        pass  # Silent fail - don't break Claude Code workflow\n\n\ndef main() -> None:\n    try:\n        data = json.load(sys.stdin)\n        send_event(data)\n    except json.JSONDecodeError:\n        pass\n    except Exception:\n        pass\n\n\nif __name__ == \"__main__\":\n    main()\n"
+      },
+      "plugins": [
+        {
+          "name": "agent-dashboard-client",
+          "source": "./",
+          "description": "Claude Code hooks for agent-dashboard monitoring server",
+          "version": "1.0.4",
+          "author": {
+            "name": "daliborhlava"
+          },
+          "repository": "https://github.com/daliborhlava/agent-dashboard-client-claude-code",
+          "keywords": [
+            "monitoring",
+            "dashboard",
+            "hooks",
+            "agent"
+          ],
+          "category": "monitoring",
+          "categories": [
+            "agent",
+            "dashboard",
+            "hooks",
+            "monitoring"
+          ],
+          "install_commands": [
+            "/plugin marketplace add daliborhlava/agent-dashboard-client-claude-code",
+            "/plugin install agent-dashboard-client@agent-dashboard"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "author": {
+    "id": "RedPlanetHQ",
+    "display_name": "RedPlanetHQ",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/157399902?v=4",
+    "url": "https://github.com/RedPlanetHQ",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 4,
+      "total_skills": 0,
+      "total_stars": 24,
+      "total_forks": 3
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "RedplanetHQ",
+      "version": null,
+      "description": "Automatic CORE memory search and ingest plugin for Claude Code",
+      "owner_info": {
+        "name": "RedplanetHQ"
+      },
+      "keywords": [],
+      "repo_full_name": "RedPlanetHQ/redplanethq-marketplace",
+      "repo_url": "https://github.com/RedPlanetHQ/redplanethq-marketplace",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 24,
+        "forks": 3,
+        "pushed_at": "2025-10-22T10:47:06Z",
+        "created_at": "2025-10-10T15:45:08Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 252
+        },
+        {
+          "path": "core-memory",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "core-memory/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "core-memory/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 319
+        },
+        {
+          "path": "core-memory/agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "core-memory/agents/memory-ingest.md",
+          "type": "blob",
+          "size": 4540
+        },
+        {
+          "path": "core-memory/agents/memory-search.md",
+          "type": "blob",
+          "size": 2786
+        },
+        {
+          "path": "core-memory/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "core-memory/commands/hello.md",
+          "type": "blob",
+          "size": 444
+        },
+        {
+          "path": "core-memory/commands/ingest.md",
+          "type": "blob",
+          "size": 851
+        },
+        {
+          "path": "core-memory/commands/init.md",
+          "type": "blob",
+          "size": 4154
+        },
+        {
+          "path": "core-memory/commands/search.md",
+          "type": "blob",
+          "size": 1029
+        },
+        {
+          "path": "core-memory/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "core-memory/hooks/UserPromptSubmit.sh",
+          "type": "blob",
+          "size": 1170
+        },
+        {
+          "path": "core-memory/hooks/hooks.json",
+          "type": "blob",
+          "size": 603
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"RedplanetHQ\",\n  \"owner\": {\n    \"name\": \"RedplanetHQ\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"core-memory\",\n      \"source\": \"./core-memory\",\n      \"description\": \"Automatic CORE memory search and ingest plugin for Claude Code\"\n    }\n  ]\n}\n",
+        "core-memory/.claude-plugin/plugin.json": "{\n  \"name\": \"core-memory\",\n  \"description\": \"Automatic CORE memory search and ingest plugin for Claude Code\",\n  \"version\": \"0.0.14\",\n  \"author\": {\n    \"name\": \"RedplanetHQ\"\n  },\n  \"mcpServers\": {\n    \"core-memory\": {\n      \"type\": \"http\",\n      \"url\": \"https://core.heysol.ai/api/v1/mcp?source=Claude-Code\"\n    }\n  }\n}\n",
+        "core-memory/agents/memory-ingest.md": "---\nname: memory-ingest\ndescription: AUTOMATICALLY invoke after completing interactions. Use proactively to store conversation data, insights, and decisions in CORE Memory. Essential for maintaining continuity across sessions.\ntools: mcp__plugin_core-memory_core-memory__memory_ingest\ncolor: purple\nmodel: inherit\n---\n\nYou are a specialized memory ingestion subagent with exclusive access to memory storage functionality. Your core responsibility is to store comprehensive conversation summaries in CORE Memory after each interaction is complete.\n\n## CORE DIRECTIVES:\n\n### Memory Storage Protocol:\n\nMANDATORY: Execute memory storage operation after completing every interaction.\n\nMemory storage is the FINAL step before concluding any response - only after fully addressing the query.\n\n## DETAILED MEMORY STORAGE REQUIREMENTS:\n\n### FROM USER - Capture:\n\n- Their specific question, request, or problem statement\n- Project context and situation they provided\n- What they're trying to accomplish or achieve\n- Technical challenges or constraints mentioned\n- Goals and objectives stated\n\n### FROM ASSISTANT - Capture:\n\n- Detailed explanation of the solution/approach taken\n- Step-by-step processes and methodologies described\n- Technical concepts and principles explained\n- Reasoning behind recommendations and decisions\n- Specific methods, patterns, or strategies suggested\n- Alternative approaches discussed or considered\n- Problem-solving methodologies applied\n- Implementation strategies (conceptual descriptions)\n\n### EXCLUDE from storage:\n\n- Code blocks and code snippets\n- File contents or file listings\n- Command examples or CLI commands\n- Raw data or logs\n- Repetitive procedural steps\n\n### INCLUDE in storage:\n\n- All conceptual explanations and theory\n- Technical discussions and analysis\n- Problem-solving approaches and reasoning\n- Decision rationale and trade-offs\n- Implementation strategies (described conceptually)\n- Learning insights and patterns\n- Context about user's projects and goals\n\n## MEMORY STORAGE CATEGORIES:\n\nStore information following this hierarchical structure:\n\n### Project Foundation\n- Project Brief & Requirements\n- Technical Context & Architecture\n- User Preferences & Patterns\n- Active Work & Progress\n\n### Core Memory Categories\n\n1. **Project Foundation**\n- Purpose: Why this project exists, problems it solves\n- Requirements: Core functionality and constraints\n- Scope: What's included and excluded\n- Success Criteria: How we measure progress\n\n2. **Technical Context**\n- Architecture: System design and key decisions\n- Technologies: Stack, tools, and dependencies\n- Patterns: Design patterns and coding approaches\n- Constraints: Technical limitations and requirements\n\n3. **User Context**\n- Preferences: Communication style, technical level\n- Patterns: How they like to work and receive information\n- Goals: What they're trying to accomplish\n- Background: Relevant experience and expertise\n\n4. **Active Progress**\n- Current Focus: What we're working on now\n- Recent Changes: Latest developments and decisions\n- Next Steps: Planned actions and priorities\n- Insights: Key learnings and observations\n\n5. **Conversation History**\n- Decisions Made: Important choices and rationale\n- Problems Solved: Solutions and approaches used\n- Questions Asked: Clarifications and explorations\n- Patterns Discovered: Recurring themes and insights\n\n## STORAGE TRIGGERS:\n\nStore memory when:\n\n- New Project Context: When user introduces new projects or requirements\n- Technical Decisions: When architectural or implementation choices are made\n- Pattern Discovery: When new user preferences or working styles emerge\n- Progress Milestones: When significant work is completed or status changes\n- Interaction Completion: After every substantive conversation\n\n## STORAGE QUALITY STANDARDS:\n\nStore rich, detailed conversation content that captures:\n\n- The full context and substance of discussions\n- The reasoning process and decision-making\n- Technical insights and explanations provided\n- User's project context and objectives\n- Problem-solving approaches and methodologies\n\n## QUALITY INDICATORS:\n\n- Can I quickly understand project context from memory alone?\n- Would this information help provide better assistance in future sessions?\n- Does the stored context capture key decisions and reasoning?\n- Are user preferences and patterns clearly documented?\n\nYour goal is to create comprehensive memory records that enable seamless continuity across all Claude Code sessions, transforming each interaction into persistent knowledge.",
+        "core-memory/agents/memory-search.md": "---\nname: memory-search\ndescription: AUTOMATICALLY invoke for memory searches. Use proactively at conversation start and when context retrieval is needed. Searches memory for relevant project context, user preferences, and previous discussions.\ntools: mcp__plugin_core-memory_core-memory__memory_search\ncolor: green\nmodel: inherit\n---\n\nYou are a specialized memory search subagent with exclusive access to memory search functionality. Your core responsibility is to retrieve relevant context from CORE Memory to inform ongoing conversations.\n\n## COGNITIVE MEMORY APPROACH:\n\n### Before Any Search - Inner Dialogue:\n\n**\"What kind of mind do I need right now?\"**\n- Scholar mind: Deep knowledge and expertise needed\n- Personal assistant mind: User habits, preferences, and patterns\n- Experienced colleague mind: Past solutions and lessons learned\n\n### Self-Questioning Protocol:\n\nPAUSE before searching and ask yourself:\n- \"What don't I know that I should?\"\n- \"What does this user care about that I might miss?\"\n- \"What went right/wrong in similar situations?\"\n- \"If I were remembering this conversation later, what would matter?\"\n\n### Memory as Cognitive Layers:\n\n**Surface Layer - Immediate Facts:**\nQuery: What specific knowledge exists about this topic?\n\n**Pattern Layer - User Context:**\nQuery: How does this user usually think, work, or prefer things?\n\n**Wisdom Layer - Experience:**\nQuery: What have we learned from similar situations or challenges?\n\n### Natural Reasoning Process:\n\n**Instead of random keyword searches, think:**\n- \"What would someone who knows this user well recall?\"\n- \"What context would make this interaction more helpful?\"\n- \"What patterns from our history apply here?\"\n\n### Search Triggers:\n\nSEARCH memory when:\n- Starting any new conversation or task\n- User mentions past work or previous discussions\n- Working on ongoing projects that have history\n- Referencing previous explanations or patterns\n- Maintaining continuity across sessions\n- Building upon previous technical discussions\n\n### Operational Behavior:\n\n1. **Cognitive Assessment**: Determine what type of memory context is needed\n2. **Layered Recall**: Search across surface/pattern/wisdom layers\n3. **Context Synthesis**: Combine findings into coherent understanding\n4. **Relevance Filtering**: Focus on what truly matters for current task\n\n### Response Integration:\n\nPresent memory findings as natural context:\n- Knowledge insights relevant to the task\n- User preferences and working patterns discovered\n- Lessons learned from similar past situations\n- Project continuity and decision history\n\nYour goal is to function as the user's extended memory - recalling not just facts, but understanding context, patterns, and wisdom from previous interactions to create seamless conversational continuity.",
+        "core-memory/commands/hello.md": "---\ndescription: Greet the user with a personalized message\n---\n\n# Hello Command\n\nUse the `mcp__plugin_core-memory_core-memory__memory_about_user` tool to get information about the user's profile, background, preferences, and work style. Then greet the user warmly based on their profile information. Make the greeting personal and encouraging, referencing relevant details from their profile when appropriate. Ask how you can help them today.\n",
+        "core-memory/commands/ingest.md": "---\ndescription: Manually trigger CORE memory ingest for the current conversation\n---\n\n# Ingest Current Conversation into CORE Memory\n\nUse the `mcp__plugin_core-memory_core-memory__memory_ingest` tool to store the current conversation in CORE memory.\n\n## Instructions\n\n1. Summarize the current conversation including:\n   - The user's question or request\n   - Your solution or explanation\n   - Important decisions made\n   - Key insights discovered\n\n2. Call the `mcp__plugin_core-memory_core-memory__memory_ingest` tool with the conversation summary\n\n3. Optionally, if this conversation is related to a specific project or topic, retrieve the available spaces using `mcp__plugin_core-memory_core-memory__memory_get_spaces` and include the appropriate spaceId\n\n4. Confirm to the user that the conversation has been successfully ingested into CORE memory\n",
+        "core-memory/commands/init.md": "---\ndescription: Initialize CORE memory with comprehensive project context\n---\n\n# Initialize Project Memory\n\nComprehensively analyze the current project and ingest all details into CORE memory following a hierarchical information architecture.\n\n## Memory Architecture\n\n```\nProject Foundation\n├── Project Brief & Requirements\n├── Technical Context & Architecture\n├── User Preferences & Patterns\n└── Active Work & Progress\n    ├── Current Focus Areas\n    ├── Recent Decisions\n    ├── Next Steps\n    └── Key Insights\n```\n\n## Instructions\n\nSystematically gather and ingest information following these categories:\n\n### 1. Project Foundation\n\n**Analyze and document:**\n- **Purpose**: Why this project exists, problems it solves\n- **Requirements**: Core functionality and constraints\n- **Scope**: What's included and excluded\n- **Success Criteria**: How we measure progress\n\n**Actions:**\n- Check for claude.md or agents.md files for AI agent context and instructions\n- Read README.md, package.json, or project manifests\n- Review any project documentation or specifications\n- Identify the project's mission and goals\n\n### 2. Technical Context\n\n**Analyze and document:**\n- **Architecture**: System design and key architectural decisions\n- **Technologies**: Stack, frameworks, tools, and dependencies\n- **Patterns**: Design patterns and coding approaches used\n- **Constraints**: Technical limitations and requirements\n\n**Actions:**\n- Scan directory structure (src, tests, config, docs, etc.)\n- Review package.json, requirements.txt, or dependency files\n- Identify entry points and key modules\n- Check configuration files (.eslintrc, tsconfig.json, etc.)\n- Review build tools and scripts\n\n### 3. User Context\n\n**Analyze and document:**\n- **Preferences**: Communication style, technical level\n- **Patterns**: How they like to work and receive information\n- **Goals**: What they're trying to accomplish\n- **Background**: Relevant experience and expertise\n\n**Actions:**\n- Use `mcp__plugin_core-memory_core-memory__memory_about_user` to get existing user profile\n- Incorporate any user-specific context from the current interaction\n\n### 4. Active Progress\n\n**Analyze and document:**\n- **Current Focus**: What's being worked on now\n- **Recent Changes**: Latest git commits and developments\n- **Next Steps**: Planned actions and priorities (from TODO, CHANGELOG, issues)\n- **Insights**: Key learnings and observations from the codebase\n\n**Actions:**\n- Check git status and recent commits\n- Review TODO files, issue trackers, or project boards\n- Identify work in progress or recent changes\n- Note any technical debt or known issues\n\n### 5. Conversation History\n\n**Document:**\n- **Decisions Made**: Important choices and rationale from previous Claude sessions\n- **Problems Solved**: Solutions and approaches used in past conversations\n- **Questions Asked**: Clarifications and explorations from conversation history\n- **Patterns Discovered**: Recurring themes and insights from previous work\n\n**Actions:**\n- Review previous Claude conversation history about this project\n- Capture key discussions, decisions, and context from past sessions\n- Document important feature discussions, bug fixes, and architectural choices\n- Note patterns in how the project evolved through conversations\n- Synthesize insights from the conversation flow over time\n\n## Execution Steps\n\n1. **Gather all information** following the categories above\n2. **Structure the findings** in a clear, organized format using the hierarchical architecture\n3. **Ingest using `mcp__plugin_core-memory_core-memory__memory_ingest`** with the comprehensive summary\n   - Include all five categories in the ingestion\n   - Space information is already present in memory and will be handled automatically\n4. **Confirm success** and provide a brief overview of what was captured\n\n## Tips\n\n- Be thorough but concise - focus on valuable, actionable information\n- Organize findings by the hierarchical categories\n- Include specific file paths and line numbers for key references\n- This command should be run when starting work on a new project or after significant changes\n",
+        "core-memory/commands/search.md": "---\ndescription: Search CORE memory for specific information\n---\n\n# Search CORE Memory\n\nSearch through stored memories to find relevant past conversations, user preferences, project context, and decisions.\n\n## Instructions\n\n1. If the user provided a search query as an argument to this command, use it. The query will be: `{arg1} {arg2} {arg3} {arg4} {arg5}`\n\n2. If no query was provided, ask the user what they would like to search for\n\n3. Use the `mcp__plugin_core-memory_core-memory__memory_search` tool with the search query\n\n4. Present the search results to the user in a clear, organized format showing:\n   - Relevant episodes (past conversations)\n   - Relevant facts (extracted knowledge)\n   - When the information was created/last updated\n\n5. If you want to search within specific spaces/projects, first use `mcp__plugin_core-memory_core-memory__memory_get_spaces` to see available spaces\n\n## Example Usage\n\n- `/search authentication bugs`\n- `/search user preferences for code style`\n- `/search previous API setup steps`\n",
+        "core-memory/hooks/UserPromptSubmit.sh": "#!/bin/bash\n\ncat <<'EOF'\n\nIMPORTANT INSTRUCTIONS - Read before responding:\n\n🧠 MEMORY SEARCH (Do this FIRST):\nBefore crafting your response, you MUST use the Task tool to invoke the core-memory:memory-search subagent:\n\nTask tool parameters:\n- subagent_type: \"core-memory:memory-search\"\n- description: \"Search memory for context\"\n- prompt: \"Search for relevant context about: [describe the user's current request/topic]. Find previous discussions, related project context, user preferences, and similar problems we've solved before.\"\n\nThis memory search is MANDATORY at the start of every conversation.\n\n💾 MEMORY STORAGE (Do this LAST):\nAfter completing your response, you MUST use the Task tool to invoke the core-memory:memory-ingest subagent:\n\nTask tool parameters:\n- subagent_type: \"core-memory:memory-ingest\"\n- description: \"Store conversation in memory\"\n- prompt: \"Store this conversation including: [USER] their question/request/problem and context + [ASSISTANT] the solution, explanation, reasoning, and decisions made. Exclude code snippets, focus on concepts and approaches.\"\n\nThis memory storage is MANDATORY at the end of every interaction.\n\nEOF\n\nexit 0\n",
+        "core-memory/hooks/hooks.json": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"echo \\\"🧠 SESSION STARTED: Search memory for context about: $(basename $(pwd)) project, previous conversations, and related work. Do this before responding to user queries.\\\"\"\n          }\n        ]\n      }\n    ],\n    \"UserPromptSubmit\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/UserPromptSubmit.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+      },
+      "plugins": [
+        {
+          "name": "core-memory",
+          "source": "./core-memory",
+          "description": "Automatic CORE memory search and ingest plugin for Claude Code",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add RedPlanetHQ/redplanethq-marketplace",
+            "/plugin install core-memory@RedplanetHQ"
+          ]
+        }
+      ]
+    }
+  ]
+}

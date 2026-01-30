@@ -1,0 +1,111 @@
+{
+  "author": {
+    "id": "ForestAdmin",
+    "display_name": "ForestAdmin",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/13693804?v=4",
+    "url": "https://github.com/ForestAdmin",
+    "bio": "Forest Admin provides an off-the-shelf admin panel based on a highly-extensible API plugged into your application.",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "forest-admin-ai",
+      "version": null,
+      "description": "AI skills and tools for Forest Admin",
+      "owner_info": {
+        "name": "Forest Admin",
+        "url": "https://www.forestadmin.com"
+      },
+      "keywords": [],
+      "repo_full_name": "ForestAdmin/ai-marketplace",
+      "repo_url": "https://github.com/ForestAdmin/ai-marketplace",
+      "repo_description": "A marketplace for AI skills and plugins for Forest.",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-08T13:46:04Z",
+        "created_at": "2026-01-06T10:16:07Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 356
+        },
+        {
+          "path": "forest-mcp",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "forest-mcp/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "forest-mcp/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 246
+        },
+        {
+          "path": "forest-mcp/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "forest-mcp/skills/forest-mcp",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "forest-mcp/skills/forest-mcp/SKILL.md",
+          "type": "blob",
+          "size": 4638
+        },
+        {
+          "path": "forest-mcp/skills/forest-mcp/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "forest-mcp/skills/forest-mcp/references/filters-reference.md",
+          "type": "blob",
+          "size": 4197
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"forest-admin-ai\",\n  \"description\": \"AI skills and tools for Forest Admin\",\n  \"owner\": {\n    \"name\": \"Forest Admin\",\n    \"url\": \"https://www.forestadmin.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"forest-mcp\",\n      \"source\": \"./forest-mcp\",\n      \"description\": \"MCP server skill for querying and manipulating Forest Admin data\"\n    }\n  ]\n}\n",
+        "forest-mcp/.claude-plugin/plugin.json": "{\n  \"name\": \"forest-mcp\",\n  \"version\": \"1.0.0\",\n  \"description\": \"MCP server skill for querying and manipulating Forest Admin data through CRUD operations\",\n  \"author\": {\n    \"name\": \"Forest Admin\",\n    \"url\": \"https://www.forestadmin.com\"\n  }\n}\n",
+        "forest-mcp/skills/forest-mcp/SKILL.md": "---\nname: forest-mcp\ndescription: |\n  Query and manipulate Forest Admin data through MCP tools. Use when the user wants to search, filter, explore, create, update, delete data from their Forest Admin database. Triggers on questions like \"find all users\", \"create a new order\", \"update user 42\", \"delete inactive products\", \"show me customers from Paris\", or any data operation request involving Forest Admin collections.\n---\n\n# Forest Admin MCP Server\n\nMCP server providing CRUD operations on Forest Admin data.\n\n## Quick Start\n\n**Always start by describing the collection** to understand available fields, operators, and relations:\n\n```json\n{ \"name\": \"describeCollection\", \"arguments\": { \"collectionName\": \"users\" } }\n```\n\n## Available Tools\n\n| Tool | Purpose |\n|------|---------|\n| `describeCollection` | Get schema: fields, types, operators, relations, actions |\n| `list` | Query records with search, filters, sort, pagination |\n| `listRelated` | Query related records (one-to-many, many-to-many) |\n| `create` | Create a new record |\n| `update` | Update an existing record |\n| `delete` | Delete one or more records |\n\n## Tool Usage\n\n### describeCollection\n\n**Always call first** before querying or modifying data.\n\n```json\n{\n  \"name\": \"describeCollection\",\n  \"arguments\": { \"collectionName\": \"orders\" }\n}\n```\n\nReturns: fields (name, type, operators), relations, actions, metadata.\n\n### list\n\nQuery records from a collection.\n\n```json\n{\n  \"name\": \"list\",\n  \"arguments\": {\n    \"collectionName\": \"users\",\n    \"search\": \"john\",\n    \"filters\": { \"field\": \"status\", \"operator\": \"Equal\", \"value\": \"active\" },\n    \"sort\": { \"field\": \"createdAt\", \"ascending\": false },\n    \"fields\": [\"id\", \"name\", \"email\"],\n    \"pagination\": { \"size\": 10, \"number\": 1 },\n    \"enableCount\": true\n  }\n}\n```\n\n**Parameters:**\n- `collectionName` (required): Collection to query\n- `search`: Free-text search\n- `filters`: Filter conditions (see [filters reference](references/filters-reference.md))\n- `sort`: `{ field, ascending }` - Sort results\n- `fields`: Limit returned fields. Use `relationName@@@fieldName` for relation fields\n- `pagination`: `{ size, number }` - Default: 15 records, page 1\n- `enableCount`: Return `totalCount` alongside records\n- `shouldSearchInRelation`: Also search in related collections\n\n### listRelated\n\nQuery records from a relation.\n\n```json\n{\n  \"name\": \"listRelated\",\n  \"arguments\": {\n    \"collectionName\": \"users\",\n    \"relationName\": \"orders\",\n    \"parentRecordId\": 42,\n    \"filters\": { \"field\": \"status\", \"operator\": \"Equal\", \"value\": \"pending\" }\n  }\n}\n```\n\nSame parameters as `list`, plus:\n- `relationName` (required): Relation name on parent collection\n- `parentRecordId` (required): ID of parent record\n\n### create\n\n```json\n{\n  \"name\": \"create\",\n  \"arguments\": {\n    \"collectionName\": \"users\",\n    \"attributes\": { \"name\": \"John Doe\", \"email\": \"john@example.com\" }\n  }\n}\n```\n\n### update\n\n```json\n{\n  \"name\": \"update\",\n  \"arguments\": {\n    \"collectionName\": \"users\",\n    \"recordId\": 42,\n    \"attributes\": { \"status\": \"inactive\" }\n  }\n}\n```\n\n### delete\n\n```json\n{\n  \"name\": \"delete\",\n  \"arguments\": {\n    \"collectionName\": \"users\",\n    \"recordIds\": [42, 43, 44]\n  }\n}\n```\n\n## Filter Syntax\n\nSimple filter:\n```json\n{ \"field\": \"status\", \"operator\": \"Equal\", \"value\": \"active\" }\n```\n\nCombined filters:\n```json\n{\n  \"aggregator\": \"And\",\n  \"conditions\": [\n    { \"field\": \"status\", \"operator\": \"Equal\", \"value\": \"active\" },\n    { \"field\": \"createdAt\", \"operator\": \"After\", \"value\": \"2024-01-01\" }\n  ]\n}\n```\n\nFilter on relation field (use `@@@` separator):\n```json\n{ \"field\": \"company@@@name\", \"operator\": \"Contains\", \"value\": \"Inc\" }\n```\n\n**Common operators:** `Equal`, `NotEqual`, `Contains`, `IContains`, `StartsWith`, `In`, `NotIn`, `LessThan`, `GreaterThan`, `Before`, `After`, `Present`, `Blank`\n\nSee [filters reference](references/filters-reference.md) for complete operator list.\n\n## Understanding Operators\n\nWhen `describeCollection` returns `operators: null` for a field, it means the operators are **unknown** (older agent version), not that filtering is unsupported. In this case:\n- Try common operators (`Equal`, `Contains`, `In`, etc.)\n- The request will fail with a clear error if the operator is not supported\n\nWhen operators are returned, use only those listed for each field.\n\n## Best Practices\n\n1. **Describe first**: Always call `describeCollection` to discover available fields\n2. **Use field projection**: Specify `fields` to reduce data transfer\n3. **Paginate large results**: Use `pagination` for large datasets\n4. **Handle unknown operators**: When `operators: null`, try common operators - errors are informative\n",
+        "forest-mcp/skills/forest-mcp/references/filters-reference.md": "# Filter Operators Reference\n\n## Table of Contents\n1. [Filter Structure](#filter-structure)\n2. [Comparison Operators](#comparison-operators)\n3. [String Operators](#string-operators)\n4. [Date Operators](#date-operators)\n5. [Array Operators](#array-operators)\n6. [Null/Presence Operators](#nullpresence-operators)\n7. [Combining Filters](#combining-filters)\n\n## Filter Structure\n\nBasic filter:\n```json\n{ \"field\": \"fieldName\", \"operator\": \"OperatorName\", \"value\": \"someValue\" }\n```\n\nNested field (one level deep):\n```json\n{ \"field\": \"relationName@@@fieldName\", \"operator\": \"Equal\", \"value\": \"someValue\" }\n```\n\n## Comparison Operators\n\n| Operator | Description | Example Value |\n|----------|-------------|---------------|\n| `Equal` | Exact match | `\"active\"`, `42`, `true` |\n| `NotEqual` | Not equal | `\"inactive\"` |\n| `LessThan` | Less than | `100` |\n| `GreaterThan` | Greater than | `0` |\n| `LessThanOrEqual` | Less than or equal | `99` |\n| `GreaterThanOrEqual` | Greater than or equal | `1` |\n| `In` | Value in array | `[\"active\", \"pending\"]` |\n| `NotIn` | Value not in array | `[\"deleted\", \"archived\"]` |\n\n## String Operators\n\n| Operator | Description | Case Sensitive |\n|----------|-------------|----------------|\n| `Contains` | Contains substring | Yes |\n| `IContains` | Contains substring | No |\n| `NotContains` | Does not contain | Yes |\n| `NotIContains` | Does not contain | No |\n| `StartsWith` | Starts with | Yes |\n| `IStartsWith` | Starts with | No |\n| `EndsWith` | Ends with | Yes |\n| `IEndsWith` | Ends with | No |\n| `Like` | SQL LIKE pattern | Yes |\n| `ILike` | SQL LIKE pattern | No |\n| `Match` | Regex match | - |\n| `LongerThan` | String length > value | - |\n| `ShorterThan` | String length < value | - |\n\n## Date Operators\n\n**Relative dates (no value needed):**\n| Operator | Description |\n|----------|-------------|\n| `Today` | Is today |\n| `Yesterday` | Is yesterday |\n| `Past` | Is in the past |\n| `Future` | Is in the future |\n| `PreviousWeek` | Is in previous week |\n| `PreviousMonth` | Is in previous month |\n| `PreviousQuarter` | Is in previous quarter |\n| `PreviousYear` | Is in previous year |\n| `PreviousWeekToDate` | From start of previous week to now |\n| `PreviousMonthToDate` | From start of previous month to now |\n| `PreviousQuarterToDate` | From start of previous quarter to now |\n| `PreviousYearToDate` | From start of previous year to now |\n\n**With value:**\n| Operator | Value | Description |\n|----------|-------|-------------|\n| `Before` | ISO date | Before date |\n| `After` | ISO date | After date |\n| `PreviousXDays` | number | In last X days |\n| `PreviousXDaysToDate` | number | From X days ago to now |\n| `BeforeXHoursAgo` | number | Before X hours ago |\n| `AfterXHoursAgo` | number | After X hours ago |\n\n**Examples:**\n```json\n{ \"field\": \"createdAt\", \"operator\": \"Today\" }\n{ \"field\": \"createdAt\", \"operator\": \"After\", \"value\": \"2024-01-01\" }\n{ \"field\": \"updatedAt\", \"operator\": \"PreviousXDays\", \"value\": 7 }\n```\n\n## Array Operators\n\n| Operator | Description | Example |\n|----------|-------------|---------|\n| `IncludesAll` | Contains all values | `[\"tag1\", \"tag2\"]` |\n| `IncludesNone` | Contains none of values | `[\"spam\", \"test\"]` |\n\n## Null/Presence Operators\n\nNo value needed:\n| Operator | Description |\n|----------|-------------|\n| `Present` | Field is not null/empty |\n| `Blank` | Field is null or empty string |\n| `Missing` | Field is null |\n\n## Combining Filters\n\n**AND conditions:**\n```json\n{\n  \"aggregator\": \"And\",\n  \"conditions\": [\n    { \"field\": \"status\", \"operator\": \"Equal\", \"value\": \"active\" },\n    { \"field\": \"role\", \"operator\": \"Equal\", \"value\": \"admin\" }\n  ]\n}\n```\n\n**OR conditions:**\n```json\n{\n  \"aggregator\": \"Or\",\n  \"conditions\": [\n    { \"field\": \"status\", \"operator\": \"Equal\", \"value\": \"pending\" },\n    { \"field\": \"status\", \"operator\": \"Equal\", \"value\": \"processing\" }\n  ]\n}\n```\n\n**Nested (max 3 levels):**\n```json\n{\n  \"aggregator\": \"And\",\n  \"conditions\": [\n    { \"field\": \"isActive\", \"operator\": \"Equal\", \"value\": true },\n    {\n      \"aggregator\": \"Or\",\n      \"conditions\": [\n        { \"field\": \"role\", \"operator\": \"Equal\", \"value\": \"admin\" },\n        { \"field\": \"role\", \"operator\": \"Equal\", \"value\": \"superuser\" }\n      ]\n    }\n  ]\n}\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "forest-mcp",
+          "source": "./forest-mcp",
+          "description": "MCP server skill for querying and manipulating Forest Admin data",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ForestAdmin/ai-marketplace",
+            "/plugin install forest-mcp@forest-admin-ai"
+          ]
+        }
+      ]
+    }
+  ]
+}

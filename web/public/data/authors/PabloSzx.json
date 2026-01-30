@@ -1,0 +1,124 @@
+{
+  "author": {
+    "id": "PabloSzx",
+    "display_name": "Pablo Sáez",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8672915?v=4",
+    "url": "https://github.com/PabloSzx",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 1,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "pabloszx-marketplace",
+      "version": null,
+      "description": "PabloSzx's Claude Code plugins",
+      "owner_info": {
+        "name": "PabloSzx"
+      },
+      "keywords": [],
+      "repo_full_name": "PabloSzx/pabloszx-marketplace",
+      "repo_url": "https://github.com/PabloSzx/pabloszx-marketplace",
+      "repo_description": "Claude Code marketplace plugins",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-18T18:50:00Z",
+        "created_at": "2026-01-16T19:45:11Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 475
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/refactor-verifier",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/refactor-verifier/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/refactor-verifier/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 313
+        },
+        {
+          "path": "plugins/refactor-verifier/README.md",
+          "type": "blob",
+          "size": 1900
+        },
+        {
+          "path": "plugins/refactor-verifier/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/refactor-verifier/commands/verify-refactor.md",
+          "type": "blob",
+          "size": 7636
+        },
+        {
+          "path": "plugins/refactor-verifier/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/refactor-verifier/skills/refactor-verification",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/refactor-verifier/skills/refactor-verification/SKILL.md",
+          "type": "blob",
+          "size": 6997
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"pabloszx-marketplace\",\n  \"description\": \"PabloSzx's Claude Code plugins\",\n  \"owner\": {\n    \"name\": \"PabloSzx\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"refactor-verifier\",\n      \"description\": \"Deterministically verify that code refactors are purely structural with no unintended logic changes\",\n      \"source\": \"./plugins/refactor-verifier\",\n      \"category\": \"code-analysis\"\n    }\n  ]\n}\n",
+        "plugins/refactor-verifier/.claude-plugin/plugin.json": "{\n  \"name\": \"refactor-verifier\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Deterministically verify that code refactors are purely structural with no unintended logic changes\",\n  \"author\": {\n    \"name\": \"Claude Code\"\n  },\n  \"keywords\": [\"refactor\", \"verification\", \"python\", \"typescript\", \"code-analysis\", \"ast\"]\n}\n",
+        "plugins/refactor-verifier/README.md": "# Refactor Verifier\n\nDeterministically verify that code refactors are purely structural with no unintended logic changes.\n\n## Features\n\n- **AST-based comparison**: Extracts and compares function/class definitions using language-specific AST parsing\n- **Hash-based verification**: Uses SHA256 hashes of normalized code bodies for deterministic comparison\n- **Multi-language support**: Python and TypeScript extractors included\n- **Git integration**: Auto-detects branch changes and compares against base branch\n- **Detailed reporting**: Shows removed, added, modified, and renamed definitions\n\n## Usage\n\n### Skill (Auto-triggered)\n\nAsk Claude about verifying refactors:\n- \"Can you verify this refactor didn't change any logic?\"\n- \"I want to confirm this file split was purely structural\"\n- \"Help me check if this code reorganization introduced changes\"\n\n### Command\n\n```\n/verify-refactor\n```\n\nRuns verification on the current branch against staging/main.\n\n## Components\n\n- **Skill**: `refactor-verification` - Knowledge about deterministic refactor analysis\n- **Command**: `/verify-refactor` - Explicit verification invocation\n- **Scripts**:\n  - `verify-refactor.ts` - Summary verification with hash comparison\n  - `verify-refactor-detailed.ts` - Detailed diff output\n\n## Requirements\n\n- Bun runtime (for TypeScript scripts)\n- Python 3.8+ (for Python AST extraction)\n- Git (for branch comparison)\n\n## How It Works\n\n1. Fetches old code from base branch (staging or main)\n2. Reads new code from current working directory\n3. Extracts all function/class definitions using AST parsing\n4. Computes SHA256 hashes of normalized code bodies\n5. Compares definitions to identify:\n   - **Removed**: Exist in old, missing in new\n   - **Added**: Exist in new, missing in old\n   - **Modified**: Same name, different body hash\n   - **Matching**: Identical definitions\n6. Reports findings with optional detailed diffs\n",
+        "plugins/refactor-verifier/commands/verify-refactor.md": "---\nname: verify-refactor\ndescription: Deterministically verify a code refactor is purely structural with no logic changes\nallowed-tools:\n  - Bash\n  - Read\n  - Glob\n  - Grep\nargument-hint: \"[--detailed]\"\n---\n\n# Verify Refactor Command\n\nVerify that the current branch's refactor is purely structural with no unintended logic changes.\n\n## Process\n\n### Step 1: Gather Context\n\nRun git commands to understand the current state:\n\n```bash\ngit fetch origin && \\\necho \"=== BRANCH ===\" && git rev-parse --abbrev-ref HEAD && \\\necho \"=== MERGE BASE ===\" && git merge-base origin/staging HEAD 2>/dev/null || git merge-base origin/main HEAD && \\\necho \"=== CHANGED FILES ===\" && git diff origin/staging --stat 2>/dev/null || git diff origin/main --stat\n```\n\n### Step 2: Run Verification\n\nExecute the verification script:\n\n```bash\nbun run ${CLAUDE_PLUGIN_ROOT}/scripts/verify-refactor.ts\n```\n\n### Step 3: Analyze Results\n\nReview the output:\n\n- **Removed**: Functions/classes missing in new code - potential regression\n- **Added**: New functions/classes - may be intentional\n- **Modified**: Same name, different body - investigate\n- **Matching**: Identical definitions - good\n\n### Step 4: Get Details (if --detailed or modifications found)\n\nIf the user requested `--detailed` or if there are modifications, run:\n\n```bash\nbun run ${CLAUDE_PLUGIN_ROOT}/scripts/verify-refactor-detailed.ts\n```\n\n### Step 5: Report Findings\n\nSummarize:\n\n1. **Verification status**: PASSED (pure refactor) or FAILED (changes detected)\n2. **Statistics**: Count of removed/added/modified/matching\n3. **Intentional improvements**: Type annotations, typo fixes, etc.\n4. **Regressions to fix**: Missing functions, logic changes\n\nIf regressions found, suggest specific fixes based on the diff output.\n\n## Fallback: Self-Healing Script Creation\n\n**If the baked scripts fail** (parsing errors, missing dependencies, unsupported syntax), create a local adapted script:\n\n### Step F1: Diagnose the Failure\n\nAnalyze the error output:\n- **Parsing error**: The file may use syntax not supported by the extractor\n- **Missing dependency**: Bun or Python not available\n- **Path issues**: Files don't match expected structure\n\n### Step F2: Create Local Script\n\nCreate a simplified local script in the repository root that handles the specific case:\n\n```bash\n# Create local script adapted to the specific files being verified\ncat > /tmp/verify-refactor-local.py << 'SCRIPT'\n#!/usr/bin/env python3\n\"\"\"\nLocal refactor verification script - adapted for this specific verification.\n\"\"\"\nimport ast\nimport hashlib\nimport subprocess\nimport sys\n\ndef get_file_from_git(ref: str, path: str) -> str:\n    \"\"\"Get file content from git at specific ref.\"\"\"\n    try:\n        result = subprocess.run(\n            [\"git\", \"show\", f\"{ref}:{path}\"],\n            capture_output=True, text=True, check=True\n        )\n        return result.stdout\n    except subprocess.CalledProcessError:\n        return \"\"\n\ndef extract_python_definitions(source: str) -> dict[str, str]:\n    \"\"\"Extract function and class definitions from Python source.\"\"\"\n    try:\n        tree = ast.parse(source)\n    except SyntaxError as e:\n        print(f\"Syntax error: {e}\", file=sys.stderr)\n        return {}\n\n    definitions = {}\n    for node in ast.iter_child_nodes(tree):\n        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):\n            name = node.name\n            body = ast.unparse(node)\n            definitions[name] = body\n        elif isinstance(node, ast.ClassDef):\n            name = node.name\n            body = ast.unparse(node)\n            definitions[name] = body\n    return definitions\n\ndef hash_body(body: str) -> str:\n    \"\"\"Compute SHA256 hash of normalized body.\"\"\"\n    return hashlib.sha256(body.encode()).hexdigest()[:12]\n\ndef compare_definitions(old_defs: dict, new_defs: dict) -> dict:\n    \"\"\"Compare old and new definitions.\"\"\"\n    old_names = set(old_defs.keys())\n    new_names = set(new_defs.keys())\n\n    removed = old_names - new_names\n    added = new_names - old_names\n    common = old_names & new_names\n\n    modified = []\n    matching = []\n    for name in common:\n        old_hash = hash_body(old_defs[name])\n        new_hash = hash_body(new_defs[name])\n        if old_hash != new_hash:\n            modified.append((name, old_hash, new_hash))\n        else:\n            matching.append(name)\n\n    return {\n        \"removed\": list(removed),\n        \"added\": list(added),\n        \"modified\": modified,\n        \"matching\": matching\n    }\n\nif __name__ == \"__main__\":\n    # Customize these for your verification\n    BASE_REF = \"origin/staging\"  # or origin/main\n    FILES = [\n        # Add files to verify here\n        # \"path/to/old_file.py:path/to/new_file.py\",\n    ]\n\n    # Get merge base\n    result = subprocess.run(\n        [\"git\", \"merge-base\", BASE_REF, \"HEAD\"],\n        capture_output=True, text=True\n    )\n    merge_base = result.stdout.strip()\n    print(f\"Comparing against merge base: {merge_base[:8]}\")\n\n    # Compare each file pair\n    for file_spec in FILES:\n        if \":\" in file_spec:\n            old_path, new_path = file_spec.split(\":\")\n        else:\n            old_path = new_path = file_spec\n\n        print(f\"\\n=== {old_path} → {new_path} ===\")\n\n        old_content = get_file_from_git(merge_base, old_path)\n        with open(new_path) as f:\n            new_content = f.read()\n\n        old_defs = extract_python_definitions(old_content)\n        new_defs = extract_python_definitions(new_content)\n\n        results = compare_definitions(old_defs, new_defs)\n\n        print(f\"Removed: {len(results['removed'])}\")\n        print(f\"Added: {len(results['added'])}\")\n        print(f\"Modified: {len(results['modified'])}\")\n        print(f\"Matching: {len(results['matching'])}\")\n\n        if results['removed']:\n            print(f\"  ⚠️  Removed: {', '.join(results['removed'])}\")\n        if results['modified']:\n            for name, old_h, new_h in results['modified']:\n                print(f\"  ⚠️  Modified: {name} ({old_h} → {new_h})\")\nSCRIPT\n```\n\n### Step F3: Customize and Run\n\n1. Edit the `FILES` list in the script to include the files being verified\n2. Adjust `BASE_REF` if needed (staging vs main)\n3. Run the local script:\n\n```bash\npython3 /tmp/verify-refactor-local.py\n```\n\n### Step F4: TypeScript Fallback\n\nFor TypeScript files, create a simpler text-based comparison if AST parsing fails:\n\n```bash\n# Simple text-based extraction for TypeScript\ncat > /tmp/verify-ts-simple.sh << 'SCRIPT'\n#!/bin/bash\n# Extract function/class signatures and compare\n\nOLD_REF=\"${1:-origin/staging}\"\nFILE=\"$2\"\n\necho \"=== Comparing $FILE ===\"\nMERGE_BASE=$(git merge-base \"$OLD_REF\" HEAD)\n\necho \"Old definitions:\"\ngit show \"$MERGE_BASE:$FILE\" 2>/dev/null | grep -E \"^(export )?(async )?(function|class|interface|type) \" | sort\n\necho \"\"\necho \"New definitions:\"\ngrep -E \"^(export )?(async )?(function|class|interface|type) \" \"$FILE\" | sort\nSCRIPT\nchmod +x /tmp/verify-ts-simple.sh\n```\n\n### When to Use Fallback\n\nUse the fallback approach when:\n- Baked scripts fail with parsing errors\n- Files use newer syntax features not yet supported\n- Environment doesn't have required dependencies (Bun)\n- Files are in languages other than Python/TypeScript\n\nThe local script approach allows adapting the verification logic to the specific files and syntax being verified.\n\n## Notes\n\n- The script auto-detects the base branch (staging or main)\n- Python and TypeScript files are supported\n- Comments and whitespace changes don't affect verification\n- Renamed functions are detected if they follow common patterns\n- **If scripts fail, create local adapted versions using the fallback instructions above**\n",
+        "plugins/refactor-verifier/skills/refactor-verification/SKILL.md": "---\nname: Refactor Verification\ndescription: This skill should be used when the user asks to \"verify a refactor\", \"check if a refactor changed logic\", \"confirm a file split was structural\", \"analyze refactor changes deterministically\", \"compare old and new code after reorganization\", or wants to ensure a code reorganization didn't introduce unintended changes. Provides AST-based deterministic verification for Python and TypeScript refactors.\n---\n\n# Refactor Verification\n\nDeterministically verify that code refactors are purely structural with no unintended logic changes using AST-based comparison and hash verification.\n\n## Overview\n\nWhen refactoring code (splitting files, reorganizing modules, renaming), it's critical to verify no functional changes were introduced. This skill provides a deterministic approach using:\n\n1. **AST Extraction**: Parse code to extract function/class definitions\n2. **Normalization**: Convert AST back to normalized source code\n3. **Hash Comparison**: SHA256 hash of normalized bodies for exact comparison\n4. **Diff Reporting**: Identify removed, added, modified, and renamed definitions\n\n## When to Use\n\n- Reviewing PRs that split monolithic files into modules\n- Verifying module reorganization didn't change behavior\n- Confirming rename-only changes\n- Auditing large-scale refactoring efforts\n\n## Verification Process\n\n### Step 1: Identify the Refactor Scope\n\nDetermine what files changed:\n\n```bash\n# Get files changed vs base branch\ngit diff origin/staging --stat\n\n# Or vs main\ngit diff origin/main --stat\n```\n\n### Step 2: Run Verification Script\n\nExecute the verification script from the repository root:\n\n```bash\nbun run ${CLAUDE_PLUGIN_ROOT}/scripts/verify-refactor.ts\n```\n\nThe script automatically:\n- Detects the current branch\n- Finds the merge base with staging/main\n- Fetches old file content from base branch\n- Extracts definitions from both old and new code\n- Compares and reports differences\n\n### Step 3: Analyze Results\n\nThe script reports:\n\n| Category | Meaning |\n|----------|---------|\n| **Removed** | Functions/classes in old code, missing in new |\n| **Added** | Functions/classes in new code, missing in old |\n| **Modified** | Same name but different body hash |\n| **Matching** | Identical definitions (hash match) |\n\n### Step 4: Investigate Differences\n\nFor modified items, run the detailed script:\n\n```bash\nbun run ${CLAUDE_PLUGIN_ROOT}/scripts/verify-refactor-detailed.ts\n```\n\nThis shows line-by-line diffs for each modified function/class.\n\n## Understanding Results\n\n### Pure Refactor (No Changes)\n\n```\n✅ VERIFICATION PASSED: Refactor is 100% structural\n   All function and class bodies are identical.\n```\n\n### Intentional Improvements\n\nSome changes during refactoring are intentional improvements:\n\n- **Type annotations added**: `def foo(x):` → `def foo(x: int) -> str:`\n- **Import cleanup**: Moving imports to module level\n- **Typo fixes**: `get_snipet` → `get_snippet`\n- **Docstring fixes**: Correcting spelling/grammar\n\nThese show as \"modified\" but are acceptable.\n\n### Regressions to Fix\n\nWatch for unintended changes:\n\n- **Missing functions**: Endpoint accidentally removed\n- **Signature changes**: Arguments became keyword-only unexpectedly\n- **Logic changes**: Conditional behavior modified\n- **API examples truncated**: Documentation degraded\n\n## Language Support\n\n### Python\n\nUses Python's `ast` module for precise extraction:\n\n- Functions: `def` and `async def` at module level\n- Classes: All class definitions with methods\n- Assignments: Top-level constants and type aliases\n\nThe extractor normalizes code using `ast.unparse()` for consistent comparison.\n\n### TypeScript\n\nUses TypeScript compiler API for extraction:\n\n- Functions: Named functions and arrow functions\n- Classes: Class declarations with methods\n- Interfaces: Interface definitions\n- Types: Type aliases\n\n## Handling Renames\n\nThe scripts detect common rename patterns:\n\n```python\n# Known renames (adjust as needed)\nrenames = {\n    \"_get_asset\": \"get_asset\",           # Private to public\n    \"get_sql_snipet\": \"get_sql_snippet\"  # Typo fix\n}\n```\n\nRenamed functions are compared with the name normalized, so `_get_asset` → `get_asset` shows as \"renamed\" rather than \"removed + added\".\n\n## Customization\n\n### Specify Files to Compare\n\nEdit the script constants to target specific paths:\n\n```typescript\nconst V0_PATH = \"agora/agora/web/api/public/v0\";\nconst NEW_FILE_PATHS = [\n  `${V0_PATH}/views/aop.py`,\n  `${V0_PATH}/views/assets.py`,\n  // ...\n];\n```\n\n### Add Language Extractors\n\nThe Python extractor pattern can be adapted for other languages. Key requirements:\n\n1. Parse source to AST\n2. Extract top-level definitions\n3. Normalize back to source string\n4. Hash the normalized body\n\n## Utility Scripts\n\n### `verify-refactor.ts`\n\nSummary verification script that:\n- Extracts all definitions from old and new code\n- Computes SHA256 hashes of normalized bodies\n- Reports removed/added/modified/matching counts\n- Shows full body for modified items\n\n### `verify-refactor-detailed.ts`\n\nDetailed diff script that:\n- Shows line-by-line differences\n- Highlights specific changes within functions\n- Useful for investigating modifications\n\n## Best Practices\n\n### Before Running Verification\n\n1. Ensure working directory is clean (`git status`)\n2. Fetch latest from remote (`git fetch origin`)\n3. Know the base branch (staging vs main)\n\n### Interpreting Results\n\n1. **100% matching**: Pure refactor, safe to merge\n2. **Only type annotations added**: Likely intentional improvement\n3. **Functions missing**: Investigate - may be regression\n4. **Logic changes**: Review carefully before approving\n\n### Fixing Regressions\n\nWhen verification fails:\n\n1. Identify the regression from the diff output\n2. Compare against original implementation\n3. Restore missing code or revert unintended changes\n4. Re-run verification to confirm fix\n\n## Example Workflow\n\n```bash\n# 1. Check current branch status\ngit status\n\n# 2. Run summary verification\nbun run plugins/refactor-verifier/scripts/verify-refactor.ts\n\n# 3. If modifications found, get details\nbun run plugins/refactor-verifier/scripts/verify-refactor-detailed.ts\n\n# 4. Fix any regressions\n# ... edit files ...\n\n# 5. Re-verify\nbun run plugins/refactor-verifier/scripts/verify-refactor.ts\n```\n\n## Limitations\n\n- **Comments**: Changes to comments don't affect body hash (AST strips comments)\n- **Formatting**: Whitespace changes don't affect hash (normalized)\n- **Import order**: Import reorganization shows as \"modified\" for classes using decorators\n- **Nested functions**: Only top-level definitions are compared\n\n## Troubleshooting\n\n### \"Module not found\" Error\n\nEnsure Bun is installed and script path is correct:\n\n```bash\nbun --version\nls -la ${CLAUDE_PLUGIN_ROOT}/scripts/\n```\n\n### Python Syntax Error\n\nThe Python extractor requires Python 3.8+ for `ast.unparse()`. Check version:\n\n```bash\npython3 --version\n```\n\n### No Definitions Found\n\nVerify the file paths in the script match actual locations in the repository.\n"
+      },
+      "plugins": [
+        {
+          "name": "refactor-verifier",
+          "description": "Deterministically verify that code refactors are purely structural with no unintended logic changes",
+          "source": "./plugins/refactor-verifier",
+          "category": "code-analysis",
+          "categories": [
+            "code-analysis"
+          ],
+          "install_commands": [
+            "/plugin marketplace add PabloSzx/pabloszx-marketplace",
+            "/plugin install refactor-verifier@pabloszx-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

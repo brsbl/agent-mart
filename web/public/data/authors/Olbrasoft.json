@@ -1,0 +1,148 @@
+{
+  "author": {
+    "id": "Olbrasoft",
+    "display_name": "Jiří Tůma",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/35496927?u=7ee821360f3d19606ac98f028f8262084d3f60ca&v=4",
+    "url": "https://github.com/Olbrasoft",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 2,
+      "total_commands": 1,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "ClaudeCode",
+      "version": null,
+      "description": "Loads pending tasks from VirtualAssistant database on session start and saves results on session stop",
+      "owner_info": {
+        "name": "Olbrasoft"
+      },
+      "keywords": [],
+      "repo_full_name": "Olbrasoft/ClaudeCode",
+      "repo_url": "https://github.com/Olbrasoft/ClaudeCode",
+      "repo_description": "TypeScript plugins for Claude Code integration - task dispatch, notifications, and automation",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-20T07:52:18Z",
+        "created_at": "2025-12-08T08:44:03Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 451
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/notify-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/notify-plugin/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/notify-plugin/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 196
+        },
+        {
+          "path": "plugins/notify-plugin/README.md",
+          "type": "blob",
+          "size": 912
+        },
+        {
+          "path": "plugins/notify-plugin/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/notify-plugin/commands/notify.md",
+          "type": "blob",
+          "size": 965
+        },
+        {
+          "path": "plugins/task-dispatch",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/task-dispatch/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/task-dispatch/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 292
+        },
+        {
+          "path": "plugins/task-dispatch/README.md",
+          "type": "blob",
+          "size": 2919
+        },
+        {
+          "path": "plugins/task-dispatch/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/task-dispatch/hooks/hooks.json",
+          "type": "blob",
+          "size": 402
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ClaudeCode\",\n  \"owner\": {\n    \"name\": \"Olbrasoft\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"task-dispatch\",\n      \"source\": \"./plugins/task-dispatch\",\n      \"description\": \"Loads pending tasks from VirtualAssistant database on session start and saves results on session stop\"\n    },\n    {\n      \"name\": \"notify\",\n      \"source\": \"./plugins/notify-plugin\",\n      \"description\": \"Send notifications to VirtualAssistant database\"\n    }\n  ]\n}\n",
+        "plugins/notify-plugin/.claude-plugin/plugin.json": "{\n  \"name\": \"notify\",\n  \"description\": \"Send notifications to VirtualAssistant database\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Olbrasoft\"\n  },\n  \"commands\": [\"./commands/notify.md\"]\n}\n",
+        "plugins/notify-plugin/README.md": "# Notify Plugin for Claude Code\n\nPlugin that provides a `/notify` command to send notifications to VirtualAssistant database.\n\n## Installation\n\n### 1. Add marketplace (if not already added)\n```bash\n/plugin marketplace add /home/jirka/GitHub/Olbrasoft/ClaudeCode\n```\n\n### 2. Install the plugin\n```bash\n/plugin install notify@ClaudeCode\n```\n\n### 3. Restart Claude Code\nRestart to apply changes.\n\n## Usage\n\n```\n/notify <message>\n```\n\n### Examples\n```\n/notify Zahajuji praci na issue #255\n/notify Vytvoril jsem Notification entitu\n/notify Dokoncil jsem issue #255\n```\n\n## API Endpoint\n\nThe plugin sends notifications to:\n- **URL**: `http://localhost:5055/api/notifications`\n- **Method**: POST\n- **Headers**: `Content-Type: application/json`\n- **Body**: `{\"agentId\": \"Claude Code\", \"text\": \"<message>\"}`\n\n## Requirements\n\n- VirtualAssistant service running on localhost:5055\n- `/api/notifications` endpoint available\n",
+        "plugins/notify-plugin/commands/notify.md": "---\nname: notify\ndescription: Send notification to VirtualAssistant about your work progress\n---\n\nSend a notification to VirtualAssistant database about your current work.\n\nThe notification should:\n- Describe what you're doing (starting work, progress update, completion)\n- Be written in Czech language\n- Be concise (1-2 sentences)\n- Include issue number if working on a specific issue\n\nExamples:\n- \"Zahajuji praci na issue #255\"\n- \"Vytvoril jsem Notification entitu\"\n- \"Dokoncil jsem issue #255\"\n\nAfter writing the notification text, call the VirtualAssistant API:\n- Endpoint: `http://localhost:5055/api/notifications`\n- Method: POST\n- Headers: `Content-Type: application/json`\n- Body: `{\"agentId\": \"Claude Code\", \"text\": \"<your notification text>\"}`\n\nUse curl to make the HTTP request:\n```bash\ncurl -X POST http://localhost:5055/api/notifications \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"agentId\": \"Claude Code\", \"text\": \"<your notification text>\"}'\n```\n",
+        "plugins/task-dispatch/.claude-plugin/plugin.json": "{\n  \"name\": \"task-dispatch\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Loads pending tasks from VirtualAssistant database on session start and saves results on session stop\",\n  \"author\": \"Olbrasoft\",\n  \"repository\": \"https://github.com/Olbrasoft/ClaudeCode\",\n  \"hooks\": \"../hooks/hooks.json\"\n}\n",
+        "plugins/task-dispatch/README.md": "# Task Dispatch Plugin\n\nIntegrates Claude Code with VirtualAssistant task queue using hooks.\n\n## Architecture\n\n```\n~/.claude/plugins/task-dispatch/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin manifest\n├── hooks/\n│   └── hooks.json           # SessionStart + Stop hooks\n├── scripts/\n│   ├── load-task.sh         # Query DB → output task context\n│   └── save-result.sh       # Update DB with result\n└── .env                     # Database connection settings\n```\n\n## Flow\n\n1. **Session Start** → `load-task.sh` → loads pending task from DB → injects into Claude's context\n2. **Claude works** on the task\n3. **Session Stop** → `save-result.sh` → saves result to DB, notifies TTS\n\n## Hooks\n\n| Event | Script | Purpose |\n|-------|--------|---------|\n| SessionStart | load-task.sh | Load pending task for Claude agent |\n| Stop | save-result.sh | Save session result, mark task completed |\n\n## Database Schema\n\nUses VirtualAssistant's PostgreSQL database:\n\n**Table: `agent_tasks`**\n- `id` - Task ID\n- `github_issue_url` - Full GitHub issue URL\n- `github_issue_number` - Issue number\n- `summary` - Task description\n- `target_agent_id` - Claude's agent ID\n- `status` - pending/approved/notified/sent/completed/cancelled\n- `result` - Completion summary\n- `claude_session_id` - Session ID for tracking\n- `sent_at`, `completed_at` - Timestamps\n\n## Installation\n\n1. Copy plugin to Claude plugins directory:\n```bash\ncp -r plugins/task-dispatch ~/.claude/plugins/\n```\n\n2. Configure database connection in `.env`:\n```bash\nDB_HOST=localhost\nDB_PORT=5432\nDB_NAME=virtual_assistant\nDB_USER=postgres\nDB_PASSWORD=postgres\n```\n\n3. Ensure `jq` and `psql` are installed:\n```bash\nsudo apt install jq postgresql-client\n```\n\n## Usage\n\nWhen Claude Code starts with a pending task:\n- The task description is automatically injected into context\n- Task status changes from \"pending/approved\" to \"sent\"\n- `claude_session_id` is set for tracking\n\nWhen Claude Code session ends:\n- Result is extracted from transcript\n- Task status changes to \"completed\"\n- TTS notification is sent (optional)\n\n## Manual Testing\n\nTest load script:\n```bash\necho '{\"session_id\": \"test-123\", \"cwd\": \"/home/user\"}' | ./scripts/load-task.sh\n```\n\nTest save script:\n```bash\necho '{\"session_id\": \"test-123\", \"transcript_path\": \"/tmp/test.jsonl\"}' | ./scripts/save-result.sh\n```\n\n## Requirements\n\n- PostgreSQL client (`psql`)\n- `jq` for JSON parsing\n- VirtualAssistant database running\n- Agent \"claude\" registered in `agents` table\n\n## Related Issues\n\n- [Issue #1](https://github.com/Olbrasoft/ClaudeCode/issues/1) - PoC: Task Dispatch Plugin\n- [Issue #2](https://github.com/Olbrasoft/ClaudeCode/issues/2) - Plugin skeleton with hooks.json\n- [Issue #3](https://github.com/Olbrasoft/ClaudeCode/issues/3) - SessionStart hook\n- [Issue #4](https://github.com/Olbrasoft/ClaudeCode/issues/4) - Stop hook\n",
+        "plugins/task-dispatch/hooks/hooks.json": "{\n  \"hooks\": [\n    {\n      \"matcher\": {\n        \"event\": \"SessionStart\"\n      },\n      \"hooks\": [\n        {\n          \"type\": \"command\",\n          \"command\": \"../scripts/load-task.sh\"\n        }\n      ]\n    },\n    {\n      \"matcher\": {\n        \"event\": \"Stop\"\n      },\n      \"hooks\": [\n        {\n          \"type\": \"command\",\n          \"command\": \"../scripts/save-result.sh\"\n        }\n      ]\n    }\n  ]\n}\n"
+      },
+      "plugins": [
+        {
+          "name": "task-dispatch",
+          "source": "./plugins/task-dispatch",
+          "description": "Loads pending tasks from VirtualAssistant database on session start and saves results on session stop",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Olbrasoft/ClaudeCode",
+            "/plugin install task-dispatch@ClaudeCode"
+          ]
+        },
+        {
+          "name": "notify",
+          "source": "./plugins/notify-plugin",
+          "description": "Send notifications to VirtualAssistant database",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Olbrasoft/ClaudeCode",
+            "/plugin install notify@ClaudeCode"
+          ]
+        }
+      ]
+    }
+  ]
+}

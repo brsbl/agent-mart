@@ -1,0 +1,135 @@
+{
+  "author": {
+    "id": "jes5199",
+    "display_name": "Jes Wolfe",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/16204?u=f195ae3b81969a5e93d9e5cdbd7ece191b9f9262&v=4",
+    "url": "https://github.com/jes5199",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 3,
+      "total_skills": 0,
+      "total_stars": 34,
+      "total_forks": 4
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "chief-wiggum",
+      "version": "1.1.0",
+      "description": "Self-referential AI development loops - iterate until completion",
+      "owner_info": {
+        "name": "Jes",
+        "email": ""
+      },
+      "keywords": [],
+      "repo_full_name": "jes5199/chief-wiggum",
+      "repo_url": "https://github.com/jes5199/chief-wiggum",
+      "repo_description": "it's just Ralph with a hat on",
+      "homepage": "",
+      "signals": {
+        "stars": 34,
+        "forks": 4,
+        "pushed_at": "2026-01-05T08:35:44Z",
+        "created_at": "2025-12-23T21:10:07Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 540
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 324
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 4332
+        },
+        {
+          "path": "commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "commands/cancel-wiggum.md",
+          "type": "blob",
+          "size": 639
+        },
+        {
+          "path": "commands/help.md",
+          "type": "blob",
+          "size": 3578
+        },
+        {
+          "path": "commands/wiggum-loop.md",
+          "type": "blob",
+          "size": 1638
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/hooks.json",
+          "type": "blob",
+          "size": 284
+        },
+        {
+          "path": "hooks/stop-hook.sh",
+          "type": "blob",
+          "size": 7377
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/wiggum-loop.md",
+          "type": "blob",
+          "size": 2752
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"chief-wiggum\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Self-referential AI development loops - iterate until completion\",\n  \"owner\": {\n    \"name\": \"Jes\",\n    \"email\": \"\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"chief-wiggum\",\n      \"description\": \"Implementation of the Ralph Wiggum technique - continuous self-referential AI loops for iterative development\",\n      \"version\": \"1.1.0\",\n      \"source\": \"./\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"chief-wiggum\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Implementation of the Ralph Wiggum technique - continuous self-referential AI loops for interactive iterative development. Run Claude in a while-true loop with the same prompt until task completion.\",\n  \"author\": {\n    \"name\": \"Jes\",\n    \"email\": \"\"\n  }\n}\n",
+        "README.md": "# Chief Wiggum Plugin\n\n![Chief Wiggum iterating on code](assets/banner.png)\n\nA fork of the [ralph-wiggum](https://github.com/anthropics/claude-code/tree/main/plugins/ralph-wiggum) plugin for Claude Code, implementing self-referential AI development loops.\n\n## Why This Fork?\n\nThis fork exists for two reasons:\n\n### 1. Bug Fixes\n\nIncludes fixes from [PR #12642](https://github.com/anthropics/claude-code/pull/12642):\n- Slash commands failed due to multi-line bash being blocked by security checks\n- Permission check bug with ` ```! ` auto-execute syntax\n\nAdditional fixes in v1.1.0:\n- Flag-like values (e.g. `--completion-promise --iterations`) now rejected with helpful error messages instead of silently misinterpreting arguments\n- Iteration context now injected into the prompt Claude sees (workaround for Claude Code's `systemMessage` not being visible to the AI)\n\nAlso adds clearer documentation that completion promises must be wrapped in `<promise>` XML tags.\n\n### 2. Natural Language Invocation\n\nYou can start a Wiggum loop just by asking Claude naturally:\n\n> \"Wiggum this until the tests pass\"\n> \"Keep trying to fix the build\"\n> \"Run in a loop until it works\"\n\nThe plugin includes a skill file that recognizes these phrases and automatically starts an appropriate loop with sensible defaults.\n\n## Installation\n\n```\n/plugin marketplace add jes5199/chief-wiggum\n/plugin install chief-wiggum\n```\n\nThen restart Claude Code to load the plugin.\n\n**Note:** The Claude Code plugin interface can be buggy. If the above commands don't work, ask Claude to directly edit your config files to install or uninstall the plugin.\n\n## What is Ralph Wiggum?\n\nThe Ralph Wiggum technique is an iterative development methodology based on continuous AI loops, pioneered by [Geoffrey Huntley](https://ghuntley.com/ralph/).\n\n**Core concept:** Feed Claude the same prompt repeatedly. Each iteration, Claude sees its previous work in files and git history, allowing it to iteratively improve until the task is complete.\n\nThis plugin implements Ralph using a **Stop hook** that intercepts Claude's exit attempts and feeds the same prompt back.\n\n## Quick Start\n\n```bash\n/wiggum-loop \"Build a REST API for todos. Requirements: CRUD operations, input validation, tests. Output <promise>COMPLETE</promise> when done.\" --completion-promise \"COMPLETE\" --max-iterations 15\n```\n\nOr just ask naturally:\n\n> \"Wiggum it - implement user authentication with tests\"\n\n## Commands\n\n### /wiggum-loop\n\nStart a loop in your current session.\n\n```bash\n/wiggum-loop \"<prompt>\" --max-iterations <n> --completion-promise \"<text>\"\n```\n\n**Options:**\n- `--completion-promise <text>` - Phrase that signals completion (HIGHLY ENCOURAGED)\n- `--max-iterations <n>` - Stop after N iterations (HIGHLY ENCOURAGED, recommend 10-20)\n\n**IMPORTANT:** Always specify BOTH options to prevent infinite loops.\n\n### /cancel-wiggum\n\nCancel the active loop.\n\n```bash\n/cancel-wiggum\n```\n\n## Completion Promises\n\nTo signal completion, output a `<promise>` tag with the exact text specified:\n\n```\n<promise>COMPLETE</promise>\n```\n\nThe stop hook detects this tag and ends the loop. Always use both a completion promise AND `--max-iterations` (recommend 10-20) to prevent infinite loops.\n\n## Best Practices\n\n### Clear Completion Criteria\n\n```markdown\nBuild a REST API for todos.\n\nWhen complete:\n- All CRUD endpoints working\n- Input validation in place\n- Tests passing (coverage > 80%)\n- Output: <promise>COMPLETE</promise>\n```\n\n### Always Set Both Safeguards\n\n```bash\n/wiggum-loop \"Try to implement feature X\" --completion-promise \"FEATURE COMPLETE\" --max-iterations 15\n```\n\nAlways specify both `--completion-promise` and `--max-iterations` (recommend 10-20). This prevents infinite loops on impossible tasks.\n\n## When to Use\n\n**Good for:**\n- Well-defined tasks with clear success criteria\n- Tasks requiring iteration (getting tests to pass)\n- Greenfield projects\n- Tasks with automatic verification (tests, linters)\n\n**Not good for:**\n- Tasks requiring human judgment\n- One-shot operations\n- Unclear success criteria\n\n## Learn More\n\n- Original plugin: [ralph-wiggum](https://github.com/anthropics/claude-code-plugins/tree/main/plugins/ralph-wiggum) (Anthropic's official version)\n- Original technique: https://ghuntley.com/ralph/\n- Ralph Orchestrator: https://github.com/mikeyobrien/ralph-orchestrator\n",
+        "commands/cancel-wiggum.md": "---\ndescription: \"Cancel active Wiggum loop\"\nallowed-tools: [\"Bash\", \"Read\"]\nhide-from-slash-command-tool: \"true\"\n---\n\n# Cancel Wiggum\n\nTo cancel the Wiggum loop:\n\n1. Check if `.claude/wiggum-loop.local.md` exists using Bash: `test -f .claude/wiggum-loop.local.md && echo \"EXISTS\" || echo \"NOT_FOUND\"`\n\n2. **If NOT_FOUND**: Say \"No active Wiggum loop found.\"\n\n3. **If EXISTS**:\n   - Read `.claude/wiggum-loop.local.md` to get the current iteration number from the `iteration:` field\n   - Remove the file using Bash: `rm .claude/wiggum-loop.local.md`\n   - Report: \"Cancelled Wiggum loop (was at iteration N)\" where N is the iteration value\n",
+        "commands/help.md": "---\ndescription: \"Explain Wiggum technique and available commands\"\n---\n\n# Chief Wiggum Plugin Help\n\nPlease explain the following to the user:\n\n## What is the Ralph Wiggum Technique?\n\nThe Ralph Wiggum technique is an iterative development methodology based on continuous AI loops, pioneered by Geoffrey Huntley.\n\n**Core concept:**\n```bash\nwhile :; do\n  cat PROMPT.md | claude-code --continue\ndone\n```\n\nThe same prompt is fed to Claude repeatedly. The \"self-referential\" aspect comes from Claude seeing its own previous work in the files and git history, not from feeding output back as input.\n\n**Each iteration:**\n1. Claude receives the SAME prompt\n2. Works on the task, modifying files\n3. Tries to exit\n4. Stop hook intercepts and feeds the same prompt again\n5. Claude sees its previous work in the files\n6. Iteratively improves until completion\n\nThe technique is described as \"deterministically bad in an undeterministic world\" - failures are predictable, enabling systematic improvement through prompt tuning.\n\n## Available Commands\n\n### /wiggum-loop <PROMPT> [OPTIONS]\n\nStart a Wiggum loop in your current session.\n\n**Usage:**\n```\n/wiggum-loop \"Refactor the cache layer\" --completion-promise \"REFACTOR DONE\" --max-iterations 15\n/wiggum-loop \"Add tests until passing\" --completion-promise \"TESTS COMPLETE\" --max-iterations 10\n```\n\n**Options:**\n- `--completion-promise <text>` - Promise phrase to signal completion (HIGHLY ENCOURAGED)\n- `--max-iterations <n>` - Max iterations before auto-stop (HIGHLY ENCOURAGED)\n\n**IMPORTANT:** Always specify BOTH options. A reasonable default for max iterations is 10-20. Loops without these safeguards can run indefinitely.\n\n**How it works:**\n1. Creates `.claude/wiggum-loop.local.md` state file\n2. You work on the task\n3. When you try to exit, stop hook intercepts\n4. Same prompt fed back\n5. You see your previous work\n6. Continues until promise detected or max iterations\n\n---\n\n### /cancel-wiggum\n\nCancel an active Wiggum loop (removes the loop state file).\n\n**Usage:**\n```\n/cancel-wiggum\n```\n\n**How it works:**\n- Checks for active loop state file\n- Removes `.claude/wiggum-loop.local.md`\n- Reports cancellation with iteration count\n\n---\n\n## Key Concepts\n\n### Completion Promises\n\nTo signal completion, Claude must output a `<promise>` tag:\n\n```\n<promise>TASK COMPLETE</promise>\n```\n\nThe stop hook looks for this specific tag. **Always use BOTH a completion promise AND max iterations** to prevent infinite loops. Use 10-20 as a reasonable default iteration count.\n\n### Self-Reference Mechanism\n\nThe \"loop\" doesn't mean Claude talks to itself. It means:\n- Same prompt repeated\n- Claude's work persists in files\n- Each iteration sees previous attempts\n- Builds incrementally toward goal\n\n## Example\n\n### Interactive Bug Fix\n\n```\n/wiggum-loop \"Fix the token refresh logic in auth.ts. Output <promise>FIXED</promise> when all tests pass.\" --completion-promise \"FIXED\" --max-iterations 10\n```\n\nYou'll see the loop:\n- Attempt fixes\n- Run tests\n- See failures\n- Iterate on solution\n- In your current session\n\n## When to Use Wiggum Loop\n\n**Good for:**\n- Well-defined tasks with clear success criteria\n- Tasks requiring iteration and refinement\n- Iterative development with self-correction\n- Greenfield projects\n\n**Not good for:**\n- Tasks requiring human judgment or design decisions\n- One-shot operations\n- Tasks with unclear success criteria\n- Debugging production issues (use targeted debugging instead)\n\n## Learn More\n\n- Original technique: https://ghuntley.com/ralph/\n- Ralph Orchestrator: https://github.com/mikeyobrien/ralph-orchestrator\n",
+        "commands/wiggum-loop.md": "---\ndescription: \"Start Wiggum loop in current session\"\nargument-hint: \"PROMPT [--max-iterations N] [--completion-promise TEXT]\"\nallowed-tools: [\"Bash\"]\nhide-from-slash-command-tool: \"true\"\n---\n\n# Wiggum Loop Command\n\nRun this command to initialize the Wiggum loop:\n\n```bash\n\"${CLAUDE_PLUGIN_ROOT}/scripts/setup-wiggum-loop.sh\" $ARGUMENTS\n```\n\nExecute the above command using Bash, then work on the task. When you try to exit, the Wiggum loop will feed the SAME PROMPT back to you for the next iteration. You'll see your previous work in files and git history, allowing you to iterate and improve.\n\n**IMPORTANT:** Always specify BOTH `--completion-promise` AND `--max-iterations`. Loops without these safeguards can run indefinitely. A reasonable default for max iterations is 10-20 (10 for simple tasks, 20 for complex ones).\n\n**WARNING: Use explicit flag syntax.** The script does NOT parse natural language. Writing `20 READY TO MERGE` will NOT set max_iterations to 20 - it will be treated as literal prompt text. You MUST use:\n```\n--max-iterations 20 --completion-promise \"READY TO MERGE\"\n```\n\nCRITICAL RULE: If a completion promise is set, you may ONLY output it when the statement is completely and unequivocally TRUE. Do not output false promises to escape the loop, even if you think you're stuck or should exit for other reasons. The loop is designed to continue until genuine completion.\n\nFORMAT REQUIREMENT: To signal completion, wrap the promise in `<promise>` tags. For example, if the completion promise is \"DONE\", output:\n```\n<promise>DONE</promise>\n```\nThe text inside the tags must match the completion promise exactly.\n",
+        "hooks/hooks.json": "{\n  \"description\": \"Chief Wiggum plugin stop hook for self-referential loops\",\n  \"hooks\": {\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/stop-hook.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "hooks/stop-hook.sh": "#!/bin/bash\n\n# Chief Wiggum Stop Hook\n# Prevents session exit when a wiggum-loop is active\n# Feeds Claude's output back as input to continue the loop\n\nset -euo pipefail\n\n# Read hook input from stdin (advanced stop hook API)\nHOOK_INPUT=$(cat)\n\n# Check if wiggum-loop is active\nWIGGUM_STATE_FILE=\".claude/wiggum-loop.local.md\"\n\nif [[ ! -f \"$WIGGUM_STATE_FILE\" ]]; then\n  # No active loop - allow exit\n  exit 0\nfi\n\n# Parse markdown frontmatter (YAML between ---) and extract values\nFRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' \"$WIGGUM_STATE_FILE\")\nITERATION=$(echo \"$FRONTMATTER\" | grep '^iteration:' | sed 's/iteration: *//')\nMAX_ITERATIONS=$(echo \"$FRONTMATTER\" | grep '^max_iterations:' | sed 's/max_iterations: *//')\n# Extract completion_promise and strip surrounding quotes if present\nCOMPLETION_PROMISE=$(echo \"$FRONTMATTER\" | grep '^completion_promise:' | sed 's/completion_promise: *//' | sed 's/^\"\\(.*\\)\"$/\\1/')\n\n# Validate numeric fields before arithmetic operations\nif [[ ! \"$ITERATION\" =~ ^[0-9]+$ ]]; then\n  echo \"Warning: Wiggum loop: State file corrupted\" >&2\n  echo \"   File: $WIGGUM_STATE_FILE\" >&2\n  echo \"   Problem: 'iteration' field is not a valid number (got: '$ITERATION')\" >&2\n  echo \"\" >&2\n  echo \"   This usually means the state file was manually edited or corrupted.\" >&2\n  echo \"   Wiggum loop is stopping. Run /wiggum-loop again to start fresh.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\nif [[ ! \"$MAX_ITERATIONS\" =~ ^[0-9]+$ ]]; then\n  echo \"Warning: Wiggum loop: State file corrupted\" >&2\n  echo \"   File: $WIGGUM_STATE_FILE\" >&2\n  echo \"   Problem: 'max_iterations' field is not a valid number (got: '$MAX_ITERATIONS')\" >&2\n  echo \"\" >&2\n  echo \"   This usually means the state file was manually edited or corrupted.\" >&2\n  echo \"   Wiggum loop is stopping. Run /wiggum-loop again to start fresh.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\n# Check if max iterations reached\nif [[ $MAX_ITERATIONS -gt 0 ]] && [[ $ITERATION -ge $MAX_ITERATIONS ]]; then\n  echo \"Wiggum loop: Max iterations ($MAX_ITERATIONS) reached.\"\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\n# Get transcript path from hook input\nTRANSCRIPT_PATH=$(echo \"$HOOK_INPUT\" | jq -r '.transcript_path')\n\nif [[ ! -f \"$TRANSCRIPT_PATH\" ]]; then\n  echo \"Warning: Wiggum loop: Transcript file not found\" >&2\n  echo \"   Expected: $TRANSCRIPT_PATH\" >&2\n  echo \"   This is unusual and may indicate a Claude Code internal issue.\" >&2\n  echo \"   Wiggum loop is stopping.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\n# Read last assistant message from transcript (JSONL format - one JSON per line)\n# First check if there are any assistant messages\nif ! grep -q '\"role\":\"assistant\"' \"$TRANSCRIPT_PATH\"; then\n  echo \"Warning: Wiggum loop: No assistant messages found in transcript\" >&2\n  echo \"   Transcript: $TRANSCRIPT_PATH\" >&2\n  echo \"   This is unusual and may indicate a transcript format issue\" >&2\n  echo \"   Wiggum loop is stopping.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\n# Extract last assistant message with explicit error handling\nLAST_LINE=$(grep '\"role\":\"assistant\"' \"$TRANSCRIPT_PATH\" | tail -1)\nif [[ -z \"$LAST_LINE\" ]]; then\n  echo \"Warning: Wiggum loop: Failed to extract last assistant message\" >&2\n  echo \"   Wiggum loop is stopping.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\n# Parse JSON with error handling\nLAST_OUTPUT=$(echo \"$LAST_LINE\" | jq -r '\n  .message.content |\n  map(select(.type == \"text\")) |\n  map(.text) |\n  join(\"\\n\")\n' 2>&1)\n\n# Check if jq succeeded\nif [[ $? -ne 0 ]]; then\n  echo \"Warning: Wiggum loop: Failed to parse assistant message JSON\" >&2\n  echo \"   Error: $LAST_OUTPUT\" >&2\n  echo \"   This may indicate a transcript format issue\" >&2\n  echo \"   Wiggum loop is stopping.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\nif [[ -z \"$LAST_OUTPUT\" ]]; then\n  echo \"Warning: Wiggum loop: Assistant message contained no text content\" >&2\n  echo \"   Wiggum loop is stopping.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\n# Check for completion promise (only if set)\nif [[ \"$COMPLETION_PROMISE\" != \"null\" ]] && [[ -n \"$COMPLETION_PROMISE\" ]]; then\n  # Extract text from <promise> tags using Perl for multiline support\n  # -0777 slurps entire input, s flag makes . match newlines\n  # .*? is non-greedy (takes FIRST tag), whitespace normalized\n  PROMISE_TEXT=$(echo \"$LAST_OUTPUT\" | perl -0777 -pe 's/.*?<promise>(.*?)<\\/promise>.*/$1/s; s/^\\s+|\\s+$//g; s/\\s+/ /g' 2>/dev/null || echo \"\")\n\n  # Use = for literal string comparison (not pattern matching)\n  # == in [[ ]] does glob pattern matching which breaks with *, ?, [ characters\n  if [[ -n \"$PROMISE_TEXT\" ]] && [[ \"$PROMISE_TEXT\" = \"$COMPLETION_PROMISE\" ]]; then\n    echo \"Wiggum loop: Detected <promise>$COMPLETION_PROMISE</promise>\"\n    rm \"$WIGGUM_STATE_FILE\"\n    exit 0\n  fi\nfi\n\n# Not complete - continue loop with SAME PROMPT\nNEXT_ITERATION=$((ITERATION + 1))\n\n# Extract prompt (everything after the closing ---)\n# Skip first --- line, skip until second --- line, then print everything after\n# Use i>=2 instead of i==2 to handle --- in prompt content\nPROMPT_TEXT=$(awk '/^---$/{i++; next} i>=2' \"$WIGGUM_STATE_FILE\")\n\nif [[ -z \"$PROMPT_TEXT\" ]]; then\n  echo \"Warning: Wiggum loop: State file corrupted or incomplete\" >&2\n  echo \"   File: $WIGGUM_STATE_FILE\" >&2\n  echo \"   Problem: No prompt text found\" >&2\n  echo \"\" >&2\n  echo \"   This usually means:\" >&2\n  echo \"     - State file was manually edited\" >&2\n  echo \"     - File was corrupted during writing\" >&2\n  echo \"\" >&2\n  echo \"   Wiggum loop is stopping. Run /wiggum-loop again to start fresh.\" >&2\n  rm \"$WIGGUM_STATE_FILE\"\n  exit 0\nfi\n\n# Update iteration in frontmatter (portable across macOS and Linux)\n# Create temp file, then atomically replace\nTEMP_FILE=\"${WIGGUM_STATE_FILE}.tmp.$$\"\nsed \"s/^iteration: .*/iteration: $NEXT_ITERATION/\" \"$WIGGUM_STATE_FILE\" > \"$TEMP_FILE\"\nmv \"$TEMP_FILE\" \"$WIGGUM_STATE_FILE\"\n\n# Build iteration context for Claude (injected into reason since systemMessage isn't visible to Claude)\nif [[ \"$COMPLETION_PROMISE\" != \"null\" ]] && [[ -n \"$COMPLETION_PROMISE\" ]]; then\n  if [[ $MAX_ITERATIONS -gt 0 ]]; then\n    ITERATION_CONTEXT=\"[Wiggum loop iteration $NEXT_ITERATION/$MAX_ITERATIONS | Complete by outputting: <promise>$COMPLETION_PROMISE</promise>]\"\n  else\n    ITERATION_CONTEXT=\"[Wiggum loop iteration $NEXT_ITERATION | Complete by outputting: <promise>$COMPLETION_PROMISE</promise>]\"\n  fi\n  SYSTEM_MSG=\"Wiggum iteration $NEXT_ITERATION | To stop: output <promise>$COMPLETION_PROMISE</promise> (ONLY when statement is TRUE - do not lie to exit!)\"\nelse\n  if [[ $MAX_ITERATIONS -gt 0 ]]; then\n    ITERATION_CONTEXT=\"[Wiggum loop iteration $NEXT_ITERATION/$MAX_ITERATIONS | No completion promise - runs until max iterations]\"\n  else\n    ITERATION_CONTEXT=\"[Wiggum loop iteration $NEXT_ITERATION | No completion promise - runs infinitely]\"\n  fi\n  SYSTEM_MSG=\"Wiggum iteration $NEXT_ITERATION | No completion promise set - loop runs infinitely\"\nfi\n\n# Output JSON to block the stop and feed prompt back\n# The \"reason\" field contains the prompt that will be sent back to Claude\n# We prepend ITERATION_CONTEXT since systemMessage isn't visible to Claude\njq -n \\\n  --arg context \"$ITERATION_CONTEXT\" \\\n  --arg prompt \"$PROMPT_TEXT\" \\\n  --arg msg \"$SYSTEM_MSG\" \\\n  '{\n    \"decision\": \"block\",\n    \"reason\": ($context + \"\\n\\n\" + $prompt),\n    \"systemMessage\": $msg\n  }'\n\n# Exit 0 for successful hook execution\nexit 0\n",
+        "skills/wiggum-loop.md": "---\ndescription: \"Start self-referential development loop for iterative tasks. Use when user asks to 'wiggum this', 'wiggum it', 'run in a loop until done', or wants iterative development with automatic self-correction.\"\n---\n\n# Wiggum Loop\n\nThe user wants to run a task in a self-referential loop where you iterate until completion.\n\n## When to use this\n\n- User says \"wiggum this\", \"wiggum it\", \"ralph it\"\n- User wants you to \"keep trying until it works\"\n- User asks for iterative development with self-correction\n- User wants to \"run in a loop\" until a task is complete\n- User mentions wanting automatic retry/iteration behavior\n\n## How to start the loop\n\nRun the `/wiggum-loop` command with the user's task:\n\n```\n/wiggum-loop \"<TASK DESCRIPTION>\" --completion-promise \"<SUCCESS_CRITERIA>\" --max-iterations <N>\n```\n\n### Constructing the command\n\n**IMPORTANT: Always specify BOTH options.** Loops without limits can run indefinitely.\n\n1. **Task description**: Convert the user's request into a clear task prompt\n2. **Completion promise**: Define what \"done\" means - a true statement when complete (REQUIRED)\n3. **Max iterations**: Use 10-20 as a reasonable default; adjust based on task complexity (REQUIRED)\n\n**WARNING: Use explicit flag syntax, not natural language.** The script does NOT parse natural language into flags.\n\n❌ WRONG: `/wiggum-loop \"Fix bugs\" 20 READY TO MERGE`\n→ This sets max_iterations: 0, completion_promise: null (the \"20 READY TO MERGE\" becomes prompt text)\n\n✅ CORRECT: `/wiggum-loop \"Fix bugs\" --max-iterations 20 --completion-promise \"READY TO MERGE\"`\n→ This properly sets max_iterations: 20, completion_promise: \"READY TO MERGE\"\n\n### Examples\n\nUser: \"Wiggum adding tests until they all pass\"\n```\n/wiggum-loop \"Add comprehensive tests for the authentication module. Run tests after each change.\" --completion-promise \"All tests passing\" --max-iterations 15\n```\n\nUser: \"Wiggum it - fix the build errors\"\n```\n/wiggum-loop \"Fix all build errors. Run the build after each fix attempt.\" --completion-promise \"Build successful\" --max-iterations 10\n```\n\nUser: \"Keep trying to implement this feature until it works\"\n```\n/wiggum-loop \"Implement the user dashboard feature with charts and data tables. Test manually after each iteration.\" --completion-promise \"Feature complete and working\" --max-iterations 20\n```\n\n## Important notes\n\n- **Always specify BOTH `--completion-promise` AND `--max-iterations`** - this prevents infinite loops\n- Use 10-20 iterations as a reasonable default (10 for simple tasks, 20 for complex ones)\n- The completion promise must be something that becomes TRUE when done\n- You will see your previous work in files between iterations\n- The loop continues automatically - you don't need to restart it\n"
+      },
+      "plugins": [
+        {
+          "name": "chief-wiggum",
+          "description": "Implementation of the Ralph Wiggum technique - continuous self-referential AI loops for iterative development",
+          "version": "1.1.0",
+          "source": "./",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jes5199/chief-wiggum",
+            "/plugin install chief-wiggum@chief-wiggum"
+          ]
+        }
+      ]
+    }
+  ]
+}

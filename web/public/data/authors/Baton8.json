@@ -1,0 +1,154 @@
+{
+  "author": {
+    "id": "Baton8",
+    "display_name": "Baton, Inc.",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/42776435?v=4",
+    "url": "https://github.com/Baton8",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 2,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "takushi-notifier-marketplace",
+      "version": null,
+      "description": "TTS通知機能を提供するローカルマーケットプレイス",
+      "owner_info": {
+        "name": "Yuri"
+      },
+      "keywords": [],
+      "repo_full_name": "Baton8/TakushiNotifier",
+      "repo_url": "https://github.com/Baton8/TakushiNotifier",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-10-21T07:32:10Z",
+        "created_at": "2025-10-16T17:25:47Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 397
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 288
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 2320
+        },
+        {
+          "path": "commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "commands/project_name.md",
+          "type": "blob",
+          "size": 1604
+        },
+        {
+          "path": "commands/volume.md",
+          "type": "blob",
+          "size": 965
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/generate_message.sh",
+          "type": "blob",
+          "size": 2826
+        },
+        {
+          "path": "hooks/hooks.json",
+          "type": "blob",
+          "size": 227
+        },
+        {
+          "path": "hooks/notify.sh",
+          "type": "blob",
+          "size": 3362
+        },
+        {
+          "path": "hooks/project_manager.sh",
+          "type": "blob",
+          "size": 3682
+        },
+        {
+          "path": "hooks/tts_bert_vits.sh",
+          "type": "blob",
+          "size": 3296
+        },
+        {
+          "path": "hooks/volume_manager.sh",
+          "type": "blob",
+          "size": 2341
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/takushi-notification",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/takushi-notification/SKILL.md",
+          "type": "blob",
+          "size": 1115
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"takushi-notifier-marketplace\",\n  \"description\": \"TTS通知機能を提供するローカルマーケットプレイス\",\n  \"owner\": {\"name\": \"Yuri\"},\n  \"plugins\": [\n    {\n      \"name\": \"takushi-notifier\",\n      \"source\": \"./\",\n      \"description\": \"Claude Assistantの応答を音声で読み上げるプラグイン（Style-Bert-VITS2対応）\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"takushi-notifier\",\n  \"description\": \"Claude Assistantの応答を音声で読み上げるプラグイン（Style-Bert-VITS2対応）\",\n  \"version\": \"1.0.0\",\n  \"author\": { \"name\": \"Yuri\" },\n  \"keywords\": [\"takushi\", \"notification\", \"voice\", \"bert-vits\"],\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# Takushi Notifier Plugin\n\nClaude Assistantの応答を音声で読み上げるプラグインです。Style-Bert-VITS2を使用して高品質な音声合成を行います。\n\n## 機能\n\n- Assistantの応答を自動的に音声で読み上げ\n- Style-Bert-VITS2を使用した高品質な音声合成\n- Claude CLIを使用したメッセージの動的生成\n- 通知ログの管理\n- macOSネイティブ通知対応\n- `/takushi_volume`コマンドで音量調整（0-100%）\n\n## インストール\n\n1. Claude Codeを起動\n2. 以下のコマンドを実行：\n   ```\n   /plugin marketplace add .\n   /plugin install takushi-notifier@takushi-notifier-marketplace\n   ```\n\n## 音量調整\n\nプラグインインストール後、以下のコマンドで音量を調整できます：\n\n```\n# 音量を50%に設定\n/takushi_volume 50\n\n# 現在の音量を確認\n/takushi_volume\n\n# 音量を0%（無音）に設定\n/takushi_volume 0\n```\n\n設定は `~/.config/takushi_notifier/volume.conf` に保存されます。\n\n## 要件\n\n- **Claude CLI**: メッセージ生成に使用されます\n  - インストール: `npm install -g @anthropic-ai/claude`\n  - 設定: `claude auth login`\n\n## 設定\n\n### API設定\n`hooks/tts_bert_vits.sh`ファイル内で以下の設定を確認してください：\n- CF_ACCESS_CLIENT_ID\n- CF_ACCESS_CLIENT_SECRET\n- API_BASE_URL\n- MODEL_NAME\n\n## ファイル構成\n\n```\n.\n├── .claude-plugin/\n│   ├── plugin.json          # プラグインのメタデータ\n│   └── marketplace.json     # ローカルマーケットプレイス\n├── hooks/\n│   ├── hooks.json           # フック設定\n│   ├── notify.sh            # メイン通知スクリプト\n│   ├── tts_bert_vits.sh     # TTS音声合成スクリプト\n│   ├── tts_bert_vits.settings # TTS設定ファイル\n│   └── generate_message.sh  # メッセージ生成スクリプト\n└── skills/\n    └── tts-notification/\n        └── SKILL.md         # スキル説明\n```\n\n## トラブルシューティング\n\n- 音声が再生されない場合は、macOSの音量設定を確認してください\n- APIエラーが発生する場合は、認証情報を確認してください\n- ログは`hooks/notify.log`に保存されます\n\n## ライセンス\n\nMIT\n",
+        "commands/project_name.md": "---\ndescription: \"現在のプロジェクトに名前を設定する\"\nargument-hint: [project_name]\n---\n\n# エージェント向け指示\n\n引数がある場合は現在の作業ディレクトリにプロジェクト名を設定し、引数がない場合は現在設定されているプロジェクト名を表示してください。\n\n```bash\n# プロジェクト名設定（引数がある場合）\nbash \"${CLAUDE_PLUGIN_ROOT}/hooks/project_manager.sh\" set \"$(pwd)\" \"[project_name]\"\n\n# 現在のプロジェクト名取得（引数がない場合）\nbash \"${CLAUDE_PLUGIN_ROOT}/hooks/project_manager.sh\" get \"$(pwd)\"\n```\n\n---\n\n# ユーザー向け使用方法\n\n## 概要\n現在のプロジェクトに名前を設定します。設定した名前は通知時に読み上げられます。\n\n## 使用例\n\n```bash\n# プロジェクト名を設定\n/project_name TakushiNotifier\n\n# 現在のプロジェクト名を確認\n/project_name\n```\n\n## 引数\n\n- `project_name` (オプション): プロジェクトに付ける名前（文字列）\n  - 省略時: 現在のプロジェクト名を表示\n\n## 動作\n\nプロジェクト名が設定されている場合、通知時に読み上げるテキストの先頭に「{プロジェクト名}です。」が追加されます。\n\n**例:**\n- プロジェクト名: `InfoComposer`\n- 元のメッセージ: `処理が完了しました。`\n- 読み上げ: `InfoComposerです。処理が完了しました。`\n\n## 設定保存\n\n設定は `~/.config/takushi_notifier/project_names.conf` に保存され、プロジェクトパスごとに管理されます。\n",
+        "commands/volume.md": "---\ndescription: \"Takushi音量を0-100の範囲で設定する\"\nargument-hint: [volume]\n---\n\n# エージェント向け指示\n\n引数がある場合は音量を設定し、引数がない場合は現在の音量を表示してください。\n\n```bash\n# 音量設定（引数がある場合）\nbash \"${CLAUDE_PLUGIN_ROOT}/hooks/volume_manager.sh\" set [volume]\n\n# 現在の音量取得（引数がない場合）\nbash \"${CLAUDE_PLUGIN_ROOT}/hooks/volume_manager.sh\" get\n```\n\n---\n\n# ユーザー向け使用方法\n\n## 概要\nTakushi（Text-to-Speech）の音量を0-100の範囲で設定します。\n\n## 使用例\n\n```bash\n# 音量を75%に設定\n/volume 75\n\n# 現在の音量を確認\n/volume\n```\n\n## 引数\n\n- `volume` (オプション): 音量レベル（0-100の整数）\n  - 0: 無音\n  - 50: 中間音量\n  - 100: 最大音量\n  - 省略時: 現在の音量を表示\n\n## 設定保存\n\n設定は `~/.config/takushi_notifier/volume.conf` に保存されます。\n",
+        "hooks/generate_message.sh": "#!/bin/bash\n\n# メッセージ生成スクリプト\n\n# プラグインのディレクトリを取得\nSCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\nHOOKS_DIR=\"$SCRIPT_DIR\"\nNOTIFY_LOG_PATH=\"$HOOKS_DIR/notify.log\"\n\n# 標準入力からメッセージ要約を取得\nSUMMARY=$(cat)\n\nEXISTING_EXAMPLES=$(cat <<'EOT'\n- 対応を完了しました。\n- 修正を反映しました。\n- 最終確認をお願いします。\n- 確認事項があります。\n- 次の点についてご確認ください。\n- ご回答をお願いします。\n- 追加の情報が必要です。\n- ご指示をお願いします。\n- ご確認ください。\n- 以上です。\nEOT\n)\n\n# 直近10件のログを取得\nRECENT_LOGS=\"\"\nif [ -f \"$NOTIFY_LOG_PATH\" ]; then\n    RECENT_LOGS=$(tail -n 10 \"$NOTIFY_LOG_PATH\" | cut -d'|' -f2)\nfi\n\n# Claude APIへのプロンプトを作成\nPROMPT=\"あなたは無個性で中立的なアシスタントです。以下のタスク要約に対し、\n感情やキャラクター性を排した、簡潔で平易な敬体のメッセージを50文字以内で生成してください。\n\n前提: これはAgentからユーザーへの切り替え時の発言です（質問がある時または対応完了時）。\n\nタスク要約: $SUMMARY\n\n【必須要件】\n- 無個性・中立。感情やキャラクター性を出さない。\n- です／ます調。過度に仰々しい敬語や比喩は避ける。\n- 記号・絵文字・感嘆符を使わない。平易な語彙を用いる。\n- 着手・開始・実行・進める等の未来時制の表現は使わない。\n- 成果の報告または質問の提示に限定する。\n\n【重複回避】\n- 最近の発言（下記）と同義反復や語句の重複を避ける。\n$RECENT_LOGS\n\n【発言パターン例】\n$EXISTING_EXAMPLES\n\n【出力形式】\n- 何をしたかが具体的にわかるよう、端的に記載する（前後の解説・記号・引用符なし）。\"\n\n# フォールバック文言の判定（質問/確認が含まれるかで出し分け）\nif echo \"$SUMMARY\" | grep -Eq '[\\?？]|質問|確認|教えて|不明点|ご回答'; then\n\tFALLBACK_MESSAGE=\"ご確認をお願いします。\"\nelse\n\tFALLBACK_MESSAGE=\"対応を完了しました。\"\nfi\n\n# Claude CLIコマンドを使用してメッセージ生成\nif command -v claude >/dev/null 2>&1; then\n    # プロンプトを直接パイプで渡す\n    RESPONSE=$(echo \"$PROMPT\" | claude -p - 2>/dev/null)\n    # レスポンスが取得できた場合\n    if [ -n \"$RESPONSE\" ] && [ \"$RESPONSE\" != \"\" ]; then\n        echo \"$RESPONSE\" | head -n 2\n    else\n        # Claude CLIが失敗した場合のフォールバック\n        echo \"$FALLBACK_MESSAGE\"\n    fi\nelse\n    # Claude CLIが利用できない場合のフォールバック\n    echo \"$FALLBACK_MESSAGE\"\nfi\n\n\n",
+        "hooks/hooks.json": "{\n  \"hooks\": {\n    \"Stop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/notify.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "hooks/notify.sh": "#!/bin/bash\n\n# 音声通知スクリプト\n# 最後のメッセージを取得し、要約してメッセージを読み上げ\n\n# 標準入力からJSONを読み取る\nINPUT=$(cat)\n\n# プラグインのディレクトリを取得\nSCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\nPLUGIN_DIR=\"$(dirname \"$SCRIPT_DIR\")\"\nHOOKS_DIR=\"$SCRIPT_DIR\"\nNOTIFY_LOG_PATH=\"$HOOKS_DIR/notify.log\"\n\n# ログディレクトリの作成\nmkdir -p \"$HOOKS_DIR\"\n\n# トランスクリプトを処理（.jsonl形式に対応）\nTRANSCRIPT_PATH=$(echo \"$INPUT\" | jq -r '.transcript_path')\nif [ -f \"$TRANSCRIPT_PATH\" ]; then\n    # 最後のアシスタントメッセージのみを取得（全文）\n    TEMP_FILE=$(mktemp)\n    \n    if command -v tail >/dev/null 2>&1; then\n        tail -r \"$TRANSCRIPT_PATH\" > \"$TEMP_FILE\"\n        \n        LAST_MESSAGE=\"\"\n        while IFS= read -r line; do\n            # JSON形式の妥当性をチェック\n            if echo \"$line\" | jq -e . >/dev/null 2>&1; then\n                if echo \"$line\" | jq -e '.type == \"assistant\"' >/dev/null 2>&1; then\n                    LAST_MESSAGE=$(echo \"$line\" | jq -r '.message.content[]? | select(.type == \"text\") | .text' 2>/dev/null)\n                    break\n                fi\n            fi\n        done < \"$TEMP_FILE\"\n        \n        rm -f \"$TEMP_FILE\"\n    fi\n\n    # メッセージが取得できた場合の処理\n    if [ -n \"$LAST_MESSAGE\" ]; then\n        # 最後のメッセージの1行目を取得（最大100文字）\n        MESSAGE=$(echo \"$LAST_MESSAGE\" | head -n 1 | head -c 100 | sed 's/[[:space:]]*$//')\n\n        # メッセージが空の場合はデフォルト文例\n        if [ -z \"$MESSAGE\" ]; then\n            MESSAGE=\"処理が完了しました。\"\n        fi\n\n        # プロジェクト名を取得して追加\n        PROJECT_PATH=$(echo \"$INPUT\" | jq -r '.cwd // empty')\n        if [ -n \"$PROJECT_PATH\" ]; then\n            PROJECT_MANAGER=\"$HOOKS_DIR/project_manager.sh\"\n            if [ -f \"$PROJECT_MANAGER\" ]; then\n                PROJECT_NAME=$(bash \"$PROJECT_MANAGER\" get \"$PROJECT_PATH\" 2>/dev/null || echo \"\")\n                if [ -n \"$PROJECT_NAME\" ]; then\n                    MESSAGE=\"${PROJECT_NAME}のたくしです。${MESSAGE}\"\n                fi\n            fi\n        fi\n\n        # 通知実行\n        # terminal-notifier使用（Macネイティブ通知）\n        if command -v terminal-notifier >/dev/null 2>&1; then\n            terminal-notifier -message \"$MESSAGE\" -title \"Assistant\" >/dev/null 2>&1 &\n        fi\n        \n        # 音声出力（Style-Bert-VITS2）\n        TTS_SCRIPT=\"$HOOKS_DIR/tts_bert_vits.sh\"\n        if [ -f \"$TTS_SCRIPT\" ]; then\n            nohup bash \"$TTS_SCRIPT\" \"$MESSAGE\" >/dev/null 2>&1 &\n        fi\n        \n        # ログ保存（タイムスタンプ|発言のみ、改行除去）\n        TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')\n        CLEAN_MESSAGE=$(echo \"$MESSAGE\" | tr -d '\\n\\r' | sed 's/[[:space:]]\\+/ /g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')\n        echo \"$TIMESTAMP|$CLEAN_MESSAGE\" >> \"$NOTIFY_LOG_PATH\"\n        \n        # ログを10件までに制限\n        if [ -f \"$NOTIFY_LOG_PATH\" ]; then\n            TEMP_LOG=$(mktemp)\n            tail -n 10 \"$NOTIFY_LOG_PATH\" > \"$TEMP_LOG\"\n            mv \"$TEMP_LOG\" \"$NOTIFY_LOG_PATH\"\n        fi\n    fi\nfi\n\necho '{\"decision\": \"approve\"}'\nexit 0",
+        "hooks/project_manager.sh": "#!/bin/bash\n\n# Takushiプロジェクト名管理スクリプト\n# 使用方法: ./project_manager.sh [action] [args...]\n# action: set, get, init\n\nCONFIG_DIR=\"$HOME/.config/takushi_notifier\"\nPROJECT_NAMES_FILE=\"$CONFIG_DIR/project_names.conf\"\n\n# 設定ディレクトリの作成\ninit_config() {\n    mkdir -p \"$CONFIG_DIR\"\n    if [ ! -f \"$PROJECT_NAMES_FILE\" ]; then\n        touch \"$PROJECT_NAMES_FILE\"\n    fi\n}\n\n# プロジェクト名設定\nset_project_name() {\n    local project_path=\"$1\"\n    local project_name=\"$2\"\n\n    # 引数チェック\n    if [ -z \"$project_path\" ] || [ -z \"$project_name\" ]; then\n        echo \"エラー: プロジェクトパスと名前を指定してください\"\n        exit 1\n    fi\n\n    init_config\n\n    # 一時ファイルを作成\n    local temp_file=$(mktemp)\n    local var_name=\"PROJECT_NAME_${project_path//\\//_}\"\n    local updated=false\n\n    # 設定ファイルを読み込み、該当行を更新\n    if [ -f \"$PROJECT_NAMES_FILE\" ]; then\n        while IFS= read -r line; do\n            if [[ \"$line\" =~ ^${var_name}= ]]; then\n                echo \"${var_name}=\\\"$project_name\\\"\" >> \"$temp_file\"\n                updated=true\n            else\n                echo \"$line\" >> \"$temp_file\"\n            fi\n        done < \"$PROJECT_NAMES_FILE\"\n    fi\n\n    # 新規追加の場合\n    if [ \"$updated\" = false ]; then\n        echo \"${var_name}=\\\"$project_name\\\"\" >> \"$temp_file\"\n    fi\n\n    # 一時ファイルで設定ファイルを上書き\n    mv \"$temp_file\" \"$PROJECT_NAMES_FILE\"\n\n    echo \"プロジェクト「${project_name}」を設定しました (パス: ${project_path})\"\n}\n\n# プロジェクト名取得\nget_project_name() {\n    local project_path=\"$1\"\n\n    if [ -z \"$project_path\" ]; then\n        echo \"エラー: プロジェクトパスを指定してください\"\n        exit 1\n    fi\n\n    init_config\n\n    if [ -f \"$PROJECT_NAMES_FILE\" ]; then\n        local current_path=\"$project_path\"\n        \n        # 現在のパスから親階層まで順に探索\n        while [ -n \"$current_path\" ]; do\n            local var_name=\"PROJECT_NAME_${current_path//\\//_}\"\n            local project_name=$(grep \"^${var_name}=\" \"$PROJECT_NAMES_FILE\" | cut -d'=' -f2- | tr -d '\"')\n            \n            if [ -n \"$project_name\" ]; then\n                echo \"$project_name\"\n                return\n            fi\n            \n            # 親ディレクトリに移動\n            if [ \"$current_path\" = \"/\" ] || [ \"$current_path\" = \".\" ]; then\n                break\n            fi\n            current_path=$(dirname \"$current_path\")\n            if [ \"$current_path\" = \".\" ]; then\n                break\n            fi\n        done\n    fi\n    \n    echo \"\"\n}\n\n# メイン処理\ncase \"${1:-get}\" in\n    \"set\")\n        if [ -z \"$2\" ] || [ -z \"$3\" ]; then\n            echo \"エラー: プロジェクトパスと名前を指定してください\"\n            echo \"使用方法: $0 set [path] [name]\"\n            exit 1\n        fi\n        set_project_name \"$2\" \"$3\"\n        ;;\n    \"get\")\n        if [ -z \"$2\" ]; then\n            echo \"エラー: プロジェクトパスを指定してください\"\n            echo \"使用方法: $0 get [path]\"\n            exit 1\n        fi\n        get_project_name \"$2\"\n        ;;\n    \"init\")\n        init_config\n        echo \"設定ディレクトリを初期化しました: $CONFIG_DIR\"\n        ;;\n    *)\n        echo \"使用方法: $0 [set|get|init] [args...]\"\n        echo \"  set [path] [name] : プロジェクト名を設定\"\n        echo \"  get [path]        : プロジェクト名を取得\"\n        echo \"  init              : 設定ディレクトリを初期化\"\n        exit 1\n        ;;\nesac\n",
+        "hooks/tts_bert_vits.sh": "#!/bin/bash\n\n# Style-Bert-VITS2 音声合成スクリプト\n# 使用方法: ./tts_bert_vits.sh \"読み上げたいテキスト\"\n\n# API認証情報\nCF_ACCESS_CLIENT_ID=\"78daf18f4b82f77f12a0bfec004ab4ce.access\"\nCF_ACCESS_CLIENT_SECRET=\"cded896f04ee01c47f5098cebcd3118ed09ad1bc3666f1d59cc5912b2e724020\"\nAPI_BASE_URL=\"https://bert-vits-web.vildas.org\"\n\n# モデル設定（固定）\nMODEL_NAME=\"izawa_toiyomi\"\nMODEL_FILE=\"model_assets/izawa_toiyomi/izawa_toiyomi_e100_s5000.safetensors\"\n\n# 設定ファイルの読み込み\nSCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n\n# グローバル設定ファイルを読み込み\nGLOBAL_CONFIG=\"$HOME/.config/takushi_notifier/volume.conf\"\n\n# グローバル設定ファイルが存在する場合は読み込み\nif [ -f \"$GLOBAL_CONFIG\" ]; then\n    . \"$GLOBAL_CONFIG\"\nfi\n\n# 音量設定（設定ファイルで AFPLAY_VOLUME を 0.0〜1.0 で指定可能。）\nAFPLAY_VOLUME=\"${AFPLAY_VOLUME:-1.0}\"\n\n# 引数チェック\nif [ $# -eq 0 ]; then\n    echo \"エラー: テキストを指定してください\"\n    echo \"使用方法: $0 \\\"読み上げたいテキスト\\\"\"\n    exit 1\nfi\n\nTEXT=\"$1\"\nSAVE_FILE=\"${2:-}\"  # 第2引数で出力ファイル名を指定可能（省略時は一時ファイル）\n\n# 出力ファイルの設定\nif [ -z \"$SAVE_FILE\" ]; then\n    # ファイル名が指定されていない場合は一時ファイルを使用（macOS対応）\n    OUTPUT_FILE=$(mktemp).wav\n    if [ $? -ne 0 ] || [ -z \"$OUTPUT_FILE\" ]; then\n        echo \"エラー: 一時ファイルの作成に失敗しました\"\n        exit 1\n    fi\n    TEMP_FILE=true\nelse\n    OUTPUT_FILE=\"$SAVE_FILE\"\n    TEMP_FILE=false\nfi\n\n# 1. G2P処理でmoraToneListを取得\nG2P_RESULT=$(curl -s -X POST \"${API_BASE_URL}/api/g2p\" \\\n  -H \"CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}\" \\\n  -H \"CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}\" \\\n  -H \"Content-Type: application/json\" \\\n  -d \"{\\\"text\\\": \\\"${TEXT}\\\"}\")\n\n# エラーチェック\nif [ $? -ne 0 ]; then\n    echo \"エラー: G2P処理に失敗しました\"\n    exit 1\nfi\n\n# 2. 音声合成\nSYNTHESIS_JSON=$(cat <<EOF\n{\n  \"model\": \"${MODEL_NAME}\",\n  \"modelFile\": \"${MODEL_FILE}\",\n  \"text\": \"${TEXT}\",\n  \"moraToneList\": ${G2P_RESULT}\n}\nEOF\n)\n\n# 音声合成リクエスト\nHTTP_STATUS=$(curl -s -X POST \"${API_BASE_URL}/api/synthesis\" \\\n  -H \"CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}\" \\\n  -H \"CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Accept: audio/wav\" \\\n  -d \"${SYNTHESIS_JSON}\" \\\n  --output \"${OUTPUT_FILE}\" \\\n  -w \"%{http_code}\")\n\n# HTTPステータスコードチェック\nif [ -n \"$HTTP_STATUS\" ] && [ \"$HTTP_STATUS\" -eq 200 ]; then\n    if [ -f \"${OUTPUT_FILE}\" ]; then\n        if [ \"$TEMP_FILE\" = true ]; then\n            # 一時ファイルの場合は自動再生して削除\n            afplay -v \"${AFPLAY_VOLUME}\" \"${OUTPUT_FILE}\"\n            rm \"${OUTPUT_FILE}\"\n        else\n            # ファイル保存の場合\n            echo \"ファイル: ${OUTPUT_FILE}\"\n        fi\n    fi\nelse\n    echo \"エラー: 音声合成に失敗しました (HTTPステータス: ${HTTP_STATUS})\"\n    if [ -f \"${OUTPUT_FILE}\" ]; then\n        echo \"エラー内容:\"\n        cat \"${OUTPUT_FILE}\"\n        rm \"${OUTPUT_FILE}\"\n    fi\n    exit 1\nfi",
+        "hooks/volume_manager.sh": "#!/bin/bash\n\n# Takushi音量管理スクリプト\n# 使用方法: ./volume_manager.sh [action] [args...]\n# action: set, get, init\n\nCONFIG_DIR=\"$HOME/.config/takushi_notifier\"\nCONFIG_FILE=\"$CONFIG_DIR/volume.conf\"\nDEFAULT_VOLUME=50\n\n# 設定ディレクトリの作成\ninit_config() {\n    mkdir -p \"$CONFIG_DIR\"\n    if [ ! -f \"$CONFIG_FILE\" ]; then\n        echo \"AFPLAY_VOLUME=0.5\" > \"$CONFIG_FILE\"\n        echo \"VOLUME_PERCENT=$DEFAULT_VOLUME\" >> \"$CONFIG_FILE\"\n    fi\n}\n\n# 音量設定（0-100を0.0-1.0に変換）\nset_volume() {\n    local volume_percent=\"$1\"\n\n    # 引数チェック\n    if ! [[ \"$volume_percent\" =~ ^[0-9]+$ ]]; then\n        echo \"エラー: 音量は0-100の整数で指定してください\"\n        exit 1\n    fi\n\n    if [ \"$volume_percent\" -lt 0 ] || [ \"$volume_percent\" -gt 100 ]; then\n        echo \"エラー: 音量は0-100の範囲で指定してください\"\n        exit 1\n    fi\n\n    # 0-100を0.0-1.0に変換\n    local volume_float=$(echo \"scale=2; $volume_percent / 100\" | bc -l)\n\n    # 設定ファイルを更新\n    init_config\n    cat > \"$CONFIG_FILE\" << EOF\nAFPLAY_VOLUME=$volume_float\nVOLUME_PERCENT=$volume_percent\nEOF\n\n    echo \"Takushi音量を${volume_percent}%に設定しました (afplay: ${volume_float})\"\n}\n\n# 現在の音量取得\nget_volume() {\n    init_config\n    if [ -f \"$CONFIG_FILE\" ]; then\n        source \"$CONFIG_FILE\"\n        echo \"現在のTakushi音量: ${VOLUME_PERCENT}% (afplay: ${AFPLAY_VOLUME})\"\n    else\n        echo \"設定ファイルが見つかりません。初期化します...\"\n        init_config\n        echo \"現在のTakushi音量: ${DEFAULT_VOLUME}% (afplay: 0.5)\"\n    fi\n}\n\n# メイン処理\ncase \"${1:-get}\" in\n    \"set\")\n        if [ -z \"$2\" ]; then\n            echo \"エラー: 音量を指定してください\"\n            echo \"使用方法: $0 set [0-100]\"\n            exit 1\n        fi\n        set_volume \"$2\"\n        ;;\n    \"get\")\n        get_volume\n        ;;\n    \"init\")\n        init_config\n        echo \"設定ディレクトリを初期化しました: $CONFIG_DIR\"\n        ;;\n    *)\n        echo \"使用方法: $0 [set|get|init] [volume]\"\n        echo \"  set [0-100]  : 音量を設定\"\n        echo \"  get          : 現在の音量を表示\"\n        echo \"  init         : 設定ディレクトリを初期化\"\n        exit 1\n        ;;\nesac\n",
+        "skills/takushi-notification/SKILL.md": "---\ndescription: \"Takushi通知機能の設定と使用方法を提供するスキル\"\n---\n\n# Takushi通知スキル\n\nこのスキルは、Claude Assistantの応答を音声で読み上げる機能を提供します。\n\n## 機能\n\n- Assistantの応答を自動的に音声で読み上げ\n- Style-Bert-VITS2を使用した高品質な音声合成\n- メッセージの要約と動的生成\n- 通知ログの管理\n\n## 設定\n\n### 音量設定\n`/volume`コマンドで音量を調整できます：\n```\n/volume 50  # 50%の音量に設定\n```\n\n### API設定\n`hooks/tts_bert_vits.sh`ファイル内で以下の設定を確認してください：\n- CF_ACCESS_CLIENT_ID\n- CF_ACCESS_CLIENT_SECRET\n- API_BASE_URL\n- MODEL_NAME\n\n## 使用方法\n\nプラグインをインストールすると、Assistantの応答が自動的に音声で読み上げられます。\n\n## トラブルシューティング\n\n- 音声が再生されない場合は、macOSの音量設定を確認してください\n- APIエラーが発生する場合は、認証情報を確認してください\n- ログは`hooks/notify.log`に保存されます\n"
+      },
+      "plugins": [
+        {
+          "name": "takushi-notifier",
+          "source": "./",
+          "description": "Claude Assistantの応答を音声で読み上げるプラグイン（Style-Bert-VITS2対応）",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Baton8/TakushiNotifier",
+            "/plugin install takushi-notifier@takushi-notifier-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

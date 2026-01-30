@@ -1,0 +1,104 @@
+{
+  "author": {
+    "id": "humanlayer",
+    "display_name": "HumanLayer",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/177409041?v=4",
+    "url": "https://github.com/humanlayer",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 2,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "humanlayer-riptide-rpi",
+      "version": null,
+      "description": "Research-Plan-Implement workflow for Linear tickets",
+      "owner_info": {
+        "name": "HumanLayer",
+        "email": "support@humanlayer.dev"
+      },
+      "keywords": [],
+      "repo_full_name": "humanlayer/riptide-rpi",
+      "repo_url": "https://github.com/humanlayer/riptide-rpi",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2025-12-29T21:31:49Z",
+        "created_at": "2025-12-29T21:14:19Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 584
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 431
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 316
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/rpi-setup-humanlayer",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/rpi-setup-humanlayer/SKILL.md",
+          "type": "blob",
+          "size": 2598
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"humanlayer-riptide-rpi\",\n  \"description\": \"Research-Plan-Implement workflow for Linear tickets\",\n  \"owner\": {\n    \"name\": \"HumanLayer\",\n    \"email\": \"support@humanlayer.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"riptide-rpi\",\n      \"description\": \"Research-Plan-Implement workflow for Linear tickets.\",\n      \"version\": \"0.2.0\",\n      \"author\": {\n        \"name\": \"HumanLayer\",\n        \"email\": \"support@humanlayer.dev\"\n      },\n      \"source\": \"./\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"riptide-rpi\",\n  \"description\": \"Research-Plan-Implement workflow for Linear tickets.\",\n  \"version\": \"0.2.0\",\n  \"author\": {\n    \"name\": \"HumanLayer\",\n    \"email\": \"support@humanlayer.dev\"\n  },\n  \"repository\": \"https://github.com/humanlayer/riptide-rpi\",\n  \"license\": \"All Rights Reserved\",\n  \"keywords\": [\"linear\", \"planning\", \"rpi\", \"thoughts\", \"humanlayer\", \"research\", \"codelayer\", \"riptide\", \"plan\", \"implement\"]\n}\n",
+        "README.md": "# Riptide RPI Plugin\n\nResearch-Plan-Implement workflow for Linear tickets with Claude Code.\n\n## Installation\n\n```\n/plugin marketplace add humanlayer/riptide-rpi\n/plugin install riptide-rpi@humanlayer-riptide-rpi\n```\n\n## Test Installation\n\nSay \"set up rpi\" to verify the plugin is working and validate prerequisites.\n",
+        "skills/rpi-setup-humanlayer/SKILL.md": "---\nname: rpi-setup-humanlayer\ndescription: use this skill when a user asks to set up RPI or a \"research plan implement\" workflow, or to do anything related to RPI skills. if the user says the acronym \"RPI\" or \"rpi\" or \"humanlayer\", you MUST use this skill! Example questions - \"I want to set up rpi for ticket eng-1234\" - \"Whats the next rpi step for eng-5678\"\n---\n\n## HumanLayer RPI Setup\n\nYou're tasked with setting up a research-plan-implement workflow for a user.\n\n## CRITICAL: Validate Prerequisites First\n\nBefore doing ANYTHING else, validate prerequisites. Run these checks in order:\n\n### Step 1: Check HumanLayer CLI\n```bash\nwhich humanlayer\n```\nIf not found: \"HumanLayer CLI not found. Install via: `brew install humanlayer/tap/humanlayer`\"\n\n### Step 2: Check Linear CLI\n```bash\nwhich linear\n```\nIf not found: \"Linear CLI not found. Install via: `npm install -g @codelayer/linear-cli`\"\n\n### Step 3: Check Thoughts Configuration\n```bash\nhumanlayer thoughts status\n```\nIf fails or \"Not initialized\": \"Thoughts not configured. Run: `humanlayer thoughts init`\"\n\n### Step 4: Verify Sync Works\n```bash\nhumanlayer thoughts sync\n```\nIf fails, tell user to check their thoughts repository configuration.\n\n### Step 5: Output Test Permalink\nParse `humanlayer thoughts status` output to get:\n- \"Thoughts directory\" line (e.g., `repos/synclayer`)\n\nGet the thoughts repo path and GitHub remote:\n```bash\nhumanlayer thoughts config | grep \"Thoughts repository\" | awk '{print $NF}'\n```\nThen:\n```bash\ngit -C <that-path> remote get-url origin\n```\n\nConstruct and output a test permalink:\n```\nPrerequisites validated!\n\nTest this permalink opens correctly:\nhttps://github.com/<org>/<repo>/tree/main/<thoughts-directory>/tasks/\n\nIf it opens to your tasks directory, you're ready!\n```\n\n---\n\n## After Prerequisites Pass\n\nHelp the user with their RPI workflow question.\n\n## Example: Setting up a new ticket\n\n```\nUser: set up rpi for ticket eng-1234\n```\n\n1. Run prerequisite checks (steps 1-5)\n2. Fetch ticket info: `linear get-issue-v2 eng-1234 --fields=branch`\n3. Create task directory: `mkdir -p thoughts/tasks/eng-1234-description`\n4. Fetch ticket: `linear get-issue eng-1234 > thoughts/tasks/eng-1234-description/ticket.md`\n5. Tell user to start with: `use the create-research-questions skill for thoughts/tasks/eng-1234-description/ticket.md`\n\n## Example: Checking status of existing task\n\n```\nUser: what's the next rpi step for eng-5678\n```\n\n1. Find task dir: `ls thoughts/tasks | grep eng-5678`\n2. List contents: `ls thoughts/tasks/eng-5678-...`\n3. Based on which files exist, suggest the next skill to use\n"
+      },
+      "plugins": [
+        {
+          "name": "riptide-rpi",
+          "description": "Research-Plan-Implement workflow for Linear tickets.",
+          "version": "0.2.0",
+          "author": {
+            "name": "HumanLayer",
+            "email": "support@humanlayer.dev"
+          },
+          "source": "./",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add humanlayer/riptide-rpi",
+            "/plugin install riptide-rpi@humanlayer-riptide-rpi"
+          ]
+        }
+      ]
+    }
+  ]
+}

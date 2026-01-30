@@ -1,0 +1,127 @@
+{
+  "author": {
+    "id": "peilingjiang",
+    "display_name": "Peiling Jiang",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/25191575?u=9256b1065bf88300e09795ce11ea87a5b9f29032&v=4",
+    "url": "https://github.com/peilingjiang",
+    "bio": "\r\n    \r\n",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "peilingjiang-skills",
+      "version": null,
+      "description": "Claude skills by Peiling Jiang (https://jiang.pl)",
+      "owner_info": {
+        "name": "Peiling Jiang",
+        "email": "contact@jiang.pl"
+      },
+      "keywords": [],
+      "repo_full_name": "peilingjiang/skills",
+      "repo_url": "https://github.com/peilingjiang/skills",
+      "repo_description": "Claude Code skills, e.g., let agents watch and learn from Youtube videos.",
+      "homepage": "",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-25T23:31:16Z",
+        "created_at": "2026-01-25T08:52:38Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 466
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 1696
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/watch-youtube",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/watch-youtube/SKILL.md",
+          "type": "blob",
+          "size": 3279
+        },
+        {
+          "path": "skills/watch-youtube/assets",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/watch-youtube/assets/templates",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/watch-youtube/assets/templates/skill-series.md",
+          "type": "blob",
+          "size": 918
+        },
+        {
+          "path": "skills/watch-youtube/assets/templates/skill-single.md",
+          "type": "blob",
+          "size": 975
+        },
+        {
+          "path": "skills/watch-youtube/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/watch-youtube/references/extract-knowledge.md",
+          "type": "blob",
+          "size": 3204
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"peilingjiang-skills\",\n  \"owner\": {\n    \"name\": \"Peiling Jiang\",\n    \"email\": \"contact@jiang.pl\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude skills by Peiling Jiang (https://jiang.pl)\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"learning-skills\",\n      \"description\": \"Skills for learning from external content\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/watch-youtube\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# peilingjiang/skills\n\nEnglish | [中文](./README.zh-CN.md)\n\nA collection of Claude Code skills for learning and productivity.\n\n## Skills\n\n| Skill            | Description                                                                               | Usage                                        |\n| ---------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------- |\n| `/watch-youtube` | Your agent can watch YouTube videos and extract knowledge from them, so you don't have to | `Learn from https://youtube.com/watch?v=abc` |\n\n### [/watch-youtube](./skills/watch-youtube)\n\n| What you say                     | What happens                                                  |\n| -------------------------------- | ------------------------------------------------------------- |\n| `Check out this tutorial: [URL]` | Extracts and presents key steps, concepts, and tips           |\n| `Save this as a skill: [URL]`    | Creates a reusable skill file from the video(s)               |\n| `Watch videos about kubernetes`  | Searches YouTube and watches top 3 results, combines insights |\n\n**Setup:** Let the agent install the dependencies automatically or `pip install youtube-transcript-api requests beautifulsoup4`\n\n---\n\n## Installation\n\n### Option 1: npx skills (Recommended)\n\n```bash\nnpx skills add https://github.com/peilingjiang/skills --skill watch-youtube\n```\n\n### Option 2: Claude Code Marketplace\n\n```\n/plugin marketplace add peilingjiang/skills\n```\n\n### Option 3: Manual\n\n```bash\ngit clone https://github.com/peilingjiang/skills ~/.claude/plugins/peilingjiang-skills\n```\n\n## License\n\n[MIT](./LICENSE)\n",
+        "skills/watch-youtube/SKILL.md": "---\nname: watch-youtube\ndescription: Learn from YouTube videos by extracting transcripts and presenting structured knowledge. Use when users share YouTube URLs or ask about video tutorials.\nlicense: MIT\ncompatibility: Requires Python 3.8+ and pip packages (youtube-transcript-api, requests, beautifulsoup4)\nallowed-tools: Bash(python:*) Read Write Edit Glob\n---\n\n# Watch YouTube\n\nExtract knowledge from YouTube videos and present it in the conversation.\n\n## Quick Reference\n\n| User Intent                       | Action                               |\n| --------------------------------- | ------------------------------------ |\n| Shares YouTube URL(s)             | Extract and present knowledge        |\n| \"search/find videos about X\"      | Search → show results → user picks   |\n| \"watch videos about X\"            | Search → watch top results           |\n| \"save as skill\" / \"remember this\" | Save extracted knowledge as SKILL.md |\n\n---\n\n## Step 1: Get Video(s)\n\n### Option A: User Provides URL(s)\n\nExtract transcript from each URL:\n\n```bash\npython {{SKILL_DIR}}/scripts/transcript.py \"VIDEO_URL\"\n```\n\n### Option B: User Wants to Search\n\n```bash\npython {{SKILL_DIR}}/scripts/search.py \"QUERY\" --max-results 5\n```\n\nThen either:\n\n- **\"watch videos about X\"** → Auto-select top 3 (or top 1 if \"a video\")\n- **\"search/find videos about X\"** → Show list, let user choose\n\nAfter selection, extract transcripts for chosen video(s).\n\n---\n\n## Step 2: Extract Knowledge\n\nAnalyze the transcript(s) and extract the knowledge (either to use for the next steps or present to the user based on the context):\n\n1. **Summary** - What the video teaches (2-3 sentences)\n2. **Key Steps** - Actionable instructions with commands/code\n3. **Important Concepts** - Core ideas explained clearly\n4. **Warnings** - Common pitfalls mentioned\n5. **Tips** - Pro recommendations from the video\n\nFor multiple videos: combine insights, deduplicate overlapping concepts, note differing perspectives.\n\n---\n\n## Step 3: Save as Skill (Only When Requested)\n\n**Default behavior: Use knowledge for the ongoing tasks, do not save files.**\n\nOnly save when user explicitly asks with phrases like:\n\n- \"save this as a skill\"\n- \"remember this for later\"\n- \"make it a skill\"\n\n### To Save:\n\n1. Read the extraction prompt: [references/extract-knowledge.md](references/extract-knowledge.md)\n\n2. Read the appropriate template:\n   - Single video: [assets/templates/skill-single.md](assets/templates/skill-single.md)\n   - Multiple videos: [assets/templates/skill-series.md](assets/templates/skill-series.md)\n\n3. Ask where to save:\n   - **Project** (default): `.claude/skills/{skill-name}/SKILL.md`\n   - **Personal**: `~/.claude/skills/{skill-name}/SKILL.md`\n\n4. Save and confirm with skill name and how to invoke it (`/skill-name`)\n\n5. Remind the user that the skill can only be loaded when Claude Code is reloaded\n\n---\n\n## Error Handling\n\n| Error                     | Solution                  |\n| ------------------------- | ------------------------- |\n| \"No transcript available\" | Suggest alternative video |\n| \"Video not found\"         | Ask user to verify URL    |\n| \"Module not found\"        | Run setup command below   |\n\n### First-Time Setup\n\n```bash\npip install -r {{SKILL_DIR}}/scripts/requirements.txt\n```\n",
+        "skills/watch-youtube/assets/templates/skill-series.md": "---\nname: { { suggested_skill_name } }\ndescription: Comprehensive guide covering {{video_count}} videos about {{series_title}}\n---\n\n# {{series_title}}\n\n{{combined_summary}}\n\n## Prerequisites\n\n{{#each all_prerequisites}}\n\n- {{this}}\n  {{/each}}\n\n## Tools & Technologies\n\n{{#each all_tools}}\n\n- {{this}}\n  {{/each}}\n\n---\n\n{{#each videos}}\n\n## Part {{@index}}: {{title}}\n\n{{summary}}\n\n### Steps\n\n{{#each steps}}\n\n#### {{@index}}. {{title}}\n\n{{description}}\n\n{{#if commands}}\n\n```bash\n{{#each commands}}\n{{this}}\n{{/each}}\n```\n\n{{/if}}\n\n{{#if expected_outcome}}\n**Expected:** {{expected_outcome}}\n{{/if}}\n\n{{/each}}\n\n### Key Takeaways\n\n{{#each key_concepts}}\n\n- **{{name}}**: {{explanation}}\n  {{/each}}\n\n---\n\n{{/each}}\n\n## Common Pitfalls\n\n{{#each all_warnings}}\n\n- {{this}}\n  {{/each}}\n\n## Pro Tips\n\n{{#each all_tips}}\n\n- {{this}}\n  {{/each}}\n\n---\n\n_Generated from {{video_count}} YouTube videos by watch-youtube skill_\n",
+        "skills/watch-youtube/assets/templates/skill-single.md": "---\nname: { { suggested_skill_name } }\ndescription: { { summary } }\n---\n\n# {{title}}\n\n{{summary}}\n\n## Prerequisites\n\n{{#each prerequisites}}\n\n- {{this}}\n  {{/each}}\n\n## Steps\n\n{{#each steps}}\n\n### {{@index}}. {{title}}\n\n{{description}}\n\n{{#if commands}}\n\n```bash\n{{#each commands}}\n{{this}}\n{{/each}}\n```\n\n{{/if}}\n\n{{#if code}}\n\n```{{language}}\n{{code}}\n```\n\n{{/if}}\n\n{{#if expected_outcome}}\n**Expected:** {{expected_outcome}}\n{{/if}}\n\n{{/each}}\n\n## Key Concepts\n\n{{#each key_concepts}}\n\n### {{name}}\n\n{{explanation}}\n\n{{/each}}\n\n{{#if code_snippets}}\n\n## Code Reference\n\n{{#each code_snippets}}\n\n### {{description}}\n\n```{{language}}\n{{code}}\n```\n\n{{/each}}\n{{/if}}\n\n## Tools & Technologies\n\n{{#each tools}}\n\n- {{this}}\n  {{/each}}\n\n{{#if warnings}}\n\n## Common Pitfalls\n\n{{#each warnings}}\n\n- **Warning:** {{this}}\n  {{/each}}\n  {{/if}}\n\n{{#if tips}}\n\n## Pro Tips\n\n{{#each tips}}\n\n- {{this}}\n  {{/each}}\n  {{/if}}\n\n---\n\n_Generated from YouTube video by watch-youtube skill_\n",
+        "skills/watch-youtube/references/extract-knowledge.md": "# Knowledge Extraction Prompt\n\nYou are an expert at extracting structured, actionable knowledge from video transcripts. Your goal is to transform tutorial content into a well-organized skill that users can follow.\n\n## Input\n\nYou will receive a transcript from a YouTube video. The transcript may be imperfect (auto-generated captions).\n\n## Output\n\nExtract and structure the following information:\n\n### 1. Metadata\n\n- **title**: Clear, descriptive title (not the video title, but what it teaches)\n- **suggested_skill_name**: kebab-case name for the skill (e.g., `deploy-nextjs-vercel`)\n- **category**: One of: coding, devops, design, data-science, business, productivity, other\n- **difficulty**: beginner, intermediate, or advanced\n- **estimated_time**: How long to complete the tutorial (e.g., \"15 minutes\")\n\n### 2. Summary\n\n2-3 sentences explaining what this skill teaches and when to use it.\n\n### 3. Prerequisites\n\nList everything needed before starting:\n\n- Software/tools to install\n- Accounts to create\n- Prior knowledge required\n- Files or projects to have ready\n\n### 4. Steps\n\nFor each step:\n\n- **title**: Brief action-oriented title\n- **description**: What to do (detailed enough to follow)\n- **commands**: Exact commands to run (if any)\n- **code**: Code snippets to write (if any)\n- **expected_outcome**: What should happen after this step\n\n### 5. Key Concepts\n\nImportant ideas explained in the video:\n\n- **name**: Concept name\n- **explanation**: Clear, concise explanation\n\n### 6. Code Snippets\n\nAny significant code shown:\n\n- **language**: Programming language\n- **description**: What the code does\n- **code**: The actual code (as accurate as possible from transcript)\n\n### 7. Tools & Technologies\n\nList all tools, libraries, frameworks, services mentioned.\n\n### 8. Warnings\n\nCommon mistakes or pitfalls mentioned:\n\n- What can go wrong\n- How to avoid it\n\n### 9. Tips\n\nPro tips and best practices:\n\n- Shortcuts\n- Better approaches\n- Things the presenter recommends\n\n## Guidelines\n\n1. **Accuracy is critical**: Extract EXACT commands and code when possible\n2. **Fill gaps intelligently**: If transcript is unclear, use your knowledge to clarify\n3. **Be actionable**: Someone should be able to follow these steps directly\n4. **Note versions**: If specific versions are mentioned, include them\n5. **Preserve context**: Include relevant timestamps for complex steps\n6. **Don't fabricate**: If something isn't in the transcript, don't make it up\n7. **Handle poor transcripts**: Auto-generated captions have errors - interpret sensibly\n\n## Output Format\n\nReturn a JSON object with this structure:\n\n```json\n{\n  \"title\": \"...\",\n  \"suggested_skill_name\": \"...\",\n  \"category\": \"...\",\n  \"difficulty\": \"...\",\n  \"estimated_time\": \"...\",\n  \"summary\": \"...\",\n  \"prerequisites\": [\"...\"],\n  \"steps\": [\n    {\n      \"title\": \"...\",\n      \"description\": \"...\",\n      \"commands\": [\"...\"],\n      \"code\": \"...\",\n      \"expected_outcome\": \"...\"\n    }\n  ],\n  \"key_concepts\": [\n    {\n      \"name\": \"...\",\n      \"explanation\": \"...\"\n    }\n  ],\n  \"code_snippets\": [\n    {\n      \"language\": \"...\",\n      \"description\": \"...\",\n      \"code\": \"...\"\n    }\n  ],\n  \"tools\": [\"...\"],\n  \"warnings\": [\"...\"],\n  \"tips\": [\"...\"]\n}\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "learning-skills",
+          "description": "Skills for learning from external content",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/watch-youtube"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add peilingjiang/skills",
+            "/plugin install learning-skills@peilingjiang-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

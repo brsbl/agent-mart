@@ -1,0 +1,115 @@
+{
+  "author": {
+    "id": "chouzz",
+    "display_name": "Chouzz",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/18023066?u=d292338e7849372ff05a11164ffe9679fa59d32e&v=4",
+    "url": "https://github.com/chouzz",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 1,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "chouzz-plugins",
+      "version": null,
+      "description": "Personal Claude Code plugins by chouzz",
+      "owner_info": {
+        "name": "chouzz"
+      },
+      "keywords": [],
+      "repo_full_name": "chouzz/minecraft-mod-dev",
+      "repo_url": "https://github.com/chouzz/minecraft-mod-dev",
+      "repo_description": "Claude Code skill for Minecraft mod development with NeoForge/Fabric support and inter-mod integration (JEI/AE2/Create)",
+      "homepage": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-15T14:44:44Z",
+        "created_at": "2026-01-15T04:50:40Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 592
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 300
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 1534
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/minecraft-mod-dev",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/minecraft-mod-dev/SKILL.md",
+          "type": "blob",
+          "size": 2831
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"chouzz-plugins\",\n  \"owner\": {\n    \"name\": \"chouzz\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code plugins by chouzz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"minecraft-mod-dev\",\n      \"source\": \".\",\n      \"description\": \"A Claude Code plugin for Minecraft mod development with modern loaders (NeoForge/Fabric) and ecosystem interoperability.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"chouzz\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"minecraft\", \"mod\", \"neoforge\", \"fabric\", \"game-dev\"],\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"minecraft-mod-dev\",\n  \"version\": \"1.0.0\",\n  \"description\": \"A Claude Code plugin for Minecraft mod development with modern loaders (NeoForge/Fabric) and ecosystem interoperability.\",\n  \"author\": \"chouzz\",\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/chouzz/minecraft-mod-dev\"\n}\n",
+        "README.md": "# Minecraft Mod Development Plugin\n\nA Claude Code plugin for Minecraft mod development with modern loaders (NeoForge/Fabric) and ecosystem interoperability.\n\n## Features\n\n- **Dynamic Documentation Fetching** - Automatically fetches latest docs for NeoForge/Fabric\n- **Inter-mod Integration** - Guides for JEI, AE2, Create, and other popular mods\n- **Modern Standards** - Data Components, Data Generation, Convention Tags\n- **Environment Detection** - Auto-detects project configuration\n\n## Installation\n\nAdd the marketplace and install the plugin:\n\n```bash\n/plugin marketplace add chouzz/minecraft-mod-dev\n/plugin install minecraft-mod-dev@chouzz-plugins\n```\n\nOr run `/plugin` and go to the **Marketplaces** tab to add, then **Discover** to install.\n\n## Usage Triggers\n\nThis skill activates when you:\n- Create new blocks, items, or entities\n- Integrate with JEI/AE2/Create\n- Set up modding environment\n- Migrate code to 1.21+\n- Work with NeoForge or Fabric loaders\n\n## Example\n\n```\n> \"Help me create a machine block that works with AE2 storage and shows recipes in JEI\"\n```\n\nThe skill will guide you through:\n1. Fetching latest API docs\n2. Implementing AE2 Grid integration\n3. Registering JEI recipe types\n4. Using Data Components for item data\n\n## Resources\n\n- [NeoForge Docs](https://docs.neoforged.net/)\n- [Fabric Wiki](https://fabricmc.net/wiki/)\n- See `references/mod-links.md` for more API documentation\n\n## Development\n\nTo test the plugin locally during development:\n\n```bash\nclaude --plugin-dir /path/to/minecraft-mod-dev\n```\n",
+        "skills/minecraft-mod-dev/SKILL.md": "---\nname: minecraft-mod-dev\ndescription: Use when creating Minecraft mods, integrating with mod APIs (JEI/AE2/Create), setting up modding environments, or migrating to newer versions\n---\n\n# Minecraft Mod Development Skill\n\nYou are an expert Minecraft Mod Developer. You prioritize modern standards, data-driven design, and inter-mod compatibility.\n\n## Core Protocols\n\n### 1. Dynamic Documentation Fetching\nWhen the user mentions a specific version (e.g., 1.21.1) or Mod Loader (NeoForge, Fabric), you MUST:\n- Use `webfetch` to check `https://docs.neoforged.net/` or `https://fabricmc.net/wiki/`.\n- Use `context7` (if available) to fetch latest library headers: `use context7 for neoforge 1.21`.\n- DO NOT rely on internal knowledge for Registry names or Packet handling logic as they change frequently.\n\n### 2. Inter-mod Integration (Ecosystem First)\nBefore implementing custom systems, check for integration opportunities:\n- **JEI/EMI:** Always register custom `RecipeType` and provide a `IModPlugin` implementation.\n- **AE2:** For storage/automation, implement `IGridNodeListener` and use AE2's Grid API.\n- **Create:** Leverage `Create`'s `AllBlockEntityTypes` patterns or custom `mixing/pressing` recipe types.\n- **Convention Tags:** Use `#c:ingots`, `#c:dusts` (for 1.21 NeoForge) to ensure cross-mod compatibility.\n\n### 3. Standards & Best Practices\n- **Registration:** Use `DeferredRegister` for NeoForge or standard `Registry` for Fabric.\n- **Logic Separation:** Keep `@OnlyIn(Dist.CLIENT)` logic strictly in Client-side classes (e.g., Renderers, Screens).\n- **Data Generation:** Prefer writing `DataProvider` classes over manual JSON editing.\n- **Data Components:** In 1.20.5+, use `DataComponentType` instead of raw NBT for item data.\n\n## Tooling\n- Use `./gradlew runData` to generate resources.\n- Use `./gradlew runGameTestServer` for integration testing.\n\n## Documentation References\nSee `references/mod-links.md` for links to official loaders and popular mod APIs.\n\n## Migration Protocol\n\nWhen the user requests \"migration\", \"rewrite\", or \"refactor\" of old mod code:\n\n1. **Read Migration Guide:** You MUST first read `references/migration-guide.md`.\n2. **Extract Core Logic:** Prioritize extracting mathematical formulas and business logic from old code, not API calls.\n3. **Modernize Patterns:** Apply paradigm shifts from the migration guide:\n   - Replace TileEntity with BlockEntity + BlockEntityTicker\n   - Replace NBT with Data Components (1.20.5+)\n   - Replace hardcoded JSON with DataProvider\n4. **Post-Migration:** After rewriting, ALWAYS remind the user:\n   > \"I have rewritten the logic according to 1.21+ specifications. Please run `./gradlew runData` to ensure legacy resource files are correctly converted.\"\n\n## Environment Check\nRun `scripts/mod-env-check.sh` to auto-detect current project configuration.\n"
+      },
+      "plugins": [
+        {
+          "name": "minecraft-mod-dev",
+          "source": ".",
+          "description": "A Claude Code plugin for Minecraft mod development with modern loaders (NeoForge/Fabric) and ecosystem interoperability.",
+          "version": "1.0.0",
+          "author": {
+            "name": "chouzz"
+          },
+          "license": "MIT",
+          "keywords": [
+            "minecraft",
+            "mod",
+            "neoforge",
+            "fabric",
+            "game-dev"
+          ],
+          "category": "development",
+          "categories": [
+            "development",
+            "fabric",
+            "game-dev",
+            "minecraft",
+            "mod",
+            "neoforge"
+          ],
+          "install_commands": [
+            "/plugin marketplace add chouzz/minecraft-mod-dev",
+            "/plugin install minecraft-mod-dev@chouzz-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

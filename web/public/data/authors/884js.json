@@ -1,0 +1,176 @@
+{
+  "author": {
+    "id": "884js",
+    "display_name": "Yuki Hayashi",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/43997348?v=4",
+    "url": "https://github.com/884js",
+    "bio": "JavaScript",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 6,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "agent-plugins",
+      "version": null,
+      "description": "AI変更前に自動セーブポイントを作成し、/rejectで戻せるプラグイン",
+      "owner_info": {
+        "name": "884js"
+      },
+      "keywords": [],
+      "repo_full_name": "884js/agent-plugins",
+      "repo_url": "https://github.com/884js/agent-plugins",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-28T14:25:18Z",
+        "created_at": "2026-01-27T05:35:05Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 280
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 204
+        },
+        {
+          "path": "plugins/savepoint/README.md",
+          "type": "blob",
+          "size": 3096
+        },
+        {
+          "path": "plugins/savepoint/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/hooks/hooks.json",
+          "type": "blob",
+          "size": 721
+        },
+        {
+          "path": "plugins/savepoint/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/skills/cleanup",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/skills/cleanup/SKILL.md",
+          "type": "blob",
+          "size": 408
+        },
+        {
+          "path": "plugins/savepoint/skills/diff",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/skills/diff/SKILL.md",
+          "type": "blob",
+          "size": 1233
+        },
+        {
+          "path": "plugins/savepoint/skills/list",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/skills/list/SKILL.md",
+          "type": "blob",
+          "size": 1490
+        },
+        {
+          "path": "plugins/savepoint/skills/reject",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/skills/reject/SKILL.md",
+          "type": "blob",
+          "size": 870
+        },
+        {
+          "path": "plugins/savepoint/skills/rollback",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/skills/rollback/SKILL.md",
+          "type": "blob",
+          "size": 915
+        },
+        {
+          "path": "plugins/savepoint/skills/save",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/savepoint/skills/save/SKILL.md",
+          "type": "blob",
+          "size": 841
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-plugins\",\n  \"owner\": {\n    \"name\": \"884js\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"savepoint\",\n      \"source\": \"./plugins/savepoint\",\n      \"description\": \"AI変更前に自動セーブポイントを作成し、/rejectで戻せるプラグイン\"\n    }\n  ]\n}\n",
+        "plugins/savepoint/.claude-plugin/plugin.json": "{\n  \"name\": \"savepoint\",\n  \"description\": \"AI変更前に自動セーブポイントを作成し、/rejectで戻せるプラグイン\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"yukihayashi\"\n  }\n}\n",
+        "plugins/savepoint/README.md": "# savepoint\n\nAIの変更を自動でセーブポイントに保存し、いつでもワンコマンドで戻せるClaude Codeプラグイン。\n\n\n## 概要\nClaude Codeでコード編集中、自動的にセーブポイントを作成します。\n変更が気に入らなければ `/savepoint:reject` で即座に戻せます。\n\n## クイックスタート\n\n```bash\n# セーブポイント一覧を確認\n/savepoint:list\n\n# 現在の変更を確認\n/savepoint:diff\n\n# AIの変更を取り消して直前に戻す（Bash変更も戻せる！）\n/savepoint:reject\n```\n\n---\n\n## 詳細\n\n### 仕組み\n\nこのプラグインは Claude Code のフック機能を使って動作します：\n\n1. **セッション開始時**: 初期状態をセーブポイントとして保存\n2. **モデル停止時**: 変更があれば新しいセーブポイントを作成\n3. **セーブポイントは永久保存**: 明示的にクリーンアップしない限り保持\n\n内部では git を使用しており、効率的な差分管理と高速な復元を実現しています。\n\n### スキル一覧\n\n#### `/savepoint:save`\n手動でセーブポイントを作成します。重要な変更の前に明示的に保存したい場合に使用。\n\n#### `/savepoint:list`\nセーブポイントの一覧を表示します。\n\n| 表示内容 | 説明 |\n|---------|------|\n| セーブポイント名 | `YYYYMMDD-HHMMSS` 形式 |\n| 日時 | 作成日時 |\n| 変更サマリー | 変更されたファイル（最大3つ） |\n\n#### `/savepoint:diff [セーブポイント1] [セーブポイント2]`\nセーブポイント間の差分を表示します。\n\n- **引数なし**: 最新セーブポイント ↔ 現在の状態\n- **1つ**: 指定セーブポイント ↔ 現在の状態\n- **2つ**: セーブポイント1 ↔ セーブポイント2\n\n#### `/savepoint:reject`\n直前のセーブポイントに戻します。AIの変更を即座に取り消したい場合に使用。\n**Bashで削除されたファイルも復元できます。**\n\n#### `/savepoint:rollback <セーブポイント名>`\n指定したセーブポイントに戻します。\n\n```bash\n# 例\n/savepoint:rollback 20250126-153045\n```\n\n#### `/savepoint:cleanup`\n現在のプロジェクトのセーブポイントを手動で削除します。ディスク容量を解放したい場合に使用。\n\n### ストレージ\n\n- **保存先**: `~/.claude/savepoint-repos/`\n- **リポジトリ名**: `{プロジェクトハッシュ}-{セッションID}`\n\n#### ファイル追跡\n\n| プロジェクト種別 | 追跡対象 |\n|-----------------|---------|\n| gitプロジェクト | `git ls-files` で管理されているファイル |\n| 非gitプロジェクト | 3階層までのファイル（dotfiles, node_modules等は除外） |\n\n### 注意事項\n\n- `.claude/` ディレクトリ内のプロジェクトはセーブポイント対象外\n- `rollback` / `reject` 実行時、戻り先より新しいセーブポイントは削除されます（線形履歴）\n- バイナリファイルの差分は表示されません\n\n---\n\n## ライセンス\n\nMIT\n",
+        "plugins/savepoint/hooks/hooks.json": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"node \\\"${CLAUDE_PLUGIN_ROOT}/scripts/smart-install.js\\\"\",\n            \"timeout\": 120\n          },\n          {\n            \"type\": \"command\",\n            \"command\": \"\\\"$HOME/.bun/bin/bun\\\" \\\"${CLAUDE_PLUGIN_ROOT}/scripts/create-savepoint.ts\\\"\",\n            \"timeout\": 60\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"\\\"$HOME/.bun/bin/bun\\\" \\\"${CLAUDE_PLUGIN_ROOT}/scripts/create-savepoint.ts\\\"\",\n            \"timeout\": 60,\n            \"async\": false\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "plugins/savepoint/skills/cleanup/SKILL.md": "# /savepoint:cleanup\n\n現在のプロジェクトのセーブポイントを手動でクリーンアップします。\n\n## 使用方法\n\n```bash\n/savepoint:cleanup\n```\n\n## 実行手順\n\n1. 以下のスクリプトを実行してセーブポイントを削除します：\n\n```bash\nbun \"${CLAUDE_PLUGIN_ROOT}/skills/cleanup/scripts/cleanup.ts\"\n```\n\n2. 実行結果をユーザーに報告してください。\n",
+        "plugins/savepoint/skills/diff/SKILL.md": "---\nname: savepoint-diff\ndescription: セーブポイントとの差分を表示\nallowed-tools: Bash\nargument-hint: \"[savepoint1] [savepoint2]\"\n---\n\n# Diff Command\n\n現在の状態と指定したセーブポイント（またはセーブポイント間）の差分を表示します。\n\n## 使用方法\n\n```bash\n# 最新セーブポイントからの変更\n\"$HOME/.bun/bin/bun\" \"${CLAUDE_PLUGIN_ROOT}/skills/diff/scripts/diff.ts\"\n\n# 指定セーブポイントからの変更\n\"$HOME/.bun/bin/bun\" \"${CLAUDE_PLUGIN_ROOT}/skills/diff/scripts/diff.ts\" 20250126-153045\n\n# 2つのセーブポイント間の差分\n\"$HOME/.bun/bin/bun\" \"${CLAUDE_PLUGIN_ROOT}/skills/diff/scripts/diff.ts\" 20250126-142010 20250126-153045\n```\n\n## 引数\n\n- 引数なし: 最新セーブポイントから現在までの変更\n- 1つ: 指定セーブポイントから現在までの変更\n- 2つ: 2つのセーブポイント間の変更\n\n## 出力例\n\n```\n変更されたファイル (savepoint/20250126-153045 → 現在):\nM  src/utils.ts\nA  src/new-feature.ts\n\ndiff --git a/src/utils.ts b/src/utils.ts\n...\n```\n\n## 注意事項\n\n- 差分表示にはGitのdiffフォーマットを使用します\n- バイナリファイルの差分は表示されません\n",
+        "plugins/savepoint/skills/list/SKILL.md": "---\nname: savepoint-list\ndescription: セーブポイント一覧を表示\nallowed-tools: Bash\n---\n\n# List Command\n\n作成されたセーブポイントの一覧を要約付きで表示します。\n\n## 使用方法\n\n```bash\n\"$HOME/.bun/bin/bun\" \"${CLAUDE_PLUGIN_ROOT}/skills/list/scripts/list.ts\"\n```\n\n## 表示指示\n\nスクリプトは以下の形式で生データを出力します：\n\n```\n[YYYYMMDD-HHMMSS] YYYY-MM-DD\n  +25/-10 | 8 files | M:file1 M:file2 A:file3 D:file4...\n```\n\n### データ形式\n- `+N/-N`: 追加/削除行数\n- `N files`: 変更ファイル数\n- `A:`: 追加(Added), `M:`: 変更(Modified), `D:`: 削除(Deleted)\n\n### 表示時の処理\n1. テーブル形式で整理して表示\n2. ファイルが多い場合は主要なファイルのみ表示し、残りは省略\n3. 変更ファイルのパターンから変更内容を推測して簡潔に説明\n   - ファイル拡張子、ディレクトリ構造、ファイル名から推測\n   - 追加/変更/削除のバランスから変更の性質を判断\n\n### 表示例\n\n| セーブポイント | 日時 | 変更規模 | 概要 |\n|--------------|------|---------|------|\n| 20250126-153045 | 01-26 15:30 | +25/-10 (3files) | src配下のTS変更、設定追加 |\n| 20250126-142010 | 01-26 14:20 | - | 初期セーブポイント |\n\n## 注意事項\n\n- セーブポイントリポジトリは `~/.claude/savepoint-repos/` に保存されます\n- 要約はセーブポイント作成時に自動生成されます\n",
+        "plugins/savepoint/skills/reject/SKILL.md": "---\nname: savepoint-reject\ndescription: AIの変更を破棄して直前のセーブポイントに戻す。「元に戻して」「やり直して」「変更を取り消して」などで使用。\nallowed-tools: Bash\ndisable-model-invocation: true\n---\n\n# Reject Command\n\nAIが行った変更を破棄し、直前のセーブポイントまで戻します。\n\n## 使用方法\n\n```bash\n\"$HOME/.bun/bin/bun\" \"${CLAUDE_PLUGIN_ROOT}/skills/reject/scripts/reject.ts\"\n```\n\n## 動作\n\n1. 直前のセーブポイントを特定\n2. それより新しいセーブポイントを削除\n3. リポジトリを直前のセーブポイントにリセット\n4. プロジェクトファイルを復元\n\n## 注意事項\n\n- 復元すると、そのセーブポイント以降の履歴は削除されます\n- 復元操作自体では新しいセーブポイントは作成されません\n",
+        "plugins/savepoint/skills/rollback/SKILL.md": "---\nname: savepoint-rollback\ndescription: 指定したセーブポイントに戻す\nallowed-tools: Bash\ndisable-model-invocation: true\nargument-hint: \"[savepoint-name]\"\n---\n\n# Rollback Command\n\n指定したセーブポイントに戻します。\n\n## 使用方法\n\n```bash\n\"$HOME/.bun/bin/bun\" \"${CLAUDE_PLUGIN_ROOT}/skills/rollback/scripts/restore.ts\" <savepoint-name>\n```\n\n例: `restore.ts 20250126-153045`\n\n## 引数\n\n- `$ARGUMENTS` - 戻したいセーブポイント名（必須）\n  - `savepoint/20250126-153045` または `20250126-153045` のどちらでも可\n\n## 動作\n\n1. 指定されたセーブポイントの存在を確認\n2. リポジトリを指定セーブポイントにリセット\n3. プロジェクトファイルを復元\n\n## 注意事項\n\n- セーブポイント名は `/savepoint:list` で確認できます\n- 復元操作自体では新しいセーブポイントは作成されません\n",
+        "plugins/savepoint/skills/save/SKILL.md": "---\nname: savepoint-save\ndescription: 手動でセーブポイントを作成\nallowed-tools: Bash\n---\n\n# Save Command\n\n現在の状態でセーブポイントを手動作成します。\n\n## 使用方法\n\n```bash\n\"$HOME/.bun/bin/bun\" \"${CLAUDE_PLUGIN_ROOT}/skills/save/scripts/create.ts\"\n```\n\n## 動作\n\n1. プロジェクトファイルをセーブポイントリポジトリに同期\n2. 変更がある場合のみセーブポイント（タグ）を作成\n3. 前のセーブポイントとのdiffを保存\n\n## 出力\n\n- 成功時: セーブポイント名を表示\n- 変更なし: 何も作成されない旨を表示\n\n## 注意事項\n\n- git管理されているプロジェクトのみ対応\n- `.claude/` 配下のプロジェクトは対象外\n- セーブポイントリポジトリは `~/.claude/savepoint-repos/` に保存されます\n"
+      },
+      "plugins": [
+        {
+          "name": "savepoint",
+          "source": "./plugins/savepoint",
+          "description": "AI変更前に自動セーブポイントを作成し、/rejectで戻せるプラグイン",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add 884js/agent-plugins",
+            "/plugin install savepoint@agent-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

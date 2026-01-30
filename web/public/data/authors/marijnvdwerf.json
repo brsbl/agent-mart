@@ -1,0 +1,105 @@
+{
+  "author": {
+    "id": "marijnvdwerf",
+    "display_name": "Marijn van der Werf",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/737603?u=ba77c8e915d537b3fabf7a28f5818f94ac6cc5bd&v=4",
+    "url": "https://github.com/marijnvdwerf",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 2,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "marijnvdwerf-agent-skills",
+      "version": null,
+      "description": "N64 decompilation skills",
+      "owner_info": {
+        "name": "Marijn van der Werf"
+      },
+      "keywords": [],
+      "repo_full_name": "marijnvdwerf/agent-skills",
+      "repo_url": "https://github.com/marijnvdwerf/agent-skills",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-21T10:14:42Z",
+        "created_at": "2026-01-21T10:01:15Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 559
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 656
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/n64-decomp-ido",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/n64-decomp-ido/SKILL.md",
+          "type": "blob",
+          "size": 1622
+        },
+        {
+          "path": "skills/n64-decomp",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/n64-decomp/SKILL.md",
+          "type": "blob",
+          "size": 8092
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"marijnvdwerf-agent-skills\",\n  \"owner\": {\n    \"name\": \"Marijn van der Werf\"\n  },\n  \"metadata\": {\n    \"description\": \"N64 decompilation skills\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"decomp-n64\",\n      \"description\": \"N64 game decompilation workflow assistant for setting up projects with splat64, ninja build systems, libultra identification, and compiler configuration.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/n64-decomp\",\n        \"./skills/n64-decomp-ido\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# N64 Decompilation Skills\n\nSkills to assist with Nintendo 64 game decompilation projects.\n\n## Skills\n\n- **n64-decomp** - Project setup with splat64, ninja build systems, libultra identification, compiler detection\n- **n64-decomp-ido** - IDO compiler build configuration with asm-processor\n\n## Installation\n\n### Claude Code\n\n```\n/plugin marketplace add marijnvdwerf/agent-skills\n/plugin install decomp-n64@marijnvdwerf-agent-skills\n```\n\n### Codex\n\n```\n$skill-installer install https://github.com/marijnvdwerf/agent-skills/tree/main/skills/n64-decomp\n$skill-installer install https://github.com/marijnvdwerf/agent-skills/tree/main/skills/n64-decomp-ido\n```\n",
+        "skills/n64-decomp-ido/SKILL.md": "---\nname: n64-decomp-ido\ndescription: |\n  IDO build configuration for N64 decompilation. Use when setting up C compilation for an IDO-based N64 decomp project. Covers asm-processor setup and build integration.\n---\n\n# IDO Build Configuration\n\nSplat detects the compiler and sets `options.compiler: IDO` in the yaml. This skill covers how to configure the build for IDO.\n\n## asm-processor\n\nIDO doesn't support inline assembly the way modern compilers do. asm-processor solves this by:\n1. Replacing `GLOBAL_ASM` blocks with dummy C code of matching sizes\n2. Compiling everything together with IDO\n3. Overwriting the dummy output with actual assembly\n\nThis lets assembly and C coexist without recompilation complexity. It also handles tricky cases like \"late_rodata\" (read-only data emitted in two passes by IDO).\n\nSee https://github.com/simonlindholm/asm-processor for details.\n\n### Download\n\nDownload prebuilt binaries from https://github.com/simonlindholm/asm-processor/releases\n\nURL pattern:\n```\nhttps://github.com/simonlindholm/asm-processor/releases/download/1.0.1/asm-processor-{triple}.tar.xz\n```\n\nTriples: `aarch64-apple-darwin`, `x86_64-apple-darwin`, `x86_64-pc-windows-msvc` (.zip), `aarch64-unknown-linux-gnu`, `x86_64-unknown-linux-gnu`\n\n### Build Integration\n\nasm-processor wraps the IDO compiler. See https://github.com/ethteck/pokemonsnap/blob/main/configure.py for a full example.\n\nThe command pattern:\n```\ntools/asm_proc/asm-processor {IDO_CC} -- {CROSS_AS} {AS_FLAGS} -- {IDO_FLAGS} -c -o $out $in\n```\n\nWhere:\n- First `--` separates IDO path from assembler\n- Second `--` separates assembler from IDO flags\n",
+        "skills/n64-decomp/SKILL.md": "---\nname: n64-decomp\ndescription: |\n  N64 game decompilation workflow assistant. Use when helping with Nintendo 64 reverse engineering tasks including: (1) Setting up new decomp projects with splat64 and uv, (2) Creating build systems with ninja, (3) Identifying libultra versions and symbols, (4) Finding compiler versions via decomp.me, (5) Converting assembly to C code. Triggers on mentions of N64/Nintendo 64 decompilation, splat, decomp.me, libultra, or MIPS assembly matching.\n---\n\n# N64 Decompilation\n\n## Project Setup\n\nFirst, ask user if they want to initialize a git repository for this project.\n\nInitialize with uv (not pip) for better version locking:\n\n```bash\nuv init --bare\nuv add \"splat64[mips]\"\n```\n\nCopy ROM to project folder as `baserom.<extension>` (keep original extension):\n\n```bash\ncp \"/path/to/Game Name.n64\" baserom.n64\n```\n\nGenerate config from ROM (splat handles byteswapping internally):\n\n```bash\nuv run -m splat create_config baserom.n64\n```\n\nAfter config generation, splat creates a byteswapped `baserom.z64`. From this point on, always use `baserom.z64` (the build system expects z64 format).\n\nAfter config is generated, enable undefined symbol paths in the yaml (uncomment these lines):\n\n```yaml\nundefined_funcs_auto_path: undefined_funcs_auto.txt\nundefined_syms_auto_path: undefined_syms_auto.txt\n```\n\nDo NOT enable `hardware_regs` or `libultra_symbols` - they cause symbol mismatches and are unnecessary work.\n\nSplit the ROM:\n\n```bash\nuv run -m splat split <game>.yaml\n```\n\nSplat generates `include/macro.inc` automatically - do not create it manually.\n\nAdd to `.gitignore` (avoid copyright issues):\n- `baserom.z64` (or whatever input ROM name)\n- All generated folders (`asm/`, `bin/`, `assets/`, etc.)\n\nIMPORTANT: The `asm/` folder is generated by splat and NOT checked in. Never edit asm files directly to fix build issues - those changes won't persist. Instead, fix issues in the YAML config or symbol files.\n\nSplat suggests file splits in output - these are \"highly likely\" object boundaries detected via zero-padding between functions aligned at 0x10. Add these to the yaml LATER, after basic build works.\n\nNote on splits: Splat detects splits when a function's last instruction is at offset like 0x1C and the next function starts at 0x20 (aligned). If a function ends at 0x1C and the next starts at 0x20 without padding, splat cannot detect the boundary - but one may still exist.\n\n### Splat YAML Subsegment Format\n\nSubsegments use shorthand: `[offset, type]` or `[offset, type, name]`\n\n```yaml\nsubsegments:\n  - [0x1050, asm]                    # name defaults to \"1050\" (hex offset)\n  - [0xA0CD0, asm, libultra/A0CD0]   # explicit name, creates libultra/ folder\n```\n\nTo rename a file, add the third element. Names with slashes become folders.\n\n## Build System\n\nCRITICAL: Use [references/configure-simple.py](references/configure-simple.py) for initial setup. It handles assembly-only builds. Do NOT use the complex Pokemon Snap example yet - that's for later when adding C compilation.\n\nAfter creating configure.py, make it executable: `chmod +x configure.py`\n\nGoal: get a matching ROM building. At this stage, compiler doesn't matter since all files are assembly objects.\n\n### BSS Mismatch Issues\n\nNEVER edit asm files to fix address mismatches - they are regenerated by splat and changes are lost.\n\nIf entrypoint references `main_BSS_START` with wrong value, calculate `bss_size` from the entry asm file (usually `asm/1000.s` - splat names files by ROM offset, not `entry.s`):\n\n```asm\nlui  $t0, 0x800e        # BSS_START high = 0x800e\nlui  $t1, (0x7DAC0 >> 16)  # BSS_SIZE high\naddiu $t0, $t0, 0x2e00  # BSS_START low = 0x2e00 → BSS_START = 0x800e2e00\nori  $t1, $t1, (0x7DAC0 & 0xFFFF)  # BSS_SIZE = 0x7DAC0\n```\n\nAdd `bss_size` to the main segment and a `.bss` subsegment in YAML:\n\n```yaml\n- name: main\n  type: code\n  start: 0x1050\n  vram: 0x80001050\n  bss_size: 0x7DAC0\n  subsegments:\n    - [0x1050, asm]\n    - { start: 0xB1BD0, type: .bss, vram: 0x800E2E00 }\n```\n\nThe `.bss` vram should match BSS_START calculated from entrypoint. Then re-run `python configure.py --clean` and rebuild.\n\nOnce building succeeds:\n1. Add the suggested splits from splat output to the yaml\n2. Rebuild and verify still matches\n3. Checkpoint: verify build matches, then commit\n4. Proceed to libultra identification\n\nCheckpoints are good points to verify your build still matches, and commit your work. Do not wait for user input at checkpoints.\n\n## Identifying libultra\n\n### Find Version\n\nCheck `asm/header.s` for revision field:\n\n```asm\n.word 0x00001448       /* Revision */\n```\n\nThe byte (0x48 = 'H') encodes libultra SDK version as ASCII (E=2.0E, F=2.0F, ... L=2.0L). See https://n64brew.dev/wiki/Libultra for version history.\n\n### Setup\n\n```bash\ngit clone https://github.com/decompals/ultralib\nrm -rf ultralib/.git\nuv add git+https://github.com/matt-kempster/m2c\n```\n\nDownload ultralib into the project and commit it (remove .git, not a submodule). Do NOT add ultralib to .gitignore.\n\nAfter adding ultralib, update configure.py to include its headers in compilation:\n```python\nINCLUDES = \"-I include -I ultralib/include -I ultralib/include/PR\"\n```\n\n### Get n64sym Hints First\n\nBEFORE doing any analysis, ask user to run n64sym and paste the output: https://shygoo.github.io/n64sym/web/\n\nWait for user to provide n64sym output. Use it to estimate:\n- Where libultra might start (look for first os* function address)\n- Where libultra might end\n- Which functions might be present\n\nWARNING: n64sym is UNRELIABLE - pattern-matches against known binaries. NEVER add symbols directly. Use ONLY as hints for where to look.\n\n### Find libultra Boundaries\n\nNOTE: Do not read raw asm files - they are large and token-inefficient. Always use m2c first:\n```bash\nuv run m2c asm/<file>.s\n```\n\n1. **Find start of libultra**: Based on n64sym hints, check candidate files with m2c\n   - Compare m2c output against ultralib source\n   - When matched, rename in yaml: `[0xA0CD0, asm, libultra/A0CD0]`\n\n2. **Find end of libultra**: Same process for last libultra function\n\n3. **Rename ALL files** in the libultra range in the yaml subsegments\n\n4. **Rebuild** to verify still matches\n\nLibultra is typically one continuous block of modules.\n\n### Identify Called Functions\n\nFind ALL function calls INTO the libultra VRAM range:\n\n```bash\n# Find calls to libultra address range (adjust range for your ROM)\nrg \"jal.*0x800[a-f]\" asm/\n```\n\nContinue until you have identified ALL unique libultra functions called from game code. These are the priority - game code needs to know their signatures.\n\n### Add Symbols Module-by-Module\n\nFor each called function:\n1. Run m2c on the file containing that address\n2. Match m2c output to ultralib source\n3. Add function symbol to symbol_addrs.txt (text symbols more important than data)\n4. Rebuild and verify\n\nFor symbol syntax, see https://github.com/ethteck/splat/wiki/Adding-Symbols\n\nDo not stop until all calls into libultra are identified. Checkpoint: verify build matches, commit, then proceed to compiler identification.\n\n## Identifying Compiler Version\n\nThe compiler type is in the yaml under `options.compiler` (detected by splat).\n\n### Using decomp.me\n\n1. Find a small, linear function outside libultra\n2. Run through m2c: `uv run m2c asm/<file>.s`\n3. Guide user to https://decomp.me/new with:\n   - Target assembly (from the .s file)\n   - m2c output as starting point\n   - Function signatures for called functions\n   - Typedefs (s32, u32, etc.)\n4. User tries presets until one matches\n\nPrefer functions with simple control flow - fewer branches = fewer ways to write equivalent C.\n\n### IDO Specifics\n\nIf compiler is IDO (most common), see the `n64-decomp-ido` skill for setting up asm-processor and build integration.\n\nFor compiler downloads, see https://github.com/decompme/compilers/blob/main/values.yaml\n\n## Converting to C\n\nChange file type from `asm` to `c` in splatfile. This generates:\n- C file with function stubs\n- Separate .s files per function\n\nCan do this earlier for the \"identification function\" to give user a single target .asm file.\n"
+      },
+      "plugins": [
+        {
+          "name": "decomp-n64",
+          "description": "N64 game decompilation workflow assistant for setting up projects with splat64, ninja build systems, libultra identification, and compiler configuration.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/n64-decomp",
+            "./skills/n64-decomp-ido"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add marijnvdwerf/agent-skills",
+            "/plugin install decomp-n64@marijnvdwerf-agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

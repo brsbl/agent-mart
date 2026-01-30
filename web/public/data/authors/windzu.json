@@ -1,0 +1,128 @@
+{
+  "author": {
+    "id": "windzu",
+    "display_name": "windzu",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/27621651?u=ed06470503ef0249e2ba6c010cd057cf412565f2&v=4",
+    "url": "https://github.com/windzu",
+    "bio": "computer vision engineer",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 2,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "windzu-skills",
+      "version": null,
+      "description": "Wind's personal Claude skills collection",
+      "owner_info": {
+        "name": "windzu",
+        "email": ""
+      },
+      "keywords": [],
+      "repo_full_name": "windzu/skills",
+      "repo_url": "https://github.com/windzu/skills",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-27T01:29:11Z",
+        "created_at": "2026-01-21T02:57:48Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 451
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3183
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/docker-dev-env",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/docker-dev-env/SKILL.md",
+          "type": "blob",
+          "size": 3268
+        },
+        {
+          "path": "skills/docker-dev-env/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/docker-dev-env/references/dockerfile-best-practices.md",
+          "type": "blob",
+          "size": 4063
+        },
+        {
+          "path": "skills/docker-dev-env/references/mirrors.md",
+          "type": "blob",
+          "size": 2241
+        },
+        {
+          "path": "skills/docker-dev-env/references/templates.md",
+          "type": "blob",
+          "size": 4869
+        },
+        {
+          "path": "template",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "template/SKILL.md",
+          "type": "blob",
+          "size": 955
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"windzu-skills\",\n  \"owner\": {\n    \"name\": \"windzu\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Wind's personal Claude skills collection\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"docker-dev-env\",\n      \"description\": \"Create Docker-based development environments with docker-compose\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/docker-dev-env\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Wind's Claude Skills\n\nPersonal collection of Claude Code skills for specialized tasks.\n\n## Repository Structure\n\n```\nskills/\n├── .claude-plugin/       # Claude Code plugin configuration\n│   └── manifest.json\n├── skills/               # Custom skills directory\n│   └── <skill-name>/     # Each skill in its own folder\n│       └── SKILL.md      # Skill definition file\n├── template/             # Skill template for creating new skills\n│   └── SKILL.md\n├── .gitignore\n└── README.md\n```\n\n## What are Skills?\n\nSkills are folders of instructions, scripts, and resources that Claude loads dynamically to improve performance on specialized tasks. Each skill contains a `SKILL.md` file with YAML frontmatter and instructions.\n\n## Creating a New Skill\n\n1. Copy the `template/SKILL.md` to a new folder under `skills/`:\n   ```bash\n   mkdir skills/my-new-skill\n   cp template/SKILL.md skills/my-new-skill/SKILL.md\n   ```\n\n2. Edit the `SKILL.md` file:\n   - Update the `name` field (lowercase, use hyphens)\n   - Write a clear `description`\n   - Add your instructions and examples\n\n3. Commit and push to GitHub\n\n## Installing Skills\n\n### Method 1: Using Claude Code CLI (Recommended)\n\n1. Add this repository as a plugin marketplace:\n   ```bash\n   /plugin marketplace add windzu/skills\n   ```\n\n2. Install specific skills:\n   ```bash\n   /plugin install <skill-name>@windzu-skills\n   ```\n\n### Method 2: Manual Configuration\n\nIf automatic installation doesn't work, follow these steps:\n\n1. **Clone the repository** to Claude's marketplace directory:\n   ```bash\n   git clone git@github.com:windzu/skills.git ~/.claude/plugins/marketplaces/windzu-skills\n   ```\n\n2. **Enable the plugin** in `~/.claude/settings.json`:\n   ```json\n   {\n     \"enabledPlugins\": {\n       \"docker-dev-env@windzu-skills\": true\n     }\n   }\n   ```\n\n3. **Register the plugin** in `~/.claude/plugins/installed_plugins.json`:\n   ```json\n   {\n     \"version\": 2,\n     \"plugins\": {\n       \"docker-dev-env@windzu-skills\": [\n         {\n           \"scope\": \"user\",\n           \"installPath\": \"/home/<username>/.claude/plugins/cache/windzu-skills/docker-dev-env/<version>\",\n           \"version\": \"<version>\",\n           \"installedAt\": \"2026-01-26T00:00:00.000Z\",\n           \"lastUpdated\": \"2026-01-26T00:00:00.000Z\",\n           \"gitCommitSha\": \"<version>\"\n         }\n       ]\n     }\n   }\n   ```\n\n   > **Note:** The `installPath` must point to the **cache directory**, not the marketplace directory. Claude Code automatically copies plugins to `~/.claude/plugins/cache/` with a version hash.\n\n4. **Restart Claude Code** to load the new skill.\n\n### Verifying Installation\n\nAfter installation, run:\n```bash\n/docker-dev-env\n```\n\nIf the skill loads successfully, you'll see the Docker Development Environment workflow.\n\n## SKILL.md Format\n\n```markdown\n---\nname: skill-name\ndescription: Description of what the skill does and when to use it\n---\n\n# Skill Name\n\nInstructions for Claude to follow...\n```\n\n## Available Skills\n\n| Skill Name | Description |\n|------------|-------------|\n| docker-dev-env | Create Docker-based development environments with docker-compose |\n\n## License\n\nMIT\n",
+        "skills/docker-dev-env/SKILL.md": "---\nname: docker-dev-env\ndescription: Create Docker-based development environments with docker-compose. Use when users want to set up containerized dev environments, create Dockerfile/docker-compose.yml for projects, or need isolated development containers. Handles Python, Node.js, and general-purpose environments with Chinese mirror sources, proper user permissions, and helper scripts.\n---\n\n# Docker Development Environment\n\nCreate standardized, reproducible development environments using Docker and docker-compose.\n\n## Workflow\n\n```\n1. Gather Requirements (REQUIRED)\n   └─> Ask user about: language/framework, ports, additional tools\n\n2. Generate Files\n   ├─> init-env.sh (from scripts/)\n   ├─> enter.sh (from scripts/)\n   ├─> Dockerfile (from templates)\n   └─> docker-compose.yml (from templates)\n\n3. Initialize\n   └─> Run ./init-env.sh to generate .env\n\n4. Start\n   └─> docker compose up\n```\n\n## Step 1: Gather Requirements\n\n**ALWAYS ask before generating files:**\n\n- What programming language/framework? (Python, Node.js, Go, etc.)\n- What version? (Python 3.11, Node 20, etc.)\n- What ports need to be exposed?\n- Any additional system packages?\n- Any specific services needed? (database, cache, etc.)\n\n## Step 2: Generate Files\n\n### Required Files\n\n1. **Copy helper scripts** from this skill's `scripts/` directory:\n   - `init-env.sh` - Generates .env with host user info\n   - `enter.sh` - Enter running container\n\n2. **Create Dockerfile** following [dockerfile-best-practices.md](references/dockerfile-best-practices.md):\n   - Use appropriate base image\n   - Configure Chinese mirrors (see [mirrors.md](references/mirrors.md))\n   - Set up user with HOST_UID/HOST_GID args\n   - Install required packages\n\n3. **Create docker-compose.yml**:\n   - Map current directory to `/workspace`\n   - Pass build args from .env\n   - Configure ports and volumes\n\nSee [templates.md](references/templates.md) for complete examples.\n\n### File Structure\n\n```\nproject/\n├── .env              # Generated by init-env.sh\n├── .dockerignore\n├── Dockerfile\n├── docker-compose.yml\n├── init-env.sh\n└── enter.sh\n```\n\n### docker-compose.yml Structure\n\n```yaml\nservices:\n  dev:\n    build:\n      context: .\n      args:\n        HOST_UID: ${HOST_UID}\n        HOST_GID: ${HOST_GID}\n        HOST_USER: ${HOST_USER}\n    container_name: ${COMPOSE_PROJECT_NAME:-dev}\n    volumes:\n      - .:/workspace\n    stdin_open: true\n    tty: true\n```\n\n## Step 3: Initialize & Start\n\nInstruct user:\n\n```bash\n# First time setup\nchmod +x init-env.sh enter.sh\n./init-env.sh\n\n# Start container\ndocker compose up -d\n\n# Enter container\n./enter.sh\n```\n\n## Key Principles\n\n1. **User permission mapping** - Container user UID/GID matches host to avoid permission issues\n2. **Chinese mirror sources** - Faster builds in China (Tsinghua by default)\n3. **Simple startup** - Just `docker compose up`, no extra parameters\n4. **Workspace mapping** - Project directory mounted at `/workspace`\n\n## References\n\n- [Dockerfile Best Practices](references/dockerfile-best-practices.md) - Writing standards\n- [Mirror Sources](references/mirrors.md) - Chinese mirror configurations\n- [Templates](references/templates.md) - Ready-to-use templates for Python, Node.js, etc.\n",
+        "skills/docker-dev-env/references/dockerfile-best-practices.md": "# Dockerfile 编写规范\n\n## 基本原则\n\n1. **使用官方基础镜像**，指定明确版本标签\n2. **减少层数**，合并相关 RUN 指令\n3. **利用构建缓存**，将变化频繁的指令放在后面\n4. **清理缓存**，减小镜像体积\n\n## 标准结构\n\n```dockerfile\n# ============================================================\n# 基础镜像\n# ============================================================\nFROM ubuntu:22.04\n\n# ============================================================\n# 元信息\n# ============================================================\nLABEL maintainer=\"your@email.com\"\nLABEL description=\"Development environment\"\n\n# ============================================================\n# 构建参数\n# ============================================================\nARG HOST_UID=1000\nARG HOST_GID=1000\nARG HOST_USER=dev\n\n# ============================================================\n# 环境变量\n# ============================================================\nENV DEBIAN_FRONTEND=noninteractive\nENV TZ=Asia/Shanghai\nENV LANG=C.UTF-8\n\n# ============================================================\n# 系统配置（镜像源、时区等）\n# ============================================================\n# 配置镜像源（见 mirrors.md）\nRUN ...\n\n# ============================================================\n# 安装系统依赖\n# ============================================================\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n        package1 \\\n        package2 \\\n    && rm -rf /var/lib/apt/lists/*\n\n# ============================================================\n# 创建用户（与宿主机权限一致）\n# ============================================================\nRUN groupadd -g ${HOST_GID} ${HOST_USER} \\\n    && useradd -m -u ${HOST_UID} -g ${HOST_GID} -s /bin/bash ${HOST_USER}\n\n# ============================================================\n# 安装开发工具和语言运行时\n# ============================================================\n# 根据需求安装\n\n# ============================================================\n# 配置工作目录\n# ============================================================\nWORKDIR /workspace\n\n# ============================================================\n# 切换用户\n# ============================================================\nUSER ${HOST_USER}\n\n# ============================================================\n# 入口点\n# ============================================================\nCMD [\"/bin/bash\"]\n```\n\n## 关键规范\n\n### 1. 包安装规范\n\n```dockerfile\n# ✅ 正确：合并命令，清理缓存，按字母排序\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n        curl \\\n        git \\\n        vim \\\n        wget \\\n    && rm -rf /var/lib/apt/lists/*\n\n# ❌ 错误：多个 RUN，不清理缓存\nRUN apt-get update\nRUN apt-get install -y curl\nRUN apt-get install -y git\n```\n\n### 2. 用户权限规范\n\n```dockerfile\n# 使用 ARG 接收宿主机用户信息\nARG HOST_UID=1000\nARG HOST_GID=1000\nARG HOST_USER=dev\n\n# 创建与宿主机一致的用户\nRUN groupadd -g ${HOST_GID} ${HOST_USER} \\\n    && useradd -m -u ${HOST_UID} -g ${HOST_GID} -s /bin/bash ${HOST_USER}\n```\n\n### 3. 多阶段构建（生产环境）\n\n```dockerfile\n# 构建阶段\nFROM node:20 AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\n# 运行阶段\nFROM node:20-slim\nWORKDIR /app\nCOPY --from=builder /app/dist ./dist\nCMD [\"node\", \"dist/main.js\"]\n```\n\n### 4. COPY vs ADD\n\n```dockerfile\n# ✅ 优先使用 COPY（更明确）\nCOPY package.json ./\n\n# 只在需要解压或远程 URL 时使用 ADD\nADD https://example.com/file.tar.gz /tmp/\n```\n\n## 常见问题\n\n### 权限问题\n\n如果容器内创建的文件在宿主机无法访问：\n- 确保 Dockerfile 中用户 UID/GID 与宿主机一致\n- 检查 .env 文件是否正确生成\n\n### 缓存失效\n\n如果修改代码后构建很慢：\n- 将 `COPY . .` 放在安装依赖之后\n- 先复制依赖声明文件，安装依赖，再复制源码\n",
+        "skills/docker-dev-env/references/mirrors.md": "# 国内镜像源配置\n\n## Ubuntu/Debian APT 镜像\n\n### 清华大学 (tuna)\n\n```dockerfile\nRUN sed -i 's@//.*archive.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list \\\n    && sed -i 's@//.*security.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list\n```\n\n### 阿里云\n\n```dockerfile\nRUN sed -i 's@//.*archive.ubuntu.com@//mirrors.aliyun.com@g' /etc/apt/sources.list \\\n    && sed -i 's@//.*security.ubuntu.com@//mirrors.aliyun.com@g' /etc/apt/sources.list\n```\n\n### 中科大 (ustc)\n\n```dockerfile\nRUN sed -i 's@//.*archive.ubuntu.com@//mirrors.ustc.edu.cn@g' /etc/apt/sources.list \\\n    && sed -i 's@//.*security.ubuntu.com@//mirrors.ustc.edu.cn@g' /etc/apt/sources.list\n```\n\n## Python pip 镜像\n\n### 清华大学\n\n```dockerfile\nRUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple\n```\n\n或创建配置文件：\n\n```dockerfile\nRUN mkdir -p ~/.pip && echo \"[global]\\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple\\ntrusted-host = pypi.tuna.tsinghua.edu.cn\" > ~/.pip/pip.conf\n```\n\n## Node.js npm 镜像\n\n### 淘宝镜像\n\n```dockerfile\nRUN npm config set registry https://registry.npmmirror.com\n```\n\n### pnpm\n\n```dockerfile\nRUN pnpm config set registry https://registry.npmmirror.com\n```\n\n### yarn\n\n```dockerfile\nRUN yarn config set registry https://registry.npmmirror.com\n```\n\n## Alpine APK 镜像\n\n### 清华大学\n\n```dockerfile\nRUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories\n```\n\n## Go Proxy\n\n```dockerfile\nENV GOPROXY=https://goproxy.cn,direct\n```\n\n## Rust Cargo 镜像\n\n创建 `~/.cargo/config`：\n\n```toml\n[source.crates-io]\nreplace-with = 'tuna'\n\n[source.tuna]\nregistry = \"https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git\"\n```\n\n## 完整示例\n\n```dockerfile\nFROM ubuntu:22.04\n\n# 配置 APT 镜像源\nRUN sed -i 's@//.*archive.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list \\\n    && sed -i 's@//.*security.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list\n\n# 安装 Python\nRUN apt-get update && apt-get install -y python3 python3-pip \\\n    && rm -rf /var/lib/apt/lists/*\n\n# 配置 pip 镜像源\nRUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple\n```\n",
+        "skills/docker-dev-env/references/templates.md": "# 开发环境模板\n\n## Python 开发环境\n\n### Dockerfile\n\n```dockerfile\nFROM python:3.11-slim\n\nLABEL maintainer=\"dev@example.com\"\n\nARG HOST_UID=1000\nARG HOST_GID=1000\nARG HOST_USER=dev\n\nENV DEBIAN_FRONTEND=noninteractive\nENV TZ=Asia/Shanghai\nENV PYTHONDONTWRITEBYTECODE=1\nENV PYTHONUNBUFFERED=1\n\n# 配置国内镜像源\nRUN sed -i 's@deb.debian.org@mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list.d/debian.sources\n\n# 安装系统依赖和常用工具\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n        build-essential \\\n        curl \\\n        git \\\n        htop \\\n        net-tools \\\n        tree \\\n        unzip \\\n        vim \\\n        zip \\\n    && rm -rf /var/lib/apt/lists/*\n\n# 安装 Node.js (用于 npm 包管理)\nRUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \\\n    && apt-get install -y nodejs \\\n    && rm -rf /var/lib/apt/lists/* \\\n    && npm config set registry https://registry.npmmirror.com\n\n# 创建用户\nRUN groupadd -g ${HOST_GID} ${HOST_USER} \\\n    && useradd -m -u ${HOST_UID} -g ${HOST_GID} -s /bin/bash ${HOST_USER}\n\n# 配置 pip 镜像\nRUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple\n\nWORKDIR /workspace\nUSER ${HOST_USER}\n\nCMD [\"/bin/bash\"]\n```\n\n### docker-compose.yml\n\n```yaml\nservices:\n  python-dev:\n    build:\n      context: .\n      args:\n        HOST_UID: ${HOST_UID}\n        HOST_GID: ${HOST_GID}\n        HOST_USER: ${HOST_USER}\n    container_name: python-dev\n    volumes:\n      - .:/workspace\n    stdin_open: true\n    tty: true\n```\n\n---\n\n## Node.js 开发环境\n\n### Dockerfile\n\n```dockerfile\nFROM node:20-slim\n\nLABEL maintainer=\"dev@example.com\"\n\nARG HOST_UID=1000\nARG HOST_GID=1000\nARG HOST_USER=dev\n\nENV DEBIAN_FRONTEND=noninteractive\nENV TZ=Asia/Shanghai\n\n# 配置国内镜像源\nRUN sed -i 's@deb.debian.org@mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list.d/debian.sources\n\n# 安装系统依赖和常用工具\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n        curl \\\n        git \\\n        htop \\\n        net-tools \\\n        tree \\\n        unzip \\\n        vim \\\n        zip \\\n    && rm -rf /var/lib/apt/lists/*\n\n# 修改 node 用户 UID/GID 以匹配宿主机\nRUN groupmod -g ${HOST_GID} node \\\n    && usermod -u ${HOST_UID} -g ${HOST_GID} node\n\n# 配置 npm 镜像\nRUN npm config set registry https://registry.npmmirror.com\n\nWORKDIR /workspace\nUSER node\n\nCMD [\"/bin/bash\"]\n```\n\n### docker-compose.yml\n\n```yaml\nservices:\n  node-dev:\n    build:\n      context: .\n      args:\n        HOST_UID: ${HOST_UID}\n        HOST_GID: ${HOST_GID}\n        HOST_USER: ${HOST_USER}\n    container_name: node-dev\n    volumes:\n      - .:/workspace\n      - node_modules:/workspace/node_modules\n    ports:\n      - \"3000:3000\"\n      - \"5173:5173\"\n    stdin_open: true\n    tty: true\n\nvolumes:\n  node_modules:\n```\n\n---\n\n## 通用开发环境\n\n### Dockerfile\n\n```dockerfile\nFROM ubuntu:22.04\n\nLABEL maintainer=\"dev@example.com\"\n\nARG HOST_UID=1000\nARG HOST_GID=1000\nARG HOST_USER=dev\n\nENV DEBIAN_FRONTEND=noninteractive\nENV TZ=Asia/Shanghai\nENV LANG=C.UTF-8\n\n# 配置国内镜像源\nRUN sed -i 's@//.*archive.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list \\\n    && sed -i 's@//.*security.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list\n\n# 安装基础工具\nRUN apt-get update && apt-get install -y --no-install-recommends \\\n        build-essential \\\n        curl \\\n        git \\\n        htop \\\n        jq \\\n        less \\\n        net-tools \\\n        openssh-client \\\n        sudo \\\n        tree \\\n        unzip \\\n        vim \\\n        wget \\\n        zip \\\n    && rm -rf /var/lib/apt/lists/*\n\n# 安装 Node.js (用于 npm 包管理)\nRUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \\\n    && apt-get install -y nodejs \\\n    && rm -rf /var/lib/apt/lists/* \\\n    && npm config set registry https://registry.npmmirror.com\n\n# 创建用户并添加 sudo 权限\nRUN groupadd -g ${HOST_GID} ${HOST_USER} \\\n    && useradd -m -u ${HOST_UID} -g ${HOST_GID} -s /bin/bash ${HOST_USER} \\\n    && echo \"${HOST_USER} ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers\n\nWORKDIR /workspace\nUSER ${HOST_USER}\n\nCMD [\"/bin/bash\"]\n```\n\n### docker-compose.yml\n\n```yaml\nservices:\n  dev:\n    build:\n      context: .\n      args:\n        HOST_UID: ${HOST_UID}\n        HOST_GID: ${HOST_GID}\n        HOST_USER: ${HOST_USER}\n    container_name: dev\n    volumes:\n      - .:/workspace\n    stdin_open: true\n    tty: true\n```\n\n---\n\n## 文件清单\n\n创建开发环境时需要生成以下文件：\n\n```\nproject/\n├── .env              # 由 init-env.sh 生成\n├── Dockerfile\n├── docker-compose.yml\n├── init-env.sh       # 复制自 skill\n├── enter.sh          # 复制自 skill\n└── .dockerignore     # 可选\n```\n\n### .dockerignore 模板\n\n```\n.git\n.gitignore\n.env\n*.md\nnode_modules\n__pycache__\n*.pyc\n.venv\nvenv\n```\n",
+        "template/SKILL.md": "---\nname: my-skill-name\ndescription: A clear description of what this skill does and when Claude should use it. Include specific triggers or keywords that indicate when this skill is appropriate.\n---\n\n# My Skill Name\n\nBrief introduction explaining the purpose of this skill.\n\n## When to Use This Skill\n\n- Trigger condition 1\n- Trigger condition 2\n- Trigger condition 3\n\n## Instructions\n\nDetailed instructions for Claude to follow when this skill is activated.\n\n### Step 1: [First Step Name]\n\nDescription of what to do in step 1.\n\n### Step 2: [Second Step Name]\n\nDescription of what to do in step 2.\n\n## Examples\n\n### Example 1: [Example Name]\n\n```\nInput: [example input]\nOutput: [expected output]\n```\n\n### Example 2: [Example Name]\n\n```\nInput: [example input]\nOutput: [expected output]\n```\n\n## Guidelines\n\n- Guideline 1: Description\n- Guideline 2: Description\n- Guideline 3: Description\n\n## Notes\n\nAdditional notes or considerations for using this skill.\n"
+      },
+      "plugins": [
+        {
+          "name": "docker-dev-env",
+          "description": "Create Docker-based development environments with docker-compose",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/docker-dev-env"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add windzu/skills",
+            "/plugin install docker-dev-env@windzu-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

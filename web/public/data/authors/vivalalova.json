@@ -1,0 +1,152 @@
+{
+  "author": {
+    "id": "vivalalova",
+    "display_name": "Lova",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/4427760?u=043b150e03e4894980fa87bd2032aa24b3beb4b3&v=4",
+    "url": "https://github.com/vivalalova",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 2,
+      "total_forks": 1
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "agent-ide-skills",
+      "version": null,
+      "description": "AI code intelligence toolkit for refactoring, analysis, and quality assessment",
+      "owner_info": {
+        "name": "vivalalova",
+        "email": "vivalalova@gmail.com"
+      },
+      "keywords": [],
+      "repo_full_name": "vivalalova/agent-ide",
+      "repo_url": "https://github.com/vivalalova/agent-ide",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 2,
+        "forks": 1,
+        "pushed_at": "2026-01-13T07:53:50Z",
+        "created_at": "2025-10-03T02:03:29Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 586
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/skills/agent-ide",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/skills/agent-ide/SKILL.md",
+          "type": "blob",
+          "size": 2128
+        },
+        {
+          "path": "plugins/skills/agent-ide/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/call-hierarchy.md",
+          "type": "blob",
+          "size": 438
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/change-signature.md",
+          "type": "blob",
+          "size": 678
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/cycles.md",
+          "type": "blob",
+          "size": 229
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/deadcode.md",
+          "type": "blob",
+          "size": 395
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/find-references.md",
+          "type": "blob",
+          "size": 297
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/impact.md",
+          "type": "blob",
+          "size": 301
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/move.md",
+          "type": "blob",
+          "size": 672
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/rename.md",
+          "type": "blob",
+          "size": 532
+        },
+        {
+          "path": "plugins/skills/agent-ide/references/snapshot.md",
+          "type": "blob",
+          "size": 397
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agent-ide-skills\",\n  \"description\": \"AI code intelligence toolkit for refactoring, analysis, and quality assessment\",\n  \"owner\": {\n    \"name\": \"vivalalova\",\n    \"email\": \"vivalalova@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-ide\",\n      \"description\": \"Refactoring & analysis: rename, move, dependency cycles, impact analysis, deadcode detection, snapshots. TS/JS.\",\n      \"source\": \"./plugins/skills/agent-ide\",\n      \"category\": \"development\",\n      \"version\": \"0.13.5\"\n    }\n  ]\n}\n",
+        "plugins/skills/agent-ide/SKILL.md": "---\nname: agent-ide\ndescription: TS/JS 程式碼智能重構工具。重命名、移動檔案、清理 dead code、修改函式簽章時自動更新所有引用。\n---\n\n# Agent IDE\n\nTS/JS 程式碼智能重構工具。\n\n## 功能列表\n\n| 功能 | 用途 |\n|------|------|\n| [snapshot](references/snapshot.md) | 專案/模組 API 快照 |\n| [cycles](references/cycles.md) | 循環依賴檢測 |\n| [impact](references/impact.md) | 變更影響分析 |\n| [find-references](references/find-references.md) | 符號引用查找 |\n| [call-hierarchy](references/call-hierarchy.md) | 呼叫層次追蹤 |\n| [rename](references/rename.md) | 重命名符號 + 自動更新引用 |\n| [move](references/move.md) | 移動檔案/成員 + 自動更新 import |\n| [change-signature](references/change-signature.md) | 修改函式參數 + 更新呼叫點 |\n| [deadcode](references/deadcode.md) | 檢測/清理未使用程式碼 |\n\n## 最佳實踐\n\n### 重構標準流程\n\n```text\n1. deadcode     → 清理未使用程式碼（清場）\n2. snapshot     → 了解專案架構（偵察）\n3. cycles       → 檢測循環依賴（診斷）\n4. move         → 重組檔案/成員（重構）\n5. rename       → 修正命名風格（收尾）\n```\n\n### 場景選用指南\n\n| 場景 | 功能 | 說明 |\n|------|-------|------|\n| 接手新專案 | `deadcode` → `snapshot` | 先清垃圾，再看全貌 |\n| 重構前診斷 | `cycles` → `impact` | 找問題點，評估影響範圍 |\n| 檔案重組 | `move src/a.ts src/b/` | 自動更新所有 import |\n| 抽取函式 | `move src/a.ts:25 src/b.ts` | 移動成員到新位置 |\n| 統一命名 | `rename --from userId --to uid` | 全專案一致性 |\n| 修改 API | `change-signature` | 參數順序/名稱變更 |\n| 追蹤呼叫 | `call-hierarchy` → `find-references` | 理解函式使用情況 |\n\n### 安全操作原則\n\n1. **先 `--dry-run` 再執行**：變更類功能務必預覽\n2. **清理優先於重構**：`deadcode` 減少不必要的移動/重命名\n3. **小步快跑**：一次只做一種類型的變更，便於回滾\n4. **重構後驗證**：`cycles` 確保沒引入循環依賴\n",
+        "plugins/skills/agent-ide/references/call-hierarchy.md": "# call-hierarchy\n\n追蹤函式的呼叫層次關係。\n\n## 參數\n\n- `<function>` - 要分析的函式名稱（必填）\n- `--path <path>` - 專案路徑（必填）\n- `--direction both|incoming|outgoing` - 分析方向（預設 both）\n- `--format json|summary` - 輸出格式（預設 json）\n\n## 範例\n\n```bash\nnpx agent-ide call-hierarchy myFunction --path .\nnpx agent-ide call-hierarchy myFunction --path . --direction incoming\n```\n",
+        "plugins/skills/agent-ide/references/change-signature.md": "# change-signature\n\n修改函式參數並自動更新所有呼叫點。\n\n## 參數\n\n- `--file <file>` - 函式所在檔案（必填）\n- `--function <name>` - 函式名稱（必填）\n- `--reorder \"b,a,c\"` - 重新排序參數\n- `--add \"paramName:type\"` - 新增參數\n- `--remove \"paramName\"` - 移除參數\n- `--path <path>` - 專案路徑（預設當前目錄）\n- `--dry-run` - 預覽變更\n- `--format json|summary|diff` - 輸出格式（預設 diff）\n\n## 範例\n\n```bash\nnpx agent-ide change-signature --file src/api.ts --function fetch --reorder \"url,options,timeout\"\nnpx agent-ide change-signature --file src/api.ts --function fetch --add \"cache:boolean\" --dry-run\n```\n",
+        "plugins/skills/agent-ide/references/cycles.md": "# cycles\n\n檢測專案循環依賴（Tarjan 演算法）。\n\n## 參數\n\n- `--path <path>` - 專案路徑（必填）\n- `--format json|summary` - 輸出格式（預設 json）\n\n## 範例\n\n```bash\nnpx agent-ide cycles --path .\n```\n",
+        "plugins/skills/agent-ide/references/deadcode.md": "# deadcode\n\n檢測並清理未使用的程式碼。\n\n## 參數\n\n- `--path <path>` - 專案路徑（必填）\n- `--dry-run` - 預覽要刪除的程式碼\n- `--include-exports` - 也檢測未使用的 export\n- `--format json|summary|diff` - 輸出格式（預設 diff）\n\n## 範例\n\n```bash\nnpx agent-ide deadcode --path . --dry-run\nnpx agent-ide deadcode --path . --include-exports --dry-run\n```\n",
+        "plugins/skills/agent-ide/references/find-references.md": "# find-references\n\n查找符號的所有引用位置。\n\n## 參數\n\n- `<symbol>` - 要查找的符號名稱（必填）\n- `--path <path>` - 專案路徑（必填）\n- `--format json|summary` - 輸出格式（預設 json）\n\n## 範例\n\n```bash\nnpx agent-ide find-references myFunction --path .\n```\n",
+        "plugins/skills/agent-ide/references/impact.md": "# impact\n\n分析檔案變更的影響範圍（BFS）。\n\n## 參數\n\n- `--file <file>` - 要分析的檔案（必填）\n- `--path <path>` - 專案路徑（必填）\n- `--format json|summary` - 輸出格式（預設 json）\n\n## 範例\n\n```bash\nnpx agent-ide impact --file src/core/index.ts --path .\n```\n",
+        "plugins/skills/agent-ide/references/move.md": "# move\n\n移動檔案/成員並自動更新 import。\n\n## 參數\n\n- `<source>` - 來源路徑（必填）\n  - 檔案：`src/old.ts`\n  - 目錄：`src/utils/`\n  - Glob：`\"src/utils/*.ts\"`\n  - 成員：`src/utils.ts:25`（行號表示成員移動）\n- `<target>` - 目標路徑（必填）\n- `--path <path>` - 專案路徑（必填）\n- `--dry-run` - 預覽變更\n- `--format json|summary|diff` - 輸出格式（預設 diff）\n\n## 範例\n\n```bash\nnpx agent-ide move src/old.ts src/new.ts --path . --dry-run\nnpx agent-ide move src/utils src/helpers --path .\nnpx agent-ide move \"src/utils/*.ts\" src/lib/ --path .\nnpx agent-ide move src/utils.ts:25 src/helpers.ts --path .\n```\n",
+        "plugins/skills/agent-ide/references/rename.md": "# rename\n\n重命名符號並自動更新所有引用。\n\n## 參數\n\n- `--from <old>` - 原始符號名稱（必填）\n- `--to <new>` - 新符號名稱（必填）\n- `--path <path>` - 專案路徑（必填）\n- `--at <file:line:column>` - 指定符號位置（同名消歧）\n- `--dry-run` - 預覽變更\n- `--format json|summary|diff` - 輸出格式（預設 diff）\n\n## 範例\n\n```bash\nnpx agent-ide rename --from oldName --to newName --path . --dry-run\nnpx agent-ide rename --from userId --to uid --at src/user.ts:42 --path .\n```\n",
+        "plugins/skills/agent-ide/references/snapshot.md": "# snapshot\n\n產生專案/模組 API 快照，節省 ~91% token。\n\n## 參數\n\n- `--path <path>` - 目標路徑（必填）\n- `--since last` - 增量模式\n- `--refresh` - 強制重新生成\n- `--format json|summary` - 輸出格式（預設 json）\n\n## 範例\n\n```bash\nnpx agent-ide snapshot --path .\nnpx agent-ide snapshot --path src/core/indexing\nnpx agent-ide snapshot --path . --since last\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "agent-ide",
+          "description": "Refactoring & analysis: rename, move, dependency cycles, impact analysis, deadcode detection, snapshots. TS/JS.",
+          "source": "./plugins/skills/agent-ide",
+          "category": "development",
+          "version": "0.13.5",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add vivalalova/agent-ide",
+            "/plugin install agent-ide@agent-ide-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

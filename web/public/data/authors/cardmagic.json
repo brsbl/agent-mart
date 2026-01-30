@@ -1,0 +1,141 @@
+{
+  "author": {
+    "id": "cardmagic",
+    "display_name": "Lucas Carlson",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1264?v=4",
+    "url": "https://github.com/cardmagic",
+    "bio": "craftsmanfounder.com",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 7,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "cardmagic",
+      "version": null,
+      "description": "Search and browse Apple Notes with fuzzy matching",
+      "owner_info": null,
+      "keywords": [],
+      "repo_full_name": "cardmagic/notes",
+      "repo_url": "https://github.com/cardmagic/notes",
+      "repo_description": "CLI and MCP server to search and browse Apple Notes",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-28T12:57:18Z",
+        "created_at": "2026-01-01T18:02:36Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 202
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 277
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 7435
+        },
+        {
+          "path": "commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "commands/create.md",
+          "type": "blob",
+          "size": 566
+        },
+        {
+          "path": "commands/delete.md",
+          "type": "blob",
+          "size": 558
+        },
+        {
+          "path": "commands/folder.md",
+          "type": "blob",
+          "size": 503
+        },
+        {
+          "path": "commands/folders.md",
+          "type": "blob",
+          "size": 449
+        },
+        {
+          "path": "commands/read.md",
+          "type": "blob",
+          "size": 394
+        },
+        {
+          "path": "commands/recent.md",
+          "type": "blob",
+          "size": 473
+        },
+        {
+          "path": "commands/search.md",
+          "type": "blob",
+          "size": 485
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/notes",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/notes/SKILL.md",
+          "type": "blob",
+          "size": 1511
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cardmagic\",\n  \"plugins\": [\n    {\n      \"name\": \"notes\",\n      \"source\": \"./\",\n      \"description\": \"Search and browse Apple Notes with fuzzy matching\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"notes\",\n  \"description\": \"Search and browse Apple Notes from the command line\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Lucas Carlson\"\n  },\n  \"repository\": \"https://github.com/cardmagic/notes\",\n  \"keywords\": [\"macos\", \"apple\", \"notes\", \"search\", \"mcp\"]\n}\n",
+        "README.md": "# @cardmagic/notes\n\nCLI and MCP server to search and browse Apple Notes with fuzzy matching.\n\n## Features\n\n- **Fuzzy search** - Find notes even with typos using MiniSearch\n- **Full-text search** - Searches note titles, snippets, and body content\n- **Create & delete notes** - Manage notes via AppleScript automation\n- **PDF text extraction** - Automatically extracts and indexes text from PDF attachments\n- **Folder browsing** - List and filter notes by folder\n- **Fast indexing** - SQLite FTS5 + MiniSearch for quick searches across thousands of notes\n- **Dual mode** - Use as CLI tool or MCP server for Claude Code integration\n\n## Installation\n\n### Homebrew\n\n```bash\nbrew install cardmagic/tap/notes\n```\n\n### npm\n\n```bash\nnpm install -g @cardmagic/notes\n```\n\n### Claude Code Plugin (recommended)\n\nInstall as a plugin to get skills (auto-invoked) and slash commands:\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add cardmagic/ai-marketplace\n\n# Install the plugin\nclaude plugin install notes@cardmagic\n```\n\nThis gives you:\n- **Skill**: Claude automatically searches notes when you ask about notes\n- **Slash commands**: `/notes:search`, `/notes:recent`, `/notes:folders`, and more\n\n### MCP Server\n\nFor direct MCP tool access without the plugin:\n\n```bash\nclaude mcp add --transport stdio notes -- npx -y @cardmagic/notes --mcp\n```\n\nOr install globally first:\n\n```bash\nnpm install -g @cardmagic/notes\nclaude mcp add --transport stdio notes -- notes --mcp\n```\n\n### From source\n\n```bash\ngit clone https://github.com/cardmagic/notes.git\ncd notes\nmake install\n\n# Then add as plugin OR MCP server:\nclaude plugin marketplace add cardmagic/ai-marketplace\nclaude plugin install notes@cardmagic\n# OR\nclaude mcp add --transport stdio notes -- notes --mcp\n```\n\n## Requirements\n\n- **macOS** - Reads from Apple Notes database\n- **Full Disk Access** - Terminal/IDE needs access to `~/Library/Group Containers/`\n- **pdftotext** (optional) - For PDF text extraction\n\n```bash\n# Install pdftotext for PDF support\nbrew install poppler\n```\n\n## Granting Full Disk Access\n\nThe tool needs to read your Notes database at `~/Library/Group Containers/group.com.apple.notes/`:\n\n1. Open **System Settings** > **Privacy & Security** > **Full Disk Access**\n2. Click **+** and add your terminal app (Terminal.app, iTerm, Warp, etc.)\n3. Restart your terminal\n\n## CLI Usage\n\n### Search notes\n\n```bash\n# Fuzzy search\nnotes search \"recipe chocolate\"\n\n# Filter by folder\nnotes search \"taxes\" --folder \"2024\"\n\n# Limit results\nnotes search \"meeting\" --limit 5\n\n# Filter by date\nnotes search \"project\" --after 2024-01-01\n```\n\n### Browse notes\n\n```bash\n# Recent notes\nnotes recent\nnotes recent --limit 10\n\n# List all folders\nnotes folders\n\n# Notes in a specific folder\nnotes folder \"Recipes\"\nnotes folder \"Work\" --limit 20\n```\n\n### Read a note\n\n```bash\n# Get note ID from search results, then read full content\nnotes read 12345\n```\n\n### Create a note\n\n```bash\n# Create a new note in the default \"Notes\" folder\nnotes create \"Meeting Notes\" --body \"Agenda items for today...\"\n\n# Create in a specific folder\nnotes create \"Shopping List\" --body \"Milk, eggs, bread\" --folder \"Personal\"\n```\n\n### Delete a note\n\n```bash\n# Delete a note by title\nnotes delete \"Old Meeting Notes\"\n\n# Delete from a specific folder (useful if multiple notes have the same title)\nnotes delete \"Draft\" --folder \"Work\"\n```\n\n### Manage index\n\n```bash\n# Show index statistics\nnotes stats\n\n# Update index (incremental - only processes changed notes)\nnotes index\n\n# Force full rebuild\nnotes index --force\n```\n\nThe index uses **incremental updates** by default:\n- Tracks modification timestamps to detect changed notes\n- Only reprocesses notes modified since last index\n- Detects and removes deleted notes\n- Much faster than full rebuild for small changes\n\n## Claude Code Plugin\n\nWhen installed as a plugin, you get:\n\n**Skill** (auto-invoked): Claude automatically searches notes when you ask things like:\n- \"What's in my notes about recipes?\"\n- \"Find my notes about the project\"\n- \"Create a note about the meeting\"\n- \"Delete my draft notes\"\n\n**Slash Commands**:\n\n| Command | Description |\n|---------|-------------|\n| `/notes:search <query>` | Fuzzy search with optional filters |\n| `/notes:recent` | Show recently modified notes |\n| `/notes:folders` | List all folders with note counts |\n| `/notes:folder \"Name\"` | List notes in a specific folder |\n| `/notes:read <id>` | Read full note content by ID |\n| `/notes:create <title>` | Create a new note |\n| `/notes:delete <title>` | Delete a note by title |\n\n## MCP Server\n\nRun as an MCP server for Claude Code integration:\n\n```bash\nnotes --mcp\n```\n\n### Available Tools\n\n| Tool | Description |\n|------|-------------|\n| `search_notes` | Fuzzy search through notes |\n| `recent_notes` | Get recently modified notes |\n| `read_note` | Read full note content by ID |\n| `list_folders` | List all folders with note counts |\n| `notes_in_folder` | List notes in a specific folder |\n| `get_note_stats` | Get index statistics |\n| `create_note` | Create a new note |\n| `delete_note` | Delete a note by title |\n\n### Manual MCP Configuration\n\nFor Claude Desktop or VS Code, add to your MCP configuration:\n\n```json\n{\n  \"mcpServers\": {\n    \"notes\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@cardmagic/notes\", \"--mcp\"]\n    }\n  }\n}\n```\n\n## PDF Text Extraction\n\nPDF attachments in Notes are automatically extracted and indexed when:\n\n1. **pdftotext is installed** - `brew install poppler`\n2. **PDF has been viewed** - Notes caches PDFs locally when opened\n\nThe extracted text is appended to the note body, making PDF content fully searchable.\n\n### How it works\n\n- PDFs are cached at `~/Library/Group Containers/group.com.apple.notes/Library/Caches/Paper/`\n- Each PDF bundle contains the file in `Assets.bundle/`\n- Text is extracted using `pdftotext` and indexed with the parent note\n\n### Limitations\n\n- PDFs stored only in iCloud (never opened locally) won't be indexed\n- Password-protected PDFs cannot be extracted\n- Scanned PDFs without OCR won't have searchable text\n\n## Data Locations\n\n| Data | Path |\n|------|------|\n| Notes database | `~/Library/Group Containers/group.com.apple.notes/NoteStore.sqlite` |\n| PDF cache | `~/Library/Group Containers/group.com.apple.notes/Library/Caches/Paper/` |\n| Search index | `~/.notes/index.db` |\n| Fuzzy index | `~/.notes/fuzzy.json` |\n| Stats | `~/.notes/stats.json` |\n\n## Development\n\n```bash\n# Clone and install\ngit clone https://github.com/cardmagic/notes\ncd notes\npnpm install\n\n# Build\npnpm build\n\n# Watch mode\npnpm dev\n\n# Link globally for testing\npnpm link --global\n\n# Type check\npnpm typecheck\n\n# Lint\npnpm lint\n```\n\n### Project Structure\n\n```\nsrc/\n├── index.ts        # Entry point - routes to CLI or MCP\n├── cli.ts          # Commander-based CLI\n├── mcp.ts          # MCP server implementation\n├── applescript.ts  # AppleScript automation for create/delete\n├── indexer.ts      # Builds search indexes from Notes database\n├── searcher.ts     # Query engine with fuzzy matching\n├── attachments.ts  # PDF text extraction\n├── formatter.ts    # Terminal output formatting\n└── types.ts        # TypeScript types and utilities\n```\n\n## Privacy\n\nThis tool accesses your local Notes database for reading and uses AppleScript to create/delete notes. No data is sent externally. The search index is stored locally in `~/.notes/`.\n\n## License\n\nMIT\n\n## Author\n\nLucas Carlson\n",
+        "commands/create.md": "---\ndescription: Create a new Apple Note\nallowed-tools: Bash(notes:*)\nargument-hint: <title> --body \"content\" [--folder \"Folder\"]\n---\n\n# Create Note\n\nCreate a new note in Apple Notes.\n\n## Instructions\n\n1. Check if the notes CLI is installed:\n```bash\ncommand -v notes || pnpm add -g @cardmagic/notes\n```\n\n2. Create the note:\n```bash\nnotes create \"$ARGUMENTS\"\n```\n\n## Examples\n\n- `/notes:create \"Meeting Notes\" --body \"Agenda items...\"` - Create a note with content\n- `/notes:create \"Shopping List\" --body \"Milk, Eggs\" --folder \"Personal\"` - Create in specific folder\n",
+        "commands/delete.md": "---\ndescription: Delete an Apple Note by title\nallowed-tools: Bash(notes:*)\nargument-hint: <title> [--folder \"Folder\"]\n---\n\n# Delete Note\n\nDelete a note from Apple Notes by its title.\n\n## Instructions\n\n1. Check if the notes CLI is installed:\n```bash\ncommand -v notes || pnpm add -g @cardmagic/notes\n```\n\n2. Delete the note:\n```bash\nnotes delete \"$ARGUMENTS\"\n```\n\n## Examples\n\n- `/notes:delete \"Old Meeting Notes\"` - Delete a note by title\n- `/notes:delete \"Draft\" --folder \"Work\"` - Delete from specific folder (useful if multiple notes have the same title)\n",
+        "commands/folder.md": "---\ndescription: List notes in a specific folder\nallowed-tools: Bash(notes:*)\nargument-hint: <folder_name>\n---\n\n# Notes in Folder\n\nList all notes in a specific Apple Notes folder.\n\n## Instructions\n\n1. Check if the notes CLI is installed:\n```bash\ncommand -v notes || pnpm add -g @cardmagic/notes\n```\n\n2. List notes in folder:\n```bash\nnotes folder \"$ARGUMENTS\"\n```\n\n## Examples\n\n- `/notes:folder Taxes` - List notes in Taxes folder\n- `/notes:folder \"Business Ideas\"` - List notes in Business Ideas folder\n",
+        "commands/folders.md": "---\ndescription: List Apple Notes folders\nallowed-tools: Bash(notes:*)\nargument-hint: [limit]\n---\n\n# List Folders\n\nList all Apple Notes folders with note counts.\n\n## Instructions\n\n1. Check if the notes CLI is installed:\n```bash\ncommand -v notes || pnpm add -g @cardmagic/notes\n```\n\n2. List folders:\n```bash\nnotes folders ${ARGUMENTS:+-l $ARGUMENTS}\n```\n\n## Examples\n\n- `/notes:folders` - Show all folders\n- `/notes:folders 10` - Show top 10 folders\n",
+        "commands/read.md": "---\ndescription: Read an Apple Note by ID\nallowed-tools: Bash(notes:*)\nargument-hint: <note_id>\n---\n\n# Read Note\n\nRead the full content of an Apple Note by its ID.\n\n## Instructions\n\n1. Check if the notes CLI is installed:\n```bash\ncommand -v notes || pnpm add -g @cardmagic/notes\n```\n\n2. Read the note:\n```bash\nnotes read $ARGUMENTS\n```\n\n## Examples\n\n- `/notes:read 123` - Read note with ID 123\n",
+        "commands/recent.md": "---\ndescription: Show recently modified Apple Notes\nallowed-tools: Bash(notes:*)\nargument-hint: [limit]\n---\n\n# Recent Notes\n\nShow the most recently modified Apple Notes.\n\n## Instructions\n\n1. Check if the notes CLI is installed:\n```bash\ncommand -v notes || pnpm add -g @cardmagic/notes\n```\n\n2. Get recent notes:\n```bash\nnotes recent ${ARGUMENTS:+-l $ARGUMENTS}\n```\n\n## Examples\n\n- `/notes:recent` - Show 20 most recent notes\n- `/notes:recent 10` - Show 10 most recent notes\n",
+        "commands/search.md": "---\ndescription: Search Apple Notes with fuzzy matching\nallowed-tools: Bash(notes:*)\nargument-hint: <query>\n---\n\n# Search Notes\n\nSearch through Apple Notes using fuzzy matching.\n\n## Instructions\n\n1. Check if the notes CLI is installed:\n```bash\ncommand -v notes || pnpm add -g @cardmagic/notes\n```\n\n2. Run the search:\n```bash\nnotes search \"$ARGUMENTS\"\n```\n\n## Examples\n\n- `/notes:search recipe` - Find notes about recipes\n- `/notes:search \"tax 2024\"` - Find tax-related notes from 2024\n",
+        "skills/notes/SKILL.md": "---\nname: notes\ndescription: Search, browse, create, and delete Apple Notes. Use when user asks about notes, wants to find something in notes, create a new note, or delete notes.\ntriggers:\n  - \"notes\"\n  - \"apple notes\"\n  - \"find note\"\n  - \"search notes\"\n  - \"my notes\"\n  - \"list notes\"\n  - \"read note\"\n  - \"create note\"\n  - \"add note\"\n  - \"new note\"\n  - \"delete note\"\n  - \"remove note\"\n---\n\n# Apple Notes Skill\n\nSearch, browse, create, and delete Apple Notes with fuzzy matching.\n\n## Prerequisites\n\nEnsure the notes CLI is installed:\n\n```bash\nif ! command -v notes &> /dev/null; then\n  pnpm add -g @cardmagic/notes\nfi\n```\n\n## Commands\n\n### Search notes\n```bash\nnotes search \"query\" [-l limit] [-f folder] [-a after_date]\n```\n\n### Recent notes\n```bash\nnotes recent [-l limit]\n```\n\n### Read a note by ID\n```bash\nnotes read <id>\n```\n\n### List folders\n```bash\nnotes folders [-l limit]\n```\n\n### Notes in folder\n```bash\nnotes folder \"folder_name\" [-l limit]\n```\n\n### Index statistics\n```bash\nnotes stats\n```\n\n### Rebuild index\n```bash\nnotes index [-f|--force]\n```\n\n### Create a note\n```bash\nnotes create \"Title\" --body \"Content\" [--folder \"Folder\"]\n```\n\n### Delete a note\n```bash\nnotes delete \"Title\" [--folder \"Folder\"]\n```\n\n## Examples\n\n- Search for \"recipe\": `notes search \"recipe\"`\n- Recent notes: `notes recent`\n- Notes in Taxes folder: `notes folder Taxes`\n- Read note ID 123: `notes read 123`\n- Create a note: `notes create \"Meeting Notes\" --body \"Agenda items...\"`\n- Delete a note: `notes delete \"Old Draft\"`\n"
+      },
+      "plugins": [
+        {
+          "name": "notes",
+          "source": "./",
+          "description": "Search and browse Apple Notes with fuzzy matching",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cardmagic/notes",
+            "/plugin install notes@cardmagic"
+          ]
+        }
+      ]
+    }
+  ]
+}

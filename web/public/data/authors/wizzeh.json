@@ -1,0 +1,107 @@
+{
+  "author": {
+    "id": "wizzeh",
+    "display_name": "Ellie High",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6687206?u=ae60a53c3cfa664ff05b2af60c3b87583fb21d0c&v=4",
+    "url": "https://github.com/wizzeh",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 2,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "ellies-marketplace",
+      "version": null,
+      "description": "Ellie's frontend and nix environment standards",
+      "owner_info": {
+        "name": "Ellie"
+      },
+      "keywords": [],
+      "repo_full_name": "wizzeh/skills",
+      "repo_url": "https://github.com/wizzeh/skills",
+      "repo_description": "my skills :)",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-04T03:40:14Z",
+        "created_at": "2026-01-04T03:35:30Z",
+        "license": "GPL-3.0"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 254
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 158
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 49
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/ellies-frontend-standards",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/ellies-frontend-standards/SKILL.md",
+          "type": "blob",
+          "size": 1946
+        },
+        {
+          "path": "skills/ellies-nix-environment",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/ellies-nix-environment/SKILL.md",
+          "type": "blob",
+          "size": 2414
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ellies-marketplace\",\n  \"owner\": {\n    \"name\": \"Ellie\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ellies-skills\",\n      \"source\": \"./\",\n      \"description\": \"Ellie's frontend and nix environment standards\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ellies-skills\",\n  \"description\": \"Ellie's frontend and nix environment standards\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Ellie\"\n  }\n}\n",
+        "README.md": "this is a collection of my claude code skills :)\n",
+        "skills/ellies-frontend-standards/SKILL.md": "---\nname: ellies-frontend-standards\ndescription: Frontend development standards for Ellie's projects. Use when building frontend interfaces, components, pages, or applications. Enforces tech stack preferences (Leptos > HTMX/SolidJS > React, modern vanilla CSS, no Tailwind) and accessibility-first development. Always apply these standards unless they conflict with an existing project's established patterns.\n---\n\n# Ellie's Frontend Standards\n\n## Core Principles\n\n**Consistency trumps these guidelines.** If working in an existing project with established patterns, follow those patterns even if they contradict the preferences below.\n\n## Tech Stack\n\n### Frameworks (in order of preference)\n\n1. **Leptos** (Rust) - Preferred when Rust is an option\n2. **HTMX** or **SolidJS** - Preferred for JS-based projects\n3. **React** - Only when required by existing project or explicit request\n\n### CSS\n\n**Use modern vanilla CSS.** Take advantage of:\n- CSS custom properties (variables)\n- Native CSS nesting\n- Container queries\n- `:has()`, `:is()`, `:where()` selectors\n- CSS Grid and Flexbox\n- `clamp()` for fluid typography and spacing\n\n**Never use Tailwind.** No exceptions.\n\n### Aesthetics\n\nDefer to the `frontend-design` skill for visual design guidance (typography, color, motion, layout aesthetics).\n\n## Accessibility\n\nAccessibility is a priority, not an afterthought:\n\n- **Semantic HTML first** - Use the right element for the job (`<button>`, `<nav>`, `<main>`, `<article>`, etc.)\n- **Keyboard navigation** - All interactive elements must be keyboard accessible\n- **Focus management** - Visible focus indicators, logical focus order, focus trapping in modals\n- **ARIA when needed** - Only when semantic HTML isn't sufficient; prefer native elements\n- **Color contrast** - Meet WCAG AA minimum (4.5:1 for text, 3:1 for large text/UI)\n- **Motion** - Respect `prefers-reduced-motion`\n- **Screen reader testing** - Consider how content reads linearly\n",
+        "skills/ellies-nix-environment/SKILL.md": "---\nname: ellies-nix-environment\ndescription: Nix environment patterns for Ellie's projects. Use when (1) a tool or command is not available on the system, or (2) setting up a new project that needs a development environment. Provides patterns for ad-hoc tool execution and flake-based devShells with direnv.\n---\n\n# Ellie's Nix Environment\n\n## When a Tool Isn't Available\n\nIf a command fails because a tool isn't installed, use `nix run` to execute it:\n\n```bash\nnix run nixpkgs#<tool> -- <args>\n```\n\nExamples:\n```bash\nnix run nixpkgs#python3 -- script.py\nnix run nixpkgs#jq -- '.field' file.json\nnix run nixpkgs#ffmpeg -- -i input.mp4 output.gif\nnix run nixpkgs#ripgrep -- \"pattern\" .\n```\n\nDo not suggest installing tools globally. Use `nix run` for one-off commands.\n\n## Setting Up a New Project\n\nWhen a project needs a development environment, create a flake with direnv:\n\n### 1. Create `flake.nix`\n\n```nix\n{\n  description = \"Project description\";\n\n  inputs = {\n    nixpkgs.url = \"github:NixOS/nixpkgs/nixpkgs-unstable\";\n    flake-utils.url = \"github:numtide/flake-utils\";\n  };\n\n  outputs = { self, nixpkgs, flake-utils }:\n    flake-utils.lib.eachDefaultSystem (system:\n      let\n        pkgs = nixpkgs.legacyPackages.${system};\n      in\n      {\n        devShells.default = pkgs.mkShell {\n          buildInputs = with pkgs; [\n            # Add project dependencies here\n          ];\n        };\n      });\n}\n```\n\n### 2. Create `.envrc`\n\n```bash\nuse flake .\n```\n\n### 3. Activate direnv\n\n```bash\ndirenv allow\n```\n\n### 4. Add to `.gitignore`\n\n```\n.direnv/\n```\n\n## Rust Projects\n\nFor Rust projects, use rust-overlay to get the toolchain:\n\n```nix\n{\n  description = \"Rust project\";\n\n  inputs = {\n    nixpkgs.url = \"github:NixOS/nixpkgs/nixpkgs-unstable\";\n    flake-utils.url = \"github:numtide/flake-utils\";\n    rust-overlay = {\n      url = \"github:oxalica/rust-overlay\";\n      inputs.nixpkgs.follows = \"nixpkgs\";\n    };\n  };\n\n  outputs = { self, nixpkgs, flake-utils, rust-overlay }:\n    flake-utils.lib.eachDefaultSystem (system:\n      let\n        overlays = [ (import rust-overlay) ];\n        pkgs = import nixpkgs { inherit system overlays; };\n        rust = pkgs.rust-bin.nightly.latest.default.override {\n          extensions = [ \"rust-src\" \"rust-analyzer\" ];\n        };\n      in\n      {\n        devShells.default = pkgs.mkShell {\n          buildInputs = [\n            rust\n          ];\n        };\n      });\n}\n```\n\n"
+      },
+      "plugins": [
+        {
+          "name": "ellies-skills",
+          "source": "./",
+          "description": "Ellie's frontend and nix environment standards",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add wizzeh/skills",
+            "/plugin install ellies-skills@ellies-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

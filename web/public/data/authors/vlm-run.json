@@ -1,0 +1,90 @@
+{
+  "author": {
+    "id": "vlm-run",
+    "display_name": "VLM Run",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/188105732?v=4",
+    "url": "https://github.com/vlm-run",
+    "bio": "The Unified Gateway for Visual AI",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 6,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "vlmrun-skills",
+      "version": null,
+      "description": "Agent Skills for visual AI tasks including image understanding, video processing, document extraction, and multi-modal generation using VLM Run's Orion agent",
+      "owner_info": {
+        "name": "VLM Run"
+      },
+      "keywords": [],
+      "repo_full_name": "vlm-run/skills",
+      "repo_url": "https://github.com/vlm-run/skills",
+      "repo_description": "Claude skill for VLM Run CLI",
+      "homepage": null,
+      "signals": {
+        "stars": 6,
+        "forks": 0,
+        "pushed_at": "2026-01-28T17:08:48Z",
+        "created_at": "2026-01-16T23:52:05Z",
+        "license": "Apache-2.0"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 697
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 591
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/vlmrun-cli-skill",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/vlmrun-cli-skill/SKILL.md",
+          "type": "blob",
+          "size": 4454
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"vlmrun-skills\",\n  \"owner\": {\n    \"name\": \"VLM Run\"\n  },\n  \"metadata\": {\n    \"description\": \"Agent Skills for visual AI tasks including image understanding, video processing, document extraction, and multi-modal generation using VLM Run's Orion agent\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"vlmrun-cli-skill\",\n      \"source\": \"./skills/vlmrun-cli-skill\",\n      \"skills\": \"./\",\n      \"description\": \"Use the VLM Run CLI to interact with Orion visual AI agent. Process images, videos, and documents with natural language. Supports image understanding/generation, object detection, OCR, video summarization, document extraction, and visual AI chat.\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"vlmrun-skills\",\n  \"description\": \"Agent Skills for visual AI tasks including image understanding, video processing, document extraction, and multi-modal generation using VLM Run's Orion agent\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"VLM Run\"\n  },\n  \"homepage\": \"https://vlm.run\",\n  \"repository\": \"https://github.com/vlm-run/skills\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\n    \"vlmrun\",\n    \"visual-ai\",\n    \"image-understanding\",\n    \"video-processing\",\n    \"document-extraction\",\n    \"ocr\",\n    \"image-generation\",\n    \"video-generation\",\n    \"multi-modal\"\n  ]\n}\n",
+        "skills/vlmrun-cli-skill/SKILL.md": "---\nname: vlmrun-cli-skill\ndescription: \"Use the VLM Run CLI (`vlmrun`) to interact with Orion visual AI agent. Process images, videos, and documents with natural language. Triggers: image understanding/generation, object detection, OCR, video summarization, document extraction, image generation, visual AI chat, 'generate an image/video', 'analyze this image/video', 'extract text from', 'summarize this video', 'process this PDF'.\"\n---\n\n# VLM Run CLI\n\nChat with VLM Run's Orion visual AI agent via CLI.\n\n## Setup\n```bash\nuv venv && source .venv/bin/activate\nuv pip install \"vlmrun[cli]\"\n```\n\n## Environment Variables\n\nYou must load the following variables in your environment so that the CLI can use them. You may load the [./env](./env) file to your environment.\n\n| Variable | Type | Description |\n|----------|------|-------------|\n| `VLMRUN_API_KEY` | Required | Your VLM Run API key (required) |\n| `VLMRUN_BASE_URL` | Optional | Base URL (default: `https://agent.vlm.run/v1`) |\n| `VLMRUN_CACHE_DIR` | Optional | Cache directory (default: `~/.vlmrun/cache/artifacts/`) |\n\n## Command\n\n```bash\nvlmrun chat \"<prompt>\" -i input.jpg [options]\n```\n\n## Options\n\n| Flag | Description |\n|------|-------------|\n| `-p, --prompt` | Prompt text, file path, or `stdin` |\n| `-i, --input` | Input file(s) - images, videos, docs (repeatable) |\n| `-o, --output` | Artifact directory (default: `~/.vlmrun/cache/artifacts/`) |\n| `-m, --model` | `vlmrun-orion-1:fast`, `vlmrun-orion-1:auto` (default), `vlmrun-orion-1:pro` |\n| `-s, --session` | Optional session ID to continue a previous session |\n| `-j, --json` | Raw JSON output |\n| `-ns, --no-stream` | Disable streaming |\n| `-nd, --no-download` | Skip artifact download |\n\n## Examples\n\n### Images\n```bash\nvlmrun chat \"Describe what you see in this image in detail\" -i photo.jpg\nvlmrun chat \"Detect and list all objects visible in this scene\" -i scene.jpg\nvlmrun chat \"Extract all text and numbers from this document image\" -i document.png\nvlmrun chat \"Compare these two images and describe the differences\" -i before.jpg -i after.jpg\n```\n\n### Image Generation\n```bash\nvlmrun chat \"Generate a photorealistic image of a cozy cabin in a snowy forest at sunset\" -o ./generated\nvlmrun chat \"Remove the background from this product image and make it transparent\" -i product.jpg -o ./output\n```\n\n### Video\n```bash\nvlmrun chat \"Summarize the key points discussed in this meeting video\" -i meeting.mp4\nvlmrun chat \"Find the top 3 highlight moments and create short clips from them\" -i sports.mp4\nvlmrun chat \"Transcribe this lecture with timestamps for each section\" -i lecture.mp4 --json\n```\n\n### Video Generation\n```bash\nvlmrun chat \"Generate a 5-second video of ocean waves crashing on a rocky beach at golden hour\" -o ./videos\nvlmrun chat \"Create a smooth slow-motion video from this image\" -i ocean.jpg -o ./output\n```\n\n### Documents\n```bash\nvlmrun chat \"Extract the vendor name, line items, and total amount\" -i invoice.pdf --json\nvlmrun chat \"Summarize the key terms and obligations in this contract\" -i contract.pdf\n```\n\n### Prompt Sources\n```bash\n# Direct prompt\nvlmrun chat \"What objects and people are visible in this image?\" -i photo.jpg\n\n# Prompt from file\nvlmrun chat -p long_prompt.txt -i photo.jpg\n\n# Prompt from stdin\necho \"Describe this image in detail\" | vlmrun chat - -i photo.jpg\n```\n\n### Continuing a previous session\nIf you want to keep the past conversation and generated artifacts in context, you can use the `-s` flag to continue a previous session using the session ID generated when you started the session.\n\n```bash\n# Start a new session of an image generation task where a new character is generated\nvlmrun chat \"Create an iconic scene of a ninja in a forest, practicing his skills with a katana?\" -i photo.jpg\n\n# Use the previous chat session in context to retain the same character and scene context (where the session ID is <session_id>)\nvlmrun chat \"Create a new scene with the same character meditating under a tree\" -i photo.jpg -s <session_id>\n```\n\n### Skipping artifact download\nIf you want to skip the artifact download, you can use the `-nd` flag.\n```bash\nvlmrun chat \"What objects and people are visible in this image?\" -i photo.jpg -nd\n```\n\n## Notes\n\n- Use `-o ./<directory>` to save generated artifacts (images, videos) relative to your current working directory\n- Without `-o`, artifacts save to `~/.vlmrun/cache/artifacts/<session_id>/`\n- Multiple input files upload concurrently\n"
+      },
+      "plugins": [
+        {
+          "name": "vlmrun-cli-skill",
+          "source": "./skills/vlmrun-cli-skill",
+          "skills": "./",
+          "description": "Use the VLM Run CLI to interact with Orion visual AI agent. Process images, videos, and documents with natural language. Supports image understanding/generation, object detection, OCR, video summarization, document extraction, and visual AI chat.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add vlm-run/skills",
+            "/plugin install vlmrun-cli-skill@vlmrun-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "author": {
+    "id": "JimmyPeilinLi",
+    "display_name": "Peilin Li",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/177450066?u=a924bfd3017bf5d95dcf049c14c17b05078df54b&v=4",
+    "url": "https://github.com/JimmyPeilinLi",
+    "bio": "Northwestern Polytechnical University/major in Computer Science",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "training-profile-toolkit",
+      "version": null,
+      "description": "Top-down training performance profiling toolkit for PyTorch + DeepSpeed workloads",
+      "owner_info": {
+        "name": "lpl",
+        "email": ""
+      },
+      "keywords": [],
+      "repo_full_name": "JimmyPeilinLi/profile_claude_skill",
+      "repo_url": "https://github.com/JimmyPeilinLi/profile_claude_skill",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-29T12:52:34Z",
+        "created_at": "2026-01-29T12:52:01Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 592
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3682
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/profile-training",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/profile-training/SKILL.md",
+          "type": "blob",
+          "size": 7625
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"training-profile-toolkit\",\n  \"owner\": {\n    \"name\": \"lpl\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Top-down training performance profiling toolkit for PyTorch + DeepSpeed workloads\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"profile-training\",\n      \"description\": \"Complete top-down performance profiling pipeline: from nsys/torch.profiler/pyinstrument traces to hierarchical time attribution with source code mapping\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/profile-training\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Training Profile Toolkit\n\nPyTorch + DeepSpeed 训练性能 Top-Down 分析工具包。\n\n从三种 profile 数据（nsys、torch.profiler、pyinstrument）出发，完成完整的层次化时间归因分析，最终输出到具体代码和 aten 操作级别的性能分解。\n\n## 使用方式\n\n### 作为 Claude Code Skill\n\n```bash\n# 安装为 Claude Code plugin\nclaude plugin add /path/to/profile_toolkit\n\n# 使用 skill\n/profile-training\n```\n\n### 独立使用分析脚本\n\n```bash\ncd profile_toolkit/scripts\n\n# Step 1: 探索数据文件结构\npython 01_explore_data.py /path/to/profile_data\n\n# Step 2: 提取 NVTX 训练时间线\npython 02_nsys_nvtx_timeline.py /path/to/nsys.json\n\n# Step 3: GPU kernel 分类（nsys sqlite，避免 JSON 名称截断）\npython 03_nsys_gpu_kernels.py /path/to/nsys.sqlite time_ranges.json\n\n# Step 4: Memcpy + Sync 分析\npython 04_nsys_memcpy_sync.py /path/to/nsys.sqlite time_ranges.json\n\n# Step 5: CPU ops Total Time 聚合\npython 05_torch_cpu_ops.py /path/to/torch_trace.json <start_us> <end_us>\n\n# Step 6: Self Time 计算（核心算法）\npython 06_self_time.py /path/to/torch_trace.json <start_us> <end_us>\n\n# Step 7: CUDA Runtime 归因到关键 Op\npython 07_cuda_runtime_attribution.py /path/to/torch_trace.json <start_us> <end_us>\n\n# Step 8: Pyinstrument 代码路径分析\npython 08_pyinstrument_analysis.py /path/to/pyinstrument_trace.json\n```\n\n## 分析流水线\n\n```\n三种 Profile 输入\n├── nsys sqlite      → GPU kernel 分类 + Memcpy/Sync 统计\n├── nsys JSON        → NVTX 训练时间线（forward/backward wall time）\n├── torch.profiler   → cpu_op Total/Self Time + CUDA Runtime 归因\n└── pyinstrument     → Python 代码路径映射\n\n         ↓ 分析流水线\n\nStep 1: 数据探索 → 确认文件结构和可用字段\nStep 2: NVTX 时间线 → 识别稳态 step、提取时间范围\nStep 3: GPU kernel → 完整 demangled 名称分类（修正 JSON 截断问题）\nStep 4: Memcpy/Sync → HtoD 搬运量、带宽、同步等待时间\nStep 5: CPU ops → Total Time 聚合（含嵌套重复）\nStep 6: Self Time → Stack-based 去重算法（核心创新）\nStep 7: CUDA Runtime 归因 → 分解 self time 为 GPU sync vs Python dispatch\nStep 8: 代码路径 → 映射到 DeepSpeed/框架源码\n\n         ↓ 输出文档\n\n01. 训练整体流程时间分布\n02. Step 级 forward/backward wall time\n03. GPU kernel 分类统计\n04. 数据搬运深度分析\n05. CPU Self Time 层次化分解\n06. 完整时间归因大表（一级→二级→三级，到代码级）\n```\n\n## 核心算法\n\n### Self Time 计算（06_self_time.py）\n\ntorch.profiler 的 cpu_op 事件是嵌套的。使用 stack-based interval containment 算法：\n\n1. 按 `(ts, -dur)` 排序（相同起始时间，长事件先入栈成为父事件）\n2. 维护栈结构，栈顶是当前事件的父事件\n3. `child_dur[parent] += child.dur`\n4. `self_time = dur - child_dur`（自身独占 CPU 时间）\n\n### CUDA Runtime 归因（07_cuda_runtime_attribution.py）\n\n对每个关键 cpu_op，用 bisect 二分查找其时间范围内的 cuda_runtime 事件，\n分解 self time 为：\n- **GPU sync 等待**（cudaStreamSynchronize）\n- **Kernel launch**（cudaLaunchKernel）\n- **Memcpy dispatch**（cudaMemcpyAsync）\n- **Python/C++ 框架调度**（剩余部分）\n\n## 适用场景\n\n- PyTorch 训练性能分析\n- DeepSpeed ZeRO-3 + CPU Offload 瓶颈定位\n- MoE 模型参数搬运分析\n- Gradient Checkpointing 开销评估\n- 任何需要 top-down 层次化时间归因的训练调优\n\n## 依赖\n\n- Python 3.8+\n- 标准库：json, sqlite3, collections, bisect, sys, os\n- 无第三方依赖\n\n## License\n\nApache 2.0\n",
+        "skills/profile-training/SKILL.md": "---\nname: profile-training\ndescription: \"Perform complete top-down training performance profiling analysis from nsys/torch.profiler/pyinstrument trace data. Use when the user provides training profile data and wants GPU utilization, CPU time breakdown, memcpy analysis, or performance bottleneck identification.\"\nargument-hint: \"[profile_data_directory]\"\nallowed-tools: Read, Glob, Grep, Bash(python3:*), Bash(ls:*), Bash(sqlite3:*), Write, Edit\n---\n\n# Training Performance Top-Down Profiling\n\n你是一个专业的 PyTorch 训练性能分析工程师。用户会提供训练的 profile 数据（nsys、torch.profiler、pyinstrument 三种中的一种或多种），你需要完成从粗到细的完整 top-down 性能分析。\n\n## 输入数据\n\n用户会提供一个目录（通过 `$ARGUMENTS` 或对话指定），其中包含：\n\n| 数据源 | 典型文件 | 包含信息 |\n|--------|---------|---------|\n| nsys sqlite | `*.sqlite` | GPU kernel 完整 demangled 名称、Memcpy (HtoD/DtoH)、Sync 事件、NVTX 标记 |\n| nsys JSON | `*.nsys.json` | Chrome trace 格式，但 **kernel 名称会被截断**（重要：必须用 sqlite 修正） |\n| torch.profiler | `torch_trace.json` | cpu_op（嵌套）、cuda_runtime、autograd、user_annotation (NCCL) |\n| pyinstrument | `pyinstrument_trace.json` | Python 完整调用栈、函数级时间 |\n\n**第一步**：探索用户提供的目录，确认有哪些 profile 文件可用。\n\n## 分析流水线（按顺序执行）\n\n### Phase 1: 数据探索与时间线建立\n\n1. **探索数据文件结构**\n   - 检查每个文件的格式、大小、可用字段\n   - 脚本参考: `scripts/01_explore_data.py`\n\n2. **提取训练时间线**（需要 nsys JSON 或 torch_trace）\n   - 从 NVTX 标记提取每个 micro-batch 的 forward/backward/optimizer wall time\n   - 区分 warmup step（通常第 1 个 step）和稳态 step\n   - 确定稳态 step 的精确时间范围（后续分析的基础）\n   - 脚本参考: `scripts/02_nsys_nvtx_timeline.py`\n\n### Phase 2: GPU 侧分析（需要 nsys sqlite）\n\n3. **GPU Kernel 分类**\n   - **必须**使用 sqlite 的 `demangledName` 获取完整 kernel 名称（JSON 会截断！）\n   - 分类: GEMM (按 layout: TN/NN/NT/MoE ReLU)、Elementwise、FlashAttention、Reduction、Sort/TopK (MoE gate)、Copy 等\n   - 分别统计 Forward 和 Backward 的 kernel 时间\n   - 计算 GPU 利用率 = kernel time / wall time\n   - 脚本参考: `scripts/03_nsys_gpu_kernels.py`\n\n4. **数据搬运 (Memcpy) 分析**\n   - 从 `CUPTI_ACTIVITY_KIND_MEMCPY` 表统计 HtoD/DtoH/DtoD\n   - 关键指标: 搬运量(GB)、时间(s)、带宽(GB/s)、每 micro-batch 搬运量\n   - 对于 ZeRO-3 + CPU Offload: 分析参数搬运效率和浪费率（MoE 场景特别关注）\n   - 脚本参考: `scripts/04_nsys_memcpy_sync.py`\n\n5. **同步事件分析**\n   - 从 `CUPTI_ACTIVITY_KIND_SYNCHRONIZATION` 表统计 cudaStreamSynchronize 时间\n   - 这是 CPU 被阻塞等待 GPU 的时间\n\n### Phase 3: CPU 侧分析（需要 torch.profiler）\n\n6. **CPU Ops Total Time 聚合**\n   - 按操作名称聚合 `cpu_op` 事件的 total time（注意：含嵌套重复）\n   - 统计 CUDA Runtime 调用（cudaStreamSync、cudaLaunchKernel、cudaMemcpyAsync）\n   - 检查 NCCL 通信操作（单卡 ZeRO-3 稳态应几乎无 NCCL）\n   - 识别线程角色（主线程=forward，autograd 线程=backward）\n   - 脚本参考: `scripts/05_torch_cpu_ops.py`\n\n7. **Self Time 计算**（核心步骤！）\n   - cpu_op 事件是嵌套的，total time 会重复计算\n   - 使用 **stack-based interval containment 算法**:\n     1. 按线程分组\n     2. 每个线程内按 `(ts, -dur)` 排序\n     3. 维护栈，栈顶=当前事件的父事件\n     4. `child_dur[parent] += child.dur`\n     5. `self_time = dur - child_dur`\n   - 验证: 所有 self time 之和应 ≈ wall time\n   - 脚本参考: `scripts/06_self_time.py`\n\n8. **CUDA Runtime 归因到关键 Op**\n   - 对每个高 self-time 的 op，用 bisect 查找其内部的 cuda_runtime 事件\n   - 分解 self time = GPU sync 等待 + Kernel launch + Memcpy dispatch + Python/C++ 调度\n   - 脚本参考: `scripts/07_cuda_runtime_attribution.py`\n\n### Phase 4: 代码路径映射（需要 pyinstrument）\n\n9. **Python 调用栈分析**\n   - 展开 training_step 内部的完整调用链\n   - 区分 Forward（compute_loss → model.forward → gradient_checkpointing）和 Backward（autograd engine）\n   - 映射到框架源码（DeepSpeed、PyTorch、Transformers、PEFT 等）\n   - 脚本参考: `scripts/08_pyinstrument_analysis.py`\n\n### Phase 5: 综合分析与文档输出\n\n10. **层次化时间归因**\n    - 将 self time 的抽象分类替换为具体代码操作\n    - 建立三级分类:\n      - **一级**: 大门类（计算/数据搬运/框架调度/同步等待/其他）\n      - **二级**: 具体操作（如 \"ZeRO-3 权重 fetch 调度\"、\"aten::mm CPU launch\"）\n      - **三级**: 代码或 aten op（如 `fetch_sub_module() Python 遍历`、`cudaStreamSynchronize`）\n    - 输出完整的不重叠时间归因大表\n\n11. **交叉验证**\n    - nsys wall time vs pyinstrument wall time vs torch.profiler self time\n    - nsys GPU kernel time vs torch.profiler aten op time\n    - nsys memcpy time (GPU 侧) vs torch.profiler copy_ time (CPU 侧)\n    - 三种工具的数据应相互吻合，不吻合需要解释原因\n\n## 关键陷阱与注意事项\n\n### 必须遵守\n\n1. **nsys JSON kernel 名称截断问题**\n   - nsys 导出的 JSON 会把 `cutlass::Kernel2<cutlass_80_wmma_...gemm...>` 截断为 `Kernel2`\n   - **必须**用 nsys sqlite 的 `demangledName` 字段获取完整名称\n   - 否则会把 GEMM 误判为 NCCL AllGather\n\n2. **cpu_op Self Time vs Total Time**\n   - Total time 含嵌套子事件，直接加总会严重重复计算（如 97s total vs 36s self）\n   - **必须**计算 self time 才能得到不重复的时间分解\n\n3. **CUDA Runtime 时间是 CPU 侧异步调度时间**\n   - `cudaMemcpyAsync` 的 cuda_runtime 时间（~0.9s）远小于 GPU 实际传输时间（~9.8s）\n   - 因为是异步调用，CPU 侧很快返回\n   - GPU 实际时间只能从 nsys sqlite 的 MEMCPY 表获取\n\n4. **单卡 ZeRO-3 不走 NCCL**\n   - `num_partitions=1` 时 DeepSpeed 走 `NoGatherCoalescedHandle`\n   - 使用 `tensor.to(device)` 替代 NCCL AllGather\n   - 稳态 step 应几乎无 NCCL 调用\n\n5. **Gradient Checkpointing 让 CPU 开销翻倍**\n   - backward 时重新运行 forward（re-trigger 所有 ZeRO-3 fetch/release hooks）\n   - CPU Python 调度和 HtoD 搬运都会翻倍\n\n### 常见发现模式\n\n- **ZeRO-3 + CPU Offload**: 最大瓶颈通常是参数搬运（HtoD）+ Python 调度开销，GPU 利用率极低（<10%）\n- **MoE 模型**: 参数搬运浪费率高（按 module 整体 fetch，不区分活跃/非活跃 expert）\n- **CPU 串行瓶颈**: wall time ≈ CPU serial time，GPU 大部分时间空闲\n- **aten::mm CPU dispatch > GPU GEMM**: kernel launch 开销可能超过 GPU 实际计算时间\n\n## 输出格式\n\n为每个分析阶段生成 markdown 文档，最终输出：\n\n1. `01_training_overview.md` — 训练整体流程与时间分布\n2. `02_analysis_methods.md` — 使用的分析方法、脚本、数据源\n3. `03_gpu_analysis.md` — GPU kernel 分类、利用率、memcpy、sync\n4. `04_cpu_analysis.md` — cpu_op total/self time、CUDA runtime 归因\n5. `05_code_path_mapping.md` — pyinstrument 代码路径映射\n6. `06_complete_breakdown.md` — 完整层次化时间归因大表\n\n每个文档都应包含：\n- 具体数据和表格\n- 分析方法说明\n- 数据来源标注\n- 与其他工具数据的交叉验证\n"
+      },
+      "plugins": [
+        {
+          "name": "profile-training",
+          "description": "Complete top-down performance profiling pipeline: from nsys/torch.profiler/pyinstrument traces to hierarchical time attribution with source code mapping",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/profile-training"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JimmyPeilinLi/profile_claude_skill",
+            "/plugin install profile-training@training-profile-toolkit"
+          ]
+        }
+      ]
+    }
+  ]
+}

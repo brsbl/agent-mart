@@ -1,0 +1,101 @@
+{
+  "author": {
+    "id": "bartolli",
+    "display_name": "Angel Bartolli",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3233943?v=4",
+    "url": "https://github.com/bartolli",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 2,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "codanna-cc-plugin",
+      "version": null,
+      "description": "Codanna code intelligence integration for Claude Code - semantic search, symbol analysis, and call graph exploration",
+      "owner_info": {
+        "name": "bartolli"
+      },
+      "keywords": [],
+      "repo_full_name": "bartolli/codanna-cc-plugin",
+      "repo_url": "https://github.com/bartolli/codanna-cc-plugin",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-10-11T15:14:27Z",
+        "created_at": "2025-10-11T05:15:05Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 304
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 455
+        },
+        {
+          "path": "commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "commands/ask.md",
+          "type": "blob",
+          "size": 747
+        },
+        {
+          "path": "commands/find.md",
+          "type": "blob",
+          "size": 2488
+        },
+        {
+          "path": "scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "scripts/README.md",
+          "type": "blob",
+          "size": 9670
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"codanna-cc-plugin\",\n  \"owner\": {\n    \"name\": \"bartolli\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"codanna-cc-plugin\",\n      \"source\": \"./\",\n      \"description\": \"Codanna code intelligence integration for Claude Code - semantic search, symbol analysis, and call graph exploration\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"codanna-cc-plugin\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Codanna code intelligence integration for Claude Code - semantic search, symbol analysis, and call graph exploration\",\n  \"author\": {\n    \"name\": \"bartolli\"\n  },\n  \"repository\": \"https://github.com/bartolli/codanna-cc-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"codanna\",\n    \"code-intelligence\",\n    \"semantic-search\",\n    \"symbol-analysis\",\n    \"call-graph\",\n    \"mcp\"\n  ]\n}\n",
+        "commands/ask.md": "---\ndescription: Look up a symbol and ask Claude a specific question about it\nargument-hint: <symbol-name> \"<question>\"\n---\n\n## Context\n\nSymbol to analyze: **$1**\n\nUser's question: **$2**\n\n## Your task\n\nUse the Bash tool to fetch symbol information, then answer the user's question.\n\n**Workflow:**\n1. Execute: `node .claude/scripts/context-provider.js symbol $1`\n2. Analyze the symbol details returned\n3. Answer the question: \"$2\"\n\nWhen answering:\n- Reference actual code locations (file:line)\n- Explain relationships (calls, called_by, implements, defines)\n- Use the signature and documentation from the symbol\n- Be specific about how the symbol is used in the codebase\n\nFocus on what the code actually shows, not general programming principles.\n",
+        "commands/find.md": "---\ndescription: Smart semantic search for code with full context\nargument-hint: \"<query>\"\n---\n\n## Search Query Analysis\n\n**User's Original Query**: \"$ARGUMENTS\"\n\n### Query Optimization\n\nClaude, analyze the query above and improve it for code search:\n\n1. **If vague** (e.g., \"that parsing thing\") → Make it specific (e.g., \"language parser implementation\")\n2. **If a question** (e.g., \"how does parsing work?\") → Extract keywords (e.g., \"parsing implementation process\")\n3. **If conversational** (e.g., \"the stuff that handles languages\") → Use technical terms (e.g., \"language handler processor\")\n4. **If too broad** (e.g., \"errors\") → Add context (e.g., \"error handling exception management\")\n\n**YourOptimizedQuery**: _{Claude: Write your improved query here, then use it below}_\n\nExecute this command with your optimized query:\n\n## Your task\n\nUse the Bash tool to perform semantic code search.\n\n**Workflow:**\n1. Execute: `node .claude/scripts/context-provider.js find \"$YourOptimizedQuery\" --limit=5`\n2. Analyze the results with their relevance scores\n3. **To see actual implementation** of interesting results:\n   - Use the line range from the Location field to read just the relevant code\n   - Example: If you see \"Location: `src/io/exit_code.rs:108-120`\"\n   - Execute: `sed -n '108,120p' src/io/exit_code.rs` to read lines 108-120\n   - This shows the actual code implementation, not just the signature\n4. **When relationships are shown** (called_by, calls, defines, implements):\n   - If a relationship looks relevant to answering the query, investigate it\n   - Execute: `node .claude/scripts/context-provider.js symbol <relationship_symbol_name>`\n   - Example: If you see \"Called by: `initialize_registry`\", run: `node .claude/scripts/context-provider.js symbol initialize_registry`\n5. Build a complete picture by following 1-2 key relationships and reading relevant code sections\n6. Present findings to the user with context from search results, relationships, and actual code snippets\n\n**The results include:**\n- Relevance scores (how well each result matches the query)\n- Symbol documentation and signatures\n- Relationships (who calls this, what it calls, what it defines)\n- System guidance for follow-up investigation\n\n**Tips:**\n- Add `--lang=rust` (or python, typescript, etc.) to narrow results by language\n- Follow relationships that appear in multiple results (they're likely important)\n- Use the `symbol` command to get full details about interesting relationships\n",
+        "scripts/README.md": "# Codanna Context Provider Scripts\n\nNode.js utilities that provide structured context from Codanna CLI to Claude Code slash commands.\n\n## Architecture\n\n```\n┌─────────────────┐\n│ Slash Command   │ /ask, /symbol, etc.\n└────────┬────────┘\n         │ Invokes via Bash tool\n         ▼\n┌─────────────────┐\n│ context-provider│ Main CLI entry point\n└────────┬────────┘\n         │\n    ┌────┴────┬──────────┬───────────┐\n    ▼         ▼          ▼           ▼\n┌────────┐ ┌──────┐ ┌──────────┐ ┌──────────┐\n│Executor│ │Schema│ │Formatter │ │  Config  │\n│        │ │Valid │ │          │ │ Resolver │\n└────────┘ └──────┘ └──────────┘ └──────────┘\n    │\n    ▼\n┌─────────────────┐\n│  codanna CLI    │ --config /path/to/settings.toml\n└─────────────────┘\n```\n\n## Design Principles\n\n**1. Token Efficiency**\n- Pre-process JSON responses before presenting to Claude\n- Format output for readability (markdown/json/compact)\n- Filter irrelevant data\n\n**2. Configuration Discovery**\n- Read `.codanna/.project-id` from working directory\n- Lookup project in `~/.codanna/projects.json`\n- Resolve settings path automatically\n- Support monorepos (multiple indexes)\n\n**3. Zero-Config for Simple Cases**\n- Works out of the box with default settings\n- Explicit configuration only for edge cases\n- Uses `CLAUDE_WORKING_DIR` environment variable\n\n## Components\n\n### context-provider.js\nMain CLI interface for slash commands.\n\n**Commands:**\n```bash\nnode context-provider.js symbol <name> [--format=markdown|json|compact] [--lang=rust|python|...]\nnode context-provider.js callers <function-name> [--lang=...]\nnode context-provider.js calls <function-name> [--lang=...]\nnode context-provider.js search <query> [--limit=5] [--lang=...]\nnode context-provider.js describe <symbol-name> [--lang=...]\n```\n\n**Output formats:**\n- `markdown` (default): Rich formatted output with relationships\n- `json`: Raw JSON for programmatic use\n- `compact`: One-line summary\n\n### lib/executor.js\nExecutes Codanna CLI commands and parses JSON responses.\n\n**Key features:**\n- Uses `ConfigResolver` to find project settings\n- Adds `--config` flag automatically when settings.toml exists\n- Handles exit code 3 (not found) gracefully\n- Runs in `CLAUDE_WORKING_DIR` or `process.cwd()`\n\n**Methods:**\n- `findSymbol(name)` → Symbol details with relationships\n- `findCallers(name)` → Functions that call this symbol\n- `findCalls(name)` → Functions called by this symbol\n- `search(query, limit)` → Full-text search results\n- `describe(name)` → Comprehensive symbol information\n\n### lib/config-resolver.js\nDiscovers Codanna configuration using existing infrastructure.\n\n**Resolution flow:**\n```\n1. Read .codanna/.project-id from working directory\n2. Load ~/.codanna/projects.json global registry\n3. Find project path by ID\n4. Return path to {project_path}/.codanna/settings.toml\n5. Fallback: .codanna/settings.toml in current directory\n```\n\n**Methods:**\n- `readProjectId()` → Project UUID\n- `loadProjectsRegistry()` → Global projects index\n- `findProjectPath(id)` → Absolute path to project\n- `resolveSettingsPath()` → Path to settings.toml\n- `getCodannaCommand(binary)` → Command with --config flag\n- `getProjectMetadata()` → Symbol count, file count, last modified\n\n### lib/validator.js\nValidates JSON responses against schemas.\n\n**Capabilities:**\n- Loads schemas from `schemas/` directory\n- Basic validation (required fields, enum values)\n- Schema caching for performance\n- Extensible for full JSON Schema validation (ajv)\n\n### formatters/symbol.js\nTransforms symbol data into readable output.\n\n**Format methods:**\n- `format(response)` → Markdown with full context\n- `formatCompact(response)` → One-line summary\n- `formatJson(response)` → Pretty-printed JSON\n\n**Markdown output includes:**\n- Symbol metadata (kind, language, visibility)\n- Location (file:line, module path)\n- Signature and documentation\n- Relationships (implements, calls, called_by, defines)\n- Scope context\n\n### schemas/symbol.json\nJSON Schema definition for Codanna symbol responses.\n\n**Response structure:**\n```json\n{\n  \"status\": \"success|not_found|error\",\n  \"entity_type\": \"symbol\",\n  \"count\": 1,\n  \"items\": [{\n    \"symbol\": { \"id\", \"name\", \"kind\", \"signature\", ... },\n    \"file_path\": \"src/file.rs:line\",\n    \"relationships\": {\n      \"implements\": [...],\n      \"called_by\": [...],\n      \"calls\": [...],\n      \"defines\": [...]\n    }\n  }]\n}\n```\n\n## Usage from Slash Commands\n\n### Pattern 1: Auto-execution (Context Gathering)\n```markdown\n---\nallowed-tools: Bash(node:*)\n---\n\n!`node .claude/scripts/context-provider.js symbol $1`\n\nBased on the symbol above, ...\n```\n\n**Use when:** Gathering context before Claude decides what to do.\n\n### Pattern 2: Workflow Instructions\n```markdown\n---\ndescription: Ask a question about a symbol\n---\n\n## Your task\n\n1. Execute: `node .claude/scripts/context-provider.js symbol $1`\n2. Analyze the output\n3. Answer the question: \"$2\"\n```\n\n**Use when:** Claude should control when and how to fetch data.\n\n## Language Filtering\n\nReduces noise in polyglot codebases.\n\n```bash\n# Filter by language\nnode context-provider.js symbol main --lang=rust\nnode context-provider.js search \"parse\" --lang=python --limit=10\n```\n\n**Supported languages:** rust, python, typescript, go, php, c, cpp\n\n**Error handling:**\n- Not found with language filter → Suggests removing filter\n- Shows language badge in results `[rust]`, `[python]`\n- Language filter indicator in search output\n\n## Configuration\n\nThe system uses Codanna's existing infrastructure:\n\n**Project identification:**\n```\n.codanna/.project-id          → UUID (e.g., de9a0dcf92ce...)\n~/.codanna/projects.json      → Registry of all indexed projects\n{project}/.codanna/settings.toml → Project-specific settings\n```\n\n**No manual configuration needed** - the resolver automatically:\n1. Detects the current project\n2. Finds the correct index\n3. Applies the right settings\n\n**For monorepos:**\nEach package can have its own `.codanna/.project-id`, pointing to separate indexes.\n\n## Error Handling\n\n**Exit codes:**\n- `0`: Success\n- `1`: Execution error (printed to stderr)\n- `3`: Not found (Codanna returns JSON with status=\"not_found\")\n\n**Error messages:**\n- Include context when language filter applied\n- Suggest remediation (remove filter, check if indexed)\n- Preserve structured JSON output with `--format=json`\n\n## Extension Points\n\n**Adding new commands:**\n1. Add method to `ContextProvider` class\n2. Handle in `run()` switch statement\n3. Create formatter if needed\n4. Add schema for validation\n5. Update usage documentation\n\n**Adding new formatters:**\n1. Create `formatters/{type}.js`\n2. Implement static methods: `format()`, `formatCompact()`, `formatJson()`\n3. Export class\n\n**Adding new schemas:**\n1. Create `schemas/{type}.json`\n2. Define JSON Schema structure\n3. Validator auto-loads from filename\n\n## Performance\n\n**Optimization strategy:**\n- JSON parsing happens once in Node.js\n- Formatted output reduces Claude's parsing work\n- Compact format for simple queries\n- Schema validation is minimal (basic checks only)\n\n**Typical execution times:**\n- Symbol lookup: <50ms\n- Search (5 results): <100ms\n- Config resolution: <10ms (cached in-memory)\n\n## Development\n\n**Testing:**\n```bash\n# Test symbol lookup\nnode .claude/scripts/context-provider.js symbol index_file\n\n# Test with formatting\nnode .claude/scripts/context-provider.js symbol main --format=compact\n\n# Test language filtering\nnode .claude/scripts/context-provider.js search \"parse\" --lang=rust --limit=3\n\n# Test search\nnode .claude/scripts/context-provider.js search \"indexing\" --limit=10\n```\n\n**Debugging config resolution:**\n```bash\nnode -e \"\nconst ConfigResolver = require('./.claude/scripts/lib/config-resolver');\nconst resolver = new ConfigResolver();\nconsole.log('Project ID:', resolver.readProjectId());\nconsole.log('Settings:', resolver.resolveSettingsPath());\nconsole.log('Command:', resolver.getCodannaCommand());\n\"\n```\n\n## Integration with Claude Code\n\n**Environment variables used:**\n- `CLAUDE_WORKING_DIR` → Set by Claude Code, used as working directory\n\n**Tool requirements:**\n- Slash commands must include `allowed-tools: Bash(node:*)` for auto-execution\n- Or inherit from conversation for manual execution\n\n**Argument passing:**\n- `$1`, `$2`, etc. → Positional arguments\n- `$ARGUMENTS` → All arguments as string\n- Quoted strings preserved: `\"multi word arg\"`\n\n## Why This Design?\n\n**Separation of concerns:**\n- Codanna CLI: Index management, querying\n- Node.js scripts: JSON parsing, formatting, config discovery\n- Claude: Analysis, reasoning, answering questions\n\n**Benefits:**\n- Reduces Claude's token usage (pre-formatted output)\n- Reuses Codanna's project infrastructure\n- Works seamlessly with monorepos\n- Extensible for new query types\n- Testable independently of Claude\n\n**Trade-offs:**\n- Requires Node.js runtime\n- Additional layer of indirection\n- Must keep schemas in sync with Codanna output\n\n## Future Enhancements\n\n**Potential improvements:**\n- Full JSON Schema validation with ajv\n- Caching for repeated queries\n- Batch operations (multiple symbols at once)\n- Custom output templates\n- Integration with other code intelligence tools\n"
+      },
+      "plugins": [
+        {
+          "name": "codanna-cc-plugin",
+          "source": "./",
+          "description": "Codanna code intelligence integration for Claude Code - semantic search, symbol analysis, and call graph exploration",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bartolli/codanna-cc-plugin",
+            "/plugin install codanna-cc-plugin@codanna-cc-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

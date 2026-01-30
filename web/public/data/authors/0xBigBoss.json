@@ -1,0 +1,108 @@
+{
+  "author": {
+    "id": "0xBigBoss",
+    "display_name": "Big Boss",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/95193764?u=51eef509938b5eda01f8486a6f94bffb80d69255&v=4",
+    "url": "https://github.com/0xBigBoss",
+    "bio": "We can build anything we want given enough time.",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "0xbigboss-recall",
+      "version": null,
+      "description": "Session recall and analytics for AI agents",
+      "owner_info": {
+        "name": "0xBigBoss",
+        "email": "bigboss@metalrodeo.xyz"
+      },
+      "keywords": [],
+      "repo_full_name": "0xBigBoss/recall",
+      "repo_url": "https://github.com/0xBigBoss/recall",
+      "repo_description": "Session recall and analytics for AI agents (Claude Code, Codex)",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-24T02:53:43Z",
+        "created_at": "2026-01-16T22:15:29Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 333
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 270
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 2348
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/recall",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/recall/CLI_REFERENCE.md",
+          "type": "blob",
+          "size": 3951
+        },
+        {
+          "path": "skills/recall/EXAMPLES.md",
+          "type": "blob",
+          "size": 4487
+        },
+        {
+          "path": "skills/recall/SKILL.md",
+          "type": "blob",
+          "size": 2083
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"0xbigboss-recall\",\n  \"description\": \"Session recall and analytics for AI agents\",\n  \"owner\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"bigboss@metalrodeo.xyz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"recall\",\n      \"description\": \"Search and analyze past Claude Code and Codex sessions\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"recall\",\n  \"description\": \"Session recall and analytics for AI agents\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"bigboss@metalrodeo.xyz\"\n  },\n  \"repository\": \"https://github.com/0xbigboss/recall\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# recall\n\n[![CI](https://github.com/0xBigBoss/recall/actions/workflows/ci.yml/badge.svg)](https://github.com/0xBigBoss/recall/actions/workflows/ci.yml)\n\nSession recall and analytics for AI agents (Claude Code, Codex).\n\nSearch past sessions, analyze tool usage patterns, and generate permission suggestions from your AI coding history.\n\n## Installation\n\n```bash\n# Install from GitHub\nuv tool install \"recall @ git+https://github.com/0xbigboss/recall.git#subdirectory=packages/recall\"\n\n# Or clone and run locally\ngit clone https://github.com/0xbigboss/recall.git\ncd recall\nuv sync\nuv run recall --help\n```\n\n## Quick Start\n\n```bash\n# Index your sessions (run first)\nrecall index\n\n# Search past work\nrecall search \"authentication\"\nrecall search \"git rebase\" --tool Bash\n\n# List recent sessions\nrecall list --since 7d\nrecall list --project /path/to/repo\n\n# View session details\nrecall show <session-id> --tools\n\n# Analytics\nrecall stats tools        # Tool usage counts\nrecall stats bash         # Bash command breakdown\nrecall stats bash --suggest  # Permission suggestions\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `recall index` | Index sessions from Claude Code and Codex |\n| `recall search <query>` | Full-text search across sessions |\n| `recall list` | List sessions with filters |\n| `recall show <id>` | Display session details |\n| `recall stats` | Analytics and usage patterns |\n\n## Claude Code Plugin\n\nInstall as a Claude Code plugin for automatic skill integration:\n\n```bash\nclaude plugin marketplace add 0xbigboss/recall\nclaude plugin install recall@0xbigboss-recall\n```\n\nOr test locally:\n\n```bash\nclaude --plugin-dir /path/to/recall\n```\n\nThe skill auto-triggers on prompts like \"search my past sessions\" or \"suggest permissions to auto-approve\".\n\n## Data Locations\n\n| Data | Path |\n|------|------|\n| Database | `~/.local/share/recall/recall.duckdb` |\n| Claude Code sessions | `~/.claude/projects/**/*.jsonl` |\n| Codex sessions | `~/.codex/sessions/**/rollout*.jsonl` |\n\n## Development\n\n```bash\nuv sync                    # Install dependencies\nuv run pytest              # Run tests\nuv run ruff check .        # Lint\nuvx ty check               # Type check\n```\n\nGit hooks (format, lint, typecheck, test) auto-install via [direnv](https://direnv.net/).\nWithout direnv: `uv run lefthook install`\n\n## License\n\nMIT\n",
+        "skills/recall/CLI_REFERENCE.md": "# CLI Reference\n\nComplete documentation for all recall commands.\n\n## recall index\n\nIndex sessions from Claude Code and Codex into the database.\n\n```bash\nrecall index [OPTIONS]\n```\n\n| Option | Description |\n|--------|-------------|\n| `--full` | Force full reindex of all sessions |\n| `--source` | Filter by source: `claude-code` or `codex` |\n| `--recreate` | Backup and rebuild database from scratch |\n| `-v, --verbose` | Enable verbose logging |\n| `--json` | Output results as JSON |\n\n**Example output:**\n```\nIndexed 15 sessions, skipped 42, failed 0 (total 57).\n```\n\n## recall search\n\nFull-text search across session content and tool calls.\n\n```bash\nrecall search <query> [OPTIONS]\n```\n\n| Option | Description |\n|--------|-------------|\n| `--tool` | Filter to Bash tool calls only (searches bash commands) |\n| `--source` | Filter by source: `claude-code` or `codex` |\n| `--json` | Output results as JSON |\n\n**Example output:**\n```\n[0.85] abc123def456 (claude_code)\n  assistant: Implemented OAuth2 authentication flow using...\n  source: ~/.claude/projects/my-app/session.jsonl\n  time: 2024-01-15T10:30:00\n```\n\n## recall list\n\nList sessions with optional filters.\n\n```bash\nrecall list [OPTIONS]\n```\n\n| Option | Description |\n|--------|-------------|\n| `--source` | Filter by source: `claude-code` or `codex` |\n| `--since` | Time window: `7d`, `24h`, `2024-01-01` |\n| `--project` | Filter by git repo path |\n| `--json` | Output results as JSON |\n\n**Example output:**\n```\n[2024-01-15 10:30] abc123 (claude_code) /path/to/repo messages=25 tools=12\n[2024-01-14 14:22] def456 (codex) /path/to/project messages=8 tools=3\n```\n\n## recall show\n\nDisplay detailed session information.\n\n```bash\nrecall show <session-id> [OPTIONS]\n```\n\n| Option | Description |\n|--------|-------------|\n| `--tools` | Include tool calls in output |\n| `--thinking` | Include thinking blocks (Claude Code) |\n| `--json` | Output results as JSON |\n\n**Example output:**\n```\n[2024-01-15 10:30] Session abc123def456 (claude_code)\nProject: /path/to/my-app\nDuration: 1234s | Messages: 25 | Tools: 12\n\n[10:30:15] user:\nFix the authentication bug\n\n[10:30:45] assistant:\nI'll look into the authentication code...\n  [Read] src/auth.py\n  [Edit] src/auth.py\n```\n\n## recall stats\n\nAnalytics subcommands for usage patterns.\n\n### recall stats (overview)\n\n```bash\nrecall stats [--json]\n```\n\n**Output:**\n```\nOverview\n  Sessions: 142\n  Messages: 3567\n  Tool calls: 1234\n  Bash calls: 456\n```\n\n### recall stats tools\n\nTool usage frequency.\n\n```bash\nrecall stats tools [--json]\n```\n\n**Output:**\n```\nBash: 456\nRead: 312\nEdit: 234\nGlob: 156\nGrep: 89\nWrite: 45\n```\n\n### recall stats bash\n\nBash command breakdown and permission suggestions.\n\n```bash\nrecall stats bash [OPTIONS]\n```\n\n| Option | Description |\n|--------|-------------|\n| `--suggest` | Generate permission suggestions for auto-approval |\n| `--json` | Output results as JSON |\n\n**Without --suggest:**\n```\ngit status: 45\nnpm test: 32\ngit diff: 28\nnpm install: 15 (compound)\n```\n\n**With --suggest:**\n```\nSuggested Bash Permissions\n==========================\nhigh: run tests (45 uses)\nhigh: git operations (73 uses)\nmedium: npm/yarn commands (47 uses)\nSkipped\n- rm -rf: dangerous command\n```\n\n### recall stats tokens\n\nToken usage by project.\n\n```bash\nrecall stats tokens [--json]\n```\n\n**Output:**\n```\n/path/to/project-a: 125000 in / 45000 out\n/path/to/project-b: 89000 in / 32000 out\n```\n\n## JSON Output\n\nAll commands support `--json` for machine-readable output. JSON output includes all fields and is suitable for piping to `jq` or programmatic processing.\n\n```bash\nrecall list --json | jq '.[] | .id'\nrecall stats tools --json | jq 'to_entries | sort_by(-.value) | .[0]'\n```\n\n## Data Locations\n\n| Data | Path |\n|------|------|\n| Database | `~/.local/share/recall/recall.duckdb` |\n| Lock file | `~/.local/share/recall/recall.lock` |\n| Claude Code sessions | `~/.claude/projects/**/*.jsonl` |\n| Codex sessions | `~/.codex/sessions/*/rollout.jsonl` |\n",
+        "skills/recall/EXAMPLES.md": "# Examples\n\nCommon usage patterns and workflows for recall.\n\n## Finding Past Work\n\n### Search for a Topic\n\nFind sessions where you worked on authentication:\n\n```bash\nrecall search \"authentication\"\nrecall search \"oauth login\"\nrecall search \"JWT token\"\n```\n\n### Search Within Bash Commands\n\nFind bash commands related to git:\n\n```bash\nrecall search \"git\" --tool Bash\nrecall search \"rebase\" --tool Bash\n```\n\nThe `--tool` flag filters to Bash tool calls only, searching within bash command text.\n\n### Filter by Source\n\nSearch only Claude Code sessions (input accepts `claude-code` or `claude_code`):\n\n```bash\nrecall search \"refactor\" --source claude-code\n```\n\nSearch only Codex sessions:\n\n```bash\nrecall search \"fix bug\" --source codex\n```\n\nNote: Output displays `claude_code` (underscore) in results.\n\n## Browsing Sessions\n\n### Recent Activity\n\nSee what you worked on today:\n\n```bash\nrecall list --since 24h\n```\n\nThis week:\n\n```bash\nrecall list --since 7d\n```\n\nSince a specific date:\n\n```bash\nrecall list --since 2024-01-01\n```\n\n### By Project\n\nFind sessions in a specific repository:\n\n```bash\nrecall list --project /path/to/my-app\nrecall list --project ~/code/api-server\n```\n\nCombine with time filter:\n\n```bash\nrecall list --project /path/to/repo --since 7d\n```\n\n## Session Deep Dive\n\n### View Session Details\n\nGet full conversation with tool calls:\n\n```bash\nrecall show abc123def456 --tools\n```\n\nInclude thinking blocks (Claude Code):\n\n```bash\nrecall show abc123def456 --tools --thinking\n```\n\n### Export for Analysis\n\nGet JSON for processing:\n\n```bash\nrecall show abc123def456 --json > session.json\n```\n\nExtract specific fields with jq:\n\n```bash\nrecall show abc123 --json | jq '.messages[] | select(.role == \"assistant\") | .content'\n```\n\n## Analytics\n\n### Tool Usage Patterns\n\nSee which tools you use most:\n\n```bash\nrecall stats tools\n```\n\nOutput:\n```\nBash: 456\nRead: 312\nEdit: 234\nGlob: 156\nGrep: 89\nWrite: 45\n```\n\n### Bash Command Analysis\n\nBreak down bash commands by type:\n\n```bash\nrecall stats bash\n```\n\nOutput:\n```\ngit status: 45\nnpm test: 32\ngit diff: 28\nuv run: 22\n```\n\n### Permission Suggestions\n\nGenerate patterns for auto-approval:\n\n```bash\nrecall stats bash --suggest\n```\n\nOutput:\n```\nSuggested Bash Permissions\n==========================\nhigh: run tests (45 uses)\nhigh: git operations (73 uses)\nmedium: npm/yarn commands (47 uses)\n```\n\nUse these suggestions to configure Claude Code permissions:\n\n```json\n{\n  \"permissions\": {\n    \"allow\": [\n      {\"tool\": \"Bash\", \"prompt\": \"run tests\"},\n      {\"tool\": \"Bash\", \"prompt\": \"git operations\"}\n    ]\n  }\n}\n```\n\n### Token Usage\n\nSee token consumption by project:\n\n```bash\nrecall stats tokens\n```\n\nOutput:\n```\n/path/to/project-a: 125000 in / 45000 out\n/path/to/project-b: 89000 in / 32000 out\n```\n\n## Maintenance\n\n### Initial Setup\n\nIndex all existing sessions:\n\n```bash\nrecall index\n```\n\nThis scans:\n- `~/.claude/projects/**/*.jsonl` (Claude Code)\n- `~/.codex/sessions/*/rollout.jsonl` (Codex)\n\n### Periodic Updates\n\nRun index to pick up new sessions:\n\n```bash\nrecall index\n```\n\nAlready-indexed sessions are skipped automatically.\n\n### Force Reindex\n\nIf data seems stale, force a full reindex:\n\n```bash\nrecall index --full\n```\n\n### Rebuild Database\n\nStart fresh (creates backup first):\n\n```bash\nrecall index --recreate\n```\n\n### Index Specific Source\n\nOnly index Claude Code sessions:\n\n```bash\nrecall index --source claude-code\n```\n\nOnly index Codex sessions:\n\n```bash\nrecall index --source codex\n```\n\n## JSON Output for Scripts\n\nAll commands support `--json` for scripting:\n\n```bash\n# Get session IDs from last week\nrecall list --since 7d --json | jq -r '.[].id'\n\n# Find most-used tool\nrecall stats tools --json | jq 'to_entries | max_by(.value) | .key'\n\n# Count sessions by source\nrecall list --json | jq 'group_by(.source) | map({source: .[0].source, count: length})'\n```\n\n## Workflow: Review Past Implementation\n\n1. Search for the topic:\n   ```bash\n   recall search \"rate limiting\"\n   ```\n\n2. List sessions in that project:\n   ```bash\n   recall list --project /path/to/api --since 30d\n   ```\n\n3. Deep dive into relevant session:\n   ```bash\n   recall show abc123 --tools\n   ```\n\n## Workflow: Optimize Permissions\n\n1. Index recent sessions:\n   ```bash\n   recall index\n   ```\n\n2. Get permission suggestions:\n   ```bash\n   recall stats bash --suggest\n   ```\n\n3. Review and add trusted patterns to Claude Code config.\n\n4. Periodically re-run to discover new patterns:\n   ```bash\n   recall index && recall stats bash --suggest\n   ```\n",
+        "skills/recall/SKILL.md": "---\nname: recall\ndescription: Search and analyze past Claude Code and Codex sessions. Use when user asks about past sessions, tool usage patterns, bash command history, permission suggestions, or wants to find previous work.\nallowed-tools: Bash\n---\n\n# recall\n\nSearch and analyze past AI agent sessions (Claude Code, Codex).\n\n## Installation\n\n```bash\n# Install from GitHub\nuv tool install \"recall @ git+https://github.com/0xbigboss/recall.git#subdirectory=packages/recall\"\n```\n\n## Quick Start\n\n```bash\n# Index sessions (run first, then periodically)\nrecall index\n\n# Search across all sessions\nrecall search \"authentication\"\nrecall search \"git\" --tool Bash\n\n# List recent sessions\nrecall list --since 7d\nrecall list --project /path/to/repo\n\n# Show session details\nrecall show <session-id>\nrecall show <session-id> --tools --thinking\n\n# Analytics\nrecall stats              # Overview\nrecall stats tools        # Tool usage counts\nrecall stats bash         # Bash command breakdown\nrecall stats bash --suggest  # Permission suggestions\nrecall stats tokens       # Token usage by project\n```\n\n## When to Use Each Command\n\n| Task | Command |\n|------|---------|\n| Find past work on a topic | `recall search \"<topic>\"` |\n| See what I did recently | `recall list --since 24h` |\n| Find work in a specific repo | `recall list --project <path>` |\n| Analyze my tool usage | `recall stats tools` |\n| Get permission suggestions | `recall stats bash --suggest` |\n| Review a specific session | `recall show <id>` |\n\n## Common Workflows\n\n### Find Previous Implementation\n```bash\nrecall search \"oauth authentication\"\nrecall show <session-id> --tools\n```\n\n### Generate Permission Suggestions\n```bash\nrecall stats bash --suggest\n# Returns patterns like: \"run tests\", \"git operations\", etc.\n```\n\n### Analyze Tool Patterns\n```bash\nrecall stats tools    # See which tools used most\nrecall stats bash     # Break down bash commands\n```\n\n## Further Reading\n\n- [CLI_REFERENCE.md](CLI_REFERENCE.md) - Full command documentation with all flags\n- [EXAMPLES.md](EXAMPLES.md) - Detailed usage examples and patterns\n"
+      },
+      "plugins": [
+        {
+          "name": "recall",
+          "description": "Search and analyze past Claude Code and Codex sessions",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add 0xBigBoss/recall",
+            "/plugin install recall@0xbigboss-recall"
+          ]
+        }
+      ]
+    }
+  ]
+}

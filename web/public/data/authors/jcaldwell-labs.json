@@ -1,0 +1,108 @@
+{
+  "author": {
+    "id": "jcaldwell-labs",
+    "display_name": "jcaldwell-labs",
+    "type": "Organization",
+    "avatar_url": "https://avatars.githubusercontent.com/u/244511510?v=4",
+    "url": "https://github.com/jcaldwell-labs",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 1,
+      "total_skills": 1,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "my-grid",
+      "version": null,
+      "description": "my-grid ASCII canvas editor plugin for Claude Code",
+      "owner_info": {
+        "name": "jcaldwell-labs",
+        "email": "jcaldwell@example.com"
+      },
+      "keywords": [],
+      "repo_full_name": "jcaldwell-labs/my-grid",
+      "repo_url": "https://github.com/jcaldwell-labs/my-grid",
+      "repo_description": "ASCII canvas editor with spatial workspace - Raskin-inspired infinite canvas for terminal",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-19T16:53:48Z",
+        "created_at": "2025-12-16T03:02:37Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 443
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 554
+        },
+        {
+          "path": "claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-plugin/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-plugin/commands/grid.md",
+          "type": "blob",
+          "size": 3043
+        },
+        {
+          "path": "claude-plugin/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-plugin/skills/my-grid",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-plugin/skills/my-grid/SKILL.md",
+          "type": "blob",
+          "size": 2451
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"my-grid\",\n  \"owner\": {\n    \"name\": \"jcaldwell-labs\",\n    \"email\": \"jcaldwell@example.com\"\n  },\n  \"metadata\": {\n    \"description\": \"my-grid ASCII canvas editor plugin for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"grid\",\n      \"source\": \"./claude-plugin\",\n      \"description\": \"Spawn and control ASCII canvas editor in tmux for visual workspace organization\",\n      \"version\": \"0.1.3\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"my-grid\",\n  \"version\": \"0.1.3\",\n  \"description\": \"Spawn and control ASCII canvas editor in tmux for visual workspace organization\",\n  \"author\": {\n    \"name\": \"my-grid contributors\"\n  },\n  \"homepage\": \"https://github.com/jcaldwell-labs/my-grid\",\n  \"repository\": \"https://github.com/jcaldwell-labs/my-grid\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"ascii\",\n    \"canvas\",\n    \"terminal\",\n    \"tmux\",\n    \"visualization\",\n    \"spatial-workspace\",\n    \"zones\"\n  ],\n  \"commands\": \"./claude-plugin/commands\",\n  \"skills\": \"./claude-plugin/skills\"\n}\n",
+        "claude-plugin/commands/grid.md": "---\nname: grid\ndescription: Spawn and control my-grid ASCII canvas editor in tmux split pane\n---\n\n# Grid Command\n\nSpawn and control an interactive ASCII canvas for visual workspace organization.\n\n## Prerequisites\n\n**tmux is required.** The grid spawns in a tmux split pane alongside Claude Code.\n\n**First, check if you're in tmux:**\n\n```bash\necho $TMUX\n```\n\n**If empty (not in tmux), start a tmux session first:**\n\n```bash\ntmux new -s claude\n# Then run Claude Code inside this tmux session\n```\n\n**If you see a path (already in tmux), you're ready to use /grid.**\n\n## Quick Start\n\n```bash\n# Spawn my-grid in side panel\ncd ${CLAUDE_PLUGIN_ROOT}\npython3 src/cli.py spawn\n\n# Send commands to the grid\npython3 src/cli.py send \":text Hello World\"\npython3 src/cli.py send \":rect 20 10\"\n\n# Control pane layout\npython3 src/cli.py zoom       # Toggle fullscreen\npython3 src/cli.py ratio 50   # 50/50 split\npython3 src/cli.py hide       # Hide pane\npython3 src/cli.py show       # Restore pane\n```\n\n## Commands\n\n### spawn\n\nSpawn my-grid in a tmux split pane (or reuse existing).\n\n```bash\npython3 src/cli.py spawn [--ratio 67] [--layout NAME] [--new]\n```\n\nOptions:\n\n- `--ratio N`: Pane width percentage (default: 67 = 2/3 of terminal)\n- `--layout NAME`: Load layout on startup (devops, development, monitoring)\n- `--new`: Force create new pane instead of reusing\n\n### send\n\nSend any my-grid command.\n\n```bash\npython3 src/cli.py send COMMAND\n```\n\nExamples:\n\n```bash\n# Drawing\npython3 src/cli.py send \":text Hello\"\npython3 src/cli.py send \":rect 30 15\"\npython3 src/cli.py send \":goto 50 25\"\n\n# Zones\npython3 src/cli.py send \":zone watch GIT 50 15 5s git status --short\"\npython3 src/cli.py send \":zone pipe FILES 40 20 tree -L 2\"\npython3 src/cli.py send \":zone pty TERM 80 24\"\n\n# Layouts\npython3 src/cli.py send \":layout load devops\"\npython3 src/cli.py send \":layout save myworkspace\"\n```\n\n### Pane Management\n\n```bash\n# Toggle fullscreen zoom\npython3 src/cli.py zoom\n\n# Resize pane (25%, 50%, or 75% width)\npython3 src/cli.py ratio 25\npython3 src/cli.py ratio 50\npython3 src/cli.py ratio 75\n\n# Hide/show pane\npython3 src/cli.py hide\npython3 src/cli.py show\n\n# Close pane\npython3 src/cli.py close\n\n# Focus pane\npython3 src/cli.py focus\n```\n\n### status\n\nGet current grid status.\n\n```bash\npython3 src/cli.py status [--json]\n```\n\n## Common Workflows\n\n### DevOps Dashboard\n\n```bash\npython3 src/cli.py spawn --layout devops\n```\n\n### Git Monitoring\n\n```bash\npython3 src/cli.py spawn\npython3 src/cli.py send \":zone watch GIT 50 15 5s git status --short\"\npython3 src/cli.py send \":zone watch LOG 50 10 10s git log --oneline -10\"\n```\n\n### Side-by-Side Coding\n\n```bash\npython3 src/cli.py spawn --ratio 50\npython3 src/cli.py send \":zone pty EDITOR 80 30 vim\"\n```\n\n## Requirements\n\n- **tmux**: Must be running inside a tmux session\n- **my-grid**: The ASCII canvas editor (this repository)\n\n## Notes\n\n- Pane is reused across spawns unless `--new` is specified\n- Server runs on port 8765 by default (override with `--port`)\n- All my-grid commands are supported via `send`\n",
+        "claude-plugin/skills/my-grid/SKILL.md": "---\nname: my-grid\ndescription: |\n  **ASCII canvas editor integration.** Covers spawning my-grid in tmux, controlling via IPC, and zone management.\n  Use when creating visual workspaces, monitoring dashboards, or organizing spatial content.\n---\n\n# my-grid Integration\n\n**Start here when using the ASCII canvas editor.** This skill covers spawning, controlling, and integrating my-grid with Claude Code.\n\n## Overview\n\nmy-grid is a persistent ASCII canvas editor with:\n\n- **Zones**: Dynamic content regions (WATCH, PTY, PIPE, SOCKET)\n- **Infinite canvas**: Navigate freely with vim-style keys\n- **TCP API**: Control via external processes\n- **Layouts**: Save/restore workspace templates\n\n## Prerequisites\n\n**tmux is required.** Check with `echo $TMUX` - if empty, start tmux first:\n\n```bash\ntmux new -s claude\n# Then run Claude Code inside tmux\n```\n\n## Quick Start\n\n```bash\ncd ${CLAUDE_PLUGIN_ROOT}\n\n# Spawn in tmux (67% width by default)\npython3 src/cli.py spawn\n\n# Send commands\npython3 src/cli.py send \":text Hello World\"\npython3 src/cli.py send \":rect 20 10\"\n\n# Create zones\npython3 src/cli.py send \":zone watch GIT 50 15 5s git status --short\"\n```\n\n## Pane Management\n\n| Command            | Description               |\n| ------------------ | ------------------------- |\n| `spawn`            | Create/reuse my-grid pane |\n| `zoom`             | Toggle fullscreen         |\n| `ratio 25\\|50\\|75` | Set width percentage      |\n| `hide` / `show`    | Toggle visibility         |\n| `close`            | Kill pane                 |\n| `focus`            | Switch to my-grid pane    |\n\n## Zone Types\n\n| Type     | Description              | Example                            |\n| -------- | ------------------------ | ---------------------------------- |\n| `watch`  | Periodic command refresh | `:zone watch DISK 40 10 30s df -h` |\n| `pipe`   | One-shot command         | `:zone pipe TREE 60 20 tree -L 2`  |\n| `pty`    | Live terminal            | `:zone pty TERM 80 24`             |\n| `socket` | TCP listener             | `:zone socket MSG 50 15 9999`      |\n\n## Common Patterns\n\n### DevOps Dashboard\n\n```bash\npython3 src/cli.py spawn --layout devops\n```\n\n### Real-time Monitoring\n\n```bash\npython3 src/cli.py send \":zone watch LOG 80 20 watch:/var/log/app.log tail -20 {file}\"\n```\n\n### Side-by-Side with Claude\n\n```bash\npython3 src/cli.py spawn --ratio 50\n```\n\n## Requirements\n\n- **tmux**: Must run inside tmux session\n- **Python 3.8+**: For plugin CLI\n"
+      },
+      "plugins": [
+        {
+          "name": "grid",
+          "source": "./claude-plugin",
+          "description": "Spawn and control ASCII canvas editor in tmux for visual workspace organization",
+          "version": "0.1.3",
+          "strict": false,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jcaldwell-labs/my-grid",
+            "/plugin install grid@my-grid"
+          ]
+        }
+      ]
+    }
+  ]
+}

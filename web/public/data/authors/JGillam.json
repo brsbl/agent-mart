@@ -1,0 +1,119 @@
+{
+  "author": {
+    "id": "JGillam",
+    "display_name": "Jason Gillam",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5461356?u=967ebb5a73f6f13be3e057e2894e199363ebf612&v=4",
+    "url": "https://github.com/JGillam",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 2,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "practical-cc",
+      "version": null,
+      "description": "A curated marketplace of Claude Code plugins and workflows to enhance your AI-assisted development experience",
+      "owner_info": {
+        "name": "Jason G.",
+        "email": "jason@example.com"
+      },
+      "keywords": [],
+      "repo_full_name": "JGillam/practical-cc",
+      "repo_url": "https://github.com/JGillam/practical-cc",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-15T20:13:46Z",
+        "created_at": "2026-01-07T21:39:10Z",
+        "license": "CC-BY-4.0"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 721
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/jg-session",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/jg-session/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/jg-session/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 709
+        },
+        {
+          "path": "plugins/jg-session/README.md",
+          "type": "blob",
+          "size": 4195
+        },
+        {
+          "path": "plugins/jg-session/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/jg-session/commands/tidydown.md",
+          "type": "blob",
+          "size": 394
+        },
+        {
+          "path": "plugins/jg-session/commands/tidyup.md",
+          "type": "blob",
+          "size": 1052
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"practical-cc\",\n  \"owner\": {\n    \"name\": \"Jason G.\",\n    \"email\": \"jason@example.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A curated marketplace of Claude Code plugins and workflows to enhance your AI-assisted development experience\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"session-management\",\n      \"description\": \"Maintain context and continuity between Claude Code sessions with tidyup/tidydown commands\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugins/jg-session\",\n      \"author\": {\n        \"name\": \"Jason G.\"\n      },\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "plugins/jg-session/.claude-plugin/plugin.json": "{\n  \"name\": \"session-management\",\n  \"version\": \"1.0.0\",\n  \"description\": \"A pair of slash commands that maintain context between Claude Code sessions through automatic session documentation. Eliminates the need to manually explain what you were working on when starting a new session.\",\n  \"author\": {\n    \"name\": \"Jason G.\",\n    \"url\": \"https://github.com/jasongilman/practical-cc\"\n  },\n  \"license\": \"CC-BY-4.0\",\n  \"homepage\": \"https://github.com/jasongilman/practical-cc/tree/main/plugins/jg-session\",\n  \"repository\": \"https://github.com/jasongilman/practical-cc\",\n  \"keywords\": [\n    \"session\",\n    \"context\",\n    \"workflow\",\n    \"productivity\",\n    \"tidyup\",\n    \"tidydown\",\n    \"session-management\"\n  ]\n}\n",
+        "plugins/jg-session/README.md": "# Session Management Plugin (jg-session)\n\nA pair of slash commands that maintain context between Claude Code sessions through automatic session documentation.\n\n## Overview\n\nThese commands work together to create seamless continuity in your development workflow:\n\n- **tidyup** runs at the end of a session to commit your work and create a structured session summary\n- **tidydown** runs at the start of the next session to load the previous context\n\nThis eliminates the need to manually explain what you were working on when starting a new session.\n\n## Commands\n\n### /tidyup\n\nEnd-of-session cleanup that:\n- Ensures `.CLAUDE_LAST_SESSION.md` is in `.gitignore`\n- Updates project status documentation\n- Commits your code\n- Creates a new session summary with:\n  - What was accomplished (features, bugs fixed, refactoring)\n  - Current state (what's working, what's incomplete)\n  - Next steps (prioritized actions)\n  - Open questions/decisions (blockers, unresolved issues)\n\n### /tidydown\n\nStart-of-session context loader that:\n- Reads `.CLAUDE_LAST_SESSION.md` from your project root\n- Uses it as context for the current session\n- Informs you if no previous session exists (starting fresh)\n\n## Installation\n\nThis plugin is installed by registering the practical-cc marketplace in Claude Code. Once registered, the tidyup and tidydown commands become available automatically.\n\nFor detailed installation instructions, see the [Claude Code Plugin Documentation](https://code.claude.com/docs/en/plugins).\n\n## Usage\n\n### Typical Workflow\n\n**End of session:**\n```\n/tidyup\n```\n\n**Start of next session:**\n```\n/tidydown\n```\n\nThen continue with your work. Claude will have full context of what you were doing.\n\n### Example\n\n```\nUser: /tidyup\nClaude: I've completed the session tidy-up:\n1. Verified .CLAUDE_LAST_SESSION.md is in .gitignore\n2. Committed changes: \"Implement user authentication feature\"\n3. Created session summary with accomplishments and next steps\n\nThe session summary has been saved to .CLAUDE_LAST_SESSION.md\nUse /tidydown in your next session to load this context.\n\n[Next session]\nUser: /tidydown\nClaude: I've loaded the session context. I can see we implemented user authentication\nand were planning to add password reset functionality next. How would you like to proceed?\n```\n\n## How It Works\n\n### Session Summary Structure\n\nThe tidyup command creates a markdown file (`.CLAUDE_LAST_SESSION.md`) with:\n\n- **Session Summary**: Date and high-level overview\n- **What was accomplished**: Features, fixes, refactoring performed\n- **Current state**: What's working, incomplete work, known issues\n- **Next steps**: Prioritized list of upcoming work\n- **Open questions**: Blockers, decisions needed, questions for you\n\n### Git Integration\n\nThe tidyup command integrates with your git workflow:\n- Automatically commits changes before creating the session summary\n- Ensures the session file is gitignored (not committed to the repository)\n- Maintains clean commit history\n\n## Best Practices\n\n1. **Use tidyup before long breaks**: Before stepping away for more than an hour or ending your day\n2. **Always tidydown when returning**: Start each session with /tidydown to load context\n3. **Review the summary**: After tidyup, review the .CLAUDE_LAST_SESSION.md to ensure accuracy\n4. **Update CLAUDE.md**: tidyup will update project-level documentation when appropriate\n\n## Troubleshooting\n\n**Issue**: `/tidyup` or `/tidydown` not recognized\n\n**Solution**: Ensure the practical-cc marketplace is registered in Claude Code and the plugin is enabled\n\n**Issue**: Session summary not found\n\n**Solution**: You may not have run `/tidyup` in the previous session. This is normal for new projects.\n\n**Issue**: Git commit fails during tidyup\n\n**Solution**: Ensure you have changes to commit and proper git configuration (user.name, user.email)\n\n## Version History\n\n### 1.0.0\n- Initial release\n- tidyup command for end-of-session cleanup\n- tidydown command for start-of-session context loading\n\n## License\n\nThis plugin is licensed under [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)\n\n## Author\n\nCreated by Jason G. as part of the [practical-cc](https://github.com/jasongilman/practical-cc) marketplace.\n",
+        "plugins/jg-session/commands/tidydown.md": "Read the session summary from .CLAUDE_LAST_SESSION.md and use it as context for this session.\n\nIf the file doesn't exist, inform the user (they may be starting fresh) and proceed with their request.\n\nAfter loading the context, help the user with their request. They may have provided additional instructions after this command, or they may follow up with a question about what to work on next.\n",
+        "plugins/jg-session/commands/tidyup.md": "We are at a good stopping point for this session. Perform the following tidy-up:\n\n1. Ensure .CLAUDE_LAST_SESSION.md is in .gitignore (check and add if missing)\n2. Update any appropriate status documentation that exists for this project. If we don't have a dedicated file, then you can update @CLAUDE.md, if that's appropriate.\n3. Commit our code\n4. If a session summary file (.CLAUDE_LAST_SESSION.md) exists already, then remove it.\n5. Create a new session summary in .CLAUDE_LAST_SESSION.md (in the project root) with the following sections:\n\n   * Session Summary header with today's date\n   * What was accomplished (features added, bugs fixed, refactoring done, files changed)\n   * Current state (what's working, what's incomplete or in-progress, known issues)\n   * Next steps (prioritized actions for the next session)\n   * Open questions/decisions (unresolved technical decisions, blockers, questions needing user input)\n\n5. Let the user know the session summary has been saved and they can use /tidydown in their next session to load this context\n"
+      },
+      "plugins": [
+        {
+          "name": "session-management",
+          "description": "Maintain context and continuity between Claude Code sessions with tidyup/tidydown commands",
+          "version": "1.0.0",
+          "source": "./plugins/jg-session",
+          "author": {
+            "name": "Jason G."
+          },
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add JGillam/practical-cc",
+            "/plugin install session-management@practical-cc"
+          ]
+        }
+      ]
+    }
+  ]
+}

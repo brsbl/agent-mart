@@ -1,0 +1,279 @@
+{
+  "author": {
+    "id": "MMMIIIN",
+    "display_name": "Mingwan Choi",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/78677571?u=8a5fb65c733c64a1710438bb3bfa95a3cbc660b1&v=4",
+    "url": "https://github.com/MMMIIIN",
+    "bio": "Chemi",
+    "stats": {
+      "total_marketplaces": 2,
+      "total_plugins": 2,
+      "total_commands": 11,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "claude-pr-logger",
+      "version": null,
+      "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
+      "owner_info": {
+        "name": "MMMIIIN",
+        "url": "https://github.com/MMMIIIN"
+      },
+      "keywords": [],
+      "repo_full_name": "MMMIIIN/claude-pr-logger",
+      "repo_url": "https://github.com/MMMIIIN/claude-pr-logger",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-22T08:52:36Z",
+        "created_at": "2025-12-22T07:16:42Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 533
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 460
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 7467
+        },
+        {
+          "path": "commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "commands/pr-log-all.md",
+          "type": "blob",
+          "size": 421
+        },
+        {
+          "path": "commands/pr-log-clear.md",
+          "type": "blob",
+          "size": 597
+        },
+        {
+          "path": "commands/pr-log.md",
+          "type": "blob",
+          "size": 617
+        },
+        {
+          "path": "commands/uninstall.md",
+          "type": "blob",
+          "size": 807
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/hooks.json",
+          "type": "blob",
+          "size": 230
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-pr-logger\",\n  \"owner\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pr-logger\",\n      \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./\",\n      \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"pr-logger\",\n  \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n  \"version\": \"1.0.2\",\n  \"author\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"],\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "README.md": "# Claude PR Logger\n\nClaude Code에서 개발 과정을 자동으로 기록하여 PR 작성 시 활용할 수 있는 플러그인입니다.\n\n## 왜 만들었나요?\n\n### AI 시대의 코드 리뷰 패러다임 변화\n\nAI를 활용한 개발이 보편화되면서 개발 속도와 생성되는 코드의 양이 급격히 증가했습니다.\n하지만 기존의 코드 리뷰 방식은 이러한 변화를 따라가지 못하고 있습니다.\n\n**기존 방식의 한계:**\n- 한 PR에 수백, 수천 줄의 변경사항\n- 모든 코드를 라인 바이 라인으로 검토하기 어려움\n- AI가 생성한 코드의 의도를 파악하기 힘듦\n\n### 새로운 코드 리뷰: 컨텍스트 리뷰\n\n이제는 `\"어떤 코드가 생성되었는가\"`보다 `\"어떤 맥락에서, 어떤 명령으로 코드가 생성되었는가\"`를 리뷰해야 합니다.\n\n**컨텍스트 리뷰의 장점:**\n- 개발자가 AI에게 내린 명령과 의도를 확인\n- 문제 해결 과정과 의사결정 흐름을 추적\n- 코드 변경의 \"왜\"를 이해하고 리뷰\n\n### PR Logger의 역할\n\n이 플러그인은 개발자와 AI 간의 대화를 자동으로 기록하여:\n\n1. **개발 컨텍스트 보존** - 어떤 요청으로 코드가 생성되었는지 기록\n2. **의사결정 추적** - 왜 이런 방식으로 구현했는지 확인 가능\n3. **효율적인 리뷰** - 코드보다 맥락을 중심으로 빠른 리뷰\n4. **지식 공유** - 팀원들이 개발 과정을 이해하고 학습\n\n## 기능\n\n- **브랜치별 로그 분리**: Git 브랜치마다 별도의 로그 파일 자동 생성\n- **자동 질문 기록**: 사용자의 모든 질문을 타임스탬프와 함께 기록\n- **답변 요약 트리거**: 이전 답변을 요약하도록 Claude에게 자동 알림\n- **에러 메시지 요약**: 긴 에러 메시지를 자동으로 요약 (30줄 이상)\n- **PR용 로그**: 개발 과정을 PR에 그대로 활용 가능\n\n### 브랜치별 로그 파일\n\n```\n.claude/pr-logger/\n├── session-log-feature-10-geofence-management.md\n├── session-log-feature-11-worker-api.md\n├── session-log-develop.md\n└── session-log-main.md\n```\n\n브랜치를 전환하면 자동으로 해당 브랜치의 로그 파일을 사용합니다.\n\n## 설치 방법\n\n### 방법 1: GitHub에서 설치 (권장)\n\n```bash\n# Claude Code에서 실행\n/plugin install pr-logger@MMMIIIN/claude-pr-logger\n```\n\n설치 후 Claude Code를 재시작하세요.\n\n### 방법 2: 마켓플레이스 등록 후 설치\n\n```bash\n# 1. 마켓플레이스 추가\n/plugin marketplace add MMMIIIN/claude-pr-logger\n\n# 2. 플러그인 설치\n/plugin install pr-logger\n```\n\n## 삭제 방법\n\n### 방법 1: 명령어로 삭제 (권장)\n\n```bash\n# Claude Code에서 실행\n/pr-logger:uninstall\n```\n\nClaude가 캐시, 마켓플레이스, 설정 파일을 모두 정리합니다.\n\n### 방법 2: 기본 삭제\n\n```bash\n/plugin uninstall pr-logger\n```\n\n> **주의**: 기본 삭제 후 Hook 에러가 발생하면 `/pr-logger:uninstall` 명령어를 사용하세요.\n\n삭제 후 Claude Code를 재시작하세요.\n\n## 동작 원리\n\n플러그인은 다음과 같은 흐름으로 동작합니다:\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                        첫 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 질문 입력                                           │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Claude가 답변                                                │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n┌─────────────────────────────────────────────────────────────────┐\n│                        두 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 다음 질문 입력                                       │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Hook이 <pr-log-reminder> 메시지를 Claude에게 전달            │\n│  4. Claude가 이전 답변을 요약하여 session-log.md에 추가           │\n│  5. Claude가 현재 질문에 답변                                    │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n                        (반복...)\n```\n\n**핵심 포인트:**\n- 질문은 **입력 즉시** 자동 기록됩니다\n- 답변 요약은 **다음 질문 시** Claude가 작성합니다\n- 이를 통해 질문-답변 쌍이 순차적으로 기록됩니다\n\n## 사용법\n\n### 자동 기록\n\n플러그인 설치 후 자동으로 동작합니다:\n\n1. 질문을 입력하면 `.claude/pr-logger/session-log.md`에 기록됨\n2. 다음 질문 시 이전 답변 요약을 자동으로 추가\n\n### 슬래시 명령어\n\n| 명령어 | 설명 |\n|--------|------|\n| `/pr-logger:pr-log` | 현재 PR용 개발 로그 확인 |\n| `/pr-logger:pr-log-clear` | PR 작성 완료 마커 추가 |\n| `/pr-logger:pr-log-all` | 전체 개발 로그 확인 |\n| `/pr-logger:uninstall` | 플러그인 완전 삭제 (캐시, 설정 파일 모두 정리) |\n\n## 로그 형식\n\n```markdown\n# PR 개발 로그\n\n브랜치: `feature-10-geofence-management`\n세션 ID: `abc123`\n시작 시간: 2025-12-22 10:00:00\n\n---\n\n## [2025-12-22 10:00:00] 질문\n\n사용자 질문 내용\n\n### 답변 요약\n- 수행한 작업 1\n- 수행한 작업 2\n- 커밋: `abc1234`\n```\n\n## CLAUDE.md 설정 (권장)\n\n프로젝트의 `CLAUDE.md`에 다음 내용을 추가하면 더 정확하게 동작합니다:\n\n```markdown\n## PR 개발 로그 자동화\n\n`<pr-log-reminder>` 메시지가 표시되면:\n\n1. `.claude/pr-logger/session-log.md`를 읽어서 마지막 질문 확인\n2. 해당 질문에 대한 이전 답변을 간결하게 요약 (2-5줄)\n3. 요약 내용을 `### 답변 요약` 형식으로 추가\n4. 그 후 현재 질문에 대한 답변 진행\n```\n\n## 파일 구조\n\n```\nclaude-pr-logger/\n├── .claude-plugin/\n│   ├── plugin.json          # 플러그인 매니페스트\n│   └── marketplace.json     # 마켓플레이스 등록 정보\n├── hooks/\n│   └── hooks.json           # Hook 설정\n├── scripts/\n│   └── log-prompt.py        # 로깅 스크립트\n├── commands/\n│   ├── pr-log.md            # 로그 확인 명령어\n│   ├── pr-log-clear.md      # 완료 마커 명령어\n│   └── pr-log-all.md        # 전체 로그 명령어\n└── README.md\n```\n\n## 라이선스\n\nMIT License\n",
+        "commands/pr-log-all.md": "---\ndescription: PR 개발 로그 전체 기록 확인\nuser_invocable: true\n---\n\n# PR 개발 로그 전체 확인\n\n현재 프로젝트의 `.claude/pr-logger/session-log.md` 파일 전체 내용을 확인합니다.\n\n## 수행할 작업\n\n1. `.claude/pr-logger/session-log.md` 파일을 읽습니다.\n2. PR 완료 마커와 관계없이 전체 내용을 표시합니다.\n3. 히스토리 확인 목적으로 사용합니다.\n",
+        "commands/pr-log-clear.md": "---\ndescription: PR 작성 완료 마커 추가 (로그 삭제 안함)\nuser_invocable: true\n---\n\n# PR 작성 완료 마커 추가\n\nPR 작성이 완료되었을 때 사용합니다. 로그를 삭제하지 않고 마커만 추가합니다.\n\n## 수행할 작업\n\n1. `.claude/pr-logger/session-log.md` 파일 끝에 구분선을 추가합니다.\n2. `---PR_COMPLETED---` 마커와 타임스탬프를 기록합니다.\n3. 다음 세션에서는 이 마커 이후의 내용만 새 PR에 포함됩니다.\n\n## 마커 형식\n\n```\n---\n\n### PR 작성 완료: [YYYY-MM-DD HH:MM:SS]\n\n---PR_COMPLETED---\n\n---\n```\n",
+        "commands/pr-log.md": "---\ndescription: PR 개발 로그 확인 및 출력 (마지막 PR 이후만)\nuser_invocable: true\n---\n\n# PR 개발 로그 확인\n\n현재 프로젝트의 `.claude/pr-logger/session-log.md` 파일을 읽어서 개발 로그를 확인합니다.\n\n## 수행할 작업\n\n1. `.claude/pr-logger/session-log.md` 파일을 읽습니다.\n2. 마지막 PR 작성 완료 마커 (`---PR_COMPLETED---`) 이후의 내용만 표시합니다.\n3. 마커가 없으면 전체 내용을 표시합니다.\n4. 사용자에게 요약된 형태로 보여줍니다.\n\n## 출력 형식\n\n- 질문 개수\n- 주요 작업 내용 요약\n- 커밋 목록\n",
+        "commands/uninstall.md": "# PR Logger 완전 삭제\n\npr-logger 플러그인을 완전히 삭제합니다. 다음 파일들을 모두 삭제하세요:\n\n## 삭제할 항목\n\n1. **캐시 폴더 삭제**\n```bash\nrm -rf ~/.claude/plugins/cache/claude-pr-logger\n```\n\n2. **마켓플레이스 폴더 삭제**\n```bash\nrm -rf ~/.claude/plugins/marketplaces/claude-pr-logger\n```\n\n3. **installed_plugins.json에서 pr-logger 항목 제거**\n   - 파일 경로: `~/.claude/plugins/installed_plugins.json`\n   - `\"pr-logger@claude-pr-logger\"` 키와 값 전체를 삭제\n\n4. **known_marketplaces.json에서 claude-pr-logger 항목 제거**\n   - 파일 경로: `~/.claude/plugins/known_marketplaces.json`\n   - `\"claude-pr-logger\"` 키와 값 전체를 삭제\n\n## 완료 후\n\nClaude Code를 재시작하면 플러그인이 완전히 제거됩니다.\n",
+        "hooks/hooks.json": "{\n  \"hooks\": {\n    \"UserPromptSubmit\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"python3 ${CLAUDE_PLUGIN_ROOT}/scripts/log-prompt.py\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+      },
+      "plugins": [
+        {
+          "name": "pr-logger",
+          "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
+          "version": "1.0.2",
+          "source": "./",
+          "repository": "https://github.com/MMMIIIN/claude-pr-logger",
+          "license": "MIT",
+          "keywords": [
+            "pr",
+            "logging",
+            "documentation",
+            "development-log"
+          ],
+          "categories": [
+            "development-log",
+            "documentation",
+            "logging",
+            "pr"
+          ],
+          "install_commands": [
+            "/plugin marketplace add MMMIIIN/claude-pr-logger",
+            "/plugin install pr-logger@claude-pr-logger"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "daily-work-tracker",
+      "version": null,
+      "description": "여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다",
+      "owner_info": {
+        "name": "MMMIIIN",
+        "url": "https://github.com/MMMIIIN"
+      },
+      "keywords": [],
+      "repo_full_name": "MMMIIIN/daily-work-tracker",
+      "repo_url": "https://github.com/MMMIIIN/daily-work-tracker",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-05T13:38:23Z",
+        "created_at": "2026-01-05T06:43:30Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 505
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 231
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 6497
+        },
+        {
+          "path": "commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "commands/daily-clear.md",
+          "type": "blob",
+          "size": 460
+        },
+        {
+          "path": "commands/daily-path.md",
+          "type": "blob",
+          "size": 1805
+        },
+        {
+          "path": "commands/daily-setup.md",
+          "type": "blob",
+          "size": 3304
+        },
+        {
+          "path": "commands/daily-status.md",
+          "type": "blob",
+          "size": 1028
+        },
+        {
+          "path": "commands/daily-summary.md",
+          "type": "blob",
+          "size": 660
+        },
+        {
+          "path": "commands/daily-sync.md",
+          "type": "blob",
+          "size": 4674
+        },
+        {
+          "path": "commands/daily-week.md",
+          "type": "blob",
+          "size": 682
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/hooks.json",
+          "type": "blob",
+          "size": 229
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/generate-summary.md",
+          "type": "blob",
+          "size": 3269
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"daily-work-tracker\",\n  \"owner\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"daily-work-tracker\",\n      \"description\": \"여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"repository\": \"https://github.com/MMMIIIN/daily-work-tracker\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"daily\", \"work\", \"tracker\", \"logging\", \"productivity\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"daily-work-tracker\",\n  \"version\": \"1.0.0\",\n  \"description\": \"여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다\",\n  \"author\": {\n    \"name\": \"chemi\"\n  },\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "README.md": "# Daily Work Tracker\n\n여러 프로젝트에서 작업한 내역을 날짜별로 자동 추적하는 Claude Code 플러그인입니다.\n\n## 주요 기능\n\n- **자동 작업 기록**: 대화할 때마다 프로젝트별로 자동 기록\n- **프로젝트별 분리**: 여러 프로젝트 작업을 하나의 파일에서 섹션별로 관리\n- **날짜별 파일**: `~/.claude/daily-work/YYYY-MM-DD.md` 형식으로 저장\n- **Notion 연동**: Notion MCP를 통해 자동 동기화 (선택)\n- **로컬 저장**: Notion 미연결 시 로컬 MD 파일로 저장\n- **저장 경로 설정**: 로그 및 요약 파일 경로 커스터마이징 가능\n\n## 설치\n\n### 1단계: 마켓플레이스 추가\n\nClaude Code 터미널에서:\n\n```\n/plugin marketplace add MMMIIIN/daily-work-tracker\n```\n\n### 2단계: 플러그인 설치\n\n```\n/plugin install daily-work-tracker@daily-work-tracker\n```\n\n### 설치 확인\n\n```\n/plugin list\n```\n\n**참고**: 설치 후 Claude Code를 재시작하면 플러그인이 활성화됩니다.\n\n## 설정\n\n### 빠른 설정 (권장)\n\n```\n/daily-work-tracker:daily-setup\n```\n\n대화형으로 모든 설정을 진행합니다:\n1. **저장 경로** - 로그 파일 저장 위치 선택\n2. **Notion 연동** - Notion MCP 활성화 여부\n\n### 설정 파일 구조\n\n`~/.claude/daily-work-tracker/config.json`:\n\n```json\n{\n  \"notion_mcp\": {\n    \"enabled\": true,\n    \"page_id\": \"your-notion-page-id\"\n  },\n  \"storage\": {\n    \"log_path\": \"~/.claude/daily-work\",\n    \"summary_path\": \"~/.claude/daily-summaries\"\n  },\n  \"sync_history\": [\"2026-01-04\", \"2026-01-05\"]\n}\n```\n\n### Notion MCP 연동 (선택)\n\nNotion에 일일 작업 요약을 자동 동기화하려면:\n\n#### 1단계: Notion Integration 생성\n\n1. [Notion Integrations](https://www.notion.so/my-integrations) 페이지 접속\n2. \"New integration\" 클릭\n3. 이름 입력 후 생성\n4. **Internal Integration Secret** 복사 (`ntn_` 또는 `secret_`으로 시작)\n\n#### 2단계: Notion MCP 서버 설정\n\n`~/.claude.json`에 추가:\n\n```json\n{\n  \"mcpServers\": {\n    \"notion\": {\n      \"type\": \"stdio\",\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@notionhq/notion-mcp-server\"],\n      \"env\": {\n        \"OPENAPI_MCP_HEADERS\": \"{\\\"Authorization\\\": \\\"Bearer YOUR_API_KEY\\\", \\\"Notion-Version\\\": \\\"2022-06-28\\\"}\"\n      }\n    }\n  }\n}\n```\n\n#### 3단계: Notion 페이지에 Integration 연결\n\n1. 동기화할 Notion 페이지 열기\n2. 우측 상단 `⋯` 클릭\n3. \"연결\" → 생성한 Integration 선택\n4. 페이지 URL에서 ID 복사: `notion.so/페이지이름-{페이지ID}`\n\n#### 4단계: 플러그인 설정\n\n```\n/daily-work-tracker:daily-setup\n```\n\n- Notion 활성화 선택\n- 복사한 페이지 ID 입력\n\n### 동기화 형식\n\nNotion에 Toggle 블록으로 날짜+시간별 정리:\n\n```\n📅 2026-01-05 17:30 | 4개 프로젝트 | 29개 대화\n├─ 🔹 project-name\n│   ├─ [15:23] 질문 내용\n│   ├─ [16:00] 다른 질문\n│   └─ 📝 요약: Claude가 생성한 프로젝트 요약\n└─ 📊 전체 요약\n```\n\n## 명령어\n\n| 명령어 | 설명 |\n|--------|------|\n| `/daily-work-tracker:daily-setup` | 초기 설정 (저장 경로, Notion) |\n| `/daily-work-tracker:daily-sync` | Notion/로컬에 동기화 (미동기화 날짜 일괄 처리) |\n| `/daily-work-tracker:daily-summary` | 오늘 작업 내역 보기 |\n| `/daily-work-tracker:daily-week` | 이번 주 작업 요약 |\n| `/daily-work-tracker:daily-status` | 설정 상태 확인 |\n| `/daily-work-tracker:daily-path` | 저장 경로 변경 |\n| `/daily-work-tracker:daily-clear` | 오늘 기록 삭제 |\n\n## 저장 위치\n\n### 기본 경로\n\n```\n~/.claude/daily-work/          # 작업 로그\n├── 2026-01-05.md\n├── 2026-01-04.md\n└── ...\n\n~/.claude/daily-summaries/     # 일일 요약\n├── 2026-01-05-summary.md\n└── ...\n\n~/.claude/daily-work-tracker/  # 설정\n└── config.json\n```\n\n### 경로 변경\n\n`/daily-work-tracker:daily-path` 명령어로 저장 경로 변경 가능\n\n## 파일 형식\n\n```markdown\n# 📅 2026-01-05 작업 기록\n\n## 🔹 flutter-app\n> `/Users/username/projects/flutter-app`\n\n- **[14:30]** 사용자 인증 어떻게 구현하면 좋을까? → Riverpod 추천\n- **[15:00]** 로그인 화면 만들어줘 → `login_page.dart` 생성\n\n## 🔹 backend-api\n> `/Users/username/projects/backend-api`\n\n- **[16:00]** API 엔드포인트 설계 → REST API 구조 제안\n```\n\n## 동작 방식\n\n1. **UserPromptSubmit Hook**: 사용자가 질문할 때마다 `log-daily.py` 실행\n2. **프로젝트 감지**: `pubspec.yaml`, `package.json` 또는 폴더명으로 프로젝트 식별\n3. **자동 기록**: 날짜별 MD 파일에 타임스탬프와 함께 저장\n4. **요약 트리거**: 이전 답변 요약을 자동으로 추가하도록 Claude에게 알림\n\n## 스킬 (Skills)\n\n플러그인에 포함된 스킬은 Claude가 특정 작업을 수행할 때 참조하는 가이드라인입니다.\n\n### generate-summary\n\n`/daily-sync` 실행 시 Claude가 작업 기록을 분석하여 요약을 생성할 때 사용됩니다.\n\n**동작 방식:**\n1. 작업 기록 파일(`.md`)을 읽음\n2. 프로젝트별로 작업 내용 분석\n3. 스킬에 정의된 가이드라인에 따라 요약 생성\n4. Notion에 토글 형태로 저장\n\n**생성되는 요약:**\n- **프로젝트별 요약**: 각 프로젝트에서 수행한 주요 작업 1-2문장\n- **전체 요약**: 하루 전체 작업 2-3문장\n\n**예시:**\n```\n▶ 📅 2026-01-15 14:30 작업 기록 | 2개 프로젝트\n    ▶ 🔹 shopping-app\n        - [10:30] 장바구니 기능 구현 요청\n        - [11:20] 결제 페이지 연동\n        📝 요약: 장바구니 기능 구현 (상품 추가/삭제, 결제 연동)\n    ▶ 🔹 admin-dashboard\n        - [14:00] 사용자 목록 API 연결\n        📝 요약: 사용자 목록 API 연동 및 테이블 UI 개선\n    📊 전체 요약: shopping-app 장바구니 완성, admin-dashboard UI 개선\n```\n\n스킬 파일 위치: `skills/generate-summary.md`\n\n## 삭제\n\n### 플러그인 완전 삭제\n\n```\n/plugin uninstall daily-work-tracker\n```\n\n### 플러그인 비활성화\n\n```\n/plugin disable daily-work-tracker@daily-work-tracker\n```\n\n### 데이터 삭제 (선택)\n\n플러그인 삭제 후에도 기록된 데이터는 유지됩니다. 데이터도 삭제하려면:\n\n```bash\n# 작업 로그 삭제\nrm -rf ~/.claude/daily-work/\n\n# 일일 요약 삭제\nrm -rf ~/.claude/daily-summaries/\n\n# 설정 파일 삭제\nrm -rf ~/.claude/daily-work-tracker/\n```\n\n## 라이선스\n\nMIT\n",
+        "commands/daily-clear.md": "---\ndescription: 오늘 작업 기록 삭제\nuser_invocable: true\n---\n\n# Daily Clear\n\n오늘 작업 기록을 삭제합니다.\n\n## 실행 방법\n\n1. 사용자에게 확인 요청: \"오늘 작업 기록을 삭제하시겠습니까? (y/n)\"\n2. 'y' 입력 시 `~/.claude/daily-work/YYYY-MM-DD.md` 파일 삭제\n3. 삭제 완료 메시지 출력\n\n## 주의사항\n\n- 삭제된 파일은 복구할 수 없습니다\n- 다른 날짜 파일은 영향받지 않습니다\n",
+        "commands/daily-path.md": "---\ndescription: Daily Work Tracker 저장 경로 설정\nuser_invocable: true\n---\n\n# Daily Path 설정\n\n작업 로그와 요약 파일의 저장 경로를 설정합니다.\n\n## 현재 설정 확인\n\n```bash\npython3 ~/daily-work-tracker/scripts/setup.py --status\n```\n\n현재 설정된 경로를 확인합니다:\n- `log_path`: 작업 로그 저장 위치\n- `summary_path`: 요약 파일 저장 위치\n\n## 경로 설정 방법\n\n### 사용자에게 질문\n\n**\"어떤 경로를 변경하시겠습니까?\"**\n\n1. **작업 로그 경로** (`log_path`)\n2. **요약 파일 경로** (`summary_path`)\n3. **둘 다**\n\n### 작업 로그 경로 변경\n\n사용자에게 물어보세요: **\"작업 로그를 저장할 경로를 입력해주세요 (예: ~/Documents/daily-logs)\"**\n\n```bash\npython3 ~/daily-work-tracker/scripts/setup.py --log-path \"사용자입력경로\"\n```\n\n### 요약 파일 경로 변경\n\n사용자에게 물어보세요: **\"요약 파일을 저장할 경로를 입력해주세요 (예: ~/Documents/summaries)\"**\n\n```bash\npython3 ~/daily-work-tracker/scripts/setup.py --summary-path \"사용자입력경로\"\n```\n\n### 둘 다 변경\n\n```bash\npython3 ~/daily-work-tracker/scripts/setup.py --log-path \"로그경로\" --summary-path \"요약경로\"\n```\n\n## 설정 완료 메시지\n\n경로 변경 후 사용자에게 알려주세요:\n\n```\n✅ 저장 경로가 변경되었습니다!\n\n📂 현재 설정:\n- 작업 로그: [log_path]\n- 요약 파일: [summary_path]\n\n※ 기존 파일은 자동으로 이동되지 않습니다.\n   필요시 수동으로 파일을 새 경로로 이동해주세요.\n```\n\n## 기본값으로 초기화\n\n```bash\npython3 ~/daily-work-tracker/scripts/setup.py --log-path \"~/.claude/daily-work\"\npython3 ~/daily-work-tracker/scripts/setup.py --summary-path \"~/.claude/daily-summaries\"\n```\n",
+        "commands/daily-setup.md": "---\ndescription: Daily Work Tracker 초기 설정 (Notion MCP 연동)\nuser_invocable: true\n---\n\n# Daily Setup\n\nDaily Work Tracker 대화형 설정을 진행합니다.\n\n## 설정 흐름\n\nAskUserQuestion 도구를 사용해서 순서대로 설정을 진행하세요.\n\n### 1단계: 사용자에게 설정 질문\n\n**먼저** AskUserQuestion 도구로 다음 질문들을 **한 번에** 물어보세요:\n\n**질문 1**: 저장 경로\n- header: \"저장 경로\"\n- question: \"작업 기록을 어디에 저장할까요?\"\n- options:\n  - label: \"기본 경로\"\n    description: \"~/.claude/daily-work/ 에 저장\"\n  - label: \"직접 입력\"\n    description: \"원하는 경로 직접 지정\"\n\n**질문 2**: Notion MCP 사용\n- header: \"Notion\"\n- question: \"Notion에 작업 기록을 동기화하시겠습니까?\"\n- options:\n  - label: \"예\"\n    description: \"로컬 저장 + Notion 페이지에 동기화\"\n  - label: \"아니오\"\n    description: \"로컬에만 저장 (기본)\"\n\n### 2단계: 저장 경로 설정\n\n사용자 응답에 따라:\n\n**\"기본 경로\" 선택 시:**\n```bash\nmkdir -p ~/.claude/daily-work-tracker\nmkdir -p ~/.claude/daily-work\nmkdir -p ~/.claude/daily-summaries\n```\n- log_path = \"~/.claude/daily-work\"\n- summary_path = \"~/.claude/daily-summaries\"\n\n**\"직접 입력\" 선택 시:**\n- AskUserQuestion으로 \"로그 저장 경로를 입력해주세요 (예: ~/Documents/daily-work)\" 질문\n- 입력받은 경로로 디렉토리 생성:\n  ```bash\n  mkdir -p [사용자입력경로]\n  mkdir -p ~/.claude/daily-work-tracker\n  ```\n- log_path = 사용자 입력 경로\n\n### 3단계: Notion 설정 (사용자가 \"예\" 선택 시)\n\nNotion을 사용하겠다고 하면:\n\n1. Notion MCP 서버가 설정되어 있는지 확인:\n   ```bash\n   grep -A5 '\"notion\"' ~/.claude.json\n   ```\n\n2. **설정 안 되어 있으면** 안내:\n   - Notion Integration 생성 필요 (https://www.notion.so/my-integrations)\n   - API 키를 받아서 ~/.claude.json에 MCP 서버 추가 필요\n   - 설정 후 다시 /daily-setup 실행하라고 안내\n\n3. **설정 되어 있으면** 페이지 ID 요청:\n   - AskUserQuestion으로 \"Notion 페이지 URL을 입력해주세요\" 질문\n   - URL에서 페이지 ID 추출 (32자리 hex)\n\n### 4단계: 설정 파일 생성\n\n모든 응답을 수집한 후 설정 파일을 생성합니다:\n\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --notion-page \"[페이지ID]\" --notion-enable\n```\n\n또는 Notion 미사용 시:\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --init\n```\n\n### 5단계: 완료 메시지\n\n설정 완료 후 요약을 보여주세요:\n\n```\n✅ Daily Work Tracker 설정 완료!\n\n📋 설정 내용:\n- 저장 경로: [경로]\n- 로컬 저장: ✅ 활성화\n- Notion 동기화: [✅ 활성화 / ❌ 비활성화]\n\n🚀 사용 방법:\n- /daily-summary  - 오늘 작업 보기\n- /daily-sync     - Notion 동기화 (미동기화 날짜 일괄 처리)\n- /daily-status   - 설정 확인\n- /daily-path     - 저장 경로 변경\n```\n\n## 중요\n\n- 로컬 저장은 **항상 활성화** (기본)\n- Notion은 **추가 옵션**으로 활성화 가능\n- Hook이 자동으로 모든 대화를 로컬에 기록함\n- 저장 경로는 나중에 `/daily-path`로 변경 가능\n- `/daily-sync` 실행 시 동기화되지 않은 모든 날짜를 자동으로 처리\n",
+        "commands/daily-status.md": "---\ndescription: Daily Work Tracker 설정 상태 확인\nuser_invocable: true\n---\n\n# Daily Status\n\n플러그인의 현재 설정 상태를 확인합니다.\n\n## 실행 방법\n\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --status\n```\n\n## 미동기화 날짜 확인\n\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --unsynced\n```\n\n## 출력 예시\n\n```json\n{\n  \"configured\": true,\n  \"log_path\": \"~/.claude/daily-work\",\n  \"summary_path\": \"~/.claude/daily-summaries\",\n  \"notion_mcp_enabled\": true,\n  \"notion_page_id\": \"abc123def456\",\n  \"fallback_enabled\": true,\n  \"synced_dates_count\": 5,\n  \"last_synced\": \"2026-01-04\",\n  \"message\": \"설정 완료\"\n}\n```\n\n## 상태 항목\n\n| 항목 | 설명 |\n|------|------|\n| `configured` | 설정 파일 존재 여부 |\n| `log_path` | 작업 로그 저장 경로 |\n| `notion_mcp_enabled` | Notion MCP 연동 활성화 여부 |\n| `notion_page_id` | 설정된 Notion 페이지 ID |\n| `synced_dates_count` | 동기화된 날짜 수 |\n| `last_synced` | 마지막 동기화 날짜 |\n",
+        "commands/daily-summary.md": "---\ndescription: 오늘 작업한 내역 요약 보기\nuser_invocable: true\n---\n\n# Daily Summary\n\n오늘 작업한 내역을 확인합니다.\n\n## 실행 방법\n\n1. `~/.claude/daily-work/` 디렉토리에서 오늘 날짜 파일을 읽으세요\n2. 파일 형식: `YYYY-MM-DD.md` (예: 2026-01-05.md)\n3. 파일이 없으면 \"오늘 기록된 작업이 없습니다\" 출력\n\n## 출력 형식\n\n파일 내용을 보여주고 아래 통계 추가:\n\n```\n---\n📊 오늘 통계\n- 작업한 프로젝트: N개\n- 총 대화 횟수: N회\n```\n\n## 인자\n\n- 날짜 지정 가능: `/daily-summary 2026-01-04` → 해당 날짜 파일 조회\n- 인자 없으면 오늘 날짜\n",
+        "commands/daily-sync.md": "---\ndescription: 작업 요약을 Notion에 동기화하거나 로컬에 저장 (미동기화 날짜 일괄 처리)\nuser_invocable: true\n---\n\n# Daily Sync\n\n작업 기록을 Notion 페이지에 동기화합니다. 동기화되지 않은 모든 날짜를 자동으로 찾아서 일괄 처리합니다.\n\n## 실행 단계\n\n### 1단계: 설정 및 미동기화 날짜 확인\n\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --status\n```\n\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --unsynced\n```\n\n위 명령어로 다음을 확인:\n- Notion MCP 활성화 여부 (`notion_mcp_enabled`)\n- 페이지 ID (`notion_page_id`)\n- 동기화되지 않은 날짜 목록 (`unsynced_dates`)\n\n### 2단계: 동기화 대상 결정\n\n- 인자로 날짜가 지정되면 해당 날짜만 동기화\n- 인자 없으면 **모든 미동기화 날짜** 동기화\n\n### 3단계: 각 날짜별 동기화\n\n**미동기화 날짜가 있으면**, 각 날짜에 대해:\n\n1. 해당 날짜의 작업 기록 읽기 (log_path는 --status에서 확인):\n```bash\ncat [log_path]/[날짜].md\n```\n\n2. **작업 기록을 분석하여 요약 생성**:\n\n각 프로젝트별로 작업 내용을 분석하여:\n- **프로젝트별 요약**: 해당 프로젝트에서 무슨 작업을 했는지 1-2문장으로 요약\n- **전체 요약**: 오늘 하루 전체 작업을 2-3문장으로 요약\n\n3. **Notion MCP가 활성화되어 있으면**:\n\n`mcp__notion__notion-update-page` 도구를 사용해서 페이지에 **토글 형태**로 내용 추가:\n\n```\nmcp__notion__notion-update-page({\n  data: {\n    page_id: \"[config의 notion_page_id]\",\n    command: \"insert_content_after\",\n    selection_with_ellipsis: \"가장 최근 내용...\",\n    new_str: \"[토글 형태의 마크다운]\"\n  }\n})\n```\n\n**토글 형태 마크다운 예시** (Notion-flavored Markdown):\n```markdown\n▶ 📅 2026-01-15 14:30 작업 기록 | 2개 프로젝트\n\t▶ 🔹 shopping-app\n\t\t> `/home/user/projects/shopping-app`\n\t\t- **[10:30]** 장바구니 기능 구현 요청\n\t\t- **[10:45]** 상품 추가/삭제 로직 작성\n\t\t- **[11:20]** 결제 페이지 연동\n\t\t📝 **요약**: 장바구니 기능 구현 (상품 추가/삭제, 결제 페이지 연동)\n\t▶ 🔹 admin-dashboard\n\t\t> `/home/user/projects/admin-dashboard`\n\t\t- **[14:00]** 사용자 목록 API 연결\n\t\t- **[14:30]** 테이블 컴포넌트 개선\n\t\t- **[15:00]** 페이지네이션 추가\n\t\t📝 **요약**: 사용자 목록 API 연동 및 테이블 UI 개선 (페이지네이션 추가)\n\t📊 **전체 요약**: shopping-app 장바구니 및 결제 기능 완성, admin-dashboard 사용자 관리 화면 개선 작업 진행\n```\n\n**중요**:\n- 토글 내부 컨텐츠는 반드시 **탭으로 들여쓰기** 해야 함\n- 각 프로젝트 토글 끝에 `📝 **요약**:` 추가\n- 날짜 토글 끝에 `📊 **전체 요약**:` 추가\n- 요약은 작업 내용을 분석하여 Claude가 직접 생성\n\n또는 페이지가 비어있으면 `replace_content` 사용.\n\n4. **동기화 성공 후 기록 저장**:\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --add-sync [날짜]\n```\n\n### 4단계: Fallback (Notion 미설정 시)\n\nNotion이 비활성화되어 있으면 로컬에 저장:\n\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/generate-summary.py --save --date [날짜]\n```\n\n저장 후 동기화 기록 추가:\n```bash\npython3 ${CLAUDE_PLUGIN_ROOT}/scripts/setup.py --add-sync [날짜]\n```\n\n### 5단계: 결과 출력\n\n동기화 완료 후 결과 요약:\n\n| 상태 | 메시지 |\n|------|--------|\n| Notion 성공 | \"✅ [N]개 날짜 Notion에 동기화 완료!\" |\n| 로컬 저장 | \"📁 [N]개 날짜 로컬에 저장 완료\" |\n| 이미 동기화됨 | \"✅ 모든 작업이 이미 동기화되어 있습니다.\" |\n| 작업 기록 없음 | \"⚠️ 동기화할 작업 기록이 없습니다.\" |\n\n## 인자\n\n- `/daily-sync` → 모든 미동기화 날짜\n- `/daily-sync 2026-01-04` → 특정 날짜만\n\n## 요약 생성 가이드\n\nClaude가 요약을 생성할 때:\n\n### 프로젝트별 요약\n- 해당 프로젝트에서 수행한 주요 작업을 1-2문장으로 정리\n- 구체적인 기능명이나 파일명 포함\n- 예: \"장바구니 기능 구현, 상품 추가/삭제 및 결제 연동\"\n\n### 전체 요약\n- 하루 전체 작업을 2-3문장으로 정리\n- 주요 프로젝트와 핵심 작업 언급\n- 예: \"shopping-app 장바구니 기능 완성, admin-dashboard UI 개선 진행\"\n\n## 중요\n\n- Notion MCP가 설정되어 있어야 Notion 동기화 가능\n- Notion 미설정 시 자동으로 로컬에 저장\n- `/daily-setup`으로 Notion 설정 가능\n- 동기화 기록은 `~/.claude/daily-work-tracker/config.json`의 `sync_history`에 저장\n",
+        "commands/daily-week.md": "---\ndescription: 이번 주 작업 요약 보기\nuser_invocable: true\n---\n\n# Daily Week\n\n이번 주 작업 내역을 요약합니다.\n\n## 실행 방법\n\n1. `~/.claude/daily-work/` 디렉토리에서 최근 7일간의 파일들을 읽으세요\n2. 각 날짜별로 프로젝트와 주요 작업 요약\n3. 전체 통계 제공\n\n## 출력 형식\n\n```markdown\n# 📅 주간 작업 요약 (2026-01-01 ~ 2026-01-07)\n\n## 2026-01-07 (화)\n- **flutter-app**: 사용자 인증 구현 (5회)\n- **backend-api**: API 설계 (3회)\n\n## 2026-01-06 (월)\n- **flutter-app**: UI 작업 (4회)\n\n---\n📊 주간 통계\n- 총 작업일: 2일\n- 작업한 프로젝트: 2개\n- 총 대화 횟수: 12회\n```\n",
+        "hooks/hooks.json": "{\n  \"hooks\": {\n    \"UserPromptSubmit\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"python3 ${CLAUDE_PLUGIN_ROOT}/scripts/log-daily.py\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "skills/generate-summary.md": "---\ndescription: 작업 기록에서 프로젝트별/전체 요약 생성\n---\n\n# Generate Summary Skill\n\n작업 기록을 분석하여 프로젝트별 요약과 전체 요약을 생성합니다.\n\n## 입력\n\n작업 기록 마크다운 파일 내용 (예: `~/.claude/daily-work/YYYY-MM-DD.md`)\n\n## 출력\n\n### 프로젝트별 요약\n\n각 프로젝트에서 수행한 주요 작업을 1-2문장으로 정리:\n\n- 구체적인 기능명, 파일명, 작업 내용 포함\n- 기술적 세부사항보다는 \"무엇을 했는지\"에 집중\n- 작업 흐름이 보이도록 순서대로 나열\n\n**예시**:\n```\n로그인 기능 구현, 세션 관리 추가 및 테스트 코드 작성\n```\n\n### 전체 요약\n\n하루 전체 작업을 2-3문장으로 정리:\n\n- 주요 프로젝트명 언급\n- 핵심 작업 및 성과 요약\n- 전체적인 작업 방향성 표현\n\n**예시**:\n```\nshopping-app 사용자 인증 시스템 구현, admin-dashboard API 연동 작업 진행\n```\n\n## 요약 생성 가이드라인\n\n### 프로젝트별 요약 작성 규칙\n\n1. **작업 단위로 그룹화**: 비슷한 작업은 하나로 묶기\n   - Bad: \"로그인 버튼 추가, 로그인 API 연결, 로그인 에러 처리\"\n   - Good: \"로그인 기능 구현 (버튼, API 연결, 에러 처리)\"\n\n2. **구체적인 명사 사용**: 추상적 표현 지양\n   - Bad: \"기능 개선\"\n   - Good: \"다크모드 토글 기능 추가\"\n\n3. **동사로 시작**: 작업 내용을 동사로 시작\n   - \"구현\", \"추가\", \"수정\", \"개선\", \"제거\", \"리팩토링\"\n\n4. **길이 제한**: 최대 2문장, 100자 이내 권장\n\n### 전체 요약 작성 규칙\n\n1. **프로젝트 개수 고려**:\n   - 1개: 해당 프로젝트 작업 상세히\n   - 2-3개: 각 프로젝트 핵심 작업 언급\n   - 4개 이상: 가장 중요한 2-3개 언급 + \"등\"\n\n2. **성과 중심**: 과정보다 결과 강조\n   - Bad: \"여러 파일을 수정하고 테스트함\"\n   - Good: \"사용자 인증 시스템 완성, 테스트 커버리지 80% 달성\"\n\n3. **연결성 표현**: 관련 작업은 연결하여 표현\n   - \"A 작업 후 B 진행\" 또는 \"A, B 연동 작업\"\n\n## 사용 예시\n\n### 입력 (작업 기록)\n\n```markdown\n# 📅 2026-01-15 작업 기록\n\n## 🔹 shopping-app\n> `/home/user/projects/shopping-app`\n\n- **[10:30]** 장바구니 기능 구현 요청\n- **[10:45]** 상품 추가/삭제 로직 작성\n- **[11:20]** 결제 페이지 연동\n- **[11:45]** 버그 수정 및 테스트\n\n## 🔹 admin-dashboard\n> `/home/user/projects/admin-dashboard`\n\n- **[14:00]** 사용자 목록 API 연결\n- **[14:30]** 테이블 컴포넌트 개선\n- **[15:00]** 페이지네이션 추가\n```\n\n### 출력 (요약)\n\n**shopping-app 프로젝트 요약**:\n```\n장바구니 기능 구현 (상품 추가/삭제, 결제 페이지 연동), 버그 수정\n```\n\n**admin-dashboard 프로젝트 요약**:\n```\n사용자 목록 API 연동 및 테이블 UI 개선 (페이지네이션 추가)\n```\n\n**전체 요약**:\n```\nshopping-app 장바구니 및 결제 기능 완성, admin-dashboard 사용자 관리 화면 개선 작업 진행\n```\n\n## 호출 방법\n\n이 스킬은 `/daily-sync` 명령어 실행 시 자동으로 사용됩니다.\nClaude가 작업 기록을 읽은 후, 이 가이드라인에 따라 요약을 생성합니다.\n"
+      },
+      "plugins": [
+        {
+          "name": "daily-work-tracker",
+          "description": "여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다",
+          "version": "1.0.0",
+          "source": "./",
+          "repository": "https://github.com/MMMIIIN/daily-work-tracker",
+          "license": "MIT",
+          "keywords": [
+            "daily",
+            "work",
+            "tracker",
+            "logging",
+            "productivity"
+          ],
+          "categories": [
+            "daily",
+            "logging",
+            "productivity",
+            "tracker",
+            "work"
+          ],
+          "install_commands": [
+            "/plugin marketplace add MMMIIIN/daily-work-tracker",
+            "/plugin install daily-work-tracker@daily-work-tracker"
+          ]
+        }
+      ]
+    }
+  ]
+}

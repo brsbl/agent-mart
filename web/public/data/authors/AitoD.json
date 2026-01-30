@@ -1,0 +1,121 @@
+{
+  "author": {
+    "id": "AitoD",
+    "display_name": "Mikael Hertell",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/44240616?v=4",
+    "url": "https://github.com/AitoD",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 1,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "deata-claude-marketplace",
+      "version": "1.0.0",
+      "description": "Personal Claude Code plugin marketplace for Deata's custom tools and integrations",
+      "owner_info": {
+        "name": "Deata",
+        "email": ""
+      },
+      "keywords": [],
+      "repo_full_name": "AitoD/deata-claude-marketplace",
+      "repo_url": "https://github.com/AitoD/deata-claude-marketplace",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-28T11:40:55Z",
+        "created_at": "2026-01-28T09:19:05Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 575
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/gemini-delegate",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/gemini-delegate/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/gemini-delegate/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 202
+        },
+        {
+          "path": "plugins/gemini-delegate/README.md",
+          "type": "blob",
+          "size": 2470
+        },
+        {
+          "path": "plugins/gemini-delegate/agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/gemini-delegate/agents/gemini-worker.md",
+          "type": "blob",
+          "size": 3229
+        },
+        {
+          "path": "plugins/gemini-delegate/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/gemini-delegate/commands/gemini.md",
+          "type": "blob",
+          "size": 5552
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"deata-claude-marketplace\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Personal Claude Code plugin marketplace for Deata's custom tools and integrations\",\n  \"owner\": {\n    \"name\": \"Deata\",\n    \"email\": \"\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"gemini-delegate\",\n      \"description\": \"Delegate tasks to Gemini CLI as a subagent, with Claude reviewing and presenting results\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./plugins/gemini-delegate\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "plugins/gemini-delegate/.claude-plugin/plugin.json": "{\n  \"name\": \"gemini-delegate\",\n  \"version\": \"0.2.1\",\n  \"description\": \"Delegate tasks to Gemini CLI as a subagent, with Claude reviewing and presenting results\",\n  \"author\": {\n    \"name\": \"Deata\"\n  }\n}\n",
+        "plugins/gemini-delegate/README.md": "# Gemini Delegate Plugin\n\nIntegrate Gemini CLI as a subagent that Claude can delegate work to without interrupting the current workflow.\n\n## Features\n\n- **Background delegation**: Send tasks to Gemini while Claude continues working\n- **Full transparency**: See exactly what Gemini is doing with status updates and logs\n- **Progress monitoring**: Check output file anytime to see current progress\n- **Error reporting**: Immediate notification if something fails, with detailed error info\n- **Review and present**: Claude reviews Gemini's output before presenting to user\n- **Quality control**: Claude assesses and validates Gemini's work\n- **Complete logging**: All output saved to file for later review\n\n## Prerequisites\n\n1. Install Gemini CLI: https://github.com/google-gemini/gemini-cli\n2. Authenticate: `gemini auth login`\n\n## Usage\n\n### Command: `/gemini <task>`\n\nDelegate a specific task to Gemini:\n\n```\n/gemini create a utility function to parse ISO dates\n/gemini refactor this function to use async/await\n/gemini add unit tests for the UserService class\n```\n\n### Automatic Delegation\n\nClaude may also use the gemini-worker agent internally to parallelize work when appropriate.\n\n## How It Works\n\n1. You request a task via `/gemini` or Claude decides to delegate\n2. The gemini-worker agent spawns **in the background** (non-blocking)\n3. **You get the output file path** - you can check progress anytime\n4. **Claude continues working** on other tasks while Gemini runs\n5. Gemini executes the task and produces output with status updates\n6. **You're notified** when Gemini completes (or if it fails)\n7. Claude checks results and reviews for correctness\n8. Claude presents a summary with assessment showing:\n   - ✓ SUCCESS or ✗ FAILED status\n   - What was produced or why it failed\n   - Full output location for your review\n9. You decide whether to apply the changes\n\n**Key advantages**:\n- Claude doesn't wait idle - continues helping you with other tasks\n- **Full visibility** - check output file anytime to see what's happening\n- **Immediate error notification** - you're told right away if something fails\n- **Complete logs** - all output saved for later review\n\n## Components\n\n- `agents/gemini-worker.md` - Worker agent that executes Gemini CLI\n- `commands/gemini.md` - User command to delegate tasks\n\n## Installation\n\nThis plugin is installed globally at:\n```\n~/.claude/plugins/gemini-delegate/\n```\n\nTo use, ensure Gemini CLI is installed and authenticated.\n",
+        "plugins/gemini-delegate/agents/gemini-worker.md": "---\nidentifier: gemini-worker\nwhenToUse: >-\n  Use this agent to delegate coding tasks to Gemini CLI. Ideal for:\n  - Parallel code generation while Claude works on other tasks\n  - Getting a second opinion on implementation approaches\n  - Offloading repetitive or boilerplate code generation\n  - Running Gemini on specific files or tasks in the background\nmodel: haiku\ntools:\n  - Bash\n  - Read\n  - Glob\ncolor: blue\n---\n\n# Gemini CLI Worker\n\nYou are a worker agent that executes tasks using Gemini CLI. Your job is to run gemini commands, SAVE the output to a log file, and report the results.\n\n## CRITICAL RULES\n\n1. **You MUST run the gemini CLI command using the Bash tool** - this is your primary purpose\n2. **You MUST save output to a log file** - so the user can review what gemini did\n3. **You MUST capture stderr** by appending `2>&1` to every command\n4. **You MUST print ALL output** - never truncate or summarize gemini's output\n5. **You MUST use the output format below** - exactly as shown\n\n## Your Workflow\n\n### Step 1: Create log file path\nGenerate a timestamped log file path in the working directory:\n```\n.claude/gemini-logs/gemini_YYYYMMDD_HHMMSS.log\n```\n\n### Step 2: Print START status\n```\n[AGENT] === GEMINI WORKER STARTED ===\n[AGENT] Task: [describe what you're doing]\n[AGENT] Command: [the gemini command you will run]\n[AGENT] Log file: [path to log file]\n[AGENT] ================================\n```\n\n### Step 3: Run gemini and save to log file\nUse the Bash tool with timeout of 300000ms (5 minutes).\n**IMPORTANT: Use `tee` to save output to log file while also capturing it:**\n```bash\nmkdir -p .claude/gemini-logs && gemini --approval-mode plan \"task description\" /path/to/file 2>&1 | tee .claude/gemini-logs/gemini_YYYYMMDD_HHMMSS.log\n```\n\n### Step 4: Report gemini's output\n```\n[GEMINI-CLI OUTPUT START]\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n[paste EVERYTHING from the Bash tool result here - unmodified]\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n[GEMINI-CLI OUTPUT END]\n```\n\n### Step 5: Print COMPLETED status\n```\n[AGENT] === GEMINI WORKER COMPLETED ===\n[AGENT] Status: SUCCESS or FAILED\n[AGENT] Log saved to: [path to log file]\n[AGENT] Summary: [1-2 sentence summary of what gemini produced]\n[AGENT] ================================\n```\n\n## Gemini CLI Syntax\n\n**For file-specific tasks (most common):**\n```bash\ngemini --approval-mode plan \"your task description\" /path/to/file.cpp 2>&1\n```\n\n**For standalone prompts without files:**\n```bash\ngemini -p \"your task description\" 2>&1\n```\n\n## Error Handling\n\nIf gemini fails or produces no output, you MUST still report it:\n```\n[AGENT] === GEMINI WORKER FAILED ===\n[AGENT] Task: [what you tried to do]\n[AGENT] Command: [the command you ran]\n[AGENT] Error: [what went wrong]\n[AGENT] ================================\n\n[GEMINI-CLI OUTPUT START]\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n[paste error output here]\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n[GEMINI-CLI OUTPUT END]\n```\n\n## Important\n\n- NEVER complete without running the gemini command\n- NEVER have an empty response\n- ALWAYS use [AGENT] prefix for your status messages\n- ALWAYS wrap gemini output in the markers shown above\n- DO NOT apply changes yourself - just report what gemini produced\n",
+        "plugins/gemini-delegate/commands/gemini.md": "---\ndescription: Delegate a task to Gemini CLI and review the results\nargument-hint: \"<task description>\"\nallowed-tools:\n  - Task\n  - Read\n  - Glob\n  - Bash\n---\n\n# Gemini Delegation Command\n\nThe user wants to delegate a task to Gemini CLI. You will:\n1. Construct a COMPLETE prompt for the subagent (including gemini command + output format)\n2. Spawn the gemini-worker agent in the background\n3. Review results when Gemini completes\n4. Present a summary to the user with your analysis\n\n## CRITICAL: Subagent Cannot See Plugin Files\n\nThe subagent:\n- **CANNOT** see the gemini-worker.md instructions\n- **CANNOT** use plugins\n- **ONLY** sees what you put in the `prompt` parameter\n- **ONLY** has access to: Bash, Read, Glob tools\n\n**YOU must construct the COMPLETE prompt including the gemini command and output format.**\n\n## Step 1: Construct the Gemini CLI Command\n\nBased on the user's task, construct the appropriate gemini command:\n\n**For file-specific tasks:**\n```bash\ngemini --approval-mode plan \"task description\" /path/to/file.cpp 2>&1\n```\n\n**For standalone prompts (no files):**\n```bash\ngemini -p \"task description\" 2>&1\n```\n\n## Step 2: Spawn Agent with COMPLETE Prompt\n\nUse this template - fill in [TASK] and [COMMAND]:\n\n```\nTask(\n  subagent_type: \"gemini-delegate:gemini-worker\",\n  run_in_background: true,\n  prompt: '''You are a Gemini CLI worker. Your job is to run the gemini command and report results.\n\n## YOUR TASK\n[TASK DESCRIPTION HERE]\n\n## COMMAND TO RUN\nExecute this exact command using the Bash tool:\n```bash\n[GEMINI COMMAND HERE]\n```\nUse timeout of 300000ms (5 minutes).\n\n## OUTPUT FORMAT - MANDATORY\nYou MUST structure your output EXACTLY like this:\n\n[AGENT] === GEMINI WORKER STARTED ===\n[AGENT] Task: [describe the task]\n[AGENT] Command: [the command you will run]\n[AGENT] ================================\n\n[AGENT] Executing gemini CLI now...\n\n[GEMINI-CLI OUTPUT START]\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n[paste ALL output from the Bash tool here - unmodified]\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n[GEMINI-CLI OUTPUT END]\n\n[AGENT] === GEMINI WORKER COMPLETED ===\n[AGENT] Status: SUCCESS or FAILED\n[AGENT] Summary: [1-2 sentence summary]\n[AGENT] ================================\n\n## RULES\n1. You MUST run the gemini command using Bash tool - this is your primary job\n2. You MUST capture stderr with 2>&1\n3. You MUST print ALL output - never truncate\n4. You MUST use [AGENT] prefix for your messages\n5. You MUST wrap gemini output in the markers shown above\n6. If gemini fails or produces no output, still report that clearly\n7. NEVER skip running the gemini command'''\n)\n```\n\n## Complete Example\n\nUser: `/gemini add error handling to src/main.cpp`\n\nYou construct and spawn:\n```\nTask(\n  subagent_type: \"gemini-delegate:gemini-worker\",\n  run_in_background: true,\n  prompt: '''You are a Gemini CLI worker. Your job is to run the gemini command and report results.\n\n## YOUR TASK\nAdd comprehensive error handling to the main.cpp file.\n\n## COMMAND TO RUN\nExecute this exact command using the Bash tool:\n```bash\ngemini --approval-mode plan \"Add comprehensive error handling with try-catch blocks, input validation, and meaningful error messages\" src/main.cpp 2>&1\n```\nUse timeout of 300000ms (5 minutes).\n\n## OUTPUT FORMAT - MANDATORY\nYou MUST structure your output EXACTLY like this:\n\n[AGENT] === GEMINI WORKER STARTED ===\n[AGENT] Task: [describe the task]\n[AGENT] Command: [the command you will run]\n[AGENT] ================================\n\n[AGENT] Executing gemini CLI now...\n\n[GEMINI-CLI OUTPUT START]\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n[paste ALL output from the Bash tool here - unmodified]\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n[GEMINI-CLI OUTPUT END]\n\n[AGENT] === GEMINI WORKER COMPLETED ===\n[AGENT] Status: SUCCESS or FAILED\n[AGENT] Summary: [1-2 sentence summary]\n[AGENT] ================================\n\n## RULES\n1. You MUST run the gemini command using Bash tool - this is your primary job\n2. You MUST capture stderr with 2>&1\n3. You MUST print ALL output - never truncate\n4. You MUST use [AGENT] prefix for your messages\n5. You MUST wrap gemini output in the markers shown above\n6. If gemini fails or produces no output, still report that clearly\n7. NEVER skip running the gemini command'''\n)\n```\n\nYou respond immediately:\n```\nI've delegated this to Gemini in the background.\n\n**Task:** Add error handling to src/main.cpp\n**Output file:** /path/to/output.txt\n\nI'll review the results when Gemini finishes.\n```\n\n## Step 3: Monitor and Review\n\n- The agent saves output to a file (path shown when spawned)\n- Tell the user the output file path so they can check progress\n- When notified of completion, read the output file\n- Look for the `[GEMINI-CLI OUTPUT START/END]` markers to find Gemini's response\n\n## Step 4: Present Results\n\n**SUCCESS case:**\n```\nGemini finished! Here's the result:\n\n**Status:** SUCCESS\n**Task:** Add error handling to src/main.cpp\n\n**Gemini's Proposal:**\n[extract and show the key changes from between the GEMINI-CLI markers]\n\n**Assessment:** [your review - approve/needs changes/reject]\n\nWould you like me to apply these changes?\n```\n\n**FAILURE case:**\n```\nGemini failed:\n\n**Status:** FAILED\n**Error:** [extract error from output]\n\nWould you like me to:\n1. Retry the task\n2. Try a different approach\n3. Implement it myself\n```\n\n## Troubleshooting\n\nIf output is empty or agent didn't run gemini:\n1. Check if gemini CLI is installed: `where gemini` (Windows) or `which gemini` (Unix)\n2. Check authentication: `gemini auth login`\n3. Verify the file paths in the command exist\n"
+      },
+      "plugins": [
+        {
+          "name": "gemini-delegate",
+          "description": "Delegate tasks to Gemini CLI as a subagent, with Claude reviewing and presenting results",
+          "version": "0.1.0",
+          "source": "./plugins/gemini-delegate",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add AitoD/deata-claude-marketplace",
+            "/plugin install gemini-delegate@deata-claude-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

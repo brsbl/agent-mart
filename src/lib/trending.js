@@ -16,7 +16,7 @@
  * @param {Object} repoHistory - Repository history from signals-history.json
  * @param {Array} repoHistory.snapshots - Array of {date, stars, forks}
  * @param {number} currentStars - Current star count
- * @returns {{trending_score: number, stars_gained_7d: number, stars_velocity: number, is_new: boolean}}
+ * @returns {{trending_score: number, stars_gained_7d: number, stars_velocity: number, insufficient_data: boolean}}
  */
 export function calculateTrendingScore(repoHistory, currentStars) {
   const snapshots = repoHistory?.snapshots ?? [];
@@ -27,7 +27,7 @@ export function calculateTrendingScore(repoHistory, currentStars) {
       trending_score: 0,
       stars_gained_7d: 0,
       stars_velocity: 0,
-      is_new: true
+      insufficient_data: true
     };
   }
 
@@ -61,7 +61,7 @@ export function calculateTrendingScore(repoHistory, currentStars) {
       trending_score: 0,
       stars_gained_7d: 0,
       stars_velocity: 0,
-      is_new: true
+      insufficient_data: true
     };
   }
 
@@ -118,7 +118,7 @@ export function calculateTrendingScore(repoHistory, currentStars) {
     trending_score: roundToTwoDecimals(zScore),
     stars_gained_7d: starsGained7d,
     stars_velocity: roundToTwoDecimals(velocity),
-    is_new: false
+    insufficient_data: false
   };
 }
 

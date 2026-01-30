@@ -1,0 +1,89 @@
+{
+  "author": {
+    "id": "Valian",
+    "display_name": "Jakub Skałecki",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3935986?u=bd5de272ed3df5037992dd9ce32c3f0865aed937&v=4",
+    "url": "https://github.com/Valian",
+    "bio": "Still in love with coding 💖\r\n\r\nCTO & Co-founder of https://postline.ai\r\n\r\n \r\n",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 9,
+      "total_forks": 1
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "linear-cli-skill",
+      "version": null,
+      "description": "Lightweight CLI for working with Linear issues using the official Linear TypeScript SDK",
+      "owner_info": {
+        "name": "Jakub Skalecki",
+        "email": "jakub@mindnexus.dev"
+      },
+      "keywords": [],
+      "repo_full_name": "Valian/linear-cli-skill",
+      "repo_url": "https://github.com/Valian/linear-cli-skill",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 9,
+        "forks": 1,
+        "pushed_at": "2025-10-26T22:05:20Z",
+        "created_at": "2025-10-24T08:50:38Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 500
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 8368
+        },
+        {
+          "path": "linear",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "linear/SKILL.md",
+          "type": "blob",
+          "size": 3159
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"linear-cli-skill\",\n  \"owner\": {\n    \"name\": \"Jakub Skalecki\",\n    \"email\": \"jakub@mindnexus.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"Lightweight CLI for working with Linear issues using the official Linear TypeScript SDK\",\n    \"version\": \"0.1.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"linear\",\n      \"description\": \"Work with Linear issues, teams, projects, and users via CLI\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./linear\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Linear CLI Skill\n\nA Claude skill that provides a lightweight CLI for working with Linear issues. Written in JavaScript with minimal dependencies (only Linear SDK and dotenv).\n\nFollowing GitHub CLI conventions for consistency and ease of use.\n\n## What's included\n\n- **`linear/`** - Standalone CLI tool with minimal dependencies\n- **`linear/SKILL.md`** - Claude skill documentation for using the CLI\n- **`.claude-plugin/marketplace.json`** - Marketplace definition for easy installation in Claude\n- **Plans/** - Implementation planning documents\n\n## Installation in Claude\n\nInstall this skill in Claude Code using the plugin marketplace:\n\n```bash\nclaude plugin marketplace add Valian/linear-cli-skill\nclaude plugin install linear\n```\n\nThe skill will then be available for working with Linear issues directly through Claude.\n\n## Installation\n\nDependencies are automatically installed on first run. If you want to install manually:\n\n```bash\ncd linear/\nnpm install\n```\n\n## Setup\n\nGet your Linear API key:\n1. Go to https://linear.app/settings/api\n2. Navigate to Settings > API > Personal API keys\n3. Click \"Create key\"\n\nProvide your API key in one of these ways:\n\n### Option 1: Environment variable (temporary)\n```bash\nexport LINEAR_API_KEY=\"your-api-key\"\n```\n\n### Option 2: .env file (persistent, recommended)\nCreate a `.env` file next to the `linear` executable:\n```bash\necho 'LINEAR_API_KEY=your-api-key' > linear/.env\n```\n\nOr create it manually:\n```\n# linear/.env\nLINEAR_API_KEY=your-api-key\n```\n\n## Quick Start\n\n```bash\n# Setup API key\necho 'LINEAR_API_KEY=your-api-key' > linear/.env\n\n# Run the CLI\n./linear/linear team list\n./linear/linear issue list --limit 5\n```\n\n## Usage\n\nRun the CLI using the `linear` executable:\n\n```bash\n./linear/linear <resource> <action> [arguments] [options]\n```\n\nOr via npm from the `linear/` directory:\n\n```bash\ncd linear/\nnpm run cli -- <resource> <action> [arguments] [options]\n```\n\n### Resources\n\nThe CLI follows the pattern: `resource → action`, similar to the GitHub CLI.\n\nAvailable resources:\n- `issue` - Work with issues (list, view, create, update, delete, comment)\n- `user` - Work with users (list)\n- `team` - Work with teams (list)\n- `project` - Work with projects (list)\n\n### Commands\n\n#### List Users\n```bash\n./linear user list\n./linear user list --json\n```\n\n#### List Teams\n```bash\n./linear team list\n./linear team list --json\n```\n\n#### List Projects\n```bash\n./linear project list\n./linear project list --json\n```\n\n#### List Issues\n```bash\n# List all issues (default limit: 50)\n./linear issue list\n\n# Filter by team\n./linear issue list --team <team-id>\n\n# Filter by assignee\n./linear issue list --assignee <user-id>\n\n# Filter by status\n./linear issue list --status \"In Progress\"\n\n# Combine filters\n./linear issue list --team <team-id> --assignee <user-id> --status \"Ready\" --limit 10\n\n# JSON output\n./linear issue list --json\n```\n\n#### View Issue Details\n```bash\n# Using issue identifier (e.g., MIN-892)\n./linear issue view MIN-892\n\n# Using issue UUID\n./linear issue view <issue-uuid>\n\n# JSON output\n./linear issue view MIN-892 --json\n```\n\n#### Create Issue\n```bash\n# Create basic issue (--team is required)\n./linear issue create \"Fix login bug\" --team <team-id>\n\n# Create with full details\n./linear issue create \"New feature\" --team <team-id> --body \"Details here\" --assignee @me --priority 2 --status \"Todo\"\n\n# With labels (multiple ways)\n./linear issue create \"Bug fix\" --team <team-id> --label bug --label urgent\n./linear issue create \"Feature\" --team <team-id> --label \"bug,p0,feature\"\n\n# With project assignment\n./linear issue create \"Task\" --team <team-id> --project <project-id>\n\n# Create sub-issue\n./linear issue create \"Subtask\" --team <team-id> --parent PROJ-123\n\n# With estimate and due date\n./linear issue create \"Sprint task\" --team <team-id> --estimate 5 --due-date 2025-12-31\n\n# Read description from file or stdin\n./linear issue create \"Issue\" --team <team-id> --body-file description.md\necho \"Long description\" | ./linear issue create \"Issue\" --team <team-id> --body-file -\n```\n\n#### Add Comment to Issue\n```bash\n./linear issue comment MIN-892 \"Your comment text here\"\n./linear issue comment MIN-892 \"Multi word comment\"\n```\n\n#### Update Issue\n```bash\n# Update status (common: \"Backlog\", \"Todo\", \"In Progress\", \"Done\", \"Canceled\")\n./linear issue update MIN-892 --status \"Done\"\n\n# Update assignee (use @me for yourself)\n./linear issue update MIN-892 --assignee @me\n\n# Update priority (0=None, 1=Urgent/P0, 2=High/P1, 3=Medium/P2, 4=Low/P3)\n./linear issue update MIN-892 --priority 1\n\n# Update title\n./linear issue update MIN-892 --title \"New title\"\n\n# Update description\n./linear issue update MIN-892 --body \"New description\"\n\n# Read description from file or stdin\n./linear issue update MIN-892 --body-file description.md\necho \"Updated description\" | ./linear issue update MIN-892 --body-file -\n\n# Add labels\n./linear issue update MIN-892 --label bug --label urgent\n\n# Assign to project\n./linear issue update MIN-892 --project <project-id>\n\n# Set parent issue (create sub-issue)\n./linear issue update MIN-892 --parent PROJ-123\n\n# Set estimate and due date\n./linear issue update MIN-892 --estimate 5 --due-date 2025-12-31\n\n# Update multiple fields\n./linear issue update MIN-892 --status \"In Progress\" --assignee @me --priority 2 --label bug\n```\n\n#### Delete Issue\n```bash\n# Delete issue (moves to trash)\n./linear issue delete MIN-892\n```\n\n### Help\n\n```bash\n# General help\n./linear --help\n\n# Resource-specific help\n./linear user --help\n./linear team --help\n./linear project --help\n./linear issue --help\n\n# Action-specific help\n./linear issue list --help\n./linear issue view --help\n./linear issue create --help\n./linear issue update --help\n./linear issue delete --help\n./linear issue comment --help\n```\n\n## Advanced Features\n\n### Labels\nAdd labels to issues using `--label`:\n```bash\n# Multiple labels (separate flags)\n./linear issue create \"Title\" --team <team-id> --label bug --label urgent\n\n# Multiple labels (comma-separated)\n./linear issue create \"Title\" --team <team-id> --label \"bug,urgent,p0\"\n```\n\n**Note:** Labels must exist in the team before use. If a label doesn't exist, the CLI will error and display all available labels for that team.\n\n### Reading from Files or Stdin\nUse `--body-file` to read descriptions from files or stdin (following `gh` CLI conventions):\n```bash\n# From file\n./linear issue create \"Title\" --team <team-id> --body-file description.md\n\n# From stdin\necho \"Description text\" | ./linear issue create \"Title\" --team <team-id> --body-file -\ncat description.md | ./linear issue create \"Title\" --team <team-id> --body-file -\n```\n\n### Assignee Shortcuts\nUse `@me` to assign issues to yourself:\n```bash\n./linear issue create \"Title\" --team <team-id> --assignee @me\n./linear issue update PROJ-123 --assignee @me\n```\n\n### Sub-issues\nCreate hierarchical issues with `--parent`:\n```bash\n./linear issue create \"Subtask\" --team <team-id> --parent PROJ-123\n```\n\n### Project Assignment\nAssign issues to projects:\n```bash\n./linear issue create \"Task\" --team <team-id> --project <project-id>\n```\n\n### Estimates and Due Dates\nSet story points and due dates:\n```bash\n./linear issue create \"Sprint task\" --team <team-id> --estimate 5 --due-date 2025-12-31\n```\n\n### Priority Levels\nPriority mapping (matches Linear's API):\n- `0` = None\n- `1` = Urgent (P0)\n- `2` = High (P1)\n- `3` = Medium (P2)\n- `4` = Low (P3)\n\n## Output Format\n\nBy default, the CLI outputs tab-separated values with IDs prefixed by `#`:\n\n```\nUsers\n\n#user-id\tUser Name\temail@example.com\n```\n\nThis format is easy to parse with standard Unix tools like `cut`, `awk`, or `grep`.\n\nUse `--json` for machine-readable JSON output.\n\n## Examples\n\n```bash\n# Get team ID\n./linear team list\n# Output: #28adfef1-7a2b-4908-b563-089fed6dd71a\tMind Nexus\tMIN\n\n# List issues for that team\n./linear issue list --team 28adfef1-7a2b-4908-b563-089fed6dd71a --limit 5\n\n# Get issue details\n./linear issue view MIN-892\n\n# Add a comment\n./linear issue comment MIN-892 \"Working on this now\"\n\n# Update status\n./linear issue update MIN-892 --status \"Done\"\n```\n\n## Error Handling\n\nThe CLI provides helpful error messages:\n\n- Missing API key: Shows how to set `LINEAR_API_KEY`\n- Invalid commands: Shows available commands\n- Missing arguments: Shows command-specific help\n- API errors: Shows descriptive error messages\n\nExit codes:\n- `0`: Success\n- `1`: Error\n",
+        "linear/SKILL.md": "---\nname: linear\ndescription: Work with Linear issues via CLI - use this skill whenever the user asks about Linear issues, creating, updating, commenting on, or deleting issues, or checking issue status and details\nversion: 0.1.0\n---\n\n# Linear Issue Management\n\n**Use this skill whenever the user mentions Linear or asks to work with issues.**\n\nLightweight CLI to interact with Linear's issue tracking system. All commands run from the skill directory using `./linear`.\n\n## Setup\n\nDependencies install automatically on first run. API key errors are self-explanatory.\n\n## Command Pattern\n\n```bash\n./linear <resource> <action> [arguments] [options]\n```\n\nResources: `issue`, `user`, `team`, `project`\n\n## Commands\n\n### List Users\n```bash\n./linear user list\n```\nReturns: `#<user-id>\t<name>\t<email>`\n\n### List Teams\n```bash\n./linear team list\n```\nReturns: `#<team-id>\t<name>\t<key>`\n\n### List Projects\n```bash\n./linear project list\n```\nReturns: `#<project-id>\t<name>\t<state>`\n\n### List Issues\n```bash\n./linear issue list [options]\n```\n**Options:**\n- `--team <id>` - Filter by team ID\n- `--assignee <id>` - Filter by user ID\n- `--status <name>` - Filter by status name (case-sensitive)\n- `--limit <n>` - Limit results (default: 50)\n\nReturns: `#<identifier>\t<title>\t<status>\t<assignee>`\n\n**Examples:**\n```bash\n./linear issue list --team abc123 --limit 10\n./linear issue list --assignee def456 --status \"In Progress\"\n```\n\n### View Issue\n```bash\n./linear issue view <id-or-key>\n```\n**Arguments:**\n- `<id-or-key>` - Issue identifier (e.g., `ENG-123`) or UUID\n\nReturns full issue details including title, status, assignee, team, priority, labels, dates, description, and comments.\n\n### Create Issue\n```bash\n./linear issue create <title> [options]\n```\n**Arguments:**\n- `<title>` - Issue title (multi-word titles auto-combined)\n\n**Options:**\n- `--team <id>` - Team ID (required)\n- `--description <text>` - Issue description\n- `--assignee <id>` - User ID\n- `--priority <n>` - Priority (0=None, 1=Urgent, 2=High, 3=Medium, 4=Low)\n- `--status <name>` - Initial status\n\n**Example:**\n```bash\n./linear issue create \"Fix login bug\" --team abc123 --priority 2\n```\n\n### Add Comment\n```bash\n./linear issue comment <id-or-key> <text>\n```\nMulti-word text auto-combined. No quotes needed.\n\n### Update Issue\n```bash\n./linear issue update <id-or-key> [options]\n```\n**Options:**\n- `--status <name>` - Update status\n- `--assignee <id>` - Update assignee\n- `--priority <n>` - Update priority\n- `--title <text>` - Update title\n- `--description <text>` - Update description\n\nCan update multiple fields in one command.\n\n**Example:**\n```bash\n./linear issue update ENG-123 --status \"In Progress\" --assignee abc123\n```\n\n### Delete Issue\n```bash\n./linear issue delete <id-or-key>\n```\nSoft delete (moves to trash, recoverable).\n\n## Important Notes\n\n- Issue identifiers are case-insensitive (`ENG-123` = `eng-123`)\n- Status names are case-sensitive (\"In Progress\" ≠ \"in progress\")\n- User/team IDs are UUIDs (get from list commands)\n- Issue keys format: `<TEAM_KEY>-<NUMBER>` (e.g., ENG-123)\n- All commands support `--json` flag for machine-readable output\n- Use `--help` on any command for details\n"
+      },
+      "plugins": [
+        {
+          "name": "linear",
+          "description": "Work with Linear issues, teams, projects, and users via CLI",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./linear"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Valian/linear-cli-skill",
+            "/plugin install linear@linear-cli-skill"
+          ]
+        }
+      ]
+    }
+  ]
+}

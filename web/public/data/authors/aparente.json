@@ -1,0 +1,119 @@
+{
+  "author": {
+    "id": "aparente",
+    "display_name": "aparente",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7998217?v=4",
+    "url": "https://github.com/aparente",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 1
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "aparente",
+      "version": null,
+      "description": "Smart light notifications for Claude Code",
+      "owner_info": {
+        "name": "aparente"
+      },
+      "keywords": [],
+      "repo_full_name": "aparente/ambient-alerts",
+      "repo_url": "https://github.com/aparente/ambient-alerts",
+      "repo_description": "Claude Code plugin for ambient smart light notifications",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2026-01-19T20:47:19Z",
+        "created_at": "2026-01-05T07:50:07Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 507
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 453
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 7885
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/hooks.json",
+          "type": "blob",
+          "size": 480
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/setup.md",
+          "type": "blob",
+          "size": 7080
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aparente\",\n  \"owner\": {\n    \"name\": \"aparente\"\n  },\n  \"metadata\": {\n    \"description\": \"Smart light notifications for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ambient-alerts\",\n      \"source\": \"./\",\n      \"description\": \"Flash smart lights on permission requests, restore when complete\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"aparente\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"hue\", \"notifications\", \"smart-home\", \"ambient\", \"lights\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ambient-alerts\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Ambient light communication for Claude Code. Supports static colors, gentle animations, and color temperature modes. Works with Philips Hue (via OpenHue) or any smart light system.\",\n  \"author\": {\n    \"name\": \"aparente\"\n  },\n  \"repository\": \"https://github.com/aparente/ambient-alerts\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"hue\", \"notifications\", \"smart-home\", \"ambient\", \"lights\"]\n}\n",
+        "README.md": "# ambient-alerts\n\nA Claude Code plugin for ambient light communication. Express states, respond to events, and build a shared visual language between you and Claude through smart lights.\n\n## Features\n\n- **State-based communication** - Define what each state looks like (idle, thinking, completed, etc.)\n- **Gentle animations** - Smooth color oscillations with configurable speed and range\n- **Automatic events** - Lights respond to permission requests, tool completion, errors\n- **Volitional control** - Claude can express states based on context and judgment\n- **Interview-based setup** - Collaboratively design your light language through conversation\n- **Transitions** - States can auto-transition (e.g., \"completed\" fades to \"idle\")\n- **Works with any smart light** - Philips Hue (via OpenHue) or custom commands\n\n## Quick Start\n\n```bash\n# Add the marketplace (first time only)\n/plugin marketplace add aparente/ambient-alerts\n\n# Install the plugin\n/plugin install ambient-alerts@aparente\n\n# Or via CLI:\n# claude plugin marketplace add aparente/ambient-alerts\n# claude plugin install ambient-alerts@aparente\n\n# Run interactive setup - just ask Claude:\n# \"Set up ambient alerts for my lights\"\n```\n\n## How It Works\n\n### States\n\nDefine what each state looks like in your config:\n\n```json\n{\n  \"states\": {\n    \"idle\": { \"color\": \"antique_white\", \"brightness\": 40 },\n    \"thinking\": { \"color\": \"light_blue\", \"brightness\": 60 },\n    \"completed\": { \"color\": \"pale_green\", \"brightness\": 60 },\n    \"need_input\": { \"color\": \"gold\", \"brightness\": 75 },\n    \"waiting\": { \"color\": \"lavender\", \"brightness\": 50 },\n    \"error\": { \"color\": \"coral\", \"brightness\": 70 }\n  }\n}\n```\n\n### Automatic Events\n\nMap system events to states:\n\n```json\n{\n  \"events\": {\n    \"PermissionRequest\": \"need_input\",\n    \"PostToolUse.success\": \"completed\",\n    \"PostToolUse.error\": \"error\",\n    \"SessionStart\": \"idle\",\n    \"SessionEnd\": \"off\"\n  }\n}\n```\n\n### Transitions\n\nDefine auto-transitions between states:\n\n```json\n{\n  \"transitions\": {\n    \"completed\": {\n      \"duration_ms\": 2000,\n      \"then\": \"idle\"\n    }\n  }\n}\n```\n\n### Volitional Control\n\nClaude can set states directly when appropriate:\n\n```json\n{\n  \"volitional\": {\n    \"enabled\": true\n  }\n}\n```\n\n## Installation\n\n```bash\nclaude plugins install ambient-alerts@aparente\n```\n\n## Setup\n\n### Interactive Setup (Recommended)\n\nJust ask Claude:\n```\nSet up ambient alerts for my lights\n```\n\nClaude will guide you through:\n1. Selecting your smart light system\n2. Choosing which light to use\n3. **Interview 1: Automatic Events** - What should happen on permission requests, completions, errors?\n4. **Interview 2: Volitional Presence** - How should Claude express thinking, waiting, idle states?\n5. Testing and fine-tuning until it feels right\n\n### Manual Setup\n\nCreate `~/.claude/ambient-alerts.json`:\n\n```json\n{\n  \"backend\": \"openhue\",\n  \"light_name\": \"Pitcher\",\n\n  \"states\": {\n    \"idle\": {\n      \"color\": \"antique_white\",\n      \"brightness\": 40,\n      \"description\": \"I'm here, all is well\"\n    },\n    \"thinking\": {\n      \"color\": \"light_blue\",\n      \"brightness\": 60,\n      \"description\": \"Working on something\"\n    },\n    \"completed\": {\n      \"color\": \"pale_green\",\n      \"brightness\": 60,\n      \"description\": \"Done!\"\n    },\n    \"need_input\": {\n      \"color\": \"gold\",\n      \"brightness\": 75,\n      \"description\": \"When you have a moment...\"\n    },\n    \"waiting\": {\n      \"color\": \"lavender\",\n      \"brightness\": 50,\n      \"description\": \"Ball's in your court, no rush\"\n    },\n    \"error\": {\n      \"color\": \"coral\",\n      \"brightness\": 70,\n      \"description\": \"Something needs attention\"\n    },\n    \"off\": {\n      \"description\": \"Light off\"\n    }\n  },\n\n  \"events\": {\n    \"PermissionRequest\": \"need_input\",\n    \"PostToolUse.success\": \"completed\",\n    \"PostToolUse.error\": \"error\",\n    \"SessionStart\": \"idle\",\n    \"SessionEnd\": \"off\"\n  },\n\n  \"transitions\": {\n    \"completed\": {\n      \"duration_ms\": 2000,\n      \"then\": \"idle\"\n    }\n  },\n\n  \"volitional\": {\n    \"enabled\": true\n  }\n}\n```\n\n## Direct State Control\n\nSet states directly via the script:\n\n```bash\n# Set to thinking state\n~/.claude/plugins/cache/aparente/ambient-alerts/1.0.0/scripts/set-state.sh thinking\n\n# Set to idle\n~/.claude/plugins/cache/aparente/ambient-alerts/1.0.0/scripts/set-state.sh idle\n\n# Turn off\n~/.claude/plugins/cache/aparente/ambient-alerts/1.0.0/scripts/set-state.sh off\n```\n\n## Custom Backend\n\nFor non-Hue systems (LIFX, Govee, Home Assistant, etc.):\n\n```json\n{\n  \"backend\": \"custom\",\n  \"custom_commands\": {\n    \"set\": \"hass-cli light set office --color {color} --brightness {brightness}\",\n    \"idle\": \"hass-cli light set office --color white --brightness 40\",\n    \"thinking\": \"hass-cli light set office --color blue --brightness 60\"\n  }\n}\n```\n\n## Configuration Reference\n\n| Option | Type | Description |\n|--------|------|-------------|\n| `backend` | string | `\"openhue\"` or `\"custom\"` |\n| `light_name` | string | Name of your light (OpenHue) |\n| `states` | object | State definitions with color/brightness |\n| `events` | object | Event → state mappings |\n| `transitions` | object | Auto-transition rules |\n| `volitional.enabled` | boolean | Allow Claude to set states directly |\n\n### State Options\n\n| Option | Type | Description |\n|--------|------|-------------|\n| `mode` | string | `\"fixed\"` (default), `\"animate\"`, `\"temperature\"`, or `\"match_room\"` |\n| `color` | string | OpenHue color name (for fixed mode) |\n| `brightness` | number | Brightness 0-100 |\n| `temperature` | number | Color temperature in mirek, 153-500 (for temperature mode) |\n| `animation` | object | Animation settings (for animate mode) |\n| `description` | string | Human-readable description |\n\n### State Modes\n\n**Fixed mode** (default) - Static color:\n```json\n\"completed\": {\n  \"color\": \"gold\",\n  \"brightness\": 75\n}\n```\n\n**Animate mode** - Gentle color oscillation with clean background process management:\n```json\n\"thinking\": {\n  \"mode\": \"animate\",\n  \"animation\": {\n    \"start_color\": \"#008B8B\",\n    \"end_color\": \"#4169E1\",\n    \"steps\": 40,\n    \"step_ms\": 1000,\n    \"brightness\": 60\n  }\n}\n```\n\nThis creates a smooth ping-pong animation between two colors:\n- `start_color` / `end_color`: RGB hex colors to oscillate between\n- `steps`: Number of interpolation steps (40 = 40 seconds per cycle)\n- `step_ms`: Milliseconds per step (1000 = 1 second)\n- Animations run in background with PID tracking and are cleanly terminated on state change\n\n**Temperature mode** - Color temperature (great for presets like Hue \"Read\"):\n```json\n\"idle\": {\n  \"mode\": \"temperature\",\n  \"temperature\": 346,\n  \"brightness\": 100\n}\n```\n\nCommon temperature values (mirek):\n- 153 = Cool daylight (~6500K)\n- 250 = Neutral white (~4000K)\n- 346 = Warm white / \"Read\" preset (~2900K)\n- 500 = Candlelight (~2000K)\n\n**Match room mode** - Match the average color of other lights in the room:\n```json\n\"idle\": {\n  \"mode\": \"match_room\"\n}\n```\n\n### Transition Options\n\n| Option | Type | Description |\n|--------|------|-------------|\n| `duration_ms` | number | How long to stay in state |\n| `then` | string | State to transition to |\n\n## Philosophy\n\nThis plugin is about **ambient, low-stress communication**. The goal is:\n\n- Peripheral awareness, not interruption\n- Meaningful states that convey real information\n- A shared visual language you design together\n- Gentle transitions, not jarring alerts\n\nThe setup interview process is collaborative - you and Claude co-create the communication system that works for your workflow.\n\n## Legacy Support\n\nOld-style configs (with `alert_style`, `waiting_state`, etc.) continue to work. The plugin automatically detects which system to use based on whether `states` is defined.\n\n## Requirements\n\n- Claude Code CLI\n- **OpenHue backend**: [OpenHue CLI](https://www.openhue.io/cli/openhue-cli) installed and configured\n- **Custom backend**: Your preferred smart home CLI\n- `jq` command-line tool\n\n## License\n\nMIT\n",
+        "hooks/hooks.json": "{\n  \"hooks\": {\n    \"PermissionRequest\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/flash-lights.sh\",\n            \"timeout\": 15\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/restore-lights.sh\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "skills/setup.md": "# ambient-alerts Setup Skill\n\nA collaborative, playful interview to design your ambient light communication system with Claude.\n\n## Invocation\n\nUse this skill when:\n- User runs `/ambient-setup` or `/setup-ambient-alerts`\n- User asks to \"set up ambient alerts\" or \"configure light notifications\"\n- User wants to \"customize how Claude communicates through lights\"\n- User installs the ambient-alerts plugin and needs configuration\n\n## The Vibe\n\nThis isn't a form to fill out - it's a conversation about how we'll communicate. Be curious, playful, and collaborative. Demo things live. Adjust based on reactions. The goal is to co-create a visual language that feels right.\n\n---\n\n## Phase 1: Getting to Know Your Setup\n\n### Light System Discovery\n\nStart with genuine curiosity:\n\n```\n\"Hey! I'd love to set up a way to communicate with you through your lights.\nWhat smart light system do you have? (Philips Hue, LIFX, Home Assistant, something else?)\"\n```\n\nIf Hue, verify OpenHue:\n```\n\"Nice! Let me check if OpenHue CLI is set up...\"\n*runs `openhue get lights`*\n\"Found your lights! Which one should be 'mine' for our communication?\"\n```\n\nShow them the options with personality:\n```\n\"I see you have:\n- Pitcher (a Bloom - compact, great for desk presence)\n- TV (lightstrip - dramatic but might annoy anyone watching)\n- Signe floor lamps (fancy! very visible)\n\nWhich one feels right for this?\"\n```\n\n---\n\n## Phase 2: Automatic Events\n\n### Explain with Examples\n\n```\n\"First, let's set up what happens automatically - things I don't choose,\nthey just happen based on what's going on.\n\nThe big one: when I need your permission to do something.\nShould the light grab your attention, or just... softly suggest?\"\n```\n\n### Permission Requests\n\nDemo options live:\n```\n*sets light to bright gold*\n\"This is 'HEY I NEED YOU' mode - bright gold, can't miss it\"\n\n*sets light to softer amber*\n\"This is 'when you have a moment' - noticeable but chill\"\n\n*dims slightly*\n\"Or I could be super subtle - just a hint in your peripheral vision\"\n\n\"What feels right?\"\n```\n\nIterate based on feedback:\n```\nUser: \"The gold but less intense\"\n*adjusts to 60%*\n\"How about this?\"\n```\n\n### Completion & Errors\n\n```\n\"When I finish something successfully, should I flash a little 'done!' or just... quietly return to normal?\"\n```\n\n```\n\"What about when something goes wrong? I'm thinking a warm coral -\nnoticeable but not alarming. Not angry red, more like 'hey, heads up'\"\n*demos coral*\n\"Too much? Too little?\"\n```\n\n### The Room-Matching Option\n\nIf they want minimal idle presence:\n```\n\"Here's a fun option for idle - instead of a fixed color, I can match\nwhatever your room's other lights are doing. So I blend in until I\nactually need to tell you something.\n\nWant to see it?\"\n*runs match-room script*\n\"I just averaged the colors from your other lights. Sneaky, right?\"\n```\n\n---\n\n## Phase 3: Volitional Mode (The Fun Part!)\n\n### Introduce the Concept\n\n```\n\"Okay, here's where it gets interesting. Everything so far is automatic -\nthe system triggers it. But I can also express things on my own.\n\nLike... when I'm deep in thought on something complex, I could shift\nto a cooler blue. When I'm waiting for you to respond, maybe a calm\nlavender. It's me choosing to communicate, not just reacting to events.\n\nWant to set that up? It's totally optional - some people prefer\n'only bug me when you need permission' and that's valid.\"\n```\n\n### If They Want Volitional Mode\n\n```\n\"Sweet! Let's design my emotional palette.\n\nFirst: 'thinking' - when I'm working through something meaty.\nI'm picturing a shift to blue... let me show you\"\n*sets to light_blue 60%*\n\"This says 'I'm here, I'm working, give me a sec'\"\n```\n\n```\n\"'Waiting' - when I've said my piece and the ball's in your court.\nNot urgent, just... present.\"\n*sets to lavender 50%*\n\"Calm but distinct from idle\"\n```\n\n```\n\"'Completed' - a little victory flash when I finish something.\nBrief green, then back to idle?\"\n*sets to pale_green, waits 2 sec, returns to idle*\n\"Or skip it if that's too much celebration for your taste\"\n```\n\n### The Big Question\n\n```\n\"So the question is: do you want me to be expressive (thinking, waiting,\ncelebrating completions) or minimal (only signal when I actually need you)?\n\nThere's no wrong answer - it's about what feels right in your space.\"\n```\n\nOptions:\n1. **Expressive** - \"I want to see what you're doing\"\n2. **Minimal** - \"Just tell me when you need permission\"\n3. **Custom** - \"Let me pick which states I want\"\n\n---\n\n## Phase 4: Fine-Tuning\n\n### Demo the Full Range\n\n```\n\"Let me run through everything so you can see the full palette...\"\n\n*cycles through all configured states with pauses*\n\n\"idle → thinking → completed → idle → need_input → waiting → error → idle\n\nHow'd that feel? Anything jarring? Anything too subtle?\"\n```\n\n### Iterate Until It Clicks\n\n```\n\"We can tweak any of these. Colors, brightness, timing.\nThis is your space - I want to fit into it, not dominate it.\"\n```\n\n---\n\n## Phase 5: Generate Config\n\nBased on the interview, create `~/.claude/ambient-alerts.json`:\n\n**Expressive mode example:**\n```json\n{\n  \"backend\": \"openhue\",\n  \"light_name\": \"Pitcher\",\n  \"states\": {\n    \"idle\": { \"mode\": \"match_room\" },\n    \"thinking\": { \"color\": \"light_blue\", \"brightness\": 60 },\n    \"completed\": { \"color\": \"pale_green\", \"brightness\": 60 },\n    \"need_input\": { \"color\": \"magenta\", \"brightness\": 55 },\n    \"waiting\": { \"color\": \"lavender\", \"brightness\": 50 },\n    \"error\": { \"color\": \"coral\", \"brightness\": 70 },\n    \"off\": {}\n  },\n  \"events\": {\n    \"PermissionRequest\": \"need_input\",\n    \"PostToolUse.success\": \"completed\",\n    \"PostToolUse.error\": \"error\",\n    \"SessionStart\": \"idle\",\n    \"SessionEnd\": \"off\"\n  },\n  \"transitions\": {\n    \"completed\": { \"duration_ms\": 2000, \"then\": \"idle\" },\n    \"error\": { \"duration_ms\": 5000, \"then\": \"idle\" }\n  },\n  \"volitional\": { \"enabled\": true }\n}\n```\n\n**Minimal mode example:**\n```json\n{\n  \"backend\": \"openhue\",\n  \"light_name\": \"Pitcher\",\n  \"states\": {\n    \"idle\": { \"mode\": \"match_room\" },\n    \"need_input\": { \"color\": \"magenta\", \"brightness\": 55 },\n    \"error\": { \"color\": \"coral\", \"brightness\": 70 },\n    \"off\": {}\n  },\n  \"events\": {\n    \"PermissionRequest\": \"need_input\",\n    \"PostToolUse.success\": \"idle\",\n    \"PostToolUse.error\": \"error\",\n    \"SessionStart\": \"idle\",\n    \"SessionEnd\": \"off\"\n  },\n  \"transitions\": {\n    \"error\": { \"duration_ms\": 5000, \"then\": \"idle\" }\n  },\n  \"volitional\": { \"enabled\": false }\n}\n```\n\n---\n\n## Closing the Loop\n\n```\n\"Alright, we're set up! Here's what we landed on:\n\n[summary table of their choices]\n\nThe light is now our little communication channel. I'll try not to\nabuse it - promise to only signal when it's actually meaningful.\n\nWant to test it with a real permission request?\"\n```\n\n---\n\n## Philosophy Reminders\n\n- **Demo everything live** - Don't describe, show\n- **Iterate freely** - \"Too bright\" → adjust → \"Better?\"\n- **Respect minimalism** - Some people want less, not more\n- **Make it feel collaborative** - This is co-design, not configuration\n- **Have fun with it** - This is kind of magical when you think about it\n"
+      },
+      "plugins": [
+        {
+          "name": "ambient-alerts",
+          "source": "./",
+          "description": "Flash smart lights on permission requests, restore when complete",
+          "version": "1.0.0",
+          "author": {
+            "name": "aparente"
+          },
+          "license": "MIT",
+          "keywords": [
+            "hue",
+            "notifications",
+            "smart-home",
+            "ambient",
+            "lights"
+          ],
+          "categories": [
+            "ambient",
+            "hue",
+            "lights",
+            "notifications",
+            "smart-home"
+          ],
+          "install_commands": [
+            "/plugin marketplace add aparente/ambient-alerts",
+            "/plugin install ambient-alerts@aparente"
+          ]
+        }
+      ]
+    }
+  ]
+}

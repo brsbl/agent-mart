@@ -1,0 +1,122 @@
+{
+  "author": {
+    "id": "densom",
+    "display_name": "Dennis Somerville",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1593598?v=4",
+    "url": "https://github.com/densom",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 3,
+      "total_skills": 0,
+      "total_stars": 4,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "claude-1password",
+      "version": null,
+      "description": "A collection of plugins to help manage local .env files using 1password secrets.",
+      "owner_info": {
+        "name": "Dennis Somerville",
+        "email": "densom@users.noreply.github.com",
+        "url": "https://github.com/densom/claude-1password"
+      },
+      "keywords": [],
+      "repo_full_name": "densom/claude-1password",
+      "repo_url": "https://github.com/densom/claude-1password",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 4,
+        "forks": 0,
+        "pushed_at": "2025-10-29T17:35:11Z",
+        "created_at": "2025-10-28T12:54:04Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 833
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/1password",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/1password/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/1password/commands/env-add.md",
+          "type": "blob",
+          "size": 3881
+        },
+        {
+          "path": "plugins/1password/commands/env-init.md",
+          "type": "blob",
+          "size": 2555
+        },
+        {
+          "path": "plugins/1password/commands/env-sync.md",
+          "type": "blob",
+          "size": 3997
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-1password\",\n  \"owner\": {\n    \"name\": \"Dennis Somerville\",\n    \"email\": \"densom@users.noreply.github.com\",\n    \"url\": \"https://github.com/densom/claude-1password\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of plugins to help manage local .env files using 1password secrets.\",\n    \"version\": \"0.0.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"local-env-file-management\",\n      \"description\": \"Tools to populate local .env files from 1password secrets.\",\n      \"source\": \"./plugins/1password\",\n      \"keywords\": [\n        \"1password\",\n        \"env\",\n        \"dotenv\",\n        \"secrets\",\n        \"local-development\"\n      ],\n      \"license\": \"MIT\",\n      \"category\": \"development\",\n      \"author\": {\n        \"name\": \"Dennis Somerville\",\n        \"email\": \"densom@users.noreply.github.com\"\n      }\n    }\n  ]\n}\n",
+        "plugins/1password/commands/env-add.md": "---\ndescription: Add a new environment variable to .env.1password template and optionally to 1Password\nargument-hint: <VAR_NAME> [op-reference-or-value]\n---\n\nYou are tasked with adding a new environment variable to the `.env.1password` template file and optionally creating or updating the corresponding secret in 1Password.\n\n## Instructions:\n\n1. **Parse arguments**:\n   - First argument (required): The variable name (e.g., `API_KEY`)\n   - Second argument (optional): Either:\n     - A 1Password reference like `op://Private/myapp/api_key`\n     - A value to be stored in 1Password\n     - If not provided, ask the user for input\n\n2. **Check for .env.1password**: Look for the template file in the current working directory.\n   - If it doesn't exist, ask if the user wants to create it (and offer to run `/claude-1password:env-init` if a `.env` exists)\n\n3. **Check if variable already exists**:\n   - If the variable name already exists in `.env.1password`, ask if they want to update it\n   - Show the current value/reference before updating\n\n4. **Determine the 1Password reference**:\n\n   **Option A**: If the second argument looks like a 1Password reference (`op://...`):\n   - Use it as-is\n   - Verify it's valid by trying `op read \"reference\"` (optional, warn if it fails)\n\n   **Option B**: If the second argument is a value (not starting with `op://`):\n   - Ask the user for the 1Password item details:\n     - Vault name (default: \"Private\")\n     - Item name (suggest based on project or existing pattern)\n     - Field name (default: variable name in lowercase)\n   - Offer to create the item/field in 1Password using the CLI:\n     ```bash\n     op item create --category=password --title=\"item-name\" \\\n       --vault=\"vault-name\" field-name=\"value\"\n     ```\n     Or if the item exists, update it:\n     ```bash\n     op item edit \"item-name\" --vault=\"vault-name\" field-name=\"value\"\n     ```\n   - Construct the reference: `op://vault/item/field`\n\n   **Option C**: If no second argument provided:\n   - Ask the user whether they want to:\n     1. Provide an existing 1Password reference\n     2. Provide a value to store in 1Password\n     3. Leave it as a placeholder for manual editing later\n\n5. **Update .env.1password**:\n   - Add the new variable in the format: `VAR_NAME=op://vault/item/field`\n   - Optionally add a comment above it if the user wants to document it\n   - Maintain alphabetical order or append to the end (ask user preference)\n\n6. **Optionally update .env**:\n   - Ask if they want to immediately sync to `.env` by running `/claude-1password:env-sync`\n   - Or just update `.env.1password` for now\n\n7. **Output summary**: Show the user:\n   - The variable that was added: `VAR_NAME=op://...`\n   - Whether it was also created/updated in 1Password\n   - Next steps (e.g., \"Run `/claude-1password:env-sync` to update your `.env` file\")\n\n## Examples:\n\n### Example 1: Add with existing 1Password reference\n```\n/claude-1password:env-add NEW_API_KEY op://Private/myapp/new_api_key\n```\n\nResult in `.env.1password`:\n```\nNEW_API_KEY=op://Private/myapp/new_api_key\n```\n\n### Example 2: Add with a new value\n```\n/claude-1password:env-add STRIPE_KEY sk_test_abc123\n```\n\nYou would then:\n1. Ask for vault/item/field details (or use smart defaults)\n2. Create/update in 1Password\n3. Add to `.env.1password` with the generated reference\n\n### Example 3: Add placeholder for manual editing\n```\n/claude-1password:env-add DATABASE_PASSWORD\n```\n\nYou would prompt for what to do, and potentially add:\n```\nDATABASE_PASSWORD=op://Private/myapp/database_password\n```\n\n## Error Handling:\n\n- If 1Password CLI is not installed or not authenticated, warn the user but still allow adding to `.env.1password` as a placeholder\n- If variable name is invalid (contains spaces, special chars except `_`), suggest a corrected name\n- If 1Password operation fails, show the error but still update the template file\n",
+        "plugins/1password/commands/env-init.md": "---\ndescription: Initialize a .env.1password template from an existing .env file\nargument-hint: [path-to-env-file]\n---\n\nYou are tasked with creating a `.env.1password` template file from an existing `.env` file.\n\n## Instructions:\n\n1. **Read the .env file**: If the user provided a path argument, use that path. Otherwise, look for `.env` in the current working directory.\n\n2. **Parse the file**: Extract all environment variable key-value pairs. Ignore:\n   - Empty lines\n   - Lines starting with `#` (comments)\n   - Malformed lines without `=`\n\n3. **Generate template**: For each variable, create a line in the format:\n   ```\n   VAR_NAME=op://vault-name/item-name/field-name\n   ```\n\n   You should:\n   - Keep the variable name exactly as it appears\n   - For the 1Password reference, suggest a sensible structure:\n     - `vault-name`: Default to \"Private\" or ask the user\n     - `item-name`: Use a descriptive name based on the project or variable context\n     - `field-name`: Use the variable name in lowercase or the actual field name in 1Password\n\n   Example transformation:\n   ```\n   DATABASE_URL=postgresql://localhost:5432/mydb\n   API_KEY=abc123secret\n   ```\n\n   Becomes:\n   ```\n   DATABASE_URL=op://Private/project-secrets/database_url\n   API_KEY=op://Private/project-secrets/api_key\n   ```\n\n4. **Add security header**: Prepend or update the security comment to the top of the generated `.env.1password` file:\n   ```\n   # This file was auto-generated from .env.1password\n   # DO NOT commit this file to version control\n   # Generated on: [current date/time]\n\n   ```\n   (Note the blank line after the header)\n\n   If the `.env.1password` template file already exists, check for the security header and add it if it does not exist.\n\n5. **Preserve comments**: Keep any comment lines from the original file to maintain documentation.\n\n6. **Write the template**: Save the result as `.env.1password` in the same directory as the source `.env` file.\n\n7. **Output summary**: Show the user:\n   - How many variables were converted\n   - The path to the new `.env.1password` file\n   - A reminder to update the 1Password references to match their actual vault structure\n   - Instructions: \"Edit `.env.1password` to update the `op://` references to match your 1Password vault, item, and field names. Then run `/claude-1password:env-sync` to generate your `.env` file.\"\n\n## Error Handling:\n\n- If the `.env` file doesn't exist, inform the user and ask if they want to create a new empty template\n- If `.env.1password` already exists, ask if they want to overwrite it\n",
+        "plugins/1password/commands/env-sync.md": "---\ndescription: Populate .env file from .env.1password template using 1Password CLI\nargument-hint: [path-to-template]\n---\n\nYou are tasked with generating a `.env` file by resolving 1Password secret references from a `.env.1password` template file.\n\n## Prerequisites Check:\n\n1. **Verify 1Password CLI is installed**: Run `op --version` to check if the 1Password CLI is available.\n   - If not installed, inform the user to install it from https://developer.1password.com/docs/cli/get-started/\n\n2. **Verify 1Password CLI is authenticated**: Run `op account list` to check if the user is signed in.\n   - If not authenticated, inform the user to run `op signin` first\n\n## Instructions:\n\n1. **Locate the template file**: If the user provided a path argument, use that path. Otherwise, look for `.env.1password` in the current working directory.\n   - If `.env.1password` doesn't exist, inform the user and suggest running `/claude-1password:env-init` first\n\n2. **Check if .env already exists**:\n   - If `.env` already exists, ask the user if they want to overwrite it\n   - Consider backing up the existing `.env` as `.env.backup` before overwriting\n\n3. **Use op inject command**: Use the 1Password CLI `op inject` command to resolve all secret references in the template file and generate the `.env` file.\n\n   The basic command syntax is:\n   ```bash\n   op inject -i .env.1password -o .env\n   ```\n  \n   The `op inject` command will:\n   - Automatically find all `op://vault/item/field` references in the template\n   - Resolve them by fetching the secrets from 1Password\n   - Replace the references with the actual secret values\n   - Preserve all comments, empty lines, and non-secret values exactly as they appear\n   - Handle multiple references on a single line\n   - Provide clear error messages if any references are invalid or inaccessible\n\nIf the user opted to overwrite the existing file, make sure to use the `--force` flag in the op command.\n\n4. **Output summary**: Show the user:\n   - Success message: \"Successfully generated .env from .env.1password\"\n   - The path to the generated `.env` file\n   - Number of secret references that were resolved (count `op://` occurrences in the template)\n   - A reminder to add `.env` to `.gitignore` if not already present\n   - Security reminder: \"Remember to delete this file when no longer needed\"\n\n## Example:\n\nTemplate (`.env.1password`):\n```\n# Database configuration\nDATABASE_URL=op://Private/myapp/database_url\nAPI_KEY=op://Private/myapp/api_key\n\n# Non-secret values can be stored directly\nNODE_ENV=development\n```\n\nCommand executed:\n```bash\nop inject -i .env.1password -o .env\n```\n\nGenerated (`.env`):\n```\n# Database configuration\nDATABASE_URL=postgresql://user:pass@localhost:5432/db\nAPI_KEY=sk_live_abc123xyz789\n\n# Non-secret values can be stored directly\nNODE_ENV=development\n```\n\n## Additional Options:\n\n- **Force overwrite**: If you want to skip the overwrite confirmation, you can add the `--force` flag: `op inject -i .env.1password -o .env --force`\n- **In-memory only**: To output to stdout without writing a file (useful for verification): `op inject -i .env.1password`\n- **Different paths**: You can specify any template and output paths: `op inject -i path/to/template -o path/to/.env`\n\n## Error Handling:\n\n- If `.env.1password` doesn't exist, inform the user and suggest running `/claude-1password:env-init` first\n- If `.env` already exists, ask if they want to overwrite it\n- If `op inject` fails, show the specific error message from the CLI and suggest solutions:\n  - **\"not signed in\"**: User needs to run `op signin`\n  - **\"item not found\"** or **\"vault not found\"**: Check that the `op://` references in `.env.1password` match actual items in 1Password\n  - **\"field not found\"**: Verify the field name exists in the 1Password item\n  - For any errors, show which reference(s) caused the problem to help the user debug\n- If the command succeeds but the output seems incorrect, suggest the user manually verify their 1Password references\n"
+      },
+      "plugins": [
+        {
+          "name": "local-env-file-management",
+          "description": "Tools to populate local .env files from 1password secrets.",
+          "source": "./plugins/1password",
+          "keywords": [
+            "1password",
+            "env",
+            "dotenv",
+            "secrets",
+            "local-development"
+          ],
+          "license": "MIT",
+          "category": "development",
+          "author": {
+            "name": "Dennis Somerville",
+            "email": "densom@users.noreply.github.com"
+          },
+          "categories": [
+            "1password",
+            "development",
+            "dotenv",
+            "env",
+            "local-development",
+            "secrets"
+          ],
+          "install_commands": [
+            "/plugin marketplace add densom/claude-1password",
+            "/plugin install local-env-file-management@claude-1password"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "author": {
+    "id": "hatayama",
+    "display_name": "Masamichi Hatayama",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/842587?u=25b004dba922cd99c7cc9b9cc195ee011c0258dc&v=4",
+    "url": "https://github.com/hatayama",
+    "bio": "https://x.com/m_hatayama",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 1,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "pr-review-action-flow-marketplace",
+      "version": null,
+      "description": "GitHub PR のレビューコメントからコード修正と返信までを行う「PR Review Action Flow」プラグインを提供するマーケットプレイスです。",
+      "owner_info": {
+        "name": "hatayama"
+      },
+      "keywords": [],
+      "repo_full_name": "hatayama/PRReviewActionFlow",
+      "repo_url": "https://github.com/hatayama/PRReviewActionFlow",
+      "repo_description": null,
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-25T05:18:44Z",
+        "created_at": "2025-11-20T11:28:35Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 573
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 1767
+        },
+        {
+          "path": "commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "commands/address-review-comments.md",
+          "type": "blob",
+          "size": 3616
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pr-review-action-flow-marketplace\",\n  \"description\": \"GitHub PR のレビューコメントからコード修正と返信までを行う「PR Review Action Flow」プラグインを提供するマーケットプレイスです。\",\n  \"owner\": {\n    \"name\": \"hatayama\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pr-review-action-flow\",\n      \"description\": \"GitHub の PR レビューコメントを取得・精査し、修正と返信まで Claude Code から行うためのプラグインです。\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./\"\n    }\n  ]\n}\n\n\n",
+        "README.md": "# PR Review Action Flow\n\nGitHub の PR レビューコメントを集約し、コード修正と返信までを Claude Code から行うためのプラグインです。\n\nこのリポジトリは、Claude Code の **plugin marketplace** としても利用できます。\n\n## 主な機能\n\n- 未解決のレビューコメント一覧を取得\n- 各コメントの妥当性判断（suggestion も含めて精査）\n- 必要なコード修正の適用\n- 対応内容を含むレビューコメントへの返信\n\n詳しいフローやコマンド仕様は、`commands/address-review-comments.md` を参照してください。\n\n## インストール方法（Claude Code Plugin Marketplace 経由）\n\n1. Claude Code のチャットで、次のコマンドを実行して marketplace を追加します:\n\n   ```bash\n   /plugin marketplace add hatayama/PRReviewActionFlow\n   ```\n\n2. 続いて **PR Review Action Flow** プラグインをインストールします（プラグイン ID は `pr-review-action-flow` を想定）:\n\n   ```bash\n   /plugin install pr-review-action-flow\n   ```\n\n3. インストール後は、`/address-review-comments <PR URL> [GitHub username]` のコマンドで利用できます。\n\n## ディレクトリ構成\n\n```text\n.\n├── .claude-plugin/\n│   └── marketplace.json                 # PR Review Action Flow を公開するための marketplace 定義\n├── commands/\n│   ├── address-review-comments.md       # スラッシュコマンド定義 & 詳細ドキュメント\n│   └── address-review-comments/\n│       ├── get-review-comments.sh       # 未解決レビューコメント取得\n│       └── reply-review-comment.sh      # レビューコメントへの返信\n└── LICENSE\n```\n\n\n",
+        "commands/address-review-comments.md": "---\ndescription: \"PRのレビューコメントを確認し、妥当性を判断して適切に対応します\"\nallowed_tools: Bash(commands/address-review-comments/*), Bash(git:*), Bash(gh:*), Read, Edit, Write, AskUserQuestion\nmodel: sonnet\n---\n\nPRのレビューコメントを確認し、適切な対応を行います。\n\n## コマンド形式\n\n```\n/address-review-comments <PR URL> [GitHub username]\n```\n\n- **PR URL**: 対応するPRのURL（必須）\n- **GitHub username**: 使用するGitHubアカウント名（オプション）\n  - 指定した場合、自動的に `gh auth switch --user <username>` を実行\n\n### 使用例\n\n```bash\n# デフォルトアカウントで実行\n/address-review-comments https://github.com/your-org/your-repo/pull/13249\n\n# user-a アカウントに切り替えて実行\n/address-review-comments https://github.com/your-org/your-repo/pull/13249 user-a\n\n# user-b アカウントに切り替えて実行\n/address-review-comments https://github.com/your-org/your-repo/pull/13249 user-b\n```\n\n## 基本フロー\n\n0. **GitHubアカウントの切り替え**（username指定時のみ）\n   ```bash\n   gh auth switch --user <username>\n   ```\n   - 指定されたGitHubアカウントに切り替え\n\n1. **未解決レビューコメントの取得**\n   ```bash\n   commands/address-review-comments/get-review-comments.sh <PR URL>\n   ```\n   - 未解決のレビューコメント一覧を取得\n\n2. **各コメントの精査と妥当性判断**\n   - 各コメントの内容を読み、技術的妥当性を判断\n   - ```suggestion ブロックがあっても、その内容が適切かを必ず確認\n   - ✅ **妥当な指摘**: 修正を適用（ステップ3へ）\n   - ❌ **不当な指摘**: 理由をユーザーに説明（ステップ4へ）\n\n3. **妥当な指摘への対応**\n   - Edit/Write ツールを使って該当箇所を修正\n   - 修正内容をユーザーに提示\n   - **👤 ユーザー確認を取る**: 「この修正で commit・push してよいか？」\n   - OK が出たら commit・push を実行\n   - `reply-review-comment.sh` で返信（該当コミットSHAを含める）\n\n4. **不当な指摘への対応**\n   - 不当と判断した理由をユーザーに説明\n   - ユーザーの承認を得てから、`reply-review-comment.sh` で返信\n\n## 重要な注意事項\n\n- ✅ **AI が自分で判断して Edit ツールで修正を適用する**\n- ✅ **```suggestion ブロックの内容も無批判に受け入れない**\n- ✅ **必ずユーザー確認を経てから commit・push する**\n- ✅ **レビューコメントを無批判に受け入れない**\n\n## 実行前の準備\n\ngh コマンドの認証が設定されていることを確認してください：\n\n```bash\ngh auth status || gh auth login\n```\n\n**注意**: アカウント切り替えが必要な場合は、コマンドの2つ目の引数にGitHubユーザー名を指定してください。\n\nこのコマンドは、リポジトリのルートに `commands/address-review-comments/` が存在することを前提としています。\n\n## レビューコメントへの返信\n\n修正を commit・push した後、レビューコメントに返信：\n\n```bash\ncommands/address-review-comments/reply-review-comment.sh <COMMENT_ID> \"返信本文\"\n```\n\n返信メッセージには必ず以下を含めること：\n- 該当コミットのSHA（短縮版）\n- 何を修正したかの説明\n\n## 開発者向け情報  \n### スクリプト構成  \n- **get-review-comments.sh**: 未解決コメント取得\n- **reply-review-comment.sh**: レビューコメント返信\n"
+      },
+      "plugins": [
+        {
+          "name": "pr-review-action-flow",
+          "description": "GitHub の PR レビューコメントを取得・精査し、修正と返信まで Claude Code から行うためのプラグインです。",
+          "version": "0.1.0",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hatayama/PRReviewActionFlow",
+            "/plugin install pr-review-action-flow@pr-review-action-flow-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

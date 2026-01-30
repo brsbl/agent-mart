@@ -1,0 +1,138 @@
+{
+  "author": {
+    "id": "pabloprx",
+    "display_name": "Pablo",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/58896409?v=4",
+    "url": "https://github.com/pabloprx",
+    "bio": "\r\n",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 2,
+      "total_commands": 2,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "pabloprx-vibechampion",
+      "version": null,
+      "description": "VibeBattle and Claude usage tools",
+      "owner_info": {
+        "name": "pabloprx",
+        "url": "https://github.com/pabloprx"
+      },
+      "keywords": [],
+      "repo_full_name": "pabloprx/vibechampion",
+      "repo_url": "https://github.com/pabloprx/vibechampion",
+      "repo_description": null,
+      "homepage": "https://vibechampion.vercel.app",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-12T22:26:55Z",
+        "created_at": "2026-01-05T19:17:49Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 400
+        },
+        {
+          "path": ".claude-plugin/plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/plugins/usage-statusline",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/plugins/usage-statusline/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/plugins/usage-statusline/commands/configure-usage-track.md",
+          "type": "blob",
+          "size": 9234
+        },
+        {
+          "path": ".claude-plugin/plugins/usage-statusline/plugin.json",
+          "type": "blob",
+          "size": 192
+        },
+        {
+          "path": ".claude-plugin/plugins/vibechampion",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/plugins/vibechampion/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/plugins/vibechampion/commands/vibebattle.md",
+          "type": "blob",
+          "size": 7986
+        },
+        {
+          "path": ".claude-plugin/plugins/vibechampion/plugin.json",
+          "type": "blob",
+          "size": 613
+        },
+        {
+          "path": ".claude-plugin/plugins/vibechampion/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/plugins/vibechampion/scripts/sync.sh",
+          "type": "blob",
+          "size": 963
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pabloprx-vibechampion\",\n  \"owner\": {\n    \"name\": \"pabloprx\",\n    \"url\": \"https://github.com/pabloprx\"\n  },\n  \"description\": \"VibeBattle and Claude usage tools\",\n  \"plugins\": [\n    {\n      \"name\": \"vibechampion\",\n      \"source\": \"./.claude-plugin/plugins/vibechampion\"\n    },\n    {\n      \"name\": \"usage-statusline\",\n      \"source\": \"./.claude-plugin/plugins/usage-statusline\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugins/usage-statusline/commands/configure-usage-track.md": "# /configure-usage-track - Claude platform usage in statusline\n\nDisplay your Claude.ai platform usage (5-hour and 7-day limits) directly in Claude Code's statusline.\n\n## What it shows\n\n- `5h:12% 3:39` - 5-hour usage percentage + time until reset\n- `7d:6%` - 7-day usage percentage\n- Colors: red >80%, yellow >50%\n\n## Config Files\n\n**Credentials:** `~/.claude/usage-config.json`\n```json\n{\n  \"orgId\": \"your-org-uuid\",\n  \"sessionKey\": \"sk-ant-sid01-...\"\n}\n```\n\n**Statusline script:** `~/.claude/statusline-command.sh`\n**Fetch script:** `~/.claude/fetch-usage.js`\n\n## Flow\n\n### 1. Check existing setup\n\nRead `~/.claude/settings.json` and check if `statusLine` is configured.\n\n### 2. Get credentials\n\nUse AskUserQuestion with ONE call containing both questions. Tell user to paste in the text field:\n\n**Question 1: \"Organization ID? (type/paste in text field - find at https://claude.ai/settings/account)\"**\n- Header: \"Org ID\"\n- Options:\n  - Label: \"Where do I find this?\", Description: \"Go to claude.ai/settings/account and copy the UUID\"\n  - Label: \"Skip\", Description: \"Cancel setup\"\n\n**Question 2: \"sessionKey cookie? (type/paste in text field)\"**\n- Header: \"Session Key\"\n- Options:\n  - Label: \"Where do I find this?\", Description: \"DevTools (F12) > Application > Cookies > claude.ai > sessionKey\"\n  - Label: \"Skip\", Description: \"Cancel setup\"\n\nIMPORTANT: The user will paste their values in the \"Other\" text field. If they select \"Skip\", abort the setup.\n\nAfter user provides values, validate by testing the API:\n```bash\nbun -e \"\nconst r = await fetch('https://claude.ai/api/organizations/ORG_ID/usage', {\n  headers: { 'Cookie': 'sessionKey=SESSION_KEY', 'anthropic-client-platform': 'web_claude_ai' }\n});\nconsole.log(r.ok ? 'OK' : 'FAIL');\n\"\n```\n\nIf FAIL: Tell user credentials are invalid and ask again.\n\n### 3. Check statusline status\n\nRead `~/.claude/settings.json`. Check `statusLine` field:\n\n**If statusLine exists:**\nUse AskUserQuestion:\n- Question: \"You already have a custom statusline. How should we add usage tracking?\"\n- Header: \"Statusline\"\n- Options:\n  - \"Add to existing (Recommended)\" - inject usage into current script\n  - \"Replace entirely\" - overwrite with usage-focused statusline\n  - \"Skip statusline\" - only save credentials, user will integrate manually\n\n**If no statusLine:**\nUse AskUserQuestion:\n- Question: \"What indicators do you want in your statusline?\"\n- Header: \"Indicators\"\n- multiSelect: true\n- Options:\n  - \"Usage tracking (5h/7d)\" - always included\n  - \"Session timer\" - time since session start\n  - \"Context window %\" - current context usage\n  - \"Git branch\" - current branch name\n\n### 4. Create fetch script\n\nWrite `~/.claude/fetch-usage.js`:\n\n```javascript\n#!/usr/bin/env bun\nconst fs = require('fs');\nconst path = require('path');\n\nconst CONFIG_PATH = path.join(process.env.HOME, '.claude/usage-config.json');\nconst CACHE_PATH = '/tmp/claude_usage_cache.json';\nconst CACHE_TTL_MS = 60000;\n\nasync function fetchUsage(orgId, sessionKey) {\n  const url = `https://claude.ai/api/organizations/${orgId}/usage`;\n  const response = await fetch(url, {\n    headers: {\n      'accept': '*/*',\n      'content-type': 'application/json',\n      'anthropic-client-platform': 'web_claude_ai',\n      'Cookie': `sessionKey=${sessionKey}`\n    }\n  });\n  if (!response.ok) throw new Error(`HTTP ${response.status}`);\n  const text = await response.text();\n  if (text.includes('<!DOCTYPE html>')) throw new Error('AUTH_FAILED');\n  return JSON.parse(text);\n}\n\nfunction formatOutput(usage) {\n  const result = { fiveHour: null, sevenDay: null };\n  if (usage.five_hour) {\n    const pct = usage.five_hour.utilization || 0;\n    let remaining = '';\n    if (usage.five_hour.resets_at) {\n      const diffMs = new Date(usage.five_hour.resets_at).getTime() - Date.now();\n      if (diffMs > 0) {\n        const hours = Math.floor(diffMs / 3600000);\n        const mins = Math.floor((diffMs % 3600000) / 60000);\n        remaining = `${hours}:${String(mins).padStart(2, '0')}`;\n      } else {\n        remaining = '0:00';\n      }\n    }\n    result.fiveHour = { pct, remaining };\n  }\n  if (usage.seven_day) {\n    result.sevenDay = { pct: usage.seven_day.utilization || 0 };\n  }\n  return result;\n}\n\nasync function main() {\n  try {\n    if (fs.existsSync(CACHE_PATH)) {\n      const cache = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf8'));\n      if (Date.now() - cache.timestamp < CACHE_TTL_MS) {\n        console.log(JSON.stringify(cache.data));\n        return;\n      }\n    }\n  } catch {}\n\n  if (!fs.existsSync(CONFIG_PATH)) {\n    console.log(JSON.stringify({ error: 'NO_CONFIG' }));\n    return;\n  }\n\n  const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));\n  if (!config.sessionKey || !config.orgId) {\n    console.log(JSON.stringify({ error: 'MISSING_CREDS' }));\n    return;\n  }\n\n  try {\n    const usage = await fetchUsage(config.orgId, config.sessionKey);\n    const formatted = formatOutput(usage);\n    fs.writeFileSync(CACHE_PATH, JSON.stringify({ timestamp: Date.now(), data: formatted }));\n    console.log(JSON.stringify(formatted));\n  } catch (err) {\n    console.log(JSON.stringify({ error: err.message }));\n  }\n}\n\nmain();\n```\n\n### 5. Create or update statusline script\n\nBased on user choice, either:\n\n**A. Add to existing:** Read current script, inject usage fetch + display logic before final printf\n\n**B. Replace/New:** Create `~/.claude/statusline-command.sh`:\n\n```bash\n#!/bin/bash\ninput=$(cat)\ncid=$(echo \"$input\" | jq -r '.session_id // \"default\"')\n\n# Session timer (if selected)\nsf=\"/tmp/claude_session_$cid\"\n[ ! -f \"$sf\" ] && date +%s > \"$sf\"\nst=$(cat \"$sf\"); now=$(date +%s); e=$((now-st))\nh=$((e/3600)); m=$(((e%3600)/60)); s=$((e%60))\nif [ $h -gt 0 ]; then timer=\"${h}h ${m}m\"\nelif [ $m -gt 0 ]; then timer=\"${m}m ${s}s\"\nelse timer=\"${s}s\"; fi\n\n# Context window (if selected)\nusage=$(echo \"$input\" | jq '.context_window.current_usage')\nif [ \"$usage\" != \"null\" ]; then\n  current=$(echo \"$usage\" | jq '.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens')\n  size=$(echo \"$input\" | jq '.context_window.context_window_size')\n  ctx_pct=$((current * 100 / size))\n  if [ $ctx_pct -gt 50 ]; then ctx_str=\"\\033[31mctx:${ctx_pct}%\\033[0m\"\n  elif [ $ctx_pct -gt 40 ]; then ctx_str=\"\\033[33mctx:${ctx_pct}%\\033[0m\"\n  else ctx_str=\"ctx:${ctx_pct}%\"; fi\nelse ctx_str=\"ctx:0%\"; fi\n\n# Git branch (if selected)\nbranch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo \"\")\n\n# Platform usage\npu=$(bun ~/.claude/fetch-usage.js 2>/dev/null)\nfive_hour=\"\"; seven_day=\"\"\nif [ -n \"$pu\" ]; then\n  err=$(echo \"$pu\" | jq -r '.error // empty')\n  if [ -z \"$err\" ]; then\n    fp=$(echo \"$pu\" | jq -r '.fiveHour.pct // empty')\n    fr=$(echo \"$pu\" | jq -r '.fiveHour.remaining // empty')\n    if [ -n \"$fp\" ]; then\n      if [ \"$fp\" -gt 80 ]; then five_hour=\"\\033[31m5h:${fp}% ${fr}\\033[0m\"\n      elif [ \"$fp\" -gt 50 ]; then five_hour=\"\\033[33m5h:${fp}% ${fr}\\033[0m\"\n      else five_hour=\"5h:${fp}% ${fr}\"; fi\n    fi\n    sp=$(echo \"$pu\" | jq -r '.sevenDay.pct // empty')\n    if [ -n \"$sp\" ]; then\n      if [ \"$sp\" -gt 80 ]; then seven_day=\"\\033[31m7d:${sp}%\\033[0m\"\n      elif [ \"$sp\" -gt 50 ]; then seven_day=\"\\033[33m7d:${sp}%\\033[0m\"\n      else seven_day=\"7d:${sp}%\"; fi\n    fi\n  else\n    five_hour=\"\\033[31m5h:ERR\\033[0m\"\n    seven_day=\"\\033[31m7d:ERR\\033[0m\"\n  fi\nfi\n\n# Build output based on selected indicators\n# This is dynamically generated based on user selections\n```\n\nThe script must be dynamically generated based on user's indicator choices. Build the final printf statement with only the selected indicators.\n\n### 6. Update settings.json\n\nRead `~/.claude/settings.json`, update the `statusLine` field:\n\n```json\n{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"bash ~/.claude/statusline-command.sh\"\n  }\n}\n```\n\nWrite back the updated settings.json (preserve all other fields).\n\n### 7. Save credentials\n\nWrite `~/.claude/usage-config.json`:\n```json\n{\n  \"orgId\": \"USER_ORG_ID\",\n  \"sessionKey\": \"USER_SESSION_KEY\"\n}\n```\n\n### 8. Confirm\n\nTell user:\n```\nUsage tracking configured!\n\nYour statusline now shows:\n- 5h: X% H:MM (5-hour usage + reset time)\n- 7d: Y% (7-day usage)\n\nCredentials saved to ~/.claude/usage-config.json\nIf auth fails, run /configure-usage-track update-key to refresh sessionKey.\n\nRestart Claude Code to see changes.\n\nWant more? Ask me to tune your statusline - I can add RAM usage, git branch, custom emojis, and more!\n```\n\n## Error Handling\n\n- If bun not installed: \"This feature requires Bun. Install with: curl -fsSL https://bun.sh/install | bash\"\n- If credentials invalid: Ask user to re-enter\n- If statusline update fails: Show manual instructions\n\n## Subcommands\n\n- `/configure-usage-track` - Run setup wizard\n- `/configure-usage-track update-key` - Update sessionKey only (for when it expires)\n- `/configure-usage-track status` - Show current config and test connection\n\n### update-key flow\n\n1. Ask for new sessionKey using AskUserQuestion\n2. Test it against the API\n3. Update ~/.claude/usage-config.json\n4. Say \"SessionKey updated!\"\n\n### status flow\n\n1. Read ~/.claude/usage-config.json\n2. Test API connection\n3. Show: orgId (masked), sessionKey (masked), connection status (OK/FAIL)\n4. If FAIL: \"Your sessionKey may be expired. Run /configure-usage-track update-key\"\n\n$ARGUMENTS\n",
+        ".claude-plugin/plugins/usage-statusline/plugin.json": "{\n  \"name\": \"usage-statusline\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Track Claude platform usage (5h/7d limits) in your statusline\",\n  \"commands\": [\"./commands/configure-usage-track.md\"]\n}\n",
+        ".claude-plugin/plugins/vibechampion/commands/vibebattle.md": "# /vibebattle - Claude Code usage leaderboard\n\nCompare your Claude Code usage with your team.\n\n## Config File\nConfig stored at: `~/.config/vibechampion/config.json`\n\n```json\n{\n  \"machine_id\": \"uuid-v4-generated-once\",\n  \"display_name\": \"your-name\",\n  \"team\": \"TEAM-CODE\",\n  \"visibility\": \"both\",\n  \"server\": \"https://vibechampion.vercel.app\",\n  \"acknowledged\": true\n}\n```\n\nFields:\n- `machine_id`: Unique identifier for this machine (auto-generated UUID, never changes)\n- `display_name`: Your display name on the leaderboard (can be changed)\n- `team`: Team code (optional) - if set, shows team leaderboard by default\n- `visibility`: Where your stats appear - \"public\", \"team\", or \"both\"\n- `server`: API server URL\n- `acknowledged`: User accepted data sharing\n\n## Flow\n\n### 1. Check if onboarded\n\nRead `~/.config/vibechampion/config.json`. If it doesn't exist or `acknowledged` is false, run onboarding.\n\n### 2. Onboarding (first time only)\n\nUse AskUserQuestion to collect info. Ask all questions in ONE call with multiple questions:\n\n**Question 1: \"What's your battle name?\"**\n- Header: \"Display Name\"\n- Options: Let them type custom input (use Other)\n- This will appear on the leaderboard\n\n**Question 2: \"Team code (optional)\"**\n- Header: \"Team\"\n- Options:\n  - \"Skip - global only\"\n  - \"Enter code\" (let them type)\n- If they have a team code from a coworker, they enter it here\n- If empty/skipped, they only appear on global leaderboard\n\n**Question 3: \"Where should your stats appear?\"** (only if team code provided)\n- Header: \"Visibility\"\n- Options:\n  - \"Public + Team (Recommended)\" - visible everywhere\n  - \"Team Only\" - only teammates see your stats\n  - \"Public Only\" - team can't see you (why join then?)\n\n**Question 4: \"VibeBattle tracks ONLY token counts (no code, no prompts). Continue?\"**\n- Header: \"Privacy\"\n- Options: \"Yes, let's battle\" / \"No thanks\"\n\nIf they accept:\n1. Generate machine_id: Use Node.js `crypto.randomUUID()` to generate a unique identifier\n2. Create config directory: `mkdir -p ~/.config/vibechampion`\n3. Write config file with machine_id, display_name, team (if provided), visibility, server, acknowledged: true\n4. If team code provided, join the team on server:\n   ```bash\n   curl -s -X POST \"https://vibechampion.vercel.app/api/teams/{TEAM_CODE}/join\" \\\n     -H \"Content-Type: application/json\" \\\n     -d '{\"machine_id\": \"{MACHINE_ID}\", \"display_name\": \"{DISPLAY_NAME}\", \"visibility\": \"{VISIBILITY}\"}'\n   ```\n   - If team doesn't exist (404), tell user: \"Team code not found. You can create it at vibechampion.vercel.app or ask your team lead for the correct code.\"\n5. Continue to sync\n\nIf they decline: Exit with \"No worries, your stats stay private.\"\n\n### 2.1. Auto-generate machine_id (for existing configs)\n\nAfter reading config, check if machine_id exists:\n- If missing: Generate one with `crypto.randomUUID()` and save it to config\n- This handles migration for users who already have config files\n\n### 3. Sync Team Membership (check if user joined team via web)\n\nBefore syncing stats, check if user's team membership changed on the server:\n\n```bash\n# Get user's teams from server using machine_id\ncurl -s \"https://vibechampion.vercel.app/api/users/{MACHINE_ID}/teams\"\n```\n\nResponse:\n```json\n{\n  \"teams\": [\n    {\"code\": \"MYCOMPANY\", \"name\": \"Acme Corp\", \"visibility\": \"both\"}\n  ]\n}\n```\n\nIf server returns a team but local config has no team (or different team):\n- Update config.json with the team info from server\n- This handles the case where user joined via web UI\n\nIf server returns no teams but local config has a team:\n- User left via web UI, remove team from config.json\n\n### 4. Sync Stats\n\nGet stats from START OF CURRENT MONTH. Calculate the first day of current month in YYYYMMDD format.\n\n```bash\n# Get first day of current month (e.g., 20260101 for January 2026)\nSINCE=$(date +%Y%m01)\nnpx --yes ccusage@latest daily --json --since $SINCE\n```\n\nParse the JSON output. The format is:\n```json\n{\n  \"daily\": [\n    {\n      \"date\": \"2026-01-05\",\n      \"inputTokens\": 123,\n      \"outputTokens\": 456,\n      \"cacheCreationTokens\": 789,\n      \"cacheReadTokens\": 1000,\n      \"totalTokens\": 2368,\n      \"totalCost\": 1.23,\n      \"modelsUsed\": [\"claude-opus-4-5-20251101\"]\n    }\n  ]\n}\n```\n\n### 5. Submit to Server\n\nPOST to `https://vibechampion.vercel.app/api/stats`:\n```json\n{\n  \"machine_id\": \"{machine_id}\",\n  \"display_name\": \"{display_name}\",\n  \"daily\": [/* array from ccusage */]\n}\n```\n\nUse curl:\n```bash\ncurl -s -X POST https://vibechampion.vercel.app/api/stats \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"machine_id\": \"MACHINE_ID\", \"display_name\": \"NAME\", \"daily\": [...]}'\n```\n\n### 6. Get Leaderboard\n\nBuild the URL based on config:\n- Base: `https://vibechampion.vercel.app/api/leaderboard`\n- Add period: `?period=month` (or week, semester, year, all)\n- If team in config AND not using `/vibebattle global`: add `&team={TEAM_CODE}`\n\nExamples:\n```bash\n# Global monthly (no team or /vibebattle global)\nGET https://vibechampion.vercel.app/api/leaderboard?period=month\n\n# Team monthly (team in config)\nGET https://vibechampion.vercel.app/api/leaderboard?period=month&team=MYCOMPANY\n```\n\nAvailable periods: `today`, `week`, `month`, `semester`, `year`, `all`\n\n### 7. Display Results\n\nFormat the leaderboard nicely. Include team name if showing team leaderboard:\n\n```\nVIBE CHAMPION - January 2026\nTeam: Acme Corp\n=============================\n\n #  | Name           | Archetype  | Tokens (M) | Cost ($)\n----|----------------|------------|------------|----------\n 1  | pablo          | Vibe Coder |     318.3  |   348.17\n 2  | diego          | Architect  |     180.5  |   198.00\n 3  | carlos         | Thinker    |      95.2  |   102.30\n\nYour rank: #1 / 3\n\nStats synced! View full leaderboard: vibechampion.vercel.app/?team=MYCOMPANY\n```\n\nNotes:\n- Show tokens in millions (divide by 1,000,000, format to 1 decimal)\n- Include archetype from API response (vibe-coder, architect, thinker, grinder, sniper)\n- If team leaderboard, include shareable URL at the bottom\n- \"Team: {name}\" line only shown when viewing team leaderboard\n\n## Error Handling\n\n- If server unreachable: \"VibeBattle server is temporarily unavailable. Try again later.\"\n- If ccusage fails: \"Could not get stats. Make sure Claude Code has been used recently.\"\n- If no stats: \"No usage data found for this month.\"\n\n## Arguments\n\nHandle these BEFORE doing anything else:\n\n### Control Commands (no sync)\n\n- `/vibebattle pause` - Set `\"paused\": true` in config. Say \"Auto-sync paused. Run /vibebattle resume to re-enable.\"\n- `/vibebattle resume` - Remove `paused` from config. Say \"Auto-sync resumed.\"\n- `/vibebattle reset` - Delete config file. Re-run onboarding next time.\n- `/vibebattle status` - Show current config (display_name, machine_id, team, visibility, paused state)\n\n### Team Commands\n\n- `/vibebattle join CODE` - Join a team:\n  1. Ask visibility: \"Public + Team\" / \"Team Only\" / \"Public Only\"\n  2. Call API: `POST /api/teams/{CODE}/join` with machine_id, display_name, and visibility\n  3. If 404: \"Team not found. Check the code or create it at vibechampion.vercel.app\"\n  4. If success: Update config.json with team and visibility\n  5. Say \"Joined team {NAME}! Your stats will appear on the team leaderboard.\"\n\n- `/vibebattle leave-team` - Leave current team:\n  1. If no team in config: \"You're not in a team.\"\n  2. Call API: `POST /api/teams/{CODE}/leave` with machine_id\n  3. Remove team and visibility from config.json\n  4. Say \"Left team. Your stats will only appear on the global leaderboard.\"\n\n- `/vibebattle team` - Show team leaderboard (if in a team)\n\n### Leaderboard Commands (sync first)\n\n- `/vibebattle` - Sync stats and show leaderboard (team if configured, otherwise global monthly)\n- `/vibebattle global` - Show global leaderboard (ignores team setting)\n- `/vibebattle week` - Show weekly leaderboard\n- `/vibebattle semester` - Show semester leaderboard\n- `/vibebattle year` - Show yearly leaderboard\n- `/vibebattle all` - Show all-time leaderboard\n\n$ARGUMENTS\n",
+        ".claude-plugin/plugins/vibechampion/plugin.json": "{\n  \"name\": \"vibechampion\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Track and compare Claude Code usage with your team\",\n  \"commands\": [\"./commands/vibebattle.md\"],\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/sync.sh\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/sync.sh\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        ".claude-plugin/plugins/vibechampion/scripts/sync.sh": "#!/bin/bash\n# VibeBattle auto-sync script\n# Runs on session end to sync stats\n\nCONFIG_FILE=\"$HOME/.config/vibechampion/config.json\"\nSERVER=\"https://vibechampion.vercel.app\"\n\n# Check if config exists and user is onboarded\nif [ ! -f \"$CONFIG_FILE\" ]; then\n  exit 0\nfi\n\n# Check if paused\nif grep -q '\"paused\": true' \"$CONFIG_FILE\" 2>/dev/null; then\n  exit 0\nfi\n\n# Get username\nUSERNAME=$(grep -o '\"username\": *\"[^\"]*\"' \"$CONFIG_FILE\" | cut -d'\"' -f4)\nif [ -z \"$USERNAME\" ]; then\n  exit 0\nfi\n\n# Get stats for current month\nSINCE=$(date +%Y%m01)\nSTATS=$(npx --yes ccusage@latest daily --json --since \"$SINCE\" 2>/dev/null)\n\nif [ -z \"$STATS\" ]; then\n  exit 0\nfi\n\n# Extract daily array\nDAILY=$(echo \"$STATS\" | jq -c '.daily')\n\nif [ \"$DAILY\" = \"[]\" ] || [ -z \"$DAILY\" ]; then\n  exit 0\nfi\n\n# Submit to server (silent)\ncurl -s -X POST \"$SERVER/api/stats\" \\\n  -H \"Content-Type: application/json\" \\\n  -d \"{\\\"user\\\": \\\"$USERNAME\\\", \\\"daily\\\": $DAILY}\" > /dev/null 2>&1\n\nexit 0\n"
+      },
+      "plugins": [
+        {
+          "name": "vibechampion",
+          "source": "./.claude-plugin/plugins/vibechampion",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add pabloprx/vibechampion",
+            "/plugin install vibechampion@pabloprx-vibechampion"
+          ]
+        },
+        {
+          "name": "usage-statusline",
+          "source": "./.claude-plugin/plugins/usage-statusline",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add pabloprx/vibechampion",
+            "/plugin install usage-statusline@pabloprx-vibechampion"
+          ]
+        }
+      ]
+    }
+  ]
+}

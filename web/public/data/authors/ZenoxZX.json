@@ -1,0 +1,110 @@
+{
+  "author": {
+    "id": "ZenoxZX",
+    "display_name": "Aygün ÖZGÜR",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/114158896?u=5c1bcbb9e8c8006468c52a08749f3a77827f139a&v=4",
+    "url": "https://github.com/ZenoxZX",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 10,
+      "total_forks": 2
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "trello-cli-marketplace",
+      "version": null,
+      "description": "Trello CLI tools for Claude Code",
+      "owner_info": {
+        "name": "jimdowning-cyclops"
+      },
+      "keywords": [],
+      "repo_full_name": "ZenoxZX/trello-cli",
+      "repo_url": "https://github.com/ZenoxZX/trello-cli",
+      "repo_description": "A CLI tool that provides Trello integration with Claude Code. With this tool, you can manage your Trello boards, lists, and cards using natural language through Claude Code.",
+      "homepage": "",
+      "signals": {
+        "stars": 10,
+        "forks": 2,
+        "pushed_at": "2026-01-16T12:25:45Z",
+        "created_at": "2025-12-13T21:57:22Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 391
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/trello-cli",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/trello-cli/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/trello-cli/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 208
+        },
+        {
+          "path": "plugins/trello-cli/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/trello-cli/skills/trello-cli",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/trello-cli/skills/trello-cli/REFERENCE.md",
+          "type": "blob",
+          "size": 9318
+        },
+        {
+          "path": "plugins/trello-cli/skills/trello-cli/SKILL.md",
+          "type": "blob",
+          "size": 4013
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"trello-cli-marketplace\",\n  \"owner\": {\n    \"name\": \"jimdowning-cyclops\"\n  },\n  \"metadata\": {\n    \"description\": \"Trello CLI tools for Claude Code\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"trello-cli\",\n      \"source\": \"./plugins/trello-cli\",\n      \"description\": \"Trello board, list, and card management via CLI\"\n    }\n  ]\n}\n",
+        "plugins/trello-cli/.claude-plugin/plugin.json": "{\n  \"name\": \"trello-cli\",\n  \"description\": \"Trello board, list, and card management via CLI. Activate when user mentions 'Trello'.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"jimdowning-cyclops\"\n  }\n}\n",
+        "plugins/trello-cli/skills/trello-cli/REFERENCE.md": "# Trello CLI - Complete Reference\n\n## Output Format\n\nAll commands return JSON:\n\n```json\n// Success\n{\"ok\": true, \"data\": [...]}\n\n// Error\n{\"ok\": false, \"error\": \"Error message\", \"code\": \"ERROR_CODE\"}\n```\n\n### Error Codes\n\n| Code | Meaning |\n|------|---------|\n| `AUTH_ERROR` | Not authenticated or invalid credentials |\n| `NOT_FOUND` | Board/List/Card/Attachment not found |\n| `MISSING_PARAM` | Required parameter missing |\n| `HTTP_ERROR` | Network or API error |\n| `FILE_NOT_FOUND` | Local file does not exist (for uploads) |\n| `UPLOAD_FAILED` | Attachment upload failed |\n| `ATTACH_FAILED` | URL attachment failed |\n| `CREATE_FAILED` | Failed to create resource |\n| `UPDATE_FAILED` | Failed to update resource |\n| `INVALID_PARAM` | Invalid parameter value |\n| `ERROR` | General error |\n\n---\n\n## Commands\n\n### Authentication\n\n```bash\n# Check if authenticated\ntrello-cli --check-auth\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"username\":\"...\",\"fullName\":\"...\"}}\n\n# Set credentials (one-time)\ntrello-cli --set-auth <api-key> <token>\n\n# Clear saved credentials\ntrello-cli --clear-auth\n```\n\n### Board Operations\n\n```bash\n# List all boards\ntrello-cli --get-boards\n# Returns: {\"ok\":true,\"data\":[{\"id\":\"...\",\"name\":\"Board Name\",\"url\":\"...\"}]}\n\n# Get specific board\ntrello-cli --get-board <board-id>\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"...\",\"desc\":\"...\",\"url\":\"...\"}}\n```\n\n### List Operations\n\n```bash\n# Get all lists in a board\ntrello-cli --get-lists <board-id>\n# Returns: {\"ok\":true,\"data\":[{\"id\":\"...\",\"name\":\"To Do\"},{\"id\":\"...\",\"name\":\"Done\"}]}\n\n# Create new list\ntrello-cli --create-list <board-id> \"<list-name>\"\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"...\"}}\n```\n\n### Card Operations\n\n#### Reading Cards\n\n```bash\n# Get cards in a specific list\ntrello-cli --get-cards <list-id>\n\n# Get ALL cards in a board (recommended)\ntrello-cli --get-all-cards <board-id>\n\n# Get single card with full details\ntrello-cli --get-card <card-id>\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"...\",\"desc\":\"...\",\"due\":\"...\",\"idList\":\"...\"}}\n```\n\n#### Creating Cards\n\n```bash\n# Simple card\ntrello-cli --create-card <list-id> \"<card-name>\"\n\n# Card with description\ntrello-cli --create-card <list-id> \"<card-name>\" --desc \"<description>\"\n\n# Card with due date (ISO format)\ntrello-cli --create-card <list-id> \"<card-name>\" --due \"2025-01-15\"\n\n# Full card\ntrello-cli --create-card <list-id> \"<card-name>\" --desc \"<description>\" --due \"2025-01-15\"\n```\n\n#### Updating Cards\n\n```bash\n# Update name only\ntrello-cli --update-card <card-id> --name \"<new-name>\"\n\n# Update description only\ntrello-cli --update-card <card-id> --desc \"<new-description>\"\n\n# Update due date only\ntrello-cli --update-card <card-id> --due \"2025-01-20\"\n\n# Update multiple fields at once\ntrello-cli --update-card <card-id> --name \"<name>\" --desc \"<desc>\" --due \"<date>\"\n\n# Clear due date\ntrello-cli --update-card <card-id> --due \"\"\n```\n\n#### Moving Cards\n\n```bash\n# Move card to another list\ntrello-cli --move-card <card-id> <target-list-id>\n```\n\n#### Deleting Cards\n\n```bash\n# Delete card permanently\ntrello-cli --delete-card <card-id>\n# Returns: {\"ok\":true,\"data\":true}\n```\n\n### Comment Operations\n\n#### Reading Comments\n\n```bash\n# Get all comments on a card\ntrello-cli --get-comments <card-id>\n# Returns: {\"ok\":true,\"data\":[{\"id\":\"...\",\"date\":\"...\",\"data\":{\"text\":\"...\"},\"memberCreator\":{\"id\":\"...\",\"fullName\":\"...\",\"username\":\"...\"}}]}\n```\n\n#### Adding Comments\n\n```bash\n# Add a comment to a card\ntrello-cli --add-comment <card-id> \"<comment-text>\"\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"date\":\"...\",\"data\":{\"text\":\"...\"},\"memberCreator\":{\"id\":\"...\",\"fullName\":\"...\",\"username\":\"...\"}}}\n```\n\n### Attachment Operations\n\n**Note:** Downloading attachments is not supported. Trello's download API requires browser session authentication, not API tokens. Use `--attach-url` to link attachments between cards instead.\n\n#### Listing Attachments\n\n```bash\n# List all attachments on a card\ntrello-cli --list-attachments <card-id>\n# Returns: {\"ok\":true,\"data\":[{\"id\":\"...\",\"name\":\"file.pdf\",\"url\":\"...\",\"bytes\":12345,\"mimeType\":\"application/pdf\",\"date\":\"...\",\"isUpload\":true}]}\n```\n\n#### Uploading Attachments\n\n```bash\n# Upload a local file\ntrello-cli --upload-attachment <card-id> \"/path/to/file.pdf\"\n\n# Upload with custom name\ntrello-cli --upload-attachment <card-id> \"/path/to/file.pdf\" --name \"Project Spec\"\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"Project Spec\",\"url\":\"...\",\"bytes\":12345,\"mimeType\":\"application/pdf\"}}\n```\n\n#### Attaching URLs\n\n```bash\n# Attach a URL to a card\ntrello-cli --attach-url <card-id> \"https://example.com/document.pdf\"\n\n# Attach URL with custom name\ntrello-cli --attach-url <card-id> \"https://example.com/document.pdf\" --name \"External Doc\"\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"External Doc\",\"url\":\"https://example.com/document.pdf\"}}\n```\n\n#### Deleting Attachments\n\n```bash\n# Delete an attachment from a card\ntrello-cli --delete-attachment <card-id> <attachment-id>\n# Returns: {\"ok\":true,\"data\":true}\n```\n\n### Checklist Operations\n\n#### Getting Checklists\n\n```bash\n# Get all checklists on a card\ntrello-cli --get-checklists <card-id>\n# Returns: {\"ok\":true,\"data\":[{\"id\":\"...\",\"name\":\"My Checklist\",\"idCard\":\"...\",\"checkItems\":[{\"id\":\"...\",\"name\":\"Item 1\",\"state\":\"incomplete\"},{\"id\":\"...\",\"name\":\"Item 2\",\"state\":\"complete\"}]}]}\n```\n\n#### Creating Checklists\n\n```bash\n# Create a checklist on a card\ntrello-cli --create-checklist <card-id> \"<checklist-name>\"\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"My Checklist\",\"idCard\":\"...\",\"checkItems\":[]}}\n```\n\n#### Deleting Checklists\n\n```bash\n# Delete a checklist\ntrello-cli --delete-checklist <checklist-id>\n# Returns: {\"ok\":true,\"data\":true}\n```\n\n#### Adding Checklist Items\n\n```bash\n# Add an item to a checklist\ntrello-cli --add-checklist-item <checklist-id> \"<item-name>\"\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"Item name\",\"state\":\"incomplete\",\"idChecklist\":\"...\"}}\n```\n\n#### Updating Checklist Items\n\n```bash\n# Mark item as complete\ntrello-cli --update-checklist-item <card-id> <item-id> complete\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"Item name\",\"state\":\"complete\",...}}\n\n# Mark item as incomplete\ntrello-cli --update-checklist-item <card-id> <item-id> incomplete\n# Returns: {\"ok\":true,\"data\":{\"id\":\"...\",\"name\":\"Item name\",\"state\":\"incomplete\",...}}\n```\n\n#### Deleting Checklist Items\n\n```bash\n# Delete an item from a checklist\ntrello-cli --delete-checklist-item <checklist-id> <item-id>\n# Returns: {\"ok\":true,\"data\":true}\n```\n\n---\n\n## Common Workflows\n\n### 1. First Time Setup\n\n```bash\n# Get API key from: https://trello.com/app-key\n# Get Token from the same page (click \"Token\" link)\ntrello-cli --set-auth <your-api-key> <your-token>\ntrello-cli --check-auth  # Verify it works\n```\n\n### 2. Explore Board Structure\n\n```bash\ntrello-cli --get-boards                    # Find your board\ntrello-cli --get-lists <board-id>          # See all lists\ntrello-cli --get-all-cards <board-id>      # See all cards\n```\n\n### 3. Create Task with Full Details\n\n```bash\n# Step 1: Find the target list\ntrello-cli --get-lists <board-id>\n\n# Step 2: Create the card\ntrello-cli --create-card <list-id> \"Implement login feature\" \\\n  --desc \"Add OAuth2 authentication with Google and GitHub providers\" \\\n  --due \"2025-01-20\"\n```\n\n### 4. Move Card Through Workflow\n\n```bash\n# Get list IDs\ntrello-cli --get-lists <board-id>\n# Example output shows: To Do (id1), In Progress (id2), Done (id3)\n\n# Move from To Do to In Progress\ntrello-cli --move-card <card-id> <in-progress-list-id>\n\n# Later, move to Done\ntrello-cli --move-card <card-id> <done-list-id>\n```\n\n### 5. Update Existing Card\n\n```bash\n# Get card details first\ntrello-cli --get-card <card-id>\n\n# Update what you need\ntrello-cli --update-card <card-id> --desc \"Updated requirements: ...\"\n```\n\n### 6. Work with Attachments\n\n```bash\n# List attachments on a card\ntrello-cli --list-attachments <card-id>\n\n# Upload a file to a card\ntrello-cli --upload-attachment <card-id> \"./document.pdf\" --name \"Project Spec\"\n\n# Attach a URL (also used to link attachments between cards)\ntrello-cli --attach-url <card-id> \"https://docs.google.com/...\" --name \"Design Doc\"\n\n# Delete an attachment\ntrello-cli --delete-attachment <card-id> <attachment-id>\n```\n\nNote: To copy an attachment between cards, use `--list-attachments` on the source card to get the URL, then `--attach-url` on the target card.\n\n### 7. Work with Checklists\n\n```bash\n# Get existing checklists on a card\ntrello-cli --get-checklists <card-id>\n\n# Create a new checklist\ntrello-cli --create-checklist <card-id> \"Implementation Tasks\"\n\n# Add items to the checklist\ntrello-cli --add-checklist-item <checklist-id> \"Write unit tests\"\ntrello-cli --add-checklist-item <checklist-id> \"Update documentation\"\ntrello-cli --add-checklist-item <checklist-id> \"Code review\"\n\n# Mark items as complete\ntrello-cli --update-checklist-item <card-id> <item-id> complete\n\n# Delete a checklist when done\ntrello-cli --delete-checklist <checklist-id>\n```\n\n---\n\n## Tips\n\n1. **Use `--get-all-cards`** instead of multiple `--get-cards` calls\n2. **Cache board and list IDs** - they don't change often\n3. **ISO date format** for due dates: `YYYY-MM-DD`\n4. **Quote strings with spaces** in card names and descriptions\n5. **Check `ok` field** in response before processing data\n",
+        "plugins/trello-cli/skills/trello-cli/SKILL.md": "---\nname: trello-cli\ndescription: Trello board, list and card management via CLI. Activate when user mentions \"Trello\" - examples: \"Show my Trello tasks\", \"Add card to Trello\", \"Move on Trello\", \"Trello board\", \"List Trello\", \"Trello cards\".\n---\n\n# Trello CLI\n\nManage Trello boards, lists, and cards using the `trello-cli` command.\n\n## Important Rules\n\n1. **Only activate when \"Trello\" is mentioned** - Do not interfere with Notion, Jira, or other tools\n2. **Check JSON output after each command** - `ok: true` means success, `ok: false` means error\n3. **Follow the workflow**: First find board ID, then list ID, then perform card operations\n\n## Quick Reference\n\n### Board & List\n\n```bash\ntrello-cli --get-boards                              # List all boards\ntrello-cli --get-lists <board-id>                    # Get lists in board\n```\n\n### Cards\n\n```bash\ntrello-cli --get-all-cards <board-id>                # All cards in board\ntrello-cli --create-card <list-id> \"<name>\"          # Create card\ntrello-cli --create-card <list-id> \"<name>\" --desc \"<desc>\" --due \"2025-01-15\"\ntrello-cli --update-card <card-id> --name \"<name>\" --desc \"<desc>\"\ntrello-cli --move-card <card-id> <list-id>           # Move card\ntrello-cli --delete-card <card-id>                   # Delete card\ntrello-cli --get-comments <card-id>                  # Get comments\ntrello-cli --add-comment <card-id> \"<text>\"          # Add comment\n```\n\n### Attachments\n\n```bash\ntrello-cli --list-attachments <card-id>              # List attachments\ntrello-cli --upload-attachment <card-id> <file-path> [--name \"<name>\"]\ntrello-cli --attach-url <card-id> <url> [--name \"<name>\"]\ntrello-cli --delete-attachment <card-id> <attach-id>\n```\n\n**Note:** Downloading attachments is not supported - Trello's download API requires browser authentication. Use `--attach-url` to link attachments between cards.\n\n### Checklists\n\n```bash\ntrello-cli --get-checklists <card-id>                           # Get checklists on card\ntrello-cli --create-checklist <card-id> \"<name>\"                # Create checklist\ntrello-cli --delete-checklist <checklist-id>                    # Delete checklist\ntrello-cli --add-checklist-item <checklist-id> \"<name>\"         # Add item\ntrello-cli --update-checklist-item <card-id> <item-id> <state>  # complete/incomplete\ntrello-cli --delete-checklist-item <checklist-id> <item-id>     # Delete item\n```\n\n## Typical Workflows\n\n### List All Tasks\n```bash\ntrello-cli --get-boards           # → Get board ID\ntrello-cli --get-all-cards <id>   # → See all cards\n```\n\n### Add New Task\n```bash\ntrello-cli --get-boards           # → Get board ID\ntrello-cli --get-lists <id>       # → Find \"To Do\" or \"Backlog\" list ID\ntrello-cli --create-card <list-id> \"<task-name>\"\n```\n\n### Move to Done\n```bash\ntrello-cli --get-lists <board-id> # → Find \"Done\" list ID\ntrello-cli --move-card <card-id> <done-list-id>\n```\n\n## When Uncertain\n\nIf you encounter an error or don't know how to proceed:\n\n```bash\ntrello-cli --help\n```\n\nFor detailed command reference, see [REFERENCE.md](REFERENCE.md).\n\n## Example Scenarios\n\n**User:** \"Show my Trello tasks\"\n→ Run `--get-boards`, then `--get-all-cards <board-id>`\n\n**User:** \"Add a new task to Trello\"\n→ Run `--get-boards`, `--get-lists`, then `--create-card`\n\n**User:** \"Move the card to Done on Trello\"\n→ Run `--get-lists` to find Done ID, then `--move-card`\n\n**User:** \"Update the Trello card description\"\n→ Run `--update-card <card-id> --desc \"<new-desc>\"`\n\n**User:** \"Upload this file to the Trello card\"\n→ Run `--upload-attachment <card-id> \"<file-path>\"`\n\n**User:** \"Link an attachment to another Trello card\"\n→ Run `--list-attachments <source-card-id>` to get the URL, then `--attach-url <target-card-id> <url>`\n\n**User:** \"Add a checklist to this Trello card\"\n→ Run `--create-checklist <card-id> \"<checklist-name>\"`, then `--add-checklist-item` for each item\n\n**User:** \"Mark the checklist item as done on Trello\"\n→ Run `--update-checklist-item <card-id> <item-id> complete`\n"
+      },
+      "plugins": [
+        {
+          "name": "trello-cli",
+          "source": "./plugins/trello-cli",
+          "description": "Trello board, list, and card management via CLI",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ZenoxZX/trello-cli",
+            "/plugin install trello-cli@trello-cli-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

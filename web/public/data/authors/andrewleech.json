@@ -1,0 +1,100 @@
+{
+  "author": {
+    "id": "andrewleech",
+    "display_name": "Andrew Leech",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3318786?u=bbb703de38f85c76b1316cdaee8d61c1646a2454&v=4",
+    "url": "https://github.com/andrewleech",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 0,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "claude-reflections-local",
+      "version": null,
+      "description": "Local development marketplace for claude-reflections",
+      "owner_info": {
+        "name": "corona"
+      },
+      "keywords": [],
+      "repo_full_name": "andrewleech/claude-reflections",
+      "repo_url": "https://github.com/andrewleech/claude-reflections",
+      "repo_description": "Simple claude exptension to provide claude the ability to search and read it's own project conversation history",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-02T10:46:10Z",
+        "created_at": "2026-01-02T10:45:46Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 437
+        },
+        {
+          "path": ".claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 222
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3958
+        },
+        {
+          "path": "hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "hooks/debug-stop-hook.sh",
+          "type": "blob",
+          "size": 371
+        },
+        {
+          "path": "hooks/stop-index.sh",
+          "type": "blob",
+          "size": 498
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-reflections-local\",\n  \"owner\": {\n    \"name\": \"corona\"\n  },\n  \"metadata\": {\n    \"description\": \"Local development marketplace for claude-reflections\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-reflections\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./\",\n      \"description\": \"Minimal conversation memory with vector search and Agent SDK retrieval\",\n      \"author\": {\n        \"name\": \"corona\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-reflections\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Minimal conversation memory with vector search and Agent SDK retrieval\",\n  \"author\": {\n    \"name\": \"corona\"\n  },\n  \"mcpServers\": \"./../.mcp.json\"\n}\n",
+        "README.md": "# claude-reflections\n\nMinimal conversation memory with vector search and Claude Agent SDK retrieval.\n\n## Overview\n\n`claude-reflections` is a Claude Code plugin that indexes your past conversations and makes them searchable. When you search, it returns file references pointing back to the original JSONL files, then uses a Claude Agent SDK agent to read the context and answer your questions.\n\n### Key Features\n\n- **No persistent services** (except Qdrant for vector storage)\n- **Reversible indexing** - vectors point back to original JSONL files\n- **Per-project isolation** - each project has its own collection and state\n- **Incremental indexing** - only processes new messages on each run\n- **Stop hook integration** - automatically indexes when conversations end\n\n## Architecture\n\n```\n+----------------+     +----------------+     +----------------+\n|  Claude Code   | --> |   MCP Server   | --> |     Qdrant     |\n|  (stop hook)   |     |  (indexing +   |     |  (vectors with |\n+----------------+     |   search)      |     |  file:line ref)|\n                       +-------+--------+     +----------------+\n                               |\n                               v on search\n                       +----------------+\n                       | Claude Agent   |\n                       | SDK (read-only |\n                       |  reads JSONL)  |\n                       +----------------+\n```\n\n## Installation\n\n### Prerequisites\n\n- Python 3.11+\n- [uv](https://docs.astral.sh/uv/) package manager\n- Qdrant running locally (default: `http://localhost:6333`)\n\n### As Claude Code Plugin\n\n```bash\n# Install from local path\nclaude plugin add /path/to/claude-reflections\n\n# Or from GitHub (when published)\nclaude plugin add https://github.com/youruser/claude-reflections\n```\n\n### Manual Installation\n\n```bash\n# Clone and setup\ncd ~/claude-reflections\nuv sync --all-extras\n\n# Install pre-commit hooks\nuv run pre-commit install\n```\n\n## Usage\n\n### MCP Tools (via Claude Code)\n\nOnce installed as a plugin, these tools are available in Claude Code:\n\n- **search** - Search past conversations\n  ```\n  search(\"Docker memory issues\", project=\"my-project\", limit=5)\n  ```\n\n- **answer** - Search and get detailed answers using the Agent SDK\n  ```\n  answer(\"How did we fix the authentication bug?\", project=\"my-project\")\n  ```\n\n- **index_status** - Check indexing status\n  ```\n  index_status(project=\"my-project\")\n  ```\n\n- **reindex** - Manually trigger reindexing\n  ```\n  reindex(project=\"my-project\", full=True)\n  ```\n\n### CLI Commands\n\n```bash\n# List available projects\nclaude-reflections list\n\n# Index a project (incremental)\nclaude-reflections index --project my-project\n\n# Full reindex\nclaude-reflections index --project my-project --full\n\n# Search\nclaude-reflections search \"Docker configuration\" --project my-project\n\n# Check status\nclaude-reflections status\n```\n\n## Configuration\n\n### Environment Variables\n\n- `QDRANT_URL` - Qdrant server URL (default: `http://localhost:6333`)\n- `REFLECTIONS_STATE_DIR` - State directory (default: `~/.claude/reflections`)\n\n### Per-Project State\n\nEach project's state is stored in:\n```\n~/.claude/reflections/<project>/state.json\n```\n\n## Development\n\n```bash\n# Install dev dependencies\nuv sync --all-extras\n\n# Run tests\nuv run pytest\n\n# Run linting\nuv run ruff check .\nuv run ruff format --check .\n\n# Run type checking\nuv run mypy src/claude_reflections\n```\n\n## How It Works\n\n1. **Indexing**: Parses JSONL files from `~/.claude/projects/<project>/*.jsonl`\n2. **Content Extraction**: Extracts user prompts and assistant text responses (skips thinking blocks and tool use)\n3. **Embedding**: Generates 384-dimensional embeddings using FastEmbed (all-MiniLM-L6-v2)\n4. **Storage**: Stores vectors in Qdrant with payloads containing file path and line number\n5. **Search**: Vector similarity search returns file references\n6. **Answer**: Agent SDK reads original files around the matched lines to provide answers\n\n## License\n\nMIT\n",
+        "hooks/debug-stop-hook.sh": "#!/bin/bash\n# Temporary debug version to see what data the stop hook receives\n\nINPUT=$(cat)\n\n# Log the full input to inspect available fields\nLOG_FILE=\"${HOME}/.claude/reflections/stop-hook-debug.log\"\nmkdir -p \"$(dirname \"$LOG_FILE\")\"\n\n{\n  echo \"=== Stop hook fired at $(date) ===\"\n  echo \"$INPUT\" | jq '.' 2>/dev/null || echo \"$INPUT\"\n  echo \"\"\n} >> \"$LOG_FILE\"\n\nexit 0\n",
+        "hooks/stop-index.sh": "#!/bin/bash\nset -e\n\n# Read hook input from stdin\nINPUT=$(cat)\n\n# Extract current working directory from session to determine project\nCWD=$(echo \"$INPUT\" | jq -r '.cwd // \"\"')\n\nif [ -z \"$CWD\" ]; then\n    exit 0\nfi\n\n# Convert path to project name (e.g., /home/corona/foo -> -home-corona-foo)\nPROJECT=$(echo \"$CWD\" | sed 's|^/||; s|/|-|g')\n\nif [ -n \"$PROJECT\" ]; then\n    cd \"${CLAUDE_PLUGIN_ROOT}\"\n    uv run python -m claude_reflections.cli index --project \"$PROJECT\" 2>/dev/null || true\nfi\n\nexit 0\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-reflections",
+          "version": "0.1.0",
+          "source": "./",
+          "description": "Minimal conversation memory with vector search and Agent SDK retrieval",
+          "author": {
+            "name": "corona"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add andrewleech/claude-reflections",
+            "/plugin install claude-reflections@claude-reflections-local"
+          ]
+        }
+      ]
+    }
+  ]
+}

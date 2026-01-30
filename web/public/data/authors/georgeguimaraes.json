@@ -1,0 +1,169 @@
+{
+  "author": {
+    "id": "georgeguimaraes",
+    "display_name": "George Guimarães",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2929?v=4",
+    "url": "https://github.com/georgeguimaraes",
+    "bio": "Previously co-founder @sourcelevel and @plataformatec, the company behind @elixir-lang ",
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 2,
+      "total_commands": 0,
+      "total_skills": 1,
+      "total_stars": 1,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-graphite",
+      "version": null,
+      "description": "Claude Code plugins for Graphite stacked PRs workflow",
+      "owner_info": {
+        "name": "George Guimaraes"
+      },
+      "keywords": [],
+      "repo_full_name": "georgeguimaraes/claude-code-graphite",
+      "repo_url": "https://github.com/georgeguimaraes/claude-code-graphite",
+      "repo_description": "Claude Code plugins for Graphite stacked PRs",
+      "homepage": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-13T21:19:01Z",
+        "created_at": "2026-01-06T13:48:48Z",
+        "license": "Apache-2.0"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 659
+        },
+        {
+          "path": "plugins",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite-mcp",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite-mcp/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite-mcp/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 120
+        },
+        {
+          "path": "plugins/graphite",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 162
+        },
+        {
+          "path": "plugins/graphite/hooks",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite/hooks/hooks.json",
+          "type": "blob",
+          "size": 285
+        },
+        {
+          "path": "plugins/graphite/hooks/scripts",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite/hooks/scripts/graphite-context.sh",
+          "type": "blob",
+          "size": 1090
+        },
+        {
+          "path": "plugins/graphite/skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite/skills/graphite",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite/skills/graphite/SKILL.md",
+          "type": "blob",
+          "size": 7465
+        },
+        {
+          "path": "plugins/graphite/skills/graphite/references",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "plugins/graphite/skills/graphite/references/cheatsheet.md",
+          "type": "blob",
+          "size": 2644
+        },
+        {
+          "path": "plugins/graphite/skills/graphite/references/conflict-resolution.md",
+          "type": "blob",
+          "size": 985
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-graphite\",\n  \"owner\": {\n    \"name\": \"George Guimaraes\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for Graphite stacked PRs workflow\",\n    \"homepage\": \"https://github.com/georgeguimaraes/claude-code-graphite\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"graphite\",\n      \"source\": \"./plugins/graphite\",\n      \"description\": \"Skill and hooks for Graphite CLI stacked PRs: gt commands, stack planning, conflict resolution\"\n    },\n    {\n      \"name\": \"graphite-mcp\",\n      \"source\": \"./plugins/graphite-mcp\",\n      \"description\": \"MCP server integration for Graphite CLI (gt mcp)\"\n    }\n  ]\n}\n",
+        "plugins/graphite-mcp/.claude-plugin/plugin.json": "{\n  \"name\": \"graphite-mcp\",\n  \"version\": \"0.1.0\",\n  \"description\": \"MCP server integration for Graphite CLI (gt mcp)\"\n}\n",
+        "plugins/graphite/.claude-plugin/plugin.json": "{\n  \"name\": \"graphite\",\n  \"version\": \"0.1.1\",\n  \"description\": \"Skill and hooks for Graphite CLI stacked PRs: gt commands, stack planning, conflict resolution\"\n}\n",
+        "plugins/graphite/hooks/hooks.json": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/graphite-context.sh\",\n            \"timeout\": 5\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "plugins/graphite/hooks/scripts/graphite-context.sh": "#!/bin/bash\n# SessionStart hook: inject Graphite context if in a Graphite-enabled repo\n\nset -euo pipefail\n\n# Check if we're in a git repo with Graphite initialized\nif [ -f \".git/.graphite_repo_config\" ]; then\n  cat << 'EOF'\nThis repo uses Graphite CLI for stacked PRs.\n\n**IMPORTANT: Use gt commands instead of git:**\n- `gt create -am \"msg\"` instead of `git commit` - creates new branch/PR\n- `gt modify -a` instead of `git commit --amend` - amends current PR\n- `gt submit --no-interactive` instead of `git push` - submits stack\n- `gt sync` instead of `git pull` - pulls trunk, restacks, cleans merged\n\n**Before writing code for a feature:**\n1. Plan the stack structure (use TodoWrite - each todo = one PR)\n2. Present the plan and ask for confirmation\n3. Each PR must be atomic and pass CI independently\n\n**Commit style:** conventional commits (feat:, fix:, etc.), casual and concise, no LLM fluff, no em dashes.\n\n**PR bodies:** what changed, why, and the benefit.\n\nWhen conflicts occur during restack: check what each branch does, auto-resolve obvious ones, ask about ambiguous ones.\nEOF\nfi\n",
+        "plugins/graphite/skills/graphite/SKILL.md": "---\nname: graphite\ndescription: |\n  Use for Graphite CLI stacked PRs workflow in repos with .git/.graphite_repo_config.\n  Triggers: graphite, stacked PRs, dependent PRs, chained PRs, PR stack, gt create,\n  gt modify, gt submit, gt sync, gt restack, gt log, gt checkout, gt up, gt down,\n  rebase my stack, fix stack conflicts, split PR, land my stack, merge stack,\n  sync with main/trunk, reorder branches, fold commits, amend stack, move branch\n  to different parent, stack out of date, update my stack. For repos WITHOUT\n  .git/.graphite_repo_config, use standard git commands instead.\n---\n\n# Graphite Stacked PRs Workflow\n\n**IMPORTANT:** This workflow applies ONLY to repositories with `.git/.graphite_repo_config`. For repositories without this file, use standard git commands (`git commit`, `git push`, etc.).\n\n## Detection\n\nCheck for `.git/.graphite_repo_config` to determine if a repo uses Graphite:\n- **File exists:** Use `gt` commands (this skill applies)\n- **File does not exist:** Use standard `git` commands (this skill does NOT apply)\n\nWhen Graphite is detected, use `gt` commands instead of `git` for all commit and branch operations.\n\n## MCP Server\n\nA Graphite MCP server may be available (check with `/mcp`). If the `graphite` MCP is connected, it provides tools to work with stacked PRs.\n\n## Planning Stacks (CRITICAL)\n\n**Before writing any code, present the stack structure and ask for confirmation.**\n\nWhen building a feature as a stack:\n\n1. **Plan first** - break the work into logical, sequential PRs\n2. **Use TodoWrite** - each todo item maps to one PR/`gt create`\n3. **Present the structure** - show the user the planned stack:\n   ```\n   PR Stack for [Feature]:\n   1. PR 1: [description] - [what it does]\n   2. PR 2: [description] - [what it does]\n   3. PR 3: [description] - [what it does]\n   ```\n4. **Ask for confirmation** - \"Does this structure look good to proceed?\"\n5. **Only then start coding**\n\n**IMPORTANT:** Each PR must be atomic and pass CI independently. Verify this before committing.\n\n## Command Mapping\n\nUse these `gt` commands instead of their git equivalents:\n\n| Instead of | Use | Purpose |\n|------------|-----|---------|\n| `git commit` | `gt create -am \"msg\"` | Create new branch/PR with changes |\n| `git commit --amend` | `gt modify -a` | Amend current PR |\n| `git push` | `gt submit --no-interactive` | Submit current + all downstack branches |\n| `git pull` | `gt sync` | Pull trunk, restack, clean merged |\n| `git checkout` | `gt checkout <branch>` | Switch branches |\n| `git rebase` | `gt restack` | Rebase stack (usually via `gt sync`) |\n\n## When to Create vs Amend\n\n**Use `gt create -am \"message\"`** when:\n- Starting new work (new feature, new fix)\n- The change is logically separate from current PR\n- Building the next piece in a stack\n\n**Use `gt modify -a`** when:\n- Addressing PR review feedback\n- Fixing something in the current PR\n- Adding forgotten changes to current work\n\n## Commit and PR Style\n\n### Commit Messages\n\nUse conventional commits with casual, concise descriptions:\n\n- Start with type: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `perf:`, `test:`\n- Capitalize after the prefix\n- Keep it brief and human\n- No LLM fluff, no em dashes\n\n### PR Body Descriptions\n\nWrite PR bodies that explain:\n1. **What** changed\n2. **Why** it changed\n3. **The benefit** or purpose\n\nKeep descriptions casual, concise, and human-like. Avoid corporate speak or overly formal language. Don't wrap long lines with line breaks (unlike git commits). Line breaks are fine for separating paragraphs.\n\n### After Submitting\n\nWhen returning the PR URL to the user, use the **Graphite PR URL** (e.g., `https://app.graphite.dev/github/pr/...`), not the GitHub PR URL.\n\n## Stack Philosophy\n\nEach PR in a stack must be:\n- **Atomic** - passes CI independently, no broken intermediate states\n- **Small** - ideally under 250 lines changed\n- **Focused** - one logical change per branch\n- **Reviewable** - makes sense on its own (even if it depends on others)\n\nBreak large features into functional components:\n- Database changes first\n- Backend logic next\n- Frontend last\n\nOr use iterative stacking:\n- Basic implementation\n- Error handling\n- Tests\n- Polish\n\n## Navigation\n\nMove through the stack:\n\n```bash\ngt log          # View full stack with PR status\ngt ls           # Abbreviated stack view\ngt up           # Move up one branch (toward tip)\ngt down         # Move down one branch (toward trunk)\ngt top          # Jump to top of stack\ngt bottom       # Jump to bottom of stack\ngt checkout X   # Switch to specific branch\n```\n\n## Sync Workflow\n\nRun `gt sync` regularly (at least daily) to:\n1. Pull latest trunk changes\n2. Restack all branches\n3. Clean up merged branches\n\nWhen `gt sync` encounters conflicts, it pauses for resolution. See conflict resolution below.\n\n## Submitting Work\n\nPush changes with:\n\n```bash\ngt submit --no-interactive   # Submit current + all downstack branches (recommended)\ngt submit --stack            # Submit current + all descendant branches\ngt ss                        # Shorthand for --stack\n```\n\nUse `--no-interactive` to avoid prompts during submission.\n\n## Conflict Resolution\n\nWhen `gt sync` or `gt restack` hits conflicts:\n\n1. **Understand what conflicted** - check which branch and what files\n2. **Check what each branch does** - use `gt log` and review the changes\n3. **Auto-resolve obvious conflicts:**\n   - Import order changes\n   - Whitespace differences\n   - Non-overlapping additions\n4. **Ask about ambiguous conflicts:**\n   - Same code modified differently\n   - Deleted vs modified conflicts\n   - Semantic conflicts (logic changes)\n\nAfter resolving:\n```bash\ngt continue -a      # Stage all and continue restack\n```\n\nIf stuck:\n```bash\ngt abort            # Abandon restack, return to previous state\n```\n\nFor detailed conflict resolution patterns, see `references/conflict-resolution.md`.\n\n## Reorganizing Stacks\n\nAdjust stack structure when needed:\n\n```bash\ngt move --onto <branch>   # Move current branch to new parent\ngt fold                   # Merge branch into its parent\ngt split                  # Break branch into multiple\ngt squash                 # Combine commits in branch to one\ngt reorder                # Interactively reorder branches\n```\n\n## Collaboration\n\nWork with others' stacks:\n\n```bash\ngt get <branch>           # Fetch someone's stack locally\ngt track <branch>         # Start tracking existing git branch\n```\n\n## Quick Reference\n\nSee `references/cheatsheet.md` for a complete command reference.\n\n## Common Workflows\n\n### Building a Feature as a Stack\n\n1. Plan the stack structure first (use TodoWrite)\n2. Present to user and get confirmation\n3. Implement each PR sequentially:\n\n```bash\ngt sync                                    # Get latest\ngt create -am \"feat: Add avatar upload API\"\n# ... verify it passes CI ...\ngt create -am \"feat: Add avatar display component\"\n# ... verify it passes CI ...\ngt create -am \"feat: Add avatar to user profile\"\ngt submit --no-interactive                 # Submit entire stack\n```\n\n### Addressing Review Feedback\n\n```bash\ngt checkout <branch-with-feedback>\n# ... make fixes ...\ngt modify -a                               # Amend changes\ngt submit --no-interactive                 # Push updates (auto-restacks dependents)\n```\n\n### Daily Sync Routine\n\n```bash\ngt sync                                    # Pull, restack, clean\n# Resolve any conflicts if prompted\ngt continue -a                             # After resolving\n```\n",
+        "plugins/graphite/skills/graphite/references/cheatsheet.md": "# Graphite CLI Cheatsheet\n\n## Viewing Stack\n\n| Command | Short | Description |\n|---------|-------|-------------|\n| `gt log` | | Full stack with PR info |\n| `gt log short` | `gt ls` | Abbreviated stack view |\n\n## Creating & Modifying\n\n| Command | Short | Description |\n|---------|-------|-------------|\n| `gt create [name]` | `gt c` | New branch |\n| `gt create --all --message \"msg\"` | `gt c -am \"msg\"` | New branch, stage all, commit |\n| `gt modify` | `gt m` | Amend staged changes |\n| `gt modify --all` | `gt m -a` | Stage all and amend |\n| `gt modify --commit` | `gt m -c` | Add new commit (not amend) |\n\n## Syncing & Submitting\n\n| Command | Short | Description |\n|---------|-------|-------------|\n| `gt sync` | | Pull trunk, restack, clean merged |\n| `gt submit` | `gt s` | Push current branch, create/update PR |\n| `gt submit --stack` | `gt ss` | Push entire stack |\n| `gt submit --stack --update-only` | `gt ss -u` | Update existing PRs only |\n\n## Navigation\n\n| Command | Short | Description |\n|---------|-------|-------------|\n| `gt checkout [branch]` | `gt co` | Switch to branch |\n| `gt up [steps]` | `gt u` | Move up in stack |\n| `gt down [steps]` | `gt d` | Move down in stack |\n| `gt top` | `gt t` | Jump to stack top |\n| `gt bottom` | `gt b` | Jump to stack bottom |\n\n## Reorganizing\n\n| Command | Short | Description |\n|---------|-------|-------------|\n| `gt move --onto <branch>` | | Move branch to new parent |\n| `gt fold` | | Merge into parent branch |\n| `gt split` | `gt sp` | Divide branch into multiple |\n| `gt squash` | `gt sq` | Combine commits into one |\n| `gt reorder` | | Reorder stack interactively |\n| `gt absorb` | `gt ab` | Distribute staged changes to downstack |\n\n## Recovery\n\n| Command | Description |\n|---------|-------------|\n| `gt undo` | Revert recent Graphite operation |\n| `gt abort` | Stop rebase/conflict resolution |\n| `gt continue` | Resume after conflict resolution |\n| `gt continue -a` | Stage all and continue |\n\n## Collaboration\n\n| Command | Short | Description |\n|---------|-------|-------------|\n| `gt get [branch]` | | Fetch teammate's stack |\n| `gt track [branch]` | `gt tr` | Track existing git branch |\n| `gt untrack [branch]` | `gt utr` | Stop tracking branch |\n\n## Branch Management\n\n| Command | Description |\n|---------|-------------|\n| `gt delete [branch]` | Delete branch |\n| `gt rename [name]` | Rename current branch |\n| `gt restack` | Rebase stack to fix parent relationships |\n\n## Info & Config\n\n| Command | Description |\n|---------|-------------|\n| `gt info` | Show branch details |\n| `gt trunk` | Show/manage trunk branches |\n| `gt auth --token <token>` | Authenticate with GitHub |\n",
+        "plugins/graphite/skills/graphite/references/conflict-resolution.md": "# Conflict Resolution in Graphite\n\n## Basic Commands\n\n```bash\ngt continue -a    # Stage all resolved files and continue\ngt abort          # Abandon restack, return to previous state\n```\n\n## Auto-Resolvable (Handle Without Asking)\n\n- **Import order:** Keep all imports, deduplicate, sort appropriately\n- **Whitespace/formatting:** Accept the version matching project style\n- **Non-overlapping additions:** Keep both additions in logical order\n- **Version bumps:** Take the higher version\n\n## Ask the User\n\n- **Same code modified differently:** Need to understand intended behavior\n- **Delete vs modify:** One side deleted, other modified\n- **Semantic conflicts:** Logic changes that might break behavior\n- **Test expectation changes:** Need to determine correct expected values\n\n## Lock File Conflicts\n\n`package-lock.json`, `yarn.lock`, `mix.lock`, etc.\n\nAccept either version, then regenerate:\n\n```bash\ngit checkout --theirs package-lock.json\nnpm install\ngit add package-lock.json\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "graphite",
+          "source": "./plugins/graphite",
+          "description": "Skill and hooks for Graphite CLI stacked PRs: gt commands, stack planning, conflict resolution",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-graphite",
+            "/plugin install graphite@claude-code-graphite"
+          ]
+        },
+        {
+          "name": "graphite-mcp",
+          "source": "./plugins/graphite-mcp",
+          "description": "MCP server integration for Graphite CLI (gt mcp)",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-graphite",
+            "/plugin install graphite-mcp@claude-code-graphite"
+          ]
+        }
+      ]
+    }
+  ]
+}

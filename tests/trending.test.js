@@ -7,35 +7,35 @@ import { calculateTrendingScore } from '../src/lib/trending.js';
 // ============================================
 
 describe('calculateTrendingScore: basic cases', () => {
-  it('returns is_new for repos with empty snapshots array', () => {
+  it('returns insufficient_data for repos with empty snapshots array', () => {
     const result = calculateTrendingScore({ snapshots: [] }, 100);
-    assert.strictEqual(result.is_new, true);
+    assert.strictEqual(result.insufficient_data, true);
     assert.strictEqual(result.trending_score, 0);
     assert.strictEqual(result.stars_gained_7d, 0);
     assert.strictEqual(result.stars_velocity, 0);
   });
 
-  it('returns is_new for repos with only 1 snapshot', () => {
+  it('returns insufficient_data for repos with only 1 snapshot', () => {
     const result = calculateTrendingScore({
       snapshots: [{ date: '2025-01-01', stars: 50, forks: 5 }]
     }, 100);
-    assert.strictEqual(result.is_new, true);
+    assert.strictEqual(result.insufficient_data, true);
     assert.strictEqual(result.trending_score, 0);
   });
 
-  it('returns is_new for null/undefined input', () => {
+  it('returns insufficient_data for null/undefined input', () => {
     const resultNull = calculateTrendingScore(null, 100);
-    assert.strictEqual(resultNull.is_new, true);
+    assert.strictEqual(resultNull.insufficient_data, true);
     assert.strictEqual(resultNull.trending_score, 0);
 
     const resultUndefined = calculateTrendingScore(undefined, 100);
-    assert.strictEqual(resultUndefined.is_new, true);
+    assert.strictEqual(resultUndefined.insufficient_data, true);
     assert.strictEqual(resultUndefined.trending_score, 0);
   });
 
-  it('returns is_new for missing snapshots property', () => {
+  it('returns insufficient_data for missing snapshots property', () => {
     const result = calculateTrendingScore({}, 100);
-    assert.strictEqual(result.is_new, true);
+    assert.strictEqual(result.insufficient_data, true);
     assert.strictEqual(result.trending_score, 0);
   });
 });
@@ -57,7 +57,7 @@ describe('calculateTrendingScore: normal calculations', () => {
     // Current stars show 21 stars gained in last 7 days (3x normal)
     const result = calculateTrendingScore({ snapshots }, 142);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     assert.ok(result.trending_score > 0, 'Should have positive z-score for above-average growth');
     assert.strictEqual(result.stars_gained_7d, 21);
     assert.ok(result.stars_velocity > 0, 'Should have positive velocity');
@@ -79,7 +79,7 @@ describe('calculateTrendingScore: normal calculations', () => {
     // Only gained 1 star in last week (significantly below average)
     const result = calculateTrendingScore({ snapshots }, 141);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     assert.ok(result.trending_score < 0, `Should have negative z-score for below-average growth, got ${result.trending_score}`);
     assert.strictEqual(result.stars_gained_7d, 1);
   });
@@ -98,7 +98,7 @@ describe('calculateTrendingScore: normal calculations', () => {
 
     const result = calculateTrendingScore({ snapshots }, 128);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     assert.strictEqual(result.stars_gained_7d, 7);
   });
 });
@@ -119,7 +119,7 @@ describe('calculateTrendingScore: zero variance case', () => {
     // Current gain is 0 (well below the mean of 7)
     const result = calculateTrendingScore({ snapshots }, 121);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     // Zero variance and gain below mean should result in z-score of 0
     assert.strictEqual(result.trending_score, 0);
     assert.strictEqual(result.stars_gained_7d, 0);
@@ -140,7 +140,7 @@ describe('calculateTrendingScore: zero variance case', () => {
     // Current gain is 21 (3x the historical mean of 7)
     const result = calculateTrendingScore({ snapshots }, 142);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     // Zero variance but above mean should give a mild positive score
     assert.strictEqual(result.trending_score, 1);
     assert.strictEqual(result.stars_gained_7d, 21);
@@ -163,7 +163,7 @@ describe('calculateTrendingScore: negative gain case', () => {
     // Lost 10 stars in the last week (significantly below avg of ~12/week)
     const result = calculateTrendingScore({ snapshots }, 125);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     // With positive historical mean and negative current gain, z-score should be negative
     assert.ok(result.trending_score < 0, `Should have negative z-score when losing stars, got ${result.trending_score}`);
     assert.strictEqual(result.stars_gained_7d, -10);
@@ -184,7 +184,7 @@ describe('calculateTrendingScore: negative gain case', () => {
 
     const result = calculateTrendingScore({ snapshots }, 120);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     assert.strictEqual(result.stars_gained_7d, 10);
   });
 });
@@ -201,7 +201,7 @@ describe('calculateTrendingScore: edge cases', () => {
 
     const result = calculateTrendingScore({ snapshots }, 115);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     // With only 2 snapshots, we have 1 data point for gains
     // stdDev would be 0 (single data point variance is 0)
   });
@@ -219,7 +219,7 @@ describe('calculateTrendingScore: edge cases', () => {
 
     // Should not crash with division by zero
     const result = calculateTrendingScore({ snapshots }, 115);
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
   });
 
   it('handles very old snapshots (all older than 7 days)', () => {
@@ -234,7 +234,7 @@ describe('calculateTrendingScore: edge cases', () => {
 
     const result = calculateTrendingScore({ snapshots }, 150);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     // Should use the most recent snapshot that is at least 7 days old
     assert.ok(result.stars_gained_7d > 0);
   });
@@ -251,7 +251,7 @@ describe('calculateTrendingScore: edge cases', () => {
 
     const result = calculateTrendingScore({ snapshots }, 115);
 
-    assert.strictEqual(result.is_new, false);
+    assert.strictEqual(result.insufficient_data, false);
     // Should fall back to oldest snapshot for reference
     assert.strictEqual(result.stars_gained_7d, 15);  // 115 - 100
   });
@@ -272,7 +272,7 @@ describe('calculateTrendingScore: return value format', () => {
     assert.ok('trending_score' in result, 'Should have trending_score field');
     assert.ok('stars_gained_7d' in result, 'Should have stars_gained_7d field');
     assert.ok('stars_velocity' in result, 'Should have stars_velocity field');
-    assert.ok('is_new' in result, 'Should have is_new field');
+    assert.ok('insufficient_data' in result, 'Should have insufficient_data field');
   });
 
   it('returns numbers rounded to 2 decimal places', () => {

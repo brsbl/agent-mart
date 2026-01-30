@@ -1,0 +1,152 @@
+{
+  "author": {
+    "id": "kangminhyuk1111",
+    "display_name": "Minhyuk Kang",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/96116158?u=baa32122ca9a4dcba8e3d008d1bc5940937d13ae&v=4",
+    "url": "https://github.com/kangminhyuk1111",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 2,
+      "total_commands": 0,
+      "total_skills": 3,
+      "total_stars": 2,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "agent-skill-kit",
+      "version": null,
+      "description": "A collection of reusable skills for AI coding agents",
+      "owner_info": {
+        "name": "kangminhyuk",
+        "email": "kangminhyuk1111@gmail.com"
+      },
+      "keywords": [],
+      "repo_full_name": "kangminhyuk1111/agents",
+      "repo_url": "https://github.com/kangminhyuk1111/agents",
+      "repo_description": "Drop-in skills that supercharge your AI coding agent — just add SKILL.md and go",
+      "homepage": null,
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-01-29T08:58:03Z",
+        "created_at": "2026-01-23T06:55:00Z",
+        "license": null
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 740
+        },
+        {
+          "path": ".claude",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude/agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude/agents/load-test.md",
+          "type": "blob",
+          "size": 2965
+        },
+        {
+          "path": "README.md",
+          "type": "blob",
+          "size": 3667
+        },
+        {
+          "path": "skills",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/release-notes",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/release-notes/SKILL.md",
+          "type": "blob",
+          "size": 7092
+        },
+        {
+          "path": "skills/release-notes/output-template.md",
+          "type": "blob",
+          "size": 483
+        },
+        {
+          "path": "skills/spec-interview",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "skills/spec-interview/SKILL.md",
+          "type": "blob",
+          "size": 8612
+        },
+        {
+          "path": "template",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "template/SKILL.md",
+          "type": "blob",
+          "size": 143
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-skill-kit\",\n  \"owner\": {\n    \"name\": \"kangminhyuk\",\n    \"email\": \"kangminhyuk1111@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of reusable skills for AI coding agents\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"spec-skills\",\n      \"description\": \"Skills for structured requirement analysis and specification generation\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/spec-interview\"\n      ]\n    },\n    {\n      \"name\": \"release-skills\",\n      \"description\": \"Skills for automated release documentation and changelog generation\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/release-notes\"\n      ]\n    }\n  ]\n}\n",
+        ".claude/agents/load-test.md": "---\nname: load-test\ndescription: k6 load test execution and auto-generated result reports. Use when (1) API performance testing is needed, (2) load test results need documentation, (3) before/after performance comparison is required, (4) keywords like \"load test\", \"performance test\", \"k6\", \"stress test\" are mentioned.\ntools: Bash, Read, Write, Glob\nmodel: haiku\n---\n\n# Load Test Agent\n\nk6 load test execution and automated report generation agent.\n\n## Configuration\n\n> On first run, ask user to confirm the following settings.\n\n| Item | Value |\n|------|-------|\n| Script Path | load-test/scripts/ |\n| Results Path | load-test/results/ |\n| Default BASE_URL | http://localhost:8080 |\n\n### Initial Setup Interview\n\n1. \"Where are your k6 test scripts located? (e.g., `load-test/scripts/`, `tests/k6/`)\"\n2. \"Where should test result reports be saved? (e.g., `load-test/results/`, `docs/performance/`)\"\n3. \"What is the default target URL? (e.g., `http://localhost:8080`, `http://api.example.com`)\"\n\nAfter setup, update the Configuration table above with user's answers.\n\n## Prerequisites\n\n### Verify k6 Installation\n\n```bash\nk6 version\n```\n\nIf not installed:\n- macOS: `brew install k6`\n- Linux: https://k6.io/docs/get-started/installation/\n\n## Workflow\n\n### 1. Discover Test Scripts\n\nSearch in configured Script Path:\n```bash\nls {Script Path}/*.js\n```\n\n### 2. Run Test\n\n```bash\nk6 run -e BASE_URL={Default BASE_URL} {Script Path}/<script>.js\n```\n\n### 3. Generate Report\n\nAfter test completion, create markdown report in `{Results Path}`.\n\n**Required Metrics:**\n\n| Metric | k6 Output | Description |\n|--------|-----------|-------------|\n| TPS | http_reqs (rate) | Throughput per second |\n| p95 Response Time | http_req_duration p(95) | 95th percentile response time |\n| Avg Response Time | http_req_duration avg | Average response time |\n| Error Rate | http_req_failed | Failed request ratio |\n| Total Requests | http_reqs (count) | Total request count |\n\n### 4. Report Templates\n\n#### Single Test Report\n\n```markdown\n# {{FEATURE}} Load Test Results\n\n## Test Environment\n\n| Item | Value |\n|------|-------|\n| Date | {{DATE}} |\n| Target URL | {{URL}} |\n| VUsers | {{VUSER}} |\n| Duration | {{DURATION}} |\n\n## Results\n\n| Metric | Value |\n|--------|-------|\n| TPS | {{TPS}} |\n| p95 Response Time | {{P95}} |\n| Avg Response Time | {{AVG}} |\n| Error Rate | {{ERROR_RATE}} |\n\n## Analysis\n\n{{ANALYSIS}}\n```\n\n#### Before/After Comparison Report\n\n```markdown\n# {{FEATURE}} Performance Optimization Report\n\n## Problem\n{{PROBLEM}}\n\n## Improvements Applied\n{{IMPROVEMENTS}}\n\n## Performance Comparison\n\n| Metric | Before | After | Improvement |\n|--------|--------|-------|-------------|\n| p95 Response Time | {{BEFORE_P95}} | {{AFTER_P95}} | {{IMPROVEMENT}} |\n| TPS | {{BEFORE_TPS}} | {{AFTER_TPS}} | {{IMPROVEMENT}} |\n\n## Conclusion\n{{CONCLUSION}}\n```\n\n### 5. File Naming Convention\n\n- Single test: `YYYY-MM-DD-<feature>-load-test.md`\n- Comparison: `<feature>-optimization-report.md`\n",
+        "README.md": "# Agent Skill Kit\n\nA collection of reusable skills for AI coding agents.\nShare, discover, and compose skills that make your agent smarter.\n\nCompatible with [SkillsMP](https://skillsmp.com) | Claude Code | Codex CLI | ChatGPT\n\nThis project follows the official [Anthropic Agent Skills Specification](https://github.com/anthropics/skills) and is registered as a Claude Code plugin marketplace.\n\n## How It Works\n\nSkills are defined as `SKILL.md` files — structured markdown documents that AI agents automatically recognize and execute. Each skill encodes a specific workflow (e.g., conducting a requirements interview and producing a specification document), turning a multi-step process into a single command.\n\n- **Agent-native**: Skills are plain markdown with frontmatter metadata. Any agent that reads files can pick them up.\n- **Self-contained**: Each skill lives in its own directory with everything it needs — instructions, examples, and output templates.\n- **Composable**: Skills are independent units. Use one at a time or chain them together for complex workflows.\n\n## Skills\n\n| Skill | Description | Status |\n| --- | --- | --- |\n| [spec-interview](skills/spec-interview/SKILL.md) | Transforms vague requirements into actionable specifications (`SPEC.md`) through structured multi-round interviews | ✅ |\n| [release-notes](skills/release-notes/SKILL.md) | Analyzes git history to generate structured release notes (`RELEASE_NOTES.md`) with categorized changes and contributors | ✅ |\n\n> ✅ Ready | 🚧 In Progress | 📋 Planned\n\n## Agents\n\nAgents are autonomous task executors that can be invoked via the Task tool in Claude Code. They are defined in `.claude/agents/` directory.\n\n| Agent | Description | Tools | Status |\n| --- | --- | --- | --- |\n| [load-test](.claude/agents/load-test.md) | k6 load test execution and automated report generation with performance metrics | Bash, Read, Write, Glob | ✅ |\n\n**Usage:**\n```\n\"Run API load test\"\n\"Execute k6 performance test\"\n```\n\n**Trigger Keywords:** load test, performance test, k6, stress test\n\n**Usage:**\n```\n/spec-interview\n```\n\nThe skill will automatically discover requirement files (`SPEC.md`, `PRD.md`, `REQUIREMENTS.md`, etc.) in your project and begin the interview process.\n\n## Installation\n\n```bash\n# 1. Clone the repository\ngit clone https://github.com/kangminhyuk1111/agent-skill-kit.git\n\n# 2. Copy the skills you want into your project\ncp -r agent-skill-kit/skills/spec-interview /your-project/skills/\n\n# 3. Invoke the skill from your agent\n/spec-interview\n```\n\nAlternatively, clone the entire repository and symlink individual skill directories into your projects as needed.\n\n## Contributing\n\nNew skill contributions are welcome. To add a skill:\n\n1. Create a new directory under `skills/`:\n   ```\n   skills/\n   └── your-skill-name/\n       └── SKILL.md\n   ```\n\n2. Write your `SKILL.md` with the following structure:\n   ```markdown\n   ---\n   name: your-skill-name\n   description: A short one-line description of what the skill does.\n   ---\n\n   # Skill Title\n\n   ## Overview\n   What the skill does and when to use it.\n\n   ## Instructions\n   Step-by-step instructions the agent will follow.\n\n   ## Examples\n   Input/output examples demonstrating the skill.\n\n   ## Guidelines\n   Best practices and constraints.\n   ```\n\n3. Register the skill in `.claude-plugin/marketplace.json` by adding it to the appropriate plugin group:\n   ```json\n   {\n     \"name\": \"your-plugin-group\",\n     \"description\": \"Group description\",\n     \"source\": \"./\",\n     \"strict\": false,\n     \"skills\": [\n       \"./skills/your-skill-name\"\n     ]\n   }\n   ```\n\n4. Submit a pull request.\n\n## License\n\nApache 2.0\n",
+        "skills/release-notes/SKILL.md": "---\nname: release-notes\ndescription: Analyzes git commit and PR history to generate structured release notes (RELEASE_NOTES.md). Automatically categorizes changes, identifies contributors, and produces a polished release document through a brief confirmation interview.\n---\n\n# Release Notes\n\n## Overview\nThis skill generates structured release notes by analyzing git history. It determines the version range from git tags, categorizes commits by type, identifies contributors, and produces a comprehensive `RELEASE_NOTES.md`. A brief interview confirms version number, highlights, and breaking changes before final output.\n\n## Instructions\n\n### Phase 1: Discovery & Analysis\n1. Determine the version range to document:\n   - Run `git tag --sort=-version:refname` to find existing tags.\n   - If tags exist, use the range from the most recent tag to HEAD.\n   - If no tags exist, use `AskUserQuestion` to ask the user for the range (e.g., a specific commit SHA, \"last 20 commits\", or \"all history\").\n   - The user may also specify a custom range as an argument (e.g., `/release-notes v1.0.0..v1.1.0`).\n\n2. Collect commit history for the determined range:\n   - Run `git log <range> --pretty=format:\"%H|%an|%ae|%s|%b\" --no-merges` to get commit details.\n   - Run `git log <range> --pretty=format:\"%H|%an|%ae|%s|%b\" --merges` to identify PR merges.\n   - Run `git shortlog -sne <range>` to gather contributor information.\n\n3. Categorize each commit based on its message prefix or content:\n   - **Features**: Messages starting with `feat`, `add`, `new`, or containing \"added\", \"implement\"\n   - **Bug Fixes**: Messages starting with `fix`, `bugfix`, or containing \"fixed\", \"resolve\"\n   - **Breaking Changes**: Messages containing `BREAKING CHANGE`, `BREAKING:`, or using `!` after type (e.g., `feat!:`)\n   - **Improvements**: Messages starting with `refactor`, `improve`, `update`, `perf`, `enhance`\n   - **Documentation**: Messages starting with `docs`, `doc`\n   - **Other**: Messages starting with `chore`, `ci`, `build`, `test`, `style`, or anything else\n\n4. For each category, extract a clean one-line summary from the commit message subject line. Strip conventional commit prefixes (e.g., `feat: add login` becomes `Add login`).\n\n5. Identify potential highlights by looking for:\n   - Commits with long bodies (detailed explanations suggest significance)\n   - Breaking changes\n   - Features with multiple related commits\n   - Merge commits from PRs (often represent larger changes)\n\n### Phase 2: Brief Interview\n6. Present the analysis summary to the user via `AskUserQuestion` and confirm:\n\n   **Round 1 - Version & Highlights:**\n   - \"What version number should this release be?\" (suggest based on changes: major if breaking, minor if features, patch if fixes only)\n   - \"Here are the auto-detected highlights: [list]. Would you like to adjust, add, or remove any?\" (provide options: \"Looks good\", \"I'll adjust\", with space for custom input)\n\n   **Round 2 - Breaking Changes & Extras (only if applicable):**\n   - If breaking changes were detected: \"The following breaking changes were found: [list]. Do any of these need a migration guide?\"\n   - \"Any additional notes to include in the release? (e.g., deprecation notices, known issues, acknowledgments)\"\n\n### Phase 3: Output\n7. Read the template file at `skills/release-notes/output-template.md` and use it as the structure for generating `RELEASE_NOTES.md` in the project root.\n   - Replace `vX.Y.Z` with the confirmed version number.\n   - Replace `YYYY-MM-DD` with today's date.\n   - Fill each section with the categorized commit data from Phase 1 and interview answers from Phase 2.\n8. Omit sections that have no entries (e.g., if there are no breaking changes, skip that section entirely).\n9. Write the file and inform the user of the output location.\n\n## Examples\n\n### Input\n```\n/release-notes\n```\n(In a project with git tag `v1.2.0` and 15 commits since that tag)\n\n### Phase 1 Output (internal analysis)\n```\nRange: v1.2.0..HEAD (15 commits)\n\nCategorized:\n- Features (3): Add OAuth login, Add user avatar upload, Add dark mode toggle\n- Bug Fixes (5): Fix session timeout, Fix mobile nav overlap, ...\n- Improvements (4): Refactor auth middleware, Improve query performance, ...\n- Other (3): Update CI config, Add unit tests for auth, ...\n\nContributors: alice (7), bob (5), charlie (3)\nSuggested version: v1.3.0 (minor - new features, no breaking changes)\n```\n\n### Interview Round 1\n```\nQuestions:\n1. \"Based on the changes (3 new features, no breaking changes), the suggested\n    version is v1.3.0. What version should this release be?\"\n    Options: [\"v1.3.0 (Recommended)\", \"v1.2.1 (patch)\", \"v2.0.0 (major)\"]\n\n2. \"Auto-detected highlights: OAuth login support, dark mode toggle, and\n    significant auth middleware refactoring. Would you like to adjust these?\"\n    Options: [\"Looks good\", \"I'll provide my own\"]\n```\n\n### Output\n```markdown\n# Release Notes - v1.3.0\n\n> Released: 2025-01-15\n\n## Highlights\n- OAuth login support enabling Google and GitHub authentication\n- Dark mode toggle with system preference detection\n- Significant performance improvements in authentication flow\n\n## Features\n- Add OAuth login with Google and GitHub providers\n- Add user avatar upload with image cropping\n- Add dark mode toggle with system preference detection\n\n## Bug Fixes\n- Fix session timeout not redirecting to login page\n- Fix mobile navigation menu overlapping content\n- Fix password reset email not sending in production\n- Fix race condition in concurrent API requests\n- Fix incorrect timezone display in user profile\n\n## Improvements\n- Refactor auth middleware for better extensibility\n- Improve database query performance for user listings\n- Update error messages to be more descriptive\n- Enhance logging format for production debugging\n\n## Contributors\n- @alice (7 commits)\n- @bob (5 commits)\n- @charlie (3 commits)\n```\n\n## Guidelines\n- Commit messages are the primary data source. If they are poor quality (e.g., \"fix\", \"wip\", \"update\"), do your best to infer meaning from the diff summary or group them under \"Other\".\n- Never fabricate changes. Every item in the release notes must correspond to an actual commit.\n- Keep descriptions concise but informative. Transform terse commit messages into readable sentences where possible (e.g., `fix: nav overlap on mobile` becomes \"Fix mobile navigation menu overlapping content\").\n- If the project uses GitHub PRs, prefer PR titles over individual commit messages when available, as they tend to be more descriptive.\n- The interview should be brief (1-2 rounds maximum). The value is in automation, not interrogation.\n- If the user passes a file path argument, write the output to that path instead of the project root.\n- Respect existing `RELEASE_NOTES.md` or `CHANGELOG.md` files. If one exists, ask whether to append, prepend, or create a new file.\n- Use the contributor's git name as-is. Don't attempt to resolve GitHub usernames unless the information is available in the commit metadata.\n- Date in the release notes should be the date of generation (today), not the date of the last commit.\n",
+        "skills/release-notes/output-template.md": "# Release Notes - vX.Y.Z\n\n> Released: YYYY-MM-DD\n\n## Highlights\n- Key changes summarized in 2-4 bullet points\n\n## Features\n- Clean description of each new feature\n\n## Bug Fixes\n- Clean description of each fix\n\n## Breaking Changes\n- Description of what changed\n- **Migration**: How to update (if migration guide was requested)\n\n## Improvements\n- Clean description of each improvement\n\n## Documentation\n- Documentation changes (if any)\n\n## Contributors\n- @contributor-name (N commits)\n",
+        "skills/spec-interview/SKILL.md": "---\nname: spec-interview\ndescription: Conducts a deep, multi-round interview to clarify ambiguous requirements and produces a structured specification document. Automatically discovers requirement files and asks probing, non-obvious questions across technical implementation, UX/UI, trade-offs, edge cases, and architectural decisions.\n---\n\n# Spec Interview\n\n## Overview\nThis skill transforms vague or incomplete requirements into a comprehensive, actionable specification through structured interviewing. It reads existing requirement documents in the project, identifies gaps and ambiguities, then conducts a rigorous multi-round interview using the AskUserQuestion tool. The interview continues until all critical dimensions are clarified. Upon completion, it produces a structured markdown specification file.\n\n## Instructions\n\n### Phase 1: Discovery & Analysis\n1. Scan the project for requirement-related files. Search patterns include:\n   - `**/SPEC.md`, `**/spec.md`, `**/SPEC*.md`\n   - `**/PRD.md`, `**/prd.md`\n   - `**/REQUIREMENTS.md`, `**/requirements.md`\n   - `**/README.md` (if it contains requirement-like content)\n   - `**/docs/requirements/**`, `**/docs/specs/**`\n   - Any file passed as an argument to the skill invocation\n2. Read and deeply analyze all discovered files.\n3. Before starting the interview, internally identify:\n   - What is explicitly stated vs. what is assumed\n   - Logical contradictions or inconsistencies\n   - Missing technical details that would block implementation\n   - Unstated constraints (performance, scale, compatibility)\n   - Ambiguous terms that could be interpreted multiple ways\n\n### Phase 2: Interview Execution\n4. Conduct the interview using `AskUserQuestion`. Follow these principles:\n\n   **Question Quality Rules:**\n   - NEVER ask questions whose answers are already in the document\n   - NEVER ask generic questions like \"What's the target audience?\" unless genuinely unclear\n   - Each question must be derived from a specific gap, contradiction, or ambiguity found in the requirement document\n   - Questions should reveal hidden assumptions and force the user to think about scenarios they haven't considered\n   - Prefer questions that expose trade-offs (\"If X and Y conflict, which takes priority?\") over simple information gathering\n   - Ask \"what happens when...\" questions for edge cases the document doesn't address\n   - Challenge stated requirements when they seem contradictory or technically infeasible\n\n   **Interview Dimensions (cover all that are relevant):**\n   - **Core Intent**: What problem is actually being solved? Is the stated solution the right approach?\n   - **Technical Architecture**: Data models, state management, API contracts, system boundaries\n   - **UX/UI Decisions**: Interaction patterns, error states the user sees, loading states, empty states, accessibility\n   - **Edge Cases & Failure Modes**: What breaks? What's the degraded experience? Concurrency issues?\n   - **Trade-offs & Constraints**: Performance vs. correctness, speed-to-market vs. quality, flexibility vs. simplicity\n   - **Security & Privacy**: Data exposure, authentication boundaries, input validation\n   - **Scale & Performance**: Expected load, data volume growth, bottleneck scenarios\n   - **Integration & Dependencies**: External system contracts, version compatibility, fallback behavior\n   - **Migration & Rollout**: How to get from current state to target state, backward compatibility\n\n   **Interview Flow:**\n   - Start with the most critical ambiguities first (things that would fundamentally change the implementation)\n   - Group related questions together (max 3-4 questions per round using AskUserQuestion's multi-question capability)\n   - After each round, synthesize the answers and identify new questions that emerge from the responses\n   - If an answer reveals a new area of ambiguity, explore it before moving on\n   - Track which dimensions have been sufficiently covered and which remain open\n\n5. Continue the interview until:\n   - All critical implementation decisions have clear answers\n   - No logical contradictions remain\n   - Edge cases have defined behavior\n   - Trade-offs have explicit priorities\n   - The specification is implementable without further clarification\n\n### Phase 3: Specification Output\n6. When the interview is complete, inform the user that the interview is finished and write the specification file.\n7. Output file location: Same directory as the discovered requirement file, named `SPEC.md` (or update the existing file if the user prefers).\n8. The specification must follow this structure:\n\n```markdown\n# [Project/Feature Name] Specification\n\n## 1. Overview\n- Problem statement\n- Solution summary\n- Key goals and success criteria\n\n## 2. Functional Requirements\n### 2.1 Core Features\n- Feature descriptions with acceptance criteria\n### 2.2 User Flows\n- Step-by-step user interactions\n### 2.3 Edge Cases & Error Handling\n- Defined behavior for exceptional scenarios\n\n## 3. Technical Architecture\n### 3.1 System Design\n- High-level architecture decisions\n- Component boundaries\n### 3.2 Data Model\n- Key entities and relationships\n### 3.3 API Design\n- Endpoints, contracts, error responses\n### 3.4 State Management\n- Client/server state boundaries\n\n## 4. UX/UI Specification\n### 4.1 Interaction Patterns\n- Key interactions and feedback\n### 4.2 States\n- Loading, empty, error, success states\n### 4.3 Accessibility\n- Requirements and standards\n\n## 5. Non-Functional Requirements\n### 5.1 Performance\n- Targets and constraints\n### 5.2 Security\n- Authentication, authorization, data protection\n### 5.3 Scalability\n- Growth expectations and limits\n\n## 6. Constraints & Trade-offs\n- Explicit decisions made and their rationale\n- What was deliberately excluded and why\n\n## 7. Open Questions\n- Any remaining items that need future clarification\n```\n\n9. Sections that are not relevant to the project should be omitted (don't include empty sections).\n10. Every statement in the spec must be traceable to either the original document or an interview answer. Do not invent requirements.\n\n## Examples\n\n### Input\n```\n/spec-interview\n```\n(With a SPEC.md file in the project containing: \"Build a notification system for the app\")\n\n### Interview Round 1\n```\nQuestions asked:\n1. \"The document mentions 'notifications' but doesn't specify the delivery channels.\n    Are we talking about in-app only, or also push/email/SMS? If multiple, which is\n    the primary channel and which are fallbacks?\"\n2. \"What triggers a notification? Is it purely event-driven from backend actions,\n    or can other users trigger notifications (e.g., mentions, shares)?\"\n3. \"Should notifications be real-time (WebSocket/SSE) or is polling acceptable?\n    What's the maximum acceptable delay between event and notification?\"\n```\n\n### Interview Round 2 (after user answers)\n```\nQuestions asked:\n1. \"You mentioned push notifications are needed. If the user has denied push\n    permissions, should the system fall back to email, show an in-app prompt to\n    re-enable, or silently degrade?\"\n2. \"For real-time delivery: if the WebSocket connection drops, should queued\n    notifications be delivered on reconnect, or only show new ones from that point?\"\n3. \"You said 'mentions' trigger notifications. In a thread with 50 participants,\n    does @all notify everyone? Is there a rate limit to prevent notification storms?\"\n```\n\n### Output\nA structured SPEC.md file with all ambiguities resolved, containing specific implementation details derived from the interview.\n\n## Guidelines\n- The interview is the primary value of this skill. Spend more effort on asking the right questions than on formatting the output.\n- Never rush the interview. It's better to ask one more round of questions than to produce a spec with assumptions.\n- When the user's answer is vague, follow up. Don't accept \"it should just work\" as a specification.\n- Respect the user's domain expertise. Ask \"how\" and \"what if\" questions, not \"what is\" questions about their own domain.\n- If the requirement document is well-specified in certain areas, acknowledge that and focus interview time on the gaps.\n- Keep each interview round focused. Don't mix architectural questions with UX details in the same round.\n- Use the user's own terminology from the requirement document. Don't introduce new jargon.\n- If the project has existing code, reference actual file structures or patterns when asking technical questions to ground the discussion in reality.\n- The final spec should be immediately actionable by a developer who hasn't seen the interview. All context must be captured in the document.\n",
+        "template/SKILL.md": "---\nname: template-skill\ndescription: Replace with description of the skill and when the agent should use it.\n---\n\n# Insert instructions below\n"
+      },
+      "plugins": [
+        {
+          "name": "spec-skills",
+          "description": "Skills for structured requirement analysis and specification generation",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/spec-interview"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kangminhyuk1111/agents",
+            "/plugin install spec-skills@agent-skill-kit"
+          ]
+        },
+        {
+          "name": "release-skills",
+          "description": "Skills for automated release documentation and changelog generation",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/release-notes"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kangminhyuk1111/agents",
+            "/plugin install release-skills@agent-skill-kit"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "author": {
+    "id": "wakanachan",
+    "display_name": "wakanachan",
+    "type": "User",
+    "avatar_url": "https://avatars.githubusercontent.com/u/59733854?u=4234d6acaf81203012df19f61fd5e10907e59c42&v=4",
+    "url": "https://github.com/wakanachan",
+    "bio": null,
+    "stats": {
+      "total_marketplaces": 1,
+      "total_plugins": 1,
+      "total_commands": 3,
+      "total_skills": 0,
+      "total_stars": 0,
+      "total_forks": 0
+    }
+  },
+  "marketplaces": [
+    {
+      "name": "pnl-dev-marketplace",
+      "version": null,
+      "description": "preferred-natural-language dev marketplace",
+      "owner_info": {
+        "name": "Preferred Natural Language",
+        "url": "https://github.com/wakanachan/preferred-natural-language"
+      },
+      "keywords": [],
+      "repo_full_name": "wakanachan/preferred-natural-language",
+      "repo_url": "https://github.com/wakanachan/preferred-natural-language",
+      "repo_description": "A natural language preference detection tool for AI assistants through MCP (Model Context Protocol)",
+      "homepage": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-11T18:57:35Z",
+        "created_at": "2025-12-10T19:50:06Z",
+        "license": "MIT"
+      },
+      "file_tree": [
+        {
+          "path": ".claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": ".claude-plugin/marketplace.json",
+          "type": "blob",
+          "size": 911
+        },
+        {
+          "path": "claude-code-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-code-plugin/.claude-plugin",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-code-plugin/.claude-plugin/plugin.json",
+          "type": "blob",
+          "size": 243
+        },
+        {
+          "path": "claude-code-plugin/agents",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-code-plugin/agents/phl.md",
+          "type": "blob",
+          "size": 3428
+        },
+        {
+          "path": "claude-code-plugin/commands",
+          "type": "tree",
+          "size": null
+        },
+        {
+          "path": "claude-code-plugin/commands/detect-language.md",
+          "type": "blob",
+          "size": 456
+        },
+        {
+          "path": "claude-code-plugin/commands/list-languages.md",
+          "type": "blob",
+          "size": 664
+        },
+        {
+          "path": "claude-code-plugin/commands/set-language.md",
+          "type": "blob",
+          "size": 714
+        }
+      ],
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pnl-dev-marketplace\",\n  \"owner\": {\n    \"name\": \"Preferred Natural Language\",\n    \"url\": \"https://github.com/wakanachan/preferred-natural-language\"\n  },\n  \"description\": \"preferred-natural-language dev marketplace\",\n  \"plugins\": [\n    {\n      \"name\": \"pnl\",\n      \"source\": \"./claude-code-plugin\",\n      \"description\": \"Automatic language detection plugin for Claude Code. Detects user's preferred language using a 5-level priority chain and provides MCP tools for language management. Supports 70+ languages and regional variants with full i18n output in 10 major languages.\",\n      \"version\": \"3.0.0\",\n      \"author\": {\n        \"name\": \"Preferred Natural Language\",\n        \"url\": \"https://github.com/wakanachan/preferred-natural-language\"\n      },\n      \"keywords\": [\"language\", \"i18n\", \"locale\", \"detection\", \"natural-language\", \"mcp\", \"multilingual\"],\n      \"category\": \"utilities\"\n    }\n  ]\n}\n",
+        "claude-code-plugin/.claude-plugin/plugin.json": "{\n  \"name\": \"pnl\",\n  \"version\": \"3.0.0\",\n  \"description\": \"Interactive language detection and configuration tool - supports automatic detection and configuration of 70+ languages.\",\n  \"author\": {\n    \"name\": \"Preferred Natural Language\"\n  }\n}\n",
+        "claude-code-plugin/agents/phl.md": "---\nname: preferred-natural-language\ndescription: Use this agent when you need to detect the user's preferred language or configure language settings. Examples:\n\n<example>\nContext: New conversation with a user who may prefer non-English language\nuser: \"你好，我想了解这个项目的功能\"\nassistant: \"I'll use the preferred-natural-language agent to detect your language preference and communicate appropriately.\"\n<commentary>\nUser greeted in Chinese, indicating they may prefer Chinese communication. The agent should detect this preference.\n</commentary>\n</example>\n\n<example>\nContext: User wants to change their language preference\nuser: \"How do I set my language to Spanish?\"\nassistant: \"I'll use the preferred-natural-language agent to help you configure your language preference to Spanish.\"\n<commentary>\nUser explicitly wants to configure language settings, which requires the agent's set-language tool.\n</commentary>\n</example>\n\n<example>\nContext: Session start where language preference needs to be checked\nuser: \"Bonjour, pouvez-vous m'aider avec ce code ?\"\nassistant: \"I'll use the preferred-natural-language agent to detect your language preference from your French greeting.\"\n<commentary>\nUser is communicating in French, the agent should detect this and prepare to respond in French.\n</commentary>\n</example>\n\nmodel: inherit\ncolor: blue\ntools: [\"detect-language\", \"list-languages\", \"set-language\"]\n---\n\n# Preferred Natural Language Extension\n\n## Automatic Language Detection\n\nThis extension provides automatic detection of the user's preferred natural language through the Model Context Protocol (MCP).\n\n## How to Use\n\n**At the start of each conversation**, please check the user's preferred language by accessing the MCP Resource:\n\n```\nResource URI: language://preference\n```\n\nThis resource provides:\n- **language**: BCP-47 language code (e.g., zh-CN, en-US, ja-JP, ko-KR)\n- **languageName**: Full language name (e.g., 简体中文, English)\n- **source**: Detection source (config file, OS locale, environment variable, etc.)\n- **confidence**: Detection confidence level (high, medium, low)\n\n## Communication Guidelines\n\nOnce you've detected the user's preferred language:\n\n1. **Communicate in that language** for all interactions, unless:\n   - The user explicitly requests a different language\n   - The context requires English (e.g., code comments, technical docs, English-specific topics)\n\n2. **Be culturally appropriate** and use natural expressions for that language\n\n3. **Maintain consistency** throughout the conversation\n\n## Available MCP Tools\n\nYou can also use these MCP tools as needed:\n\n- **detect-language**: Re-detect language if settings may have changed\n- **set-language**: Help user configure language preference\n- **list-languages**: Show all 70+ supported languages\n\n## Example Workflow\n\n```\n1. New conversation starts\n2. Access language://preference resource\n3. Detected: zh-CN (简体中文) from config file\n4. Start communicating in Chinese: \"你好！我是 Gemini，很高兴为您服务...\"\n```\n\n## Priority Detection Chain\n\nThe language is detected from (highest to lowest priority):\n1. Configuration file (`.preferred-language.json`)\n2. Custom environment variables (`GEMINI_CLI_NATURAL_LANGUAGE`, `CLAUDE_CODE_NATURAL_LANGUAGE`)\n3. Operating system locale settings\n4. Standard environment variables (`LANGUAGE`, `LC_ALL`, `LC_MESSAGES`, `LANG`)\n5. Default fallback (`en-US`)\n\n",
+        "claude-code-plugin/commands/detect-language.md": "---\ndescription: Detect the current system's preferred natural language setting\n---\n\nPlease use the MCP tool `detect-language` to detect the user's preferred natural language and display the result in a user-friendly format.\n\nThe tool will return:\n- Language code (e.g., zh-CN, en-US, ja-JP)\n- Language name (e.g., 简体中文, English)\n- Detection source (configuration file, OS locale, environment variable, etc.)\n- Confidence level (high, medium, low)\n",
+        "claude-code-plugin/commands/list-languages.md": "---\ndescription: List all supported languages and their codes\n---\n\nPlease use the MCP tool `list-languages` to display all supported natural languages and their BCP-47 codes.\n\nThe tool will return a comprehensive list of 70+ languages and regional variants, including:\n- English variants (en-US, en-GB, en-CA, en-AU, etc.)\n- Chinese variants (zh-CN, zh-TW, zh-HK, etc.)\n- Japanese (ja-JP)\n- Korean (ko-KR)\n- European languages (fr-FR, de-DE, es-ES, it-IT, pt-BR, ru-RU, etc.)\n- Middle Eastern languages (ar-EG, ar-SA, he-IL, etc.)\n- Asian languages (hi-IN, th-TH, vi-VN, id-ID, etc.)\n\nPlease format the output in a user-friendly way (e.g., table or grouped list).\n",
+        "claude-code-plugin/commands/set-language.md": "---\ndescription: Set the preferred natural language for Claude Code\n---\n\nPlease use the MCP tool `set-language` to configure the user's preferred natural language.\n\n**Parameters:**\n- `language` (required): BCP-47 language code (e.g., zh-CN, en-US, ja-JP, ko-KR, fr-FR, de-DE, es-ES, pt-BR)\n- `fallback` (optional): Fallback language code (defaults to en-US)\n\n**What this tool does:**\n- Creates or updates `.preferred-language.json` in the project root\n- Sets the specified language as the highest priority preference\n- Validates the language code against supported languages\n\n**Usage tip:** If you're unsure which language codes are supported, use the `/list-languages` command first to see all available options.\n"
+      },
+      "plugins": [
+        {
+          "name": "pnl",
+          "source": "./claude-code-plugin",
+          "description": "Automatic language detection plugin for Claude Code. Detects user's preferred language using a 5-level priority chain and provides MCP tools for language management. Supports 70+ languages and regional variants with full i18n output in 10 major languages.",
+          "version": "3.0.0",
+          "author": {
+            "name": "Preferred Natural Language",
+            "url": "https://github.com/wakanachan/preferred-natural-language"
+          },
+          "keywords": [
+            "language",
+            "i18n",
+            "locale",
+            "detection",
+            "natural-language",
+            "mcp",
+            "multilingual"
+          ],
+          "category": "utilities",
+          "categories": [
+            "detection",
+            "i18n",
+            "language",
+            "locale",
+            "mcp",
+            "multilingual",
+            "natural-language",
+            "utilities"
+          ],
+          "install_commands": [
+            "/plugin marketplace add wakanachan/preferred-natural-language",
+            "/plugin install pnl@pnl-dev-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
