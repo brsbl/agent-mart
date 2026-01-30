@@ -82,6 +82,7 @@ function HomePageContent() {
         m.description?.toLowerCase().includes(query) ||
         m.author_id.toLowerCase().includes(query) ||
         m.author_display_name.toLowerCase().includes(query) ||
+        (Array.isArray(m.keywords) && m.keywords.some(k => k.toLowerCase().includes(query))) ||
         (Array.isArray(m.categories) && m.categories.some(c =>
           c.toLowerCase().includes(query) || getCategoryDisplay(c).toLowerCase().includes(query)
         ))

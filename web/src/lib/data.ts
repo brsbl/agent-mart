@@ -380,7 +380,7 @@ export function sortMarketplaces(
         const aScore = a.signals?.trending_score ?? 0;
         const bScore = b.signals?.trending_score ?? 0;
         const scoreDiff = bScore - aScore;
-        if (Math.abs(scoreDiff) > 0.001) return scoreDiff;
+        if (scoreDiff !== 0) return scoreDiff;
 
         // Tiebreaker: raw stars gained this week
         const aGain = a.signals?.stars_gained_7d ?? 0;

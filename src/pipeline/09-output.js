@@ -99,6 +99,13 @@ export function output({ onProgress: _onProgress } = {}) {
       // Use flat category array from categorizer
       const categories = catData?.categories || [];
 
+      // Aggregate keywords from all plugins in the marketplace
+      const keywords = [...new Set(
+        marketplace.plugins
+          .flatMap(p => p.keywords || [])
+          .filter(k => typeof k === 'string' && k.trim())
+      )];
+
       // Calculate trending score from history
       const repoHistory = signalsHistory.repositories[marketplace.repo_full_name];
       const currentStars = marketplace.signals?.stars || 0;
@@ -119,7 +126,8 @@ export function output({ onProgress: _onProgress } = {}) {
           stars_gained_7d: trendingData.stars_gained_7d,
           stars_velocity: trendingData.stars_velocity
         },
-        categories
+        categories,
+        keywords
       });
     }
   }

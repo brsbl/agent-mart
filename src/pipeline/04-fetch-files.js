@@ -32,7 +32,8 @@ function getPluginReadmePaths(marketplaceContent) {
     }
 
     return paths;
-  } catch {
+  } catch (error) {
+    log(`Failed to parse marketplace.json: ${error.message}`);
     return [];
   }
 }

@@ -149,4 +149,5 @@ export interface BrowseMarketplace {
     stars_velocity?: number;
   };
   categories: Category[];
+  keywords: string[];
 }
