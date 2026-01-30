@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "NorthShoreAutomation",
+    "display_name": "North Shore Automation",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2413999?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "trellis-marketplace",
+      "version": null,
+      "description": "Trellis plugin marketplace - Bridge spec-kit planning with beads issue tracking",
+      "repo_full_name": "NorthShoreAutomation/trellis",
+      "repo_url": "https://github.com/NorthShoreAutomation/trellis",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-28T21:22:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"trellis-marketplace\",\n  \"description\": \"Trellis plugin marketplace - Bridge spec-kit planning with beads issue tracking\",\n  \"plugins\": [\n    {\n      \"name\": \"trellis\",\n      \"description\": \"Bridge spec-kit planning with beads issue tracking for Claude Code\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"trellis\",\n  \"description\": \"Bridge spec-kit planning with beads issue tracking for Claude Code\",\n  \"version\": \"0.7.3\",\n  \"author\": {\n    \"name\": \"NorthShoreAutomation\",\n    \"email\": \"support@northshoreautomation.com\"\n  },\n  \"repository\": \"https://github.com/NorthShoreAutomation/trellis\",\n  \"license\": \"Proprietary\",\n  \"keywords\": [\"spec-kit\", \"beads\", \"task-tracking\", \"planning\"]\n}\n",
+        "README.md": "# Trellis\n\n> Bridge [spec-kit](https://github.com/github/spec-kit) planning with [beads](https://github.com/steveyegge/beads) issue tracking for Claude Code.\n\n## Why Trellis?\n\nspec-kit generates excellent task breakdowns in `tasks.md`, but checkbox-based tracking lacks dependency awareness and session recovery. Trellis imports tasks into beads for intelligent execution ordering, then keeps both in sync.\n\n## Workflow\n\n```\nspec-kit                    Trellis\n─────────                   ───────\n/speckit.spec → spec.md\n/speckit.plan → plan.md\n/speckit.tasks → tasks.md ──→ /trellis.import ──→ beads issues\n                            /trellis.implement ──→ dependency-aware execution\n                            /trellis.sync ──→ bidirectional sync\n```\n\n## Installation\n\n**Prerequisites:** [Claude Code](https://claude.ai/code), [beads](https://github.com/steveyegge/beads), [spec-kit](https://github.com/github/spec-kit)\n\n### From GitHub (Private Repository)\n\nSince this is a private repository, you need to configure authentication first:\n\n**1. Create a GitHub Personal Access Token:**\n- Go to [GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)](https://github.com/settings/tokens)\n- Click \"Generate new token (classic)\"\n- Give it a descriptive name (e.g., \"Claude Code plugins\")\n- Select the `repo` scope (required for private repository access)\n- Click \"Generate token\" and copy the token\n\n**2. Set the environment variable:**\n\n```bash\n# Add to your shell profile (~/.bashrc, ~/.zshrc, etc.)\nexport GITHUB_TOKEN=ghp_your_token_here\n```\n\n**3. Add the marketplace and install:**\n\n```bash\n# Add the repository as a marketplace source\n/plugin marketplace add NorthShoreAutomation/trellis\n\n# Install the plugin\n/plugin install trellis@NorthShoreAutomation/trellis\n```\n\n### Alternative: Settings File\n\nAdd to `~/.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"nsa-trellis\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"NorthShoreAutomation/trellis\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"trellis@nsa-trellis\": true\n  }\n}\n```\n\n## Development\n\nFor contributors developing Trellis locally:\n\n```bash\ngit clone https://github.com/NorthShoreAutomation/trellis.git\nclaude --plugin-dir /path/to/trellis\n```\n\nThe `--plugin-dir` flag loads the plugin for that session. Changes to command files are reflected on restart.\n\n## Migration\n\nIf upgrading from the symlink-based installer:\n\n1. Remove existing symlinks:\n   ```bash\n   # Check for and remove user-level symlinks\n   rm -f ~/.claude/commands/trellis.*.md\n\n   # Check for and remove project-level symlinks\n   rm -f .claude/commands/trellis.*.md\n   ```\n\n2. Install via plugin:\n   ```bash\n   claude plugin install github:NorthShoreAutomation/trellis\n   ```\n\n## Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/trellis.import` | Import tasks.md into beads |\n| `/trellis.implement` | Execute with dependency-aware ordering |\n| `/trellis.sync` | Reconcile beads ↔ tasks.md |\n| `/trellis.ready` | Show unblocked tasks |\n| `/trellis.status` | Project health overview |\n| `/trellis.prd` | Interactive PRD development |\n| `/trellis.epics` | Break PRD into sequenced epics |\n| `/trellis.test-plan` | Generate test plan documentation |\n| `/trellis.push` | Commit and push with changelog |\n| `/trellis.release` | Create release from PR |\n\nRun any command with `--help` for options (e.g., `--dry-run`, `--force`).\n\n## Quick Start\n\n```bash\n# 1. Generate tasks with spec-kit\n/speckit.tasks\n\n# 2. Import to beads\n/trellis.import\n\n# 3. Execute with tracking\n/trellis.implement\n\n# 4. Check progress anytime\n/trellis.status\nbd ready\nbd stats\n```\n\n## How It Maps\n\n| spec-kit | beads | Notes |\n|----------|-------|-------|\n| Feature | Root Epic | Parent of all phases |\n| Phase | Epic | Groups related tasks |\n| Task | Issue | Actual work item |\n| Sequential task | `blocks` dependency | Enforces order |\n| `[P]` parallel marker | No dependency | Can run anytime |\n\n## Documentation\n\n- [Architecture](docs/ARCHITECTURE.md) - How the integration works\n- [Changelog](CHANGELOG.md) - Version history\n\n## License\n\nProprietary - See [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "trellis",
+          "description": "Bridge spec-kit planning with beads issue tracking for Claude Code",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add NorthShoreAutomation/trellis",
+            "/plugin install trellis@trellis-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

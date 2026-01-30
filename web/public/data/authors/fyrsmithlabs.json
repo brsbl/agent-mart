@@ -1,0 +1,80 @@
+{
+  "author": {
+    "id": "fyrsmithlabs",
+    "display_name": "FyrsmithLabs",
+    "avatar_url": "https://avatars.githubusercontent.com/u/244544460?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "fyrsmithlabs",
+      "version": null,
+      "description": "Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance",
+      "repo_full_name": "fyrsmithlabs/marketplace",
+      "repo_url": "https://github.com/fyrsmithlabs/marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-30T18:27:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"fyrsmithlabs\",\n  \"owner\": {\n    \"name\": \"fyrsmithlabs\",\n    \"email\": \"plugins@fyrsmithlabs.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for fyrsmithlabs project standards, workflows, cross-session memory, and design system compliance\",\n    \"version\": \"1.9.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"fs-dev\",\n      \"description\": \"Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.\",\n      \"version\": \"1.9.1\",\n      \"author\": {\n        \"name\": \"fyrsmithlabs\"\n      },\n      \"source\": \"./plugins/fs-dev/\",\n      \"category\": \"development\",\n      \"strict\": false\n    },\n    {\n      \"name\": \"contextd\",\n      \"description\": \"Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"fyrsmithlabs\"\n      },\n      \"source\": \"./plugins/contextd/\",\n      \"category\": \"memory\"\n    },\n    {\n      \"name\": \"fs-design\",\n      \"description\": \"Terminal Elegance design system compliance checking for FyrsmithLabs products. Audits CSS, templates, and documentation for hardcoded values, accessibility issues, and brand consistency.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"fyrsmithlabs\"\n      },\n      \"source\": \"./plugins/fs-design/\",\n      \"category\": \"design\"\n    }\n  ]\n}\n",
+        "README.md": "# Marketplace\n\n![Version](https://img.shields.io/badge/version-1.9.1-green)\n![Build](https://github.com/fyrsmithlabs/marketplace/actions/workflows/ci.yml/badge.svg)\n![License](https://img.shields.io/badge/license-Apache--2.0-blue)\n![Gitleaks](https://img.shields.io/badge/gitleaks-enabled-blue)\n\nA Claude Code plugin marketplace providing skills, commands, and agents for fyrsmithlabs project standards and workflows.\n\n---\n\n## Prerequisites\n\nBefore installing, ensure you have:\n\n- **Claude Code CLI** - Required for all plugins\n- **GitHub CLI (`gh`) 2.0+** - Required for planning features ([install](https://cli.github.com/))\n- **contextd MCP server** - Required for contextd plugin (see [contextd Setup](#contextd-setup))\n\n---\n\n## Quick Start\n\n### Installation\n\nAdd the marketplace to your Claude Code settings:\n\n```bash\n# Install via Claude Code plugin marketplace\nclaude plugin install fyrsmithlabs/marketplace\n```\n\n### First Commands to Try\n\n```bash\n# Initialize a project with standards\n/fs-dev:init\n\n# Run a brainstorm session for a new feature\n/fs-dev:brainstorm \"Add user authentication\"\n\n# Check your daily standup\n/fs-dev:standup\n\n# Run multi-agent code review\n/fs-dev:consensus-review\n```\n\n---\n\n## Plugins\n\nThis marketplace contains three plugins that can be installed independently:\n\n| Plugin | Version | Components | Purpose |\n|--------|---------|------------|---------|\n| [fs-dev](docs/plugins/fs-dev.md) | 1.9.1 | 13 skills, 15 agents, 12 commands | Development standards, workflows, planning |\n| [contextd](docs/plugins/contextd.md) | 1.2.0 | 5 skills, 2 agents, 8 commands | Cross-session memory via MCP |\n| [fs-design](docs/plugins/fs-design.md) | 1.0.0 | 1 skill, 2 agents, 1 command | Design system compliance |\n\n---\n\n## Featured Commands\n\n### /fs-dev:init - Project Setup\n\nSet up a project to follow fyrsmithlabs standards with interactive wizard, auto-detection, and compliance checking.\n\n```bash\n# Full interactive wizard\n/fs-dev:init\n\n# Audit compliance without making changes\n/fs-dev:init --check\n\n# Quick setup (skip wizard)\n/fs-dev:init --quick\n\n# Check for drift from standards\n/fs-dev:init --validate\n```\n\n### /fs-dev:brainstorm - Feature Design\n\nInteractive design interview with complexity assessment, requirements gathering, and GitHub planning.\n\n```bash\n# Start a brainstorm session\n/fs-dev:brainstorm \"Add OAuth support\"\n\n# Brainstorm creates GitHub Issues automatically in Phase 6\n```\n\n### /fs-dev:consensus-review - Multi-Agent Code Review\n\nRun parallel code review with 6 specialized agents. All agents have veto power by default. Features adaptive token budgets, context-folding isolation for large scopes, and progressive summarization.\n\n```bash\n# Review staged changes\n/fs-dev:consensus-review\n\n# Review specific path\n/fs-dev:consensus-review src/auth/\n\n# Ignore veto power (advisory only)\n/fs-dev:consensus-review --ignore-vetos\n\n# Run subset of agents\n/fs-dev:consensus-review --agents security,code-quality,go\n```\n\n### /contextd:checkpoint - Session State Management\n\nSave your session state for later resumption. Essential before clearing context or ending a session.\n\n```bash\n# Save current session state\n/contextd:checkpoint\n\n# Checkpoints capture:\n# - Accomplishments\n# - In-progress work\n# - Next steps\n```\n\n### /fs-design:check - Design Compliance Audit\n\nAudit CSS, templates, and documentation for Terminal Elegance design system compliance.\n\n```bash\n# Scan default locations\n/fs-design:check\n\n# Check specific file\n/fs-design:check static/css/main.css\n\n# Check directory\n/fs-design:check internal/templates/\n```\n\n---\n\n## Common Workflows\n\n### New Feature Development\n\n```bash\n# 1. Design the feature\n/fs-dev:brainstorm \"Add user authentication\"\n\n# 2. Create GitHub issues (automatic from brainstorm Phase 6)\n# or manually:\n/fs-dev:plan \"Add user authentication\"\n\n# 3. Code implementation...\n\n# 4. Multi-agent code review\n/fs-dev:consensus-review\n\n# 5. Commit with standards\ngit commit -m \"feat: add user authentication\"\n```\n\n### Session Management (with contextd)\n\n```bash\n# 1. Check current state\n/contextd:status\n\n# 2. Search for relevant past learnings\n/contextd:search authentication patterns\n\n# 3. Work on tasks...\n\n# 4. Save progress before clearing context\n/contextd:checkpoint\n\n# 5. Record what you learned\n/contextd:remember\n```\n\n### Codebase Discovery\n\n```bash\n# Full codebase analysis\n/fs-dev:discover\n\n# Security-focused analysis\n/fs-dev:discover --lens security\n\n# Performance-focused analysis\n/fs-dev:discover --lens performance\n```\n\n### Daily Standup\n\n```bash\n# Today's status with GitHub PR/Issue synthesis\n/fs-dev:standup\n\n# Weekly summary\n/fs-dev:standup --week\n```\n\n---\n\n## Structure\n\n```\nmarketplace/\n├── .claude-plugin/           # Root marketplace manifest\n├── plugins/                  # All plugins\n│   ├── fs-dev/               # Core development plugin (13 skills, 15 agents, 12 commands)\n│   ├── contextd/             # Cross-session memory plugin (5 skills, 2 agents, 8 commands)\n│   └── fs-design/            # Design system plugin (1 skill, 2 agents, 1 command)\n├── hooks/                    # Claude Code hooks (PreCompact only)\n└── docs/                     # Documentation\n    └── plugins/              # Plugin-specific docs\n```\n\n---\n\n## contextd Setup\n\n> **⚠️ REQUIRED:** The contextd plugin requires the contextd MCP server.\n> Without it, all `/contextd:*` commands will fail. Setup takes ~2 minutes.\n\n### Option A: Homebrew (macOS/Linux)\n\n```bash\nbrew tap fyrsmithlabs/contextd https://github.com/fyrsmithlabs/contextd\nbrew install contextd\nctxd mcp install\n# Restart Claude Code, then: /contextd:status\n```\n\n### Option B: Direct Download\n\nDownload from [GitHub Releases](https://github.com/fyrsmithlabs/contextd/releases), then:\n\n```bash\ntar xzf contextd_*.tar.gz\nsudo mv contextd /usr/local/bin/\nctxd mcp install\n# Restart Claude Code, then: /contextd:status\n```\n\n> **Note:** On first run, contextd auto-downloads ONNX runtime (~100MB). This is one-time only.\n\n### Troubleshooting\n\n| Error | Fix |\n|-------|-----|\n| `Unknown tool: mcp__contextd__*` | Run `ctxd mcp install` and restart Claude Code |\n| `contextd: command not found` | Install via Homebrew or `go install` |\n| Connection errors | Run `ctxd mcp status` to diagnose |\n\n**Full documentation:** [contextd Plugin Guide](docs/plugins/contextd.md)\n\n---\n\n## Documentation\n\n- **Plugin Documentation**\n  - [fs-dev Plugin](docs/plugins/fs-dev.md) - Development standards and workflows\n  - [contextd Plugin](docs/plugins/contextd.md) - Cross-session memory\n  - [fs-design Plugin](docs/plugins/fs-design.md) - Design system compliance\n\n- **Project Documentation**\n  - [CHANGELOG](CHANGELOG.md) - Version history and release notes\n  - [LICENSE](LICENSE) - Apache-2.0 license\n\n---\n\n## All Commands Reference\n\n### Core Commands (fs-dev)\n\n| Command | Purpose |\n|---------|---------|\n| `/fs-dev:init` | Set up project to follow fyrsmithlabs standards |\n| `/fs-dev:yagni` | Manage YAGNI/KISS enforcement settings |\n| `/fs-dev:brainstorm` | Interactive design interview with complexity-aware questioning |\n| `/fs-dev:plan` | Full planning workflow - assess, brainstorm, create GitHub Issues |\n| `/fs-dev:discover` | Run codebase discovery with optional lens filtering |\n| `/fs-dev:standup` | Daily standup with GitHub PR/Issue synthesis |\n| `/fs-dev:consensus-review` | Multi-agent code review with veto power |\n| `/fs-dev:test-skill` | Run pressure test scenarios against marketplace skills |\n| `/fs-dev:comp-analysis` | Generate executive summary of competitor analysis |\n| `/fs-dev:spec-refinement` | Deep-dive interview to refine specification documents |\n| `/fs-dev:app-interview` | Comprehensive app ideation with competitor analysis |\n\n### contextd Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/contextd:search` | Semantic search across memories, remediations, and code |\n| `/contextd:remember` | Record a learning or insight from the current session |\n| `/contextd:checkpoint` | Save session state (accomplishments, in-progress, next steps) |\n| `/contextd:diagnose` | Diagnose errors using AI analysis and past fixes |\n| `/contextd:status` | Show contextd status for current session and project |\n| `/contextd:reflect` | Analyze memories for behavior patterns and policy compliance |\n| `/contextd:orchestrate` | Execute multi-task orchestration from GitHub issues |\n| `/contextd:help` | List all available contextd skills and commands |\n\n### Design Commands (fs-design)\n\n| Command | Purpose |\n|---------|---------|\n| `/fs-design:check` | Audit files for Terminal Elegance design system compliance |\n\n---\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "fs-dev",
+          "description": "Claude Code plugins for fyrsmithlabs project standards and workflows. Includes YAGNI/KISS enforcement, git-repo-standards, git-workflows with multi-agent consensus review, and GitHub planning integration.",
+          "version": "1.9.1",
+          "author": {
+            "name": "fyrsmithlabs"
+          },
+          "source": "./plugins/fs-dev/",
+          "category": "development",
+          "strict": false,
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add fyrsmithlabs/marketplace",
+            "/plugin install fs-dev@fyrsmithlabs"
+          ]
+        },
+        {
+          "name": "contextd",
+          "description": "Cross-session memory and learning for Claude Code. Provides semantic search, memory recording, checkpoints, error remediation, and multi-agent orchestration via the contextd MCP server.",
+          "version": "1.2.0",
+          "author": {
+            "name": "fyrsmithlabs"
+          },
+          "source": "./plugins/contextd/",
+          "category": "memory",
+          "categories": [
+            "memory"
+          ],
+          "install_commands": [
+            "/plugin marketplace add fyrsmithlabs/marketplace",
+            "/plugin install contextd@fyrsmithlabs"
+          ]
+        },
+        {
+          "name": "fs-design",
+          "description": "Terminal Elegance design system compliance checking for FyrsmithLabs products. Audits CSS, templates, and documentation for hardcoded values, accessibility issues, and brand consistency.",
+          "version": "1.0.0",
+          "author": {
+            "name": "fyrsmithlabs"
+          },
+          "source": "./plugins/fs-design/",
+          "category": "design",
+          "categories": [
+            "design"
+          ],
+          "install_commands": [
+            "/plugin marketplace add fyrsmithlabs/marketplace",
+            "/plugin install fs-design@fyrsmithlabs"
+          ]
+        }
+      ]
+    }
+  ]
+}

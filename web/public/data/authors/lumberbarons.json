@@ -1,0 +1,79 @@
+{
+  "author": {
+    "id": "lumberbarons",
+    "display_name": "lumberbarons",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5781585?u=44318959cc4dc881461d82084fcefc670c7afdf2&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lumber-mart",
+      "version": null,
+      "description": "A Claude Code plugin marketplace",
+      "repo_full_name": "lumberbarons/lumber-mart",
+      "repo_url": "https://github.com/lumberbarons/lumber-mart",
+      "repo_description": "A plugin marketplace for Claude Code.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-29T23:58:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lumber-mart\",\n  \"owner\": {\n    \"name\": \"lumberbarons\"\n  },\n  \"metadata\": {\n    \"description\": \"A Claude Code plugin marketplace\",\n    \"version\": \"1.0.0\",\n    \"license\": \"MIT\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"circuits\",\n      \"source\": \"./plugins/circuits\",\n      \"category\": \"hardware\",\n      \"keywords\": [\"hardware\", \"electronics\", \"datasheets\", \"wavejson\", \"circuit-synth\"]\n    },\n    {\n      \"name\": \"specbeads\",\n      \"source\": \"./plugins/specbeads\",\n      \"category\": \"workflow\",\n      \"keywords\": [\"spec-kit\", \"beads\", \"specifications\", \"task-tracking\", \"code-review\"]\n    }\n  ]\n}\n",
+        "README.md": "# 🪵🛒 Lumber Mart\n\nA plugin marketplace for Claude Code that lets you discover and install plugins for enhanced development workflows.\n\nLearn more about Claude Code marketplaces in the [official documentation](https://code.claude.com/docs/en/plugin-marketplaces).\n\n## Available Plugins\n\n| Plugin | Category | Description |\n|--------|----------|-------------|\n| [circuits](plugins/circuits/) | Hardware | Skills and agents for microcontroller and hardware projects -- timing diagrams, PCB design, and datasheet extraction |\n| [specbeads](plugins/specbeads/) | Workflow | Specification-driven development with spec-kit and beads -- task tracking, sync, and automated code/docs/test/spec reviews |\n\n### [circuits](plugins/circuits/)\n\nSkills and agents to help with microcontroller and other hardware projects.\n\n| Component | Type | Description |\n|-----------|------|-------------|\n| `wavejson` | Skill | Generate WaveJSON timing diagrams and HTML viewers using WaveDrom |\n| `circuit-synth` | Skill | Design PCB circuits in Python with KiCad output and component search |\n| `datasheet` | Skill | Extract structured information from IC/component datasheets into markdown |\n| `datasheet-agent` | Agent | Autonomous agent for datasheet reading and extraction |\n\n### [specbeads](plugins/specbeads/)\n\nIntegrates [spec-kit](https://github.com/spec-kit/specify) with [beads](https://github.com/beads-project/beads) for streamlined specification-driven development.\n\n| Component | Type | Description |\n|-----------|------|-------------|\n| `specbeads:init` | Command | Initialize a repository with spec-kit and beads |\n| `specbeads:beadify` | Command | Convert tasks.md into beads (epics for phases, tasks as children) |\n| `specbeads:sync` | Command | Bidirectional sync between beads and tasks.md |\n| `specbeads:status` | Command | Project progress dashboard with phase status and sync health |\n| `specbeads:review-code` | Command | Review code for quality issues, create bug beads for findings |\n| `specbeads:review-docs` | Command | Review documentation for completeness and accuracy |\n| `specbeads:review-tests` | Command | Review tests for coverage and quality issues |\n| `specbeads:review-spec` | Command | Validate implementation against spec-kit artifacts |\n\n## Usage\n\n### Adding This Marketplace\n\n```bash\n# If hosted on GitHub\n/plugin marketplace add lumberbarons/lumber-mart\n\n# For local testing\n/plugin marketplace add /path/to/lumber-mart\n```\n\n### Installing Plugins\n\n```bash\n# List available plugins\n/plugin list\n\n# Install a plugin\n/plugin install circuits-plugin@lumber-mart\n```\n\n## License\n\nMIT\n",
+        "plugins/circuits/README.md": "# circuits\n\nA Claude Code plugin with skills and agents for microcontroller and other hardware projects.\n\n## Overview\n\nThis plugin provides tools for hardware development workflows:\n- **Timing diagram generation** from signal descriptions using WaveJSON/WaveDrom\n- **PCB circuit design** using Python and KiCad with AI assistance\n- **Datasheet extraction** from component PDFs and URLs into structured markdown\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `wavejson` | Generate WaveJSON timing diagrams and standalone HTML viewers using WaveDrom |\n| `circuit-synth` | Design PCB circuits in Python with KiCad output, component search, and manufacturing-ready exports |\n| `datasheet` | Extract structured information from IC/component datasheets (PDF or URL) into markdown summaries |\n\n### wavejson\n\nGenerate timing diagrams for digital signals using WaveJSON format and create standalone HTML viewers rendered with WaveDrom.\n\n**Features:**\n- Generate WaveJSON format timing diagrams\n- Create standalone HTML viewers with WaveDrom rendering\n- Support for clock signals, data buses, control signals, and protocol sequences\n- Built-in templates for common patterns (SPI, I2C, setup/hold timing)\n- Quick reference documentation included\n\n**Usage:**\n```\nAsk Claude to generate a timing diagram for your protocol or signal sequence.\nThe skill produces WaveJSON and optionally an HTML viewer file.\n```\n\n### circuit-synth\n\nCreate and design PCB circuits using Python and KiCad with AI assistance. Generate circuits from natural language descriptions, existing documentation, or templates.\n\n**Requirements:** Python 3.12+, `circuit-synth` package, optionally `reportlab`\n\n**Features:**\n- Define circuits in Python instead of GUI clicking\n- Generate professional KiCad output (.kicad_pro, .kicad_sch, .kicad_pcb)\n- AI-accelerated design from natural language descriptions\n- Convert hardware documentation and pinouts into formal schematics\n- Search components with real-time stock and pricing (JLCPCB, DigiKey, Mouser)\n- Pre-built manufacturing-ready patterns (buck/boost converters, LDO regulators, etc.)\n- Generate manufacturing outputs (BOM, Gerbers, PDF schematics)\n- Hierarchical design with modular subcircuits\n- Version control friendly (text-based definitions)\n\n**Usage:**\n```\nAsk Claude to design a circuit, and it will create a Python project\nusing circuit-synth that generates KiCad-compatible output files.\n```\n\n### datasheet\n\nExtract structured information from integrated circuit and component datasheets (PDF files or URLs) and generate comprehensive markdown summaries.\n\n**Features:**\n- Extract from both local PDF files and URLs\n- Goal-oriented output in two sections: Circuit Design Information and Microcontroller Code Information\n- 100% accurate pinout tables with voltage levels and active HIGH/LOW indication\n- Complete timing specifications with units and conditions\n- Saves to standardized `datasheets/` directory\n- Source fidelity -- only extracts information present in the provided datasheet\n\n**Usage:**\n```\nProvide Claude with a datasheet PDF path or URL and ask it to extract\nthe component information. Output goes to datasheets/<component>.md.\n```\n\n## Agents\n\n| Agent | Description |\n|-------|-------------|\n| `datasheet-agent` | Autonomous agent that reads and extracts structured data from component datasheets |\n\nThe `datasheet-agent` is a specialized subagent used by the `datasheet` skill. It runs a 6-step extraction workflow: receive input, read/analyze the datasheet, extract goal-oriented sections, generate markdown, verify completeness, and provide a summary.\n",
+        "plugins/specbeads/README.md": "# specbeads\n\nA Claude Code plugin that integrates [spec-kit](https://github.com/spec-kit/specify) with [beads](https://github.com/beads-project/beads) for streamlined specification-driven development.\n\n## Overview\n\nThis plugin bridges two tools:\n- **spec-kit**: Manages feature specifications, plans, and task breakdowns\n- **beads**: Tracks work items (epics, tasks, bugs) with dependencies\n\nThe plugin provides commands to convert spec-kit tasks into beads and keep them synchronized, plus review skills that create beads for issues found.\n\n## Prerequisites\n\n- [spec-kit CLI](https://github.com/spec-kit/specify) (`specify` command)\n- [beads CLI](https://github.com/beads-project/beads) (`bd` command)\n- Git repository\n\n## Installation\n\nCopy this plugin to your Claude Code plugins directory or reference it in your project's `.claude/settings.json`.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/specbeads.init` | Initialize a repository with both spec-kit and beads |\n| `/specbeads.beadify` | Convert tasks.md into beads (epics for phases, tasks as children) |\n| `/specbeads.sync` | Bidirectional sync between beads and tasks.md (check off tasks, close beads, report orphans) |\n| `/specbeads.status` | Read-only dashboard showing project progress, phase status, and sync health |\n\n### Workflow\n\n1. **Initialize**: Run `/specbeads.init` to set up spec-kit and beads in your repo\n2. **Create specs**: Use spec-kit to create feature specs and task breakdowns\n3. **Convert to beads**: Run `/specbeads.beadify` to create trackable work items\n4. **Work on tasks**: Use `bd ready` to see available work, `bd close` when done\n5. **Stay in sync**: Run `/specbeads.sync` to keep beads and tasks.md aligned\n6. **Check progress**: Run `/specbeads.status` to see overall progress and sync health\n7. **Review quality**: Run review commands to find issues in code, tests, docs, or spec conformance\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `specbeads.review-code` | Review code for quality issues, create bug beads for findings |\n| `specbeads.review-docs` | Review documentation for completeness and accuracy |\n| `specbeads.review-tests` | Review tests for coverage and quality issues |\n| `specbeads.review-spec` | Validate implementation against spec-kit artifacts (spec.md, plan.md, constitution.md) |\n\n### Usage\n\n```\n/specbeads.review-code src/auth/\n/specbeads.review-docs --dry-run\n/specbeads.review-tests tests/unit/\n/specbeads.review-spec 001-user-auth\n```\n\nAll review skills support `--dry-run` to preview findings without creating beads.\n\n## Command Options\n\n### specbeads.beadify\n\n- `[spec-folder]` - Specific spec folder (e.g., `001-user-auth`)\n- `--dry-run` - Preview without creating beads\n- `--skip-completed` - Don't create beads for tasks marked `[x]`\n- `--force` - Create beads even if duplicates detected\n\n### specbeads.sync\n\n- `[spec-folder]` - Specific spec folder to sync\n- `--dry-run` - Report what would change without making modifications\n- `--no-validate` - Skip file-existence validation checks\n- `--direction <both|beads-to-tasks|tasks-to-beads>` - Sync direction (default: `both`)\n\n### specbeads.status\n\n- `[spec-folder]` - Specific spec folder to report on\n- `--verbose` - Show per-task detail tables within each phase\n\n### specbeads.review-spec\n\n- `[path]` - Path to focus the review (default: entire repo)\n- `[spec-folder]` - Specific spec folder (e.g., `001-user-auth`)\n- `--dry-run` - List findings without creating beads\n\n## Version Compatibility\n\n- spec-kit: >= 1.0.0\n- beads: >= 1.0.0\n\n## Migration from v1.x\n\nv2.0.0 removes the `/specbeads.reconcile` command. Its responsibilities are now split across more focused commands:\n\n| Old (reconcile) | New |\n|---|---|\n| Beads/tasks sync | `/specbeads.sync` (now bidirectional) |\n| Build/test validation | `/specbeads.review-spec` |\n| Architecture checks | `/specbeads.review-spec` |\n| Constitution alignment | `/specbeads.review-spec` |\n| Orphan detection | `/specbeads.sync` (orphan reporting) |\n| Status dashboard | `/specbeads.status` |\n\nThe default `sync` direction is now `both` (bidirectional). To get the old one-way behavior, use `--direction beads-to-tasks`.\n"
+      },
+      "plugins": [
+        {
+          "name": "circuits",
+          "source": "./plugins/circuits",
+          "category": "hardware",
+          "keywords": [
+            "hardware",
+            "electronics",
+            "datasheets",
+            "wavejson",
+            "circuit-synth"
+          ],
+          "description": null,
+          "categories": [
+            "circuit-synth",
+            "datasheets",
+            "electronics",
+            "hardware",
+            "wavejson"
+          ],
+          "install_commands": [
+            "/plugin marketplace add lumberbarons/lumber-mart",
+            "/plugin install circuits@lumber-mart"
+          ]
+        },
+        {
+          "name": "specbeads",
+          "source": "./plugins/specbeads",
+          "category": "workflow",
+          "keywords": [
+            "spec-kit",
+            "beads",
+            "specifications",
+            "task-tracking",
+            "code-review"
+          ],
+          "description": null,
+          "categories": [
+            "beads",
+            "code-review",
+            "spec-kit",
+            "specifications",
+            "task-tracking",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add lumberbarons/lumber-mart",
+            "/plugin install specbeads@lumber-mart"
+          ]
+        }
+      ]
+    }
+  ]
+}

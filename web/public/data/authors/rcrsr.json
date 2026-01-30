@@ -1,0 +1,65 @@
+{
+  "author": {
+    "id": "rcrsr",
+    "display_name": "rcrsr",
+    "avatar_url": "https://avatars.githubusercontent.com/u/243207018?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "rcrsr",
+      "version": null,
+      "description": "Claude Code plugins by Andre Bremer",
+      "repo_full_name": "rcrsr/claude-plugins",
+      "repo_url": "https://github.com/rcrsr/claude-plugins",
+      "repo_description": "Marketplace for Claude Code plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-29T05:59:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rcrsr\",\n  \"owner\": {\n    \"name\": \"Andre Bremer\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by Andre Bremer\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"policies\",\n      \"source\": \"./policies\",\n      \"description\": \"Auto-fetch policies for subagents via PreToolUse hook\"\n    },\n    {\n      \"name\": \"snoop\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/rcrsr/snoop.git\"\n      },\n      \"description\": \"Captures Claude Code run transcripts between user prompts for debugging and review\"\n    },\n    {\n      \"name\": \"checkmate\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/rcrsr/checkmate.git\"\n      },\n      \"description\": \"Automated code quality checks on file edits with configurable linters and formatters\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nPlugins that make Claude Code more reliable. Catch errors early, debug failures, enforce standards.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add rcrsr/claude-plugins\n\n# Install any plugin\n/plugin install <plugin>@rcrsr\n```\n\n## Available Plugins\n\n### [checkmate](https://github.com/rcrsr/checkmate)\n\n**Automated code quality checks on every edit.**\n\nRuns your linters, formatters, and type checkers after every edit. Catches errors before they compound. Zero configuration needed to get started. Discovers and configures your tools automatically within seconds. Perfect for monorepos with diverse toolchains.\n\n```bash\n/plugin install checkmate@rcrsr\n```\n\n---\n\n### [snoop](https://github.com/rcrsr/snoop)\n\n**Debug Claude Code sessions with transcript capture.**\n\nCaptures every session as streamlined JSONL. Tracks ESC interrupts, tool usage, and timing. Built-in reviewer identifies anti-patterns like loops, scope creep, and redundant reads.\n\n```bash\n/plugin install snoop@rcrsr\n```\n\n---\n\n### [policies](./policies)\n\n**Auto-inject policies into subagents.**\n\nCodify your team's standards once, reference them everywhere with § notation. Subagents declare what policies they need; the hook fetches and injects them automatically.\n\n```bash\n/plugin install policies@rcrsr\n```\n",
+        "policies/README.md": "# policies\n\nAuto-fetches policy content for subagents. Codify your team's standards once, enforce them everywhere.\n\n## Why policies?\n\n**Consistent agent behavior.** Subagents automatically receive relevant policies. No manual context stuffing. No forgotten guidelines.\n\n**Reusable standards.** Write coding standards, architecture rules, or review criteria once. Reference them with § notation across all your agents.\n\n**Self-maintaining docs.** Built-in commands create policies from existing code patterns and audit them against §META standards.\n\n**Scoped injection.** Policies load only when needed. Agents declare what they require; the hook fetches exactly that.\n\n## Installation\n\n```bash\n# From marketplace (bundled in claude-plugins)\n/plugin marketplace add rcrsr/claude-plugins\n/plugin install policies@rcrsr\n\n# Or load locally\nclaude --plugin-dir /path/to/claude-plugins/policies\n```\n\n## Quick Start\n\n1. Create policy files in `.claude/policies/*.md` using § notation\n2. Add `## Required Policies` section to your subagent with JSON array of § references\n3. When the agent runs, policies are auto-injected\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/policies:create-policies` | Extract patterns from existing code to create policy documents |\n| `/policies:review-policies` | Audit all policies against §META standards |\n\n## Agents\n\n| Agent | Description |\n|-------|-------------|\n| `policy-engineer` | Creates and optimizes policy documents |\n| `policy-reviewer` | Audits policies, reports violations with line numbers |\n\n## Bundled Policies\n\n| Policy | Description |\n|--------|-------------|\n| `policies-meta.md` | Standards for policy document structure (§META) |\n\n### §META Quick Reference\n\n- **Size limits:** 500 lines/doc, 50 lines/section, 10 lines/example\n- **Structure:** Title, intro, TOC, `{§PREFIX.X}` headers, `{§END}` marker\n- **Content:** Be explicit, lead with context, show correct/incorrect pairs\n\n## Dependencies\n\nRequires [@rcrsr/mcp-policy-server](https://github.com/rcrsr/mcp-policy-server) for § notation parsing.\n"
+      },
+      "plugins": [
+        {
+          "name": "policies",
+          "source": "./policies",
+          "description": "Auto-fetch policies for subagents via PreToolUse hook",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add rcrsr/claude-plugins",
+            "/plugin install policies@rcrsr"
+          ]
+        },
+        {
+          "name": "snoop",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/rcrsr/snoop.git"
+          },
+          "description": "Captures Claude Code run transcripts between user prompts for debugging and review",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add rcrsr/claude-plugins",
+            "/plugin install snoop@rcrsr"
+          ]
+        },
+        {
+          "name": "checkmate",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/rcrsr/checkmate.git"
+          },
+          "description": "Automated code quality checks on file edits with configurable linters and formatters",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add rcrsr/claude-plugins",
+            "/plugin install checkmate@rcrsr"
+          ]
+        }
+      ]
+    }
+  ]
+}

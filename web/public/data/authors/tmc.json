@@ -1,0 +1,68 @@
+{
+  "author": {
+    "id": "tmc",
+    "display_name": "Travis Cline",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3977?u=ba15c36cd7e0fd2d5fd1a4eb4df77420618a6d9e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "it2",
+      "version": null,
+      "description": "iTerm2 terminal automation tools and Claude Code integration agents for the it2 CLI",
+      "repo_full_name": "tmc/it2",
+      "repo_url": "https://github.com/tmc/it2",
+      "repo_description": "cli for iTerm2",
+      "signals": {
+        "stars": 11,
+        "forks": 0,
+        "pushed_at": "2025-11-16T04:16:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"it2\",\n  \"owner\": {\n    \"name\": \"it2 Development Team\",\n    \"email\": \"[email protected]\"\n  },\n  \"metadata\": {\n    \"description\": \"iTerm2 terminal automation tools and Claude Code integration agents for the it2 CLI\",\n    \"version\": \"1.1.0\",\n    \"homepage\": \"https://github.com/tmc/it2\",\n    \"repository\": \"https://github.com/tmc/it2\",\n    \"keywords\": [\"iterm2\", \"terminal\", \"automation\", \"claude-code\", \"ai-cli\"]\n  },\n  \"plugins\": [\n    {\n      \"name\": \"core\",\n      \"source\": \"./integrations/claude-code/plugins/it2-core\"\n    },\n    {\n      \"name\": \"claude-automation\",\n      \"source\": \"./integrations/claude-code/plugins/it2-claude-automation\"\n    },\n    {\n      \"name\": \"claude-plugin-development\",\n      \"source\": \"./integrations/claude-code/plugins/it2-claude-plugin-development\"\n    },\n    {\n      \"name\": \"claude-agent-development\",\n      \"source\": \"./integrations/claude-code/plugins/it2-claude-agent-development\"\n    }\n  ]\n}\n",
+        "README.md": "# it2\n\n[![Go Reference](https://pkg.go.dev/badge/github.com/tmc/it2.svg)](https://pkg.go.dev/github.com/tmc/it2)\n\nA powerful command-line tool for controlling iTerm2 through its API. Automate terminal sessions, manage tabs and windows, monitor events, and integrate iTerm2 into your workflows.\n\n## Installation\n\n### Requirements\n\n- **iTerm2** (macOS only, for now)\n- **Go** 1.21+\n\n### Install with Go\n\n```bash\ngo install github.com/tmc/it2/cmd/it2@latest\n```\n\nMake sure `~/go/bin` is in your PATH:\n\n```bash\nexport PATH=\"$HOME/go/bin:$PATH\"\n```\n\n### Install from GitHub Releases\n\nDownload pre-built binaries from [GitHub Releases](https://github.com/tmc/it2/releases).\n\n### Verify Installation\n\n```bash\nit2 auth check\n```\n\nThe first time you run `it2`, iTerm2 will prompt you to allow API access. Click \"Allow\" to continue.\n\n### Plugin Scripts\n\nPlugin scripts provide additional functionality for Claude Code integration and session management. They are automatically embedded in the `it2` binary and extracted on first use to `~/.it2/plugins/{version}/`.\n\nThe plugin discovery system searches for plugins in this priority order:\n1. Executables in your `PATH` (highest priority)\n2. Directories from `IT2_PLUGIN_PATHS` environment variable\n3. Embedded plugins extracted from the binary (fallback)\n\nList available plugins:\n```bash\nit2 plugins list\n```\n\nAvailable plugin scripts (embedded):\n- `it2-session-has-no-queued-claude-messages` - Detect if Claude is idle\n- `it2-session-claude-suggest-action` - Suggest interventions for stuck Claude sessions\n- `it2-session-is-at-prompt` - Check if session is at a shell prompt\n- `it2-session-claude-has-modal` - Check if Claude has a modal dialog\n- `it2-session-claude-auto-approve` - Auto-approve safe operations\n- And other session management utilities\n\nTo override embedded plugins, place your own version in your `PATH`.\n\n## Quick Start\n\nTry these commands to get started:\n\n```bash\n# List all terminal sessions\nit2 session list\n\n# Send text to the current session\nit2 session send-text \"echo Hello, iTerm2!\"\n\n# Create a new tab\nit2 tab create \"Default\"\n\n# Split current pane vertically\nit2 session split --vertical\n\n# Split current pane horizontally\nit2 session split --horizontal\n```\n\n### Your First Automation Script\n\nCreate a development environment with one command:\n\n```bash\n# Create a new tab and split it into three panes\nit2 tab create \"Default\"\nit2 session send-text \"cd ~/project && vim\"\nit2 session split --horizontal\nit2 session send-text \"npm run dev\"\nit2 session split --vertical\nit2 session send-text \"git status && git log --oneline -5\"\n```\n\n## Common Use Cases\n\n### Development Workflow\n\nSetup a complete development environment:\n\n```bash\n# Create a new tab with editor, dev server, and git status\nit2 tab create \"Default\"\nit2 session send-text \"cd ~/project && vim\"\nit2 session split --vertical\nit2 session send-text \"npm run dev\"\nit2 session split --horizontal\nit2 session send-text \"git status\"\n```\n\n### Multi-Server Management\n\nConnect to multiple servers at once:\n\n```bash\nfor server in web1 web2 db1; do\n    it2 tab create \"Default\"\n    it2 session send-text \"ssh $server\"\ndone\n```\n\n### Broadcast Commands\n\nRun the same command in all sessions:\n\n```bash\nfor session in $(it2 session list --format json | jq -r '.[].id'); do\n    it2 session send-text \"$session\" \"git pull && git status\"\ndone\n```\n\n### Save and Restore Layouts\n\nSave your current window arrangement:\n\n```bash\nit2 arrangement save \"my-dev-setup\"\n\n# Later, restore it\nit2 arrangement list\nit2 arrangement restore \"my-dev-setup\"\n```\n\n## Command Reference\n\n### Essential Commands\n\n**Sessions & Tabs:**\n- `it2 session list` - List all terminal sessions\n- `it2 session split [--vertical|--horizontal]` - Split current pane\n- `it2 session send-text <text>` - Send text to session\n- `it2 tab create <profile>` - Create new tab\n- `it2 window create` - Create new window\n\n**Text & Content:**\n- `it2 text get-buffer` - Get session buffer content\n- `it2 clipboard paste` - Paste from clipboard\n- `it2 badge set <text>` - Set session badge\n\n**Monitoring:**\n- `it2 notification monitor --type <type>` - Monitor events\n- `it2 variable monitor <scope> <name>` - Watch variable changes\n\n### All Command Categories\n\n<details>\n<summary>Click to expand full command list</summary>\n\n**Application Control:**\n- `app` - Control iTerm2 application (focus, variables, properties)\n- `auth` - Manage API authentication and connection\n- `arrangement` - Save and restore window arrangements\n\n**Session & Tab Management:**\n- `session` - Create, list, close, split, activate, restart sessions\n- `tab` - Create, list, close, move, activate tabs\n- `window` - Create, list, close, focus windows\n\n**Text & Content Operations:**\n- `text` - Buffer operations, cursor control, search, selection\n- `selection` - Control and retrieve text selection\n- `badge` - Display informational badges on sessions\n- `clipboard` - Manage clipboard operations\n- `screen` - Screen capture utilities\n\n**Shell Integration Features** (requires Shell Integration):\n- `prompt` - Access command history, prompts, exit codes\n- `job` - Monitor running processes and jobs\n- `shell` - Detect shell state (ready/busy/tui) and wait for prompts\n\n**Customization:**\n- `profile` - Manage terminal profiles and their properties\n- `color` - Import/export color presets and themes\n- `variable` - Get/set iTerm2 variables with scope control\n\n**Monitoring & Events:**\n- `notification` - Subscribe to real-time iTerm2 events\n- `broadcast` - Manage broadcast input domains\n- `statusbar` - Configure status bar components\n\n**Advanced:**\n- `tmux` - Control tmux integration\n- `completion` - Generate shell completion scripts\n- `config` - Manage it2 configuration\n\n</details>\n\n## Configuration\n\n### Global Flags\n\nAll commands support these flags:\n\n```bash\n--format string      # Output format: text, json, yaml (default \"text\")\n--timeout duration   # Connection timeout (default 5s)\n--url string         # API URL (auto-detects Unix socket)\n```\n\n### Environment Variables\n\n```bash\nITERM_SESSION_ID     # Current session ID (auto-set by iTerm2)\nITERM2_COOKIE        # Auth cookie (auto-requested if not set)\nITERM2_KEY           # Auth key (auto-requested if not set)\nITERM2_DEBUG=1       # Enable debug logging\n```\n\n### Output Formats\n\nGet data in different formats:\n\n```bash\nit2 session list                    # Human-readable text\nit2 session list --format json      # JSON for scripting\nit2 profile get \"Default\" --format yaml  # YAML for config\n```\n\n## Advanced Features\n\n### Shell Integration\n\nEnable advanced features by installing iTerm2 Shell Integration:\n\n**Menu → iTerm2 → Install Shell Integration**\n\nThis unlocks:\n- Command history access\n- Exit code tracking\n- Job monitoring\n- Shell state detection\n\n```bash\n# Show command history with exit codes\nit2 prompt list\n\n# Search for failed commands\nit2 prompt search \"git\" | grep \"Exit: [^0]\"\n\n# Wait for shell to be ready\nit2 shell wait-for-prompt && it2 session send-text \"echo ready\"\n```\n\n### Real-time Event Monitoring\n\nSubscribe to live iTerm2 events:\n\n```bash\n# Monitor keystrokes\nit2 notification monitor --type keystroke\n\n# Watch for new sessions\nit2 notification monitor --type session\n\n# Monitor variable changes\nit2 variable monitor session user.myvar\n```\n\n### Authentication\n\nAuthentication is automatic:\n1. First connection requests credentials via AppleScript\n2. iTerm2 prompts you to allow API access\n3. Credentials cached for session duration\n\n```bash\n# Check auth status\nit2 auth check\n\n# Force re-authentication\nit2 auth request\n```\n\n## Usage Tips\n\n### Session Identification\n\nSessions can be referenced by:\n- Full format: `w0t1p12:C3D91F33-3805-47E2-A3F6-B8AED6EC2209`\n- UUID only: `C3D91F33-3805-47E2-A3F6-B8AED6EC2209`\n- When omitted, uses `$ITERM_SESSION_ID` (current session)\n\n### Scripting Best Practices\n\n```bash\n# Use JSON output for parsing\nSESSIONS=$(it2 session list --format json)\necho \"$SESSIONS\" | jq -r '.[].id'\n\n# Always quote variables\nit2 session send-text \"$SESSION_ID\" \"$COMMAND\"\n\n# Chain commands carefully\nit2 session send-text \"cd /path && pwd && ls\"\n```\n\n## Troubleshooting\n\n### Connection Problems\n\n```bash\n# Check if iTerm2 API is enabled\nit2 auth check\n\n# Enable debug output\nITERM2_DEBUG=1 it2 session list\n\n# Verify API is enabled in iTerm2\n# Preferences → General → Magic → Enable Python API\n```\n\n### Shell Integration Not Working\n\n```bash\n# Verify Shell Integration is installed\necho $ITERM_SESSION_ID  # Should show session ID\n\n# Reinstall if needed\ncurl -L https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh | bash\n```\n\n### Session ID Not Found\n\n```bash\n# List all sessions to find the correct ID\nit2 session list\n\n# Use UUID format or full format\nit2 session send-text C3D91F33-3805-47E2-A3F6-B8AED6EC2209 \"echo test\"\n```\n\n## Go Package\n\nFor using it2 as a Go library in your own projects:\n\n```bash\ngo get github.com/tmc/it2\n```\n\nSee documentation at [pkg.go.dev/github.com/tmc/it2](https://pkg.go.dev/github.com/tmc/it2)\n\n## Resources\n\n- **Project Repository**: [github.com/tmc/it2](https://github.com/tmc/it2)\n- **iTerm2 API Docs**: [iterm2.com/documentation-api.html](https://iterm2.com/documentation-api.html)\n- **Shell Integration Guide**: [iterm2.com/documentation-shell-integration.html](https://iterm2.com/documentation-shell-integration.html)\n\nGet help for any command:\n```bash\nit2 help [command]\nit2 [command] --help\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "core",
+          "source": "./integrations/claude-code/plugins/it2-core",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tmc/it2",
+            "/plugin install core@it2"
+          ]
+        },
+        {
+          "name": "claude-automation",
+          "source": "./integrations/claude-code/plugins/it2-claude-automation",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tmc/it2",
+            "/plugin install claude-automation@it2"
+          ]
+        },
+        {
+          "name": "claude-plugin-development",
+          "source": "./integrations/claude-code/plugins/it2-claude-plugin-development",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tmc/it2",
+            "/plugin install claude-plugin-development@it2"
+          ]
+        },
+        {
+          "name": "claude-agent-development",
+          "source": "./integrations/claude-code/plugins/it2-claude-agent-development",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tmc/it2",
+            "/plugin install claude-agent-development@it2"
+          ]
+        }
+      ]
+    }
+  ]
+}

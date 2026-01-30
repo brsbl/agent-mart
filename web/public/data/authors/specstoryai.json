@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "specstoryai",
+    "display_name": "SpecStory",
+    "avatar_url": "https://avatars.githubusercontent.com/u/166310736?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-skills",
+      "version": null,
+      "description": "AI agent skills for analyzing and organizing SpecStory session histories",
+      "repo_full_name": "specstoryai/agent-skills",
+      "repo_url": "https://github.com/specstoryai/agent-skills",
+      "repo_description": "SpecStory's official collection of agent skills. Summarize, organize and create with `.specstory/history`",
+      "signals": {
+        "stars": 12,
+        "forks": 3,
+        "pushed_at": "2026-01-29T16:52:55Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-skills\",\n  \"owner\": {\n    \"name\": \"SpecStory\",\n    \"url\": \"https://specstory.com\"\n  },\n  \"metadata\": {\n    \"description\": \"AI agent skills for analyzing and organizing SpecStory session histories\",\n    \"version\": \"1.0.0\",\n    \"repository\": \"https://github.com/specstoryai/agent-skills\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"specstory-skills\",\n      \"description\": \"6 skills for working with SpecStory session histories: yak shave analysis, session summaries, link trails, file organization, and secret scanning\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/specstory-guard\",\n        \"./skills/specstory-link-trail\",\n        \"./skills/specstory-organize\",\n        \"./skills/specstory-project-stats\",\n        \"./skills/specstory-session-summary\",\n        \"./skills/specstory-yak\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Agent Skills for SpecStory\n\nA collection of AI agent skills for working with [SpecStory](https://specstory.com) session histories. Built for developers who want Claude Code (or similar AI coding assistants) to help analyze, organize, and extract insights from their AI-assisted coding sessions.\n\n**Contributions welcome!** Found a way to improve a skill or have a new one to add? [Open a PR](#contributing).\n\n## What are Skills?\n\nSkills are markdown files that give AI agents specialized knowledge and workflows for specific tasks. When you add these to your project, Claude Code (or agents like Codex, Cursor, Gemini, Copilot) can recognize relevant tasks and apply the right frameworks and analysis patterns.\n\n## Prerequisites\n\nThese skills work with your local `.specstory/history` directory ([or cloud.specstory.com APIs](https://docs.specstory.com/api-reference/introduction)), which is created by [SpecStory](https://github.com/specstoryai/getspecstory) when capturing AI coding sessions.\n\n**Install SpecStory for your tool:**\n\n| Tool | Installation |\n|------|--------------|\n| **Cursor / VS Code** | Search \"SpecStory\" in Extensions (Cmd/Ctrl+Shift+X) |\n| **Claude Code / CLI agents** | `brew tap specstoryai/tap && brew install specstory` |\n\nOnce installed, your AI conversations are automatically saved to `.specstory/history/` in each project.\n\n> **Note for contributors:** Don't run `npx skills add` from within this repo - it will install skills into the repo directory. The `.gitignore` excludes these directories, but install skills in your actual projects instead.\n\n## Available Skills\n\n<!-- SKILLS:START -->\n| Skill | Description |\n|-------|-------------|\n| [specstory-guard](skills/specstory-guard/) | Install a pre-commit hook that scans .specstory/history for secrets before commits. Run when user says \"set up secret... |\n| [specstory-link-trail](skills/specstory-link-trail/) | Track all URLs fetched during SpecStory AI coding sessions. Run when user says \"show my link trail\", \"what URLs did I... |\n| [specstory-organize](skills/specstory-organize/) | Organize SpecStory AI coding sessions in .specstory/history into year/month folders. Run when user says \"organize my... |\n| [specstory-project-stats](skills/specstory-project-stats/) | Fetch project statistics from SpecStory Cloud. Run when user says \"get project stats\", \"show SpecStory stats\", \"project... |\n| [specstory-session-summary](skills/specstory-session-summary/) | Summarize recent SpecStory AI coding sessions in standup format. Use when the user wants to review sessions from... |\n| [specstory-yak](skills/specstory-yak/) | Analyze your SpecStory AI coding sessions in .specstory/history for yak shaving - when your initial goal got derailed... |\n<!-- SKILLS:END -->\n\n## Installation\n\n### Option 1: Skills CLI (Recommended)\n\nUse [npx skills](https://skills.sh) to install skills directly:\n\n```bash\n# Install all skills\nnpx skills add specstoryai/agent-skills\n\n# Install specific skills\nnpx skills add specstoryai/agent-skills --skill specstory-yak specstory-session-summary\n\n# List available skills\nnpx skills add specstoryai/agent-skills --list\n```\n\nThis installs skills to `.agents/skills/` and symlinks them to each detected agent's directory (`.claude/skills/`, `.cursor/skills/`, `.codex/skills/`, etc.). The CLI auto-detects which agents you have installed.\n\n### Option 2: Claude Code Plugin\n\nInstall via Claude Code's built-in plugin system:\n\n```bash\n# Add the marketplace\n/plugin marketplace add specstoryai/agent-skills\n\n# Install all SpecStory skills\n/plugin install specstory-skills\n```\n\n### Option 3: Clone and Copy\n\nClone the entire repo and copy the skills folder:\n\n```bash\ngit clone https://github.com/specstoryai/agent-skills.git\ncp -r agent-skills/skills/* .claude/skills/\n```\n\n### Option 4: Git Submodule\n\nAdd as a submodule for easy updates:\n\n```bash\ngit submodule add https://github.com/specstoryai/agent-skills.git .claude/agent-skills\n```\n\nThen reference skills from `.claude/agent-skills/skills/`.\n\n### Option 5: Fork and Customize\n\n1. Fork this repository\n2. Customize skills for your specific needs\n3. Clone your fork into your projects\n\n## Usage\n\nOnce installed, just ask Claude Code to help with SpecStory-related tasks:\n\n```\n\"Analyze my yak shaving for the last 30 days\"\n→ Uses specstory-yak skill\n\n\"Summarize my coding sessions from this week\"\n→ Uses specstory-session-summary skill\n\n\"Organize my specstory history folder\"\n→ Uses specstory-organize skill\n\n\"What URLs did I visit in my last session?\"\n→ Uses specstory-link-trail skill\n\n\"Set up secret scanning for my specstory files\"\n→ Uses specstory-guard skill\n```\n\nYou can also invoke skills directly:\n\n```\n/specstory-yak\n/specstory-session-summary\n/specstory-organize\n/specstory-link-trail\n/specstory-guard\n```\n\n## Skill Categories\n\n### Session Analysis\n- `specstory-yak` - Detect rabbit holes and scope creep in your coding sessions\n- `specstory-session-summary` - Generate standup-ready summaries of recent work\n- `specstory-link-trail` - Track all URLs fetched during sessions\n\n### Organization & Maintenance\n- `specstory-organize` - Keep history files organized by year/month\n- `specstory-guard` - Pre-commit hook to catch secrets in history files\n\n## Contributing\n\nFound a way to improve a skill? Have a new skill to suggest? PRs and issues welcome!\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:\n- Repository structure and GitHub workflows\n- How to add a new skill\n- Naming conventions and PR checklist\n\n## License\n\n[Apache 2.0](LICENSE) - Use these however you want.\n"
+      },
+      "plugins": [
+        {
+          "name": "specstory-skills",
+          "description": "6 skills for working with SpecStory session histories: yak shave analysis, session summaries, link trails, file organization, and secret scanning",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/specstory-guard",
+            "./skills/specstory-link-trail",
+            "./skills/specstory-organize",
+            "./skills/specstory-project-stats",
+            "./skills/specstory-session-summary",
+            "./skills/specstory-yak"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add specstoryai/agent-skills",
+            "/plugin install specstory-skills@agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

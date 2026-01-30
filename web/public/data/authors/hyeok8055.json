@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "hyeok8055",
+    "display_name": "KKU KKU",
+    "avatar_url": "https://avatars.githubusercontent.com/u/63309194?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "hyeok-plugins",
+      "version": null,
+      "description": "hyeok8055의 커스텀 Claude 플러그인 마켓플레이스",
+      "repo_full_name": "hyeok8055/hyeok-plugins",
+      "repo_url": "https://github.com/hyeok8055/hyeok-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-28T05:39:28Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"hyeok-plugins\",\n  \"owner\": {\n    \"name\": \"hyeok8055\"\n  },\n  \"metadata\": {\n    \"description\": \"hyeok8055의 커스텀 Claude 플러그인 마켓플레이스\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"typst-korean\",\n      \"source\": \"./plugins/typst-korean\"\n    }\n  ]\n}\n",
+        "README.md": "# typst-korean\n\nClaude Code 플러그인 - Typst 한글 문서 작성 지원\n\n## 빠른 시작\n\n### 1. 플러그인 설치\n\nClaude Code에서 다음 명령어를 실행하세요:\n\n```bash\n# 마켓플레이스 추가\n/plugin marketplace add hyeok8055/hyeok-plugins\n\n# 플러그인 설치\n/plugin install typst-korean@hyeok8055-hyeok-plugins\n```\n\n### 설치 확인\n\n```bash\n# 설치된 플러그인 목록 확인\n/plugin\n```\n\n설치 후:\n- `.typ` 파일을 열면 자동으로 typst-korean 스킬이 활성화됩니다\n- `/new` 입력 시 자동완성에 커맨드가 표시됩니다\n\n### 2. 폰트 설치\n\n```bash\n/install-font\n```\n\n### 3. 새 문서 생성\n\n```bash\n/new mydocument\n```\n\n### 4. PDF로 변환\n\n```bash\n/pdf mydocument.typ\n```\n\n## 커맨드 사용법\n\n| 커맨드 | 설명 | 예시 |\n|--------|------|------|\n| `/new [파일명]` | 기본 한글 문서 생성 | `/new report` |\n| `/new-report [파일명]` | 보고서 템플릿 | `/new-report quarterly` |\n| `/new-slide [파일명]` | 슬라이드/장표 템플릿 | `/new-slide presentation` |\n| `/pdf [파일명]` | Typst → PDF 변환 | `/pdf document.typ` |\n| `/convert [파일명]` | Markdown → Typst 변환 | `/convert README.md` |\n| `/check-font` | 폰트 설치 확인 | `/check-font` |\n| `/install-font` | 폰트 다운로드/설치 | `/install-font` |\n\n## 지원 폰트\n\n모든 폰트는 **상업적 사용이 무료**입니다 (SIL OFL 또는 동등 라이선스).\n\n| 폰트 | 특징 | 추천 용도 |\n|------|------|-----------|\n| **Pretendard** (기본값) | Apple SF, Inter 스타일 | 일반 문서, UI |\n| **Noto Sans KR** | Google Fonts 고딕 | 일반 문서, 웹 |\n| **Noto Serif KR** | Google Fonts 명조 | 논문, 서적 |\n| **NanumGothicCoding** | 네이버 고정폭 | 코드, 기술 문서 |\n| **D2Coding** | 네이버 고정폭 | 코드, 기술 문서 |\n| **IBM Plex Sans KR** | IBM 디자인 고딕 | 프레젠테이션 |\n| **Spoqa Han Sans Neo** | 스포카 고딕 | UI, 웹 |\n\n문서 생성 시 폰트를 선택할 수 있으며, 기본값은 Pretendard입니다.\n\n## 기능\n\n- 다양한 한글 폰트 선택 및 fallback 지원\n- 한글 문서에 적합한 타이포그래피 설정 (CJK 권장 줄간격, 들여쓰기)\n- 다양한 템플릿 제공 (기본, 보고서, 슬라이드)\n- Typst 기본 문법 레퍼런스\n- `.typ` 파일 작업 시 자동 활성화\n\n## 폰트 설치\n\n### 프로젝트 폴더에 설치 (권장)\n\n```bash\n# 폰트 디렉토리 생성\nmkdir -p fonts\n\n# Pretendard 다운로드\ncurl -L -o fonts/Pretendard.zip \"https://github.com/orioncactus/pretendard/releases/download/v1.3.9/Pretendard-1.3.9.zip\"\ncd fonts && unzip -o Pretendard.zip -d Pretendard && rm Pretendard.zip && cd ..\n\n# 컴파일 시 폰트 경로 지정\ntypst compile --font-path ./fonts document.typ\n```\n\n### 시스템 전역 설치\n\n```bash\n# macOS\ncp fonts/*/*.otf ~/Library/Fonts/\n\n# Linux\nmkdir -p ~/.local/share/fonts\ncp fonts/*/*.otf ~/.local/share/fonts/\nfc-cache -fv\n```\n\n## 문제 해결\n\n### 폰트 인식 안 될 때\n\n```bash\n# 설치된 폰트 확인\ntypst fonts | grep -i pretendard\n\n# 폰트 경로 지정하여 컴파일\ntypst compile --font-path ./fonts document.typ\n```\n\n### typst 설치\n\n```bash\n# Cargo (Rust)\ncargo install typst-cli\n\n# Homebrew (macOS)\nbrew install typst\n\n# Scoop (Windows)\nscoop install typst\n```\n\n### 한글 깨짐\n\n폰트가 없거나 `lang` 설정이 누락된 경우 발생합니다:\n\n```typst\n#set text(\n  font: (\"Pretendard\", \"Noto Sans KR\", \"Malgun Gothic\"),\n  lang: \"ko\",\n  region: \"KR\",\n)\n```\n\n## 권장 설정\n\n### 한글 문서 기본 설정\n\n```typst\n// 폰트 (fallback 포함)\n#set text(\n  font: (\"Pretendard\", \"Noto Sans KR\", \"Malgun Gothic\"),\n  lang: \"ko\",\n  region: \"KR\",\n  size: 11pt,\n)\n\n// 페이지\n#set page(\n  paper: \"a4\",\n  margin: (x: 2.5cm, y: 2.5cm),\n)\n\n// 문단 (CJK 권장)\n#set par(\n  leading: 1.5em,\n  first-line-indent: 1em,\n  justify: true,\n)\n```\n\n## 플러그인 관리\n\n```bash\n# 플러그인 비활성화\n/plugin disable typst-korean@hyeok8055-hyeok-plugins\n\n# 플러그인 활성화\n/plugin enable typst-korean@hyeok8055-hyeok-plugins\n\n# 플러그인 제거\n/plugin uninstall typst-korean@hyeok8055-hyeok-plugins\n\n# 마켓플레이스 제거\n/plugin marketplace remove hyeok8055-hyeok-plugins\n```\n\n## 요구 사항\n\n- Typst >= 0.11.0\n- Claude Code\n\n## 라이선스\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "typst-korean",
+          "source": "./plugins/typst-korean",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hyeok8055/hyeok-plugins",
+            "/plugin install typst-korean@hyeok-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

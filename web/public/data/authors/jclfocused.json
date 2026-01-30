@@ -1,0 +1,95 @@
+{
+  "author": {
+    "id": "jclfocused",
+    "display_name": "Justin Clapperton",
+    "avatar_url": "https://avatars.githubusercontent.com/u/189531280?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "laserfocused-plugins",
+      "version": "1.0.0",
+      "description": "MVP-focused planning and workflow plugins for Linear and Jira by LaserFocused",
+      "repo_full_name": "jclfocused/claude-agents",
+      "repo_url": "https://github.com/jclfocused/claude-agents",
+      "repo_description": "Claude agents and commands configuration",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2025-12-23T12:14:12Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"laserfocused-plugins\",\n  \"version\": \"1.0.0\",\n  \"description\": \"MVP-focused planning and workflow plugins for Linear and Jira by LaserFocused\",\n  \"owner\": {\n    \"name\": \"LaserFocused OU\",\n    \"email\": \"justin@laserfocused.ee\",\n    \"url\": \"https://github.com/jclfocused\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"linear-planning-workflow\",\n      \"description\": \"MVP-focused feature planning and execution workflow for Linear. Plan features, create issues, update plans, and orchestrate work through Linear sub-issues.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"LaserFocused OU\",\n        \"email\": \"justin@laserfocused.ee\"\n      },\n      \"source\": \"./custom_plugins/plugins/linear-planning-workflow\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"linear\", \"planning\", \"workflow\", \"mvp\", \"issues\", \"features\"],\n      \"license\": \"MIT\"\n    },\n    {\n      \"name\": \"jira-planning-workflow\",\n      \"description\": \"MVP-focused feature planning and execution workflow for Jira. Plan features as Stories with flat Subtasks, create issues, and orchestrate work.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"LaserFocused OU\",\n        \"email\": \"justin@laserfocused.ee\"\n      },\n      \"source\": \"./custom_plugins/plugins/jira-planning-workflow\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"jira\", \"planning\", \"workflow\", \"mvp\", \"stories\", \"subtasks\"],\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        "custom_plugins/plugins/linear-planning-workflow/README.md": "# Linear Planning Workflow Plugin\n\nMVP-focused feature planning and execution workflow for Linear. This plugin provides a complete workflow for planning features, creating issues, updating plans, and orchestrating work through Linear sub-issues.\n\n## Requirements\n\n### Environment Variables\n\nThis plugin requires a Linear API key. Set the following environment variable:\n\n```bash\nexport LINEAR_API_KEY=\"your-linear-api-key\"\n```\n\nYou can get a Linear API key from: https://linear.app/settings/api\n\n### MCP Server\n\nThe plugin includes an MCP server configuration for Linear that will be automatically set up when the plugin is installed. The MCP server connects to Linear's hosted MCP endpoint at `https://mcp.linear.app/mcp`.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/planFeature <description>` | Create a Linear MVP parent issue with nested sub-issues for a new feature |\n| `/work-on-feature <keywords>` | Orchestrate work on a Linear parent feature issue and its sub-issues |\n| `/createIssue <description>` | Create a single Linear issue with codebase research and optional parent association |\n| `/updatePlan <changes>` | Update an existing Linear parent feature issue and its sub-issues |\n| `/fix-issues <bug description>` | Create Linear issues for reported bugs or problems |\n\n## Agents\n\n| Agent | Description |\n|-------|-------------|\n| `linear-mvp-project-creator` | Creates MVP-scoped parent issues with nested sub-issues |\n| `linear-project-context` | Queries Linear for parent feature issues and their sub-issues |\n| `linear-mvp-issue-updater` | Updates existing feature plans while preserving completed work |\n| `linear-issue-creator` | Creates single well-researched issues |\n| `execute-issue` | Implements specific Linear sub-issues with MVP discipline |\n| `create-bug` | Creates bug issues with codebase investigation |\n\n## Workflow Overview\n\n### Planning a Feature\n\n1. Run `/planFeature <your feature description>`\n2. Select a project (or no project)\n3. Parallel code explorers investigate your codebase\n4. Answer clarifying questions about the feature\n5. Linear parent issue + sub-issues are created\n\n### Working on a Feature\n\n1. Run `/work-on-feature <feature keywords>`\n2. The orchestrator finds the parent issue\n3. Creates/switches to a feature branch\n4. Works through sub-issues sequentially\n5. Marks issues as complete in Linear\n\n### Creating Single Issues\n\n1. Run `/createIssue <description>`\n2. Optionally associate with a Feature Root parent\n3. Codebase investigation runs\n4. Well-structured issue is created\n\n## Key Principles\n\n- **MVP Focus**: Only implement what's needed to make features functional\n- **Linear Discipline**: All work tracked through Linear issues\n- **Patterns First**: Investigate codebase before implementing\n- **Atomic Design**: For UI features, use/create atomic components\n- **Feature Root Labels**: Parent issues are labeled \"Feature Root\" for filtering\n- **Visual Documentation**: Use Mermaid diagrams to document flows and interactions\n\n## Mermaid Diagrams in Linear Issues\n\nLinear supports Mermaid diagrams natively in issue descriptions. **This plugin ALWAYS includes Mermaid diagrams when applicable** to visualize:\n\n- User flows and interaction sequences\n- Data flow and processing pipelines\n- State machines and status transitions\n- API/service interaction patterns\n- Entity relationships and data models\n- Bug expected vs actual behavior\n\n### Syntax\n\nUse standard markdown code fences with `mermaid` as the language identifier:\n\n````markdown\n```mermaid\nflowchart TD\n    A[User Action] --> B{Validate}\n    B -->|Valid| C[Process]\n    B -->|Invalid| D[Show Error]\n```\n````\n\n### Common Diagram Types\n\n| Type | Use Case |\n|------|----------|\n| `flowchart TD` | Top-down user flows, process flows |\n| `flowchart LR` | Left-right horizontal flows, pipelines |\n| `sequenceDiagram` | API calls, service-to-service communication |\n| `stateDiagram-v2` | Status workflows, state machines |\n| `erDiagram` | Database schemas, entity relationships |\n| `classDiagram` | Component architecture, class hierarchies |\n\n### Where Diagrams Appear\n\n- **Parent Feature Issues**: High-level flow diagram in \"High-Level Flow\" section\n- **Sub-Issues**: Flow diagrams when the slice involves processes or interactions\n- **Bug Issues**: Expected vs Actual flow diagrams to visualize the problem\n\nDiagrams are rendered automatically by Linear when viewing issues.\n\n## Installation\n\n**Run these slash commands inside Claude Code:**\n\n1. **Add the marketplace:**\n   ```\n   /plugin marketplace add jclfocused/claude-agents\n   ```\n\n2. **Install the plugin:**\n   ```\n   /plugin install linear-planning-workflow\n   ```\n\n3. **Set your environment variable:**\n   ```bash\n   export LINEAR_API_KEY=\"your-linear-api-key\"\n   ```\n   Get your API key from: https://linear.app/settings/api\n\n## Skills\n\nSkills are model-invoked capabilities that Claude uses autonomously based on context. Unlike slash commands (user-invoked), skills activate automatically when relevant.\n\n| Skill | Description |\n|-------|-------------|\n| `mvp-scoping` | Guides MVP thinking during feature discussions - \"what's the minimum to make this work?\" |\n| `linear-discipline` | Reminds about Linear issue tracking discipline - having issues in progress, marking done, creating missing scope |\n| `issue-writing` | Ensures consistent, high-quality issue structure with clear acceptance criteria |\n| `vertical-slice-planning` | Guides decomposition into vertical slices (end-to-end functionality) vs horizontal layers |\n| `atomic-design-planning` | Guides UI component architecture using atoms, molecules, organisms methodology |\n\n### When Skills Activate\n\n- **mvp-scoping**: When discussing features, planning work, or scoping requirements\n- **linear-discipline**: When starting/completing work, or discussing implementation without mentioning a Linear issue\n- **issue-writing**: When drafting issues or defining acceptance criteria\n- **vertical-slice-planning**: When breaking down features or discussing PR structure\n- **atomic-design-planning**: When discussing UI components or frontend implementation\n\n## Troubleshooting\n\n### MCP Server Not Accessible\n\nIf you see \"Linear MCP server is not accessible\", verify:\n1. Your `LINEAR_API_KEY` is set and valid\n2. You can reach `https://mcp.linear.app/mcp`\n3. The plugin is properly installed\n\n### Feature Root Label Missing\n\nThe `linear-mvp-project-creator` agent will automatically create the \"Feature Root\" label if it doesn't exist in your Linear workspace.\n\n### Project Selection\n\nWhen creating features, you'll be prompted to select a project. If you don't want project association, select \"No Project Association\".\n",
+        "custom_plugins/plugins/jira-planning-workflow/README.md": "# Jira Planning Workflow Plugin\n\nMVP-focused feature planning and execution workflow for Jira. This plugin provides a complete workflow for planning features as Stories with flat Subtasks, creating issues, and orchestrating work.\n\n## Requirements\n\n### Environment Variables\n\nThis plugin requires Jira credentials. Set the following environment variables:\n\n```bash\nexport JIRA_URL=\"https://your-domain.atlassian.net\"\nexport JIRA_USERNAME=\"your-email@example.com\"\nexport JIRA_API_TOKEN=\"your-jira-api-token\"\n```\n\nYou can create a Jira API token from: https://id.atlassian.com/manage-profile/security/api-tokens\n\n### Docker\n\nThe MCP server runs via Docker. Ensure Docker is installed and running.\n\n### MCP Server\n\nThe plugin includes an MCP server configuration that uses the `ghcr.io/sooperset/mcp-atlassian:latest` Docker image. This will be automatically set up when the plugin is installed.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/planFeature <description>` | Create a Jira Story with flat Subtasks for a new feature |\n| `/work-on-feature <keywords>` | Orchestrate work on a Jira Story and its Subtasks |\n\n## Agents\n\n| Agent | Description |\n|-------|-------------|\n| `jira-mvp-story-creator` | Creates MVP-scoped Stories with flat Subtasks |\n| `jira-story-context` | Queries Jira for Stories and their Subtasks |\n| `execute-issue-jira` | Implements specific Jira Subtasks with MVP discipline |\n| `jira-issue-creator` | Creates single well-researched issues |\n\n## Workflow Overview\n\n### Planning a Feature\n\n1. Run `/planFeature <your feature description>`\n2. Select a sprint (or backlog)\n3. Team is auto-detected from sprint name\n4. Parallel code explorers investigate your codebase\n5. Answer clarifying questions about the feature\n6. Jira Story + Subtasks are created\n\n### Working on a Feature\n\n1. Run `/work-on-feature <feature keywords>`\n2. The orchestrator finds the parent Story\n3. Optionally creates a feature branch\n4. Works through Subtasks sequentially\n5. Transitions issues to Done in Jira\n\n## Key Differences from Linear Plugin\n\n| Aspect | Linear | Jira |\n|--------|--------|------|\n| Structure | Nested sub-issues | Flat Subtasks only |\n| Naming | Any naming | SLICE/REFACTOR/TEST prefixes |\n| Custom Fields | Labels | Team + Sprint fields |\n| Status | State names | Transition IDs |\n\n## Flat Subtask Naming Convention\n\nSince Jira Subtasks cannot be nested, use naming conventions:\n\n- `SLICE 1: Main vertical slice` - A potential PR\n- `SLICE 1.1: Sub-part of slice 1` - Part of that PR\n- `SLICE 2: Next vertical slice` - Another potential PR\n- `REFACTOR: Code cleanup` - Refactoring work\n- `TEST: Testing task` - Testing work\n\n## Custom Fields\n\nThe plugin uses these Jira custom fields:\n\n| Field | ID | Purpose |\n|-------|-----|---------|\n| Team | `customfield_10001` | Team ownership (string) |\n| Sprint | `customfield_10020` | Sprint assignment (ID) |\n| Story Points | `customfield_10026` | Estimation (number) |\n\n**Note**: Custom field IDs may differ in your Jira instance. Check your Jira admin settings if issues arise.\n\n## Installation\n\n**Run these slash commands inside Claude Code:**\n\n1. **Add the marketplace:**\n   ```\n   /plugin marketplace add jclfocused/claude-agents\n   ```\n\n2. **Install the plugin:**\n   ```\n   /plugin install jira-planning-workflow\n   ```\n\n3. **Set your environment variables:**\n   ```bash\n   export JIRA_URL=\"https://your-domain.atlassian.net\"\n   export JIRA_USERNAME=\"your-email@example.com\"\n   export JIRA_API_TOKEN=\"your-jira-api-token\"\n   ```\n   Get your API token from: https://id.atlassian.com/manage-profile/security/api-tokens\n\n4. **Ensure Docker is running** (the MCP server runs in Docker)\n\n## Skills\n\nSkills are model-invoked capabilities that Claude uses autonomously based on context. Unlike slash commands (user-invoked), skills activate automatically when relevant.\n\n| Skill | Description |\n|-------|-------------|\n| `mvp-scoping` | Guides MVP thinking during feature discussions - \"what's the minimum to make this work?\" |\n| `jira-discipline` | Reminds about Jira issue tracking discipline - transitioning issues, marking done, creating Subtasks for missing scope |\n| `issue-writing` | Ensures consistent, high-quality issue structure with clear acceptance criteria |\n| `vertical-slice-planning` | Guides decomposition into vertical slices (end-to-end functionality) vs horizontal layers |\n| `atomic-design-planning` | Guides UI component architecture using atoms, molecules, organisms methodology |\n\n### When Skills Activate\n\n- **mvp-scoping**: When discussing features, planning work, or scoping requirements\n- **jira-discipline**: When starting/completing work, or discussing implementation without mentioning a Jira issue\n- **issue-writing**: When drafting issues or defining acceptance criteria\n- **vertical-slice-planning**: When breaking down features or discussing PR structure\n- **atomic-design-planning**: When discussing UI components or frontend implementation\n\n## Troubleshooting\n\n### MCP Server Not Accessible\n\nIf you see \"Jira MCP server is not accessible\", verify:\n1. Docker is running\n2. Environment variables are set correctly\n3. Your Jira API token is valid\n4. Your Jira URL is correct (include https://)\n\n### Custom Field Errors\n\nIf Subtasks aren't getting Team/Sprint:\n1. Verify custom field IDs match your Jira instance\n2. Use `mcp__mcp-atlassian__jira_search_fields` to find correct IDs\n3. Update the agent files with your custom field IDs\n\n### Sprint/Team Not Found\n\nThe plugin parses team name from sprint name (format: \"[Team] - Sprint [N]\").\nIf your sprint naming differs, you may need to adapt the parsing logic.\n"
+      },
+      "plugins": [
+        {
+          "name": "linear-planning-workflow",
+          "description": "MVP-focused feature planning and execution workflow for Linear. Plan features, create issues, update plans, and orchestrate work through Linear sub-issues.",
+          "version": "1.0.0",
+          "author": {
+            "name": "LaserFocused OU",
+            "email": "justin@laserfocused.ee"
+          },
+          "source": "./custom_plugins/plugins/linear-planning-workflow",
+          "category": "productivity",
+          "keywords": [
+            "linear",
+            "planning",
+            "workflow",
+            "mvp",
+            "issues",
+            "features"
+          ],
+          "license": "MIT",
+          "categories": [
+            "features",
+            "issues",
+            "linear",
+            "mvp",
+            "planning",
+            "productivity",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jclfocused/claude-agents",
+            "/plugin install linear-planning-workflow@laserfocused-plugins"
+          ]
+        },
+        {
+          "name": "jira-planning-workflow",
+          "description": "MVP-focused feature planning and execution workflow for Jira. Plan features as Stories with flat Subtasks, create issues, and orchestrate work.",
+          "version": "1.0.0",
+          "author": {
+            "name": "LaserFocused OU",
+            "email": "justin@laserfocused.ee"
+          },
+          "source": "./custom_plugins/plugins/jira-planning-workflow",
+          "category": "productivity",
+          "keywords": [
+            "jira",
+            "planning",
+            "workflow",
+            "mvp",
+            "stories",
+            "subtasks"
+          ],
+          "license": "MIT",
+          "categories": [
+            "jira",
+            "mvp",
+            "planning",
+            "productivity",
+            "stories",
+            "subtasks",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jclfocused/claude-agents",
+            "/plugin install jira-planning-workflow@laserfocused-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

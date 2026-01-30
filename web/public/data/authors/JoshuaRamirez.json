@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "JoshuaRamirez",
+    "display_name": "Joshua Ramirez",
+    "avatar_url": "https://avatars.githubusercontent.com/u/865163?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ms-ado-az",
+      "version": null,
+      "description": "Azure DevOps plugin using Azure CLI",
+      "repo_full_name": "JoshuaRamirez/ms-ado-az-claude-code-plugin",
+      "repo_url": "https://github.com/JoshuaRamirez/ms-ado-az-claude-code-plugin",
+      "repo_description": "Azure DevOps plugin for Claude Code - uses Azure CLI (az) instead of buggy MS MCP server",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-27T05:28:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ms-ado-az\",\n  \"owner\": {\n    \"name\": \"Joshua Ramirez\"\n  },\n  \"metadata\": {\n    \"description\": \"Azure DevOps plugin using Azure CLI\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ado-work-items\",\n      \"source\": \"./\",\n      \"description\": \"Azure DevOps work item management via CLI and REST API\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Joshua Ramirez\"\n      },\n      \"keywords\": [\"azure-devops\", \"ado\", \"work-items\", \"boards\", \"backlogs\", \"sprints\"],\n      \"category\": \"integrations\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ado-work-items\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Azure DevOps work item management - query, create, update, search work items via CLI and REST API\",\n  \"author\": {\n    \"name\": \"Joshua Ramirez\"\n  },\n  \"keywords\": [\"azure-devops\", \"ado\", \"work-items\", \"boards\", \"backlogs\", \"sprints\"]\n}\n",
+        "README.md": "# Azure DevOps Work Items Plugin\n\nA Claude Code plugin for managing Azure DevOps work items, boards, backlogs, and sprints using the Azure CLI (`az devops`).\n\n## Why This Plugin?\n\nThis plugin uses the official Azure CLI with the `azure-devops` extension instead of the Microsoft MCP server, which has known stability issues. The Azure CLI provides a reliable, well-documented interface to Azure DevOps APIs.\n\n## Prerequisites\n\n### 1. Azure CLI\n\nInstall the Azure CLI:\n- **Windows**: `winget install Microsoft.AzureCLI` or [download installer](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows)\n- **macOS**: `brew install azure-cli`\n- **Linux**: See [installation guide](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux)\n\n### 2. Azure DevOps Extension\n\nInstall the Azure DevOps extension for Azure CLI:\n\n```bash\naz extension add --name azure-devops\n```\n\n### 3. Authentication\n\nLog in to Azure:\n\n```bash\naz login\n```\n\nOr use a Personal Access Token (PAT):\n\n```bash\naz devops login\n```\n\n### 4. Configure Defaults\n\nSet your default organization and project:\n\n```bash\naz devops configure --defaults organization=https://dev.azure.com/YOUR_ORG project=YOUR_PROJECT\n```\n\nVerify configuration:\n\n```bash\naz devops configure --list\n```\n\n## Installation\n\n### From Claude Plugin Marketplace\n\n```bash\nclaude plugin marketplace add ms-ado-az\n```\n\n### From Local Source\n\n```bash\nclaude plugin install /path/to/ado\n```\n\n## Available Commands\n\n### Setup & Status\n\n| Command | Description |\n|---------|-------------|\n| `/ado:setup` | Configure Azure DevOps CLI authentication and defaults |\n| `/ado:status` | Check current configuration and test connectivity |\n\n### Work Items\n\n| Command | Description |\n|---------|-------------|\n| `/ado:items:show` | Show details of a work item by ID |\n| `/ado:items:create` | Create a new work item (bug, task, user story, etc.) |\n| `/ado:items:update` | Update an existing work item |\n| `/ado:items:query` | Query work items using WIQL |\n| `/ado:items:search` | Full-text search across work items |\n| `/ado:items:link` | Link work items together (parent/child, related, etc.) |\n| `/ado:items:comments` | View and add comments to work items |\n\n### Boards\n\n| Command | Description |\n|---------|-------------|\n| `/ado:boards:list` | List boards for a team |\n| `/ado:boards:columns` | Get board column configuration |\n| `/ado:boards:card-rules` | View board card styling rules |\n\n### Backlogs\n\n| Command | Description |\n|---------|-------------|\n| `/ado:backlogs:list` | List backlogs for a team |\n| `/ado:backlogs:items` | Get items in a backlog |\n\n### Sprints\n\n| Command | Description |\n|---------|-------------|\n| `/ado:sprints:list` | List team iterations/sprints |\n| `/ado:sprints:capacity` | View team capacity for a sprint |\n| `/ado:sprints:days-off` | View team days off for a sprint |\n\n### Areas & Iterations\n\n| Command | Description |\n|---------|-------------|\n| `/ado:areas-iterations:list-areas` | List project area paths |\n| `/ado:areas-iterations:list-iterations` | List project iteration paths |\n| `/ado:areas-iterations:assign-team` | Assign areas or iterations to a team |\n\n## Available Skills\n\nSkills provide reference documentation and guidance for complex operations:\n\n| Skill | Description |\n|-------|-------------|\n| `wiql-queries` | Build and execute WIQL (Work Item Query Language) queries |\n| `wit-invoke` | Call Azure DevOps REST APIs via `az devops invoke` |\n| `hierarchy-tree` | Construct ASCII tree visualizations from parent/child work item data |\n| `work-item-fields` | Reference for work item fields, link types, and states |\n\n## Agent\n\nThe plugin includes an AI agent for interactive work item management:\n\n### `ado-work-items` Agent\n\nAn Azure DevOps work item assistant that can:\n- Query and search work items\n- Create and update work items\n- Manage boards and backlogs\n- Handle sprints and capacity\n- Work with areas and iterations\n\nStart the agent with:\n\n```\n/agent ado-work-items\n```\n\n## Examples\n\n### Query My Open Tasks\n\n```\n/ado:items:query\n```\n\nThen ask for: \"Show me all tasks assigned to me that are not done\"\n\n### Create a Bug\n\n```\n/ado:items:create\n```\n\nThen provide: Type \"Bug\", Title \"Login button not responding\", Priority 1\n\n### View Sprint Capacity\n\n```\n/ado:sprints:capacity\n```\n\nThen specify the team and sprint iteration.\n\n## Troubleshooting\n\n### Check Status\n\nRun `/ado:status` to verify:\n- Azure CLI is installed\n- Azure DevOps extension is present\n- Default organization and project are configured\n- Connectivity to Azure DevOps is working\n\n### Common Issues\n\n1. **\"az: command not found\"** - Azure CLI is not installed or not in PATH\n2. **\"The following extension is not installed: azure-devops\"** - Run `az extension add --name azure-devops`\n3. **\"Please run 'az login' to setup account\"** - Run `az login` to authenticate\n4. **\"TF401019: The project does not exist\"** - Check your project name is correct (case-sensitive)\n5. **\"TF400813: Resource not available\"** - Verify organization URL format is `https://dev.azure.com/orgname`\n\n### Re-authenticate\n\n```bash\naz account clear\naz login\naz devops configure --defaults organization=https://dev.azure.com/YOUR_ORG project=YOUR_PROJECT\n```\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n\n## Author\n\nJoshua Ramirez\n"
+      },
+      "plugins": [
+        {
+          "name": "ado-work-items",
+          "source": "./",
+          "description": "Azure DevOps work item management via CLI and REST API",
+          "version": "1.0.0",
+          "author": {
+            "name": "Joshua Ramirez"
+          },
+          "keywords": [
+            "azure-devops",
+            "ado",
+            "work-items",
+            "boards",
+            "backlogs",
+            "sprints"
+          ],
+          "category": "integrations",
+          "categories": [
+            "ado",
+            "azure-devops",
+            "backlogs",
+            "boards",
+            "integrations",
+            "sprints",
+            "work-items"
+          ],
+          "install_commands": [
+            "/plugin marketplace add JoshuaRamirez/ms-ado-az-claude-code-plugin",
+            "/plugin install ado-work-items@ms-ado-az"
+          ]
+        }
+      ]
+    }
+  ]
+}

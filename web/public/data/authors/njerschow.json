@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "njerschow",
+    "display_name": "Nikita Jerschow",
+    "avatar_url": "https://avatars.githubusercontent.com/u/15145382?u=977c24368e456c0f0ed2ebe21d03c237f712efca&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "imessage-marketplace",
+      "version": null,
+      "description": "Send and receive iMessages via Claude Code using Sendblue",
+      "repo_full_name": "njerschow/textme",
+      "repo_url": "https://github.com/njerschow/textme",
+      "repo_description": "Text Claude from your phone via iMessage",
+      "signals": {
+        "stars": 55,
+        "forks": 3,
+        "pushed_at": "2026-01-17T17:46:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"imessage-marketplace\",\n  \"owner\": {\n    \"name\": \"n\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"imessage\",\n      \"source\": \"./\",\n      \"description\": \"Send and receive iMessages via Claude Code using Sendblue\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"imessage\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Send and receive iMessages via Claude Code using Sendblue. Use /textme to enable text mode.\",\n  \"author\": {\n    \"name\": \"njerschow\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"imessage\", \"sms\", \"sendblue\", \"messaging\", \"textme\", \"afk\"],\n  \"commands\": \"./commands\",\n  \"skills\": \"./skills\",\n  \"mcpServers\": {\n    \"imessage\": {\n      \"command\": \"npx\",\n      \"args\": [\"--yes\", \"tsx\", \"${CLAUDE_PLUGIN_ROOT}/server/src/index.ts\"],\n      \"env\": {\n        \"SENDBLUE_API_KEY\": \"${SENDBLUE_API_KEY}\",\n        \"SENDBLUE_API_SECRET\": \"${SENDBLUE_API_SECRET}\",\n        \"SENDBLUE_PHONE_NUMBER\": \"${SENDBLUE_PHONE_NUMBER}\",\n        \"IMESSAGE_WHITELIST\": \"${IMESSAGE_WHITELIST}\",\n        \"IMESSAGE_POLL_INTERVAL_MS\": \"${IMESSAGE_POLL_INTERVAL_MS:-5000}\"\n      }\n    }\n  },\n  \"hooks\": {\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"prompt\",\n            \"prompt\": \"Check if text mode is enabled by running: test -f ~/.config/claude-imessage/textme-enabled && echo TEXTME_ON || echo TEXTME_OFF\\n\\nIf TEXTME_ON: You MUST use notify_user to send a brief summary of what you just did. If you need user input, use ask_user instead and WAIT for their text response.\\n\\nIf TEXTME_OFF: SILENTLY evaluate if you should message the user. ONLY use ask_user if you completed significant work and need to discuss next steps, or are genuinely blocked. Do NOT output any text - either use ask_user or do nothing.\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "README.md": "# TextMe\n\n**Your personal Claude AI, accessible via iMessage.**\n\nText Claude from anywhere. Send messages, voice notes, or images - get intelligent responses back to your phone.\n\n---\n\n## Features\n\n- **Text Claude** - Natural conversation via iMessage\n- **Voice Notes** - Send audio, automatically transcribed via OpenAI Whisper\n- **Images** - Send photos, Claude can see and analyze them\n- **File Access** - Claude has full filesystem access for coding tasks\n- **Attachments** - Claude can send files back to you\n- **Crash Alerts** - Get notified if the daemon goes down\n- **Queue System** - Multiple messages processed in order\n\n---\n\n## Quick Start\n\n### 1. Sendblue Setup (Free)\n\n1. Sign up at [dashboard.sendblue.com](https://dashboard.sendblue.com/company-signup)\n2. Get your **API Key** and **API Secret** from Dashboard → API Keys\n3. Add your phone number as a **verified contact**\n\n### 2. Requirements\n\n```bash\nbrew install node                         # Node.js 18+\nnpm install -g @anthropic-ai/claude-code  # Claude CLI\n```\n\n### 3. Configure\n\n```bash\nmkdir -p ~/.config/claude-imessage\nnano ~/.config/claude-imessage/config.json\n```\n\n```json\n{\n  \"sendblue\": {\n    \"apiKey\": \"YOUR_API_KEY\",\n    \"apiSecret\": \"YOUR_API_SECRET\",\n    \"phoneNumber\": \"+1SENDBLUE_NUMBER\"\n  },\n  \"whitelist\": [\"+1YOUR_PHONE\"],\n  \"pollIntervalMs\": 5000,\n  \"conversationWindowSize\": 20\n}\n```\n\n### 4. Run\n\n```bash\ngit clone https://github.com/njerschow/textme.git\ncd textme/daemon && npm install && npm run build\nnode dist/index.js\n```\n\n### 5. Test\n\nText your Sendblue number: `hello`\n\n---\n\n## Commands\n\n| Command | Action |\n|---------|--------|\n| `?` | Show commands |\n| `status` | Current status & directory |\n| `queue` | View queued messages |\n| `history` | Recent messages |\n| `home` | Go to home directory |\n| `reset` | Home + clear history |\n| `cd /path` | Change directory |\n| `stop` | Cancel current task |\n| `yes` / `no` | Approve/reject actions |\n\n---\n\n## Production (PM2)\n\n```bash\npm2 start dist/index.js --name textme\npm2 save\npm2 startup\n```\n\n---\n\n## Architecture\n\n```\ndaemon/\n├── src/\n│   ├── index.ts      # Main loop, message processing, media handling\n│   ├── sendblue.ts   # Sendblue API (send, receive, upload files)\n│   └── ...\n├── dist/             # Compiled output\n└── package.json\n```\n\n---\n\n## Logs\n\n```bash\n# PM2\npm2 logs textme\n\n# Standalone\ntail -f ~/.local/log/claude-imessage.log\n```\n\n---\n\n## Auto-Start (launchd)\n\n```bash\n./scripts/install-launchd.sh    # Enable\n./scripts/uninstall-launchd.sh  # Disable\n```\n\n---\n\n## Uninstall\n\n```bash\npm2 delete textme  # or: pkill -f \"node.*daemon/dist\"\nrm -rf ~/.config/claude-imessage ~/.local/log/claude-imessage.log\n```\n\n---\n\nBuilt with [Sendblue](https://sendblue.co) + [Claude](https://anthropic.com)\n\nMIT License\n"
+      },
+      "plugins": [
+        {
+          "name": "imessage",
+          "source": "./",
+          "description": "Send and receive iMessages via Claude Code using Sendblue",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add njerschow/textme",
+            "/plugin install imessage@imessage-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

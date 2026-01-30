@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "originalix",
+    "display_name": "Leon",
+    "avatar_url": "https://avatars.githubusercontent.com/u/16911056?u=ecfb23a443e95116266d6fa8f1174a1bef2794ba&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "originalix-runtime-debugging",
+      "version": null,
+      "description": "Hypothesis-driven debugging with real-time log tracing for Claude Code",
+      "repo_full_name": "originalix/runtime-debugging",
+      "repo_url": "https://github.com/originalix/runtime-debugging",
+      "repo_description": "Hypothesis-driven debugging with real-time log tracing — inspired by Cursor's debug mode",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-10T11:43:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"originalix-runtime-debugging\",\n  \"description\": \"Hypothesis-driven debugging with real-time log tracing for Claude Code\",\n  \"owner\": {\n    \"name\": \"originalix\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"runtime-debugging\",\n      \"description\": \"Debug runtime issues systematically with hypothesis generation, strategic instrumentation, and real-time log analysis. Inspired by Cursor's debug mode.\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"originalix\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"runtime-debugging\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Hypothesis-driven debugging with real-time log tracing. Debug runtime issues systematically with hypothesis generation, strategic instrumentation, and real-time log analysis.\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# Runtime Debugging Skill for Claude Code\n\n**Hypothesis-driven debugging with real-time log tracing — inspired by Cursor's debug mode**\n\nA Claude Code skill that brings systematic runtime debugging to any JavaScript/TypeScript environment: browsers, React Native, Node.js, and more.\n\n## Why This Exists\n\nTraditional debugging with `console.log` is chaotic. You scatter logs everywhere, restart the app, and hope you guessed right. This skill teaches Claude to debug like an expert:\n\n1. **Generate hypotheses first** — Before touching code, identify 5-7 possible failure points\n2. **Instrument strategically** — Only add logs that test specific hypotheses\n3. **Eliminate systematically** — Use evidence to confirm or rule out each theory\n4. **Clean up completely** — Remove all instrumentation when done\n\n## Quick Start\n\n### 1. Install\n\n**Option A: Claude Code Plugin (Recommended)**\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add originalix/runtime-debugging\n\n# Install the plugin\nclaude plugin install runtime-debugging@originalix-runtime-debugging\n```\n\n**Option B: Manual Installation**\n\n```bash\n# Global (recommended)\ngit clone https://github.com/originalix/runtime-debugging.git ~/.claude/skills/runtime-debugging\n\n# Or project-level\ngit clone https://github.com/originalix/runtime-debugging.git .claude/skills/runtime-debugging\n```\n\n### 2. Ask Claude to debug\n\n```\nDebug why position lines aren't showing on the chart\n```\n\nClaude will:\n- Ask clarifying questions about the issue\n- Generate hypotheses with likelihood ratings\n- **Automatically start the debug server** (no manual setup needed)\n- Instrument your code with targeted log points\n- **Clear logs before each reproduction** for clean traces\n- Analyze logs and identify the root cause\n\n## How It Works\n\n```\n┌─────────────────┐     HTTP POST      ┌─────────────────┐\n│   Your App      │ ─────────────────► │  Debug Server   │\n│  (instrumented) │                    │  (port 7243)    │\n└─────────────────┘                    └────────┬────────┘\n                                                │\n                                                ▼\n                                       ┌─────────────────┐\n                                       │   debug.log     │\n                                       │    (JSONL)      │\n                                       └─────────────────┘\n```\n\nThe skill injects `fetch()` calls that send structured log data to a local server. Logs are written to `debug.log` in your project root for analysis.\n\n## Environment Support\n\nClaude will ask about your environment and configure the correct host automatically:\n\n| Environment | Host in fetch() |\n|-------------|-----------------|\n| Mac Browser | `127.0.0.1` |\n| iOS Simulator | `127.0.0.1` |\n| Android Emulator | `10.0.2.2` |\n| Real iOS/Android Device | Your Mac's LAN IP |\n\n## Log Format\n\nLogs are JSONL (newline-delimited JSON):\n\n```json\n{\"location\":\"File.ts:42\",\"message\":\"function entry\",\"data\":{\"param\":\"value\"},\"timestamp\":1234567890,\"hypothesisId\":\"A\"}\n```\n\nFilter by hypothesis:\n```bash\ncat debug.log | jq 'select(.hypothesisId == \"A\")'\n```\n\n## Example Session\n\n**User:** \"The save button doesn't work sometimes\"\n\n**Claude generates hypotheses:**\n\n| ID | Location | Theory | Likelihood |\n|----|----------|--------|------------|\n| A | `onClick` handler | Event not firing | Medium |\n| B | `validateForm()` | Validation failing silently | High |\n| C | `saveData()` | API call rejected | Medium |\n| D | State update | Race condition | Low |\n\n**After instrumentation and reproduction:**\n\n```\nHypothesis Analysis:\n\n| ID | Status | Evidence |\n|----|--------|----------|\n| A  | ELIMINATED | onClick fires every time |\n| B  | CONFIRMED | Returns false when email contains '+' |\n| C  | - | Not reached |\n\nROOT CAUSE: Email regex rejects valid addresses with '+' character.\n```\n\n## Cleanup\n\nAll instrumentation is wrapped in markers for easy removal:\n\n```bash\n# Preview\ngrep -n \"#region agent log\" src/\n\n# Remove all\nsed -i '' '/\\/\\/ #region agent log/,/\\/\\/ #endregion/d' src/**/*.ts\n```\n\n## Requirements\n\n- Node.js (for the debug server)\n- Claude Code CLI\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "runtime-debugging",
+          "description": "Debug runtime issues systematically with hypothesis generation, strategic instrumentation, and real-time log analysis. Inspired by Cursor's debug mode.",
+          "version": "1.0.0",
+          "source": "./",
+          "author": {
+            "name": "originalix"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add originalix/runtime-debugging",
+            "/plugin install runtime-debugging@originalix-runtime-debugging"
+          ]
+        }
+      ]
+    }
+  ]
+}

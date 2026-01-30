@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "aldoborrero",
+    "display_name": "Aldo",
+    "avatar_url": "https://avatars.githubusercontent.com/u/82811?u=36bfa9be281867150eddf060ed255876961fe038&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nix-search-marketplace",
+      "version": null,
+      "description": "Skills for working with Nix packages and NixOS",
+      "repo_full_name": "aldoborrero/nix-search",
+      "repo_url": "https://github.com/aldoborrero/nix-search",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2025-12-04T18:16:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nix-search-marketplace\",\n  \"owner\": {\n    \"name\": \"Aldo Borrero\",\n    \"email\": \"aldo@aldoborrero.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Skills for working with Nix packages and NixOS\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nix-search\",\n      \"description\": \"Help Claude Code search for Nix packages, NixOS options, and flakes using the nix-search CLI tool\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/nix-search\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# nix-search\n\nA fast, feature-rich CLI tool for searching NixOS packages, options, and flakes using the search.nixos.org API.\n\n## Features\n\n- **Flexible Search** - Search by package name, program name, version, or description\n- **Multiple Search Types** - Packages, NixOS options, and flakes\n- **Rich Terminal Output** - Beautiful tables with syntax highlighting\n- **Channel Support** - Search across different NixOS channels (unstable, 24.11, 24.05, etc.)\n- **Platform Filtering** - Filter results by architecture (x86_64-linux, aarch64-darwin, etc.)\n- **JSON Output** - Machine-readable output for scripting and automation\n- **Automatic Pager** - Built-in pager for large result sets\n- **Fast** - Direct Elasticsearch API queries for instant results\n\n## Installation\n\n### Using Nix Profile\n\n```bash\n# Install from this repository\nnix profile install github:aldoborrero/nix-search\n\n# Install from local checkout\nnix profile install .\n```\n\n### Using Nix Flakes\n\nAdd to your `flake.nix`:\n\n```nix\n{\n  inputs.nix-search.url = \"github:aldoborrero/nix-search\";\n}\n```\n\nThen include in your system packages:\n\n```nix\nenvironment.systemPackages = [ inputs.nix-search.packages.${system}.default ];\n```\n\n### Try Without Installing\n\n```bash\nnix run github:aldoborrero/nix-search -- python\n```\n\n## Usage\n\n### Basic Search\n\n```bash\n# Search for packages by keyword\nnix-search python\nnix-search \"python linter\"\n\n# Search by program name (binaries provided)\nnix-search -p gcc\nnix-search --program gcloud\n\n# Search by package attribute name\nnix-search -n python3\nnix-search --name \"emacsPackages.*\"\n\n# Search by version\nnix-search golang -v \"1.21\"\n```\n\n### Advanced Filtering\n\n```bash\n# Filter by platform/architecture\nnix-search --platform x86_64-linux firefox\nnix-search --platform aarch64-darwin python3\n\n# Search in specific channel\nnix-search -c 24.05 firefox\nnix-search --channel unstable python3\n```\n\n### Search Types\n\n```bash\n# Search NixOS options\nnix-search -t options \"networking.firewall\"\nnix-search -t options boot\n\n# Search flakes\nnix-search -t flakes wayland\n```\n\n### Output Options\n\n```bash\n# Show detailed information\nnix-search -d python3\n\n# Compact output (no spacing between results)\nnix-search --compact python\n\n# Reverse sort order (highest priority at bottom)\nnix-search -r python\n\n# JSON output for scripting\nnix-search --json python3 | jq '.hits.hits[0]._source.package_attr_name'\n```\n\n### Pagination\n\n```bash\n# Get more results\nnix-search -s 50 python\n\n# Start from offset (for pagination)\nnix-search --from 20 --size 20 python\n\n# Control pager\nnix-search --no-pager python  # Disable pager\nnix-search --pager python     # Force pager\n```\n\n## Examples\n\n### Find a Package by Binary Name\n\n```bash\n$ nix-search -p terraform\nFound 12 results (showing 12)\n\n[1] terraform @ 1.9.8\nPrograms: terraform\nDescription: Tool for building, changing, and versioning infrastructure\nInstall: nix-env -iA nixpkgs.terraform\n        nix profile install nixpkgs#terraform\n```\n\n### Search NixOS Options\n\n```bash\n$ nix-search -t options \"services.nginx\"\nFound 89 results (showing 20)\n\n[1] services.nginx.enable\nType: boolean\nDescription: Whether to enable nginx.\n```\n\n### Script with JSON Output\n\n```bash\n# Get latest Python 3 version\nnix-search --json -n python3 -s 1 | jq -r '.hits.hits[0]._source.package_pversion'\n```\n\n## Development\n\n### Prerequisites\n\n- Nix with flakes enabled\n- Python 3.13+\n\n### Build\n\n```bash\nnix build\n```\n\n### Development Shell\n\n```bash\nnix develop\n```\n\n### Run Tests\n\n```bash\nnix build .#checks.x86_64-linux.default\n```\n\n## License\n\nMIT License - see [LICENSE](LICENSE) file for details.\n\n## Credits\n\nThis tool interfaces with the official [search.nixos.org](https://search.nixos.org) API.\n"
+      },
+      "plugins": [
+        {
+          "name": "nix-search",
+          "description": "Help Claude Code search for Nix packages, NixOS options, and flakes using the nix-search CLI tool",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/nix-search"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add aldoborrero/nix-search",
+            "/plugin install nix-search@nix-search-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

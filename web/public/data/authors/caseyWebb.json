@@ -2,88 +2,25 @@
   "author": {
     "id": "caseyWebb",
     "display_name": "Casey Webb",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/5419074?u=6b6add5894e4cfc74155032420b6b99205c3333a&v=4",
-    "url": "https://github.com/caseyWebb",
-    "bio": "just some dude that writes code and grows plants.",
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 1,
-      "total_stars": 1,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/5419074?u=6b6add5894e4cfc74155032420b6b99205c3333a&v=4"
   },
   "marketplaces": [
     {
       "name": "caseyWebb",
       "version": null,
       "description": "Casey Webb's Claude Code plugins",
-      "owner_info": {
-        "name": "Casey Webb",
-        "email": "casey@dirtbag.social"
-      },
-      "keywords": [],
       "repo_full_name": "caseyWebb/elm-claude-plugin",
       "repo_url": "https://github.com/caseyWebb/elm-claude-plugin",
       "repo_description": "Claude Code Plugin for Elm",
-      "homepage": "",
       "signals": {
         "stars": 1,
         "forks": 0,
-        "pushed_at": "2026-01-10T03:39:28Z",
-        "created_at": "2025-12-29T19:30:47Z",
-        "license": null
+        "pushed_at": "2026-01-10T03:39:28Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 508
-        },
-        {
-          "path": ".claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 409
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 2088
-        },
-        {
-          "path": "skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/elm-packages",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/elm-packages/SKILL.md",
-          "type": "blob",
-          "size": 1468
-        },
-        {
-          "path": "skills/elm-packages/TROUBLESHOOTING.md",
-          "type": "blob",
-          "size": 2629
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"caseyWebb\",\n  \"owner\": {\n    \"name\": \"Casey Webb\",\n    \"email\": \"casey@dirtbag.social\"\n  },\n  \"metadata\": {\n    \"description\": \"Casey Webb's Claude Code plugins\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"elm\",\n      \"description\": \"Tools for working with Elm\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"Casey Webb\"\n      },\n      \"source\": \"./\",\n      \"category\": \"developer-tools\",\n      \"tags\": [\n        \"elm\",\n        \"elm-lang\"\n      ]\n    }\n  ]\n}\n",
         ".claude-plugin/plugin.json": "{\n  \"name\": \"elm\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Tools for working with Elm\",\n  \"author\": {\n    \"name\": \"Casey Webb\"\n  },\n  \"repository\": \"https://github.com/caseyWebb/elm-claude-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"elm\",\n    \"elm-lang\"\n  ],\n  \"lspServers\": {\n    \"elm\": {\n      \"command\": \"elm-language-server\",\n      \"extensionToLanguage\": {\n        \".elm\": \"elm\"\n      }\n    }\n  }\n}\n",
-        "README.md": "# Elm Claude Plugin\n\nA Claude Code plugin that provides tools for working with Elm.\n\n## Skills\n\n- **elm-packages** - Query the Elm package registry, list project dependencies, and read package documentation\n\n## Prerequisites\n\n- `curl` - for fetching package data from package.elm-lang.org\n- `jq` - for parsing JSON (install via `brew install jq` on macOS)\n- `elm-language-server` - for LSP features (install via `npm install -g @elm-tooling/elm-language-server`)\n\n## Installation\n\n### Option 1: Add as marketplace\n\n```bash\n/plugin marketplace add caseyWebb/elm-claude-plugin\n/plugin install elm@caseyWebb\n```\n\n### Option 2: Clone directly\n\n```bash\ngit clone https://github.com/caseyWebb/elm-claude-plugin ~/.claude/plugins/elm\n```\n\nThen restart Claude Code.\n\n## Usage\n\nThe skill is automatically triggered when you ask about:\n- Elm packages or dependencies\n- elm.json contents\n- Package documentation\n- Function signatures in Elm packages\n\n### Example prompts\n\n- \"What packages are installed in this Elm project?\"\n- \"Search for Elm packages that handle JSON decoding\"\n- \"What functions does elm/core's List module export?\"\n- \"Show me the documentation for List.map\"\n\n## How it works\n\nThe plugin teaches Claude how to:\n\n1. **Read elm.json directly** - Claude parses the JSON natively for listing dependencies\n2. **Run shell scripts** - For network operations and efficient JSON extraction:\n   - `list-installed-packages.sh` - Lists dependencies from elm.json\n   - `search-packages.sh` - Queries package.elm-lang.org/search.json\n   - `fetch-package.sh` - Downloads package docs to cache\n   - `get-exports.sh` - Extracts module exports (compact, no docs)\n   - `get-export-docs.sh` - Extracts single export with full documentation\n   - `get-readme.sh` - Reads package README documentation\n\nThe scripts use jq to filter large JSON files, keeping token usage efficient.\n\n## Cache\n\nPackage data is cached at `~/.elm/0.19.1/packages/{author}/{name}/{version}/`\n\nThis matches the standard Elm tooling cache location, so packages installed via `elm install` are already available.\n\n## License\n\nMIT\n",
-        "skills/elm-packages/SKILL.md": "---\nname: elm-packages\ndescription: >\n  Look up Elm package documentation, list project dependencies, search the\n  Elm package registry, and read module exports. Use when working with Elm\n  projects, elm.json files, or needing information about Elm packages.\nallowed-tools: Read, Bash, Glob\n---\n\n# Capabilities\n\nAll capabilities are exposed as bash scripts in the `scripts/` directory relative to this skill.\n\nIf scripts fail, see ./TROUBLESHOOTING.md for diagnosis and installation help.\n\n```bash\n# List installed packages (elm.json dependencies)\n./scripts/list-installed-packages.sh\n\n# Search the Elm package repository\n./scripts/search-packages.sh \"search query\"\n\n# Get README documentation for a package\n./scripts/get-readme.sh {author} {name} {version}\n\n# List package modules or module exports\n./scripts/get-exports.sh {author} {name} {version}\n./scripts/get-exports.sh {author} {name} {version} {ModuleName}\n\n# Get full docs for a specific export\n./scripts/get-export-docs.sh {author} {name} {version} {ModuleName} {exportName}\n```\n\n## Common Workflows\n\n### Looking up docs for an installed package\n\n1. Run `list-installed-packages.sh` to get author/name/version\n2. Run `get-exports.sh` to list modules, then exports\n3. Run `get-export-docs.sh` for full documentation on a specific export\n\n### Discovering new packages\n\n1. Run `search-packages.sh` with keywords to find packages\n2. Run `get-readme.sh` for an overview\n3. Run `get-exports.sh` to explore the API\n",
-        "skills/elm-packages/TROUBLESHOOTING.md": "# Troubleshooting\n\nThis guide helps diagnose and fix issues with the elm-packages skill.\n\n## Check Prerequisites\n\nFirst, verify that required tools are installed:\n\n```bash\nwhich curl\nwhich jq\n```\n\nIf either command returns nothing or \"not found\", the tool is missing.\n\n## Installing Prerequisites\n\n### macOS (Homebrew)\n```bash\nbrew install curl jq\n```\n\n### Ubuntu / Debian\n```bash\nsudo apt update\nsudo apt install curl jq\n```\n\n### Arch Linux\n```bash\nsudo pacman -S curl jq\n```\n\n### Windows (WSL)\nSame as Ubuntu/Debian instructions above.\n\n### Windows (native)\n- curl: Usually pre-installed on Windows 10+\n- jq: Download from https://jqlang.github.io/jq/download/\n\n## Common Errors\n\n### \"jq: command not found\"\n\n**Cause:** jq is not installed or not in PATH.\n\n**Fix:** Install jq using the instructions above.\n\n### \"curl: command not found\"\n\n**Cause:** curl is not installed (rare on most systems).\n\n**Fix:** Install curl using your package manager.\n\n### \"Failed to fetch package\" error\n\n**Cause:** The package couldn't be downloaded from package.elm-lang.org.\n\n**Checks:**\n1. Verify the package name and version are correct\n2. Check if the package exists: https://package.elm-lang.org/packages/{author}/{name}\n3. Verify internet connectivity\n\n### \"elm.json not found\"\n\n**Cause:** Not running from within an Elm project directory.\n\n**Fix:** Navigate to a directory containing elm.json or a subdirectory of an Elm project.\n\n### Network errors / timeouts\n\n**Cause:** Cannot reach package.elm-lang.org\n\n**Checks:**\n1. Verify internet connectivity\n2. Try: `curl -I https://package.elm-lang.org`\n3. Check if behind a proxy that blocks the domain\n\n### Permission denied on scripts\n\n**Cause:** Scripts don't have execute permission.\n\n**Fix:**\n```bash\nchmod +x scripts/*.sh\n```\n\n### Empty or invalid JSON output\n\n**Cause:** Package doesn't exist or version is wrong.\n\n**Checks:**\n1. Verify package exists: https://package.elm-lang.org/packages/{author}/{name}\n2. Check version is valid\n3. Ensure package name format is `{author}/{name}` not just `{name}`\n\n## Cache Issues\n\n### Cache location\n```\n~/.elm/0.19.1/packages/{author}/{name}/{version}/\n```\n\n### Clear cache for a package\n```bash\nrm -rf ~/.elm/0.19.1/packages/{author}/{name}/{version}\n```\n\n### Check cache contents\n```bash\nls -la ~/.elm/0.19.1/packages/{author}/{name}/{version}/\n```\n\nShould contain:\n- `README.md`\n- `docs.json`\n- (possibly other files from elm install)\n\n## Getting Help\n\nIf issues persist:\n1. Check the package exists on https://package.elm-lang.org\n2. Try fetching manually with curl to see error details\n3. Verify jq version: `jq --version` (should be 1.5+)\n"
+        "README.md": "# Elm Claude Plugin\n\nA Claude Code plugin that provides tools for working with Elm.\n\n## Skills\n\n- **elm-packages** - Query the Elm package registry, list project dependencies, and read package documentation\n\n## Prerequisites\n\n- `curl` - for fetching package data from package.elm-lang.org\n- `jq` - for parsing JSON (install via `brew install jq` on macOS)\n- `elm-language-server` - for LSP features (install via `npm install -g @elm-tooling/elm-language-server`)\n\n## Installation\n\n### Option 1: Add as marketplace\n\n```bash\n/plugin marketplace add caseyWebb/elm-claude-plugin\n/plugin install elm@caseyWebb\n```\n\n### Option 2: Clone directly\n\n```bash\ngit clone https://github.com/caseyWebb/elm-claude-plugin ~/.claude/plugins/elm\n```\n\nThen restart Claude Code.\n\n## Usage\n\nThe skill is automatically triggered when you ask about:\n- Elm packages or dependencies\n- elm.json contents\n- Package documentation\n- Function signatures in Elm packages\n\n### Example prompts\n\n- \"What packages are installed in this Elm project?\"\n- \"Search for Elm packages that handle JSON decoding\"\n- \"What functions does elm/core's List module export?\"\n- \"Show me the documentation for List.map\"\n\n## How it works\n\nThe plugin teaches Claude how to:\n\n1. **Read elm.json directly** - Claude parses the JSON natively for listing dependencies\n2. **Run shell scripts** - For network operations and efficient JSON extraction:\n   - `list-installed-packages.sh` - Lists dependencies from elm.json\n   - `search-packages.sh` - Queries package.elm-lang.org/search.json\n   - `fetch-package.sh` - Downloads package docs to cache\n   - `get-exports.sh` - Extracts module exports (compact, no docs)\n   - `get-export-docs.sh` - Extracts single export with full documentation\n   - `get-readme.sh` - Reads package README documentation\n\nThe scripts use jq to filter large JSON files, keeping token usage efficient.\n\n## Cache\n\nPackage data is cached at `~/.elm/0.19.1/packages/{author}/{name}/{version}/`\n\nThis matches the standard Elm tooling cache location, so packages installed via `elm install` are already available.\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

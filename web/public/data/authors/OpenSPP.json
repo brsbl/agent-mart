@@ -1,0 +1,68 @@
+{
+  "author": {
+    "id": "OpenSPP",
+    "display_name": "OpenSPP",
+    "avatar_url": "https://avatars.githubusercontent.com/u/110618550?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "openspp-plugins",
+      "version": null,
+      "description": "Claude Code plugins for OpenSPP and Odoo development",
+      "repo_full_name": "OpenSPP/claude-plugins",
+      "repo_url": "https://github.com/OpenSPP/claude-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-29T07:23:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"openspp-plugins\",\n  \"owner\": {\n    \"name\": \"OpenSPP\",\n    \"email\": \"dev@openspp.org\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for OpenSPP and Odoo development\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"odoo-lsp\",\n      \"source\": \"./odoo-lsp\",\n      \"description\": \"Odoo language server (odoo-ls) for Claude Code — diagnostics, completions, and code navigation for Odoo projects\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"OpenSPP\"\n      },\n      \"license\": \"MIT\",\n      \"homepage\": \"https://github.com/odoo/odoo-ls\",\n      \"repository\": \"https://github.com/OpenSPP/claude-plugins\",\n      \"keywords\": [\"odoo\", \"lsp\", \"language-server\", \"openspp\"],\n      \"category\": \"language-support\",\n      \"tags\": [\"odoo\", \"python\", \"xml\", \"erp\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nClaude Code plugins maintained by OpenSPP for Odoo development workflows.\n\n## Available Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [odoo-lsp](./odoo-lsp/) | Odoo language server integration via [odoo-ls](https://github.com/odoo/odoo-ls) |\n\n## Installation\n\n### Via marketplace (recommended)\n\nAdd the marketplace and install plugins by name:\n\n```\n/plugin marketplace add OpenSPP/claude-plugins\n/plugin install odoo-lsp@openspp-plugins\n```\n\nTo update plugins later:\n\n```\n/plugin marketplace update openspp-plugins\n```\n\n### Via project settings\n\nAdd the marketplace to your project's `.claude/settings.json` so team members are prompted to install automatically:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"openspp-plugins\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"OpenSPP/claude-plugins\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"odoo-lsp@openspp-plugins\": true\n  }\n}\n```\n\n### Via local path\n\nIf you have this repo cloned locally:\n\n```bash\nclaude --plugin-dir /path/to/claude-plugins/odoo-lsp\n```\n",
+        "odoo-lsp/README.md": "# odoo-lsp — Claude Code Plugin\n\nIntegrates the [odoo-ls](https://github.com/odoo/odoo-ls) language server with Claude Code, giving Claude real-time Odoo-aware diagnostics, completions, and code navigation.\n\n## What Claude Gains\n\n- **Diagnostics**: Model/field validation, import resolution, manifest issues, XML validation (~50 Odoo-specific error codes)\n- **Code navigation**: Go-to-definition for models, fields, compute methods; find-references; hover info; workspace symbol search (including XML IDs)\n- **Completions**: Model names, fields, method signatures, `self.env[\"model\"]` patterns\n\n## Install the Plugin\n\n```\n/plugin marketplace add OpenSPP/claude-plugins\n/plugin install odoo-lsp@openspp-plugins\n```\n\n## Prerequisites\n\n### 1. Build and install `odoo_ls_server`\n\nThe server is a Rust binary. You need [Cargo](https://rustup.rs/) installed.\n\n```bash\ngit clone https://github.com/odoo/odoo-ls.git\ncd odoo-ls/server\ncargo build --release\ncp target/release/odoo_ls_server ~/.local/bin/\n```\n\nEnsure `~/.local/bin` is in your `PATH`.\n\n### 2. Local Odoo source checkout\n\nodoo-ls needs access to Odoo source code on disk. Clone the version matching your project:\n\n```bash\n# Official Odoo repository\ngit clone --depth 1 --branch 17.0 https://github.com/odoo/odoo.git /path/to/odoo\n\n# Or OCA/OCB (community backports, often used by OpenSPP)\ngit clone --depth 1 --branch 19.0 https://github.com/OCA/OCB.git /path/to/odoo\n```\n\nEither source works — odoo-ls only needs a checkout that contains the `odoo/` directory and `addons/`.\n\n### 3. Create `odools.toml` in your project root\n\nThe server reads its configuration from `odools.toml` files found in the workspace directory and its parents. Create one at the root of your Odoo project:\n\n```toml\n[[config]]\nname = \"default\"\nodoo_path = \"/path/to/odoo\"\naddons_paths = [\n    \"/path/to/odoo/addons\",\n    \"/path/to/your/custom/addons\",\n]\npython_path = \"python3\"\n```\n\n#### Configuration fields\n\n| Field | Required | Description |\n|-------|----------|-------------|\n| `name` | No | Profile name (defaults to `\"default\"`) |\n| `odoo_path` | Yes | Path to Odoo source root (contains `odoo/` directory) |\n| `addons_paths` | Yes | Paths to addons directories |\n| `python_path` | No | Python interpreter (defaults to auto-detected `python3`) |\n| `additional_stubs` | No | Extra type stub directories |\n| `diag_missing_imports` | No | Missing import diagnostics: `\"all\"`, `\"only_odoo\"`, or `\"none\"` |\n\nPaths can be absolute or relative to the `odools.toml` file location.\n\n## Plugin Structure\n\n```\nodoo-lsp/\n├── .claude-plugin/\n│   └── plugin.json        # Plugin metadata\n├── .lsp.json              # LSP server configuration\n├── hooks/\n│   ├── hooks.json         # Session start hook\n│   └── check-odoo-ls.sh   # Checks for odoo_ls_server in PATH\n└── README.md\n```\n\n## How It Works\n\n- **`.lsp.json`** tells Claude Code to launch `odoo_ls_server` via stdio for `.py`, `.xml`, and `.csv` files\n- **`hooks/check-odoo-ls.sh`** runs on session start and warns if the binary is missing (does not block the session)\n- The server auto-discovers `odools.toml` from the workspace root and parent directories\n- No `initializationOptions` are needed — configuration is filesystem-based\n\n## Troubleshooting\n\n**\"odoo_ls_server not found\"** — Build and install the binary per the prerequisites above.\n\n**No diagnostics appearing** — Verify `odools.toml` exists in your project root (or a parent directory) and that `odoo_path` points to a valid Odoo source checkout.\n\n**Server crashes on startup** — Check that `odoo_path` contains the `odoo/` subdirectory (not just `addons/`). Run `odoo_ls_server --parse -c /path/to/ocb` to test parsing outside Claude Code.\n\n**Wrong Odoo version** — Make sure your local Odoo checkout matches your project's version. odoo-ls validates against the source it's pointed at.\n"
+      },
+      "plugins": [
+        {
+          "name": "odoo-lsp",
+          "source": "./odoo-lsp",
+          "description": "Odoo language server (odoo-ls) for Claude Code — diagnostics, completions, and code navigation for Odoo projects",
+          "version": "1.0.0",
+          "author": {
+            "name": "OpenSPP"
+          },
+          "license": "MIT",
+          "homepage": "https://github.com/odoo/odoo-ls",
+          "repository": "https://github.com/OpenSPP/claude-plugins",
+          "keywords": [
+            "odoo",
+            "lsp",
+            "language-server",
+            "openspp"
+          ],
+          "category": "language-support",
+          "tags": [
+            "odoo",
+            "python",
+            "xml",
+            "erp"
+          ],
+          "categories": [
+            "erp",
+            "language-server",
+            "language-support",
+            "lsp",
+            "odoo",
+            "openspp",
+            "python",
+            "xml"
+          ],
+          "install_commands": [
+            "/plugin marketplace add OpenSPP/claude-plugins",
+            "/plugin install odoo-lsp@openspp-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

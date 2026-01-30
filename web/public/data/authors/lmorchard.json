@@ -1,0 +1,44 @@
+{
+  "author": {
+    "id": "lmorchard",
+    "display_name": "Les Orchard",
+    "avatar_url": "https://avatars.githubusercontent.com/u/21687?u=e4b3dbd1e4fe142629c183d55cd032c8d5595669&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lmorchard-agent-skills",
+      "version": null,
+      "description": "lmorchard's agent skills",
+      "repo_full_name": "lmorchard/lmorchard-agent-skills",
+      "repo_url": "https://github.com/lmorchard/lmorchard-agent-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-01-14T23:50:47Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lmorchard-agent-skills\",\n  \"owner\": {\n    \"name\": \"Les Orchard\",\n    \"email\": \"me@lmorchard.com\"\n  },\n  \"metadata\": {\n    \"description\": \"lmorchard's agent skills\",\n    \"version\": \"0.0.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lmorchard-agent-skills\",\n      \"description\": \"Collection of miscellaneous skills built by lmorchard\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./go-cli-builder\",\n        \"./weeknotes-blog-post-composer\",\n        \"./daily-blog-post-composer\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# lmorchard's Agent Skills\n\nA collection of skills for Claude Code and Claude.ai that extend Claude's capabilities with specialized knowledge, workflows, and tools.\n\n## Available Skills\n\n### go-cli-builder\n\nBuild production-ready Go command-line tools following established patterns with Cobra CLI framework, Viper configuration, SQLite database, and automated GitHub Actions workflows.\n\n**Features:**\n- Scaffold complete Go CLI projects with one command\n- Pre-configured with Cobra, Viper, SQLite, Logrus\n- Database migration system included\n- GitHub Actions workflows for CI and multi-platform releases\n- Makefile with lint, format, test, build targets\n- Add new commands with simple script\n\n**Use when:**\n- Creating a new Go CLI tool from scratch\n- Adding commands to existing Go CLI projects\n- Setting up GitHub Actions for Go releases\n\n[View detailed documentation →](./go-cli-builder/SKILL.md)\n\n### weeknotes-blog-post-composer\n\nComposes conversational weeknotes blog posts from multiple data sources (Mastodon and Linkding).\n\n- **Description**: Automatically fetches content and composes readable, Jekyll-style blog posts with proper voice and narrative structure\n- **Data Sources**: Mastodon posts, Linkding bookmarks\n- **Output**: Jekyll Markdown with YAML frontmatter\n- **Documentation**: [weeknotes-blog-post-composer/README.md](weeknotes-blog-post-composer/README.md)\n\n**Quick usage:**\n```\nUser: Draft weeknotes for this week             # Uses last 7 days\nUser: Create weeknotes from November 4-10      # Specific date range\n```\n\n## Installation\n\n### For Claude Code\n\n#### Recommended: Install as Plugin\n\n1. Register this marketplace in Claude Code:\n   ```\n   /plugin marketplace add lmorchard/lmorchard-agent-skills\n   ```\n\n2. Install via UI:\n   - Select **Browse and install plugins**\n   - Choose **lmorchard-agent-skills**\n   - Click **Install now**\n\n3. Or install directly via command:\n   ```\n   /plugin install lmorchard-agent-skills\n   ```\n\n#### Alternative: Manual Installation\n\nIf you prefer to install manually or need to work on the skills locally:\n\n##### Install entire collection:\n```bash\n# Clone to your skills directory\ngit clone https://github.com/lmorchard/lmorchard-agent-skills.git ~/.claude/skills/lmorchard-agent-skills\n```\n\n##### Install specific skill only:\n```bash\n# Clone with sparse checkout for just one skill\ngit clone --depth 1 --filter=blob:none --sparse https://github.com/lmorchard/lmorchard-agent-skills.git ~/.claude/skills/lmorchard-agent-skills\ncd ~/.claude/skills/lmorchard-agent-skills\ngit sparse-checkout set go-cli-builder\n```\n\n### For Claude.ai\n\nThese skills can be uploaded to Claude.ai projects via the Skills API (requires API access).\n\n## Usage\n\nOnce installed, Claude will automatically detect when to use these skills based on your requests. For example:\n\n```\nYou: \"Create a new Go CLI tool called feed-analyzer\"\nClaude: [Uses go-cli-builder skill to scaffold the project]\n```\n\nYou can also explicitly invoke skills:\n```\nYou: \"Use the go-cli-builder skill to add an export command to my project\"\n```\n\n## Development\n\n**Philosophy:**\n- Skills should solve real, recurring problems\n- Prefer simple, maintainable solutions\n- Use existing tools and CLIs where possible\n- Document everything for Claude and humans\n\n### Adding a New Skill\n\n1. Create a new directory for your skill:\n   ```bash\n   mkdir my-new-skill\n   ```\n\n2. Add required files:\n   ```\n   my-new-skill/\n   ├── SKILL.md          # Required: skill metadata and instructions\n   ├── scripts/          # Optional: executable scripts\n   ├── references/       # Optional: reference documentation\n   └── assets/           # Optional: templates and resources\n   ```\n\n3. Update `.claude-plugin/marketplace.json`:\n   ```json\n   {\n     \"plugins\": [\n       {\n         \"skills\": [\n           \"./go-cli-builder\",\n           \"./my-new-skill\"\n         ]\n       }\n     ]\n   }\n   ```\n\n4. Test locally by symlinking or copying to `~/.claude/skills/`\n\n### Skill Structure\n\nEach skill must contain a `SKILL.md` file with YAML frontmatter:\n\n```markdown\n---\nname: skill-name\ndescription: Brief description of what the skill does and when to use it\n---\n\n# Skill Name\n\n[Detailed instructions for Claude...]\n```\n\nSee [Anthropic's skill documentation](https://github.com/anthropics/skills) for more details.\n\n## Security & Privacy\n\nSkills that require API credentials (like weeknotes-blog-post-composer) store them in gitignored config files. All credentials and personal data remain local on your machine. No telemetry or data sharing.\n\n## Contributing\n\nContributions are welcome! Please:\n\n1. Fork the repository\n2. Create a feature branch\n3. Test your changes locally\n4. Submit a pull request\n\n## Related Resources\n\n- [Claude Code Documentation](https://docs.claude.com/claude-code)\n- [Building Skills Guide](https://docs.claude.com/claude-code/skills)\n- [Marketplace Plugin System](https://docs.claude.com/claude-code/plugins)\n- [Anthropic's example skills](https://github.com/anthropics/skills)\n\n## License\n\nMIT License - see [LICENSE.txt](LICENSE.txt) for details.\n\n## About\n\nThese skills are created and maintained by [Les Orchard](https://github.com/lmorchard).\n"
+      },
+      "plugins": [
+        {
+          "name": "lmorchard-agent-skills",
+          "description": "Collection of miscellaneous skills built by lmorchard",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./go-cli-builder",
+            "./weeknotes-blog-post-composer",
+            "./daily-blog-post-composer"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add lmorchard/lmorchard-agent-skills",
+            "/plugin install lmorchard-agent-skills@lmorchard-agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "olakai-ai",
+    "display_name": "Olakai",
+    "avatar_url": "https://avatars.githubusercontent.com/u/176082440?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "olakai-skills",
+      "version": null,
+      "description": "Official skills for Olakai AI observability platform - monitor, analyze, and govern AI agents",
+      "repo_full_name": "olakai-ai/olakai-skills",
+      "repo_url": "https://github.com/olakai-ai/olakai-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-26T21:45:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"olakai-skills\",\n  \"description\": \"Official skills for Olakai AI observability platform - monitor, analyze, and govern AI agents\",\n  \"owner\": {\n    \"name\": \"Olakai\",\n    \"email\": \"support@olakai.ai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"olakai\",\n      \"description\": \"Olakai AI observability - create agents, add monitoring, troubleshoot issues, generate analytics reports\",\n      \"source\": \"./plugins/olakai\",\n      \"version\": \"1.4.0\",\n      \"category\": \"development\",\n      \"tags\": [\n        \"observability\",\n        \"monitoring\",\n        \"analytics\",\n        \"governance\",\n        \"kpi\",\n        \"ai-agents\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Olakai Skills\n\nOfficial skills for integrating AI agents with [Olakai](https://olakai.ai) - the enterprise AI observability and governance platform.\n\nThese skills follow the [Agent Skills Standard](https://skills.sh) and work with Claude Code, Cursor, VS Code Copilot, and other compatible AI coding assistants.\n\n## Installation\n\n### Using add-skill (Recommended)\n\n```bash\n# List available skills\nnpx add-skill olakai-ai/olakai-skills --list\n\n# Install a specific skill\nnpx add-skill olakai-ai/olakai-skills/olakai-get-started\nnpx add-skill olakai-ai/olakai-skills/olakai-create-agent\nnpx add-skill olakai-ai/olakai-skills/olakai-add-monitoring\nnpx add-skill olakai-ai/olakai-skills/olakai-troubleshoot\nnpx add-skill olakai-ai/olakai-skills/generate-analytics-reports\n```\n\n### Manual Installation\n\n```bash\n# Clone to user-level skills directory\ngit clone https://github.com/olakai-ai/olakai-skills ~/.claude/skills/olakai-skills\n\n# Or clone to project-level\ngit clone https://github.com/olakai-ai/olakai-skills .claude/skills/olakai-skills\n```\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| **olakai-get-started** | Get started with Olakai - account setup, CLI install, authentication, first agent |\n| **olakai-create-agent** | Create a new AI agent with Olakai monitoring from scratch |\n| **olakai-add-monitoring** | Add Olakai monitoring to an existing AI agent or LLM integration |\n| **olakai-troubleshoot** | Troubleshoot monitoring issues - missing events, KPI problems, SDK errors |\n| **generate-analytics-reports** | Generate terminal-based analytics reports without the web UI |\n\n## Bundled Agent\n\nThe **olakai-expert** agent combines all four skills into a single specialist:\n\n| Agent | Description |\n|-------|-------------|\n| **olakai-expert** | Full Olakai integration specialist - creates agents, adds monitoring, troubleshoots issues, generates reports |\n\n## Prerequisites\n\nBefore using these skills, ensure you have:\n\n1. **Olakai CLI** installed: `npm install -g olakai-cli`\n2. **CLI authenticated**: `olakai login`\n3. **API key** for SDK integration (generated per-agent via CLI)\n\n## The Golden Rule: Test - Fetch - Validate\n\n**Always validate your Olakai integration by generating a test event and inspecting it:**\n\n```bash\n# 1. Run your agent/trigger LLM call\n# 2. Fetch the event\nolakai activity list --agent-id AGENT_ID --limit 1 --json\nolakai activity get EVENT_ID --json | jq '{customData, kpiData}'\n\n# 3. Validate:\n#    - customData has all expected fields\n#    - kpiData shows NUMBERS (not strings like \"MyVariable\")\n#    - kpiData shows VALUES (not null)\n```\n\n## Quick Reference\n\n```bash\n# CLI Authentication\nolakai login\nolakai whoami\n\n# View Activity\nolakai activity list --limit 10\nolakai activity get EVENT_ID --json\n\n# Manage Agents (includes API key generation)\nolakai agents list\nolakai agents create --name \"Agent Name\" --with-api-key --json\nolakai agents get AGENT_ID --json | jq '.apiKey'\n\n# Manage KPIs\nolakai kpis list --agent-id ID\nolakai kpis create --formula \"Variable\" --agent-id ID\n\n# Manage Custom Data\nolakai custom-data list\nolakai custom-data create --name \"Field\" --type NUMBER\n```\n\n## SDK Quick Start\n\n**TypeScript:**\n```typescript\nimport { OlakaiSDK } from \"@olakai/sdk\";\nconst olakai = new OlakaiSDK({ apiKey: process.env.OLAKAI_API_KEY! });\nawait olakai.init();\nconst openai = olakai.wrap(new OpenAI({ apiKey }), { provider: \"openai\" });\n```\n\n**Python:**\n```python\nfrom olakaisdk import olakai_config, instrument_openai\nolakai_config(os.getenv(\"OLAKAI_API_KEY\"))\ninstrument_openai()\n```\n\n## Optional: Improved Skill Discovery\n\nFor automatic skill activation (recommended for heavy Olakai users):\n\n```bash\n# Install activation hooks for improved auto-invocation rate\ncp hooks/skill-activator.sh ~/.claude/hooks/\nchmod +x ~/.claude/hooks/skill-activator.sh\n```\n\nSee `hooks/README.md` for full setup instructions.\n\n## Documentation\n\n- [Olakai Documentation](https://app.olakai.ai/llms.txt)\n- [TypeScript SDK](https://www.npmjs.com/package/@olakai/sdk)\n- [Python SDK](https://pypi.org/project/olakai-sdk/)\n- [CLI Reference](https://www.npmjs.com/package/olakai-cli)\n\n## Agent Compatibility\n\nSee [AGENTS.md](AGENTS.md) for full compatibility information with various AI coding agents.\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n\n## Contributing\n\nContributions welcome! Please read our contributing guidelines before submitting PRs.\n\n---\n\nBuilt with love by [Olakai](https://olakai.ai)\n",
+        "plugins/olakai/README.md": "# Olakai Plugin for Claude Code\n\nOfficial plugin for integrating AI agents with [Olakai](https://olakai.ai) - the enterprise AI observability and governance platform.\n\n## Skills Included\n\n| Skill | Description |\n|-------|-------------|\n| **olakai-create-agent** | Create a new AI agent with Olakai monitoring from scratch |\n| **olakai-add-monitoring** | Add Olakai monitoring to an existing AI agent |\n| **olakai-troubleshoot** | Troubleshoot monitoring issues - missing events, KPI problems |\n| **generate-analytics-reports** | Generate terminal-based analytics reports from Olakai data |\n\n## Agent Included\n\n| Agent | Description |\n|-------|-------------|\n| **olakai-expert** | Bundled expert that combines all skills for complete Olakai integration |\n\n## Prerequisites\n\n- [Olakai CLI](https://www.npmjs.com/package/olakai-cli): `npm install -g olakai-cli`\n- Olakai account and API key\n\n## Usage\n\nOnce installed, simply ask Claude to help with Olakai-related tasks:\n\n- \"Create a new AI agent with Olakai monitoring\"\n- \"Add monitoring to my existing OpenAI integration\"\n- \"My KPIs are showing string values instead of numbers\"\n\nOr invoke the bundled agent directly:\n\n- \"Use the olakai-expert agent to set up monitoring\"\n\n## The Golden Rule\n\nAlways validate integrations by generating a test event:\n\n```bash\nolakai activity list --agent-id AGENT_ID --limit 1 --json\nolakai activity get EVENT_ID --json | jq '{customData, kpiData}'\n```\n\n## Links\n\n- [Olakai Documentation](https://app.olakai.ai/llms.txt)\n- [TypeScript SDK](https://www.npmjs.com/package/@olakai/sdk)\n- [Python SDK](https://pypi.org/project/olakai-sdk/)\n- [CLI Reference](https://www.npmjs.com/package/olakai-cli)\n"
+      },
+      "plugins": [
+        {
+          "name": "olakai",
+          "description": "Olakai AI observability - create agents, add monitoring, troubleshoot issues, generate analytics reports",
+          "source": "./plugins/olakai",
+          "version": "1.4.0",
+          "category": "development",
+          "tags": [
+            "observability",
+            "monitoring",
+            "analytics",
+            "governance",
+            "kpi",
+            "ai-agents"
+          ],
+          "categories": [
+            "ai-agents",
+            "analytics",
+            "development",
+            "governance",
+            "kpi",
+            "monitoring",
+            "observability"
+          ],
+          "install_commands": [
+            "/plugin marketplace add olakai-ai/olakai-skills",
+            "/plugin install olakai@olakai-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

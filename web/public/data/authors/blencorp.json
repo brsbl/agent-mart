@@ -1,0 +1,69 @@
+{
+  "author": {
+    "id": "blencorp",
+    "display_name": "BLEN Corp",
+    "avatar_url": "https://avatars.githubusercontent.com/u/240379?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "dr-ralph-marketplace",
+      "version": null,
+      "description": "Dr. Ralph - AI-assisted medical diagnostics with comprehensive symptom analysis and research-backed treatment plans",
+      "repo_full_name": "blencorp/dr-ralph",
+      "repo_url": "https://github.com/blencorp/dr-ralph",
+      "repo_description": "A Claude Code plugin for AI-assisted medical diagnostics with comprehensive symptom analysis and research-backed treatment plans.",
+      "signals": {
+        "stars": 23,
+        "forks": 4,
+        "pushed_at": "2026-01-06T13:43:55Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"dr-ralph-marketplace\",\n  \"owner\": {\n    \"name\": \"BLEN Corporation\",\n    \"email\": \"mike@blencorp.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Dr. Ralph - AI-assisted medical diagnostics with comprehensive symptom analysis and research-backed treatment plans\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dr-ralph\",\n      \"description\": \"Implementation of the Dr. Ralph technique - continuous self-referential AI loops for interactive iterative development. Run Claude in a while-true loop with the same prompt until task completion.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Mike Endale\",\n        \"email\": \"mike@blencorp.com\"\n      },\n      \"source\": \"./\",\n      \"category\": \"healthcare\",\n      \"tags\": [\"medical\", \"diagnostics\", \"SOAP\", \"healthcare\", \"ai-assisted\"],\n      \"keywords\": [\"dr-ralph\", \"medical\", \"diagnosis\", \"treatment\", \"SOAP-report\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"dr-ralph\",\n  \"description\": \"Implementation of the Dr. Ralph technique - continuous self-referential AI loops for interactive iterative development. Run Claude in a while-true loop with the same prompt until task completion.\",\n  \"author\": {\n    \"name\": \"Mike Endale\",\n    \"email\": \"mike@blencorp.com\"\n  }\n}\n",
+        "README.md": "<img src=\"dr-ralph-banner.png\" alt=\"Dr. Ralph Banner\">\n\n# Dr. Ralph Plugin\n\nA Claude Code plugin for AI-assisted medical diagnostics with comprehensive symptom analysis and research-backed treatment plans.\n\n> **Disclaimer:** This software is for informational and educational purposes only. It is NOT a substitute for professional medical advice. See [full disclaimer](#disclaimer).\n\n---\n\n## Table of Contents\n\n- [Overview](#overview)\n- [Quick Start](#quick-start)\n- [Installation](#installation)\n- [Commands](#commands)\n  - [/dr-ralph:diagnose](#dr-ralphdiagnose)\n  - [/dr-ralph:cancel](#dr-ralphcancel)\n- [Diagnostic Workflow](#diagnostic-workflow)\n  - [5-Phase Process](#5-phase-process)\n  - [Patient Case Management](#patient-case-management)\n  - [SOAP Report Format](#soap-report-format)\n- [Usage Tips](#usage-tips)\n- [When to Use Dr. Ralph](#when-to-use-dr-ralph)\n- [Architecture](#architecture)\n- [Disclaimer](#disclaimer)\n- [License](#license)\n- [Learn More](#learn-more)\n\n---\n\n## Overview\n\nDr. Ralph provides a structured 5-phase diagnostic workflow:\n\n**Interview → Research → Differential Diagnosis → Treatment Plan → SOAP Report**\n\nIt uses Claude Code's Stop hook system to iterate through phases until reaching a convincing diagnosis with research-backed treatment recommendations.\n\n---\n\n## Quick Start\n\n```bash\n/dr-ralph:diagnose \"Persistent fatigue and joint pain\" --patient \"John Doe\"\n```\n\n---\n\n## Installation\n\n### Option 1: From GitHub (Recommended)\n\n```bash\nclaude plugin marketplace add blencorp/dr-ralph\nclaude plugin install dr-ralph\n```\n\n### Option 2: Local Directory (Development)\n\n```bash\ngit clone git@github.com:blencorp/dr-ralph.git\nclaude --plugin-dir /path/to/dr-ralph\n```\n\n### Option 3: Configure in settings.json\n\nAdd to `.claude/settings.json`:\n\n```json\n{\n  \"marketplaces\": [\"blencorp/dr-ralph\"],\n  \"plugins\": {\n    \"dr-ralph@blencorp\": \"enabled\"\n  }\n}\n```\n\n### Verify Installation\n\n```bash\n/dr-ralph:help\n```\n\nSee the [Claude Code plugins documentation](https://code.claude.com/docs/en/plugins) for more details.\n\n---\n\n## Commands\n\n### /dr-ralph:diagnose\n\nFull diagnostic workflow with 5 phases.\n\n```bash\n/dr-ralph:diagnose \"I've been having back pain for 3 months\" --patient \"John Doe\"\n/dr-ralph:diagnose \"Headaches and dizziness\" --questions 20\n```\n\n**Options:**\n\n| Flag | Default | Description |\n|------|---------|-------------|\n| `--patient <name>` | anonymous | Patient name for case file |\n| `--questions <n>` | 15 | Maximum interview questions |\n| `--output <dir>` | @notes/ | Directory for case files |\n| `--max-iterations <n>` | unlimited | Max iterations before auto-stop |\n| `--completion-promise <text>` | none | Phrase that signals completion |\n\n**Output Files:**\n- `@notes/[patient].md` - Running notes (persists across sessions)\n- `@notes/[patient]-report-[timestamp].md` - Final SOAP report\n\n### /dr-ralph:cancel\n\nCancel an active diagnostic session.\n\n```bash\n/dr-ralph:cancel\n```\n\n---\n\n## Diagnostic Workflow\n\n### 5-Phase Process\n\n| Phase | Description |\n|-------|-------------|\n| 1. Interview | Medical records intake first, then comprehensive symptom questions |\n| 2. Research | Web search for literature, iterative refinement |\n| 3. Differential | Confidence-based diagnosis (>80% = single, else top 3-5) |\n| 4. Treatment | Action plan with urgency levels and follow-up schedule |\n| 5. Report | SOAP format with executive summary |\n\n**Medical Records Handling:**\n- Records requested FIRST, before symptom questions\n- Files processed one-by-one (never all at once)\n- Size check before reading - files >3MB trigger warning\n- Tip: Use Adobe Acrobat to split large PDFs into sections <3MB\n\n**Diagnosis Output:**\n- **>80% confident:** Single most likely diagnosis\n- **Uncertain:** Top 3-5 differential diagnoses ranked by likelihood\n- **Transparency:** States uncertainty, distinguishing features, recommended tests\n\n### Patient Case Management\n\n```\n@notes/\n├── john-doe.md              # Patient notes (grows over time)\n├── john-doe-report-20240105.md  # SOAP report\n├── jane-smith.md\n└── anonymous.md             # Default if no --patient specified\n```\n\n- **Persistence:** Notes are regular markdown files, persist across sessions\n- **Continuity:** Previous notes auto-read at session start\n- **Multiple patients:** Switch cases with `--patient` flag\n\n### SOAP Report Format\n\n```markdown\n# Patient Report: John Doe\n## Date: 2024-01-05\n\n## Executive Summary\n[2-3 paragraph overview]\n\n## Subjective\n[Patient's reported symptoms]\n\n## Objective\n[Research findings with citations]\n\n## Assessment\n[Diagnosis or differential with confidence]\n\n## Plan\n[Treatment plan with urgency levels]\n\n## Detailed Findings\n[Full interview, research, reasoning]\n\n## References\n[Cited sources]\n```\n\n---\n\n## Usage Tips\n\n### Safety Limits\n\nUse `--max-iterations` as a safety net:\n\n```bash\n/dr-ralph:diagnose \"Symptoms\" --max-iterations 10 --completion-promise DONE\n```\n\n### Patient Tracking\n\nUse `--patient` to maintain continuity across sessions:\n\n```bash\n/dr-ralph:diagnose \"Follow-up on headaches\" --patient \"John Doe\"\n```\n\n---\n\n## When to Use Dr. Ralph\n\n**Good for:**\n- Comprehensive medical symptom analysis\n- Research-backed diagnostic workflows\n- Structured patient intake interviews\n- Generating SOAP-format documentation\n- Tracking patient cases over multiple sessions\n\n**Not good for:**\n- Emergency medical situations (call 911)\n- Replacing professional medical advice\n- Quick one-off health questions\n\n---\n\n## Architecture\n\n```\ndr-ralph/\n├── .claude-plugin/\n│   └── plugin.json           # Plugin metadata\n├── commands/\n│   ├── diagnose.md           # /dr-ralph:diagnose\n│   ├── cancel.md             # /dr-ralph:cancel\n│   └── help.md               # /dr-ralph:help\n├── scripts/\n│   └── setup-dr-ralph-diagnose.sh\n├── hooks/\n│   ├── hooks.json            # Stop hook registration\n│   └── stop-hook.sh          # Iteration control\n├── docs/\n│   └── diagnose-spec.md      # Full diagnostic spec\n└── README.md\n```\n\n---\n\n## Disclaimer\n\n**THIS SOFTWARE IS FOR INFORMATIONAL AND EDUCATIONAL PURPOSES ONLY.**\n\nDr. Ralph is an AI-assisted tool and is **NOT** a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of a qualified healthcare provider with any questions regarding a medical condition. Never disregard professional medical advice or delay seeking it because of something generated by this tool.\n\n**BLEN and the authors of this software assume no responsibility or liability for any errors, omissions, or outcomes arising from the use of this tool.** Use at your own risk.\n\n**Red Flag Handling:** Emergency symptoms (chest pain + SOB, sudden severe headache, etc.) are flagged prominently but the workflow continues to gather complete information.\n\n**Data Privacy:** Remind patients to redact sensitive information from files and answers.\n\n---\n\n## License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n\n---\n\n## Learn More\n\n- [Original Ralph technique](https://ghuntley.com/ralph/)\n- [Ralph Orchestrator](https://github.com/mikeyobrien/ralph-orchestrator)\n- [Ralph Wiggum Plugin](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/ralph-wiggum)\n\n---\n\nRun `/dr-ralph:help` in Claude Code for detailed command reference.\n\n---\n\nBuilt with ❤️ by [BLEN, Inc](https://www.blencorp.com).\n\n## About BLEN\n\nBLEN, Inc is a digital services company that provides Emerging Technology (ML/AI, RPA), Digital Modernization (Legacy to Cloud), and Human-Centered Web/Mobile Design and Development."
+      },
+      "plugins": [
+        {
+          "name": "dr-ralph",
+          "description": "Implementation of the Dr. Ralph technique - continuous self-referential AI loops for interactive iterative development. Run Claude in a while-true loop with the same prompt until task completion.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Mike Endale",
+            "email": "mike@blencorp.com"
+          },
+          "source": "./",
+          "category": "healthcare",
+          "tags": [
+            "medical",
+            "diagnostics",
+            "SOAP",
+            "healthcare",
+            "ai-assisted"
+          ],
+          "keywords": [
+            "dr-ralph",
+            "medical",
+            "diagnosis",
+            "treatment",
+            "SOAP-report"
+          ],
+          "categories": [
+            "ai-assisted",
+            "diagnosis",
+            "diagnostics",
+            "dr-ralph",
+            "healthcare",
+            "medical",
+            "soap",
+            "soap-report",
+            "treatment"
+          ],
+          "install_commands": [
+            "/plugin marketplace add blencorp/dr-ralph",
+            "/plugin install dr-ralph@dr-ralph-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "author": {
+    "id": "sdui-hq",
+    "display_name": "Sdui GmbH",
+    "avatar_url": "https://avatars.githubusercontent.com/u/45559813?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "sdui-marketplace",
+      "version": "0.2.0",
+      "description": "Sdui's marketplace for AI tools",
+      "repo_full_name": "sdui-hq/ai-marketplace",
+      "repo_url": "https://github.com/sdui-hq/ai-marketplace",
+      "repo_description": "Sdui AI marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2026-01-26T10:40:33Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"sdui-marketplace\",\n  \"version\": \"0.2.0\",\n  \"description\": \"Sdui's marketplace for AI tools\",\n\n  \"owner\": {\n    \"name\": \"sdui\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"command-safety\",\n      \"source\": \"./plugins/command-safety\",\n      \"description\": \"Pre-execution validator that blocks dangerous bash commands before they run\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"safety\", \"security\", \"bash\", \"validation\"],\n      \"category\": \"security\"\n    },\n    {\n      \"name\": \"lint-runner\",\n      \"source\": \"./plugins/lint-runner\",\n      \"description\": \"Stop hook that runs linting when Claude completes tasks\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"hooks\", \"quality\", \"automation\"],\n      \"category\": \"quality\"\n    },\n    {\n      \"name\": \"notifications\",\n      \"source\": \"./plugins/notifications\",\n      \"description\": \"Cross-platform desktop notifications for Claude Code events\",\n      \"version\": \"0.3.0\",\n      \"keywords\": [\"notifications\", \"desktop\", \"alerts\", \"cross-platform\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"sdui\",\n      \"source\": \"./plugins/sdui\",\n      \"description\": \"Sdui's command toolkit for Claude Code\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"github\", \"commands\", \"tools\", \"telemetry\", \"configuration\"],\n      \"category\": \"workflow\"\n    },\n    {\n      \"name\": \"better-init\",\n      \"source\": \"./plugins/better-init\",\n      \"description\": \"Enhances CLAUDE.md initialization with best practices and guidelines\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"init\", \"claude-md\", \"best-practices\", \"documentation\"],\n      \"category\": \"workflow\"\n    }\n  ]\n}\n",
+        "README.md": "# Sdui AI marketplace\n\n[![Tests](https://github.com/sdui-hq/ai-marketplace/actions/workflows/test.yml/badge.svg)](https://github.com/sdui-hq/ai-marketplace/actions/workflows/test.yml)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\nSdui's marketplace for AI tools\n\n## Shared Configurations\n\nThis repository provides shared configurations for Claude Code.\n\n| Configuration | Description | Location |\n|--------------|-------------|----------|\n| [settings.json](./.claude/settings.json) | Shared Claude Code settings (sandbox, env vars, etc) | `.claude/settings.json` |\n| [DevContainer](./.devcontainer) | Containerised environment with network isolation | `.devcontainer/` |\n\n### Settings\n\nShared CLI configuration `.claude/settings.json` can be found in the [.claude](./.claude) directory.\n\n### DevContainer\n\nA pre-configured development container with filesystem + network isolation. See [README.md](./.devcontainer/README.md) for details.\n\n> [!NOTE]\n> DevContainers are recommended for autonomous Claude sessions that require additional security layers.\n> \n> for quick tasks with fewer permission prompts, use [Sandboxing](./.claude/settings.json)\n\n## Plugins\n\nAdd this marketplace to Claude Code:\n\n```bash\n/plugin marketplace add sdui-hq/ai-marketplace\n# or via CLI\nclaude plugin marketplace add sdui-hq/ai-marketplace\n```\n\n### Available Plugins\n\n| Plugin | Description | Type | Install |\n|--------|-------------|------|---------|\n| [sdui](./plugins/sdui) | Sdui's command toolkit (`/sdui:pr-review`, `/sdui:telemetry-setup`) | Command | `sdui@ai-marketplace` |\n| [command-safety](./plugins/command-safety) | Blocks dangerous bash commands before execution | Hook | `command-safety@ai-marketplace` |\n| [lint-runner](./plugins/lint-runner) | Runs linting when Claude completes tasks | Hook | `lint-runner@ai-marketplace` |\n| [notifications](./plugins/notifications) | Cross-platform desktop notifications for Claude Code events | Hook | `notifications@ai-marketplace` |\n| [better-init](./plugins/better-init) | Enhances CLAUDE.md initialization with best practices and guidelines | Skill | `better-init@ai-marketplace` |\n\nInstall any plugin:\n```bash\n/plugin install <plugin>@ai-marketplace\n```\n## Development\n\n### Add a new plugin to the marketplace\n\nHow to create a new plugin: [Claude Code Plugins](https://code.claude.com/docs/en/plugins)\n\n### Test the marketplace locally\n\n```bash\nclaude --plugin-dir /path/to/ai-marketplace/plugins/command-safety\n```\n",
+        "plugins/command-safety/README.md": "# command-safety\n\nPre-execution validator that blocks dangerous bash commands before they run.\n\n## What it does\n\nThis plugin intercepts all Bash tool calls and validates them against dangerous patterns. If a dangerous command is detected, it blocks execution and logs the attempt.\n\n## Blocked patterns (MVP)\n\n### Destructive operations\n- `rm -rf /`, `rm -rf ~`, `rm -rf *` (recursive force delete)\n- `del /f /s /q` (Windows force delete)\n- `rmdir /s /q`, `rd /s /q` (Windows directory removal)\n\n### Disk overwrite\n- `dd if=... of=/dev/...` (raw disk write)\n- `mkfs` (format filesystem)\n- `format C:` (Windows format)\n- `diskpart` (Windows disk partitioning)\n\n### Fork bombs\n- `:(){:|:&};:` (Unix fork bomb)\n- `%0|%0` (Windows batch fork bomb)\n- `while true; do ... & done` (infinite process spawning)\n\n## Installation\n\nVia marketplace:\n```bash\n/plugin marketplace add sdui-hq/ai-marketplace\n/plugin install command-safety@ai-marketplace\n```\n\nFor local development:\n```bash\nclaude --plugin-dir /path/to/ai-marketplace/plugins/command-safety\n```\n\n## Requirements\n\n- Python 3.6+\n\n## Logging\n\nBlocked commands are logged to `.claude/logs/command-safety.log` in the project directory:\n\n```json\n{\"timestamp\": \"2026-01-02T12:00:00Z\", \"command\": \"rm -rf /\", \"pattern\": \"file_destruction\", \"action\": \"denied\"}\n```\n\n## License\n\nMIT\n",
+        "plugins/lint-runner/README.md": "# lint-runner\n\nStop hook that runs linting when Claude completes a task.\n\n## What it does\n\nThis plugin runs your configured lint command whenever Claude attempts to complete a task. If linting fails, it blocks completion and spawns a subagent to fix the errors.\n\n## Configuration\n\nSet the `CLAUDE_LINT_COMMAND` environment variable in your project's `.claude/settings.json`:\n\n```json\n{\n  \"env\": {\n    \"CLAUDE_LINT_COMMAND\": \"npm run lint\"\n  }\n}\n```\n\nThis ensures the lint command is project-specific and shared with your team.\n\nIf not set, the hook approves immediately (no-op).\n\n## Installation\n\nVia marketplace:\n```bash\n/plugin marketplace add sdui-hq/ai-marketplace\n/plugin install lint-runner@ai-marketplace\n```\n\nFor local development:\n```bash\nclaude --plugin-dir /path/to/ai-marketplace/plugins/lint-runner\n```\n\n## Requirements\n\n- Python 3.10+\n\n## Logging\n\nLint failures are logged to `.claude/logs/lint.log` in the project directory with full output for the subagent to read and fix.\n\n## License\n\nMIT\n",
+        "plugins/notifications/README.md": "# notifications\n\nCross-platform desktop notifications for Claude Code events.\n\n## What it does\n\nThis plugin sends desktop notifications:\n- **Stop hook**: When Claude finishes responding \n- **Notification hook**: When Claude needs user input \n\n## Requirements\n\n**Linux:**\n- `notify-send` (libnotify) - usually pre-installed\n- `paplay` (PulseAudio) or `aplay` (ALSA) for sounds\n\n**macOS:**\n- `terminal-notifier` (required): `brew install terminal-notifier`\n\n**Windows:**\n- PowerShell 5.0+ (included in Windows 10+)\n",
+        "plugins/sdui/README.md": "# Sdui Plugin\n\nSdui's command toolkit for Claude Code.\n\n## Commands\n\n### `/sdui:telemetry-setup`\n\nSet up Claude Code telemetry to track tool usage across the team.\n\n**What you'll need:** A Coralogix API key (starts with `cxtp_`)\n\nThe command guides you through configuring Claude Code to send telemetry data to Coralogix.\n\n#### Why Telemetry?\n\nTelemetry helps us understand how Claude Code tools are being used across teams—which tools are popular, how tokens are consumed, and what environments are in use.\n\n| Tracked | Not Tracked |\n|---------|-------------|\n| Tool usage (which tools, frequency) | Your prompts |\n| Token consumption | Model outputs/responses |\n| OS environment | Code or file contents |\n\n---\n\n### `/sdui:pr-review`\n\nAutomated PR code review that posts feedback directly to GitHub.\n\n**What you'll need:** [GitHub CLI](https://cli.github.com/) installed and authenticated\n\n**Run it:**\n```\n/sdui:pr-review <PR_NUMBER>\n```\n\nThe command fetches the PR, analyzes all changes and posts a structured review comment with a verdict. \n\n---\n\n## Security\n\nThe `telemetry-setup` command stores credentials in settings files. Make sure `.claude/settings.local.json` is in your `.gitignore`.\n",
+        "plugins/better-init/README.md": "# Better Init Plugin\n\nEnhances CLAUDE.md initialization with best practices and guidelines.\n\n## What It Does\n\nWhen you run `/init` or ask Claude to create a CLAUDE.md file, this plugin automatically provides best practices for creating a CLAUDE.md file.\n\n## Key Guidelines Enforced\n\n- **Structure**: WHAT (tech stack), WHY (purpose), HOW (workflows)\n- **Conciseness**: Target <300 lines, ideally under 60\n- **Focused instructions**: Respects LLM instruction limits\n- **Progressive disclosure**: Reference external docs instead of embedding\n- **No style guidelines**: Use deterministic tools (linters) instead\n\n## Usage\n\nSimply run `/init` or ask Claude to create a CLAUDE.md file. The skill activates automatically.\n"
+      },
+      "plugins": [
+        {
+          "name": "command-safety",
+          "source": "./plugins/command-safety",
+          "description": "Pre-execution validator that blocks dangerous bash commands before they run",
+          "version": "0.1.0",
+          "keywords": [
+            "safety",
+            "security",
+            "bash",
+            "validation"
+          ],
+          "category": "security",
+          "categories": [
+            "bash",
+            "safety",
+            "security",
+            "validation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sdui-hq/ai-marketplace",
+            "/plugin install command-safety@sdui-marketplace"
+          ]
+        },
+        {
+          "name": "lint-runner",
+          "source": "./plugins/lint-runner",
+          "description": "Stop hook that runs linting when Claude completes tasks",
+          "version": "0.1.0",
+          "keywords": [
+            "hooks",
+            "quality",
+            "automation"
+          ],
+          "category": "quality",
+          "categories": [
+            "automation",
+            "hooks",
+            "quality"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sdui-hq/ai-marketplace",
+            "/plugin install lint-runner@sdui-marketplace"
+          ]
+        },
+        {
+          "name": "notifications",
+          "source": "./plugins/notifications",
+          "description": "Cross-platform desktop notifications for Claude Code events",
+          "version": "0.3.0",
+          "keywords": [
+            "notifications",
+            "desktop",
+            "alerts",
+            "cross-platform"
+          ],
+          "category": "productivity",
+          "categories": [
+            "alerts",
+            "cross-platform",
+            "desktop",
+            "notifications",
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sdui-hq/ai-marketplace",
+            "/plugin install notifications@sdui-marketplace"
+          ]
+        },
+        {
+          "name": "sdui",
+          "source": "./plugins/sdui",
+          "description": "Sdui's command toolkit for Claude Code",
+          "version": "0.1.0",
+          "keywords": [
+            "github",
+            "commands",
+            "tools",
+            "telemetry",
+            "configuration"
+          ],
+          "category": "workflow",
+          "categories": [
+            "commands",
+            "configuration",
+            "github",
+            "telemetry",
+            "tools",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sdui-hq/ai-marketplace",
+            "/plugin install sdui@sdui-marketplace"
+          ]
+        },
+        {
+          "name": "better-init",
+          "source": "./plugins/better-init",
+          "description": "Enhances CLAUDE.md initialization with best practices and guidelines",
+          "version": "0.1.0",
+          "keywords": [
+            "init",
+            "claude-md",
+            "best-practices",
+            "documentation"
+          ],
+          "category": "workflow",
+          "categories": [
+            "best-practices",
+            "claude-md",
+            "documentation",
+            "init",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sdui-hq/ai-marketplace",
+            "/plugin install better-init@sdui-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

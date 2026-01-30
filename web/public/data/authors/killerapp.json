@@ -1,0 +1,65 @@
+{
+  "author": {
+    "id": "killerapp",
+    "display_name": "Vaskin Kissoyan",
+    "avatar_url": "https://avatars.githubusercontent.com/u/31700?u=d78f35c0850d97654bf0aaed558a2eafbdaa7e8f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mem8-official",
+      "version": null,
+      "description": "Official mem8 plugin marketplace for Claude Code",
+      "repo_full_name": "killerapp/mem8-plugin",
+      "repo_url": "https://github.com/killerapp/mem8-plugin",
+      "repo_description": "Claude Code plugin for mem8 - Memory-augmented development workflows with commands and agents",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2025-12-21T17:46:49Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mem8-official\",\n  \"owner\": {\n    \"name\": \"killerapp\",\n    \"email\": \"contact@mem8.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"Official mem8 plugin marketplace for Claude Code\",\n    \"version\": \"3.1.0\",\n    \"repository\": \"https://github.com/killerapp/mem8-plugin\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mem8\",\n      \"source\": \"./\",\n      \"description\": \"Memory-augmented development workflows with planning, research, and debugging commands. Includes PARA-based knowledge management.\",\n      \"version\": \"3.1.0\",\n      \"author\": {\n        \"name\": \"killerapp\"\n      },\n      \"keywords\": [\"memory\", \"workflow\", \"planning\", \"research\", \"automation\", \"knowledge-management\", \"para\", \"pkm\"],\n      \"category\": \"productivity\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mem8\",\n  \"version\": \"3.1.0\",\n  \"description\": \"Memory-augmented development workflows for Claude Code. Provides commands for planning, implementation, debugging, and research with persistent memory.\",\n  \"author\": {\n    \"name\": \"killerapp\",\n    \"email\": \"contact@mem8.dev\",\n    \"url\": \"https://github.com/killerapp\"\n  },\n  \"homepage\": \"https://github.com/killerapp/mem8\",\n  \"repository\": \"https://github.com/killerapp/mem8-plugin\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\n    \"memory\",\n    \"workflow\",\n    \"planning\",\n    \"research\",\n    \"development\",\n    \"automation\",\n    \"claude-code\"\n  ],\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "README.md": "# mem8 Claude Code Plugin\n\nOfficial Claude Code plugin for [mem8](https://github.com/killerapp/mem8) - memory-augmented development workflows.\n\n## What is mem8?\n\nmem8 enhances Claude Code with persistent memory and structured workflows:\n\n- **8 workflow commands** for planning, research, implementation, and validation\n- **6 specialized agents** for codebase analysis and research\n- **2 skills** for Obsidian vault management and PARA-based knowledge management\n- **Persistent memory** across sessions via the `memory/` directory\n- **Team distribution** through `.claude/settings.json`\n\n## Installation\n\n### Step 1: Install mem8 CLI (Recommended)\n\nFor full functionality including search, sync, and diagnostics:\n\n```bash\n# Install with uv (fast, modern Python package manager)\nuv tool install mem8\n```\n\n:::tip Don't have uv?\nInstall it first:\n```bash\ncurl -LsSf https://astral.sh/uv/install.sh | sh\n```\n:::\n\nVerify CLI installation:\n\n```bash\nmem8 --version\nmem8 status\n```\n\n### Step 2: Install Plugin\n\nAdd mem8 marketplace and install the plugin:\n\n```bash\n/plugin marketplace add killerapp/mem8-plugin\n/plugin install mem8@mem8-official\n```\n\nThe `memory/` directory will be created automatically.\n\n### Team Installation\n\nFor automatic installation across your team, add to `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"mem8\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"killerapp/mem8-plugin\"\n      }\n    }\n  },\n  \"enabledPlugins\": [\"mem8@mem8-official\"]\n}\n```\n\nWhen team members trust the repository, mem8 installs automatically.\n\n## Plugin Contents\n\n### Commands (8 total)\n\n```\ncommands/\n├── commit.md         # Create well-structured commits\n├── debug.md          # Debug issues with memory context\n├── describe-pr.md    # Generate PR descriptions\n├── implement.md      # Implement from plans\n├── local-review.md   # Set up review environments\n├── plan.md          # Create implementation plans\n├── research.md      # Research codebase\n└── validate.md      # Validate implementations\n```\n\n### Agents (6 total)\n\n```\nagents/\n├── codebase-analyzer.md       # Deep code analysis\n├── codebase-locator.md        # Find relevant files\n├── codebase-pattern-finder.md # Discover patterns\n├── memory-analyzer.md         # Deep memory analysis\n├── memory-locator.md          # Find relevant memory\n└── web-search-researcher.md   # Web research\n```\n\n### Skills (2 total)\n\n```\nskills/\n├── obsidian-skill/           # Obsidian vault management\n│   ├── SKILL.md              # OFM syntax and best practices\n│   ├── references/           # Comprehensive guides\n│   ├── scripts/              # Vault health utilities\n│   └── assets/templates/     # Note templates\n└── para-pkm/                 # PARA knowledge management\n    ├── SKILL.md              # PARA method implementation\n    ├── references/           # Decision guides and patterns\n    ├── scripts/              # Automation (init, validate, archive)\n    └── assets/               # Templates for projects/areas\n```\n\n### Memory Directory Structure\n\nCreated automatically during plugin installation:\n\n```\nmemory/\n├── plans/       # Implementation plans and technical designs\n├── research/    # Research documents and findings\n├── prs/         # Pull request descriptions and reviews\n└── docs/        # Documentation and notes\n```\n\n## Usage\n\n### Getting Started\n\n```bash\n# Research your codebase\n/mem8:research\n\n# Create an implementation plan\n/mem8:plan\n\n# Implement the plan\n/mem8:implement memory/plans/your-plan.md\n\n# Validate implementation\n/mem8:validate memory/plans/your-plan.md\n```\n\n### Check Status\n\n```bash\n# View plugin status and available commands\nmem8 status\n\n# Detailed view with paths\nmem8 status --detailed\n```\n\n## Plugin Architecture\n\n### Manifest Structure\n\nThe plugin is defined by:\n\n- `.claude-plugin/plugin.json` - Plugin metadata and configuration\n- `.claude-plugin/marketplace.json` - Marketplace catalog definition\n- `hooks/hooks.json` - Post-install automation hooks\n- `scripts/` - Cross-platform setup scripts\n\n### Post-Install Hooks\n\nThe plugin automatically runs:\n\n1. **setup-memory** - Creates `memory/` directory structure\n2. **create-plugin-marker** - Creates `.claude/.mem8-plugin` marker for detection\n\nScripts support Linux/macOS (bash), Windows (batch), and PowerShell.\n\n## Customization\n\n### Fork & Modify\n\n1. Fork this repository\n2. Modify commands, agents, or hooks\n3. Update `.claude-plugin/plugin.json` version\n4. Distribute via your own marketplace:\n\n```bash\n/plugin marketplace add YOUR_ORG/mem8-plugin\n/plugin install mem8@your-marketplace\n```\n\n### Local Development\n\n```bash\ngit clone https://github.com/killerapp/mem8-plugin.git\ncd mem8-plugin\n\n# Test changes locally\n/plugin install file://$(pwd)@mem8-official\n```\n\n## Requirements\n\n- Claude Code (latest version)\n- Git (for memory directory initialization)\n\n## Support\n\n- Documentation: https://github.com/killerapp/mem8\n- Issues: https://github.com/killerapp/mem8/issues\n- Plugin docs: https://docs.claude.com/docs/claude-code/plugins\n\n## Version\n\nCurrent version: **3.0.0** (Plugin-based architecture)\n\n## License\n\nMIT License - See LICENSE file for details\n"
+      },
+      "plugins": [
+        {
+          "name": "mem8",
+          "source": "./",
+          "description": "Memory-augmented development workflows with planning, research, and debugging commands. Includes PARA-based knowledge management.",
+          "version": "3.1.0",
+          "author": {
+            "name": "killerapp"
+          },
+          "keywords": [
+            "memory",
+            "workflow",
+            "planning",
+            "research",
+            "automation",
+            "knowledge-management",
+            "para",
+            "pkm"
+          ],
+          "category": "productivity",
+          "strict": true,
+          "categories": [
+            "automation",
+            "knowledge-management",
+            "memory",
+            "para",
+            "pkm",
+            "planning",
+            "productivity",
+            "research",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add killerapp/mem8-plugin",
+            "/plugin install mem8@mem8-official"
+          ]
+        }
+      ]
+    }
+  ]
+}
