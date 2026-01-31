@@ -79,7 +79,7 @@ jobs:
 
       - name: Create PR for data updates
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.PIPELINE_GITHUB_TOKEN }}
         run: |
           # Check if there are changes to commit
           if [ -z "$(git status web/public/data/ data/signals-history.json --porcelain)" ]; then
@@ -92,11 +92,15 @@ jobs:
 
           # Create branch with date
           BRANCH="data/update-$(date +%Y-%m-%d)"
+
+          # Delete remote branch if it exists (from previous failed run)
+          git push origin --delete "$BRANCH" 2>/dev/null || true
+
           git checkout -b "$BRANCH"
 
           git add -f web/public/data/ data/signals-history.json
           git commit -m "chore: update directory data $(date +%Y-%m-%d)" --no-verify
-          git push --force-with-lease -u origin "$BRANCH" --no-verify
+          git push -u origin "$BRANCH" --no-verify
 
           # Check if PR already exists for this branch
           EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
