@@ -6,60 +6,211 @@
   },
   "marketplaces": [
     {
-      "name": "anysite-skills",
-      "version": null,
-      "description": "AnySite skills for Claude Code - LinkedIn data analysis, ICP building, and prospect research",
-      "repo_full_name": "anysiteio/cookbook",
-      "repo_url": "https://github.com/anysiteio/cookbook",
+      "name": "anysite-skills-marketplace",
+      "version": "1.1.0",
+      "description": "Marketplace for anysite MCP-powered data extraction and analysis skills",
+      "repo_full_name": "anysiteio/agent-skills",
+      "repo_url": "https://github.com/anysiteio/agent-skills",
       "repo_description": null,
       "signals": {
-        "stars": 5,
-        "forks": 0,
-        "pushed_at": "2026-01-13T18:43:16Z"
+        "stars": 9,
+        "forks": 4,
+        "pushed_at": "2026-01-30T15:31:09Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"anysite-skills\",\n  \"owner\": {\n    \"name\": \"AnySite\",\n    \"email\": \"team@anysite.io\"\n  },\n  \"metadata\": {\n    \"description\": \"AnySite skills for Claude Code - LinkedIn data analysis, ICP building, and prospect research\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"anysite-icp-builder\",\n      \"source\": \"./claude-skills/anysite-icp-builder\",\n      \"description\": \"Build Ideal Customer Profiles from LinkedIn data via AnySite MCP\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"AnySite\",\n        \"email\": \"team@anysite.io\"\n      },\n      \"homepage\": \"https://anysite.io\",\n      \"repository\": \"https://github.com/anysiteio/cookbook\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"icp\", \"linkedin\", \"sales\", \"prospecting\", \"customer-profile\", \"b2b\", \"anysite\", \"mcp\"],\n      \"category\": \"sales\",\n      \"strict\": true\n    }\n  ]\n}\n",
-        "README.md": "# cookbook",
-        "claude-skills/anysite-icp-builder/README.md": "# AnySite ICP Builder\n\n> Build data-driven Ideal Customer Profiles from LinkedIn data using AnySite MCP\n\n## Overview\n\nTransform manual ICP creation into an automated, data-driven workflow:\n\n1. **Analyze** existing customers' LinkedIn profiles via AnySite MCP\n2. **Extract** common patterns (industries, company sizes, titles, skills)\n3. **Generate** scoring criteria and ICP documentation\n4. **Find** lookalike prospects matching the ICP\n\n## Features\n\n🎯 **ICP-Driven Research**: Analyze real customer data, not assumptions\n🤖 **AI-Powered Discovery**: Automated pattern extraction from LinkedIn\n📊 **Smart Scoring**: 100-point algorithm prioritizes prospects by fit\n🔗 **Native AnySite Integration**: Uses AnySite MCP for all LinkedIn data\n📁 **Multiple Outputs**: Markdown reports + JSON configs + Prospect lists\n\n## Prerequisites\n\n- [Claude Code](https://claude.ai/code) or Claude AI with skills support\n- [AnySite MCP](https://anysite.io) server connected\n- LinkedIn URLs of 5-15 existing customers\n\n## Installation\n\n### Option 1: Claude Code Plugin (Recommended)\n\n```bash\n# Add as plugin\n/plugin marketplace add anysite/icp-builder\n\n# Or install manually\n/plugin add /path/to/anysite-icp-builder\n```\n\n### Option 2: Manual Installation\n\n```bash\n# Clone or download the skill\ngit clone https://github.com/anysite/icp-builder.git\n\n# Copy to Claude skills directory\ncp -r anysite-icp-builder ~/.claude/skills/\n\n# Copy command\ncp -r anysite-icp-builder/commands/* ~/.claude/commands/\n```\n\n### Option 3: Claude.ai Upload\n\n1. Go to Claude.ai → Settings → Skills\n2. Click \"Upload Custom Skill\"\n3. Select the `anysite-icp-builder` folder\n4. Skill will auto-activate when relevant\n\n## Usage\n\n### Quick Start\n\n```\nUser: Help me build an ICP from my customers\n\nClaude: I'll help you build an Ideal Customer Profile. Please share LinkedIn URLs \nof 5-15 of your best customers (profiles or company pages).\n\nUser: https://linkedin.com/in/customer1, https://linkedin.com/company/acme\n\nClaude: [Fetches data via AnySite MCP, analyzes patterns, generates ICP]\n```\n\n### Slash Command\n\n```\n/icp-build https://linkedin.com/in/cust1, https://linkedin.com/in/cust2\n```\n\n### Detailed Workflow\n\n1. **Provide customer URLs**: LinkedIn profile or company URLs\n2. **Answer context questions**: Product, deal size, geography\n3. **Review patterns**: Claude shows extracted patterns for validation\n4. **Get ICP document**: Full report with scoring model\n5. **Optional: Find prospects**: Discover lookalike companies/people\n\n## Output Files\n\n| File | Description |\n|------|-------------|\n| `icp-report-[company]-[date].md` | Full ICP report with scoring model |\n| `icp-config-[company]-[date].json` | Machine-readable ICP configuration |\n| `prospects-[company]-[date].json` | Scored prospect list |\n\n## AnySite MCP Tools Used\n\n| Tool | Purpose |\n|------|---------|\n| `get_linkedin_profile` | Extract full profile data |\n| `get_linkedin_company` | Company details, size, industry |\n| `get_linkedin_company_employees` | Key contacts at company |\n| `get_linkedin_user_posts` | Activity and content interests |\n| `search_linkedin_users` | Find lookalike decision makers |\n| `search_linkedin_companies` | Discover target companies |\n\n## Scoring Model\n\n### Company Fit (50 points)\n- Industry exact match: 20 pts\n- Company size in range: 15 pts\n- Geographic match: 10 pts\n- Tech stack match: 5 pts\n\n### Contact Fit (30 points)\n- Title exact/similar: 15/8 pts\n- Seniority match: 10 pts\n- Function match: 5 pts\n\n### Engagement Signals (20 points)\n- Recent activity: 10 pts\n- Skill overlap: 5 pts\n- Content relevance: 5 pts\n\n### Tiers\n| Score | Tier | Action |\n|-------|------|--------|\n| 80-100 | 🔥 Hot | Prioritize outreach |\n| 60-79 | 🌡️ Warm | Add to nurture |\n| 40-59 | ❄️ Cool | Monitor for signals |\n| <40 | ⬇️ Low | Deprioritize |\n\n## File Structure\n\n```\nanysite-icp-builder/\n├── SKILL.md              # Main skill instructions\n├── README.md             # This file\n├── commands/\n│   └── icp-build.md      # Slash command definition\n├── scripts/\n│   └── icp_analyzer.py   # Python analysis tools\n├── templates/\n│   ├── icp-report-template.md\n│   └── prospect-list-schema.json\n└── resources/\n    └── industry-keywords.json\n```\n\n## Examples\n\n### Example ICP Output\n\n```markdown\n# Ideal Customer Profile: AnySite\n\n## Executive Summary\nAnySite's ideal customer is a Series A-C B2B SaaS company with 50-500 employees, \nprimarily in AI/ML or developer tools space, led by technical founders.\n\n## Company Criteria\n\n### Must-Have\n| Criterion | Requirement | Weight |\n|-----------|-------------|--------|\n| Industry | AI/ML, Developer Tools, Data Infrastructure | 25% |\n| Size | 50-500 employees | 20% |\n| Stage | Series A-C | 15% |\n\n## Decision Maker Profile\n**Title**: VP Engineering, CTO, Head of Data\n**Seniority**: VP or C-level\n**Function**: Engineering, Data\n```\n\n## Best Practices\n\n1. **Sample Size**: Analyze at least 5 customers for reliable patterns\n2. **Quality over Quantity**: Focus on \"best\" customers (highest ACV, fastest close)\n3. **Regular Updates**: Refresh ICP quarterly\n4. **Validate with Sales**: Cross-check patterns with team knowledge\n5. **Start Broad**: Narrow criteria based on conversion data\n\n## Troubleshooting\n\n**Issue**: Not enough patterns detected\n**Solution**: Add more customer URLs, include adjacent customers\n\n**Issue**: Patterns too generic\n**Solution**: Focus only on \"best\" customers (top 20%)\n\n**Issue**: No prospects found\n**Solution**: Relax secondary criteria, expand geography\n\n## Contributing\n\nContributions welcome! Ideas:\n- Additional scoring factors\n- Industry-specific templates\n- CRM integration\n- Automated monitoring\n\n## License\n\nMIT License - see LICENSE file\n\n## Credits\n\nBuilt for [AnySite](https://anysite.io) - Internet for AI Agents\n\nBased on patterns from:\n- [claude-code-exa-gtm](https://github.com/peterkaplan/claude-code-exa-gtm)\n- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills)\n\n---\n\n*AnySite ICP Builder v1.0 - January 2026*\n"
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"anysite-skills-marketplace\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Marketplace for anysite MCP-powered data extraction and analysis skills\",\n  \"owner\": {\n    \"name\": \"Anysite Skills Contributors\",\n    \"email\": \"support@anysite.io\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"anysite-skills\",\n      \"description\": \"Complete suite of 12 professional skills for social media analysis, lead generation, market research, competitive intelligence, person intelligence, VC analysis, competitor research, and security auditing using anysite MCP server. Supports LinkedIn, Instagram, Twitter/X, Reddit, YouTube, Y Combinator, SEC, GitHub, and web scraping. Zero configuration required - no API tokens or external tools needed.\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"anysite-lead-generation\",\n      \"description\": \"Lead generation specialist using anysite MCP for LinkedIn prospect discovery, email finding, company research, and contact enrichment. Extract contacts from websites, find decision-makers, and build qualified prospect lists. Ideal for sales teams, recruiters, and business development professionals.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"skills\": [\"./skills/anysite-lead-generation\"]\n    },\n    {\n      \"name\": \"anysite-competitor-intelligence\",\n      \"description\": \"Competitive intelligence gathering across LinkedIn, social media, Y Combinator, and the web. Track competitor activities, analyze hiring patterns, monitor content strategies, and benchmark market positioning. Perfect for product managers, strategists, and market analysts.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"skills\": [\"./skills/anysite-competitor-intelligence\"]\n    },\n    {\n      \"name\": \"anysite-market-research\",\n      \"description\": \"Comprehensive market research using Y Combinator data, SEC filings, social media insights, and web scraping. Analyze market dynamics, discover emerging trends, research startup ecosystems, and understand competitive landscapes. Built for researchers, investors, and strategic planners.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"learning\",\n      \"skills\": [\"./skills/anysite-market-research\"]\n    },\n    {\n      \"name\": \"anysite-social-media-analytics\",\n      \"description\": \"Comprehensive social media analytics bundle combining audience analysis, content performance tracking, and influencer discovery. Monitor engagement metrics, identify trends, discover influencers, and analyze content strategies across Instagram, YouTube, LinkedIn, Twitter/X, and Reddit.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"skills\": [\n        \"./skills/anysite-audience-analysis\",\n        \"./skills/anysite-content-analytics\",\n        \"./skills/anysite-influencer-discovery\",\n        \"./skills/anysite-trend-analysis\",\n        \"./skills/anysite-brand-reputation\"\n      ]\n    },\n    {\n      \"name\": \"anysite-person-analyzer\",\n      \"description\": \"Deep multi-platform intelligence analysis for people combining LinkedIn (profile, posts, activity), Twitter/X (tweets, engagement), Reddit (discussions), web presence (articles, GitHub, blogs), and company intelligence. Perfect for networking, sales, partnerships, recruitment, and investor relations. Produces comprehensive cross-platform reports with conversation strategies and strategic value assessment.\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"skills\": [\"./skills/anysite-person-analyzer\"]\n    },\n    {\n      \"name\": \"anysite-vc-analyst\",\n      \"description\": \"Universal startup investor research and outreach agent. Onboards project context (website, pitch deck, fundraising stage), verifies investor roles on LinkedIn, scores investors based on stage fit, thesis alignment, and portfolio relevance. Detects portfolio conflicts and generates personalized outreach messages. Ideal for founders raising capital, VCs doing due diligence, and accelerators.\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"skills\": [\"./skills/anysite-vc-analyst\"]\n    },\n    {\n      \"name\": \"anysite-competitor-analyzer\",\n      \"description\": \"Comprehensive competitive intelligence combining web scraping, LinkedIn analysis, social media monitoring, leadership profiling, GitHub review, and community sentiment tracking. Generates detailed competitor profiles with positioning, pricing, team composition, strategic analysis, and actionable recommendations. Perfect for product managers, strategists, and sales teams.\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"skills\": [\"./skills/anysite-competitor-analyzer\"]\n    },\n    {\n      \"name\": \"skill-audit\",\n      \"description\": \"Static security auditor for Claude Code skills, commands, and plugins. Detects dangerous patterns — excessive permissions, hooks, prompt injection, credential access, privilege escalation — before you enable a skill. Performs read-only analysis with no system modifications.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Anysite Skills Contributors\",\n        \"email\": \"support@anysite.io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"skills\": [\"./skills/skill-audit\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"anysite-skills\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Professional skills for data extraction and analysis using anysite MCP server. Covers LinkedIn, Instagram, Twitter/X, Reddit, YouTube, Y Combinator, SEC, and web scraping for lead generation, competitive intelligence, market research, social media analytics, person intelligence, VC analysis, and competitor research.\",\n  \"author\": {\n    \"name\": \"Anysite Skills Contributors\",\n    \"email\": \"support@anysite.io\"\n  },\n  \"homepage\": \"https://github.com/anysiteio/agent-skills\",\n  \"repository\": \"https://github.com/anysiteio/agent-skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"anysite\",\n    \"mcp\",\n    \"data-extraction\",\n    \"linkedin\",\n    \"instagram\",\n    \"twitter\",\n    \"reddit\",\n    \"youtube\",\n    \"market-research\",\n    \"lead-generation\",\n    \"competitor-analysis\",\n    \"social-media-analytics\",\n    \"web-scraping\",\n    \"y-combinator\",\n    \"sec-filings\",\n    \"person-intelligence\",\n    \"vc-analysis\",\n    \"investor-research\"\n  ],\n  \"skills\": [\n    \"./skills/anysite-lead-generation\",\n    \"./skills/anysite-competitor-intelligence\",\n    \"./skills/anysite-influencer-discovery\",\n    \"./skills/anysite-content-analytics\",\n    \"./skills/anysite-trend-analysis\",\n    \"./skills/anysite-market-research\",\n    \"./skills/anysite-audience-analysis\",\n    \"./skills/anysite-brand-reputation\",\n    \"./skills/anysite-person-analyzer\",\n    \"./skills/anysite-vc-analyst\",\n    \"./skills/anysite-competitor-analyzer\",\n    \"./skills/skill-audit\"\n  ]\n}\n",
+        "README.md": "# Anysite MCP Skills\n\nOfficial anysite agent skills for LinkedIn intelligence, social media analysis, and data extraction. Works with Claude Code, Cursor, and other AI coding assistants that support MCP.\n\n## 💎 MCP Unlimited Plan\n\nUnlimited access to all 65+ Anysite MCP tools for just $30/month - perfect for AI agents and automation.\n\nGet unlimited requests through Remote MCP Server with no request limits. Ideal for Claude Desktop, Cursor, n8n, and any MCP-compatible client.\n\n📖 Learn more about MCP Unlimited https://docs.anysite.io/mcp-server/unlimited-plan\n\n## Available Skills\n\n<!-- BEGIN_SKILLS_TABLE -->\n| Name | Description | Documentation |\n|------|-------------|---------------|\n| `anysite-lead-generation` | Find and enrich prospects with LinkedIn search, email discovery, and contact extraction from websites. Build qualified prospect lists for sales, recruiting, and business development. | [SKILL.md](skills/anysite-lead-generation/SKILL.md) |\n| `anysite-competitor-intelligence` | Track competitors across LinkedIn, social media, Y Combinator, and the web. Analyze hiring patterns, monitor content strategies, and benchmark market positioning. | [SKILL.md](skills/anysite-competitor-intelligence/SKILL.md) |\n| `anysite-influencer-discovery` | Discover and analyze influencers across Instagram, Twitter/X, LinkedIn, and YouTube. Evaluate engagement metrics, audience quality, and partnership opportunities. | [SKILL.md](skills/anysite-influencer-discovery/SKILL.md) |\n| `anysite-content-analytics` | Track post performance, engagement metrics, and content strategy effectiveness across Instagram, YouTube, LinkedIn, Twitter/X, and Reddit. | [SKILL.md](skills/anysite-content-analytics/SKILL.md) |\n| `anysite-trend-analysis` | Detect emerging trends and viral content across Twitter/X, Reddit, YouTube, LinkedIn, and Instagram. Monitor topic momentum and market shifts. | [SKILL.md](skills/anysite-trend-analysis/SKILL.md) |\n| `anysite-market-research` | Analyze tech markets, research startup ecosystems via Y Combinator, study public companies through SEC filings, and gather market intelligence from social platforms. | [SKILL.md](skills/anysite-market-research/SKILL.md) |\n| `anysite-audience-analysis` | Analyze audience demographics, engagement patterns, and follower behavior across Instagram, YouTube, and LinkedIn. | [SKILL.md](skills/anysite-audience-analysis/SKILL.md) |\n| `anysite-brand-reputation` | Monitor brand mentions, sentiment, and social media conversations across Twitter/X, Reddit, Instagram, YouTube, and LinkedIn. Track customer feedback and identify reputation risks. | [SKILL.md](skills/anysite-brand-reputation/SKILL.md) |\n| `anysite-person-analyzer` | Deep multi-platform intelligence analysis for people combining LinkedIn (profile, posts, activity), Twitter/X, Reddit, GitHub, and web presence. Perfect for networking, sales, partnerships, recruitment, and investor relations. | [SKILL.md](skills/anysite-person-analyzer/SKILL.md) |\n| `anysite-vc-analyst` | Universal startup investor research and outreach agent. Verify investor roles, score based on stage fit and thesis alignment, detect portfolio conflicts, and generate personalized outreach messages. | [SKILL.md](skills/anysite-vc-analyst/SKILL.md) |\n| `anysite-competitor-analyzer` | Comprehensive competitive intelligence combining web scraping, LinkedIn analysis, social media monitoring, leadership profiling, GitHub review, and community sentiment tracking. | [SKILL.md](skills/anysite-competitor-analyzer/SKILL.md) |\n| `skill-audit` | Static security auditor for Claude Code skills. Detects hooks, prompt injection, and dangerous permissions. | [SKILL.md](skills/skill-audit/SKILL.md) |\n<!-- END_SKILLS_TABLE -->\n\n## Installation\n\n### Quick Start\n\n```bash\nnpx @anysiteio/agent-skills\n```\n\nThis will display installation instructions and list all available skills.\n\n### Step 1: Install anysite MCP Server\n\nFirst, install the anysite MCP server following the instructions at [docs.anysite.io/mcp-server](https://docs.anysite.io/mcp-server).\n\n### Step 2: Add Skills Marketplace\n\n#### Option 1: Using npx (Recommended)\n\n```bash\nnpx @anysiteio/agent-skills\n```\n\nThen in Claude Code, run:\n```bash\n/plugin marketplace add https://github.com/anysiteio/agent-skills\n```\n\n#### Option 2: Manual Installation\n\nIn Claude Code:\n```bash\n# Add the marketplace\n/plugin marketplace add https://github.com/anysiteio/agent-skills\n\n# Install a skill\n/plugin install anysite-lead-generation@anysite-skills\n```\n\n#### Cursor / Windsurf\n\nAdd to your project's `.cursor/settings.json` or use the same Claude Code plugin format.\n\n#### Other AI Tools\n\nAny AI tool that supports markdown context can use the skills by pointing to:\n- `skills/*/SKILL.md` - Individual skill documentation\n- `.claude-plugin/marketplace.json` - Skill metadata\n\n## Prerequisites\n\n1. **anysite MCP Server** - [docs.anysite.io/mcp-server](https://docs.anysite.io/mcp-server)\n2. **Claude Code / Cursor** - With MCP support enabled\n\nThat's it! No API tokens, .env files, or CLI tools required. Authentication is handled at the MCP server level.\n\n## Platform Coverage\n\n### Supported Platforms\n\n| Platform | Tools | Primary Use Cases |\n|----------|-------|-------------------|\n| **LinkedIn** | 30+ tools | B2B lead generation, company research, employee discovery, email finding |\n| **Instagram** | 8 tools | Influencer discovery, content analytics, audience analysis, engagement tracking |\n| **Twitter/X** | 4 tools | Trend analysis, sentiment monitoring, user research, content discovery |\n| **Reddit** | 5 tools | Community insights, sentiment analysis, market research, trend detection |\n| **YouTube** | 5 tools | Content analytics, channel research, comment analysis, video trends |\n| **Y Combinator** | 3 tools | Startup research, founder discovery, batch analysis |\n| **SEC** | 2 tools | Public company filings, financial data extraction |\n| **GitHub** | Available | Repository analysis, technical contributions, developer activity |\n| **Web Scraping** | 3 tools | Contact extraction, sitemap parsing, general web data |\n\n### Platform Limitations\n\nThe anysite MCP server currently supports LinkedIn, Instagram, Twitter/X, Reddit, YouTube, Y Combinator, SEC, and web scraping. Additional platforms may be added in future updates.\n\n## Key Features\n\n**Zero Configuration**\n- No API tokens or .env files required\n- No external CLI tools needed\n- Server-level authentication handled automatically\n\n**Synchronous Execution**\n- Immediate results without polling\n- No async job management required\n- Real-time data access\n\n**Native Integration**\n- Direct Claude tool calls\n- Seamless conversation flow\n- No external scripts to manage\n\n**Professional Grade**\n- Built for sales teams, marketers, researchers, and analysts\n- Production-ready workflows\n- Comprehensive documentation\n\n## Output Formats\n\nAll skills support three output formats:\n\n- **Chat Summary** (Default) - Natural language insights directly in conversation\n- **CSV Export** - Structured data for spreadsheet analysis and CRM import\n- **JSON Export** - Raw data for programmatic processing and integrations\n\n## Quick Start\n\nOnce installed, skills are automatically available. Simply ask Claude to perform tasks:\n\n```\n\"Find 20 sales prospects in San Francisco who work in SaaS companies\"\n→ Uses anysite-lead-generation skill\n\n\"Analyze my competitor's LinkedIn company page and recent posts\"\n→ Uses anysite-competitor-intelligence skill\n\n\"Find Instagram influencers in sustainable fashion with 10k-100k followers\"\n→ Uses anysite-influencer-discovery skill\n\n\"Research this person's LinkedIn and Twitter activity\"\n→ Uses anysite-person-analyzer skill\n\n\"Evaluate this investor for our seed round\"\n→ Uses anysite-vc-analyst skill\n```\n\n## How It Works\n\n```\nClaude Code\n    ↓\nAnysite MCP Skills (This Repository)\n    ↓\nAnysite MCP Server\n    ↓\nPlatform APIs (LinkedIn, Instagram, Twitter, etc.)\n```\n\nThe anysite MCP server handles all authentication and API communication. Skills provide structured workflows and analysis frameworks that Claude uses to extract, process, and present data.\n\n## Use Cases\n\n### Sales & Business Development\n- **Lead Generation**: Build prospect lists from LinkedIn and web sources\n- **Account Research**: Deep-dive on target companies and decision makers\n- **Competitive Intelligence**: Track competitor activities and positioning\n- **Person Intelligence**: Research prospects before meetings\n\n### Marketing & Social Media\n- **Influencer Marketing**: Discover and evaluate partnership opportunities\n- **Content Strategy**: Analyze performance and optimize posting\n- **Brand Monitoring**: Track mentions and sentiment across platforms\n- **Trend Analysis**: Identify emerging topics and viral content\n\n### Recruiting & HR\n- **Candidate Sourcing**: Find qualified candidates on LinkedIn\n- **Background Research**: Analyze candidate profiles and activity\n- **Talent Intelligence**: Track hiring patterns at target companies\n- **Network Analysis**: Map connections and referral paths\n\n### Fundraising & Investing\n- **Investor Research**: Qualify and score potential investors\n- **Due Diligence**: Research founders, teams, and companies\n- **Market Analysis**: Study startup ecosystems and trends\n- **Competitive Landscape**: Map competitors and market dynamics\n\n## License\n\nMIT License - see [LICENSE](LICENSE) file for details\n\n## Contributing\n\n1. Fork this repository\n2. Create your skill in `skills/anysite-your-skill/`\n3. Add `SKILL.md` with proper frontmatter:\n   ```yaml\n   ---\n   name: anysite-your-skill\n   description: What your skill does and when to use it\n   ---\n   ```\n4. Add entry to `.claude-plugin/marketplace.json`\n5. Update this README.md skills table\n6. Submit a pull request\n\n## Support\n\n- **GitHub Issues**: [github.com/anysiteio/agent-skills/issues](https://github.com/anysiteio/agent-skills/issues)\n- **Documentation**: Full skill documentation in each `skills/*/SKILL.md` file\n- **MCP Server**: [docs.anysite.io/mcp-server/tools](https://docs.anysite.io/mcp-server/tools)\n\n## Changelog\n\n### Version 1.1.0 (2026-01-29)\n\n- Added 3 new advanced skills:\n  - `anysite-person-analyzer` - Deep multi-platform person intelligence\n  - `anysite-vc-analyst` - Investor research and fundraising workflows\n  - `anysite-competitor-analyzer` - Comprehensive competitor intelligence\n- Enhanced GitHub integration support\n- Updated documentation structure\n\n### Version 1.0.0 (2026-01-29)\n\n- Initial release with 8 core skills\n- Support for LinkedIn, Instagram, Twitter/X, Reddit, YouTube, Y Combinator, SEC, and web scraping\n- Zero-configuration setup\n- Complete skill documentation and reference guides\n- Marketplace integration for easy installation\n"
       },
       "plugins": [
         {
-          "name": "anysite-icp-builder",
-          "source": "./claude-skills/anysite-icp-builder",
-          "description": "Build Ideal Customer Profiles from LinkedIn data via AnySite MCP",
-          "version": "1.0.0",
+          "name": "anysite-skills",
+          "description": "Complete suite of 12 professional skills for social media analysis, lead generation, market research, competitive intelligence, person intelligence, VC analysis, competitor research, and security auditing using anysite MCP server. Supports LinkedIn, Instagram, Twitter/X, Reddit, YouTube, Y Combinator, SEC, GitHub, and web scraping. Zero configuration required - no API tokens or external tools needed.",
+          "version": "1.1.0",
           "author": {
-            "name": "AnySite",
-            "email": "team@anysite.io"
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
           },
-          "homepage": "https://anysite.io",
-          "repository": "https://github.com/anysiteio/cookbook",
-          "license": "MIT",
-          "keywords": [
-            "icp",
-            "linkedin",
-            "sales",
-            "prospecting",
-            "customer-profile",
-            "b2b",
-            "anysite",
-            "mcp"
-          ],
-          "category": "sales",
-          "strict": true,
+          "source": "./",
+          "category": "productivity",
           "categories": [
-            "anysite",
-            "b2b",
-            "customer-profile",
-            "icp",
-            "linkedin",
-            "mcp",
-            "prospecting",
-            "sales"
+            "productivity"
           ],
           "install_commands": [
-            "/plugin marketplace add anysiteio/cookbook",
-            "/plugin install anysite-icp-builder@anysite-skills"
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-skills@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "anysite-lead-generation",
+          "description": "Lead generation specialist using anysite MCP for LinkedIn prospect discovery, email finding, company research, and contact enrichment. Extract contacts from websites, find decision-makers, and build qualified prospect lists. Ideal for sales teams, recruiters, and business development professionals.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "skills": [
+            "./skills/anysite-lead-generation"
+          ],
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-lead-generation@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "anysite-competitor-intelligence",
+          "description": "Competitive intelligence gathering across LinkedIn, social media, Y Combinator, and the web. Track competitor activities, analyze hiring patterns, monitor content strategies, and benchmark market positioning. Perfect for product managers, strategists, and market analysts.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "skills": [
+            "./skills/anysite-competitor-intelligence"
+          ],
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-competitor-intelligence@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "anysite-market-research",
+          "description": "Comprehensive market research using Y Combinator data, SEC filings, social media insights, and web scraping. Analyze market dynamics, discover emerging trends, research startup ecosystems, and understand competitive landscapes. Built for researchers, investors, and strategic planners.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "learning",
+          "skills": [
+            "./skills/anysite-market-research"
+          ],
+          "categories": [
+            "learning"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-market-research@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "anysite-social-media-analytics",
+          "description": "Comprehensive social media analytics bundle combining audience analysis, content performance tracking, and influencer discovery. Monitor engagement metrics, identify trends, discover influencers, and analyze content strategies across Instagram, YouTube, LinkedIn, Twitter/X, and Reddit.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "skills": [
+            "./skills/anysite-audience-analysis",
+            "./skills/anysite-content-analytics",
+            "./skills/anysite-influencer-discovery",
+            "./skills/anysite-trend-analysis",
+            "./skills/anysite-brand-reputation"
+          ],
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-social-media-analytics@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "anysite-person-analyzer",
+          "description": "Deep multi-platform intelligence analysis for people combining LinkedIn (profile, posts, activity), Twitter/X (tweets, engagement), Reddit (discussions), web presence (articles, GitHub, blogs), and company intelligence. Perfect for networking, sales, partnerships, recruitment, and investor relations. Produces comprehensive cross-platform reports with conversation strategies and strategic value assessment.",
+          "version": "1.1.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "skills": [
+            "./skills/anysite-person-analyzer"
+          ],
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-person-analyzer@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "anysite-vc-analyst",
+          "description": "Universal startup investor research and outreach agent. Onboards project context (website, pitch deck, fundraising stage), verifies investor roles on LinkedIn, scores investors based on stage fit, thesis alignment, and portfolio relevance. Detects portfolio conflicts and generates personalized outreach messages. Ideal for founders raising capital, VCs doing due diligence, and accelerators.",
+          "version": "1.1.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "skills": [
+            "./skills/anysite-vc-analyst"
+          ],
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-vc-analyst@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "anysite-competitor-analyzer",
+          "description": "Comprehensive competitive intelligence combining web scraping, LinkedIn analysis, social media monitoring, leadership profiling, GitHub review, and community sentiment tracking. Generates detailed competitor profiles with positioning, pricing, team composition, strategic analysis, and actionable recommendations. Perfect for product managers, strategists, and sales teams.",
+          "version": "1.1.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "skills": [
+            "./skills/anysite-competitor-analyzer"
+          ],
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install anysite-competitor-analyzer@anysite-skills-marketplace"
+          ]
+        },
+        {
+          "name": "skill-audit",
+          "description": "Static security auditor for Claude Code skills, commands, and plugins. Detects dangerous patterns — excessive permissions, hooks, prompt injection, credential access, privilege escalation — before you enable a skill. Performs read-only analysis with no system modifications.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Anysite Skills Contributors",
+            "email": "support@anysite.io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "skills": [
+            "./skills/skill-audit"
+          ],
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anysiteio/agent-skills",
+            "/plugin install skill-audit@anysite-skills-marketplace"
           ]
         }
       ]

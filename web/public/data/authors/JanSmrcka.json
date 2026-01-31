@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "JanSmrcka",
+    "display_name": "Jan Smrčka",
+    "avatar_url": "https://avatars.githubusercontent.com/u/55892155?u=3f26798b5ec6d958913afae4ef226f738a0fb141&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jansmrcka-cpt",
+      "version": null,
+      "description": "Claude Plan Tracker - Persist and track implementation plans across Claude Code sessions",
+      "repo_full_name": "JanSmrcka/cpt",
+      "repo_url": "https://github.com/JanSmrcka/cpt",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-26T08:06:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jansmrcka-cpt\",\n  \"owner\": {\n    \"name\": \"Jan Smrcka\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cpt\",\n      \"source\": \"./\",\n      \"description\": \"Claude Plan Tracker - Persist and track implementation plans across Claude Code sessions\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cpt\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Claude Plan Tracker - Persist and track implementation plans across Claude Code sessions\",\n  \"author\": {\n    \"name\": \"jansmrcka\"\n  },\n  \"homepage\": \"https://github.com/jansmrcka/cpt\",\n  \"repository\": \"https://github.com/jansmrcka/cpt\",\n  \"license\": \"MIT\",\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/bin/cpt hook session-start\"\n          }\n        ]\n      }\n    ],\n    \"SessionEnd\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/bin/cpt hook session-end\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/bin/cpt hook post-tool-use\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "README.md": "# Claude Plan Tracker (cpt)\n\nTrack and persist implementation plans across Claude Code sessions.\n\n## Features\n\n- **Automatic Plan Persistence**: Plans are automatically saved when sessions end\n- **Context Restoration**: Plans are restored when new sessions start on the same branch\n- **Commit Tracking**: Git commits made during sessions are tracked in plan metadata\n- **Branch-Based Organization**: Each git branch gets its own plan file\n- **Zero Runtime Dependencies**: Single static binary with no external dependencies\n\n## Installation\n\n### From GitHub Releases\n\nDownload the latest release for your platform from [Releases](https://github.com/jansmrcka/cpt/releases).\n\n### From Source\n\n```bash\ngo install github.com/jansmrcka/cpt@latest\n```\n\n### Build from Source\n\n```bash\ngit clone https://github.com/jansmrcka/cpt\ncd cpt\nmake build\n```\n\n## Usage\n\n### Initialize in a Project\n\n```bash\ncd your-project\ncpt init\n```\n\nThis creates the necessary hooks in `.claude/settings.json`.\n\n### View Current Plan Status\n\n```bash\ncpt status\n```\n\nShows the plan for the current branch, including tracked commits.\n\n### List All Plans\n\n```bash\ncpt list\n```\n\nLists all tracked plans in the repository.\n\n### Manual Sync\n\n```bash\ncpt sync\n```\n\nManually sync a plan from Claude's session storage. Use `--force` to overwrite an existing plan.\n\n## How It Works\n\ncpt uses Claude Code hooks to:\n\n1. **SessionStart**: Load the existing plan for the current branch and inject it as context\n2. **SessionEnd**: Extract the plan from the session transcript and save it\n3. **PostToolUse (Bash)**: Track git commits made during the session\n\nPlans are stored in `.claude/plans/` in your repository with YAML frontmatter containing metadata.\n\n### Plan File Format\n\n```markdown\n---\nbranch: feature/my-feature\nsource: claude-session\nlast_updated: 2024-01-15T10:00:00Z\ncommits:\n  - abc123\n  - def456\n---\n\n## Plan\n\n1. Implement feature X\n2. Add tests\n3. Update documentation\n```\n\n## Plugin Installation\n\ncpt can be installed as a Claude Code plugin. Run these commands inside a Claude Code session:\n\n### Option 1: Install from GitHub (Recommended)\n\n```\n/plugin marketplace add jansmrcka/cpt\n/plugin install cpt@jansmrcka-cpt\n```\n\n### Option 2: Install from Local Clone\n\nIf you cloned the repository locally:\n\n```\n/plugin marketplace add /path/to/cpt\n/plugin install cpt@cpt\n```\n\n### Option 3: Manual Setup with `cpt init`\n\nIf you prefer not to use the plugin system, you can set up hooks manually:\n\n```bash\n# Install the binary first (see Installation section above)\ncd your-project\ncpt init\n```\n\nThis adds the necessary hooks directly to `.claude/settings.json` in your project.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `cpt init` | Initialize hooks in the current project |\n| `cpt status` | Show plan status for current branch |\n| `cpt list` | List all tracked plans |\n| `cpt sync` | Sync plan from Claude session storage |\n| `cpt --version` | Show version |\n\n## Configuration\n\ncpt stores plans in `.claude/plans/` in your repository root. This directory is created automatically when you run `cpt init`.\n\n### gitignore\n\nYou may want to add `.claude/plans/` to your `.gitignore` if you don't want to commit plans:\n\n```\n# Claude Plan Tracker plans\n.claude/plans/\n```\n\nOr commit them if you want to share plans with your team.\n\n## Development\n\n```bash\n# Build\nmake build\n\n# Run tests\nmake test\n\n# Run linter\nmake lint\n\n# Build for all platforms\nmake build-all\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cpt",
+          "source": "./",
+          "description": "Claude Plan Tracker - Persist and track implementation plans across Claude Code sessions",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JanSmrcka/cpt",
+            "/plugin install cpt@jansmrcka-cpt"
+          ]
+        }
+      ]
+    }
+  ]
+}

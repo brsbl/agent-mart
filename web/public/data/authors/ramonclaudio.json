@@ -6,35 +6,229 @@
   },
   "marketplaces": [
     {
-      "name": "ramonclaudio-handoff",
+      "name": "skills",
       "version": null,
-      "description": "Session continuity for Claude Code.",
-      "repo_full_name": "ramonclaudio/handoff",
-      "repo_url": "https://github.com/ramonclaudio/handoff",
-      "repo_description": "Session continuity for Claude Code.",
+      "description": "Custom Claude Code skills by @ramonclaudio",
+      "repo_full_name": "ramonclaudio/skills",
+      "repo_url": "https://github.com/ramonclaudio/skills",
+      "repo_description": "Custom Claude Code skills, installable individually as plugins.",
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-24T21:58:29Z"
+        "pushed_at": "2026-01-31T18:17:15Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ramonclaudio-handoff\",\n  \"owner\": {\n    \"name\": \"Ray\",\n    \"email\": \"hello@ramonclaudio.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Session continuity for Claude Code.\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"handoff\",\n      \"source\": \"./\",\n      \"description\": \"Session continuity for Claude Code.\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"Ray\",\n        \"email\": \"hello@ramonclaudio.com\"\n      },\n      \"homepage\": \"https://github.com/ramonclaudio/handoff\",\n      \"repository\": \"https://github.com/ramonclaudio/handoff\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"session\", \"continuity\", \"handoff\", \"context\", \"sbar\"],\n      \"category\": \"workflow\",\n      \"tags\": [\"productivity\", \"session-management\", \"context-preservation\"],\n      \"agents\": [\"./agents/handoff.md\"],\n      \"hooks\": \"./hooks/hooks.json\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"handoff\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Session continuity for Claude Code.\",\n  \"author\": {\n    \"name\": \"Ray\",\n    \"email\": \"hello@ramonclaudio.com\",\n    \"url\": \"https://github.com/ramonclaudio\"\n  },\n  \"homepage\": \"https://github.com/ramonclaudio/handoff\",\n  \"repository\": \"https://github.com/ramonclaudio/handoff\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"session\",\n    \"continuity\",\n    \"handoff\",\n    \"context\",\n    \"sbar\",\n    \"claude-code\",\n    \"codex\",\n    \"cursor\"\n  ]\n}\n",
-        "README.md": "<p align=\"center\">\n  <img src=\".github/assets/logo.png\" alt=\"Handoff\" width=\"400\">\n</p>\n\n<p align=\"center\">\n  <strong>Session continuity for Claude Code.</strong>\n</p>\n\n<p align=\"center\">\n  <a href=\"#installation\">Installation</a> •\n  <a href=\"#usage\">Usage</a> •\n  <a href=\"#how-it-works\">How It Works</a>\n</p>\n\n---\n\nEvery Claude session starts fresh. You remember what you were working on yesterday - what got done, what broke, where you left off. Claude doesn't. This plugin fixes that.\n\nThink hospital shift change. Doctors don't try to remember everything about every patient. They do structured handoffs: current status, what happened, what to watch for, what's next. Same idea here.\n\nNothing fancy. Hope it's useful.\n\n## Installation\n\nInside Claude Code:\n```shell\n/plugin install ramonclaudio/handoff\n```\n\nOr from your terminal:\n```bash\nclaude plugin install ramonclaudio/handoff\n```\n\n## Usage\n\nThree ways to invoke:\n\n| Method | Example | When to use |\n|--------|---------|-------------|\n| **Command** | `/handoff start` | Explicit control |\n| **Skill** | Claude auto-invokes | Says \"handoff\", \"save progress\", \"resume\" |\n| **Agent** | \"Use handoff agent\" | Delegate to specialized agent |\n\n### Commands\n\n```shell\n/handoff init    # First time: create .handoff/ structure\n/handoff start   # Beginning of session: gather context\n/handoff end     # End of session: archive state\n```\n\n### As a Skill\n\nClaude automatically invokes handoff when you mention:\n- \"let's do a handoff\", \"save my progress\", \"context is full\"\n- \"pick up where we left off\", \"resume work\", \"start session\"\n\n### As an Agent\n\nAsk Claude to use the handoff agent for autonomous session management:\n- \"Use the handoff agent to save my progress\"\n- \"Have the handoff agent gather context\"\n\n## Structure\n\n```text\n.handoff/\n├── CONTEXT.md       # Project: stack, commands, critical paths, gotchas\n├── HANDOFF.md       # Session: severity, health, done, failed, blockers, resume\n├── .subagents.log   # Subagent activity during current session (auto-cleared on END)\n└── sessions/        # Archived handoffs by session ID\n```\n\n## How It Works\n\n### START\n\n1. Find last session archive\n2. Read `CONTEXT.md` and `HANDOFF.md`\n3. Get commits/PRs/issues since last session\n4. Check for drift (state changed since handoff?)\n5. Output structured summary\n\n### END\n\n1. Archive current `HANDOFF.md`\n2. Run health checks (build/test/lint)\n3. Capture git state\n4. Document: done, failed (with why), blockers, watch-outs\n5. Set severity and resume point\n6. Validate handoff quality\n7. Create resume Task (persists to `~/.claude/tasks`)\n\n## Severity\n\n| Level | Meaning |\n|-------|---------|\n| 🔴 CRITICAL | Production down, security issue |\n| 🟡 IN PROGRESS | Mid-feature, tests failing |\n| 🟢 READY | All green, clean state |\n\n## Requirements\n\n- Claude Code 2.1.16+ (uses Task system and `${CLAUDE_SESSION_ID}`)\n- Git\n- Optional: `gh` (GitHub CLI), Linear MCP\n\n## License\n\n[MIT](LICENSE)\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"skills\",\n  \"owner\": {\n    \"name\": \"ramonclaudio\",\n    \"email\": \"hello@ramonclaudio.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Custom Claude Code skills by @ramonclaudio\",\n    \"version\": \"1.1.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"commit\",\n      \"source\": \"./commit\",\n      \"description\": \"Atomic commits with conventional format, grouped by architectural layer. GPG signs when available.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ramonclaudio\",\n        \"email\": \"hello@ramonclaudio.com\"\n      },\n      \"homepage\": \"https://github.com/ramonclaudio/skills/tree/main/plugins/commit\",\n      \"category\": \"development\",\n      \"keywords\": [\"git\", \"commit\", \"conventional-commits\", \"gpg\"],\n      \"tags\": [\"git\", \"workflow\", \"automation\"],\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/ramonclaudio/skills\"\n    },\n    {\n      \"name\": \"simplify\",\n      \"source\": \"./simplify\",\n      \"description\": \"Analyze and simplify entire codebases using parallel background agents\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ramonclaudio\",\n        \"email\": \"hello@ramonclaudio.com\"\n      },\n      \"homepage\": \"https://github.com/ramonclaudio/skills/tree/main/plugins/simplify\",\n      \"category\": \"development\",\n      \"keywords\": [\"refactor\", \"simplify\", \"codebase\", \"analysis\"],\n      \"tags\": [\"refactoring\", \"code-quality\", \"parallel-agents\"],\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/ramonclaudio/skills\"\n    },\n    {\n      \"name\": \"audit\",\n      \"source\": \"./audit\",\n      \"description\": \"Brutally honest codebase audit with parallel agents. Finds bugs, architectural rot, and dead weight.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ramonclaudio\",\n        \"email\": \"hello@ramonclaudio.com\"\n      },\n      \"homepage\": \"https://github.com/ramonclaudio/skills/tree/main/plugins/audit\",\n      \"category\": \"development\",\n      \"keywords\": [\"audit\", \"review\", \"bugs\", \"security\", \"architecture\", \"quality\"],\n      \"tags\": [\"code-review\", \"security\", \"parallel-agents\"],\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/ramonclaudio/skills\"\n    },\n    {\n      \"name\": \"gif\",\n      \"source\": \"./gif\",\n      \"description\": \"Convert screen recordings to compressed GIFs using ffmpeg two-pass palette method\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ramonclaudio\",\n        \"email\": \"hello@ramonclaudio.com\"\n      },\n      \"homepage\": \"https://github.com/ramonclaudio/skills/tree/main/plugins/gif\",\n      \"category\": \"utility\",\n      \"keywords\": [\"video\", \"ffmpeg\", \"gif\", \"conversion\", \"screen-recording\"],\n      \"tags\": [\"media\", \"conversion\", \"ffmpeg\"],\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/ramonclaudio/skills\"\n    },\n    {\n      \"name\": \"frames\",\n      \"source\": \"./frames\",\n      \"description\": \"Extract video frames as images so Claude can analyze screen recordings, bug reproductions, and demos\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ramonclaudio\",\n        \"email\": \"hello@ramonclaudio.com\"\n      },\n      \"homepage\": \"https://github.com/ramonclaudio/skills/tree/main/plugins/frames\",\n      \"category\": \"utility\",\n      \"keywords\": [\"video\", \"ffmpeg\", \"frames\", \"extraction\"],\n      \"tags\": [\"media\", \"analysis\", \"ffmpeg\"],\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/ramonclaudio/skills\"\n    },\n    {\n      \"name\": \"handoff\",\n      \"source\": \"./handoff\",\n      \"description\": \"Session continuity for Claude Code. Structured handoffs preserve context between sessions.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ramonclaudio\",\n        \"email\": \"hello@ramonclaudio.com\"\n      },\n      \"homepage\": \"https://github.com/ramonclaudio/skills/tree/main/plugins/handoff\",\n      \"category\": \"workflow\",\n      \"keywords\": [\"session\", \"continuity\", \"handoff\", \"context\", \"sbar\"],\n      \"tags\": [\"workflow\", \"session-management\", \"tasks\"],\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/ramonclaudio/skills\"\n    }\n  ]\n}\n",
+        "README.md": "# Skills\n\nI use Claude Code all day. After hitting the same gaps over and over, I built these skills to fix them.\n\nCustom [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills, installable individually as plugins.\n\n## Setup\n\nRequires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) v1.0.33+.\n\nAdd the marketplace:\n\n```\n/plugin marketplace add ramonclaudio/skills\n```\n\n## Available Skills\n\n| Plugin | Install | Description | Requires |\n|--------|---------|-------------|----------|\n| [**commit**](plugins/commit) | `/plugin install commit@skills` | Atomic commits with conventional format, grouped by architectural layer. GPG signs when available. | `git`, `gh` |\n| [**simplify**](plugins/simplify) | `/plugin install simplify@skills` | Analyze and simplify entire codebases using parallel background agents | `git` |\n| [**audit**](plugins/audit) | `/plugin install audit@skills` | Brutally honest codebase audit with parallel agents. Finds bugs, architectural rot, and dead weight. | `git` |\n| [**gif**](plugins/gif) | `/plugin install gif@skills` | Convert screen recordings to compressed GIFs using ffmpeg two-pass palette method | `ffmpeg` |\n| [**frames**](plugins/frames) | `/plugin install frames@skills` | Extract video frames as images so Claude can analyze screen recordings, bug reproductions, and demos | `ffmpeg` |\n| [**handoff**](plugins/handoff) | `/plugin install handoff@skills` | Session continuity. Structured handoffs preserve context between sessions. | `git` |\n\n## Usage\n\nAfter installing a plugin, invoke its skill:\n\n```\n/commit:run\n/commit:run --pr\n/simplify:run --dry-run\n/gif:run ~/Desktop/recording.mov\n/gif:run ~/Desktop/recording.mov --width 480\n/frames:run ~/Desktop/recording.mov\n/audit:run --dry-run\n/audit:run --recent\n/audit:run src/\n/handoff:run init\n/handoff:run start\n/handoff:run end\n```\n\nSee each plugin's README for full documentation.\n\n## Version Pinning\n\nThe marketplace tracks the latest `main` branch. To pin to a specific version, use a ref when adding:\n\n```\n/plugin marketplace add ramonclaudio/skills#v1.0.0\n```\n\n## License\n\n[MIT](LICENSE)\n"
       },
       "plugins": [
         {
-          "name": "handoff",
-          "source": "./",
-          "description": "Session continuity for Claude Code.",
-          "version": "1.2.0",
+          "name": "commit",
+          "source": "./commit",
+          "description": "Atomic commits with conventional format, grouped by architectural layer. GPG signs when available.",
+          "version": "1.0.0",
           "author": {
-            "name": "Ray",
+            "name": "ramonclaudio",
             "email": "hello@ramonclaudio.com"
           },
-          "homepage": "https://github.com/ramonclaudio/handoff",
-          "repository": "https://github.com/ramonclaudio/handoff",
+          "homepage": "https://github.com/ramonclaudio/skills/tree/main/plugins/commit",
+          "category": "development",
+          "keywords": [
+            "git",
+            "commit",
+            "conventional-commits",
+            "gpg"
+          ],
+          "tags": [
+            "git",
+            "workflow",
+            "automation"
+          ],
           "license": "MIT",
+          "repository": "https://github.com/ramonclaudio/skills",
+          "categories": [
+            "automation",
+            "commit",
+            "conventional-commits",
+            "development",
+            "git",
+            "gpg",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ramonclaudio/skills",
+            "/plugin install commit@skills"
+          ]
+        },
+        {
+          "name": "simplify",
+          "source": "./simplify",
+          "description": "Analyze and simplify entire codebases using parallel background agents",
+          "version": "1.0.0",
+          "author": {
+            "name": "ramonclaudio",
+            "email": "hello@ramonclaudio.com"
+          },
+          "homepage": "https://github.com/ramonclaudio/skills/tree/main/plugins/simplify",
+          "category": "development",
+          "keywords": [
+            "refactor",
+            "simplify",
+            "codebase",
+            "analysis"
+          ],
+          "tags": [
+            "refactoring",
+            "code-quality",
+            "parallel-agents"
+          ],
+          "license": "MIT",
+          "repository": "https://github.com/ramonclaudio/skills",
+          "categories": [
+            "analysis",
+            "code-quality",
+            "codebase",
+            "development",
+            "parallel-agents",
+            "refactor",
+            "refactoring",
+            "simplify"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ramonclaudio/skills",
+            "/plugin install simplify@skills"
+          ]
+        },
+        {
+          "name": "audit",
+          "source": "./audit",
+          "description": "Brutally honest codebase audit with parallel agents. Finds bugs, architectural rot, and dead weight.",
+          "version": "1.0.0",
+          "author": {
+            "name": "ramonclaudio",
+            "email": "hello@ramonclaudio.com"
+          },
+          "homepage": "https://github.com/ramonclaudio/skills/tree/main/plugins/audit",
+          "category": "development",
+          "keywords": [
+            "audit",
+            "review",
+            "bugs",
+            "security",
+            "architecture",
+            "quality"
+          ],
+          "tags": [
+            "code-review",
+            "security",
+            "parallel-agents"
+          ],
+          "license": "MIT",
+          "repository": "https://github.com/ramonclaudio/skills",
+          "categories": [
+            "architecture",
+            "audit",
+            "bugs",
+            "code-review",
+            "development",
+            "parallel-agents",
+            "quality",
+            "review",
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ramonclaudio/skills",
+            "/plugin install audit@skills"
+          ]
+        },
+        {
+          "name": "gif",
+          "source": "./gif",
+          "description": "Convert screen recordings to compressed GIFs using ffmpeg two-pass palette method",
+          "version": "1.0.0",
+          "author": {
+            "name": "ramonclaudio",
+            "email": "hello@ramonclaudio.com"
+          },
+          "homepage": "https://github.com/ramonclaudio/skills/tree/main/plugins/gif",
+          "category": "utility",
+          "keywords": [
+            "video",
+            "ffmpeg",
+            "gif",
+            "conversion",
+            "screen-recording"
+          ],
+          "tags": [
+            "media",
+            "conversion",
+            "ffmpeg"
+          ],
+          "license": "MIT",
+          "repository": "https://github.com/ramonclaudio/skills",
+          "categories": [
+            "conversion",
+            "ffmpeg",
+            "gif",
+            "media",
+            "screen-recording",
+            "utility",
+            "video"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ramonclaudio/skills",
+            "/plugin install gif@skills"
+          ]
+        },
+        {
+          "name": "frames",
+          "source": "./frames",
+          "description": "Extract video frames as images so Claude can analyze screen recordings, bug reproductions, and demos",
+          "version": "1.0.0",
+          "author": {
+            "name": "ramonclaudio",
+            "email": "hello@ramonclaudio.com"
+          },
+          "homepage": "https://github.com/ramonclaudio/skills/tree/main/plugins/frames",
+          "category": "utility",
+          "keywords": [
+            "video",
+            "ffmpeg",
+            "frames",
+            "extraction"
+          ],
+          "tags": [
+            "media",
+            "analysis",
+            "ffmpeg"
+          ],
+          "license": "MIT",
+          "repository": "https://github.com/ramonclaudio/skills",
+          "categories": [
+            "analysis",
+            "extraction",
+            "ffmpeg",
+            "frames",
+            "media",
+            "utility",
+            "video"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ramonclaudio/skills",
+            "/plugin install frames@skills"
+          ]
+        },
+        {
+          "name": "handoff",
+          "source": "./handoff",
+          "description": "Session continuity for Claude Code. Structured handoffs preserve context between sessions.",
+          "version": "1.0.0",
+          "author": {
+            "name": "ramonclaudio",
+            "email": "hello@ramonclaudio.com"
+          },
+          "homepage": "https://github.com/ramonclaudio/skills/tree/main/plugins/handoff",
+          "category": "workflow",
           "keywords": [
             "session",
             "continuity",
@@ -42,30 +236,26 @@
             "context",
             "sbar"
           ],
-          "category": "workflow",
           "tags": [
-            "productivity",
+            "workflow",
             "session-management",
-            "context-preservation"
+            "tasks"
           ],
-          "agents": [
-            "./agents/handoff.md"
-          ],
-          "hooks": "./hooks/hooks.json",
+          "license": "MIT",
+          "repository": "https://github.com/ramonclaudio/skills",
           "categories": [
             "context",
-            "context-preservation",
             "continuity",
             "handoff",
-            "productivity",
             "sbar",
             "session",
             "session-management",
+            "tasks",
             "workflow"
           ],
           "install_commands": [
-            "/plugin marketplace add ramonclaudio/handoff",
-            "/plugin install handoff@ramonclaudio-handoff"
+            "/plugin marketplace add ramonclaudio/skills",
+            "/plugin install handoff@skills"
           ]
         }
       ]

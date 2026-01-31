@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "johnmatthewtennant",
+    "display_name": "John Matthew Tennant",
+    "avatar_url": "https://avatars.githubusercontent.com/u/15180577?u=a6bab0a50c91bb6060264063dddf6d56655ef663&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mcp-voice-hooks-marketplace",
+      "version": null,
+      "description": "Real-time voice interaction for Claude Code. Speak naturally while Claude works - interrupt, redirect, or provide continuous feedback without stopping.",
+      "repo_full_name": "johnmatthewtennant/mcp-voice-hooks",
+      "repo_url": "https://github.com/johnmatthewtennant/mcp-voice-hooks",
+      "repo_description": null,
+      "signals": {
+        "stars": 84,
+        "forks": 20,
+        "pushed_at": "2025-11-13T23:52:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mcp-voice-hooks-marketplace\",\n  \"owner\": {\n    \"name\": \"John Matthew Tennant\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mcp-voice-hooks-plugin\",\n      \"source\": \"./plugin\",\n      \"description\": \"Real-time voice interaction for Claude Code. Speak naturally while Claude works - interrupt, redirect, or provide continuous feedback without stopping.\"\n    }\n  ]\n}",
+        "README.md": "# Voice Mode for Claude Code\n\nVoice Mode for Claude Code allows you to have a continuous two-way conversation with Claude Code, hands-free.\n\nIt uses the new [Claude Code hooks](https://docs.anthropic.com/en/docs/claude-code/hooks) to deliver voice input to Claude while it works.\n\nThis lets you speak continuously to Claude - interrupt, redirect, or provide feedback without stopping what Claude is doing.\n\nOptionally enable text-to-speech to have Claude speak back to you.\n\nVoice recognition and text-to-speech are handled by the browser, so there is nothing to download, and no API keys are needed.\n\n## Demo Video\n\n[![Demo Video](https://img.youtube.com/vi/GbDatJtm8_k/0.jpg)](https://youtu.be/GbDatJtm8_k)\n\n## Installation\n\nInstallation is easy.\n\n### 1. Install Claude Code\n\n```bash\nnpm install -g @anthropic-ai/claude-code\n```\n\n### 2. Install Voice Mode\n\n```bash\nnpx mcp-voice-hooks@latest install-hooks\nclaude mcp add voice-hooks npx mcp-voice-hooks@latest\n```\n\n## Usage\n\n### 1. Start Claude Code\n\n```bash\nclaude\n```\n\n### 2. Start Listening\n\nThe browser interface will automatically open after 3 seconds (<http://localhost:5111>).\n\nClick \"Start Listening\"\n\n### 3. Speak\n\nSay something to Claude. You will need to send one message in the Claude Code CLI to start the conversation.\n\n### 4. Trigger Word Mode (Optional)\n\nBy default, utterances are sent automatically when you pause. You can switch to \"Wait for Trigger Word\" mode in the browser interface:\n\n1. Toggle to \"Wait for Trigger Word\" mode\n2. Enter a trigger word (e.g., \"send\", \"claude\", \"go\")\n3. Speak your message(s) - they will queue up in the browser\n4. Say your trigger word to send all queued messages at once (or click \"Send Now\")\n\nThe trigger word is case-insensitive and will be automatically removed from your message before sending.\n\n## Browser Compatibility\n\n- ✅ **Chrome**: Full support for speech recognition, browser text-to-speech, and system text-to-speech\n- ⚠️ **Safari**: Full support for speech recognition and system text-to-speech, but browser text-to-speech cannot load high-quality voices\n- ❌ **Edge**: Speech recognition not working on Apple Silicon (language-not-supported error)\n\n## Voice responses\n\nThere are two options for voice responses:\n\n1. Browser Text-to-Speech\n2. System Text-to-Speech\n\n### Selecting and downloading high quality System Voices (Mac only)\n\nMac has built-in text to speech, but high quality voices are not available by default.\n\nYou can download high quality voices from the system voice menu: `System Settings > Accessibility > Spoken Content > System Voice`\n\nClick the info icon next to the system voice dropdown. Search for \"Siri\" to find the highest quality voices. You'll have to trigger a download of the voice.\n\nOnce it's downloaded, you can select it in the Browser Voice (Local) menu in Chrome.\n\nTest it with the bash command:\n\n```bash\nsay \"Hi, this is your Mac system voice\"\n```\n\nTo use Siri voices with voice-hooks, you need to set your system voice and select \"Mac System Voice\" in the voice-hooks browser interface.\n\nOther downloaded voices will show up in the voice dropdown in the voice-hooks browser interface so you can select them there directly, instead of using the \"Mac System Voice\" option.\n\nThere is a bug in Safari that prevents browser text-to-speech from loading high-quality voices after browser restart. This is a Safari Web Speech API limitation. To use high-quality voices in Safari you need to set your system voice to Siri and select \"Mac System Voice\" in the voice-hooks browser interface.\n\n## Manual Hook Installation\n\nThe hooks are automatically installed/updated when the MCP server starts. However, if you need to manually install or reconfigure the hooks:\n\n```bash\nnpx mcp-voice-hooks install-hooks\n```\n\nThis will configure your project's `.claude/settings.local.json` with the necessary hook commands.\n\n## Uninstallation\n\nTo completely remove MCP Voice Hooks:\n\n```bash\n# Remove from Claude MCP servers\nclaude mcp remove voice-hooks\n```\n\n```bash\n# Also remove hooks and settings\nnpx mcp-voice-hooks uninstall\n```\n\nThis will:\n\n- Clean up voice hooks from your project's `.claude/settings.local.json`\n- Preserve any custom hooks you've added\n\n## Configuration\n\n#### Port Configuration\n\nThe default port is 5111. To use a different port, set the `MCP_VOICE_HOOKS_PORT` environment variable in your project's `.claude/settings.local.json`:\n\n```json\n{\n  \"env\": {\n    \"MCP_VOICE_HOOKS_PORT\": \"8080\"\n  }\n}\n```\n\nThis environment variable is used by both:\n\n- The MCP server to determine which port to listen on\n- The Claude Code hooks to connect to the correct port\n\n**Note**: Setting this in `.claude/settings.local.json` is the recommended approach. The environment variable will be available to both the MCP server process and the hook commands.\n\n#### Browser Auto-Open\n\nWhen running in MCP-managed mode, the browser will automatically open if no frontend connects within 3 seconds. To disable this behavior:\n\n```json\n{\n  \"env\": {\n    \"MCP_VOICE_HOOKS_AUTO_OPEN_BROWSER\": \"false\"\n  }\n}\n```\n\n## Experimental: Alternate Installation Method - Plugin mode\n\nSimply add the following to your project's `.claude/settings.local.json` and restart Claude Code:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"mcp-voice-hooks-marketplace\": {\n      \"source\": {\n        \"source\": \"git\",\n        \"url\": \"https://github.com/johnmatthewtennant/mcp-voice-hooks.git\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"mcp-voice-hooks-plugin@mcp-voice-hooks-marketplace\": true\n  }\n}\n```\n\nset `enabled` to `false` if you want to temporarily disable the plugin.\n"
+      },
+      "plugins": [
+        {
+          "name": "mcp-voice-hooks-plugin",
+          "source": "./plugin",
+          "description": "Real-time voice interaction for Claude Code. Speak naturally while Claude works - interrupt, redirect, or provide continuous feedback without stopping.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add johnmatthewtennant/mcp-voice-hooks",
+            "/plugin install mcp-voice-hooks-plugin@mcp-voice-hooks-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "kyle-bartlett",
+    "display_name": "Bart",
+    "avatar_url": "https://avatars.githubusercontent.com/u/218021945?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "plannotator",
+      "version": null,
+      "description": "Interactive Plan Review: Mark up and refine your plans using a UI, easily share for team collaboration, automatically integrates with plan mode hooks.",
+      "repo_full_name": "kyle-bartlett/plannotator",
+      "repo_url": "https://github.com/kyle-bartlett/plannotator",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-29T09:33:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"plannotator\",\n  \"owner\": {\n    \"name\": \"backnotprop\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"plannotator\",\n      \"source\": \"./apps/hook\",\n      \"description\": \"Interactive Plan Review: Mark up and refine your plans using a UI, easily share for team collaboration, automatically integrates with plan mode hooks.\"\n    }\n  ]\n}\n",
+        "README.md": "<p align=\"center\">\n  <img src=\"apps/marketing/public/og-image.webp\" alt=\"Plannotator\" width=\"80%\" />\n</p>\n\n# Plannotator\n\nInteractive Plan Review for AI Coding Agents. Mark up and refine your plans using a visual UI, share for team collaboration, and seamlessly integrate with **Claude Code** and **OpenCode**.\n\n<table>\n<tr>\n<td align=\"center\" width=\"50%\">\n<h3>Claude Code</h3>\n<a href=\"https://www.youtube.com/watch?v=a_AT7cEN_9I\">\n<img src=\"apps/marketing/public/youtube.png\" alt=\"Claude Code Demo\" width=\"100%\" />\n</a>\n<p><a href=\"https://www.youtube.com/watch?v=a_AT7cEN_9I\">Watch Demo</a></p>\n</td>\n<td align=\"center\" width=\"50%\">\n<h3>OpenCode</h3>\n<a href=\"https://youtu.be/_N7uo0EFI-U\">\n<img src=\"apps/marketing/public/youtube-opencode.png\" alt=\"OpenCode Demo\" width=\"100%\" />\n</a>\n<p><a href=\"https://youtu.be/_N7uo0EFI-U\">Watch Demo</a></p>\n</td>\n</tr>\n</table>\n\n\n**New:** \n\n - We now support auto-saving approved plans to [Obsidian](https://obsidian.md/) and [Bear Notes](https://bear.app/).\n\n## Install for Claude Code\n\n**Install the `plannotator` command:**\n\n**macOS / Linux / WSL:**\n\n```bash\ncurl -fsSL https://plannotator.ai/install.sh | bash\n```\n\n**Windows PowerShell:**\n\n```powershell\nirm https://plannotator.ai/install.ps1 | iex\n```\n\n**Then in Claude Code:**\n\n```\n/plugin marketplace add backnotprop/plannotator\n/plugin install plannotator@plannotator\n\n# IMPORTANT: Restart Claude Code after plugin install\n```\n\nSee [apps/hook/README.md](apps/hook/README.md) for detailed installation instructions including a `manual hook` approach.\n\n---\n\n## Install for OpenCode\n\nAdd to your `opencode.json`:\n\n```json\n{\n  \"plugin\": [\"@plannotator/opencode@latest\"]\n}\n```\n\nRestart OpenCode and the `submit_plan` tool will be available.\n\n> **Existing users:** If you're stuck on an old version, clear the cache and restart:\n> ```bash\n> rm -rf ~/.cache/opencode/node_modules/@plannotator\n> ```\n\n---\n\n## How It Works\n\nWhen your AI agent finishes planning, Plannotator:\n\n1. Opens the Plannotator UI in your browser\n2. Lets you annotate the plan visually (delete, insert, replace, comment)\n3. **Approve** → Agent proceeds with implementation\n4. **Request changes** → Your annotations are sent back as structured feedback\n\n---\n\n## License\n\n**Copyright (c) 2025 backnotprop.**\n\nThis project is licensed under the **Business Source License 1.1 (BSL)**.\n",
+        "apps/hook/README.md": "# Plannotator Claude Code Plugin\n\nThis directory contains the Claude Code plugin configuration for Plannotator.\n\n## Prerequisites\n\nInstall the `plannotator` command so Claude Code can use it:\n\n**macOS / Linux / WSL:**\n```bash\ncurl -fsSL https://plannotator.ai/install.sh | bash\n```\n\n**Windows PowerShell:**\n```powershell\nirm https://plannotator.ai/install.ps1 | iex\n```\n\n**Windows CMD:**\n```cmd\ncurl -fsSL https://plannotator.ai/install.cmd -o install.cmd && install.cmd && del install.cmd\n```\n\n---\n\n[Plugin Installation](#plugin-installation) · [Manual Installation (Hooks)](#manual-installation-hooks) · [Obsidian Integration](#obsidian-integration)  \n\n---\n\n## Plugin Installation\n\nIn Claude Code:\n\n```\n/plugin marketplace add backnotprop/plannotator\n/plugin install plannotator@plannotator\n```\n\n**Important:** Restart Claude Code after installing the plugin for the hooks to take effect.\n\n## Manual Installation (Hooks)\n\nIf you prefer not to use the plugin system, add this to your `~/.claude/settings.json`:\n\n```json\n{\n  \"hooks\": {\n    \"PermissionRequest\": [\n      {\n        \"matcher\": \"ExitPlanMode\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"plannotator\",\n            \"timeout\": 1800\n          }\n        ]\n      }\n    ]\n  }\n}\n```\n\n## How It Works\n\nWhen Claude Code calls `ExitPlanMode`, this hook intercepts and:\n\n1. Opens Plannotator UI in your browser\n2. Lets you annotate the plan visually\n3. Approve → Claude proceeds with implementation\n4. Request changes → Your annotations are sent back to Claude\n\n## Obsidian Integration\n\nApproved plans can be automatically saved to your Obsidian vault.\n\n**Setup:**\n1. Open Settings (gear icon) in Plannotator\n2. Enable \"Obsidian Integration\"\n3. Select your vault from the dropdown (auto-detected) or enter the path manually\n4. Set folder name (default: `plannotator`)\n\n**What gets saved:**\n- Plans saved with human-readable filenames: `Title - Jan 2, 2026 2-30pm.md`\n- YAML frontmatter with `created`, `source`, and `tags`\n- Tags extracted automatically from the plan title and code languages\n- Backlink to `[[Plannotator Plans]]` for graph connectivity\n\n**Example saved file:**\n```markdown\n---\ncreated: 2026-01-02T14:30:00.000Z\nsource: plannotator\ntags: [plan, authentication, typescript, sql]\n---\n\n[[Plannotator Plans]]\n\n# Implementation Plan: User Authentication\n...\n```\n\n<img width=\"1190\" height=\"730\" alt=\"image\" src=\"https://github.com/user-attachments/assets/1f0876a0-8ace-4bcf-b0d6-4bbb07613b25\" />\n\n"
+      },
+      "plugins": [
+        {
+          "name": "plannotator",
+          "source": "./apps/hook",
+          "description": "Interactive Plan Review: Mark up and refine your plans using a UI, easily share for team collaboration, automatically integrates with plan mode hooks.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kyle-bartlett/plannotator",
+            "/plugin install plannotator@plannotator"
+          ]
+        }
+      ]
+    }
+  ]
+}

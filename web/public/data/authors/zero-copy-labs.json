@@ -2,97 +2,24 @@
   "author": {
     "id": "zero-copy-labs",
     "display_name": "Zero Copy Labs",
-    "type": "Organization",
-    "avatar_url": "https://avatars.githubusercontent.com/u/118393086?v=4",
-    "url": "https://github.com/zero-copy-labs",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 3,
-      "total_skills": 0,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/118393086?v=4"
   },
   "marketplaces": [
     {
       "name": "zcl-claude-code-plugins",
       "version": null,
       "description": "Zero Copy Labs internal productivity tools",
-      "owner_info": {
-        "name": "Zero Copy Labs"
-      },
-      "keywords": [],
       "repo_full_name": "zero-copy-labs/zcl-claude-code-plugins",
       "repo_url": "https://github.com/zero-copy-labs/zcl-claude-code-plugins",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-19T13:22:51Z",
-        "created_at": "2025-12-31T21:46:10Z",
-        "license": null
+        "pushed_at": "2026-01-19T13:22:51Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 341
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/team-tools",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/team-tools/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/team-tools/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 145
-        },
-        {
-          "path": "plugins/team-tools/commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/team-tools/commands/coverage-gaps.md",
-          "type": "blob",
-          "size": 5096
-        },
-        {
-          "path": "plugins/team-tools/commands/standup.md",
-          "type": "blob",
-          "size": 2991
-        },
-        {
-          "path": "plugins/team-tools/commands/timesheet.md",
-          "type": "blob",
-          "size": 2173
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"zcl-claude-code-plugins\",\n  \"owner\": {\n    \"name\": \"Zero Copy Labs\"\n  },\n  \"metadata\": {\n    \"description\": \"Zero Copy Labs internal productivity tools\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"team-tools\",\n      \"source\": \"./plugins/team-tools\",\n      \"description\": \"Timesheet, standup, and coverage gap commands\"\n    }\n  ]\n}\n",
-        "plugins/team-tools/.claude-plugin/plugin.json": "{\n  \"name\": \"team-tools\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Internal productivity tools for timesheets, standups, and coverage analysis\"\n}\n",
-        "plugins/team-tools/commands/coverage-gaps.md": "---\nname: coverage-gaps\ndescription: Find untested files and low coverage areas in your codebase\n---\n\n# Coverage Gap Analyzer\n\nIdentify files with missing or insufficient test coverage.\n\n## Usage\n\n`/coverage-gaps [threshold]` - Find files below coverage threshold (default: 50%)\n\n## Instructions\n\nWhen invoked, follow these steps:\n\n### Step 1: Detect Test Framework\n\nCheck for these configuration files to identify the test framework:\n\n```bash\nls -la jest.config.* vitest.config.* pytest.ini pyproject.toml setup.cfg karma.conf.* .rspec phpunit.xml go.mod Cargo.toml 2>/dev/null\n```\n\n| Config File | Framework | Test Pattern |\n|-------------|-----------|--------------|\n| `jest.config.*` | Jest (JS/TS) | `*.test.ts`, `*.spec.ts`, `__tests__/` |\n| `vitest.config.*` | Vitest (JS/TS) | `*.test.ts`, `*.spec.ts` |\n| `pytest.ini`, `pyproject.toml` | Pytest (Python) | `test_*.py`, `*_test.py` |\n| `go.mod` | Go testing | `*_test.go` |\n| `Cargo.toml` | Rust | `tests/`, `#[test]` in source |\n| `.rspec` | RSpec (Ruby) | `*_spec.rb` |\n| `phpunit.xml` | PHPUnit | `*Test.php` |\n\n### Step 2: Find Existing Coverage Reports\n\nLook for coverage output in common locations:\n\n```bash\nfind . -maxdepth 3 -type f \\( -name \"lcov.info\" -o -name \"coverage.xml\" -o -name \"cobertura.xml\" -o -name \".coverage\" -o -name \"coverage.json\" \\) 2>/dev/null\n```\n\nAlso check directories:\n```bash\nls -d coverage/ .nyc_output/ htmlcov/ target/coverage/ 2>/dev/null\n```\n\n### Step 3: Analyze Coverage\n\n#### Option A: Parse Existing Coverage Report\n\nIf an `lcov.info` file exists, parse it:\n```bash\ngrep -E \"^SF:|^LH:|^LF:\" coverage/lcov.info | paste - - - | awk -F'[:|]' '{file=$2; hit=$4; total=$6; pct=(total>0)?hit/total*100:0; if(pct<THRESHOLD) print pct\"% - \"file}' | sort -n\n```\n\nIf `coverage.xml` (Cobertura) exists:\n```bash\ngrep -E 'filename=|line-rate=' coverage.xml | paste - - | awk '{...}'\n```\n\n#### Option B: Map Source Files to Tests (No Coverage Report)\n\nFind source files:\n```bash\nfind src lib app -type f \\( -name \"*.ts\" -o -name \"*.js\" -o -name \"*.py\" -o -name \"*.go\" -o -name \"*.rb\" \\) 2>/dev/null | grep -v -E \"(test|spec|__test__|_test)\"\n```\n\nFind test files:\n```bash\nfind . -type f \\( -name \"*.test.*\" -o -name \"*.spec.*\" -o -name \"test_*\" -o -name \"*_test.*\" \\) 2>/dev/null\n```\n\nMap each source file to potential test files by name convention:\n- `src/utils/auth.ts` → `src/utils/auth.test.ts` or `tests/utils/auth.test.ts`\n- `lib/payments.py` → `tests/test_payments.py` or `lib/test_payments.py`\n\n### Step 4: Get File Metadata\n\nFor files with gaps, gather additional context:\n\n```bash\nwc -l <file>                           # Line count\ngit log -1 --format=\"%ar\" -- <file>    # Last modified\ngit log --oneline -- <file> | wc -l    # Commit frequency\n```\n\n### Step 5: Format Report\n\nPresent gaps in this format:\n\n```\nCOVERAGE GAPS (threshold: {threshold}%)\n\nNo tests found:\n• src/utils/validation.ts (247 lines, modified 3 days ago)\n• src/api/payments.ts (189 lines, modified today) ⚠️\n\nLow coverage (<{threshold}%):\n• src/auth/oauth.ts — 34% covered\n• src/db/migrations.ts — 12% covered\n\nSummary:\n─────────────────────────────\nFiles with no tests:     12\nFiles below threshold:    5\nTotal files analyzed:    87\n─────────────────────────────\n\nSuggestion: Start with {highest_priority_file} ({reason})\n```\n\n### Step 6: Prioritization Logic\n\nRank files by priority using this scoring:\n1. **Recently modified** (+3 points if modified in last 7 days)\n2. **Large file** (+2 points if >200 lines)\n3. **High commit frequency** (+2 points if >10 commits)\n4. **Critical path** (+3 points if contains: auth, payment, security, user)\n\nSuggest the highest-scored file first.\n\n## Example Output\n\n```\nCOVERAGE GAPS (threshold: 50%)\n\nNo tests found:\n• src/utils/validation.ts (247 lines, modified 3 days ago)\n• src/api/payments.ts (189 lines, modified today) ⚠️\n• src/helpers/format.ts (45 lines, modified 2 weeks ago)\n\nLow coverage (<50%):\n• src/auth/oauth.ts — 34% covered\n• src/db/migrations.ts — 12% covered\n\nSummary:\n─────────────────────────────\nFiles with no tests:      3\nFiles below threshold:    2\nTotal files analyzed:    28\n─────────────────────────────\n\nSuggestion: Start with src/api/payments.ts (recently modified + no tests + critical path)\n```\n\n## Fallback Behavior\n\n- If no test framework detected: \"No test framework found. Looking for source files without corresponding test files...\"\n- If no coverage report exists: \"No coverage report found. Run your test suite with coverage enabled, or I'll analyze by file naming convention.\"\n- If codebase is empty or no source files: \"No source files found in standard directories (src/, lib/, app/)\"\n\n## Tips for Users\n\nAfter running this command, you can ask:\n- \"Generate a test file for src/api/payments.ts\"\n- \"What should I test first in oauth.ts?\"\n- \"Create a coverage improvement plan\"\n",
-        "plugins/team-tools/commands/standup.md": "---\nname: standup\ndescription: Generate a daily standup report from yesterday's work and today's plan\n---\n\n# Standup Generator\n\nGenerate a ready-to-share standup report from your git activity and open work.\n\n## Usage\n\n`/standup` - Generate standup for today\n\n## Instructions\n\nWhen invoked, follow these steps:\n\n### Step 1: Determine Yesterday\n\nCalculate \"yesterday\" intelligently:\n- If today is Monday, use Friday\n- If today is Sunday, use Friday\n- If today is Saturday, use Friday\n- Otherwise, use the previous day\n\n### Step 2: Gather Yesterday's Work\n\n#### A. Get Yesterday's Commits\n\n```bash\ngit log --author=\"$(git config user.email)\" --since=\"yesterday 00:00\" --until=\"today 00:00\" --format=\"%s\" --no-merges\n```\n\nFor Monday standups, adjust to get Friday's commits:\n```bash\ngit log --author=\"$(git config user.email)\" --since=\"3 days ago 00:00\" --until=\"2 days ago 00:00\" --format=\"%s\" --no-merges\n```\n\n#### B. Get Merged PRs (if gh CLI available)\n\n```bash\ngh pr list --author @me --state merged --search \"merged:>=$(date -v-1d +%Y-%m-%d)\" --json number,title --jq '.[] | \"PR #\\(.number): \\(.title)\"'\n```\n\n#### C. Get PRs You Reviewed\n\n```bash\ngh pr list --state all --search \"reviewed-by:@me updated:>=$(date -v-1d +%Y-%m-%d)\" --json number,title --jq '.[] | \"Reviewed PR #\\(.number): \\(.title)\"'\n```\n\n### Step 3: Gather Today's Plan\n\n#### A. Get Open PRs You Authored\n\n```bash\ngh pr list --author @me --state open --json number,title,isDraft --jq '.[] | \"PR #\\(.number): \\(.title)\" + (if .isDraft then \" (draft)\" else \"\" end)'\n```\n\n#### B. Get PRs Awaiting Your Review\n\n```bash\ngh pr list --search \"review-requested:@me\" --state open --json number,title --jq '.[] | \"Review PR #\\(.number): \\(.title)\"'\n```\n\n#### C. Get Current Branch Status\n\n```bash\ngit branch --show-current\ngit status --porcelain | wc -l | xargs echo \"uncommitted changes:\"\n```\n\n### Step 4: Format Standup\n\nPresent in this format:\n\n```\nSTANDUP - [Day], [Date]\n\nYesterday:\n• [Merged PR / Commit summary]\n• [Reviewed PR]\n• [Other work done]\n\nToday:\n• [Continue/Complete PR in progress]\n• [Review pending PRs]\n• [Current branch work]\n\nBlockers:\n• None identified\n```\n\n### Step 5: Ask About Blockers\n\nAfter presenting the standup, ask:\n> \"Any blockers I should add to this standup?\"\n\nIf the user provides blockers, update the Blockers section.\n\n## Example Output\n\n```\nSTANDUP - Tuesday, Jan 7\n\nYesterday:\n• Merged PR #42: Auth refactor\n• Fixed login redirect bug (3 commits)\n• Reviewed PR #38: API rate limiting\n\nToday:\n• Continue PR #45: User profile page (in progress)\n• Review PR #50: Database migration\n• Working on feature/user-settings branch (5 uncommitted changes)\n\nBlockers:\n• None identified (add any?)\n```\n\n## Fallback Behavior\n\n- If `gh` CLI is not available, skip PR-related steps and note: \"Install gh CLI for PR integration\"\n- If no commits found, mention: \"No commits yesterday - was this expected?\"\n- For Monday standups, expand to include Thursday if Friday was also empty\n",
-        "plugins/team-tools/commands/timesheet.md": "---\nname: timesheet\ndescription: Generate a daily timesheet entry from your git commit history, consolidating work by ticket.\n---\n\n# Timesheet Generator\n\nGenerate a consolidated, copy-paste ready timesheet entry for your daily time tracking.\n\n## Usage\n\n`/timesheet [period]`\n\n- **No argument**: Generates timesheet for **Today** (since midnight).\n- `yesterday`: Generates timesheet for **Yesterday** (entire 24h period).\n- `[number]`: Generates timesheet for the last N days (e.g. `/timesheet 7`).\n\n## Instructions\n\nWhen invoked, follow these steps:\n\n### Step 1: Determine Date Range\n\n- **Default (Today)**: `since=\"midnight\"`\n- **Yesterday**: `since=\"yesterday 00:00\"` and `until=\"today 00:00\"`\n- **N days**: `since=\"{N} days ago\"`\n\n### Step 2: Get Git User Info\n\nGet the current git user's email:\n```bash\ngit config user.email\n```\n\n### Step 3: Extract Commits\n\nRun this command (adjusting `since`/`until` based on Step 1):\n\n```bash\ngit log --author=\"$(git config user.email)\" --since=\"{since}\" --until=\"{until}\" --format=\"%s\" --no-merges\n```\n\n### Step 4: Process and Consolidate\n\n1. **Extract Ticket IDs**: Look for patterns like `PROJ-123`, `FEAT-456`, or `#[0-9]+` at the start of messages.\n2. **Group by Ticket**: Consolidate multiple commits for the same ticket.\n3. **Summarize**:\n   - If a ticket has multiple commits, combine them into a coherent summary.\n   - Example rule: \"Implemented auth flow, Fixed login bug\" -> \"Implemented auth flow & fixed login bug\".\n   - If commits are repetitive (e.g., \"wip\", \"fix\"), ignore the noise and focus on the meaningful parts.\n\n### Step 5: Format Output\n\nPresent the timesheet in this format, optimized for pasting into time tracking software:\n\n```\nTIMESHEET - [Date or Range]\n\n[Ticket ID]\n[Consolidated Summary]\n\n[Ticket ID]\n[Consolidated Summary]\n\n---\nMiscellaneous / General:\n- [Commit message without ticket ID]\n```\n\n## Example Output\n\n```\nTIMESHEET - Tuesday, Jan 14\n\nPROJ-123\nImplemented user authentication flow, added unit tests, and fixed login redirect bug.\n\nPROJ-456\nCode review feedback addressed: updated variable names and extracted constants.\n\n---\nMiscellaneous:\n- Updated README.md\n- Tweaked build script\n```\n"
+        "README.md": "# Team Tools Plugin\n\nInternal productivity tools for Claude Code.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/team-tools:timesheet [period]` | Generate daily commit summary for timesheets |\n| `/team-tools:standup` | Yesterday's work + today's plan for standups |\n| `/team-tools:coverage-gaps [threshold]` | Find files with missing or low test coverage |\n\n## Installation\n\n**Step 1: Add the marketplace**\n```\n/plugin marketplace add zero-copy-labs/zcl-claude-code-plugins\n```\n\n**Step 2: Install the plugin**\n```\n/plugin install team-tools@zcl-claude-code-plugins\n```\n\nOr use the CLI:\n```bash\nclaude plugin marketplace add zero-copy-labs/zcl-claude-code-plugins\nclaude plugin install team-tools@zcl-claude-code-plugins --scope user\n```\n\nScope options: `user` (default), `project`, or `local`.\n\n## Command Details\n\n### /team-tools:timesheet\n\nGenerates a copy-paste ready timesheet from your git history.\n\n```\n/team-tools:timesheet            # Today's commits\n/team-tools:timesheet yesterday  # Yesterday's commits\n/team-tools:timesheet 7          # Last 7 days\n```\n\n**Features:**\n- Groups commits by day\n- Extracts ticket IDs (JIRA-123, #456)\n- Multiple export formats (text, markdown, CSV)\n\n### /team-tools:standup\n\nGenerates a daily standup report.\n\n```\n/team-tools:standup\n```\n\n**Features:**\n- Yesterday's commits and merged PRs\n- Today's open PRs and pending reviews\n- Smart weekend handling (Monday shows Friday)\n- Prompts for blockers\n\n**Requires:** `gh` CLI for PR integration (optional)\n\n### /team-tools:coverage-gaps\n\nFinds files lacking test coverage.\n\n```\n/team-tools:coverage-gaps      # 50% threshold (default)\n/team-tools:coverage-gaps 80   # 80% threshold\n```\n\n**Features:**\n- Auto-detects test framework (Jest, Vitest, Pytest, Go, etc.)\n- Parses existing coverage reports (lcov, cobertura)\n- Falls back to file naming convention analysis\n- Prioritizes by recency, size, and criticality\n\n## Requirements\n\n- Git repository\n- `gh` CLI (optional, for PR features in `/standup`)\n- Coverage report (optional, for `/coverage-gaps` accuracy)\n\n## File Structure\n\n```\n.claude-plugin/\n└── marketplace.json          # Marketplace catalog\nplugins/\n└── team-tools/\n    ├── .claude-plugin/\n    │   └── plugin.json       # Plugin manifest\n    └── commands/\n        ├── timesheet.md      # /team-tools:timesheet command\n        ├── standup.md        # /team-tools:standup command\n        └── coverage-gaps.md  # /team-tools:coverage-gaps command\n```\n\n## License\n\nInternal use only.\n"
       },
       "plugins": [
         {

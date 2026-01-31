@@ -39,6 +39,40 @@
           ]
         }
       ]
+    },
+    {
+      "name": "claude-ultra-marketplace",
+      "version": null,
+      "description": "Ultra-capable Claude Code workflow with safety hooks, specialist agents, and productivity commands",
+      "repo_full_name": "nategarelik/claude-ultra-plugin",
+      "repo_url": "https://github.com/nategarelik/claude-ultra-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-22T00:04:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-ultra-marketplace\",\n  \"owner\": {\n    \"name\": \"nategarelik\",\n    \"email\": \"nategarelik@github.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-ultra\",\n      \"source\": \"./\",\n      \"description\": \"Ultra-capable Claude Code workflow with safety hooks, specialist agents, and productivity commands\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"nategarelik\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-ultra\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Ultra-capable Claude Code workflow with safety hooks, specialist agents, and productivity commands\",\n  \"author\": {\n    \"name\": \"nategarelik\",\n    \"url\": \"https://github.com/nategarelik\"\n  },\n  \"repository\": \"https://github.com/nategarelik/Claudedeee\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"workflow\",\n    \"automation\",\n    \"agents\",\n    \"productivity\",\n    \"safety\",\n    \"ultra-capable\"\n  ],\n  \"commands\": [\n    \"./commands/compact.md\",\n    \"./commands/fix.md\",\n    \"./commands/mode.md\",\n    \"./commands/parallel.md\",\n    \"./commands/plan.md\",\n    \"./commands/review.md\",\n    \"./commands/rollback.md\",\n    \"./commands/setup.md\",\n    \"./commands/status.md\",\n    \"./commands/verify.md\"\n  ],\n  \"agents\": [\n    \"./agents/architect.md\",\n    \"./agents/code-reviewer.md\",\n    \"./agents/debugger.md\",\n    \"./agents/dependency-auditor.md\",\n    \"./agents/docs-generator.md\",\n    \"./agents/explore.md\",\n    \"./agents/performance-optimizer.md\",\n    \"./agents/security-auditor.md\",\n    \"./agents/task-worker.md\"\n  ],\n  \"skills\": [\"./skills/workflow-mastery\"],\n  \"hooks\": \"./hooks/hooks.json\",\n  \"mcpServers\": {\n    \"memory\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-memory\"]\n    },\n    \"sequential-thinking\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@modelcontextprotocol/server-sequential-thinking\"]\n    }\n  }\n}\n",
+        "README.md": "# Claude Ultra Plugin\n\nUltra-capable Claude Code workflow with safety hooks, specialist agents, and productivity commands.\n\n**v1.1.0** - All hooks now use Claude Code spec-compliant output formats (Dec 2025).\n\n## Quick Install\n\n```bash\n# Add the marketplace\n/plugin marketplace add nategarelik/claude-ultra-plugin\n\n# Install the plugin\n/plugin install claude-ultra@claude-ultra-marketplace\n\n# Run setup to verify\n/claude-ultra:setup\n```\n\n## Alternative: Local Install\n\n```bash\ngit clone https://github.com/nategarelik/claude-ultra-plugin\nclaude --plugin-dir ./claude-ultra-plugin\n```\n\n## Features\n\n### Slash Commands\n\n| Command | Description |\n|---------|-------------|\n| `/claude-ultra:setup` | Initialize and verify configuration |\n| `/claude-ultra:mode` | Switch autonomy modes |\n| `/claude-ultra:verify` | Force web verification of claims |\n| `/claude-ultra:plan` | Enter planning mode for complex tasks |\n| `/claude-ultra:fix` | Systematic bug fix workflow |\n| `/claude-ultra:parallel` | Multi-agent parallel execution |\n| `/claude-ultra:review` | Code review workflow |\n| `/claude-ultra:status` | Show session status and token usage |\n| `/claude-ultra:compact` | Compress context when running low |\n| `/claude-ultra:rollback` | Git rollback helper |\n\n### Specialist Agents\n\n| Agent | Purpose |\n|-------|---------|\n| @architect | System design and architecture decisions |\n| @code-reviewer | Thorough code review |\n| @debugger | Root cause analysis |\n| @task-worker | Parallel file operations (fast) |\n| @explore | Codebase search and discovery |\n| @security-auditor | Security vulnerability checks |\n| @docs-generator | Documentation generation |\n| @performance-optimizer | Performance analysis |\n| @dependency-auditor | Dependency analysis |\n\n### Automated Hooks (Spec-Compliant)\n\nAll hooks use **Claude Code spec-compliant output formats**:\n\n| Event | Hook | Purpose | Output Format |\n|-------|------|---------|---------------|\n| SessionStart | session-initializer | Load session context | `hookSpecificOutput.additionalContext` |\n| PreToolUse (Bash) | safety-gate | Block dangerous commands | `permissionDecision: \"deny\"` |\n| PreToolUse (Bash) | git-safety-net | Prevent destructive git ops | `permissionDecision: \"deny\"/\"ask\"` |\n| PreToolUse (*) | token-budget-guardian | Monitor context usage | `permissionDecision` |\n| PostToolUse (Edit/Write) | post-edit-format | Auto-format edited files | `additionalContext` |\n| PreCompact | context-compression-guard | Archive before compression | stdout |\n| SubagentStop | quality-gate | Validate subagent output | `decision: \"block\"` + `reason` |\n| Stop | session-archiver | Archive session to memory bank | stdout |\n\n## Hook Output Format Reference\n\nPer [official Claude Code docs](https://code.claude.com/docs/en/hooks):\n\n```python\n# PreToolUse - Use permissionDecision\n{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"deny\",  # or \"allow\" or \"ask\"\n        \"permissionDecisionReason\": \"Reason shown to Claude\"\n    }\n}\n\n# PostToolUse - Use additionalContext\n{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PostToolUse\",\n        \"additionalContext\": \"Info for Claude\"\n    }\n}\n\n# SessionStart - additionalContext only\n{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"SessionStart\",\n        \"additionalContext\": \"Context injected at start\"\n    }\n}\n\n# Stop/SubagentStop - decision/reason at TOP LEVEL\n{\n    \"decision\": \"block\",\n    \"reason\": \"Reason for continuing\"\n}\n```\n\n## Workflow Protocol\n\n### Phase 1: UNDERSTAND\n- Parse the request\n- Check constraints and existing patterns\n- Run `git status`\n\n### Phase 2: PLAN\n- Use `/claude-ultra:plan` for complex tasks\n- Use @explore before modifying unfamiliar code\n- Break work into atomic tasks\n\n### Phase 3: EXECUTE\n- Delegate to specialist agents\n- Use @task-worker for parallel operations\n- Keep commits atomic\n\n### Phase 4: VERIFY\n- Run tests/build/typecheck\n- Show output as evidence\n- Never claim \"done\" without proof\n\n## Autonomy Modes\n\n```\n/claude-ultra:mode autonomous   # Full autonomy\n/claude-ultra:mode collaborative # Check in at decision points (default)\n/claude-ultra:mode supervised   # Step-by-step approval\n```\n\n## Configuration Examples\n\n- `settings.example.json` - Optimized settings with all hooks\n- `CLAUDE.example.md` - Slim 66-line system instructions\n\n## Compatibility\n\nWorks with: superpowers, context7, greptile, LSP plugins\n\n## Requirements\n\n- Python 3.8+ (for hooks)\n- Claude Code CLI v2.0.12+\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-ultra",
+          "source": "./",
+          "description": "Ultra-capable Claude Code workflow with safety hooks, specialist agents, and productivity commands",
+          "version": "1.0.0",
+          "author": {
+            "name": "nategarelik"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add nategarelik/claude-ultra-plugin",
+            "/plugin install claude-ultra@claude-ultra-marketplace"
+          ]
+        }
+      ]
     }
   ]
 }
