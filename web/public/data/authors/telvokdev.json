@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "telvokdev",
+    "display_name": "Telvok",
+    "avatar_url": "https://avatars.githubusercontent.com/u/254305512?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "librarian",
+      "version": null,
+      "description": "Knowledge capture for Claude Code - remember what we learn together",
+      "repo_full_name": "telvokdev/librarian",
+      "repo_url": "https://github.com/telvokdev/librarian",
+      "repo_description": "Knowledge capture for Claude Code and MCP clients",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-01-31T00:41:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"librarian\",\n  \"owner\": {\n    \"name\": \"Telvok\",\n    \"url\": \"https://github.com/telvokdev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"librarian\",\n      \"source\": \"./\",\n      \"description\": \"Knowledge capture for Claude Code - remember what we learn together\",\n      \"version\": \"1.5.4\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"librarian\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Knowledge capture for Claude Code\",\n  \"author\": {\n    \"name\": \"Telvok\"\n  },\n  \"skills\": \"./skills/\",\n  \"commands\": \"./commands/\"\n}\n",
+        "README.md": "# Librarian\n\n[![npm version](https://img.shields.io/npm/v/@telvok/librarian-mcp.svg)](https://www.npmjs.com/package/@telvok/librarian-mcp)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n[![Downloads](https://img.shields.io/npm/dm/@telvok/librarian-mcp.svg)](https://www.npmjs.com/package/@telvok/librarian-mcp)\n\nA knowledge management MCP server for AI coding assistants. Capture insights, search with semantic understanding, and access a marketplace of developer knowledge.\n\n## Installation\n\n### Claude Code\n\n```bash\nclaude mcp add librarian -- npx @telvok/librarian-mcp\n```\n\n### Any MCP Client\n\n```json\n{\n  \"mcpServers\": {\n    \"librarian\": {\n      \"command\": \"npx\",\n      \"args\": [\"@telvok/librarian-mcp\"]\n    }\n  }\n}\n```\n\n### Global Install\n\n```bash\nnpm install -g @telvok/librarian-mcp\n```\n\n## Quick Start\n\n```javascript\n// Search before making decisions\nbrief({ query: \"stripe webhook handling\" })\n\n// Capture what you learned\nrecord({\n  insight: \"Stripe retries webhooks but doesn't dedupe - always check idempotency key\",\n  context: \"payments, webhooks\"\n})\n\n// Mark helpful entries to boost their ranking\nmark_hit({ path: \"local/stripe-webhooks-need-idempotency.md\" })\n\n// Browse the marketplace\nlibrary_search({ query: \"react patterns\" })\n```\n\n## API Reference\n\n### Local Knowledge\n\n| Tool | Purpose |\n|------|---------|\n| `brief(query?, limit?)` | Semantic search across your library |\n| `record(insight, ...)` | Capture knowledge worth keeping |\n| `adopt(path, title?)` | Copy imported entry to local library |\n| `mark_hit(path)` | Mark an entry as helpful (increases ranking) |\n| `import_memories(format, path)` | Import from other AI tools |\n| `rebuild_index(force?)` | Rebuild semantic search embeddings |\n| `delete(path?, query?, confirm?)` | Delete entries from local library |\n\n### Marketplace\n\nFree books available now. Paid books and seller payouts coming soon.\n\n| Tool | Purpose |\n|------|---------|\n| `library_search(query, filters?)` | Search Telvok marketplace |\n| `library_download(slug)` | Download a free book locally |\n| `library_publish(name, attestation, ...)` | Publish entries as a book |\n| `my_books(filter?)` | View published and downloaded books |\n| `sync(slug?, force?)` | Check for updates to owned books |\n| `rate_book(slug, rating, ...)` | Rate a book (1-5 stars) |\n| `seller_analytics()` | View download stats for your books |\n\n### Bounties (Coming Soon)\n\n| Tool | Purpose |\n|------|---------|\n| `bounty_create(title, ...)` | Post a knowledge request |\n| `bounty_list(query?, tags?, status?)` | Browse available bounties |\n| `bounty_claim(bounty_id)` | Claim a bounty to fulfill |\n| `bounty_submit(bounty_id, book_slug)` | Submit fulfillment |\n| `my_bounties(role?)` | View your bounties |\n\n### Account\n\n| Tool | Purpose |\n|------|---------|\n| `auth(action)` | Login, logout, status, complete |\n| `help(topic?)` | Get help on any tool |\n| `feedback(message, type?)` | Send feedback |\n\n## How Search Works\n\nLibrarian uses local AI embeddings for semantic search:\n\n```\nYou saved:   \"Stripe webhooks need idempotency checks\"\nYou search:  \"handling duplicate payment events\"\n→ It finds it.\n```\n\n- `all-MiniLM-L6-v2` model (384-dim embeddings)\n- ~30MB download on first run, cached locally\n- No API calls — fully offline\n\nResults ranked by semantic similarity, recency (60%), and hit count (40%).\n\n## Import Formats\n\n| Format | Sources |\n|--------|---------|\n| `jsonl` | Anthropic MCP Memory, mcp-knowledge-graph |\n| `markdown` | Obsidian, Basic Memory MCP |\n| `cursor` | Cursor Memory Bank |\n| `json` | Simple memory servers |\n| `sqlite` | mcp-memory-service, SQLite-vec |\n\n## Authentication\n\n1. `auth({ action: \"login\" })` — returns code + URL\n2. Visit `telvok.com/device`, enter the code\n3. `auth({ action: \"complete\" })` — saves API key locally\n\nKeys stored in `.librarian/.auth`, expire after 90 days.\n\n## Library Structure\n\n```\n.librarian/\n├── local/        # Your entries\n├── imported/     # Downloaded books\n├── packages/     # Purchased content\n├── archived/     # Stale but searchable\n├── index.json    # Semantic embeddings\n├── models/       # Cached embedding model\n└── .auth         # API key (git-ignored)\n```\n\n## Contributing\n\n1. Fork the repository\n2. Create a feature branch (`git checkout -b feature/my-feature`)\n3. Commit changes (`git commit -m 'Add my feature'`)\n4. Push (`git push origin feature/my-feature`)\n5. Open a Pull Request\n\n## License\n\nMIT - [Telvok](https://github.com/telvokdev/librarian)\n"
+      },
+      "plugins": [
+        {
+          "name": "librarian",
+          "source": "./",
+          "description": "Knowledge capture for Claude Code - remember what we learn together",
+          "version": "1.5.4",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add telvokdev/librarian",
+            "/plugin install librarian@librarian"
+          ]
+        }
+      ]
+    }
+  ]
+}

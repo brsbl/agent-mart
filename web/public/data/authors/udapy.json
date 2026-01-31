@@ -2,51 +2,24 @@
   "author": {
     "id": "udapy",
     "display_name": "Uday Phalak",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/6436621?u=a0bee80721c04113ef28ba1a4956bf29e2ec529d&v=4",
-    "url": "https://github.com/udapy",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 2,
-      "total_commands": 0,
-      "total_skills": 0,
-      "total_stars": 8,
-      "total_forks": 2
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/6436621?u=a0bee80721c04113ef28ba1a4956bf29e2ec529d&v=4"
   },
   "marketplaces": [
     {
       "name": "rust-agentic-skills",
       "version": null,
       "description": "Rust coding specialists using RPI methodology.",
-      "owner_info": "Uday Phalak",
-      "keywords": [],
       "repo_full_name": "udapy/rust-agentic-skills",
       "repo_url": "https://github.com/udapy/rust-agentic-skills",
       "repo_description": "Agentic Skills focused on Rust Language.",
-      "homepage": "https://udapy.github.io/rust-agentic-skills/",
       "signals": {
         "stars": 8,
         "forks": 2,
-        "pushed_at": "2026-01-26T04:01:27Z",
-        "created_at": "2025-12-30T03:02:57Z",
-        "license": "MIT"
+        "pushed_at": "2026-01-26T04:01:27Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 503
-        }
-      ],
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rust-agentic-skills\",\n  \"owner\": \"Uday Phalak\",\n  \"metadata\": { \n      \"description\": \"Rust coding specialists using RPI methodology.\", \n      \"version\": \"1.0.0\" \n  },\n  \"plugins\": [\n    {\n      \"name\": \"Rust Kernel\",\n      \"description\": \"Core Rust capabilities\",\n      \"source\": \"local\",\n      \"path\": \"skills/rust-core\"\n    },\n    {\n       \"name\": \"Lint Hunter\",\n       \"description\": \"Borrow checker debugging\",\n       \"source\": \"local\",\n       \"path\": \"skills/lint-hunter\"\n    }\n  ]\n}\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rust-agentic-skills\",\n  \"owner\": \"Uday Phalak\",\n  \"metadata\": { \n      \"description\": \"Rust coding specialists using RPI methodology.\", \n      \"version\": \"1.0.0\" \n  },\n  \"plugins\": [\n    {\n      \"name\": \"Rust Kernel\",\n      \"description\": \"Core Rust capabilities\",\n      \"source\": \"local\",\n      \"path\": \"skills/rust-core\"\n    },\n    {\n       \"name\": \"Lint Hunter\",\n       \"description\": \"Borrow checker debugging\",\n       \"source\": \"local\",\n       \"path\": \"skills/lint-hunter\"\n    }\n  ]\n}\n",
+        "README.md": "# Rust Agentic Skills\n\n[![Rust Guild](https://img.shields.io/badge/Agent-Rust%20Guild-orange)](https://github.com/rust-lang/rust)\n[![Research-Plan-Implement Methodology](https://img.shields.io/badge/Methodology-RPI-blue)](AGENTS.md)\n[![Claude Ready](https://img.shields.io/badge/Claude-Plugin-purple)](.Claude-plugin/marketplace.json)\n[![Gemini Extension](https://img.shields.io/badge/Gemini-Extension-blue)](gemini-extension.json)\n[![Antigravity Compatible](https://img.shields.io/badge/Antigravity-Engine-green)](AGENTS.md)\n\n**A modular, constraint-based skill set for Autonomous AI coding agents.**\n\nThis repository transforms any general-purpose LLM (Claude, Gemini, GPT-4) into a **disciplined Rust engineering team**. It adheres to the **Agent Context Protocol (ACP)** to provide self-describing skills that explicitly define their triggers, capabilities, and execution phases.\n\n---\n\n## // Architecture Overview\n\nWe do not use monolithic instruction files. Instead, every skill in `skills/` follows the **Brain-Tool-Context** architecture to maximize token efficiency:\n\n1.  **Driver (`SKILL.md`)**:\n    - **The Brain**. Contains minimal YAML metadata (`trigger`, `rpi_phase`) and high-level role benchmarks.\n    - _Usage_: The agent reads this first to decide if it is relevant.\n2.  **Tools (`scripts/`)**:\n    - **The Hands**. Executable code (Shell scripts, Rust binaries) for reliable, deterministic task execution.\n    - _Usage_: The agent executes these to perform work (e.g., `init_project.sh`, `explain_error.sh`).\n3.  **Context (`references/`)**:\n    - **The Knowledge**. Deep-dive documentation and \"Dictionaries of Pain\".\n    - _Usage_: \"Lazy loaded\" by the agent only when specifically needed to solve a complex problem.\n\n---\n\n## // Integration Guide\n\n### 1. Claude Code (Plugin)\n\nThis repository is a compliant Claude Plugin.\n\n1.  Clone this repository locally.\n2.  Allow Claude to discover the `.Claude-plugin/marketplace.json` manifest.\n3.  **Result**: Claude will automatically see \"Rust Kernel\" and \"Lint Hunter\" as available tools.\n\n### 2. Gemini CLI (Extension)\n\nCompatible with the Gemini CLI tool via the **Model Context Protocol (MCP)**. This repo provides a dynamic server that auto-discovers skills.\n\n1.  **Link Extension**:\n    ```bash\n    gemini extensions link .\n    ```\n2.  **Activate**:\n    ```bash\n    gemini context set rust-agentic-skills\n    ```\n3.  **Result**: The `rust-agentic-skills` server starts up, reads your `skills/` directory, and dynamically routes your requests to the appropriate skill (e.g., \"Lint Hunter\").\n\n### 3. Manual / Custom Agents\n\n**Running the MCP Server Manually:**\nYou can run the server directly to verify standard JSON-RPC communication:\n\n```bash\ncargo run --release --bin rust-agentic-skills\n```\n\n_(Expects JSON-RPC messages on stdin)_\n\nFor generic agents (ChatGPT, heavily customized setups):\n\n1.  **System Prompt**: Load [AGENTS.md](AGENTS.md) as your system instruction. It defines the **RPI (Research → Plan → Implement)** loop.\n2.  **Context Loading**: When the agent enters a specific phase (e.g., \"Verification\"), manually load the relevant `SKILL.md` (e.g., `skills/lint-hunter/SKILL.md`).\n\n---\n\n## // How to Contribute 🤝\n\nWe welcome new skills! Follow the **Triad Pattern**:\n\n1.  **Create Directory**: `skills/<your-skill-name>/`.\n2.  **Create Driver**: Add `SKILL.md` with YAML frontmatter:\n    ```yaml\n    ---\n    name: My Skill\n    description: What it does.\n    rpi_phase: Implementation\n    trigger:\n      - \"keyword1\"\n      - \"keyword2\"\n    capabilities:\n      - capability 1\n    ---\n    ```\n3.  **Add Tools**: Put executable scripts in `skills/<your-skill-name>/scripts/`.\n4.  **Add Context**: Put documentation in `skills/<your-skill-name>/references/`.\n5.  **Generate Docs**: Run `make doc` to update `AGENTS.md`.\n\n---\n\n## // Roadmap (In Progress / TBD)\n\n- [ ] **Multi-Agent Beast Mode**: Chaining multiple skills in a single \"Beast Mode\" loop without human intervention.\n- [ ] **New Skill**: `Test Architect` (Refactoring & property-based testing).\n- [ ] **New Skill**: `Crates.io Scout` (Dependency analysis).\n- [ ] **Automated CI**: GitHub Action to run `make verify` on PRs.\n\n---\n\n## 📜 License\n\nMIT\n"
       },
       "plugins": [
         {

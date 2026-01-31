@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "jamesainslie",
+    "display_name": "James Ainslie",
+    "avatar_url": "https://avatars.githubusercontent.com/u/42301770?u=d5511dc9673fd615e470ee56ebf7e09a02c545f9&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "grimoire",
+      "version": null,
+      "description": "AI-powered knowledge base for programming best practices with semantic search",
+      "repo_full_name": "jamesainslie/grimoire",
+      "repo_url": "https://github.com/jamesainslie/grimoire",
+      "repo_description": "AI-powered knowledge base for programming best practices",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-19T19:13:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"grimoire\",\n  \"description\": \"AI-powered knowledge base for programming best practices with semantic search\",\n  \"owner\": {\n    \"name\": \"James Ainslie\",\n    \"email\": \"james@ainslie.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"grimoire\",\n      \"description\": \"AI-powered knowledge base for programming best practices. Provides semantic search over curated documentation for Go, Rust, Python, and more via MCP server and CLI.\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./\",\n      \"category\": \"development\",\n      \"author\": {\n        \"name\": \"James Ainslie\",\n        \"email\": \"james@ainslie.dev\"\n      },\n      \"homepage\": \"https://github.com/jamesainslie/grimoire\",\n      \"keywords\": [\n        \"knowledge-base\",\n        \"best-practices\",\n        \"documentation\",\n        \"semantic-search\",\n        \"vector-search\",\n        \"mcp\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"grimoire\",\n  \"version\": \"0.1.0\",\n  \"description\": \"AI-powered knowledge base for programming best practices. Provides semantic search over curated documentation for Go, Rust, Python, and more via MCP server and CLI.\",\n  \"author\": {\n    \"name\": \"James Ainslie\",\n    \"url\": \"https://github.com/jamesainslie\"\n  },\n  \"homepage\": \"https://github.com/jamesainslie/grimoire\",\n  \"repository\": \"https://github.com/jamesainslie/grimoire\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"knowledge-base\",\n    \"best-practices\",\n    \"documentation\",\n    \"semantic-search\",\n    \"vector-search\",\n    \"mcp\"\n  ]\n}\n",
+        "README.md": "# Grimoire\n\nAn AI-powered knowledge base for programming best practices. Grimoire provides semantic search over curated documentation for Go, Rust, Python, and more.\n\n## Features\n\n- **Vector Search**: Semantic similarity search using local embeddings (Ollama + snowflake-arctic-embed)\n- **Hybrid Search**: Combines vector search with full-text search for better results\n- **MCP Server**: Expose the knowledge base to AI assistants via Model Context Protocol\n- **Language Packs**: Modular documentation sources organized by programming language\n- **Local-First**: All data stored locally in SQLite with sqlite-vec for vectors\n\n## Requirements\n\n- Go 1.21+\n- [Ollama](https://ollama.ai/) running locally\n- GCC (for CGO/sqlite-vec)\n\n## Installation\n\n### Claude Plugin (Recommended)\n\nInstall as a Claude Code plugin for automatic MCP server integration:\n\n```bash\n# Install the embedding model first\nollama pull snowflake-arctic-embed:l\n\n# Add the marketplace and install\n/plugin marketplace add jamesainslie/grimoire\n/plugin install grimoire@grimoire\n\n# Or install from local clone\ngit clone https://github.com/jamesainslie/grimoire.git\ncd grimoire\n/plugin marketplace add .\n/plugin install grimoire@grimoire\n```\n\nThe plugin automatically:\n- Builds the CLI and MCP server\n- Configures the MCP server in Claude\n- Creates the data directory at `~/.grimoire/`\n\n### Manual Installation\n\n```bash\n# Clone the repository\ngit clone https://github.com/jamesainslie/grimoire.git\ncd grimoire\n\n# Install the embedding model\nollama pull snowflake-arctic-embed:l\n\n# Build\nmake build\n\n# Or use the install script\n./scripts/install.sh\n```\n\n## Quick Start\n\n### 1. Ingest Documentation\n\nIngest a language pack to populate the knowledge base:\n\n```bash\n# Ingest the Go language pack\ngrimoire ingest langpacks/go/sources.yaml\n```\n\nThis will:\n- Fetch documentation from configured git repositories\n- Parse markdown files\n- Chunk content hierarchically\n- Generate embeddings via Ollama\n- Store everything in the local database\n\n### 2. Query the Knowledge Base\n\n```bash\n# Search for information\ngrimoire query \"how to handle errors in Go\"\n\n# Filter by language\ngrimoire query --lang go \"interface design patterns\"\n\n# Limit results\ngrimoire query --limit 10 \"concurrency best practices\"\n\n# Use vector-only search (skip full-text)\ngrimoire query --vector-only \"mutex vs channels\"\n```\n\n### 3. View Statistics\n\n```bash\ngrimoire stats\n```\n\n## MCP Server\n\nGrimoire includes an MCP server for integration with AI assistants like Claude.\n\n### Configuration\n\nAdd to your Claude configuration:\n\n```json\n{\n  \"mcpServers\": {\n    \"grimoire\": {\n      \"command\": \"/path/to/grimoire-mcp\",\n      \"env\": {\n        \"GRIMOIRE_DB\": \"~/.grimoire/grimoire.db\",\n        \"OLLAMA_URL\": \"http://localhost:11434\"\n      }\n    }\n  }\n}\n```\n\n### Available Tools\n\n- **query**: Search the knowledge base for programming best practices\n- **list_languages**: List installed programming languages\n- **list_sources**: List documentation sources\n\n## CLI Reference\n\n### Global Flags\n\n| Flag | Description | Default |\n|------|-------------|---------|\n| `--db` | Database path | `~/.grimoire/grimoire.db` |\n| `--ollama-url` | Ollama API URL | `http://localhost:11434` |\n\n### Commands\n\n#### `grimoire ingest <language-pack>`\n\nFetch and index documentation from a language pack.\n\n```bash\ngrimoire ingest langpacks/go/sources.yaml\ngrimoire ingest --source go-wiki langpacks/go/sources.yaml  # Single source\n```\n\n#### `grimoire query <text>`\n\nSearch the knowledge base.\n\n| Flag | Description | Default |\n|------|-------------|---------|\n| `--lang` | Filter by language | (all) |\n| `--limit` | Max results | 5 |\n| `--vector-only` | Skip full-text search | false |\n\n#### `grimoire stats`\n\nShow knowledge base statistics.\n\n#### `grimoire languages list`\n\nList installed languages.\n\n#### `grimoire languages install <language>`\n\nInstall a language pack (placeholder).\n\n#### `grimoire sources list`\n\nList documentation sources.\n\n| Flag | Description |\n|------|-------------|\n| `--lang` | Filter by language |\n\n#### `grimoire sources add <language> <type> <url>`\n\nAdd a custom documentation source (placeholder).\n\n## Language Packs\n\nLanguage packs are YAML files that define documentation sources:\n\n```yaml\nlanguage: go\ndisplay_name: Go\n\nsources:\n  - name: go-wiki\n    type: git\n    url: https://github.com/golang/wiki\n    paths:\n      - \"*.md\"\n    tier: 1\n\n  - name: uber-style-guide\n    type: git\n    url: https://github.com/uber-go/guide\n    paths:\n      - style.md\n    tier: 2\n```\n\n### Source Tiers\n\n| Tier | Description |\n|------|-------------|\n| 1 | Official documentation |\n| 2 | Industry style guides |\n| 3 | Books and tutorials |\n| 4 | Blog posts and articles |\n| 5 | Curated lists |\n\n### Included Language Packs\n\n- **Go** (`langpacks/go/sources.yaml`): Official wiki, Uber style guide, learn-go-with-tests, and more\n\n## Architecture\n\n```\ngrimoire/\n├── .claude-plugin/    # Claude plugin configuration\n│   ├── plugin.json    # Plugin manifest\n│   └── marketplace.json\n├── bin/               # Built binaries (after install)\n├── cmd/\n│   ├── grimoire/      # CLI application\n│   └── grimoire-mcp/  # MCP server\n├── internal/\n│   ├── chunk/         # Document chunking\n│   ├── embed/         # Ollama embeddings client\n│   ├── ingest/        # Language pack loading\n│   ├── parse/         # Markdown parsing\n│   ├── source/git/    # Git repository fetcher\n│   └── store/         # SQLite + sqlite-vec storage\n├── langpacks/         # Language pack definitions\n│   └── go/\n├── scripts/\n│   └── install.sh     # Installation script\n└── skills/            # Claude skills\n    └── grimoire-query/\n```\n\n## Development\n\n```bash\n# Run tests\nmake test\n\n# Build binaries\nmake build\n\n# Run linter\nmake lint\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "grimoire",
+          "description": "AI-powered knowledge base for programming best practices. Provides semantic search over curated documentation for Go, Rust, Python, and more via MCP server and CLI.",
+          "version": "0.1.0",
+          "source": "./",
+          "category": "development",
+          "author": {
+            "name": "James Ainslie",
+            "email": "james@ainslie.dev"
+          },
+          "homepage": "https://github.com/jamesainslie/grimoire",
+          "keywords": [
+            "knowledge-base",
+            "best-practices",
+            "documentation",
+            "semantic-search",
+            "vector-search",
+            "mcp"
+          ],
+          "categories": [
+            "best-practices",
+            "development",
+            "documentation",
+            "knowledge-base",
+            "mcp",
+            "semantic-search",
+            "vector-search"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jamesainslie/grimoire",
+            "/plugin install grimoire@grimoire"
+          ]
+        }
+      ]
+    }
+  ]
+}

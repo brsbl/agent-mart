@@ -2,86 +2,24 @@
   "author": {
     "id": "camerondavison",
     "display_name": "Cameron Davison",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/165381?v=4",
-    "url": "https://github.com/camerondavison",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 1,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/165381?v=4"
   },
   "marketplaces": [
     {
       "name": "itack-marketplace",
       "version": null,
       "description": "Plugins for itack Git-backed issue tracker for multi-agent coordination",
-      "owner_info": {
-        "name": "Cameron Davison",
-        "email": "cameron.davison+itack@gmail.com"
-      },
-      "keywords": [],
       "repo_full_name": "camerondavison/itack",
       "repo_url": "https://github.com/camerondavison/itack",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-29T03:16:52Z",
-        "created_at": "2026-01-25T21:14:00Z",
-        "license": null
+        "pushed_at": "2026-01-29T03:16:52Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 404
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 202
-        },
-        {
-          "path": "plugins/skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/skills/itack-basics",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/skills/itack-basics/SKILL.md",
-          "type": "blob",
-          "size": 3391
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"itack-marketplace\",\n  \"metadata\": {\n    \"description\": \"Plugins for itack Git-backed issue tracker for multi-agent coordination\"\n  },\n  \"owner\": {\n    \"name\": \"Cameron Davison\",\n    \"email\": \"cameron.davison+itack@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"itack\",\n      \"description\": \"itack issue tracker skills\",\n      \"source\": \"./plugins\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
-        "plugins/.claude-plugin/plugin.json": "{\n  \"name\": \"itack\",\n  \"description\": \"Plugins for itack issue tracker cli tool\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Cameron Davison\",\n    \"email\": \"cameron.davison+itack@gmail.com\"\n  }\n}\n",
-        "plugins/skills/itack-basics/SKILL.md": "---\nname: itack\ndescription: >\n  Git-backed issue tracker for multi-agent coordination.\n  Use when working with itack issues to:\n    (1) View the project board and list issues\n    (2) Create new issues with titles and descriptions\n    (3) Claim issues to work on them\n    (4) Mark issues as done when completed\n    (5) Release claimed issues if needed\n    (6) Check database health with doctor command\n    (7) Search issues by query.\nallowed-tools: Bash(itack *)\n---\n\n# itack CLI\n\nGit-backed issue tracker for multi-agent coordination.\n\n## Commands\n\n### View Issues\n\n```bash\n# Show project board overview\nitack board\n\n# List all issues\nitack list\n\n# List issues filtered by status\nitack list --status open\nitack list --status in-progress\nitack list --status done\nitack list --status wont-fix\n\n# Show details of a specific issue\nitack show <id>\n\n# Search issues by title or body\nitack search <query>\n\n# Search across all git branches\nitack search <query> --all-branches\n```\n\n### Create Issues\n\nIssues are automatically committed to git when created.\n\n```bash\n# Create a new issue\nitack create \"Issue title\"\n\n# Create with an epic/category\nitack create \"Issue title\" --epic \"epic-name\"\n\n# Create with a body/description\nitack create \"Issue title\" --body \"Detailed description\"\n\n# Create with a custom commit message\nitack create \"Issue title\" --message \"Custom commit message\"\n```\n\n### Work on Issues\n\n```bash\n# Claim an issue (marks as in-progress)\nitack claim <id> <assignee-name>\n\n# Claim with a session ID (e.g., Claude Code session)\nitack claim <id> <assignee-name> --session <session-id>\n\n# Mark an issue as done\nitack done <id>\n\n# Release a claimed issue without completing\nitack release <id>\n```\n\n### Edit Issues\n\nIssues are automatically committed to git after editing.\n\n```bash\n# Open issue in editor\nitack edit <id>\n\n# Set the issue body directly (skips editor)\nitack edit <id> --body \"New description\"\n\n# Edit with a custom commit message\nitack edit <id> --message \"Custom commit message\"\n```\n\n### Diagnose Issues\n\n```bash\n# Check database health and issue synchronization\nitack doctor\n```\n\n## Workflow\n\n1. Run `itack board` to see available issues\n2. Run `itack show <id>` to view issue details\n3. Run `itack claim <id> <name>` to claim an issue\n4. Work on the issue\n5. Run `itack done <id>` when complete (commit separately with your implementation changes)\n\n## Important: One Issue at a Time\n\nOnly claim and work on one issue at a time. If an issue is not claimed, assume someone else is working on it or will pick it up. Do not claim multiple issues simultaneously.\n\n## Configuration\n\nGlobal configuration is stored in `~/.itack/config.toml`:\n\n```toml\n# Default assignee name for claims\ndefault_assignee = \"my-name\"\n\n# Editor command (defaults to $EDITOR or vi)\neditor = \"code --wait\"\n\n# Branch where itack stores issue data (default: \"data/itack\")\ndata_branch = \"data/itack\"\n```\n\n### Data Branch Behavior\n\n- Issue changes are committed to `data_branch` (default: `data/itack`)\n- Only `itack done` commits to your current HEAD branch - other commands only commit to the data branch\n- When viewing/editing an issue, the latest version is always read from the `data/itack` branch, ensuring you see all edits regardless of which working branch you're on\n- This minimizes merge conflicts: feature branches only get issue commits when marking issues as \"done\", right before merging\n"
+        "README.md": "# itack\n\nGit-backed issue tracker for multi-agent coordination.\n\n## Installation\n\n### Claude Code Skill\n\nTo install the itack skill for Claude Code:\n\n```bash\nclaude plugin marketplace add camerondavison/itack\nclaude plugin install itack@itack-marketplace\n```\n"
       },
       "plugins": [
         {

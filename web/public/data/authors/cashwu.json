@@ -6,6 +6,51 @@
   },
   "marketplaces": [
     {
+      "name": "claude-code-snapshot",
+      "version": null,
+      "description": "Snapshot Skill - 產生專案地圖讓 AI 快速了解專案結構",
+      "repo_full_name": "cashwu/claude-code-snapshot",
+      "repo_url": "https://github.com/cashwu/claude-code-snapshot",
+      "repo_description": null,
+      "signals": {
+        "stars": 6,
+        "forks": 0,
+        "pushed_at": "2025-12-11T02:57:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-snapshot\",\n  \"owner\": {\n    \"name\": \"cash\",\n    \"email\": \"cashwugeek@icloud.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Snapshot Skill - 產生專案地圖讓 AI 快速了解專案結構\",\n    \"version\": \"1.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"snapshot\",\n      \"source\": \"./plugins/snapshot\",\n      \"description\": \"產生和維護 snapshot.json 專案地圖\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"cash\"\n      },\n      \"category\": \"productivity\",\n      \"tags\": [\"snapshot\", \"project-map\", \"ai-context\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Snapshot\n\n> 基於 [tzangms (海總理)](https://tzangms.com) 的 Vibe Coding 方法論\n\nSnapshot Plugin 讓 AI 可以快速產生和維護專案的 `snapshot.json`「專案地圖」，大幅減少 AI 理解專案結構的時間。\n\n## 什麼是 Snapshot？\n\nSnapshot 是一個給 AI 看的「專案地圖」檔案，讓 AI 能快速了解專案的結構和功能，而不需要逐一掃描所有檔案。\n\n### 為什麼需要 Snapshot？\n\n當專案變大後，與 AI 協作開發會遇到以下問題：\n\n1. **搜尋變慢** - AI 需要不斷掃描檔案來理解專案\n2. **重複開發** - AI 不知道既有功能，可能重新實作已存在的功能\n3. **Context 佔用** - 大量檔案內容佔用寶貴的 context 空間\n\nSnapshot 的解決方案：\n- 提供精簡的專案概覽\n- 讓 AI 知道「有什麼」、「在哪裡」、「做什麼用」\n- 大幅減少搜尋和理解時間\n\n## 安裝\n\n```bash\n# 新增 marketplace\n/plugin marketplace add cashwu/claude-code-snapshot\n\n# 安裝 plugin\n/plugin install snapshot\n```\n\n## 指令\n\n| 指令 | 說明 |\n|------|------|\n| `/snapshot` | 掃描專案並產生 `.snapshot/snapshot.json` |\n| `/snapshot-link` | 在 `CLAUDE.md` 加入 snapshot 參考提示 |\n\n### `/snapshot-link` 說明\n\n這個指令會在專案的 `CLAUDE.md` 檔案中加入 snapshot 參考提示，讓 AI 在每次新對話開始時自動知道去讀取 `.snapshot/snapshot.json`。\n\n**使用情境：**\n- 希望 AI 自動參考 snapshot，不需要每次手動提醒\n- 搭配 `/snapshot` 使用，完成完整的設定\n\n**執行結果：**\n- 如果 `CLAUDE.md` 不存在 → 自動建立並加入提示\n- 如果已存在但沒有 snapshot 參考 → 在檔案末尾加入\n- 如果已經有 snapshot 參考 → 不會重複加入\n\n## 快速開始\n\n```\n/snapshot\n```\n\nAI 會自動：\n1. 建立 `.snapshot/` 目錄\n2. 偵測專案類型（語言、框架）\n3. 掃描專案結構\n4. 產生 `.snapshot/snapshot.json`\n\n## 輸出位置\n\n根據專案規模和架構，Snapshot 會自動決定輸出模式：\n\n### 一般專案\n```\nyour-project/\n├── .snapshot/\n│   └── snapshot.json    # 專案快照（給 AI 看的）\n├── src/\n└── ...\n```\n\n### 多專案架構（Java multi-module、.NET solution、Monorepo）\n```\nyour-project/\n├── .snapshot/\n│   ├── index.json           # 主索引\n│   └── projects/\n│       ├── module-a.json    # 子專案 A\n│       └── module-b.json    # 子專案 B\n├── module-a/\n├── module-b/\n└── ...\n```\n\n### 大型專案（50+ 模組）\n```\nyour-project/\n├── .snapshot/\n│   ├── index.json           # 主索引\n│   └── modules/\n│       ├── controllers.json # 控制器模組\n│       ├── services.json    # 服務模組\n│       └── ...\n├── src/\n└── ...\n```\n\n## 自動分檔功能\n\nSnapshot 會根據專案規模和架構自動決定是否分檔：\n\n| 條件 | 輸出模式 | 說明 |\n|------|---------|------|\n| 多專案架構 | `projects` | 自動偵測 Java multi-module、.NET solution、Monorepo |\n| 大型單一專案 | `modules` | 模組數量超過 50 個時自動分檔 |\n| 一般專案 | `none` | 維持單一 `snapshot.json` |\n\n### 多專案架構偵測\n- **Java/Kotlin**: `settings.gradle` 或 `settings.gradle.kts` 中有 `include` 語句\n- **.NET**: `*.sln` 檔案中包含多個 `*.csproj`\n- **JS/TS Monorepo**: `pnpm-workspace.yaml`、`lerna.json`、或 `package.json` 中的 `workspaces`\n\n## 支援的專案類型\n\n| 類型 | 偵測方式 | 主要分析項目 |\n|------|----------|--------------|\n| **Java (Spring)** | `build.gradle`, `pom.xml` | @Controller, @Service, @Repository, @Entity |\n| **Kotlin (Android)** | `build.gradle.kts`, `AndroidManifest.xml` | Activity, Fragment, ViewModel, Repository |\n| **Python** | `requirements.txt`, `pyproject.toml` | 模組、類別、函數 |\n| **JavaScript/TypeScript** | `package.json` | components, API routes, hooks |\n| **C# (.NET)** | `*.csproj`, `*.sln` | Controllers, Services, Models |\n| **其他** | 自動偵測 | 根據檔案結構分析 |\n\n## Snapshot 結構範例\n\n```json\n{\n  \"project\": \"my-app\",\n  \"description\": \"專案描述\",\n  \"version\": \"1.0\",\n  \"generated_at\": \"2025-01-01T00:00:00Z\",\n  \"tech_stack\": {\n    \"language\": \"TypeScript\",\n    \"framework\": \"Next.js\",\n    \"build_tool\": \"npm\",\n    \"dependencies\": [\"react\", \"next\", \"prisma\"]\n  },\n  \"structure\": {\n    \"entry_point\": {\n      \"path\": \"src/app/page.tsx\",\n      \"purpose\": \"首頁入口\"\n    },\n    \"directories\": {\n      \"src/app/\": \"App Router 頁面\",\n      \"src/components/\": \"React 元件\",\n      \"src/lib/\": \"工具函數\"\n    }\n  },\n  \"modules\": {\n    \"components\": {\n      \"Header\": {\n        \"path\": \"src/components/Header.tsx\",\n        \"purpose\": \"網站導覽列\"\n      }\n    },\n    \"services\": {\n      \"auth\": {\n        \"path\": \"src/lib/auth.ts\",\n        \"purpose\": \"認證邏輯\"\n      }\n    }\n  },\n  \"config_files\": {\n    \"next.config.js\": \"Next.js 設定\",\n    \"tailwind.config.js\": \"Tailwind CSS 設定\"\n  },\n  \"scripts\": {\n    \"dev\": \"npm run dev\",\n    \"build\": \"npm run build\"\n  }\n}\n```\n\n## 最佳實踐\n\n1. **首次使用**：執行 `/snapshot` 產生專案快照\n2. **定期更新**：專案有重大變更時重新執行 `/snapshot`\n3. **新對話開始**：AI 會自動讀取 `.snapshot/snapshot.json`\n\n## 參考資料\n\n- [Vibe Coding: Snapshot 2.0](https://tzangms.com/vibe-coding-snapshot-2-0/)\n- [Vibe Coding snapshot - 小海報 61](https://tzangms.substack.com/p/vibe-coding-snapshot-61)\n\n## 授權\n\nMIT License\n\n## 作者\n\n- [Cash Wu](https://github.com/cashwu)\n",
+        "plugins/snapshot/README.md": "# Snapshot Plugin\n\n產生專案快照，使用 TOON 格式讓 AI 快速了解專案結構。\n\n## 指令\n\n### `/snapshot` - 產生專案快照\n\n掃描專案並產生 TOON 格式快照，比 JSON 節省約 40% token。\n\n**功能：**\n- 識別路由對應（URL → handler → db → template）\n- 識別模組及相依性\n- 自動偵測專案架構並分檔\n\n## TOON 格式\n\nTOON (Token-Oriented Object Notation) 專為 LLM 優化。\n\n**語法：**\n- 縮排表示巢狀\n- `[N]` 陣列長度\n- `{field1,field2}` 欄位標題\n- `|` 分隔多值\n\n**範例：**\n\n```toon\nproj: project-name\ndesc: short desc\ntech:\n  lang: TypeScript\n  fw: Next.js\n  db: PostgreSQL\nentry: src/app/layout.tsx\nr[2]{route,handler,tables,tpl}:\n  GET /users,UserCtrl.list,users,UserList\n  POST /api/users,UserCtrl.create,users,\nm.ctrl[1]{name,path,desc,deps}:\n  UserCtrl,src/ctrl/user.ts,user api,UserSvc\nm.svc[1]{name,path,desc,deps}:\n  UserSvc,src/svc/user.ts,user logic,UserRepo\ncfg[2]: package.json,tsconfig.json\n```\n\n## 縮寫對照\n\n| 縮寫 | 原意 | 縮寫 | 原意 |\n|------|------|------|------|\n| proj | project | m | modules |\n| r | routes | cfg | config |\n| ctrl | controllers | svc | services |\n| repo | repositories | cmp | components |\n| tpl | template | deps | dependencies |\n\n## 自動分檔\n\n| 條件 | split | 輸出 |\n|------|-------|------|\n| 一般專案 | none | `.snapshot/snapshot.toon` |\n| 多專案架構 | projects | `index.toon` + `projects/*.toon` |\n| 大型專案（50+ 模組） | modules | `index.toon` + `modules/*.toon` |\n\n## 問題回報\n\n[GitHub Issues](https://github.com/cashwu/claude-code-snapshot/issues)\n"
+      },
+      "plugins": [
+        {
+          "name": "snapshot",
+          "source": "./plugins/snapshot",
+          "description": "產生和維護 snapshot.json 專案地圖",
+          "version": "1.1.0",
+          "author": {
+            "name": "cash"
+          },
+          "category": "productivity",
+          "tags": [
+            "snapshot",
+            "project-map",
+            "ai-context"
+          ],
+          "categories": [
+            "ai-context",
+            "productivity",
+            "project-map",
+            "snapshot"
+          ],
+          "install_commands": [
+            "/plugin marketplace add cashwu/claude-code-snapshot",
+            "/plugin install snapshot@claude-code-snapshot"
+          ]
+        }
+      ]
+    },
+    {
       "name": "tdd-methodologies",
       "version": null,
       "description": "Two complementary Test-Driven Development approaches: Kent Beck's organic TDD and structured Test-First TDD",
