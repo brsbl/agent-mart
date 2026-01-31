@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "bokuhe",
+    "display_name": "H. Park",
+    "avatar_url": "https://avatars.githubusercontent.com/u/35752384?u=7bfcaf1429f3f0a402a33fbc5da61ff746a3f1d5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "duet-marketplace",
+      "version": null,
+      "description": "AI Code Review - Claude Code + Gemini working together like a duet",
+      "repo_full_name": "bokuhe/claude-duet",
+      "repo_url": "https://github.com/bokuhe/claude-duet",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-28T09:03:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"duet-marketplace\",\n  \"owner\": {\n    \"name\": \"H. Park\"\n  },\n  \"metadata\": {\n    \"description\": \"AI Code Review - Claude Code + Gemini working together like a duet\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"duet\",\n      \"source\": \"./plugins/duet\",\n      \"description\": \"Review code with Gemini AI, apply feedback, and commit/PR\",\n      \"version\": \"0.1.6\",\n      \"author\": {\n        \"name\": \"H. Park\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Duet\n\n> AI Code Review Plugin - Claude Code + Gemini working together like a duet\n\nA Claude Code plugin that enables two AIs to collaborate on code review, commit, and PR creation.\n\n## Features\n\n| Command | Description |\n|---------|-------------|\n| `/duet:review` | Gemini code review -> Apply feedback -> Commit |\n| `/duet:pr` | Gemini code review -> Apply feedback -> Commit -> Create PR |\n\n## Installation\n\n### From GitHub\n\n```bash\n# 1. Add the marketplace (one-time setup)\n/plugin marketplace add bokuhe/claude-duet\n\n# 2. Install the plugin\n/plugin install duet@duet-marketplace\n```\n\n### Local Development\n\n```bash\n# Clone the repository\ngit clone https://github.com/bokuhe/claude-duet.git\n\n# Add as local marketplace\n/plugin marketplace add ./claude-duet\n\n# Install the plugin\n/plugin install duet@duet-marketplace\n```\n\n### Updating\n\n```bash\n/plugin update duet@duet-marketplace\n```\n\n## Prerequisites\n\n- **Gemini CLI** installed and configured (requires Node.js 20+)\n  ```bash\n  npm install -g @google/gemini-cli\n  gemini --version\n  ```\n- **Git** repository initialized\n- (For PR creation) **GitHub CLI** installed\n  ```bash\n  gh --version\n  ```\n\n## Usage\n\n### Review and Commit\n\n```bash\n# After making code changes\n/duet:review\n```\n\n**Workflow:**\n1. Check `git diff` for pending changes\n2. Request code review via Gemini CLI\n3. Display feedback in a structured table\n4. Select which suggestions to apply\n5. Apply selected feedback\n6. (Repeat if needed)\n7. Create commit\n\n### Review and Create PR\n\n```bash\n/duet:pr\n```\n\n**Workflow:**\n1. Perform review + commit process above\n2. Push to remote branch\n3. Create GitHub PR\n\n## Feedback Format\n\nReview results are organized by priority:\n\n| # | Severity | Category | Description |\n|---|----------|----------|-------------|\n| 1 | Critical | Security | SQL injection vulnerability |\n| 2 | Warning | Logic | Missing null check |\n| 3 | Nitpick | Style | Use const instead of let |\n\n**Gemini reviews in 3 phases:**\n1. **Intent & Risk** - What the changes do, risk level\n2. **Critical Audit** - Security, Logic, Performance issues\n3. **Code Quality** - Style and improvements\n\nYou select which items to apply before any changes are made.\n\n## How It Works\n\n```\n+-----------------------------------------------------------+\n|  /duet:review                                             |\n|                                                           |\n|  1. git diff --> 2. gemini CLI --> 3. Parse feedback      |\n|                                           |               |\n|                                           v               |\n|  6. commit <-- 5. Apply fixes <-- 4. User selects         |\n+-----------------------------------------------------------+\n\n+---------------------------------------------------------------+\n|  /duet:pr                                                     |\n|                                                               |\n|  [ Same as above ] --> 7. git push --> 8. gh pr create        |\n+---------------------------------------------------------------+\n```\n\n## Project Structure\n\n```\nduet/\n├── .claude-plugin/\n│   └── marketplace.json     # Marketplace configuration\n├── plugins/\n│   └── duet/\n│       ├── .claude-plugin/\n│       │   └── plugin.json  # Plugin metadata\n│       └── commands/\n│           ├── review.md    # /duet:review command\n│           └── pr.md        # /duet:pr command\n├── README.md\n└── LICENSE\n```\n\n## License\n\nMIT License\n\n## Contributing\n\nIssues and PRs are welcome!\n\n1. Fork the repository\n2. Create your feature branch (`git checkout -b feature/amazing`)\n3. Commit your changes (`git commit -m 'Add amazing feature'`)\n4. Push to the branch (`git push origin feature/amazing`)\n5. Open a Pull Request\n"
+      },
+      "plugins": [
+        {
+          "name": "duet",
+          "source": "./plugins/duet",
+          "description": "Review code with Gemini AI, apply feedback, and commit/PR",
+          "version": "0.1.6",
+          "author": {
+            "name": "H. Park"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bokuhe/claude-duet",
+            "/plugin install duet@duet-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "stefanzvonar",
+    "display_name": "Stefan Zvonar",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3641969?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "stefan-claude-tools",
+      "version": null,
+      "description": "Stefan's Claude Code plugins",
+      "repo_full_name": "stefanzvonar/claude-tools",
+      "repo_url": "https://github.com/stefanzvonar/claude-tools",
+      "repo_description": "Stefan's Claude Code plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-12T06:51:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"stefan-claude-tools\",\n  \"description\": \"Stefan's Claude Code plugins\",\n  \"owner\": {\n    \"name\": \"Stefan Zvonar\",\n    \"email\": \"stefan@zvonar.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ralph-loop-beads\",\n      \"description\": \"Ralph Playbook methodology for beads - fresh context loops with backpressure\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Stefan Zvonar\",\n        \"email\": \"stefan@zvonar.com\"\n      },\n      \"source\": \"./plugins/ralph-loop-beads\",\n      \"category\": \"development\",\n      \"homepage\": \"https://github.com/stefanzvonar/claude-tools\"\n    }\n  ]\n}\n",
+        "README.md": "# Stefan's Claude Tools\n\nClaude Code plugins for development workflows.\n\n## Installation\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add stefanzvonar/claude-tools\n\n# Install plugins\nclaude plugin install ralph-loop-beads@stefan-claude-tools\n```\n\n## Plugins\n\n### ralph-loop-beads\n\n[Ralph Playbook](https://github.com/ClaytonFarr/ralph-playbook) methodology for working through [beads](https://github.com/anthropics/beads) issues.\n\n**Features:**\n- Fresh context each iteration (outer bash loop restarts Claude)\n- One issue per iteration (optimal context utilization)\n- Backpressure (verification before commit)\n- Numbered guardrails (deterministic behavior)\n\n**Usage:**\n```bash\n/ralph-loop-beads:loop           # Default 20 iterations\n/ralph-loop-beads:loop --max 50  # Custom limit\n```\n\n**How it works:**\n1. Outer bash loop checks `bd ready` for available issues\n2. Starts Claude with fresh context window\n3. Claude works on ONE issue (claim → implement → verify → close → commit)\n4. Claude exits, loop restarts with fresh context\n5. Repeats until all issues resolved or max iterations\n\n**Controls:**\n- Stop early: Ctrl+C\n- Resume: run command again\n- Check progress: `bd stats`\n\n**Requirements:**\n- [beads](https://github.com/anthropics/beads) CLI installed\n- Git repository with `.beads/` directory\n\n**Generated Files:**\n\nThe plugin creates files in `.claude/` for session state:\n- `ralph-loop-state.json` - iteration counter\n- `ralph-progress.md` - handoff notes between iterations\n\nAdd to your `.gitignore`:\n```\n.claude/ralph-*\n.claude/settings.local.json\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "ralph-loop-beads",
+          "description": "Ralph Playbook methodology for beads - fresh context loops with backpressure",
+          "version": "1.0.0",
+          "author": {
+            "name": "Stefan Zvonar",
+            "email": "stefan@zvonar.com"
+          },
+          "source": "./plugins/ralph-loop-beads",
+          "category": "development",
+          "homepage": "https://github.com/stefanzvonar/claude-tools",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add stefanzvonar/claude-tools",
+            "/plugin install ralph-loop-beads@stefan-claude-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

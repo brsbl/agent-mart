@@ -1,0 +1,65 @@
+{
+  "author": {
+    "id": "uptick",
+    "display_name": "Uptick",
+    "avatar_url": "https://avatars.githubusercontent.com/u/10147530?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "uptick-claude-code-plugins",
+      "version": "1.0.0",
+      "description": "Automated code review for pull requests using multiple specialized agents with confidence-based scoring to filter false positives",
+      "repo_full_name": "uptick/claude-marketplace",
+      "repo_url": "https://github.com/uptick/claude-marketplace",
+      "repo_description": "Uptick ai plugins / commands.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-29T01:29:53Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n    \"name\": \"uptick-claude-code-plugins\",\n    \"version\": \"1.0.0\",\n    \"description\": \"\",\n    \"owner\": {\n      \"name\": \"Uptick\",\n      \"email\": \"devops@uptickhq.com\"\n    },\n    \"plugins\": [\n      {\n        \"name\": \"uptick-code-review\",\n        \"description\": \"Automated code review for pull requests using multiple specialized agents with confidence-based scoring to filter false positives\",\n        \"version\": \"1.0.0\",\n        \"author\": {\n          \"name\": \"William Chu\",\n          \"email\": \"william.chu@uptickhq.com\"\n        },\n        \"source\": \"./plugins/gh-code-review\",\n        \"category\": \"productivity\"\n      },\n      {\n        \"name\": \"uptick-gha-patterns\",\n        \"description\": \"GitHub Actions best practices following Uptick's security-first patterns, including reusable workflows, ratchet pinning, and CI audit tooling\",\n        \"version\": \"0.1.0\",\n        \"author\": {\n          \"name\": \"Uptick\",\n          \"url\": \"https://github.com/uptick\"\n        },\n        \"source\": \"./plugins/uptick-gha-patterns\",\n        \"category\": \"productivity\"\n      }\n    ]\n  }\n",
+        "README.md": "# claude-marketplace\nUptick ai plugins / commands.\n",
+        "plugins/uptick-gha-patterns/README.md": "# uptick-gha-patterns\n\nA Claude Code plugin for GitHub Actions best practices following Uptick's security-first patterns.\n\n## Features\n\n- **Skill: Uptick CI Patterns** - Domain knowledge for GitHub Actions following Uptick's security-first approach\n- **Command: /audit-ci** - Audit workflows for compliance and offer fixes\n\n## Best Practices Covered\n\n### Uptick Reusable Workflows\n\nFrom [uptick/actions](https://github.com/uptick/actions):\n\n- `ci.yaml` - Comprehensive CI/CD pipeline with Python, uv, mise, AWS OIDC, Docker/ECR\n- `claude_review.yaml` - Claude Code PR review pipeline\n- `claude_mention.yaml` - Claude Code @mention pipeline\n\n### Security Principles\n\n- Avoid external action dependencies (security risks)\n- Implement via Python/bash scripts with built-in libraries only\n- Pin all third-party actions using Ratchet\n- Exclude `uptick/actions` references from pinning with `# ratchet:exclude`\n\n### Ratchet Pinning\n\nPin actions to SHA for immutability:\n\n```yaml\nuses: 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' # ratchet:actions/checkout@v4\n```\n\nInstall ratchet:\n```bash\nmise use -g ratchet\n```\n\n## Installation\n\n```bash\n# Test locally\nclaude --plugin-dir /path/to/uptick-gha-patterns\n```\n\n## Usage\n\n### Skill (automatic)\n\nAsk questions that trigger the skill:\n\n- \"How should I set up CI for this repo?\"\n- \"What's the best way to pin GitHub Actions?\"\n- \"Help me configure the Uptick CI workflow\"\n- \"Set up Claude code review for this repo\"\n- \"Deploy with tickforge\"\n\n### Command\n\n```\n/uptick-gha-patterns:audit-ci\n```\n\nAudits `.github/workflows/` for:\n- Unpinned actions (should use ratchet)\n- Missing `# ratchet:exclude` on uptick/actions references\n- External dependencies that could be replaced with scripts\n- Missing Claude review/mention workflows\n- Authentication patterns (OIDC vs long-lived credentials)\n\n## Plugin Structure\n\n```\nuptick-gha-patterns/\n├── .claude-plugin/\n│   └── plugin.json\n├── commands/\n│   └── audit-ci.md\n├── skills/\n│   └── uptick-ci-patterns/\n│       ├── SKILL.md\n│       ├── references/\n│       │   ├── uptick-workflows.md\n│       │   └── ratchet-guide.md\n│       └── examples/\n│           ├── ci-python-uv.yaml\n│           └── ci-docker-tickforge.yaml\n└── README.md\n```\n\n## Requirements\n\n- [Ratchet](https://github.com/sethvargo/ratchet) for action pinning (`mise use -g ratchet`)\n- [mise](https://mise.jdx.dev/) for task running\n"
+      },
+      "plugins": [
+        {
+          "name": "uptick-code-review",
+          "description": "Automated code review for pull requests using multiple specialized agents with confidence-based scoring to filter false positives",
+          "version": "1.0.0",
+          "author": {
+            "name": "William Chu",
+            "email": "william.chu@uptickhq.com"
+          },
+          "source": "./plugins/gh-code-review",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add uptick/claude-marketplace",
+            "/plugin install uptick-code-review@uptick-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "uptick-gha-patterns",
+          "description": "GitHub Actions best practices following Uptick's security-first patterns, including reusable workflows, ratchet pinning, and CI audit tooling",
+          "version": "0.1.0",
+          "author": {
+            "name": "Uptick",
+            "url": "https://github.com/uptick"
+          },
+          "source": "./plugins/uptick-gha-patterns",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add uptick/claude-marketplace",
+            "/plugin install uptick-gha-patterns@uptick-claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

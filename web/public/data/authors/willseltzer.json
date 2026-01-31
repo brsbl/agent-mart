@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "willseltzer",
+    "display_name": "Will Seltzer",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1661264?u=ce1cb0653a22b314657cbe44cd146ebd390e4786&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "handoff-marketplace",
+      "version": null,
+      "description": "Handoff plugin for Claude Code",
+      "repo_full_name": "willseltzer/claude-handoff",
+      "repo_url": "https://github.com/willseltzer/claude-handoff",
+      "repo_description": null,
+      "signals": {
+        "stars": 13,
+        "forks": 0,
+        "pushed_at": "2025-12-28T20:45:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"handoff-marketplace\",\n  \"owner\": {\n    \"name\": \"willseltzer\"\n  },\n  \"metadata\": {\n    \"description\": \"Handoff plugin for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"handoff\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"willseltzer/claude-handoff\"\n      },\n      \"description\": \"Hand off context to any AI coding agent\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"handoff\",\n  \"description\": \"Hand off context to any AI coding agent. Creates comprehensive handoff documents that capture the current task, progress, modified files, and all relevant context needed to seamlessly continue work in any AI assistant (Claude Code, Cursor, Copilot, Aider, etc.).\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"willseltzer\"\n  },\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/willseltzer/claude-handoff\",\n  \"repository\": \"https://github.com/willseltzer/claude-handoff\"\n}\n",
+        "README.md": "# Handoff Plugin\n\nCreate handoff documents that let **any AI coding agent** continue your work.\n\n## Install\n\nRun these commands inside Claude Code:\n\n```\n/plugin marketplace add willseltzer/claude-handoff\n/plugin install handoff\n```\n\n## Why?\n\nAI sessions have limited context. When you switch tools, take a break, or hit a context limit, the next agent starts from scratch. Handoffs solve this by capturing:\n\n- What you're trying to do\n- What's done, what's not\n- What failed (so the next agent doesn't repeat mistakes)\n- Key decisions and their rationale\n- Exactly how to continue\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/handoff:create` | Full handoff with complete context |\n| `/handoff:quick` | Minimal handoff - just the essentials |\n| `/handoff:resume` | Continue from an existing handoff |\n\n## Usage\n\n### Creating a Handoff\n\nWhen you're done (or switching agents):\n\n```\n/handoff:create\n```\n\nThis generates `HANDOFF.md` with:\n- Goal and progress\n- Failed approaches (so they're not repeated)\n- Key decisions with rationale\n- Current state (what works, what's broken)\n- Specific resume instructions\n\nFor simple tasks:\n\n```\n/handoff:quick\n```\n\n### Resuming from a Handoff\n\nIn a new session (Claude Code or any AI):\n\n```\n/handoff:resume\n```\n\nThe agent will:\n1. Check if the repo state has drifted\n2. Summarize the handoff\n3. Continue from where you left off\n\n### For Non-Claude Agents\n\nJust tell them:\n\n> \"Read HANDOFF.md and continue the work\"\n\nThe format is agent-agnostic.\n\n## Handoff Format\n\n```markdown\n# Handoff: [Task Title]\n\n**Generated**: 2024-01-15 14:30\n**Branch**: feature/auth\n**Status**: In Progress\n\n## Goal\nAdd user authentication with OAuth2.\n\n## Completed\n- [x] Set up OAuth2 provider config\n- [x] Created login endpoint\n\n## Not Yet Done\n- [ ] Add token refresh logic\n- [ ] Handle logout\n\n## Failed Approaches (Don't Repeat These)\nTried passport.js first - it conflicted with our Express middleware.\n`req.user` was always undefined because passport's session middleware\nran after our custom auth check. Switched to oauth4webapi which works\ndirectly with fetch and doesn't touch Express.\n\n## Key Decisions\n| Decision | Rationale |\n|----------|-----------|\n| oauth4webapi over passport | Lighter weight, no middleware conflicts |\n| Store refresh token in httpOnly cookie | More secure than localStorage |\n\n## Current State\n**Working**: Login flow returns valid tokens\n**Broken**: Refresh endpoint returns 500 - `TokenExpiredError` at refresh.ts:42\n\n## Code Context\n\n// Hook signature - src/hooks/useAuth.ts\nfunction useAuth(): {\n  user: User | null;\n  login: (email: string, password: string) => Promise<void>;\n  logout: () => void;\n  isLoading: boolean;\n}\n\n// POST /api/auth/login response\n{ \"accessToken\": \"eyJ...\", \"expiresIn\": 3600 }\n// Refresh token set as httpOnly cookie, not in response body\n\n## Resume Instructions\n1. Fix refresh endpoint: the JWT verify call at `refresh.ts:42` uses wrong secret\n   - Expected: Returns new access token\n   - Current: Throws TokenExpiredError even for valid tokens\n2. Add logout: clear the httpOnly cookie, POST /api/auth/logout\n3. Test full flow:\n   - Login with test@example.com / testpass123\n   - Wait 5 seconds, trigger refresh (or manually call /api/auth/refresh)\n   - Expected: New token returned, no errors\n\n## Setup Required\n- `OAUTH_CLIENT_SECRET` env var must be set (see .env.example)\n- Test user exists: test@example.com / testpass123\n\n## Warnings\n- OAuth provider sandbox resets daily at midnight UTC\n- Don't use `localStorage` for tokens - we decided httpOnly cookies only\n```\n\n## Plugin Structure\n\n```\nclaude-handoff/\n├── .claude-plugin/\n│   └── plugin.json\n├── commands/\n│   ├── create.md      # /handoff:create\n│   ├── quick.md       # /handoff:quick\n│   └── resume.md      # /handoff:resume\n├── skills/\n│   └── handoff/\n│       └── SKILL.md   # Auto-detection\n└── README.md\n```\n\n## Tips\n\n1. **Failed approaches are mandatory** - This is the most valuable part. \"Tried X, it didn't work because Y\" saves hours.\n\n2. **Show code, don't describe** - \"Created a hook\" is useless. Show the signature so the next agent knows how to use it.\n\n3. **Test steps need expected outcomes** - Not \"verify it works\" but \"POST to /api/X, expect 200 with { status: 'ok' }\".\n\n4. **Include the actual error messages** - \"It threw an error\" vs \"TokenExpiredError at line 42\" - huge difference.\n\n5. **Use `/handoff:quick` for simple tasks** - Not everything needs 10 sections.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "handoff",
+          "source": {
+            "source": "github",
+            "repo": "willseltzer/claude-handoff"
+          },
+          "description": "Hand off context to any AI coding agent",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add willseltzer/claude-handoff",
+            "/plugin install handoff@handoff-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "h4x3rotab",
+    "display_name": "Hang Yin",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1343470?u=e6da1827b24572e8e7b1db5741f5f551179173cb&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "redpill-vault-marketplace",
+      "version": null,
+      "description": "Marketplace for the redpill-vault plugin",
+      "repo_full_name": "h4x3rotab/redpill-vault",
+      "repo_url": "https://github.com/h4x3rotab/redpill-vault",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-30T06:34:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"redpill-vault-marketplace\",\n  \"owner\": {\n    \"name\": \"redpill-vault\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"redpill-vault\",\n      \"source\": \"./\",\n      \"description\": \"Secure credential manager for AI tools — transparent secret injection via psst\",\n      \"strict\": false,\n      \"keywords\": [\"secrets\", \"vault\", \"credentials\", \"hook\"],\n      \"skills\": [\"./skills/redpill-vault\"]\n    }\n  ],\n  \"metadata\": {\n    \"description\": \"Marketplace for the redpill-vault plugin\",\n    \"version\": \"0.1.1\"\n  }\n}\n",
+        "README.md": "# redpill-vault\n\nRedpill-vault is a secure credential manager for all your AI tools. It stores your API keys and context safely, so you never re-enter them between sessions, and they never touch LLM chats.\n\nYour keys are encrypted and sync privately across your devices. Stop pasting keys. Start coding.\n\n## Requirements\n\n- Node.js\n- `psst` (installed automatically and exposed on PATH by this package)\n\n## Install\n\n```bash\nnpm i -g redpill-vault\n```\n\n## Quick start\n\n```bash\n# 1) Initialize vault + hook in your project\nrv init\n\n# 2) Register which secrets this repo is allowed to use\nrv add OPENAI_API_KEY\n\n# 3) Store the secret in psst (global vault)\npsst --global set OPENAI_API_KEY\n\n# 4) Approve this project for injection\nrv approve\n```\n\nAfter approval, any Bash command run by the agent is wrapped with `rv-exec`, and the secrets listed in `.rv.json` are injected as environment variables.\n\n## Claude Code plugin\n\nInstall the plugin marketplace and plugin:\n\n```bash\nclaude plugin marketplace add https://github.com/h4x3rotab/redpill-vault\nclaude plugin install redpill-vault@redpill-vault-marketplace\n```\n\nThen ask Claude to run the skill:\n\n```\nUse the redpill-vault skill to set up redpill-vault for this project.\n```\n\nClaude will run `rv init`. You still need to run `rv approve` yourself.\n\n## Common commands\n\n```bash\nrv add <KEY>        # add key to .rv.json\nrv remove <KEY>     # remove key from .rv.json\nrv list             # list keys in .rv.json\nrv approve          # allow this project to inject its secrets\nrv revoke           # remove approval\nrv check            # verify keys exist in psst\nrv doctor           # full health check\n```\n\n## Notes\n\n- Secrets are injected per-project based on `.rv.json` and approval state.\n- The agent never sees secret values; `rv-exec` resolves them at execution time via `psst`.\n"
+      },
+      "plugins": [
+        {
+          "name": "redpill-vault",
+          "source": "./",
+          "description": "Secure credential manager for AI tools — transparent secret injection via psst",
+          "strict": false,
+          "keywords": [
+            "secrets",
+            "vault",
+            "credentials",
+            "hook"
+          ],
+          "skills": [
+            "./skills/redpill-vault"
+          ],
+          "categories": [
+            "credentials",
+            "hook",
+            "secrets",
+            "vault"
+          ],
+          "install_commands": [
+            "/plugin marketplace add h4x3rotab/redpill-vault",
+            "/plugin install redpill-vault@redpill-vault-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

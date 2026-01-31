@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "nathanphelps",
+    "display_name": "Nathan Phelps",
+    "avatar_url": "https://avatars.githubusercontent.com/u/26461946?u=2ff636c1efc9c1441363d1499a916bf7e3bc5b03&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "local-voice",
+      "version": null,
+      "description": "Text-to-speech for Claude Code using Kokoro neural TTS.",
+      "repo_full_name": "nathanphelps/claude-voice-mcp",
+      "repo_url": "https://github.com/nathanphelps/claude-voice-mcp",
+      "repo_description": "Text-to-speech plugin for Claude Code using Kokoro neural TTS",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-31T04:16:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"local-voice\",\n  \"owner\": {\n    \"name\": \"N8\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"voice\",\n      \"source\": \"./voice\",\n      \"description\": \"Text-to-speech for Claude Code using Kokoro neural TTS.\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Voice MCP\n\nA [Claude Code](https://claude.ai/code) plugin that gives Claude a voice. After every response, Claude speaks a conversational summary aloud using [Kokoro-82M](https://github.com/thewh1teagle/kokoro-onnx), a high-quality neural text-to-speech engine that runs locally on your machine.\n\nNo API keys. No cloud services. Fully offline after setup.\n\n## Demo\n\nOnce installed, Claude automatically speaks after every response. You can also ask Claude to change voices, adjust speed, or list available voices naturally in conversation.\n\n## Setup\n\n### Prerequisites\n\n- [Claude Code](https://claude.ai/code) CLI installed and working\n- [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python package manager)\n\n**Platform-specific:**\n\n| Platform | Extra requirement |\n|---|---|\n| **Windows** | [Visual C++ 2015-2022 Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) (usually already installed) |\n| **macOS** | `brew install libomp` (required by ONNX Runtime) |\n| **Linux** | `sudo apt install libportaudio2` (Debian/Ubuntu) or `sudo dnf install portaudio` (Fedora) |\n\n### Install the Plugin\n\n1. In Claude Code, run:\n\n   ```\n   /install-plugin https://github.com/nathanphelps/claude-voice-mcp\n   ```\n\n2. Run the install script to download TTS models (~337 MB) and verify dependencies:\n\n   **Windows (PowerShell):**\n   ```powershell\n   powershell -ExecutionPolicy ByPass -File install.ps1\n   ```\n\n   **macOS / Linux:**\n   ```bash\n   ./install.sh\n   ```\n\n   > **Important:** The install script pre-downloads the Kokoro model files. Without this step, the first `speak` call will hang while downloading 337 MB in the background.\n\n3. Restart Claude Code. The voice plugin activates automatically.\n\n## Available Voices\n\n28 voices across two accents and two genders. Default is `af_heart`.\n\n### American Female\n| ID | Name |\n|---|---|\n| `af_heart` | Heart **(default, highest quality)** |\n| `af_alloy` | Alloy |\n| `af_aoede` | Aoede |\n| `af_bella` | Bella |\n| `af_jessica` | Jessica |\n| `af_kore` | Kore |\n| `af_nicole` | Nicole |\n| `af_nova` | Nova |\n| `af_river` | River |\n| `af_sarah` | Sarah |\n| `af_sky` | Sky |\n\n### American Male\n| ID | Name |\n|---|---|\n| `am_adam` | Adam |\n| `am_echo` | Echo |\n| `am_eric` | Eric |\n| `am_fenrir` | Fenrir |\n| `am_liam` | Liam |\n| `am_michael` | Michael |\n| `am_onyx` | Onyx |\n| `am_puck` | Puck |\n| `am_santa` | Santa |\n\n### British Female\n| ID | Name |\n|---|---|\n| `bf_alice` | Alice |\n| `bf_emma` | Emma |\n| `bf_isabella` | Isabella |\n| `bf_lily` | Lily |\n\n### British Male\n| ID | Name |\n|---|---|\n| `bm_daniel` | Daniel |\n| `bm_fable` | Fable |\n| `bm_george` | George |\n| `bm_lewis` | Lewis |\n\n## Usage\n\nThe plugin is **always active** — Claude speaks after every response automatically. No commands needed.\n\nYou can interact with the voice naturally:\n\n- *\"Switch to a British male voice\"*\n- *\"Use the voice am_michael\"*\n- *\"List all available voices\"*\n- *\"Speak a bit faster\"*\n- *\"Read that last part again\"*\n\n### MCP Tools\n\nThe plugin exposes three tools that Claude calls automatically:\n\n| Tool | Description |\n|---|---|\n| `speak` | Synthesize and play text aloud. Accepts `text`, `voice` (optional), and `speed` (optional, default 1.0). |\n| `list_voices` | List available voices. Filter by `language`: `en` (all English), `a` (American), `b` (British), `all` (everything). |\n| `set_default_voice` | Change the session default voice by ID (e.g. `am_michael`). |\n\n### Speed Control\n\nPass a `speed` multiplier to the `speak` tool:\n- `0.8` — slower\n- `1.0` — normal (default)\n- `1.2` — faster\n\n## How It Works\n\nThe plugin runs as an [MCP](https://modelcontextprotocol.io/) (Model Context Protocol) server. Claude Code launches it automatically when the plugin is active.\n\n1. Claude generates a text response\n2. An always-active skill directs Claude to call the `speak` tool\n3. The `speak` tool synthesizes audio using Kokoro-82M (ONNX) and plays it through your speakers via `sounddevice`\n\nAll processing is local. Audio is generated by the Kokoro neural TTS model (~310 MB ONNX) running on CPU via ONNX Runtime. No GPU required.\n\n## Troubleshooting\n\n### First `speak` call hangs\nRun the install script (`install.ps1` or `install.sh`). The hang is caused by model files downloading on first use. The install script pre-downloads them.\n\n### No audio output\n- Check that your system default audio output device is set correctly\n- On Linux, ensure `libportaudio2` is installed\n- Test audio with: `python -c \"import sounddevice; print(sounddevice.query_devices())\"`\n\n### Model loading is slow on first call\nThe Kokoro model takes ~2 seconds to load into memory on the first `speak` call of each session. Subsequent calls are fast.\n\n## Credits\n\n- [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) by hexgrad — neural TTS model\n- [kokoro-onnx](https://github.com/thewh1teagle/kokoro-onnx) by thewh1teagle — ONNX runtime wrapper\n- Built on Anthropic's [Model Context Protocol](https://modelcontextprotocol.io/) and [FastMCP](https://github.com/jlowin/fastmcp)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "voice",
+          "source": "./voice",
+          "description": "Text-to-speech for Claude Code using Kokoro neural TTS.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add nathanphelps/claude-voice-mcp",
+            "/plugin install voice@local-voice"
+          ]
+        }
+      ]
+    }
+  ]
+}

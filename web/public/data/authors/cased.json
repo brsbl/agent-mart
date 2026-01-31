@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "cased",
+    "display_name": "Cased",
+    "avatar_url": "https://avatars.githubusercontent.com/u/13429108?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cased-claude-code-plugins",
+      "version": "1.0.0",
+      "description": "Curated collection of Claude Code plugins by Cased",
+      "repo_full_name": "cased/claude-code-plugins",
+      "repo_url": "https://github.com/cased/claude-code-plugins",
+      "repo_description": "A marketplace for Claude Code plugins including skills, MCP servers, hooks, and commands",
+      "signals": {
+        "stars": 4,
+        "forks": 0,
+        "pushed_at": "2026-01-07T21:54:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cased-claude-code-plugins\",\n  \"description\": \"Curated collection of Claude Code plugins by Cased\",\n  \"version\": \"1.0.0\",\n  \"owner\": {\n    \"name\": \"Cased\",\n    \"url\": \"https://cased.com\"\n  },\n  \"repository\": \"https://github.com/cased/claude-code-plugins\",\n  \"license\": \"MIT\",\n  \"plugins\": [\n    {\n      \"name\": \"kit-cli\",\n      \"source\": \"./plugins/kit-cli\",\n      \"description\": \"Run focused kit CLI commands for fast codebase exploration\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"piglet\",\n      \"source\": \"./plugins/piglet\",\n      \"description\": \"Manage PostHog feature flags, cohorts, dashboards, and insights\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"sentry\",\n      \"source\": \"./plugins/sentry\",\n      \"description\": \"Fetch Sentry error context and diagnose bugs with root cause analysis\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nA collection of plugins for [Claude Code](https://claude.com/claude-code) including skills, MCP servers, hooks, and slash commands.\n\n## Available Plugins\n\n| Plugin | Type | Description |\n|--------|------|-------------|\n| [kit-cli](./plugins/kit-cli) | skill | Run focused `kit` CLI commands for fast codebase exploration |\n| [piglet](./plugins/piglet) | skill | Manage PostHog feature flags, cohorts, dashboards, and insights |\n\n## Installation\n\n### Using the `/plugin` Command\n\n1. Add this marketplace to Claude Code:\n   ```\n   /plugin marketplace add cased/claude-code-plugins\n   ```\n\n2. Install a plugin:\n   ```\n   /plugin install kit-cli\n   ```\n\n### Manual Installation\n\nAlternatively, clone and copy files directly:\n\n```bash\ngit clone https://github.com/cased/claude-code-plugins.git\ncp -r claude-code-plugins/plugins/kit-cli/skills/kit-cli ~/.claude/skills/\n```\n\n## Plugin Structure\n\nEach plugin follows the Claude Code plugin specification:\n\n```\nplugin-name/\n├── .claude-plugin/\n│   └── plugin.json       # Plugin manifest\n├── skills/               # Skills (optional)\n│   └── skill-name/\n│       ├── SKILL.md\n│       └── reference.md\n├── commands/             # Slash commands (optional)\n├── hooks/                # Hooks (optional)\n├── .mcp.json            # MCP server config (optional)\n└── README.md            # Plugin documentation\n```\n\n## Contributing\n\nSee [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on submitting plugins.\n\n## License\n\nMIT\n",
+        "plugins/kit-cli/README.md": "# kit-cli Plugin\n\nA Claude Code skill for running focused `kit` CLI commands to build high-signal repository context fast.\n\n## What it does\n\nThis skill enables Claude to use the [kit](https://github.com/cased/kit) CLI for:\n\n- **File trees** - Structural overview of repositories\n- **Symbol extraction** - Find functions, classes, and their locations\n- **Code search** - Text and semantic search across codebases\n- **Dependency graphs** - Map imports and module relationships\n- **Context bundling** - Export slices of code for analysis\n\n## Prerequisites\n\nInstall kit from [cased/kit](https://github.com/cased/kit).\n\n## Installation\n\n```\n/plugin marketplace add cased/claude-code-plugins\n/plugin install kit-cli\n```\n\n## Usage\n\nOnce installed, Claude will automatically use kit commands when you ask questions like:\n\n- \"What's the structure of this codebase?\"\n- \"Find where `validateToken` is defined and used\"\n- \"Show me the dependency graph for the Python modules\"\n- \"Search for authentication-related code\"\n\n## Commands Reference\n\n| Command | Purpose |\n|---------|---------|\n| `kit file-tree PATH` | Directory structure |\n| `kit symbols PATH` | Extract functions/classes |\n| `kit usages PATH Symbol` | Find symbol definitions and references |\n| `kit search PATH \"pattern\"` | Text/regex search |\n| `kit search-semantic PATH \"query\"` | Semantic code search |\n| `kit dependencies PATH --language python` | Import/dependency graph |\n| `kit context PATH file line` | Surrounding code window |\n\nSee the [reference.md](./skills/kit-cli/reference.md) for complete command documentation.\n\n## License\n\nMIT\n",
+        "plugins/piglet/README.md": "# Piglet Plugin for Claude Code\n\nA Claude Code skill for managing PostHog resources via the `piglet` CLI.\n\n## What it does\n\nThis plugin enables Claude to help you manage PostHog feature flags, cohorts, dashboards, and insights through natural language requests like:\n\n- \"What feature flags do we have?\"\n- \"Create a flag called dark-mode with 50% rollout\"\n- \"Disable the beta-feature flag\"\n- \"List all our cohorts\"\n- \"Export all flags as JSON\"\n\n## Prerequisites\n\n1. Install the piglet CLI:\n   ```bash\n   uv tool install cased-piglet\n   ```\n\n2. Configure PostHog credentials:\n   ```bash\n   export POSTHOG_API_KEY=\"phx_your_key\"\n   export POSTHOG_PROJECT_ID=\"12345\"\n   ```\n\n## Installation\n\nInstall via Claude Code plugin system:\n```\n/plugin add cased/claude-code-plugins --path plugins/piglet\n```\n\n## Usage\n\nOnce installed, Claude will automatically use piglet when you ask about PostHog resources. Examples:\n\n- \"List my feature flags\"\n- \"Is the new-checkout flag enabled?\"\n- \"Roll out dark-mode to 100%\"\n- \"Create a cohort for beta users\"\n- \"What dashboards do we have?\"\n\n## Links\n\n- [Piglet CLI Repository](https://github.com/cased/piglet)\n- [PostHog](https://posthog.com)\n",
+        "plugins/sentry/README.md": "# Sentry Plugin\n\nFetch Sentry error context and diagnose bugs with systematic root cause analysis.\n\n## Prerequisites\n\n- [cased/sentry-cli](https://github.com/cased/sentry-cli) installed via uv:\n  ```bash\n  uv tool install git+https://github.com/cased/sentry-cli\n  ```\n- Environment variables set:\n  - `SENTRY_AUTH_TOKEN` - Your Sentry authentication token\n  - `SENTRY_ORG` - Your Sentry organization slug\n\n## Installation\n\n```bash\nclaude plugin add cased/sentry\n```\n\n## Usage\n\n```\n/sentry <issue-id>\n```\n\nExamples:\n- `/sentry PROJ-123`\n- `/sentry 12345678`\n- Paste a Sentry URL and the skill will extract the issue ID\n\n## What It Does\n\n1. **Fetches error context** from Sentry using sentry-cli\n2. **Analyzes the error** - identifies key application frames, breadcrumbs, and secondary errors\n3. **Traces upstream** to find the root cause (not just where it crashed)\n4. **Proposes a fix** that addresses the underlying issue, not just the symptom\n\n## Error Class Examples\n\nThe skill includes detailed examples for common error classes:\n\n| Class | Description |\n|-------|-------------|\n| [Crashes & Unhandled Exceptions](skills/sentry/examples/crashes-and-unhandled-exceptions.md) | Null dereferences, type errors, uncaught promises |\n| [State & Concurrency Bugs](skills/sentry/examples/state-and-concurrency-bugs.md) | Race conditions, stale closures, double submissions |\n| [Data Integrity & Serialization](skills/sentry/examples/data-integrity-and-serialization-bugs.md) | Enum drift, schema mismatches, date parsing |\n| [Configuration & Environment](skills/sentry/examples/configuration-and-environment-bugs.md) | Missing env vars, feature flag issues |\n| [Dependency & Third-Party Failures](skills/sentry/examples/dependency-and-third-party-failures.md) | Timeouts, SDK bugs, API contract changes |\n\n## Philosophy\n\nThis skill emphasizes **fixing root causes, not symptoms**:\n\n- Don't just add null checks where it crashes\n- Trace bad data back to its source\n- Fix secondary errors found in breadcrumbs\n- Match existing codebase patterns\n\nSee the [SKILL.md](skills/sentry/SKILL.md) for the full methodology.\n"
+      },
+      "plugins": [
+        {
+          "name": "kit-cli",
+          "source": "./plugins/kit-cli",
+          "description": "Run focused kit CLI commands for fast codebase exploration",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cased/claude-code-plugins",
+            "/plugin install kit-cli@cased-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "piglet",
+          "source": "./plugins/piglet",
+          "description": "Manage PostHog feature flags, cohorts, dashboards, and insights",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cased/claude-code-plugins",
+            "/plugin install piglet@cased-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "sentry",
+          "source": "./plugins/sentry",
+          "description": "Fetch Sentry error context and diagnose bugs with root cause analysis",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cased/claude-code-plugins",
+            "/plugin install sentry@cased-claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

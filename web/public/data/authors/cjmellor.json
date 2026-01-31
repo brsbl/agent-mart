@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "cjmellor",
+    "display_name": "Chris Mellor",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1848476?u=db494a70e61ddbdf872ab033740bb8ac49ca56a1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mella-marketplace",
+      "version": null,
+      "description": "Mella's curated marketplace of Claude Code plugins",
+      "repo_full_name": "cjmellor/mella-marketplace",
+      "repo_url": "https://github.com/cjmellor/mella-marketplace",
+      "repo_description": "A curated collection of plugins for Claude Code",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-15T17:32:28Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mella-marketplace\",\n  \"owner\": {\n    \"name\": \"Chris\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Mella's curated marketplace of Claude Code plugins\",\n    \"version\": \"1.1.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mella\",\n      \"source\": \"./plugins/mella\",\n      \"description\": \"Mella's collection of productivity tools for Claude Code\",\n      \"version\": \"1.1.1\",\n      \"keywords\": [\"testing\", \"walkthrough\", \"documentation\", \"qa\"],\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        "README.md": "# Mella Marketplace\n\nA curated collection of plugins for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) - Anthropic's official CLI for Claude.\n\n> **Note:** Requires Claude Code v2.1.3 or later.\n\n## What's Included\n\n### mella\n\nProductivity tools to streamline your development workflow.\n\n**Skills:**\n\n| Skill | Description | Triggers when... |\n|-------|-------------|------------------|\n| `commit` | Create git commits with optional intelligent grouping (`group`), push (`push`), and PR creation (`pr`). Automatically runs Laravel Pint linter if available. | You invoke `/mella:commit` |\n| `walkthrough` | Auto-generates step-by-step testing guides for features and bug fixes | You ask Claude to \"write a walkthrough\", \"create testing steps\", or generate QA documentation |\n\nSkills can be invoked directly or triggered automatically based on context. For example, after implementing a feature you can say \"now write a walkthrough guide\" and Claude will use the skill.\n\n## Installation\n\n**1. Add the marketplace:**\n\n```bash\n# From GitHub\n/plugin marketplace add cjmellor/mella-marketplace\n\n# Or from a local path\n/plugin marketplace add /path/to/mella-marketplace\n```\n\n**2. Install the plugin:**\n\n```bash\n/plugin install mella@mella-marketplace\n```\n\n**3. Start using:**\n\n```bash\n# Create commits with intelligent grouping\n/mella:commit group\n\n# Create commits, push, and handle PR\n/mella:commit group pr push\n\n# Generate testing walkthroughs\n/mella:walkthrough\n```\n\n## Uninstall\n\n```bash\n/plugin uninstall mella@mella-marketplace\n/plugin marketplace remove mella-marketplace\n```\n\n## License\n\nMIT\n",
+        "plugins/mella/README.md": "# Mella Plugin\n\nMella's collection of productivity tools for Claude Code.\n\n## Commands\n\n### `/mella:commit`\n\nCreate git commits with optional intelligent grouping, push, and PR creation.\n\n**Usage:**\n```bash\n/mella:commit                    # Standard commit (like /commit-commands:commit)\n/mella:commit group              # Analyze changes and create grouped commits\n/mella:commit pr                 # Commit and handle PR (check if exists or ask to create)\n/mella:commit push               # Commit and push to current branch\n/mella:commit push origin/main   # Commit and push to specific branch\n/mella:commit group pr push      # Combine all options\n```\n\n**Features:**\n- **Standard mode**: Creates a single commit with all staged/unstaged changes\n- **Grouped mode (`group`)**: Intelligently analyzes changed files and groups them into logical, separate commits\n  - Separates dependency updates from code changes\n  - Groups related files together\n  - Generates descriptive commit messages following commit conventions\n  - Automatically stages unstaged files\n- **PR mode (`pr`)**: Checks if PR exists for current branch, or asks user if they want to create one\n- **Push mode (`push`)**: Pushes commits to remote (current branch or specified branch)\n\n**Example:**\n\nWhen you have changes to both `package.json`, `composer.json`, and source files like `Controller.php`:\n\n```bash\n/mella:commit group pr push\n```\n\nThis will:\n1. Create separate commits:\n   - \"Update dependencies\" (package.json, composer.json)\n   - \"Add authentication to user controller\" (Controller.php, Middleware.php)\n2. Push all commits to the remote\n3. Check if a PR exists or ask to create one\n\n### `/mella:walkthrough`\n\nInteractive walkthrough command for documentation and QA.\n\n## Installation\n\nThis plugin is part of the mella-marketplace. To use it:\n\n1. Clone or install from marketplace\n2. Enable in Claude Code settings\n3. Commands will be available as `/mella:command-name`\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "mella",
+          "source": "./plugins/mella",
+          "description": "Mella's collection of productivity tools for Claude Code",
+          "version": "1.1.1",
+          "keywords": [
+            "testing",
+            "walkthrough",
+            "documentation",
+            "qa"
+          ],
+          "license": "MIT",
+          "categories": [
+            "documentation",
+            "qa",
+            "testing",
+            "walkthrough"
+          ],
+          "install_commands": [
+            "/plugin marketplace add cjmellor/mella-marketplace",
+            "/plugin install mella@mella-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

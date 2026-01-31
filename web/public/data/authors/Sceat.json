@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "Sceat",
+    "display_name": "Sceat",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11330271?u=588f30d084f12802266c9002516b1fc45c53e980&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "sceat-plugins",
+      "version": null,
+      "description": "Filesystem protection + LOC enforcement for Claude Code",
+      "repo_full_name": "Sceat/frozen-gates-claude-plugin",
+      "repo_url": "https://github.com/Sceat/frozen-gates-claude-plugin",
+      "repo_description": "Filesystem protection for Claude Code - lock files to prevent AI modifications",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-06T08:34:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"sceat-plugins\",\n  \"owner\": {\n    \"name\": \"sceat\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"frozen-gates\",\n      \"source\": \"./\",\n      \"description\": \"Filesystem protection + LOC enforcement for Claude Code\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"frozen-gates\",\n  \"description\": \"Filesystem protection for Claude Code - lock files to prevent AI modifications\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"sceat\"\n  },\n  \"homepage\": \"https://github.com/sceat/frozen-gates-claude-plugin\",\n  \"repository\": \"https://github.com/sceat/frozen-gates-claude-plugin\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# frozen-gates\n\n**AI agents should be citizens of a system, not autonomous actors.**\n\nWhen you give an AI agent write access to your codebase, you're trusting it to make high-level decisions within your architecture. But agents drift. They \"fix\" things that aren't broken. They refactor code they don't fully understand. They modify configuration files because they think they know better.\n\nSilent drift is the killer. You ask for a bug fix, and somewhere in the process the agent also:\n- Rewrote your package.json dependencies\n- \"Improved\" your SDK internals\n- Refactored a working abstraction into something clever\n- Added 600 lines to a file that was intentionally small\n\n**frozen-gates removes the agent's ability to drift.** It enforces hard boundaries at the filesystem level - boundaries the agent cannot negotiate, bypass, or \"helpfully\" work around.\n\n## Philosophy\n\nAgents should operate at a higher level of abstraction:\n- Make architectural decisions → yes\n- Implement features within existing patterns → yes\n- Modify foundational code → **no, ask a human**\n- Change project configuration → **no, ask a human**\n- Let files grow unbounded → **no, enforce limits**\n\nThe agent becomes a citizen operating within your system's constraints, not an autonomous actor rewriting the rules.\n\n## Features\n\n- **Filesystem locks** - OS-level immutability (agent literally cannot write)\n- **LOC limits** - Prevent files from growing beyond maintainable size\n- **Human-only unlock** - Sudo requirement ensures only humans change boundaries\n\n## Security Model\n\n| Action | Who | Why |\n|--------|-----|-----|\n| Lock | Human only | You define the boundaries |\n| Unlock | Human only | Agent can NEVER unlock |\n| Status | Claude + Human | Read-only awareness |\n\n## Install\n\n```bash\n/plugin install frozen-gates --source github --repo sceat/frozen-gates-claude-plugin\n```\n\n## Requirements\n\n- macOS (uses `chflags uchg`)\n- `yq`: `brew install yq`\n- `pyyaml`: `pip install pyyaml`\n\n## Setup\n\n### 1. Define your boundaries\n\n```bash\nmkdir -p ~/.claude\ncat > ~/.claude/frozengates.yaml << 'EOF'\nversion: 1\n\ndefaults:\n  loc:\n    limit: 500\n    extensions: [.ts, .tsx, .js, .jsx, .py, .rs]\n\nrepos:\n  # SDK code is foundational - agent should never touch it\n  my-sdk:\n    path: ~/dev/my-sdk\n    frozen_all: true\n\n  # Config files define the system - agent works within them\n  my-app:\n    path: ~/dev/my-app\n    frozen:\n      - package.json\n      - package-lock.json\n      - tsconfig.json\n    loc:\n      limit: 400\nEOF\n```\n\n### 2. Add terminal controls\n\n```bash\ncat >> ~/.zshrc << 'EOF'\n\n# Frozen gates - human-only lock/unlock\nalias claude-lock='~/dev/sceat/frozen-gates-claude-plugin/scripts/frozengates.sh lock'\nalias claude-unlock='~/dev/sceat/frozen-gates-claude-plugin/scripts/frozengates.sh unlock'\nalias claude-status='~/dev/sceat/frozen-gates-claude-plugin/scripts/frozengates.sh status'\nEOF\nsource ~/.zshrc\n```\n\n### 3. Activate boundaries\n\n```bash\nclaude-lock  # Requires sudo - this is intentional\n```\n\n## Usage\n\n**Human (terminal):**\n```bash\nclaude-lock      # Activate all boundaries\nclaude-unlock    # Release boundaries (when YOU decide)\nclaude-status    # View current state\n```\n\n**Agent (plugin):**\n```bash\n/frozen-gates:status  # Agent can see boundaries, not change them\n```\n\n## How It Works\n\n1. **chflags uchg** - macOS immutable flag at filesystem level\n2. **Pre-tool-use hook** - Blocks Write/Edit before execution\n3. **Stop hook** - Enforces LOC limits on session end\n4. **Sudo requirement** - Physical barrier requiring human terminal access\n\nEven if the hook fails, the OS-level lock prevents modification. Belt and suspenders.\n\n## Config Reference\n\n```yaml\nversion: 1\n\ndefaults:\n  loc:\n    limit: 500                                    # Default max lines\n    extensions: [.ts, .tsx, .js, .jsx, .py, .rs]  # Files to check\n\nrepos:\n  # Entire SDK is off-limits\n  my-sdk:\n    path: ~/dev/my-sdk\n    frozen_all: true\n\n  # Specific files frozen + custom LOC\n  my-app:\n    path: ~/dev/my-app\n    frozen:\n      - package.json\n      - tsconfig.json\n    loc:\n      limit: 400\n      exclude: [\"*.test.ts\"]\n\n  # LOC only (no frozen files)\n  my-scripts:\n    path: ~/dev/my-scripts\n    loc:\n      limit: 200\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "frozen-gates",
+          "source": "./",
+          "description": "Filesystem protection + LOC enforcement for Claude Code",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Sceat/frozen-gates-claude-plugin",
+            "/plugin install frozen-gates@sceat-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

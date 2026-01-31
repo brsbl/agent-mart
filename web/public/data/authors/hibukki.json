@@ -1,0 +1,67 @@
+{
+  "author": {
+    "id": "hibukki",
+    "display_name": "Yonatan Cale",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11378537?u=c77e5e97e8dd3a81a582d2751a0588fe073a9648&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "yonatans-cc-marketplace",
+      "version": null,
+      "description": "Yonatan's Claude Code plugins",
+      "repo_full_name": "hibukki/yonatans-cc-marketplace",
+      "repo_url": "https://github.com/hibukki/yonatans-cc-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-31T22:59:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"yonatans-cc-marketplace\",\n  \"description\": \"Yonatan's Claude Code plugins\",\n  \"owner\": {\n    \"name\": \"Yonatan\"\n  },\n  \"metadata\": {\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"quick-review\",\n      \"source\": \"./plugins/quick-review\",\n      \"description\": \"Yonatan's workflow, including async auto-reviews, comment reduction, and more\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"plugin-security-reviews\",\n      \"source\": \"./plugins/plugin-security-reviews\",\n      \"description\": \"Security review for Claude Code plugins with auto-detection of new/changed plugins\",\n      \"category\": \"security\"\n    },\n    {\n      \"name\": \"google-workspace-connector\",\n      \"source\": \"./plugins/google-workspace-connector\",\n      \"description\": \"Access Google Workspace APIs (Gmail, Drive, Sheets, Docs) via oauth2l + curl\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# quick-review\n\nA Claude Code plugin for better coding habits.\n\n## Features\n\n**Auto-review commits** - When Claude commits code, an async reviewer is automatically spawned. The review comes back later with suggestions, and Claude is encouraged to fix correct comments without waiting for you.\n\n**Plan commit check** - When Claude tries to exit plan mode, it's blocked unless the plan mentions \"commit\". This encourages planning for small, self-contained commits upfront.\n\n**Write counter** - After every 5 file writes, Claude is reminded to commit small self-contained changes.\n\n**Large commit warning** - When Claude makes a commit over 100 lines, it's reminded that small, self-contained commits are preferred.\n\n**Comment quality check** - When Claude writes a new comment, it's reminded that redundant comments are bad and asked if this comment seems necessary. This often leads Claude to remove unnecessary comments on its own.\n\n**Package management** - When Claude tries to add a package by editing package.json or pyproject.toml directly, it's blocked and reminded to use the command line (`npm install` or `uv add`).\n\n**WebFetch tip** - When Claude uses WebFetch, it's reminded that downloading the full page often works better than the filtered extraction.\n\n**Brainstorm mode** - When you ask to \"brainstorm\" or \"find ideas\", Claude launches 3 parallel subagents with different perspectives: a pain-points analyst, a minimal-code advocate, and a battle-seasoned CTO.\n\n**Stack recommendations** - Tips for starting new projects (Vite+React, uv for Python, etc.)\n\n## Requirements\n\n- **jq** - Required for most hooks. Install with `brew install jq` (macOS) or `apt install jq` (Linux). If missing, you'll see a warning at session start and hooks will be disabled.\n\n## Installation\n\n### Option 1: Via slash commands\n\n```bash\n/plugin marketplace add hibukki/yonatans-cc-marketplace\n/plugin install quick-review@yonatans-cc-marketplace\n```\n\n### Option 2: Manual (in settings.json)\n\nAdd to your `.claude/settings.json`:\n\n```json\n{\n  \"enabledPlugins\": {\n    \"quick-review@yonatans-cc-marketplace\": true\n  },\n  \"extraKnownMarketplaces\": {\n    \"yonatans-cc-marketplace\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"hibukki/yonatans-cc-marketplace\"\n      }\n    }\n  }\n}\n```\n\n## Setup (for contributors)\n\n```bash\ngit config core.hooksPath .githooks\n```\n\nThis enables the pre-commit hook that auto-bumps the plugin version.\n\n## Other plugins that seem promising\n\n### Search\n\n[exa MCP](https://exa.ai/docs/reference/exa-mcp)\n\n### Getting docs\n\nAs markdown, with optimizations for LLMs\n\n[context7](https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/context7)\n\n### Interacting with a browser\n\n[dev browser](https://github.com/SawyerHood/dev-browser)\n\nSeems more promising than the playwright MCP and the claude chrome plugin.\n"
+      },
+      "plugins": [
+        {
+          "name": "quick-review",
+          "source": "./plugins/quick-review",
+          "description": "Yonatan's workflow, including async auto-reviews, comment reduction, and more",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add hibukki/yonatans-cc-marketplace",
+            "/plugin install quick-review@yonatans-cc-marketplace"
+          ]
+        },
+        {
+          "name": "plugin-security-reviews",
+          "source": "./plugins/plugin-security-reviews",
+          "description": "Security review for Claude Code plugins with auto-detection of new/changed plugins",
+          "category": "security",
+          "categories": [
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add hibukki/yonatans-cc-marketplace",
+            "/plugin install plugin-security-reviews@yonatans-cc-marketplace"
+          ]
+        },
+        {
+          "name": "google-workspace-connector",
+          "source": "./plugins/google-workspace-connector",
+          "description": "Access Google Workspace APIs (Gmail, Drive, Sheets, Docs) via oauth2l + curl",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add hibukki/yonatans-cc-marketplace",
+            "/plugin install google-workspace-connector@yonatans-cc-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

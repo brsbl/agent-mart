@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "sug1t0m0",
+    "display_name": "sug1t0m0",
+    "avatar_url": "https://avatars.githubusercontent.com/u/22994051?u=8bfe7f484c355755203ac75553c4e2d6387de4ed&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-mp-test",
+      "version": null,
+      "description": "Claude Code 開発支援プラグイン集",
+      "repo_full_name": "sug1t0m0/cc-mp-test",
+      "repo_url": "https://github.com/sug1t0m0/cc-mp-test",
+      "repo_description": "Claude Code 開発支援プラグイン集 - session-summary & workflow-helper",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-25T15:05:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-mp-test\",\n  \"owner\": {\n    \"name\": \"sug1t0m0\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code 開発支援プラグイン集\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"session-summary\",\n      \"source\": \"./plugins/session-summary\",\n      \"description\": \"セッションを要約・エクスポート。学びを記録し、どのプロジェクトでも使える。\"\n    },\n    {\n      \"name\": \"workflow-helper\",\n      \"source\": \"./plugins/workflow-helper\",\n      \"description\": \"Git worktreeとWezTermを活用した並列開発ワークフロー支援ツール\"\n    }\n  ]\n}\n",
+        "README.md": "# cc-mp-test\n\nClaude Code 開発支援プラグイン集\n\n## プラグイン一覧\n\n| プラグイン | 説明 |\n|-----------|------|\n| **session-summary** | セッションを要約・エクスポート。学びを記録し、どのプロジェクトでも使える。 |\n| **workflow-helper** | Git worktreeとWezTermを活用した並列開発ワークフロー支援ツール |\n\n## インストール\n\n### 1. マーケットプレイスを追加\n\n```bash\n/plugin marketplace add sug1t0m0/cc-mp-test\n```\n\n### 2. プラグインをインストール\n\n```bash\n# 個別にインストール\n/plugin install session-summary@cc-mp-test\n/plugin install workflow-helper@cc-mp-test\n```\n\n## プラグイン詳細\n\n### session-summary\n\nセッションの要約とエクスポート機能を提供します。\n\n**コマンド:**\n- `/session-summary:setup` - Global gitignore に .claude-sessions を追加\n- `/session-summary:summary` - セッションを要約\n- `/session-summary:export` - セッション要約をMarkdownファイルに保存\n- `/session-summary:learnings` - セッションから学び（TIL）を抽出\n\n### workflow-helper\n\nGit worktreeとWezTermを活用した並列開発ワークフローを支援します。\n\n**コマンド:**\n- `/workflow-helper:new-task [task-name]` - 新しいworktreeを作成し、WezTermで新ペインを開く\n- `/workflow-helper:list-tasks` - 現在のworktree一覧を表示\n- `/workflow-helper:cleanup-tasks [target]` - 完了したworktreeを削除\n\n## ライセンス\n\nMIT\n",
+        "plugins/session-summary/README.md": "# Session Summary Plugin\n\nSummarize and export your Claude Code sessions. Track learnings, decisions, and progress across any project.\n\n## Installation\n\n### Option 1: Install from local directory (for development)\n\n```bash\nclaude --plugin-dir ./session-summary\n```\n\n### Option 2: Install to user scope (recommended for daily use)\n\n```bash\n# Add to your personal plugin collection\n/plugin install session-summary@your-marketplace\n```\n\n## Commands\n\n### `/session-summary:summary`\n\nGenerate a structured summary of the current session.\n\n**Output includes:**\n- Session overview (date, duration, context)\n- What was accomplished\n- Key decisions made\n- Problems solved\n- Files changed\n- Next steps\n- Open questions\n\n**Example:**\n```\n/session-summary:summary\n```\n\n### `/session-summary:export`\n\nExport the session summary to a markdown file.\n\n**Features:**\n- Saves to `.claude-sessions/` directory\n- Auto-generates filename with timestamp\n- Optional custom title via arguments\n\n**Examples:**\n```\n/session-summary:export\n/session-summary:export feature-authentication\n```\n\n**Output location:** `.claude-sessions/session-YYYY-MM-DD-HHMMSS.md`\n\n### `/session-summary:learnings`\n\nExtract TIL (Today I Learned) insights from the session.\n\n**Captures:**\n- New knowledge discovered\n- Gotchas and pitfalls\n- Best practices identified\n- Useful commands and snippets\n- Reusable code patterns\n\n**Example:**\n```\n/session-summary:learnings\n```\n\n## Use Cases\n\n1. **End of day review**: Run `/session-summary:export` before closing Claude Code\n2. **Knowledge capture**: Use `/session-summary:learnings` after solving tricky problems\n3. **Handoff documentation**: Generate summaries when passing work to teammates\n4. **Personal log**: Build a searchable history of your development sessions\n\n## Tips\n\n- Run `summary` first to preview, then `export` if you want to save\n- Use descriptive arguments with `export` to make files easier to find later\n- The `.claude-sessions/` folder can be gitignored or committed based on your preference\n\n## Directory Structure\n\n```\nsession-summary/\n├── .claude-plugin/\n│   └── plugin.json\n├── commands/\n│   ├── summary.md\n│   ├── export.md\n│   └── learnings.md\n└── README.md\n```\n\n## License\n\nMIT\n",
+        "plugins/workflow-helper/README.md": "# workflow-helper\n\nGit worktreeとWezTermを活用した並列開発ワークフロー支援プラグイン。\n\n## 概要\n\nClaude Codeで複数のタスクを並列で処理する際に、git worktreeとWezTermを組み合わせて効率的なワークフローを実現します。\n\n## インストール\n\n```bash\n# マーケットプレイスから（設定後）\n/plugin install workflow-helper\n\n# または直接指定\nclaude --plugin-dir /path/to/workflow-helper\n```\n\n## コマンド\n\n### `/workflow-helper:new-task [task-name]`\n\n新しいgit worktreeを作成し、WezTermの新しいペインで作業を開始します。\n\n```\n/workflow-helper:new-task fix-login-bug\n/workflow-helper:new-task feature-user-auth\n/workflow-helper:new-task review-pr-123\n```\n\n**動作:**\n1. タスク名からブランチ名を生成（小文字化、スペース→ハイフン）\n2. `../project-name-branch/` にworktreeを作成\n3. WezTermで右側に新しいペインを開く\n4. 新しいペインでworktreeディレクトリに移動\n\n### `/workflow-helper:list-tasks`\n\n現在のworktree一覧を表示します。\n\n### `/workflow-helper:cleanup-tasks [target]`\n\n完了したworktreeを削除します。\n\n- 引数なし: worktree一覧を表示\n- 引数あり: 指定したworktree（パスまたはブランチ名）を削除\n\n## ユーティリティスクリプト\n\n`scripts/worktree-utils.sh` を直接使用することもできます：\n\n```bash\n./scripts/worktree-utils.sh new my-feature     # worktree作成\n./scripts/worktree-utils.sh open-pane ./path   # ペインを開く\n./scripts/worktree-utils.sh list               # 一覧表示\n./scripts/worktree-utils.sh remove my-feature  # 削除\n./scripts/worktree-utils.sh prune              # 古いworktreeを整理\n```\n\n## 要件\n\n- Git\n- WezTerm（`wezterm cli` コマンドが利用可能であること）\n\n## ワークフロー例\n\n1. 新しいタスクを開始\n   ```\n   /workflow-helper:new-task implement-oauth\n   ```\n\n2. WezTermの右側に新しいペインが開く\n\n3. 新しいペインで `claude` を実行して独立したセッションを開始\n\n4. タスク完了後、worktreeを削除\n   ```\n   /workflow-helper:cleanup-tasks implement-oauth\n   ```\n\n## ライセンス\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "session-summary",
+          "source": "./plugins/session-summary",
+          "description": "セッションを要約・エクスポート。学びを記録し、どのプロジェクトでも使える。",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sug1t0m0/cc-mp-test",
+            "/plugin install session-summary@cc-mp-test"
+          ]
+        },
+        {
+          "name": "workflow-helper",
+          "source": "./plugins/workflow-helper",
+          "description": "Git worktreeとWezTermを活用した並列開発ワークフロー支援ツール",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sug1t0m0/cc-mp-test",
+            "/plugin install workflow-helper@cc-mp-test"
+          ]
+        }
+      ]
+    }
+  ]
+}

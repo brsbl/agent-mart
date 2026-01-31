@@ -1,0 +1,54 @@
+{
+  "author": {
+    "id": "ast-grep",
+    "display_name": "ast-grep",
+    "avatar_url": "https://avatars.githubusercontent.com/u/114017360?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ast-grep-marketplace",
+      "version": null,
+      "description": "A marketplace for Claude Code skills including ast-grep structural code search",
+      "repo_full_name": "ast-grep/agent-skill",
+      "repo_url": "https://github.com/ast-grep/agent-skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 469,
+        "forks": 18,
+        "pushed_at": "2026-01-22T01:18:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ast-grep-marketplace\",\n  \"owner\": {\n    \"name\": \"Herrington Darkholme\"\n  },\n  \"metadata\": {\n    \"description\": \"A marketplace for Claude Code skills including ast-grep structural code search\",\n    \"version\": \"1.0.0\",\n    \"repository\": \"https://github.com/ast-grep/claude-skill\",\n    \"homepage\": \"https://github.com/ast-grep/claude-skill\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ast-grep\",\n      \"source\": \"./ast-grep\",\n      \"description\": \"Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search.\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\n        \"ast-grep\",\n        \"code-search\",\n        \"ast\",\n        \"structural-search\",\n        \"pattern-matching\",\n        \"refactoring\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# ast-grep Plugin Marketplace for AI Agents\n\nA Claude Code plugin marketplace containing the ast-grep skill for powerful structural code search using Abstract Syntax Tree (AST) patterns. Search your codebase based on code structure rather than just text matching.\n\n## What is This?\n\nThis is a **Claude Code plugin marketplace** that provides the **ast-grep plugin**. The plugin includes a skill that teaches Claude how to write and use ast-grep rules to perform advanced code searches. Unlike traditional text-based search (grep, ripgrep), ast-grep understands the structure of your code, allowing you to find patterns like:\n\n- \"Find all async functions that don't have error handling\"\n- \"Locate all React components that use a specific hook\"\n- \"Find functions with more than 3 parameters\"\n- \"Search for console.log calls inside class methods\"\n\n\n\n\n## Prerequisites\n\nYou need to have ast-grep installed on your system:\n\n```bash\n# macOS\nbrew install ast-grep\n\n# npm\nnpm install -g @ast-grep/cli\n\n# cargo\ncargo install ast-grep\n```\n\nVerify installation:\n```bash\nast-grep --version\n```\n\n## Installation\n\n### Option 1: Install via skills.sh (Recommended)\n\n```\nnpx skills add ast-grep/agent-skill\n```\n\n### Option 2: Install via Marketplace \n\n1. **Add the marketplace** to your Claude Code:\n\n```bash\n/plugin marketplace add ast-grep/agent-skill\n```\n\n2. **Install the ast-grep plugin**:\n\n```bash\n/plugin install ast-grep\n```\n\n3. **Restart Claude Code** to activate the plugin\n\n4. **Verify installation**: Use `/help` to see if ast-grep skill is available\n\n### Option 3: Install Locally for Development\n\nIf you're developing or testing locally:\n\n```bash\n# Clone the repository\ngit clone https://github.com/ast-grep/claude-skill.git /path/to/local-marketplace\n\n# Add as local marketplace\n/plugin marketplace add /path/to/local-marketplace\n\n# Install the plugin\n/plugin install ast-grep\n```\n\n### Usage Notes\n\nYou will need to ask Claude to use this skill explicitly in your queries, like \"Use ast-grep to find...\". Claude Code, as of Nov 2025, cannot automatically detect when to use ast-grep for all appropriate use cases.\n\n## How to Use\n\nOnce installed, simply ask Claude to search your code using structural patterns. Claude will automatically use this skill when appropriate.\n\n### Example Queries\n\n**Find async functions with await:**\n```\nFind all async functions in this project that use await\n```\n\n**Find missing error handling:**\n```\nShow me async functions that don't have try-catch blocks\n```\n\n**Find specific function calls:**\n```\nFind all places where we call console.log with more than one argument\n```\n\n**Find code in specific contexts:**\n```\nFind all setState calls inside useEffect hooks\n```\n\n### How It Works\n\nWhen you ask Claude to search for code patterns:\n\n1. Claude analyzes your query and determines if ast-grep is appropriate\n2. It creates example code that matches your search criteria\n3. It writes an ast-grep rule to match the pattern\n4. It tests the rule against the example code\n5. Once verified, it searches your entire codebase\n6. Results are presented with file paths and line numbers\n\n## Supported Languages\n\nast-grep supports many programming languages including:\n\n- JavaScript/TypeScript\n- Python\n- Rust\n- Go\n- Java\n- C/C++\n- Ruby\n- PHP\n- And many more\n\n## Key Features\n\n- **Structure-aware search**: Matches code based on AST structure, not just text\n- **Metavariables**: Use `$VAR` to match any expression, statement, or identifier\n- **Relational queries**: Find code inside specific contexts (e.g., \"find X inside Y\")\n- **Composite logic**: Combine rules with AND, OR, NOT operations\n- **Test-driven approach**: Rules are tested before running on your codebase\n\n## Advanced Usage\n\n### Direct ast-grep Commands\n\nWhile Claude will handle most use cases automatically, you can also use ast-grep directly:\n\n```bash\n# Simple pattern search\nast-grep run --pattern 'console.log($ARG)' --lang javascript .\n\n# Complex rule-based search\nast-grep scan --inline-rules \"id: my-rule\nlanguage: javascript\nrule:\n  kind: function_declaration\n  has:\n    pattern: await \\$EXPR\n    stopBy: end\" .\n```\n\n### Debugging\n\nIf a search isn't working as expected, ask Claude to:\n- Show you the ast-grep rule it created\n- Inspect the AST structure of your code\n- Test the rule against example code\n\n## Repository Structure\n\nThis is a Claude Code plugin marketplace repository with the following structure:\n\n```\nclaude-skill/\n├── .claude-plugin/\n│   └── marketplace.json           # Marketplace manifest\n├── ast-grep/                       # ast-grep plugin\n│   ├── .claude-plugin/\n│   │   └── plugin.json            # Plugin manifest\n│   └── skills/\n│       └── ast-grep/\n│           ├── SKILL.md           # Skill instructions for Claude\n│           └── references/\n│               └── rule_reference.md  # ast-grep rule documentation\n├── ast-grep.zip                    # Archived version\n└── README.md                       # This file\n```\n\n### Key Files\n\n- **`.claude-plugin/marketplace.json`**: Marketplace manifest defining available plugins\n- **`ast-grep/.claude-plugin/plugin.json`**: Plugin manifest for the ast-grep plugin\n- **`ast-grep/skills/ast-grep/SKILL.md`**: Main skill instructions that Claude uses\n- **`ast-grep/skills/ast-grep/references/`**: Supporting documentation and reference materials\n\n## Tips for Best Results\n\n1. **Be specific**: The more details you provide, the better the search results\n2. **Provide examples**: If possible, show Claude an example of what you want to find\n3. **Iterate**: Start with a broad search and narrow it down\n4. **Ask for explanations**: Ask Claude to explain the ast-grep rule it creates\n\n## Examples of What You Can Search For\n\n### Code Quality\n- Functions without return statements\n- Functions with too many parameters\n- Unused variables\n- Missing null checks\n\n### Patterns\n- React hooks usage patterns\n- API call patterns\n- Database query patterns\n- Error handling patterns\n\n### Refactoring\n- Find all uses of deprecated functions\n- Locate code that needs migration\n- Find inconsistent patterns across codebase\n\n### Security\n- Potential SQL injection points\n- Unsafe eval usage\n- Missing input validation\n\n## Troubleshooting\n\n**Claude isn't using the skill:**\n- Make sure ast-grep is installed (`ast-grep --version`)\n- Try being more explicit: \"Use ast-grep to search for...\"\n\n**No results found:**\n- Try a simpler query first\n- Ask Claude to show you the rule and test it\n- Provide an example of code you want to match\n\n**Unexpected results:**\n- Refine your query with more details\n- Ask Claude to exclude certain patterns\n- Request to see the AST structure of your code\n\n## Contributing\n\nTo improve this skill:\n1. Edit `SKILL.md` to update Claude's instructions\n2. Add examples to `references/` directory\n3. Test with various code patterns\n\n## Resources\n\n- [ast-grep Official Documentation](https://ast-grep.github.io/)\n- [ast-grep Playground](https://ast-grep.github.io/playground.html) - Test patterns online\n- [ast-grep GitHub](https://github.com/ast-grep/ast-grep)\n\n## License\n\nThis skill follows ast-grep's MIT license for any included documentation or examples.\n\n## Support\n\nFor issues with:\n- **This skill**: Open an issue in this repository\n- **ast-grep itself**: Visit [ast-grep GitHub](https://github.com/ast-grep/ast-grep)\n- **Claude Code**: Check [Claude Code documentation](https://code.claude.com/)\n"
+      },
+      "plugins": [
+        {
+          "name": "ast-grep",
+          "source": "./ast-grep",
+          "description": "Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search.",
+          "version": "1.0.0",
+          "keywords": [
+            "ast-grep",
+            "code-search",
+            "ast",
+            "structural-search",
+            "pattern-matching",
+            "refactoring"
+          ],
+          "categories": [
+            "ast",
+            "ast-grep",
+            "code-search",
+            "pattern-matching",
+            "refactoring",
+            "structural-search"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ast-grep/agent-skill",
+            "/plugin install ast-grep@ast-grep-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

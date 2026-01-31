@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "wlevan3",
+    "display_name": "wlevan3",
+    "avatar_url": "https://avatars.githubusercontent.com/u/89826498?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "wjlevan-claude-plugins",
+      "version": null,
+      "description": "Personal Claude Code plugins by Walter Levan",
+      "repo_full_name": "wlevan3/claude-plugins",
+      "repo_url": "https://github.com/wlevan3/claude-plugins",
+      "repo_description": "Personal Claude Code plugins marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-27T07:49:55Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"wjlevan-claude-plugins\",\n  \"description\": \"Personal Claude Code plugins by Walter Levan\",\n  \"owner\": {\n    \"name\": \"Walter Levan\",\n    \"github\": \"wjlevan\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"multi-ai-consult\",\n      \"source\": \"./multi-ai-consult\",\n      \"description\": \"Consult Gemini, Codex, Qwen, and OpenCode AIs in parallel\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"ai\", \"consultation\", \"multi-agent\", \"gemini\", \"codex\"]\n    }\n  ]\n}\n",
+        "README.md": "# Walter Levan's Claude Code Plugins\n\nPersonal plugin marketplace for Claude Code.\n\n## Available Plugins\n\n| Plugin | Description | Version |\n|--------|-------------|---------|\n| [multi-ai-consult](./multi-ai-consult) | Consult multiple AIs (Gemini, Codex, Qwen, OpenCode) in parallel and synthesize responses | 1.0.0 |\n\n## Installation\n\n### Add Marketplace\n\n```bash\n/plugin marketplace add wjlevan/claude-plugins\n```\n\n### Install a Plugin\n\n```bash\n/plugin install multi-ai-consult@wjlevan-claude-plugins\n```\n\n## Author\n\n**Walter Levan** - [@wjlevan](https://github.com/wjlevan)\n\n## License\n\nMIT\n",
+        "multi-ai-consult/README.md": "# Multi-AI Consult\n\nConsult multiple AI assistants in parallel and get a synthesized response.\n\n## Features\n\n- **Parallel Execution**: Query Gemini, Codex, Qwen, and OpenCode simultaneously\n- **Platform Detection**: Automatically uses `gtimeout` on macOS, `timeout` on Linux\n- **Full PATH Resolution**: Resolves CLI binary paths at startup to prevent exit 127 errors\n- **Response Truncation**: Prevents 25K token overflow with intelligent truncation\n- **Tiered Synthesis**: Adapts strategy based on response size (Small/Medium/Large)\n- **Enhanced Error Classification**: Categorizes errors (auth, rate limit, network, timeout) for smart retry\n- **Graceful Degradation**: Works with any subset of available AI CLIs\n\n## Prerequisites\n\nInstall at least one AI CLI:\n- `gemini` - Google Gemini CLI\n- `codex` - OpenAI Codex CLI\n- `qwen` - Alibaba Qwen CLI\n- `opencode` - OpenCode CLI\n\nAlso required:\n- `jq` - JSON parsing\n- `coreutils` (macOS): `brew install coreutils` for `gtimeout`\n\n## Usage\n\n```bash\n# Basic consultation\n/consult <your question>\n\n# Query specific AIs only\n/consult --only=gemini,codex <question>\n\n# Exclude specific AIs\n/consult --exclude=qwen <question>\n\n# Show individual responses before synthesis\n/consult --verbose <question>\n\n# Preview prompt without executing\n/consult --dry-run <question>\n```\n\n## Configuration\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `CONSULT_TIMEOUT` | `120` | Timeout per CLI (seconds) |\n| `CONSULT_MAX_RESPONSE_CHARS` | `20000` | Max chars per response (~5K tokens) |\n| `CONSULT_GEMINI_MODEL` | `gemini-3-pro-preview` | Gemini model |\n| `CONSULT_CODEX_MODEL` | `gpt-5.1-codex-max` | Codex model |\n| `CONSULT_OPENCODE_MODEL` | `anthropic/claude-opus-4-5` | OpenCode model |\n\n## How It Works\n\n1. **Verify**: Detects platform and resolves full paths to CLI binaries\n2. **Prepare**: Constructs a clear prompt from your query\n3. **Execute**: Runs all available CLIs in parallel with timeout\n4. **Retry**: Failed CLIs get one retry with exponential backoff\n5. **Parse**: Extracts text responses using jq (handles NDJSON formats)\n6. **Synthesize**: Combines all responses into a unified answer\n\n## Exit Codes\n\n| Code | Meaning |\n|------|---------|\n| 0 | Success - at least 2 AIs responded |\n| 1 | Partial success - only 1 AI responded |\n| 2-5 | All AIs failed (auth/rate limit/timeout/other) |\n| 10 | No AI CLIs installed |\n| 11 | Missing required dependency |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "multi-ai-consult",
+          "source": "./multi-ai-consult",
+          "description": "Consult Gemini, Codex, Qwen, and OpenCode AIs in parallel",
+          "version": "1.0.0",
+          "keywords": [
+            "ai",
+            "consultation",
+            "multi-agent",
+            "gemini",
+            "codex"
+          ],
+          "categories": [
+            "ai",
+            "codex",
+            "consultation",
+            "gemini",
+            "multi-agent"
+          ],
+          "install_commands": [
+            "/plugin marketplace add wlevan3/claude-plugins",
+            "/plugin install multi-ai-consult@wjlevan-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

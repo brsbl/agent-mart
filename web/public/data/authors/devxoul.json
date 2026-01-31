@@ -6,54 +6,89 @@
   },
   "marketplaces": [
     {
-      "name": "vibe-haptic",
+      "name": "agent-messenger",
       "version": null,
-      "description": "Haptic feedback plugin for Claude Code using macOS Force Touch trackpad",
-      "repo_full_name": "devxoul/vibe-haptic",
-      "repo_url": "https://github.com/devxoul/vibe-haptic",
-      "repo_description": "🫨 Haptic feedback from your coding agents – Get notified physically.",
+      "description": "Messaging platform interaction skills for AI agents - Slack workspaces and Discord servers",
+      "repo_full_name": "devxoul/agent-messenger",
+      "repo_url": "https://github.com/devxoul/agent-messenger",
+      "repo_description": "Give your AI agent the power to read and send messages across Slack, Discord, Teams and more",
       "signals": {
-        "stars": 18,
-        "forks": 0,
-        "pushed_at": "2026-01-21T12:18:29Z"
+        "stars": 6,
+        "forks": 1,
+        "pushed_at": "2026-01-31T16:33:46Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"vibe-haptic\",\n  \"description\": \"Haptic feedback plugin for Claude Code using macOS Force Touch trackpad\",\n  \"owner\": {\n    \"name\": \"Jeon Suyeol\",\n    \"url\": \"https://github.com/devxoul\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"vibe-haptic\",\n      \"description\": \"Feel tactile feedback when tasks complete or when input is needed through your MacBook's Force Touch trackpad\",\n      \"version\": \"1.0.3\",\n      \"author\": {\n        \"name\": \"Jeon Suyeol\",\n        \"url\": \"https://github.com/devxoul\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/devxoul/vibe-haptic\",\n      \"keywords\": [\"haptic\", \"feedback\", \"macos\", \"trackpad\", \"force-touch\", \"accessibility\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"vibe-haptic\",\n  \"version\": \"1.0.5\",\n  \"description\": \"Haptic feedback for Claude Code using macOS Force Touch trackpad. Feel tactile feedback when tasks complete or when input is needed.\",\n  \"author\": {\n    \"name\": \"Jeon Suyeol\",\n    \"url\": \"https://github.com/devxoul\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"haptic\", \"feedback\", \"macos\", \"trackpad\", \"force-touch\", \"accessibility\"],\n  \"homepage\": \"https://github.com/devxoul/vibe-haptic\",\n  \"repository\": \"https://github.com/devxoul/vibe-haptic\"\n}\n",
-        "README.md": "# Vibe Haptic 🫨\n\nHaptic feedback from your coding agents.\n\n![Vibe Haptic](https://github.com/user-attachments/assets/4e80abbf-e61a-43b1-ad17-14ea8f480cdd)\n\nGet tactile feedback when your AI agent completes tasks, encounters errors, or requests input — feel the rhythm of your coding session through your MacBook's trackpad.\n\n## Why?\n\n\"Why not just use system notifications?\"\n\nI tried that. Banners popping up, sounds dinging — it felt noisy and annoying. Every notification pulled my eyes away from what I was doing, broke my flow, and honestly just became another thing to dismiss.\n\nI wanted something quieter. A subtle nudge that says \"hey, I'm done\" without screaming for attention. Something I could feel without having to look. (I'm the kind of person who always has Do Not Disturb on.)\n\nThat's what haptic feedback does — it's silent, ambient, and stays out of your way until you need it.\n\n## How It Works\n\nModern MacBooks have a Force Touch trackpad that doesn't physically click. Instead, it uses a linear actuator (Taptic Engine) to simulate the sensation of a click through precise vibrations.\n\nVibe Haptic taps into macOS's private `MultitouchSupport.framework` to trigger these haptic actuations programmatically. When your AI agent finishes a task or needs attention, the trackpad vibrates with distinct patterns you can feel under your fingers.\n\n## Installation\n\n### Claude Code\n\n```bash\nclaude plugin marketplace add devxoul/vibe-haptic\nclaude plugin install vibe-haptic\n```\n\nOr within Claude Code:\n\n```\n/plugin marketplace add devxoul/vibe-haptic\n/plugin install vibe-haptic\n```\n\n### OpenCode\n\nAdd to your `opencode.jsonc`:\n\n```jsonc\n{\n  \"plugins\": [\n    \"vibe-haptic@1.0.5\"\n  ]\n}\n```\n\n## Configuration\n\nEverything works out of the box — just install and go. But if you want to tweak the patterns or map different events, here's how.\n\n### Configuration File\n\nCreate `vibe-haptic.json` in your config directory:\n\n- **Claude Code**: `~/.claude/vibe-haptic.json` or `.claude/vibe-haptic.json`\n- **OpenCode**: `~/.config/opencode/vibe-haptic.json` or `.opencode/vibe-haptic.json`\n\n```json\n{\n  \"patterns\": {\n    \"success\": { \"beat\": \"6/1.5 6/0.8  4/0.5\" },\n    \"error\": { \"beat\": \"6/2.0 6/2.0 6/2.0\" }\n  },\n  \"events\": {\n    \"stop\": \"dopamine\",\n    \"prompt\": \"alert\"\n  }\n}\n```\n\n### Events\n\nEvents map agent actions to haptic patterns:\n\n| Event | Trigger | Claude Code | OpenCode |\n|-------|---------|-------------|----------|\n| `stop` | Agent finishes and becomes idle | ✓ | ✓ |\n| `prompt` | Agent asks for input (select option, permission, etc.) | ✓ | ✓ |\n\n#### Trigger Details\n\n**`stop` event** — Fires when the agent completes its work:\n- **Claude Code**: Triggered by the `Stop` hook event when the agent finishes responding\n- **OpenCode**: Triggered when session status changes to `idle`\n\n**`prompt` event** — Fires when the agent needs your attention:\n- **Claude Code**: Triggered by `Notification` hook events (permission requests, tool approvals, etc.)\n- **OpenCode**: Triggered by `permission.updated` or `question.asked` events\n\n### Beat Patterns\n\nHaptic feedback is defined using a beat notation:\n\n```\n\"6/0.8 4/1.0  6/0.5\"\n```\n\n- **Digits (3-6)**: Actuation strength — `3` minimal, `4` medium, `5` weak, `6` strong\n- **`/intensity`**: Optional intensity (0.0-2.0) — `6/0.5` = strong actuation at half intensity\n- **Spaces**: Pauses between taps (100ms per space)\n\nExamples:\n- `6 6 6` — three strong taps with short pauses\n- `6/2.0 6/0.5` — loud tap followed by soft tap\n- `66` — rapid double tap (no pause)\n- `6  6` — two taps with longer pause\n\n### Built-in Patterns\n\n| Pattern | Beat | Description |\n|---------|------|-------------|\n| `vibe` | `6/0.8 3/1.0   6/1.0` | Signature rhythm (default for stop event) |\n| `alert` | `6/0.5 6/1.0 6/0.5` | Attention pulse (default for prompt event) |\n| `dopamine` | `6666666 5/1.0 4/1.0 3/1.0` | Reward cascade |\n| `noise` | `6543654365436543` | Rapid texture |\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agent-messenger\",\n  \"description\": \"Messaging platform interaction skills for AI agents - Slack workspaces and Discord servers\",\n  \"owner\": {\n    \"name\": \"devxoul\",\n    \"url\": \"https://github.com/devxoul\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-slack\",\n      \"description\": \"Interact with Slack workspaces through a CLI interface. Features seamless token extraction from Slack desktop app, multi-workspace support, AI-friendly entity references (@c1, @m1, @u1), message operations, channel management, reactions, and file uploads.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"devxoul\",\n        \"url\": \"https://github.com/devxoul\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/devxoul/agent-messenger\",\n      \"keywords\": [\"slack\", \"messaging\", \"workspace\", \"ai-agent\", \"cli\", \"communication\"]\n    },\n    {\n      \"name\": \"agent-discord\",\n      \"description\": \"Interact with Discord servers through a CLI interface. Features seamless token extraction from Discord desktop app, multi-guild support, message operations, channel management, reactions, and file uploads.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"devxoul\",\n        \"url\": \"https://github.com/devxoul\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/devxoul/agent-messenger\",\n      \"keywords\": [\"discord\", \"messaging\", \"guild\", \"server\", \"ai-agent\", \"cli\", \"communication\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agent-messenger\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Messaging platform interaction skills for AI agents. Interact with Slack workspaces and Discord servers - send messages, read channels, manage reactions, upload files, and more through simple CLI interfaces.\",\n  \"author\": {\n    \"name\": \"devxoul\",\n    \"url\": \"https://github.com/devxoul\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"slack\", \"discord\", \"messaging\", \"workspace\", \"guild\", \"ai-agent\", \"cli\", \"communication\", \"productivity\"],\n  \"homepage\": \"https://github.com/devxoul/agent-messenger\",\n  \"repository\": \"https://github.com/devxoul/agent-messenger\",\n  \"skills\": [\n    \"./skills/agent-slack\",\n    \"./skills/agent-discord\"\n  ]\n}\n",
+        "README.md": "# 💬 Agent Messenger\n\n**Give your AI agent the power to read and send messages across Slack, Discord, Teams and more**\n\nA unified, agent-friendly CLI for messaging platforms. Zero-config credential extraction from your desktop apps—no OAuth flows, no API keys, no admin approval needed. Works out of the box.\n\n## ✨ Why Agent Messenger?\n\n- 🔑 **No API keys needed** — Automatically extracts credentials from your installed desktop apps\n- 🌐 **One interface, multiple platforms** — Learn once, use everywhere (Slack, Discord, Teams)\n- 🤖 **AI-agent friendly** — JSON output by default, perfect for LLM tool use\n- 👤 **Human friendly too** — Add `--pretty` for readable output\n\n## 📦 Installation\n\n```bash\nnpm install -g agent-messenger\n```\n\nOr use your favorite package manager.\n\nThis installs:\n- `agent-slack` — Slack CLI\n- `agent-discord` — Discord CLI\n- `agent-teams` — Microsoft Teams CLI\n\n## 🧩 Agent Skills\n\nAgent Messenger includes [Agent Skills](https://agentskills.io/) that teach your AI agent how to use these CLIs effectively.\n\n### Skills CLI\n\n```bash\nnpx skills add devxoul/agent-messenger\n```\n\nSee [skills.sh](https://skills.sh/) for more details.\n\n### Claude Code\n\n```bash\nclaude plugin marketplace add devxoul/agent-messenger\nclaude plugin install agent-messenger\n```\n\nOr within Claude Code:\n\n```\n/plugin marketplace add devxoul/agent-messenger\n/plugin install agent-messenger\n```\n\n### OpenCode\n\nAdd to your `opencode.jsonc`:\n\n```jsonc\n{\n  \"plugins\": [\n    \"agent-messenger@1.0.0\"\n  ]\n}\n```\n\n## 🚀 Quick Start\n\nGet up and running in 30 seconds:\n\n```bash\n# 1. Extract credentials from your Slack desktop app\nagent-slack auth extract\n\n# 2. See your workspace at a glance\nagent-slack snapshot --pretty\n\n# 3. Send a message\nagent-slack message send general \"Hello from the CLI!\"\n```\n\nThat's it. No OAuth flows. No API tokens. No configuration files.\n\n## 🔌 Supported Platforms\n\n| Feature | Slack | Discord | Teams |\n|---------|:-----:|:-------:|:-----:|\n| Auto credential extraction | ✅ | ✅ | ✅ |\n| Send / List / Search messages | ✅ | ✅ | ✅ |\n| Threads | ✅ | ✅ | ✅ |\n| Channels & Users | ✅ | ✅ | ✅ |\n| Reactions | ✅ | ✅ | ✅ |\n| File uploads | ✅ | ✅ | ✅ |\n| Workspace snapshots | ✅ | ✅ | ✅ |\n| Multi-workspace | ✅ | ✅ | ✅ |\n| Bot support | 🏗️ | 🏗️ | 🏗️ |\n\n> **Note**: Teams tokens expire in 60-90 minutes. See [Teams Guide](docs/teams.md) for token refresh patterns.\n\n## 📚 Platform Guides\n\n- **[Slack Guide](docs/slack.md)** — Full command reference for Slack\n- **[Discord Guide](docs/discord.md)** — Full command reference for Discord\n- **[Teams Guide](docs/teams.md)** — Full command reference for Microsoft Teams\n\n## 💡 Use Cases\n\n**🤖 For AI Agents**\n- Give Claude, GPT, or your custom agent the ability to read and send messages\n- Automate Slack/Discord/Teams workflows with simple CLI commands\n- Build integrations without OAuth complexity\n\n**👩‍💻 For Developers**\n- Quick message sending from terminal\n- Scripted notifications and alerts\n- Workspace snapshots for debugging\n\n**👥 For Teams**\n- Automate standups and reminders\n- Cross-post announcements to multiple platforms\n- Build custom notification pipelines\n\n## 🧠 Philosophy\n\n**Why not MCP?** MCP servers expose all tools at once, bloating context and confusing agents. **[Agent Skills](https://agentskills.io/) + agent-friendly CLI** offer a better approach—load what you need, when you need it. Fewer tokens, cleaner context, better output.\n\n**Why not OAuth?** OAuth requires an app and it requires workspace admin approval to install, which can take days. This tool just works—zero setup required. Bot support is on the roadmap for those who prefer it.\n\nInspired by [agent-browser](https://github.com/vercel-labs/agent-browser) from Vercel Labs.\n\n## 🤝 Contributing\n\n```bash\nbun install    # Install dependencies\nbun link       # Link CLI globally for local testing\nbun test       # Run tests\nbun typecheck  # Type check\nbun lint       # Lint\nbun run build  # Build\n```\n\n## 📄 License\n\nMIT\n"
       },
       "plugins": [
         {
-          "name": "vibe-haptic",
-          "description": "Feel tactile feedback when tasks complete or when input is needed through your MacBook's Force Touch trackpad",
-          "version": "1.0.3",
+          "name": "agent-slack",
+          "description": "Interact with Slack workspaces through a CLI interface. Features seamless token extraction from Slack desktop app, multi-workspace support, AI-friendly entity references (@c1, @m1, @u1), message operations, channel management, reactions, and file uploads.",
+          "version": "0.1.0",
           "author": {
-            "name": "Jeon Suyeol",
+            "name": "devxoul",
             "url": "https://github.com/devxoul"
           },
           "source": "./",
           "category": "productivity",
-          "homepage": "https://github.com/devxoul/vibe-haptic",
+          "homepage": "https://github.com/devxoul/agent-messenger",
           "keywords": [
-            "haptic",
-            "feedback",
-            "macos",
-            "trackpad",
-            "force-touch",
-            "accessibility"
+            "slack",
+            "messaging",
+            "workspace",
+            "ai-agent",
+            "cli",
+            "communication"
           ],
           "categories": [
-            "accessibility",
-            "feedback",
-            "force-touch",
-            "haptic",
-            "macos",
+            "ai-agent",
+            "cli",
+            "communication",
+            "messaging",
             "productivity",
-            "trackpad"
+            "slack",
+            "workspace"
           ],
           "install_commands": [
-            "/plugin marketplace add devxoul/vibe-haptic",
-            "/plugin install vibe-haptic@vibe-haptic"
+            "/plugin marketplace add devxoul/agent-messenger",
+            "/plugin install agent-slack@agent-messenger"
+          ]
+        },
+        {
+          "name": "agent-discord",
+          "description": "Interact with Discord servers through a CLI interface. Features seamless token extraction from Discord desktop app, multi-guild support, message operations, channel management, reactions, and file uploads.",
+          "version": "0.1.0",
+          "author": {
+            "name": "devxoul",
+            "url": "https://github.com/devxoul"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/devxoul/agent-messenger",
+          "keywords": [
+            "discord",
+            "messaging",
+            "guild",
+            "server",
+            "ai-agent",
+            "cli",
+            "communication"
+          ],
+          "categories": [
+            "ai-agent",
+            "cli",
+            "communication",
+            "discord",
+            "guild",
+            "messaging",
+            "productivity",
+            "server"
+          ],
+          "install_commands": [
+            "/plugin marketplace add devxoul/agent-messenger",
+            "/plugin install agent-discord@agent-messenger"
           ]
         }
       ]
