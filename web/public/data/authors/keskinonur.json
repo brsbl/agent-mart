@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "keskinonur",
+    "display_name": "Onur Keskin, Ph.D.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9061586?u=6f061a6d4db46a174fed4e537ca1445732e8b5cf&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "fizzy-marketplace",
+      "version": null,
+      "description": "Fizzy.do integration for Claude Code",
+      "repo_full_name": "keskinonur/claude-plugin-fizzy",
+      "repo_url": "https://github.com/keskinonur/claude-plugin-fizzy",
+      "repo_description": "A plugin that syncs Claude Code todos to Fizzy.do cards in real-time.",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-13T16:08:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"fizzy-marketplace\",\n  \"description\": \"Fizzy.do integration for Claude Code\",\n  \"owner\": {\n    \"name\": \"Onur Keskin\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"fizzy\",\n      \"description\": \"Sync Claude Code todos to Fizzy.do cards automatically\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Onur Keskin\"\n      },\n      \"source\": \"./plugins/fizzy\",\n      \"homepage\": \"https://github.com/keskinonur/claude-plugin-fizzy\"\n    }\n  ]\n}\n",
+        "README.md": "# Fizzy\n\n**Your AI's work, visible to your team.**\n\nFizzy syncs Claude Code todos to [Fizzy.do](https://fizzy.do) cards in real-time. When Claude plans and executes tasks, your team sees the progress live.\n\n## Why?\n\nWhen Claude works on complex tasks, it creates internal todo lists. These disappear when the session ends. Fizzy captures them as persistent cards your whole team can track.\n\n```\nClaude creates todos → Fizzy syncs automatically → Team sees progress in Fizzy.do\n```\n\n## Install\n\n```bash\nclaude plugin marketplace add keskinonur/claude-plugin-fizzy\nclaude plugin install fizzy\n```\n\nBuild the MCP server:\n```bash\n(cd ~/.claude/plugins/cache/fizzy-marketplace/fizzy/*/servers/fizzy-mcp && bun install && bun run build)\n```\n\n## Setup\n\n1. Get your API token from [Fizzy.do Settings](https://app.fizzy.do/settings)\n\n2. Connect your account:\n   ```\n   /fizzy:setup <your-token>\n   ```\n\n3. Set your sync target:\n   ```\n   /fizzy:configure \"My Project\"\n   ```\n\nDone. Your todos now sync automatically.\n\n## How It Works\n\nWhen Claude uses `TodoWrite`, a hook automatically:\n- Creates a card in your configured board\n- Adds each todo as a step\n- Updates completion status in real-time\n- Prefixes cards with `[Claude]` for easy filtering\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/fizzy:setup <token>` | Connect your Fizzy.do account |\n| `/fizzy:configure <board>` | Set which board to sync to |\n| `/fizzy:status` | Check connection and sync status |\n\n## For Teams\n\nCards created by Claude show up alongside your team's work in Fizzy.do:\n\n- **Transparency** - See what Claude is working on\n- **Handoff** - If Claude stops, remaining steps are visible\n- **Integration** - AI work tracked in same board as human work\n\n## Token Storage\n\nFizzy checks these locations (in order):\n1. Environment variable `FIZZY_TOKEN`\n2. macOS Keychain\n3. Config file `~/.claude/plugins/fizzy/config.json`\n\n## Requirements\n\n- Claude Code CLI\n- Node.js 18+\n- Fizzy.do account\n- `jq` and `curl`\n\n## Resources\n\n- [Fizzy API Documentation](https://github.com/basecamp/fizzy/blob/main/docs/API.md)\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "fizzy",
+          "description": "Sync Claude Code todos to Fizzy.do cards automatically",
+          "version": "1.0.0",
+          "author": {
+            "name": "Onur Keskin"
+          },
+          "source": "./plugins/fizzy",
+          "homepage": "https://github.com/keskinonur/claude-plugin-fizzy",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add keskinonur/claude-plugin-fizzy",
+            "/plugin install fizzy@fizzy-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "author": {
+    "id": "a-pavithraa",
+    "display_name": "Pavithra",
+    "avatar_url": "https://avatars.githubusercontent.com/u/23714753?u=0d1fe68d0230491cb7aeb56f684b8d41e5449c86&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "springboot-skills-marketplace",
+      "version": null,
+      "description": "A collection of Claude Code skills for creating Spring Boot applications with proper architecture patterns",
+      "repo_full_name": "a-pavithraa/springboot-skills-marketplace",
+      "repo_url": "https://github.com/a-pavithraa/springboot-skills-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 6,
+        "forks": 0,
+        "pushed_at": "2026-01-29T14:06:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\r\n  \"name\": \"springboot-skills-marketplace\",\r\n  \"owner\": {\r\n    \"name\": \"Pavithra\"\r\n  },\r\n  \"metadata\": {\r\n    \"description\": \"A collection of Claude Code skills for creating Spring Boot applications with proper architecture patterns\",\r\n    \"version\": \"1.0.0\",\r\n    \"pluginRoot\": \"./plugins\"\r\n  },\r\n  \"plugins\": [\r\n    {\r\n      \"name\": \"springboot-architecture\",\r\n      \"source\": \"./plugins/springboot-architecture\",\r\n      \"description\": \"Skills for creating Spring Boot projects with architecture patterns (Layered to DDD+Hexagonal)\",\r\n      \"version\": \"1.0.0\",\r\n      \"author\": {\r\n        \"name\": \"Pavithra\"\r\n      },\r\n      \"repository\": \"https://github.com/a-pavithraa/springboot-skills-marketplace\",\r\n      \"category\": \"spring-boot\",\r\n      \"tags\": [\"spring-boot\", \"java\", \"architecture\", \"ddd\", \"hexagonal\", \"spring-data-jpa\", \"jpa\", \"hibernate\"],\r\n      \"strict\": false,\r\n      \"agents\": [\r\n        \"./skills/creating-springboot-projects/SKILL.md\",\r\n        \"./skills/spring-data-jpa/SKILL.md\"\r\n      ]\r\n    }\r\n  ]\r\n}\r\n",
+        "README.md": "# Spring Boot Skills Marketplace\n\nClaude Code skills that help you build Spring Boot apps with architecture that actually fits your needs.\n\n## Why This Exists\n\nProjects that start simple tend to grow messy. These skills help you pick the right architecture for where you are now—with a clear path forward when things get complex.\n\n> **Start simple. Add complexity only when complexity demands it.**\n\nBuilt on patterns from [spring-boot-application-architecture-patterns](https://github.com/sivaprasadreddy/spring-boot-application-architecture-patterns).\n\n## Architecture Patterns (Progressive)\n\n| Pattern | Complexity | When to Use |\n|---------|-----------|-------------|\n| **Layered** | ⭐ Low | Simple CRUD, prototypes, MVPs |\n| **Package-by-Module** | ⭐⭐ Low-Medium | 3-5 distinct features, medium apps |\n| **Modular Monolith** | ⭐⭐ Medium | Need module boundaries, Spring Modulith |\n| **Tomato** | ⭐⭐⭐ Medium-High | Rich domain, Value Objects, type safety |\n| **DDD+Hexagonal** | ⭐⭐⭐⭐ High | Complex domains, CQRS, infra independence |\n\n## Installation\n\n> **Using Codex?** See [CODEX-COMPATIBILITY.md](./CODEX-COMPATIBILITY.md) for detailed Codex installation and usage instructions.\n\n### Claude Code (Plugin Marketplace)\n\n```bash\n/plugin marketplace add a-pavithraa/springboot-skills-marketplace\n/plugin enable a-pavithraa/springboot-skills-marketplace\n/plugin install springboot-architecture@springboot-skills-marketplace\n```\n\n### Claude Code (Manual Installation)\n\n```bash\n# Clone or download this repository\ngit clone https://github.com/a-pavithraa/springboot-skills-marketplace.git\n\n# Copy skills to Claude Code skills directory\ncp -r springboot-skills-marketplace/plugins/springboot-architecture/skills/* ~/.claude/skills/\n```\n\n### Codex (Manual Installation)\n\n```bash\n# Clone or download this repository\ngit clone https://github.com/a-pavithraa/springboot-skills-marketplace.git\n\n# Copy skills to Codex skills directory\nmkdir -p ~/.codex/skills\ncp -r springboot-skills-marketplace/plugins/springboot-architecture/skills/* ~/.codex/skills/\n```\n\n## Usage\n\n### Claude Code\n\nSkills are automatically discovered and loaded when relevant. Claude will invoke them based on your request:\n\n```\nYou: \"I need to create a new Spring Boot microservice\"\nClaude: [Automatically loads creating-springboot-projects skill]\n```\n\nYou can also explicitly request a skill:\n```\nYou: \"Use the spring-data-jpa skill to optimize this repository\"\n```\n\n### Codex\n\nSkills must be manually invoked using the `$skill-name` syntax:\n\n```\nusing $creating-springboot-projects create a new order service\nusing $spring-data-jpa optimize this repository code\nusing $springboot-migration upgrade to Spring Boot 4\nusing $code-reviewer review this service implementation\n```\n\nFor detailed reference chapters, include the path:\n```\nusing $spring-data-jpa and ~/.codex/skills/spring-data-jpa/references/dto-projections.md implement efficient queries\n```\n\n## Available Skills\n\n### creating-springboot-projects\n\nAsks a few questions about your project, then builds the right architecture from the start.\n\nWhat you get: assessment-driven scaffolding, Spring Initializr setup, and templates for Value Objects, Rich Entities, CQRS patterns, converters—whatever your chosen architecture needs.\n\n**Quick assessment covers:**\n- Domain complexity (CRUD vs. business rules)\n- Team size and project lifespan\n- Type safety requirements\n- Bounded contexts\n\n### spring-data-jpa\n\nHelps you write JPA code that doesn't slow down six months later.\n\nCovers query patterns, DTO projections, custom repositories, CQRS query services, and the performance anti-patterns that bite everyone eventually (repositories for every entity, method-name query hell, blind `save()` calls).\n\n### springboot-migration\n\nStep-by-step migration to Spring Boot 4 + Java 25 (with Spring Modulith 2 and Testcontainers 2 support).\n\nScans your project first, then walks through dependencies → code → config in phases. Includes retry/resilience patterns and references for each upgrade target.\n\n### code-reviewer\n\nSanity-checks your Boot 4 / Java 25 project for architecture fit and performance gotchas.\n\nCovers all five architecture patterns (when to use, when to avoid), plus checklists for events, CQRS, Modulith boundaries. Catches N+1 queries, missing caches, virtual thread pinning, and other performance traps.\n\nUse this when you want a second opinion or need to decide if it's time to evolve your architecture.\n\n## Usage Examples\n\n**\"I need a REST API for products with basic CRUD.\"**\n→ Asks about your domain, team, and timeline. Suggests Layered architecture. Generates scaffolding.\n\n**\"I need an order service with payments and inventory rules.\"**\n→ Assesses complexity. Recommends Tomato architecture. Generates value objects, rich entities, CQRS services.\n\n**\"My product search is slow.\"**\n→ Analyzes your queries, spots N+1 issues, refactors to DTO projections.\n\n**\"We need to migrate from Boot 3 to Boot 4.\"**\n→ Runs migration scanner, plans phased upgrade (dependencies → code → config), applies and verifies each step.\n\n**\"Can you review our Boot 4 service for issues?\"**\n→ Checks architecture pattern fit, hunts for performance problems (N+1, missing caches, virtual thread pinning, entity leaks).\n\n## Templates & Assets\n\n**Architecture templates** (`creating-springboot-projects/assets/`)\nValue Objects, Rich Entities, CQRS services, converters, REST controllers, Flyway migrations, Testcontainers, ProblemDetail handlers.\n\n**JPA templates** (`spring-data-jpa/assets/`)\nQuery repositories, DTO projections, custom repos, CQRS query services, relationship patterns.\n\n**Reviewer references** (`java25-springboot4-reviewer/references/`)\nArchitecture patterns, decision matrices, performance checklists.\n\n**Reference guides** (`spring-data-jpa/references/`)\nQuery patterns, projections, custom repositories, relationship handling, performance tuning.\n\n## Testing Skills\n\nWant to verify skills work as intended? See the `tests/` directory for baseline scenarios.\n\n**Quick start:**\n```bash\n# Run one scenario in 5 minutes\ncd tests\ncat QUICKSTART.md\n```\n\n**Full test suite:**\n- 8 baseline scenarios testing each skill's core behaviors\n- RED-GREEN-REFACTOR methodology\n- Rationalization tracking\n- See `tests/README.md` for complete testing guide\n\nBased on [terraform-skill testing approach](https://github.com/antonbabenko/terraform-skill/blob/master/tests/baseline-scenarios.md).\n\n## Prerequisites\n\n- Claude Code CLI\n- Java 25\n- Maven or Gradle\n- Spring Boot 4.0+ familiarity\n\n## Evolution Path\n\nStart simple, evolve as needed:\n\n```text\nLayered → Package-by-Module → Modular Monolith → Tomato → DDD+Hexagonal\n```\n\n## Credits\n\n- Architecture patterns: [Siva Prasad Reddy](https://github.com/sivaprasadreddy)\n- Spring Boot 4 features: [spring-boot-4-features](https://github.com/sivaprasadreddy/spring-boot-4-features)\n- Modular monolith reference: [spring-modular-monolith](https://github.com/sivaprasadreddy/spring-modular-monolith)\n- Marketplace inspiration: [sivalabs-marketplace](https://github.com/sivaprasadreddy/sivalabs-marketplace)\n- JPA/Hibernate best practices: [Vlad Mihalcea](https://vladmihalcea.com/blog/)\n"
+      },
+      "plugins": [
+        {
+          "name": "springboot-architecture",
+          "source": "./plugins/springboot-architecture",
+          "description": "Skills for creating Spring Boot projects with architecture patterns (Layered to DDD+Hexagonal)",
+          "version": "1.0.0",
+          "author": {
+            "name": "Pavithra"
+          },
+          "repository": "https://github.com/a-pavithraa/springboot-skills-marketplace",
+          "category": "spring-boot",
+          "tags": [
+            "spring-boot",
+            "java",
+            "architecture",
+            "ddd",
+            "hexagonal",
+            "spring-data-jpa",
+            "jpa",
+            "hibernate"
+          ],
+          "strict": false,
+          "agents": [
+            "./skills/creating-springboot-projects/SKILL.md",
+            "./skills/spring-data-jpa/SKILL.md"
+          ],
+          "categories": [
+            "architecture",
+            "ddd",
+            "hexagonal",
+            "hibernate",
+            "java",
+            "jpa",
+            "spring-boot",
+            "spring-data-jpa"
+          ],
+          "install_commands": [
+            "/plugin marketplace add a-pavithraa/springboot-skills-marketplace",
+            "/plugin install springboot-architecture@springboot-skills-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

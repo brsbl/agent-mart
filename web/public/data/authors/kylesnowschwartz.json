@@ -6,36 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "claude-handoff",
-      "version": "1.0.0",
-      "description": "Local marketplace for Claude-Handoff plugin development",
-      "repo_full_name": "kylesnowschwartz/claude-handoff",
-      "repo_url": "https://github.com/kylesnowschwartz/claude-handoff",
-      "repo_description": null,
-      "signals": {
-        "stars": 25,
-        "forks": 2,
-        "pushed_at": "2026-01-05T07:09:03Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-handoff\",\n  \"owner\": {\n    \"name\": \"Kyle Snow Schwartz\",\n    \"email\": \"kyle.snowschwartz@gmail.com\"\n  },\n  \"description\": \"Local marketplace for Claude-Handoff plugin development\",\n  \"version\": \"1.0.0\",\n  \"plugins\": [\n    {\n      \"name\": \"claude-handoff\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./handoff-plugin\",\n      \"description\": \"Intelligent context transfer for focused thread transitions\"\n    }\n  ]\n}\n",
-        "README.md": "![Handoff](banner.png)\n\nGoal-focused context transfer for Claude Code - transform `/compact` into system instructions that preserves the current task post-compact\n\n## What It Does\n\nClaude-Handoff extends `/compact` with optional goal-focused handoff. When you run `/compact handoff:<your goal>` the plugin:\n\n1. Captures your goal and current session state before compaction\n2. Analyzes the previous thread to extract an immediate handoff instructions\n3. Injects the handoff as a system message in the new, compacted session\n4. Automatically starts the new session ready to execute your goal\n\nSimply prompt the agent to 'proceed' and you're away.\n\n## How It Works\n\n1. **PreCompact Hook**: Activates only when you use `/compact handoff:...` format\n   - Extracts your goal from the `handoff:` prefix\n   - Uses `claude --resume <session> --fork-session --model haiku --print <prompt>` to generate handoff immediately\n   - Saves pre-generated handoff content and goal to `.git/handoff-pending/handoff-context.json` temporarily\n\n2. **Compact**: Proceeds normally\n\n3. **SessionStart Hook**: Runs in the continued session\n   - Reads pre-generated handoff content from saved state\n   - Injects handoff as system message\n   - Cleans up state file\n\n4. **Result**: Session continues with focused context injected, ready to execute your goal, just prompt it to go\n\n## Why?\n\nTraditional compaction is lossy and unfocused - each summary degrades context quality. Goal-focused handoffs produce sharper results and get you back where you left off.\n\n## Trade-offs\n\nInspired by [AmpCode's handoff model](https://ampcode.com/news/handoff), and my own observations, this plugin auto-injects generated context without human review. Claude Code hooks can't pause for user editing.\n\nPreCompact prompting for handoff adds some execution time to `/compact`, approximately ~20s.\n\n## Installation\n\n```bash\n# From your project directory\nclaude plugin marketplace add kylesnowschwartz/claude-handoff\nclaude plugin install claude-handoff\n```\n\n## Usage\n\n**Trigger goal-focused handoff:**\n```bash\n/compact handoff:now implement this for teams as well, not just individual users\n/compact handoff:execute phase one of the created plan\n/compact handoff:find other places in the codebase that need this same fix\n```\n\n**Regular compact (no handoff):**\n```bash\n/compact\n/compact keep the context tight\n```\n\n## Configuration\n\nEnable debug logging: Edit `handoff-plugin/hooks/lib/logging.sh` and set `LOGGING_ENABLED=true`\n\nView logs:\n```bash\ntail -f /tmp/handoff-precompact.log /tmp/handoff-sessionstart.log\n```\n\n## Development\n\nThis plugin follows the Claude Code plugin architecture:\n- `.claude-plugin/marketplace.json` - Local marketplace definition\n- `handoff-plugin/.claude-plugin/plugin.json` - Plugin metadata\n- `handoff-plugin/commands/` - Slash commands\n- `handoff-plugin/hooks/` - Hook implementations\n\n## License\n\nMIT - See LICENSE file for details\n"
-      },
-      "plugins": [
-        {
-          "name": "claude-handoff",
-          "version": "1.0.0",
-          "source": "./handoff-plugin",
-          "description": "Intelligent context transfer for focused thread transitions",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add kylesnowschwartz/claude-handoff",
-            "/plugin install claude-handoff@claude-handoff"
-          ]
-        }
-      ]
-    },
-    {
       "name": "jira-cli-skill",
       "version": null,
       "description": "Jira integration via jira-cli with wiki markup formatting support",
