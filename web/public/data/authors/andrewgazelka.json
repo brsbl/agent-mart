@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "andrewgazelka",
+    "display_name": "Andrew Gazelka",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7644264?u=141334a6f6f177313947feab3acc4f205ce8d719&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mcsound",
+      "version": null,
+      "description": "Minecraft sound effects for Claude Code events",
+      "repo_full_name": "andrewgazelka/mcsound",
+      "repo_url": "https://github.com/andrewgazelka/mcsound",
+      "repo_description": "Add Minecraft sound effects to Claude Code",
+      "signals": {
+        "stars": 6,
+        "forks": 2,
+        "pushed_at": "2025-12-29T23:06:19Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mcsound\",\n  \"owner\": {\n    \"name\": \"Andrew Gazelka\",\n    \"github\": \"andrewgazelka\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mcsound\",\n      \"source\": \"./\",\n      \"description\": \"Minecraft sound effects for Claude Code events\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Andrew Gazelka\",\n        \"github\": \"andrewgazelka\"\n      },\n      \"license\": \"MIT\",\n      \"homepage\": \"https://github.com/andrewgazelka/mcsound\",\n      \"repository\": \"https://github.com/andrewgazelka/mcsound\",\n      \"keywords\": [\"minecraft\", \"sounds\", \"hooks\", \"notifications\"],\n      \"category\": \"utilities\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mcsound\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Minecraft sound effects for Claude Code events\",\n  \"author\": {\n    \"name\": \"Andrew Gazelka\",\n    \"github\": \"andrewgazelka\"\n  },\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "<p align=\"center\">\n  <img src=\".github/assets/header.svg\" alt=\"mcsound\" width=\"100%\"/>\n</p>\n\n<p align=\"center\">\n  <strong>Add Minecraft sound effects to Claude Code</strong>\n</p>\n\n<p align=\"center\">\n\n```bash\nclaude plugin marketplace add andrewgazelka/mcsound\nclaude plugin install mcsound\n```\n\n</p>\n\n---\n\nA Claude Code plugin that plays Minecraft sounds for coding events — hear a door open when you start a session, level up when tasks complete, and amethyst chimes when files are saved.\n\n## Sound Mappings\n\n| Event | Sound |\n|-------|-------|\n| Session start | `random/door_open` |\n| Session end | `random/door_close` |\n| Task complete | `random/levelup` |\n| Subagent complete | `random/orb` |\n| Notification | `note/bell` |\n| File write/edit | `block/amethyst/place1` |\n| Bash command | `random/click` |\n| Task spawn | `block/end_portal/endportal` |\n| Web search/fetch | `block/end_portal/eyeplace1` |\n\n## Configuration\n\nOverride any sound via environment variables:\n\n| Variable | Default |\n|----------|---------|\n| `MCSOUND_SESSION_START` | `random/door_open` |\n| `MCSOUND_SESSION_END` | `random/door_close` |\n| `MCSOUND_STOP` | `random/levelup` |\n| `MCSOUND_SUBAGENT_STOP` | `random/orb` |\n| `MCSOUND_NOTIFICATION` | `note/bell` |\n| `MCSOUND_WRITE` | `block/amethyst/place1` |\n| `MCSOUND_BASH` | `random/click` |\n| `MCSOUND_TASK` | `block/end_portal/endportal` |\n| `MCSOUND_WEB` | `block/end_portal/eyeplace1` |\n\n```bash\n# Example: change task complete sound\nexport MCSOUND_STOP=\"mob/villager/celebrate\"\n```\n\n## Requirements\n\n- Minecraft Java Edition must have been launched at least once (to download sound assets)\n- Either [Nix](https://nixos.org/) or Rust/Cargo for building locally\n\n## Installation\n\n### With Nix\nThe plugin uses `nix run` for zero-install execution. No additional setup needed.\n\n### Without Nix (Cargo)\nIf you don't have Nix installed, build the binary locally:\n\n```bash\ncd ~/.claude/plugins/marketplaces/mcsound\ncargo build --release\n```\n\nThe plugin will automatically use the built binary at `target/release/mcsound`.\n\n### Prism Launcher / Alternative Minecraft Locations\nIf you use Prism Launcher or have Minecraft installed in a non-standard location, set the `MINECRAFT_HOME` environment variable:\n\n```bash\nexport MINECRAFT_HOME=\"$HOME/.local/share/PrismLauncher\"\n```\n\n---\n\n<details>\n<summary>Standalone CLI usage</summary>\n\nCan also be used as a standalone CLI tool:\n\n```bash\n# Run directly with Nix\nnix run github:andrewgazelka/mcsound -- play mob/zombie/death\n\n# List all sounds\nnix run github:andrewgazelka/mcsound -- list\n\n# Filter sounds\nnix run github:andrewgazelka/mcsound -- list zombie\n```\n\n**Install with Cargo:**\n```bash\ncargo install --git https://github.com/andrewgazelka/mcsound\n\nmcsound play mob/zombie/death\nmcsound list zombie\n```\n\n**Minecraft path:** Auto-detects standard locations. Override with `MINECRAFT_HOME` env var.\n\n</details>\n\n<details>\n<summary>How it works</summary>\n\nReads the Minecraft asset index to map sound names to hashed files in `.minecraft/assets/objects/`. Audio playback is bundled (no ffmpeg required).\n\n</details>\n"
+      },
+      "plugins": [
+        {
+          "name": "mcsound",
+          "source": "./",
+          "description": "Minecraft sound effects for Claude Code events",
+          "version": "0.1.0",
+          "author": {
+            "name": "Andrew Gazelka",
+            "github": "andrewgazelka"
+          },
+          "license": "MIT",
+          "homepage": "https://github.com/andrewgazelka/mcsound",
+          "repository": "https://github.com/andrewgazelka/mcsound",
+          "keywords": [
+            "minecraft",
+            "sounds",
+            "hooks",
+            "notifications"
+          ],
+          "category": "utilities",
+          "categories": [
+            "hooks",
+            "minecraft",
+            "notifications",
+            "sounds",
+            "utilities"
+          ],
+          "install_commands": [
+            "/plugin marketplace add andrewgazelka/mcsound",
+            "/plugin install mcsound@mcsound"
+          ]
+        }
+      ]
+    }
+  ]
+}

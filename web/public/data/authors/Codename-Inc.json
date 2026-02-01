@@ -34,6 +34,60 @@
           ]
         }
       ]
+    },
+    {
+      "name": "spectre",
+      "version": "2.1.2",
+      "description": "SPECTRE - Structured agentic workflow for AI coding. Scope, Plan, Execute, Clean, Test, Rebase, Evaluate. A meta-prompting system where prompts invoke subagents that execute specialized prompts.",
+      "repo_full_name": "Codename-Inc/spectre",
+      "repo_url": "https://github.com/Codename-Inc/spectre",
+      "repo_description": "SPECTRE is a meta prompt + subagent based Agentic Coding Workflow - /Scope, /Plan, /Execute, /Clean, Test, Release, /Evaluate - that uses simply step by step product development workflow to generate high quality results from your AI Coding Agents.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-01T15:49:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"spectre\",\n  \"version\": \"2.1.2\",\n  \"owner\": {\n    \"name\": \"Joe Fernandez\",\n    \"email\": \"joe@subspace.build\"\n  },\n  \"metadata\": {\n    \"description\": \"SPECTRE - Structured agentic workflow for AI coding. Scope, Plan, Execute, Clean, Test, Rebase, Evaluate. A meta-prompting system where prompts invoke subagents that execute specialized prompts.\",\n    \"homepage\": \"https://github.com/Codename-Inc/spectre\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"spectre\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"Codename-Inc/spectre\"\n      },\n      \"description\": \"Agentic coding workflow with session memory. SPECTRE guides you through Scope, Plan, Execute, Clean, Test, Rebase, and Evaluate phases. Includes cross-session memory via /spectre:handoff. Start with /spectre:scope.\",\n      \"version\": \"2.1.2\",\n      \"author\": {\n        \"name\": \"Joe Fernandez\",\n        \"email\": \"joe@subspace.build\"\n      },\n      \"keywords\": [\n        \"workflow\",\n        \"tdd\",\n        \"planning\",\n        \"code-review\",\n        \"session\",\n        \"memory\",\n        \"handoff\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# SPECTRE\n\n**S**cope → **P**lan → **E**xecute → **C**lean → **T**est → **R**ebase → **E**valuate\n\nA simple, powerful, and **proven** structured development workflow plugin for Claude Code.\n\n## Core Principles\n\n- Great Inputs -&gt; Great Outputs\n- Ambiguity is Death\n- One Workflow, Every Feature, Any Size, Any Codebase\n- Agent Agnostic (aspirational, right now this is Claude Code coupled)\n\n## Why SPECTRE?\n\nPrompt based workflows are how you get better, higher quality, and more consistent results from AI Coding Agents.\n\nThe better your prompt based workflows, the more AI can take on, the longer AI can work autonomously, the more easily you can multi-task, and suddently you are 100x'ing your output.\n\nI created Spectre because I wanted:\n\n- a repeatable daily driver workflow that works on brand new projects, and large existing codebases.\n\n- a single workflow that works on both small & big features without being overwhelmed with process\n\n- a workflow that delivers robusts engineering plans when needed, or a concise set of tasks if not\n\n- hands on planning but hands off execution\n\n- higher quality INPUT with LESS WORK so i can ensure the outputs are more aligned with my vision\n\n- ***stupid. simple. memory.*** agent sessions are aware of the ongoing thread of work (/spectre:handoff)\n\n## About Spectre\n\nSpectre is the result of over 12 months of daily Claude Code use. I used and iterated on Spectre ***every single day***.\n\nThese are the *actual* prompts I use non stop every day.\n\nWith Spectre, I built an React Native based AI Agent + GPS Rangefinder for Golfers (New June (in Alpha)) and a 250k line Tauri/Rust/React desktop application called Subspace (in open Beta).\n\nSpectre made products like New June and Subspace possible.\n\n## Quick Start\n\n### Claude Code\n\n```bash\n# Add marketplace and install\n/plugin marketplace add Codename-Inc/spectre\n/plugin install spectre@codename\n```\n\nThen start building:\n\n```plaintext\n/spectre:scope \n```\n\nThat's it. You just start with 1 command to build features.\n\n## The SPECTRE Workflow\n\nIf you start with /scope, your agent will guide you through the rest of the steps automatically.\n\n| Phase | Command | What It Does |\n| --- | --- | --- |\n| **S**cope | `/spectre:scope` | Define requirements, constraints, success criteria |\n| **P**lan | `/spectre:plan` | Research codebase, create implementation plan |\n| **E**xecute | `/spectre:execute` | Parallel implementation with wave-based delivery |\n| **C**lean | `/spectre:clean` | Remove dead code, lint, format |\n| **T**est | `/spectre:test` | Risk-aware test coverage |\n| **R**ebase | `/spectre:rebase` | Safe merge preparation with conflict handling |\n| **E**valuate | `/spectre:evaluate` | Document changes + architecture review |\n\nEach command ends with \"Next Steps\" suggestions, so you always know what prompt to run next — you don’t have to remember what the prompts are, which is one thing that kills me about many other Spec Driven Development workflows.\n\nYou can use *any* of the commands in any sequence you want - they are good standalone too. More on my typical daily usage below.\n\n## Spectre Session Memory\n\nSPECTRE can maintain and accumulates context across sessions when you use the /spectre:handoff command. To get the most from Spectre's Session Memory, we recommend that you:\n\n1. turn off auto-compact in Claude Code /config settings, and\n\n2. run /spectre:handoff liberally when you are switching gears or the context window is getting north of 160k tokens.\n\n### How It Works\n\nWhen you run /spectre:handoff, a status report will get generated for that session, and automatically loaded into your context window for the next session. You’ll see a nice summary of the status when you run /clear.\n\nIf you already had previous sessions, a subagent (spectre:sync) will review the last 3 status updates and merge into a single continuous session memory.\n\nVoila -- trailing 3 session memory snapshots.\n\nIf you want to start fresh — /spectre:forget archives the session_logs.\n\n```plaintext\n/spectre:handoff   # Save progress before session ends\n/spectre:forget    # Clear memory for fresh start\n```\n\n## Subagents\n\nSPECTRE dispatches specialized subagents for different tasks:\\\n\\\nNOTE: You don’t even need to know that these subagents exist. The prompts instruct Claude Code to call them automatically. \\\n\\\nAlthough I do sometimes use @spectre:researcher for web research. Its like mini deep-research.\n\n| Agent | Purpose |\n| --- | --- |\n| `@spectre:dev` | Implementation with MVP focus |\n| `@spectre:analyst` | Understand how code works |\n| `@spectre:finder` | Find where code lives |\n| `@spectre:patterns` | Find reusable patterns |\n| `@spectre:researcher` | Web research |\n| `@spectre:tester` | Test automation |\n| `@spectre:reviewer` | Independent code review |\n\n## How I Typically use Spectre\n\n99.9% of my day is spent using Spectre exactly like this.\n\n- start /spectre:scope to get crisp on what’s in/out. this is non-negotiable unless the feature is a one line ask.\n\n- /spectre:plan to build out a well researched technical design or set of tasks\n\n- once i have scope/plan/tasks, I typically run /spectre:handoff to get a fresh context window with awareness of what we’re working on.\n\n- then run /spectre:execute to use parallel subagents to work through the tasks. Execute is a meta prompt that also calls /spectre:code_review and /spectre:validate.\n\n  - side note /spectre:validate is a killer prompt. It breaks down the original tasks and dispatches subagents to verify. find stuff missing all the time with this.\n\n- From here — I do a bunch off manual testing and fixing. If something new comes up, or if the scope is not what I’d hoped, I run a new SPECTRE cycle from within the project.\n\n- Once wrapping up, /spectre:clean helps find dead code, duplicates, verifies, lint, commits any stragglers, etc., then /spectre:test then writes tests based on a risk-adjusted framework focusing on behavior not implementation details.\n\n- /spectre:rebase works great but obviously you do you with your release flow.\n\n- /spectre:evaluate is a good way to document the work that you can later easily reference with an @, and the architecture review is helpful to think through if what you built ultimately needs some future work. Nothing ever goes as planned after all.\n\nNote: I'm hard at work on a major upgrade to the /evaluate prompt, so watch for that. Hint: recursive learning.\n\n## Slash Command Reference\n\n### Core Workflow\n\n| Command | Description |\n| --- | --- |\n| `/spectre:scope` | Interactive feature scoping |\n| `/spectre:plan` | Research codebase, create implementation plan |\n| `/spectre:execute` | Wave-based parallel execution with code review |\n| `/spectre:clean` | Code cleanup and quality gates |\n| `/spectre:test` | Risk-aware test coverage |\n| `/spectre:rebase` | Safe rebase with conflict handling |\n| `/spectre:evaluate` | Documentation and architecture review |\n\n### Quick Start\n\n| Command | Description |\n| --- | --- |\n| `/spectre:quick_dev` | Scope + plan for small/medium tasks |\n\n### Discovery & Research\n\n| Command | Description |\n| --- | --- |\n| `/spectre:kickoff` | Deep research for high-ambiguity features |\n| `/spectre:research` | Parallel codebase research |\n\n### Session Memory\n\n| Command | Description |\n| --- | --- |\n| `/spectre:handoff` | Save session state snapshot |\n| `/spectre:forget` | Clear memory, archive logs |\n\n### Utilities\n\n| Command | Description |\n| --- | --- |\n| `/spectre:ux_spec` | UX specification for UI-heavy features |\n| `/spectre:create_plan` | Generate technical design doc |\n| `/spectre:create_tasks` | Detailed task breakdown |\n| `/spectre:code_review` | Independent code review |\n| `/spectre:validate` | Requirements verification |\n| `/spectre:architecture_review` | Principal architect assessment |\n| `/spectre:fix` | Investigate bugs & implement fixes |\n\n## Repository Structure\n\n```plaintext\nspectre/\n├── plugin.json       # Plugin manifest\n├── commands/         # Slash commands\n├── agents/           # Subagent definitions\n├── hooks/            # Session memory hooks\n├── skills/           # Skills\n└── .claude-plugin/   # Marketplace registration\n```\n\n> **CLI for Other Agents**: If you need to run SPECTRE from Codex or other AI agents, see [spectre-labs/cli](https://github.com/Codename-Inc/spectre-labs/tree/main/cli)\n\n## License\n\nMIT"
+      },
+      "plugins": [
+        {
+          "name": "spectre",
+          "source": {
+            "source": "github",
+            "repo": "Codename-Inc/spectre"
+          },
+          "description": "Agentic coding workflow with session memory. SPECTRE guides you through Scope, Plan, Execute, Clean, Test, Rebase, and Evaluate phases. Includes cross-session memory via /spectre:handoff. Start with /spectre:scope.",
+          "version": "2.1.2",
+          "author": {
+            "name": "Joe Fernandez",
+            "email": "joe@subspace.build"
+          },
+          "keywords": [
+            "workflow",
+            "tdd",
+            "planning",
+            "code-review",
+            "session",
+            "memory",
+            "handoff"
+          ],
+          "categories": [
+            "code-review",
+            "handoff",
+            "memory",
+            "planning",
+            "session",
+            "tdd",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Codename-Inc/spectre",
+            "/plugin install spectre@spectre"
+          ]
+        }
+      ]
     }
   ]
 }
