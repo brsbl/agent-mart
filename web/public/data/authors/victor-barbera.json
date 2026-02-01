@@ -2,98 +2,24 @@
   "author": {
     "id": "victor-barbera",
     "display_name": "Víctor Barberà",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/62574048?u=00e108810b6ceeb8784465b3e8b4544883a76e6f&v=4",
-    "url": "https://github.com/victor-barbera",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 3,
-      "total_skills": 0,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/62574048?u=00e108810b6ceeb8784465b3e8b4544883a76e6f&v=4"
   },
   "marketplaces": [
     {
       "name": "vbq-cc-marketplace",
       "version": null,
       "description": "Marketplace of claude plugins used by me.",
-      "owner_info": {
-        "name": "Víctor Barberà",
-        "email": "me@victorbarbera.dev"
-      },
-      "keywords": [],
       "repo_full_name": "victor-barbera/cc-marketplace",
       "repo_url": "https://github.com/victor-barbera/cc-marketplace",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-10-22T08:45:18Z",
-        "created_at": "2025-10-21T14:53:02Z",
-        "license": null
+        "pushed_at": "2025-10-22T08:45:18Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 335
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/rpi-workflow",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/rpi-workflow/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/rpi-workflow/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 245
-        },
-        {
-          "path": "plugins/rpi-workflow/commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/rpi-workflow/commands/generate-n-plans.md",
-          "type": "blob",
-          "size": 822
-        },
-        {
-          "path": "plugins/rpi-workflow/commands/implement-plan.md",
-          "type": "blob",
-          "size": 1052
-        },
-        {
-          "path": "plugins/rpi-workflow/commands/research-feature.md",
-          "type": "blob",
-          "size": 1002
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"vbq-cc-marketplace\",\n  \"owner\": {\n    \"name\": \"Víctor Barberà\",\n    \"email\": \"me@victorbarbera.dev\"\n  },\n  \"metadata\": { \"description\": \"Marketplace of claude plugins used by me.\" },\n  \"plugins\": [\n    {\n      \"name\": \"rpi-workflow\",\n      \"source\": \"./plugins/rpi-workflow\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
-        "plugins/rpi-workflow/.claude-plugin/plugin.json": "{\n  \"name\": \"rpi-workflow\",\n  \"version\": \"1.0.0\",\n  \"description\": \"A plugin that contains commands for the research -> plan -> implement workflow\",\n  \"author\": {\n    \"name\": \"Víctor Barberà Quiñoa\",\n    \"email\": \"me@victorbarbera.dev\"\n  }\n}\n",
-        "plugins/rpi-workflow/commands/generate-n-plans.md": "---\nargument-hint: [amount] [feature-id]\ndescription: Create n  amount of plans for a feature\n---\n\nTHINK HARD.\n\nGenerate $1 amount of plans for a feature with id $2, you'll use a sub-agent to generate each plan so that each plan is unique.\n\nA research file has already been gerated by a human or agent. Read it from .claude/research/[$2].md. If you can't find the research file, ask the user to provide the research.\n\nThen, think of n directions for the plans. Just think of the main directions, don't go into the details yet.\nThen, trigger a sub-agent for each direction to generate a plan. The sub-agent will use the research from .claude/research/[$2].md to generate the plan.\n\nOnce you have generated all the plans, return the plans in a file called .claude/plans/[$2].md, adding a comparison of the plans at the end.\n",
-        "plugins/rpi-workflow/commands/implement-plan.md": "---\nargument-hint: [plan-id] [approach-id]\ndescription: Implement a plan for a feature\n---\n\nImplement the plan that can be found in .claude/plans/[$1].md, if you can't find the plan, ask the user to provide the plan.\n\nInside of the plan there might be more than one approach, implement the one with id $2, if you can't find the approach, ask the user to provide the approach.\n\n**[IMPORTANT] Git Worktree**\n- Create a new worktree before starting to make changes.\n- Use command `git worktree add .tree/[$1]-[$2]-claude-implementation -b claude/[$1]-[$2]`.\n- ONLY USE THE WORKTREE FOR THE IMPLEMENTATION.\n\n**Process**\n1- Ask the user if he wants to add details or changes to the plan.\n2- Generate the todo list for the plan.\n3- Implement the fisrt item of the todo list.\n4- Ask the user for feedback.\n5- Commit the changes (DON'T PUSH THEM).\n6- Repeat the process until the plan is implemented.\n\n**IMPORTANT**\n- Stick to the plan and the approach, don't start free styling.\n- NEVER PUSH THE CHANGES.\n- Don't test.\n- Don't lint.\n- Don't tscheck the code.\n",
-        "plugins/rpi-workflow/commands/research-feature.md": "---\nargument-hint: [feature-id]\ndescription: Research a feature and generate a file with hints for the planning agent\n---\n\nRead the initial research file in .claude/features/[$1].md that contains the feature description provided by the user.\n\nIf you can't find the feature file, ask the user to provide the feature description.\n\nThen, research the codebase for usefull information about the feature:\n\n- If there are existing implementations, you can use them as a reference.\n- If there are libraries or frameworks that can be used, you can use them as a reference.\n- If there are README.md files that describe usefull information about the feature, you can use them as a reference.\n\n(Reference document pahts, don't copy over the code).\n\nDON'T PROPOSE ANYTHING. NO ESTIMATES. NO PLANS. NO IMPLEMENTATIONS. NO CODE. JUST RESEARCH. DON'T TRY TO TELL THE NEXT AGENT WHAT TO DO, HE KNOWS. NO TODOs.\n\nOnce you have gathered all the information, return the research in a file called .claude/research/[$1].md."
+        "README.md": "# Claude Code Marketplace\n\n### Resources\n- [Claude Code Plugin Marketplace](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)\n"
       },
       "plugins": [
         {
