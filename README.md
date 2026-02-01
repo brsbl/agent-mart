@@ -63,7 +63,7 @@ agent-mart/
 
 ## Contributing
 
-Found a bug or have a feature request? [Open an issue](https://github.com/anthropics/agent-mart/issues).
+Found a bug or have a feature request? [Open an issue](https://github.com/brsbl/agent-mart/issues).
 
 ## License
 
