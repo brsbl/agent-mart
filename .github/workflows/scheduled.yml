@@ -93,19 +93,24 @@ jobs:
           # Create branch with date
           BRANCH="data/update-$(date +%Y-%m-%d)"
 
-          # Delete remote branch if it exists (from previous failed run)
-          git push origin --delete "$BRANCH" 2>/dev/null || true
-
-          git checkout -b "$BRANCH"
+          # Check if branch exists remotely
+          if git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch $BRANCH exists, updating it"
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+          else
+            echo "Creating new branch $BRANCH"
+            git checkout -b "$BRANCH"
+          fi
 
           git add -f web/public/data/ data/signals-history.json
           git commit -m "chore: update directory data $(date +%Y-%m-%d)" --no-verify
-          git push -u origin "$BRANCH" --no-verify
+          git push -u origin "$BRANCH" --force-with-lease --no-verify
 
           # Check if PR already exists for this branch
           EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
           if [ -n "$EXISTING_PR" ]; then
-            echo "PR #$EXISTING_PR already exists for branch $BRANCH"
+            echo "PR #$EXISTING_PR updated with new commit"
             exit 0
           fi
 
