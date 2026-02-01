@@ -150,56 +150,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "speech-automation-local",
-      "version": null,
-      "description": "Local marketplace for speech automation plugin",
-      "repo_full_name": "flight505/claude-speech-automation",
-      "repo_url": "https://github.com/flight505/claude-speech-automation",
-      "repo_description": "Speech automation plugin for Claude Code with direct TTS integration",
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2025-12-24T21:49:15Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"speech-automation-local\",\n  \"owner\": {\n    \"name\": \"flight505\"\n  },\n  \"metadata\": {\n    \"description\": \"Local marketplace for speech automation plugin\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"speech-automation\",\n      \"source\": \"./\",\n      \"description\": \"Intelligent automatic speech notifications with Kokoro TTS\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"flight505\",\n        \"url\": \"https://github.com/flight505\"\n      },\n      \"repository\": \"https://github.com/flight505/Intelligent-speech\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"tts\", \"speech\", \"automation\", \"kokoro\", \"notifications\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"speech-automation\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Intelligent automatic speech notifications with Kokoro TTS - provides slash commands and automation hooks\",\n  \"author\": {\n    \"name\": \"flight505\",\n    \"url\": \"https://github.com/flight505\"\n  },\n  \"homepage\": \"https://github.com/flight505/Intelligent-speech\"\n}\n",
-        "README.md": "# Speech Automation Plugin\n\nIntelligent speech notifications for Claude Code using Kokoro TTS.\n\n## Features\n\n- **🔊 Manual Speech Commands** - `/speak`, `/voices`, `/speech-status`, `/speech-config`\n- **🤖 Automatic Speech Hooks** - Smart notifications for errors, tests, builds, and long operations\n- **⚡ GPU-Accelerated** - Fast synthesis with Kokoro TTS 82M model\n- **💾 Smart Caching** - 10,000x speedup for repeated phrases\n- **🎭 8 Voices** - American and British, male and female\n- **🎯 Priority Scoring** - Intelligent event classification (0-100 scale)\n- **⏰ Quiet Hours** - Reduce or disable notifications at night (10 PM - 7 AM)\n\n## Prerequisites\n\nThis plugin requires the **speech-tts MCP server** to be configured.\n\n1. The speech-tts MCP server must be installed and configured via:\n   ```bash\n   claude mcp add speech-tts /path/to/Speech_MCP/start-mcp-server.sh\n   ```\n\n2. ML server must be running at http://ml-server:8001 with Kokoro TTS\n\n## Installation\n\nInstall the plugin:\n```bash\nclaude plugin install ~/.claude/plugins/speech-automation\n```\n\nOr for local development, the plugin can be loaded from:\n```\n~/.claude/plugins/speech-automation/\n```\n\n## Commands\n\n### /speak\nSynthesize speech from text:\n```\n/speak \"Hello world\"\n/speak \"Build complete\" --voice am_adam --speed 1.2\n```\n\n### /voices\nList all available voices:\n```\n/voices\n/voices --play-samples\n```\n\n### /speech-status\nCheck system status:\n```\n/speech-status\n```\n\n### /speech-config\nConfigure automatic speech settings:\n```\n# View current configuration\n/speech-config\n\n# Enable/disable automation\n/speech-config enable\n/speech-config disable\n\n# Adjust settings\n/speech-config set min_priority 50\n/speech-config set events.errors.enabled false\n/speech-config set quiet_hours.start_hour 23\n```\n\n## Automatic Speech\n\n**⚠️ Hooks are now installed! See [HOOKS-SETUP.md](HOOKS-SETUP.md) for details.**\n\nThe plugin includes intelligent hooks that automatically trigger speech for important events:\n\n**Event Types:**\n- 🔴 **Errors** - Exceptions, failures, crashes (voice: Adam)\n- ⏱️  **Long Operations** - Commands taking 30+ seconds (voice: Bella)\n- ✅ **Test Results** - Pytest, Jest, test pass/fail (voice: Emma)\n- 🏗️  **Build Completions** - Webpack, Vite, builds (voice: Sarah)\n- 🔀 **Git Operations** - Commits, pushes, merges (voice: George)\n\n**Getting Started:**\n```\n# Enable automatic speech\n/speech-config enable\n\n# Test with a long operation\nsleep 35 && echo \"Done\"\n\n# Adjust sensitivity\n/speech-config set min_priority 40  # Higher = fewer notifications\n```\n\n\n## Configuration\n\n**ML Server:** http://ml-server:8001\n**Text Limit:** 800 characters (optimal quality)\n**Cache:** 100 entries, 1 hour TTL\n**Audio Location:** ~/.cache/speech-mcp/\n\n## Voices\n\n- **af_bella** - American Female (warm, friendly)\n- **af_sarah** - American Female (professional)\n- **am_adam** - American Male (calm, measured)\n- **am_michael** - American Male (energetic)\n- **bf_emma** - British Female (refined)\n- **bf_isabella** - British Female (elegant)\n- **bm_george** - British Male (distinguished)\n- **bm_lewis** - British Male (modern)\n\n## Performance\n\n- **Cache Hit:** ~0.01ms\n- **Synthesis:** 200-500ms (GPU)\n- **Audio Playback:** ~4ms\n\n## Requirements\n\n- ML server running on http://ml-server:8001\n- Kokoro TTS service deployed\n- Claude Code >= 1.0.0\n\n## Version\n\n1.0.0 - Full release with manual commands and automatic speech hooks\n\n**Implemented:**\n- ✅ Manual speech commands (/speak, /voices, /speech-status, /speech-config)\n- ✅ Automatic speech hooks (PostToolUse, SessionStart, Stop)\n- ✅ Quiet hours configuration (10 PM - 7 AM)\n- ✅ Priority-based notifications (0-100 scoring)\n- ✅ Event-driven speech automation (errors, tests, builds, git, long-running)\n- ✅ Smart caching (10,000x speedup)\n- ✅ GPU acceleration (RTX 5070 Ti)\n- ✅ 8 voices (American and British, male and female)\n\n**Future Enhancements:**\n- Voice emotion control (pitch, tone variation)\n- Custom voice cloning\n- SSML support for rich speech formatting\n- Webhook integrations (Slack, Discord notifications)\n\n## Links\n\n- **Repository:** https://github.com/flight505/Intelligent-speech\n- **Author:** flight505\n"
-      },
-      "plugins": [
-        {
-          "name": "speech-automation",
-          "source": "./",
-          "description": "Intelligent automatic speech notifications with Kokoro TTS",
-          "version": "1.0.0",
-          "author": {
-            "name": "flight505",
-            "url": "https://github.com/flight505"
-          },
-          "repository": "https://github.com/flight505/Intelligent-speech",
-          "license": "MIT",
-          "keywords": [
-            "tts",
-            "speech",
-            "automation",
-            "kokoro",
-            "notifications"
-          ],
-          "categories": [
-            "automation",
-            "kokoro",
-            "notifications",
-            "speech",
-            "tts"
-          ],
-          "install_commands": [
-            "/plugin marketplace add flight505/claude-speech-automation",
-            "/plugin install speech-automation@speech-automation-local"
-          ]
-        }
-      ]
     }
   ]
 }

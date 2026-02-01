@@ -477,6 +477,67 @@
           ]
         }
       ]
+    },
+    {
+      "name": "tabz-beads",
+      "version": "2.0.0",
+      "description": "Claude Code orchestration plugin - multi-session workflows via beads issue tracking",
+      "repo_full_name": "GGPrompts/TabzBeads",
+      "repo_url": "https://github.com/GGPrompts/TabzBeads",
+      "repo_description": "Conductor plugin for orchestrating multi-session Claude development with beads",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-16T20:38:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"tabz-beads\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Claude Code orchestration plugin - multi-session workflows via beads issue tracking\",\n  \"owner\": {\n    \"name\": \"GGPrompts\",\n    \"url\": \"https://github.com/GGPrompts/TabzBeads\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"conductor\",\n      \"description\": \"Multi-session orchestration - beads workflows, parallel workers, visual QA via tabz-expert, completion pipelines\",\n      \"source\": \"./plugins/conductor\",\n      \"category\": \"orchestration\",\n      \"keywords\": [\"conductor\", \"orchestrate\", \"workflow\", \"multi-session\", \"parallel\", \"worker\", \"spawn\", \"swarm\", \"beads\", \"issues\", \"tabz\", \"browser\", \"visual-qa\"]\n    }\n  ]\n}\n",
+        "README.md": "# TabzBeads - Plugin Marketplace for Claude Code\n\nA collection of plugins for development workflows, browser automation, and multi-session orchestration.\n\n## Features\n\n- **Prefix taxonomy**: `bd-` (user commands), `bdc-` (conductor skills), `bdw-` (worker skills)\n- **Beads integration**: AI-native issue tracking with `bd` CLI\n- **Multi-session orchestration**: Spawn parallel workers via TabzChrome\n- **Auto-discovered skills**: Commands in `commands/`, internal skills in `skills/`\n\n## Quick Start\n\n```bash\n# User entry points (commands)\n/conductor:bd-start [issue-id]  # Single-session: you do the work (no spawn)\n/conductor:bd-plan              # Prepare backlog\n/conductor:bd-conduct           # Interactive orchestration (1-4 workers)\n/conductor:bd-auto              # Fully autonomous (all ready, no prompts)\n/conductor:bd-status            # View issue state\n/conductor:bd-new-project       # Project scaffolding\n```\n\n## Installation\n\n```bash\n./install.sh\n```\n\n## Documentation\n\n- [Conductor Workflows](docs/conductor-workflows.md) - Complete workflow reference\n- [CLAUDE.md](CLAUDE.md) - Project structure and patterns\n",
+        "plugins/conductor/README.md": "# Conductor Plugin\n\nMulti-session orchestration for Claude Code with beads-native issue tracking.\n\n## Overview\n\nThe Conductor plugin enables parallel Claude Code workflows through:\n- **Worker spawning** via TabzChrome terminals\n- **Beads integration** for issue tracking and state management\n- **Wave-based execution** for parallel task processing\n- **Automated code review** and completion pipelines\n\n## Installation\n\n```bash\n# Clone TabzBeads marketplace\ngit clone https://github.com/GGPrompts/TabzBeads.git\n\n# Copy to Claude plugins\ncp -r TabzBeads/plugins/conductor ~/.claude/plugins/\n```\n\nOr add to your `.claude/plugins/` symlink path.\n\n## Commands\n\nCommands are workflow steps invoked with `/conductor:*` prefix.\n\n### User Entry Points (bd-*)\n| Command | Purpose |\n|---------|---------|\n| `bd-plan` | Prepare backlog: refine, enhance prompts, match skills |\n| `bd-start` | Work directly on an issue (no spawn) |\n| `bd-status` | View issue state (open, blocked, ready) |\n| `bd-conduct` | Interactive orchestration: select issues, terminals (1-4), mode |\n| `bd-auto` | Fully autonomous: all ready issues, no prompts |\n| `bd-new-project` | Template-based project scaffolding |\n\n### Conductor Internal (bdc-*)\n| Command | Purpose |\n|---------|---------|\n| `bdc-orchestration` | Multi-session coordination |\n| `bdc-swarm-auto` | Autonomous waves until backlog empty |\n| `bdc-wave-done` | Merge branches, unified review, cleanup |\n| `bdc-visual-qa` | Visual QA between waves |\n| `bdc-run-wave` | Run wave from template |\n| `bdc-prompt-enhancer` | Enhance issue prompts with context |\n| `bdc-analyze-transcripts` | Review worker session transcripts |\n\n### Worker Steps (bdw-*)\n| Command | Purpose |\n|---------|---------|\n| `bdw-verify-build` | Run build and report errors |\n| `bdw-run-tests` | Run tests if available |\n| `bdw-code-review` | Sonnet review, worker applies fixes |\n| `bdw-codex-review` | Cost-effective read-only review via OpenAI Codex |\n| `bdw-commit-changes` | Stage + commit with conventional format |\n| `bdw-close-issue` | Close a beads issue |\n| `bdw-create-followups` | Create follow-up beads issues |\n| `bdw-update-docs` | Update README, CHANGELOG, CLAUDE.md |\n| `bdw-worker-init` | Initialize worker context |\n| `bdw-worker-done` | Full completion pipeline |\n\n## Skills\n\nSkills provide reference knowledge (naturally invoked, no prefix needed).\n\n| Skill | Purpose |\n|-------|---------|\n| `tabz-mcp` | Browser automation MCP reference (70 tools) |\n| `terminal-tools` | tmux and TUI tool control reference |\n\n## Agents\n\n| Agent | Purpose |\n|-------|---------|\n| `conductor` | Main orchestrator for multi-session workflows |\n| `code-reviewer` | Read-only Sonnet code review |\n| `skill-picker` | Find and install skills from skillsmp.com |\n| `silent-failure-hunter` | Error handling audit |\n\n## Scripts\n\n| Script | Purpose |\n|--------|---------|\n| `setup-worktree.sh` | Git worktree creation |\n| `match-skills.sh` | Issue-to-skill matching |\n| `lookahead-enhancer.sh` | Parallel prompt preparation |\n| `completion-pipeline.sh` | Automated wave completion |\n| `wave-summary.sh` | Generate wave summaries |\n| `capture-session.sh` | Capture session transcripts |\n| `discover-skills.sh` | Runtime skill discovery |\n\n## Workflow Example\n\n```bash\n# 1. Check available work\nbd ready\n\n# 2. Start interactive orchestration\n/conductor:bd-conduct\n\n# 3. Select issues, terminal count, mode\n# Workers spawn and execute in parallel\n\n# 4. When workers complete, conductor merges and reviews\n/conductor:bdc-wave-done V4V-abc V4V-def\n```\n\n## Requirements\n\n- Claude Code with Task tool\n- beads CLI (`bd`) for issue tracking\n- TabzChrome for terminal spawning (optional)\n- tmux for session management\n\n## License\n\nMIT License - see LICENSE file\n"
+      },
+      "plugins": [
+        {
+          "name": "conductor",
+          "description": "Multi-session orchestration - beads workflows, parallel workers, visual QA via tabz-expert, completion pipelines",
+          "source": "./plugins/conductor",
+          "category": "orchestration",
+          "keywords": [
+            "conductor",
+            "orchestrate",
+            "workflow",
+            "multi-session",
+            "parallel",
+            "worker",
+            "spawn",
+            "swarm",
+            "beads",
+            "issues",
+            "tabz",
+            "browser",
+            "visual-qa"
+          ],
+          "categories": [
+            "beads",
+            "browser",
+            "conductor",
+            "issues",
+            "multi-session",
+            "orchestrate",
+            "orchestration",
+            "parallel",
+            "spawn",
+            "swarm",
+            "tabz",
+            "visual-qa",
+            "worker",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add GGPrompts/TabzBeads",
+            "/plugin install conductor@tabz-beads"
+          ]
+        }
+      ]
     }
   ]
 }

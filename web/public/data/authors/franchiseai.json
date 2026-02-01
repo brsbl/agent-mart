@@ -1,0 +1,83 @@
+{
+  "author": {
+    "id": "franchiseai",
+    "display_name": "Franchise Ai",
+    "avatar_url": "https://avatars.githubusercontent.com/u/160742480?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "fsai",
+      "version": null,
+      "description": "Remove AI-generated code patterns (slop) from branches",
+      "repo_full_name": "franchiseai/claude-code-plugins",
+      "repo_url": "https://github.com/franchiseai/claude-code-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-18T07:50:19Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"fsai\",\n  \"owner\": {\n    \"name\": \"Bill Smith\",\n    \"email\": \"bill@franchisesystems.ai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"code-cleanup\",\n      \"source\": \"./plugins/code-cleanup\",\n      \"description\": \"Remove AI-generated code patterns (slop) from branches\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"dead-code\",\n      \"source\": \"./plugins/dead-code\",\n      \"description\": \"Find and remove unused code added in the current branch\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"worktree\",\n      \"source\": \"./plugins/worktree\",\n      \"description\": \"Manage git worktrees for parallel development\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"pr-to-ticket\",\n      \"source\": \"./plugins/pr-to-ticket\",\n      \"description\": \"File Linear tickets from PR review feedback\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"backend-architecture\",\n      \"source\": \"./plugins/backend-architecture\",\n      \"description\": \"Analyze and refactor backend code to entity/service separation pattern\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# FSAI - Claude Code Plugins\n\nClaude Code plugins for code quality and development workflows.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add franchiseai/claude-code-plugins\n\n# Install plugins\n/plugin install code-cleanup@fsai\n/plugin install dead-code@fsai\n/plugin install worktree@fsai\n/plugin install architecture-refactor@fsai\n```\n\n## Plugins\n\n### code-cleanup\n\nRemove AI-generated code patterns (\"slop\") from a branch.\n\n**Usage:** Just ask Claude Code:\n\n- \"Remove the slop from this branch\"\n- \"Clean up AI code\"\n- \"Make this code look human-written\"\n\nClaude will diff against master, identify AI patterns, and fix them.\n\n---\n\n### dead-code\n\nRemove dead code from a branch.\n\n**Usage:** Just ask Claude Code:\n\n- \"Remove the dead code from this branch\"\n\nClaude will diff against master, identify dead code, and remove it.\n\n---\n\n### worktree\n\nManage git worktrees for parallel development.\n\n**Usage:** Just ask Claude Code:\n\n- \"Create a worktree for feature-xyz\"\n- \"List my worktrees\"\n- \"Remove the fsai2 worktree\"\n\nClaude will manage worktrees and remind you to install dependencies.\n\n---\n\n### architecture-refactor\n\nAnalyze and refactor backend code to follow the entity/service separation pattern.\n\n**The Pattern:**\n\n```\nController (HTTP only)\n    ↓\nService (orchestration, enforcement, side effects)\n    ↓\nEntity (business rules as predicates, data access)\n    ↓\nDatabase\n```\n\n**Usage:** Just ask Claude Code:\n\n- \"Refactor deals to entity pattern\"\n- \"Analyze architecture for leads\"\n- \"Extract business rules from application service\"\n- \"Where are the rules for deals?\"\n- \"Create entity for franchisee\"\n- \"Separate concerns for locations\"\n\n**What it does:**\n\n1. **Analyzes** the current service/controller for a domain concept\n2. **Identifies** scattered business rules, data access, and side effects\n3. **Proposes** an entity interface with predicates and data methods\n4. **Refactors** the service to be an orchestrator that:\n   - Calls entity predicates (`canConvert()`, `isEntityDeal()`)\n   - Enforces rules (throws if predicate returns false)\n   - Coordinates multiple entities in transactions\n   - Triggers side effects after success\n\n**Key Principles:**\n\n| Layer          | Does                                                             | Does Not                          |\n| -------------- | ---------------------------------------------------------------- | --------------------------------- |\n| **Entity**     | Define rules as predicates (`canX() → boolean`), CRUD, queries   | Throw errors, call other entities |\n| **Service**    | Orchestrate, enforce rules (throw), business logic, transactions | Define rules, write SQL           |\n| **Controller** | Parse request, auth, call service, format response               | Business logic, call entities     |\n\n**Example Transformation:**\n\nBefore (rules scattered in service):\n\n```typescript\nasync convertDeal(dealId) {\n  const deal = await this.getDealOverview(dealId);\n  if (deal.convertedAt) throw new ValidationError('Already converted');\n  if (!deal.applicationId) throw new ValidationError('No application');\n  // ... 200 lines of mixed logic\n}\n```\n\nAfter (rules in entity, service orchestrates):\n\n```typescript\nasync convertDeal(dealId) {\n  const deal = await dealEntity.getOverview(dealId);\n\n  const { allowed, reason } = dealEntity.canConvert(deal);\n  if (!allowed) throw new ValidationError(reason);\n\n  // Orchestrate...\n  await dealNotifications.onConverted(deal);\n}\n```\n\n---\n\n## Contributing\n\nTo add a new plugin:\n\n1. Create a folder in `plugins/` with your plugin name\n2. Add `plugin.json` with metadata\n3. Add `skill.md` with the instruction set\n4. Update `marketplace.json` to include your plugin\n"
+      },
+      "plugins": [
+        {
+          "name": "code-cleanup",
+          "source": "./plugins/code-cleanup",
+          "description": "Remove AI-generated code patterns (slop) from branches",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add franchiseai/claude-code-plugins",
+            "/plugin install code-cleanup@fsai"
+          ]
+        },
+        {
+          "name": "dead-code",
+          "source": "./plugins/dead-code",
+          "description": "Find and remove unused code added in the current branch",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add franchiseai/claude-code-plugins",
+            "/plugin install dead-code@fsai"
+          ]
+        },
+        {
+          "name": "worktree",
+          "source": "./plugins/worktree",
+          "description": "Manage git worktrees for parallel development",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add franchiseai/claude-code-plugins",
+            "/plugin install worktree@fsai"
+          ]
+        },
+        {
+          "name": "pr-to-ticket",
+          "source": "./plugins/pr-to-ticket",
+          "description": "File Linear tickets from PR review feedback",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add franchiseai/claude-code-plugins",
+            "/plugin install pr-to-ticket@fsai"
+          ]
+        },
+        {
+          "name": "backend-architecture",
+          "source": "./plugins/backend-architecture",
+          "description": "Analyze and refactor backend code to entity/service separation pattern",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add franchiseai/claude-code-plugins",
+            "/plugin install backend-architecture@fsai"
+          ]
+        }
+      ]
+    }
+  ]
+}
