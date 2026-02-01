@@ -41,12 +41,14 @@ GitHub API
 ```
 src/
 ├── lib/
-│   ├── github.js      # GitHub API client (GraphQL + REST)
-│   ├── cache.js       # File-based caching
-│   ├── parser.js      # JSON/YAML/Markdown parsing
-│   ├── validator.js   # Schema validation
-│   ├── categories.js  # Category normalization
-│   └── utils.js       # General utilities
+│   ├── github.js         # GitHub API client (GraphQL + REST)
+│   ├── cache.js          # File-based caching
+│   ├── parser.js         # JSON/YAML/Markdown parsing
+│   ├── validator.js      # Schema validation
+│   ├── categorizer.js    # Category normalization
+│   ├── signalsHistory.js # Signals history tracking
+│   ├── trending.js       # Trending score calculation
+│   └── utils.js          # General utilities
 └── pipeline/
     ├── 01-discover.js
     ├── 02-fetch-repos.js

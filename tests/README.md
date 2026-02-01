@@ -40,15 +40,11 @@ cd web && npm test
 Test individual functions in isolation:
 
 ```javascript
-import { extractCategories } from '../src/lib/categorizer.js';
+import { normalizeCategory } from '../src/lib/categorizer.js';
 
-test('extracts tech stack from description', () => {
-  const marketplace = {
-    description: 'A Next.js plugin for testing',
-    plugins: []
-  };
-  const result = extractCategories(marketplace);
-  expect(result.techStack).toContain('nextjs');
+test('normalizes category values', () => {
+  const result = normalizeCategory('  Next.js  ');
+  expect(result).toBe('next.js');
 });
 ```
 

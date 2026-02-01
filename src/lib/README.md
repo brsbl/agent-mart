@@ -12,7 +12,7 @@ GraphQL and REST client with batching, rate limiting, and retry logic.
 
 **Key Functions:**
 - `searchCode(query)` - Code search with 10 req/min rate limit
-- `fetchReposBatch(repos)` - GraphQL batching (up to 100 repos per query)
+- `fetchReposBatch(repos)` - GraphQL batching (up to 15 repos per query)
 - `fetchTree(owner, repo, sha)` - Get repository file tree
 - `fetchFile(owner, repo, path, ref)` - Fetch file contents
 
@@ -31,7 +31,7 @@ GraphQL batching reduces API calls by ~90%:
 query {
   repo1: repository(owner: "a", name: "b") { ...fields }
   repo2: repository(owner: "c", name: "d") { ...fields }
-  # Up to 100 repos per query
+  # Up to 15 repos per query
 }
 ```
 
@@ -94,9 +94,9 @@ Simple category normalization that preserves plugin-defined categories with basi
 Logging and file I/O helper functions.
 
 **Key Functions:**
-- `log(message, level)` - Structured logging
-- `readJSON(path)` - Read and parse JSON file
-- `writeJSON(path, data)` - Write JSON with formatting
+- `log(message)` - Timestamped logging
+- `loadJson(path)` - Read and parse JSON file
+- `saveJson(path, data)` - Write JSON with formatting
 
 ---
 

@@ -45,10 +45,10 @@ Automated pipeline run for data updates and trending score calculation.
 | Create PR | Open PR with updated data (if changes) |
 
 **Artifacts:**
-- `public-directory` - Generated JSON output (30 day retention)
+- `web-public-data` - Generated JSON output (30 day retention)
 - `etl-visualization-report` - HTML progress report (30 day retention)
 
-**Timeout:** 30 minutes
+**Timeout:** 60 minutes
 
 ---
 

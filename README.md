@@ -44,10 +44,10 @@ Agent Mart crawls GitHub repositories for `marketplace.json` files and builds a 
 agent-mart/
 ├── src/
 │   ├── lib/              # GitHub client, cache, parsers, validators, categorizer
-│   └── pipeline/         # 8-step ETL pipeline (01-discover to 08-categorize)
+│   └── pipeline/         # 8-step ETL pipeline (01-discover to 09-output)
 ├── scripts/              # Pipeline orchestrator and visualizer
 ├── tests/                # ETL unit tests
-├── public/               # Generated JSON output
+├── web/public/data/      # Generated JSON output
 └── web/                  # Next.js frontend application
 ```
 

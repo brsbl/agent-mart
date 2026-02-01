@@ -96,8 +96,8 @@ src/
            ▼
 ┌──────────────────────┐
 │ web/src/lib/data.ts  │
-│  loadMarketplaces()  │
-│  loadAuthorData()    │
+│  flattenPlugins()    │
+│  sortMarketplaces()  │
 └──────────┬───────────┘
            │
            ▼
@@ -153,7 +153,7 @@ Filter state is synced to URL parameters for shareable links.
 
 ### Styling
 
-This project uses Tailwind CSS. Configuration is in `tailwind.config.ts`.
+This project uses Tailwind CSS 4 with CSS-based configuration in `src/app/globals.css` via the `@theme inline` directive.
 
 Common patterns:
 - Responsive: `sm:`, `md:`, `lg:` prefixes
@@ -169,7 +169,7 @@ Common patterns:
 npm test
 
 # Run tests once
-npm run test:ci
+npm test -- --run
 
 # Run with coverage
 npm run test:coverage

@@ -16,12 +16,13 @@ agent-mart/
 ├── src/pipeline/     # 8-step ETL pipeline
 ├── scripts/          # Build tools and visualizer
 ├── tests/            # Node.js test runner tests
+├── data/             # Pipeline intermediate data and cache
 ├── web/              # Next.js 16 frontend (TypeScript)
 │   ├── src/app/      # App Router pages
 │   ├── src/components/
 │   ├── src/hooks/
 │   └── src/lib/
-└── public/           # Generated JSON output
+└── web/public/data/  # Generated JSON output
 ```
 
 ---
@@ -472,10 +473,15 @@ it('test1', () => {
 ### Before Committing
 
 ```bash
-npm run lint          # Check linting
-npm run lint:fix      # Auto-fix issues
-npm test              # Run ETL tests
-npm run test:web      # Run frontend tests
+npm run pipeline        # Run ETL pipeline
+npm run pipeline:dev    # Run ETL with visualizer
+npm run lint            # Check linting
+npm run lint:fix        # Auto-fix issues
+npm test                # Run ETL tests
+npm run test:unit       # Run unit tests only
+npm run test:data       # Run data quality tests only
+npm run test:web        # Run frontend tests
+npm run test:all        # Run all tests
 ```
 
 ### Commit Messages
