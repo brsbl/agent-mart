@@ -160,15 +160,15 @@ describe('calculateTrendingScore: negative gain case', () => {
       { date: new Date(now.getTime() - 7 * day).toISOString().split('T')[0], stars: 135, forks: 13 }
     ];
 
-    // Lost 10 stars in the last week - should be clamped to 0 for trending
+    // Lost 10 stars in the last week - negative gains are valid data
     const result = calculateTrendingScore({ snapshots }, 125);
 
     assert.strictEqual(result.insufficient_data, false);
-    // Negative gains are clamped to 0 for trending - it's not meaningful to show "losing momentum"
-    assert.strictEqual(result.stars_gained_7d, 0, 'Negative star gains should be clamped to 0');
-    assert.strictEqual(result.stars_velocity, 0, 'Velocity should be 0 when gains are clamped');
-    // z-score will be negative because 0 is below historical mean
-    assert.ok(result.trending_score < 0, `Should have negative z-score when clamped gain is below mean, got ${result.trending_score}`);
+    // Negative gains are allowed - shows repo is losing stars
+    assert.strictEqual(result.stars_gained_7d, -10, 'Negative star gains should be reported');
+    assert.ok(result.stars_velocity < 0, 'Velocity should be negative when losing stars');
+    // z-score will be negative because -10 is well below historical mean
+    assert.ok(result.trending_score < 0, `Should have negative z-score when losing stars, got ${result.trending_score}`);
   });
 
   it('handles mixed history with negative gains', () => {
