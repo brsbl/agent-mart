@@ -52,27 +52,6 @@ Automated pipeline run for data updates and trending score calculation.
 
 ---
 
-### Update Categories (`update-categories.yml`)
-
-Weekly category refresh workflow.
-
-**Triggers:**
-- Schedule: Weekly on Sunday at midnight UTC (`0 0 * * 0`)
-- Manual dispatch with optional `force_all` input
-
-**Jobs:**
-| Step | Description |
-|------|-------------|
-| Run pipeline | Fetch latest data from GitHub |
-| Detect changes | Check for category modifications |
-| Update categories | Re-categorize if changes detected |
-| Create PR | Open PR for review |
-
-**Manual Options:**
-- `force_all: true` - Re-categorize all marketplaces (useful for migrations)
-
----
-
 ## Required Secrets
 
 | Secret | Required By | Description |
@@ -93,7 +72,7 @@ Weekly category refresh workflow.
 All workflows support manual triggering:
 
 1. Go to **Actions** tab
-2. Select the workflow (CI, Nightly Build, or Update Categories)
+2. Select the workflow (CI or Scheduled Build)
 3. Click **Run workflow**
 4. Select branch and options
 5. Click **Run workflow**
@@ -114,5 +93,4 @@ Workflows use concurrency groups to prevent parallel runs:
 | Workflow | Permissions |
 |----------|-------------|
 | CI | `contents: read` |
-| Nightly | `contents: write`, `pull-requests: write` |
-| Update Categories | `contents: write`, `pull-requests: write` |
+| Scheduled | `contents: write`, `pull-requests: write` |

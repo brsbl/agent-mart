@@ -20,30 +20,6 @@ npm run pipeline
 - Handles errors gracefully
 - Supports `REPO_LIMIT` environment variable for testing
 
-### `update-categories.js` - Category Extraction
-
-Extracts category information from pipeline output for use in CI workflows.
-
-```bash
-node scripts/update-categories.js
-```
-
-**Output:**
-- Generates category taxonomy from enriched data
-- Used by GitHub Actions to detect category changes
-
-### `detect-category-changes.js` - CI Helper
-
-Detects changes to category definitions for PR validation.
-
-```bash
-node scripts/detect-category-changes.js
-```
-
-**Used in:**
-- Pull request checks
-- Category consistency validation
-
 ---
 
 ## ETL Visualizer
