@@ -2,7 +2,7 @@
   "author": {
     "id": "MMMIIIN",
     "display_name": "Mingwan Choi",
-    "avatar_url": "https://avatars.githubusercontent.com/u/78677571?u=8a5fb65c733c64a1710438bb3bfa95a3cbc660b1&v=4"
+    "avatar_url": "https://avatars.githubusercontent.com/u/78677571?v=4"
   },
   "marketplaces": [
     {
@@ -45,6 +45,52 @@
           "install_commands": [
             "/plugin marketplace add MMMIIIN/claude-pr-logger",
             "/plugin install pr-logger@claude-pr-logger"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "daily-work-tracker",
+      "version": null,
+      "description": "여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다",
+      "repo_full_name": "MMMIIIN/daily-work-tracker",
+      "repo_url": "https://github.com/MMMIIIN/daily-work-tracker",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-05T13:38:23Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"daily-work-tracker\",\n  \"owner\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"daily-work-tracker\",\n      \"description\": \"여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"repository\": \"https://github.com/MMMIIIN/daily-work-tracker\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"daily\", \"work\", \"tracker\", \"logging\", \"productivity\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"daily-work-tracker\",\n  \"version\": \"1.0.0\",\n  \"description\": \"여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다\",\n  \"author\": {\n    \"name\": \"chemi\"\n  },\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "README.md": "# Daily Work Tracker\n\n여러 프로젝트에서 작업한 내역을 날짜별로 자동 추적하는 Claude Code 플러그인입니다.\n\n## 주요 기능\n\n- **자동 작업 기록**: 대화할 때마다 프로젝트별로 자동 기록\n- **프로젝트별 분리**: 여러 프로젝트 작업을 하나의 파일에서 섹션별로 관리\n- **날짜별 파일**: `~/.claude/daily-work/YYYY-MM-DD.md` 형식으로 저장\n- **Notion 연동**: Notion MCP를 통해 자동 동기화 (선택)\n- **로컬 저장**: Notion 미연결 시 로컬 MD 파일로 저장\n- **저장 경로 설정**: 로그 및 요약 파일 경로 커스터마이징 가능\n\n## 설치\n\n### 1단계: 마켓플레이스 추가\n\nClaude Code 터미널에서:\n\n```\n/plugin marketplace add MMMIIIN/daily-work-tracker\n```\n\n### 2단계: 플러그인 설치\n\n```\n/plugin install daily-work-tracker@daily-work-tracker\n```\n\n### 설치 확인\n\n```\n/plugin list\n```\n\n**참고**: 설치 후 Claude Code를 재시작하면 플러그인이 활성화됩니다.\n\n## 설정\n\n### 빠른 설정 (권장)\n\n```\n/daily-work-tracker:daily-setup\n```\n\n대화형으로 모든 설정을 진행합니다:\n1. **저장 경로** - 로그 파일 저장 위치 선택\n2. **Notion 연동** - Notion MCP 활성화 여부\n\n### 설정 파일 구조\n\n`~/.claude/daily-work-tracker/config.json`:\n\n```json\n{\n  \"notion_mcp\": {\n    \"enabled\": true,\n    \"page_id\": \"your-notion-page-id\"\n  },\n  \"storage\": {\n    \"log_path\": \"~/.claude/daily-work\",\n    \"summary_path\": \"~/.claude/daily-summaries\"\n  },\n  \"sync_history\": [\"2026-01-04\", \"2026-01-05\"]\n}\n```\n\n### Notion MCP 연동 (선택)\n\nNotion에 일일 작업 요약을 자동 동기화하려면:\n\n#### 1단계: Notion Integration 생성\n\n1. [Notion Integrations](https://www.notion.so/my-integrations) 페이지 접속\n2. \"New integration\" 클릭\n3. 이름 입력 후 생성\n4. **Internal Integration Secret** 복사 (`ntn_` 또는 `secret_`으로 시작)\n\n#### 2단계: Notion MCP 서버 설정\n\n`~/.claude.json`에 추가:\n\n```json\n{\n  \"mcpServers\": {\n    \"notion\": {\n      \"type\": \"stdio\",\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@notionhq/notion-mcp-server\"],\n      \"env\": {\n        \"OPENAPI_MCP_HEADERS\": \"{\\\"Authorization\\\": \\\"Bearer YOUR_API_KEY\\\", \\\"Notion-Version\\\": \\\"2022-06-28\\\"}\"\n      }\n    }\n  }\n}\n```\n\n#### 3단계: Notion 페이지에 Integration 연결\n\n1. 동기화할 Notion 페이지 열기\n2. 우측 상단 `⋯` 클릭\n3. \"연결\" → 생성한 Integration 선택\n4. 페이지 URL에서 ID 복사: `notion.so/페이지이름-{페이지ID}`\n\n#### 4단계: 플러그인 설정\n\n```\n/daily-work-tracker:daily-setup\n```\n\n- Notion 활성화 선택\n- 복사한 페이지 ID 입력\n\n### 동기화 형식\n\nNotion에 Toggle 블록으로 날짜+시간별 정리:\n\n```\n📅 2026-01-05 17:30 | 4개 프로젝트 | 29개 대화\n├─ 🔹 project-name\n│   ├─ [15:23] 질문 내용\n│   ├─ [16:00] 다른 질문\n│   └─ 📝 요약: Claude가 생성한 프로젝트 요약\n└─ 📊 전체 요약\n```\n\n## 명령어\n\n| 명령어 | 설명 |\n|--------|------|\n| `/daily-work-tracker:daily-setup` | 초기 설정 (저장 경로, Notion) |\n| `/daily-work-tracker:daily-sync` | Notion/로컬에 동기화 (미동기화 날짜 일괄 처리) |\n| `/daily-work-tracker:daily-summary` | 오늘 작업 내역 보기 |\n| `/daily-work-tracker:daily-week` | 이번 주 작업 요약 |\n| `/daily-work-tracker:daily-status` | 설정 상태 확인 |\n| `/daily-work-tracker:daily-path` | 저장 경로 변경 |\n| `/daily-work-tracker:daily-clear` | 오늘 기록 삭제 |\n\n## 저장 위치\n\n### 기본 경로\n\n```\n~/.claude/daily-work/          # 작업 로그\n├── 2026-01-05.md\n├── 2026-01-04.md\n└── ...\n\n~/.claude/daily-summaries/     # 일일 요약\n├── 2026-01-05-summary.md\n└── ...\n\n~/.claude/daily-work-tracker/  # 설정\n└── config.json\n```\n\n### 경로 변경\n\n`/daily-work-tracker:daily-path` 명령어로 저장 경로 변경 가능\n\n## 파일 형식\n\n```markdown\n# 📅 2026-01-05 작업 기록\n\n## 🔹 flutter-app\n> `/Users/username/projects/flutter-app`\n\n- **[14:30]** 사용자 인증 어떻게 구현하면 좋을까? → Riverpod 추천\n- **[15:00]** 로그인 화면 만들어줘 → `login_page.dart` 생성\n\n## 🔹 backend-api\n> `/Users/username/projects/backend-api`\n\n- **[16:00]** API 엔드포인트 설계 → REST API 구조 제안\n```\n\n## 동작 방식\n\n1. **UserPromptSubmit Hook**: 사용자가 질문할 때마다 `log-daily.py` 실행\n2. **프로젝트 감지**: `pubspec.yaml`, `package.json` 또는 폴더명으로 프로젝트 식별\n3. **자동 기록**: 날짜별 MD 파일에 타임스탬프와 함께 저장\n4. **요약 트리거**: 이전 답변 요약을 자동으로 추가하도록 Claude에게 알림\n\n## 스킬 (Skills)\n\n플러그인에 포함된 스킬은 Claude가 특정 작업을 수행할 때 참조하는 가이드라인입니다.\n\n### generate-summary\n\n`/daily-sync` 실행 시 Claude가 작업 기록을 분석하여 요약을 생성할 때 사용됩니다.\n\n**동작 방식:**\n1. 작업 기록 파일(`.md`)을 읽음\n2. 프로젝트별로 작업 내용 분석\n3. 스킬에 정의된 가이드라인에 따라 요약 생성\n4. Notion에 토글 형태로 저장\n\n**생성되는 요약:**\n- **프로젝트별 요약**: 각 프로젝트에서 수행한 주요 작업 1-2문장\n- **전체 요약**: 하루 전체 작업 2-3문장\n\n**예시:**\n```\n▶ 📅 2026-01-15 14:30 작업 기록 | 2개 프로젝트\n    ▶ 🔹 shopping-app\n        - [10:30] 장바구니 기능 구현 요청\n        - [11:20] 결제 페이지 연동\n        📝 요약: 장바구니 기능 구현 (상품 추가/삭제, 결제 연동)\n    ▶ 🔹 admin-dashboard\n        - [14:00] 사용자 목록 API 연결\n        📝 요약: 사용자 목록 API 연동 및 테이블 UI 개선\n    📊 전체 요약: shopping-app 장바구니 완성, admin-dashboard UI 개선\n```\n\n스킬 파일 위치: `skills/generate-summary.md`\n\n## 삭제\n\n### 플러그인 완전 삭제\n\n```\n/plugin uninstall daily-work-tracker\n```\n\n### 플러그인 비활성화\n\n```\n/plugin disable daily-work-tracker@daily-work-tracker\n```\n\n### 데이터 삭제 (선택)\n\n플러그인 삭제 후에도 기록된 데이터는 유지됩니다. 데이터도 삭제하려면:\n\n```bash\n# 작업 로그 삭제\nrm -rf ~/.claude/daily-work/\n\n# 일일 요약 삭제\nrm -rf ~/.claude/daily-summaries/\n\n# 설정 파일 삭제\nrm -rf ~/.claude/daily-work-tracker/\n```\n\n## 라이선스\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "daily-work-tracker",
+          "description": "여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다",
+          "version": "1.0.0",
+          "source": "./",
+          "repository": "https://github.com/MMMIIIN/daily-work-tracker",
+          "license": "MIT",
+          "keywords": [
+            "daily",
+            "work",
+            "tracker",
+            "logging",
+            "productivity"
+          ],
+          "categories": [
+            "daily",
+            "logging",
+            "productivity",
+            "tracker",
+            "work"
+          ],
+          "install_commands": [
+            "/plugin marketplace add MMMIIIN/daily-work-tracker",
+            "/plugin install daily-work-tracker@daily-work-tracker"
           ]
         }
       ]

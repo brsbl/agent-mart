@@ -2,65 +2,9 @@
   "author": {
     "id": "aperepel",
     "display_name": "Andrew Grande",
-    "avatar_url": "https://avatars.githubusercontent.com/u/119367?u=5d6deabbf2c5c3a126f283d57b4d9fc6727871fe&v=4"
+    "avatar_url": "https://avatars.githubusercontent.com/u/119367?v=4"
   },
   "marketplaces": [
-    {
-      "name": "claude-mlx-tts",
-      "version": null,
-      "description": "Voice-cloned TTS summaries for Claude Code deep work sessions",
-      "repo_full_name": "aperepel/claude-mlx-tts",
-      "repo_url": "https://github.com/aperepel/claude-mlx-tts",
-      "repo_description": "Voice-cloned smart attention TTS notifications for Claude Code. AI summarizes deep work session responses, speaks in your cloned voice. MLX Chatterbox Turbo on Apple Silicon. Zero config, works out of the box.",
-      "signals": {
-        "stars": 7,
-        "forks": 1,
-        "pushed_at": "2026-01-15T18:19:26Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-mlx-tts\",\n  \"owner\": {\n    \"name\": \"aperepel\"\n  },\n  \"metadata\": {\n    \"description\": \"Voice-cloned TTS summaries for Claude Code deep work sessions\",\n    \"version\": \"1.4.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-mlx-tts\",\n      \"source\": \"./\",\n      \"description\": \"Speaks a voice-cloned summary when Claude finishes deep work. Works out of the box with bundled voice, or clone your own. Triggers on long responses, multiple tool calls, or thinking mode.\",\n      \"version\": \"1.4.0\",\n      \"author\": {\n        \"name\": \"aperepel\"\n      },\n      \"license\": \"MIT\",\n      \"homepage\": \"https://github.com/aperepel/claude-mlx-tts\",\n      \"repository\": \"https://github.com/aperepel/claude-mlx-tts\",\n      \"keywords\": [\"tts\", \"voice-cloning\", \"mlx\", \"chatterbox\", \"apple-silicon\", \"notification\", \"summarization\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-mlx-tts\",\n  \"description\": \"Voice-cloned TTS notifications using MLX Chatterbox Turbo. Clone any voice from a 20-second sample.\",\n  \"version\": \"1.4.0\",\n  \"author\": {\n    \"name\": \"aperepel\"\n  },\n  \"hooks\": {\n    \"Stop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/run-tts.sh\",\n            \"timeout\": 60\n          }\n        ]\n      }\n    ],\n    \"PermissionRequest\": [\n      {\n        \"matcher\": \"AskUserQuestion\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/run-permission-notify.sh\",\n            \"timeout\": 30\n          }\n        ]\n      },\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/run-permission-notify.sh\",\n            \"timeout\": 10\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/approve-tts.py\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
-        "README.md": "# Claude MLX TTS\n\nVoice-cloned TTS notifications for Claude Code using [Chatterbox Turbo](https://www.resemble.ai/chatterbox/) on Apple Silicon.\n\nWhen Claude finishes deep work, hear a brief AI-generated summary spoken aloud—so you know it's ready without watching the screen.\n\n## Demo\n\n[![Watch the demo](https://img.youtube.com/vi/0K0UmI2knRI/maxresdefault.jpg)](https://www.youtube.com/watch?v=0K0UmI2knRI)\n\n*Click to watch the plugin in action*\n\n## Features\n\n- **Streaming TTS** - Audio starts in ~200ms instead of waiting for full generation\n- **6 bundled voices** - `default`, `alex`, `jerry`, `scarlett`, `snoop`, `c3po` ready to use\n- **Customization TUI** - Full terminal UI for voice, audio, and prompt configuration\n- **Voice cloning** - Create new voices from WAV samples via Clone Lab\n- **Dynamic compressor** - Professional-grade audio processing for consistent, punchy volume\n- **AI-powered summaries** - Condenses Claude's response into a 10-15 word spoken update\n- **Smart detection** - Only triggers on deep work (15+ seconds, 2+ tool calls, or thinking mode)\n- **Zero config** - Works out of the box with bundled voice\n\n## Quick Start\n\n### Install\n\nFirst, add this repo as a plugin marketplace:\n\n```bash\n# From terminal\nclaude plugin marketplace add aperepel/claude-mlx-tts\n\n# Or from within a Claude Code session\n/plugin marketplace add aperepel/claude-mlx-tts\n```\n\nThen install the plugin:\n\n```bash\n# From terminal\nclaude plugin install claude-mlx-tts\n\n# Or from within a Claude Code session\n/plugin install claude-mlx-tts\n```\n\n### Enable Voice Cloning (MLX on Apple Silicon)\n\nAfter installation, enable MLX voice cloning:\n\n```bash\n# Install uv (if needed)\nbrew install uv        # or: curl -LsSf https://astral.sh/uv/install.sh | sh\n```\n\nThen in a Claude Code session:\n\n```bash\n/tts-init   # Install dependencies and download model (one-time, ~4GB)\n/tts-start  # Start the TTS server (recommended)\n```\n\n**Why `/tts-start`?** Pre-warms the model in GPU memory for fast responses. Without it, each TTS request cold-loads the model (~10s delay). See [ARCHITECTURE.md](ARCHITECTURE.md) for the full backend fallback chain.\n\n> **Note:** The default fp16 model is ~4GB and may take a while to download. See [Model Options](#model-options) for smaller quantized alternatives.\n\n> [Full uv installation guide](https://docs.astral.sh/uv/getting-started/installation/)\n\n### Marketplace Management\n\n```bash\n/plugin marketplace list                  # View all marketplaces\n/plugin marketplace update claude-mlx-tts # Refresh plugins\n/plugin marketplace remove claude-mlx-tts # Remove marketplace\n```\n\n### Test It\n\nVerify the install with a smoke test:\n\n```\n/claude-mlx-tts:say Everything checks out and seems to be working. Great job!\n```\n\nOr trigger deep work to hear an automatic summary:\n\n```\n> think about what makes good API design\n```\n\n## Custom Voice\n\nClone your voice in seconds using Clone Lab:\n\n1. Record a WAV sample (see [RECORDING.md](RECORDING.md) for tips)\n2. Run `/tts-status` and launch the TUI\n3. Open **Clone Lab** tab → select your WAV → create voice\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/tts-init` | Install MLX dependencies and download model (~4GB) |\n| `/tts-status` | Show config overview, available voices, and server status |\n| `/tts-mute [duration]` | Mute TTS (`30m`, `until 5pm`, or indefinitely) |\n| `/say <text>` | Speak text directly (smoke test) |\n| `/summary-say <text>` | Summarize long text and speak it |\n| `/tts-start` | Start server (pre-warms model for faster responses) |\n| `/tts-stop` | Stop server (reclaims ~4GB GPU memory) |\n\n## Configuration\n\nRun `/tts-status` and launch the TUI to configure:\n\n- **Voice Lab** — Per-voice audio controls (compressor, limiter, gain)\n- **Clone Lab** — Create voices from WAV samples\n- **Prompt Lab** — Customize voice and message per notification type\n\n### Model Options\n\nThe default model is `chatterbox-turbo-fp16` (~4GB). For smaller memory footprint:\n\n| Model | Size | Quality |\n|-------|------|---------|\n| `mlx-community/chatterbox-turbo-fp16` | ~4GB | Best |\n| `mlx-community/chatterbox-turbo-8bit` | ~2GB | Good |\n| `mlx-community/chatterbox-turbo-4bit` | ~1GB | Acceptable |\n\n## Troubleshooting\n\nSee [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common issues.\n\n## Requirements\n\n**Basic (macOS `say`):**\n- macOS (any Mac)\n- Claude Code installed\n\n**Voice Cloning (MLX):**\n- macOS on Apple Silicon (M1/M2/M3/M4)\n- Claude Code installed\n- ~4GB disk space for the model\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "claude-mlx-tts",
-          "source": "./",
-          "description": "Speaks a voice-cloned summary when Claude finishes deep work. Works out of the box with bundled voice, or clone your own. Triggers on long responses, multiple tool calls, or thinking mode.",
-          "version": "1.4.0",
-          "author": {
-            "name": "aperepel"
-          },
-          "license": "MIT",
-          "homepage": "https://github.com/aperepel/claude-mlx-tts",
-          "repository": "https://github.com/aperepel/claude-mlx-tts",
-          "keywords": [
-            "tts",
-            "voice-cloning",
-            "mlx",
-            "chatterbox",
-            "apple-silicon",
-            "notification",
-            "summarization"
-          ],
-          "category": "productivity",
-          "categories": [
-            "apple-silicon",
-            "chatterbox",
-            "mlx",
-            "notification",
-            "productivity",
-            "summarization",
-            "tts",
-            "voice-cloning"
-          ],
-          "install_commands": [
-            "/plugin marketplace add aperepel/claude-mlx-tts",
-            "/plugin install claude-mlx-tts@claude-mlx-tts"
-          ]
-        }
-      ]
-    },
     {
       "name": "textual-tui-marketplace",
       "version": null,
