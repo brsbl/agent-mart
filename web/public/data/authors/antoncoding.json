@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "antoncoding",
+    "display_name": "Anton Cheng",
+    "avatar_url": "https://avatars.githubusercontent.com/u/20136488?u=4da1b8fde546f5032e1bf47abe0ffa12bdeb230f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-track-marketplace",
+      "version": null,
+      "description": "Claude Track – visual task management interface with drag-and-drop prioritization for Claude Code workflows",
+      "repo_full_name": "antoncoding/claude-track",
+      "repo_url": "https://github.com/antoncoding/claude-track",
+      "repo_description": "Claude Code plugin for better Agent control with todo list",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-10-25T08:56:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-track-marketplace\",\n  \"owner\": {\n    \"name\": \"Anton Cheng\",\n    \"email\": \"[email protected]\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-track\",\n      \"source\": \"./\",\n      \"description\": \"Claude Track – visual task management interface with drag-and-drop prioritization for Claude Code workflows\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"tasks\", \"todo\", \"progress\", \"workflow\", \"ui\"],\n      \"author\": {\n        \"name\": \"Anton Cheng\",\n        \"email\": \"[email protected]\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-track\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude Track – visual task management interface with drag-and-drop prioritization for Claude Code workflows\",\n  \"author\": {\n    \"name\": \"Your Name\",\n    \"email\": \"[email protected]\"\n  },\n  \"keywords\": [\"tasks\", \"todo\", \"progress\", \"workflow\", \"ui\"],\n  \"hooks\": \"./hooks/hooks.json\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# Claude Track\n\nVisual task management interface with drag-and-drop prioritization for Claude Code workflows.\n\n## Features\n\n- 🎯 Forces Claude to break work into trackable tasks\n- 📊 Real-time progress visualization\n- 🔄 Drag-and-drop task reprioritization\n- 📝 Automatic TODO.md synchronization\n- 🌐 Web UI on localhost:3333\n\n## Installation\n\n1. Create a local marketplace directory\n2. Clone/copy this plugin to the marketplace\n3. Add marketplace: `/plugin marketplace add /path/to/marketplace`\n4. Install plugin: `/plugin install claude-track@your-marketplace`\n\n## Usage\n\nStart Claude Code - the plugin automatically:\n1. Launches HTTP server on port 3333\n2. Opens browser to task management UI\n3. Creates TODO.md in your project root\n4. Updates progress after each tool use\n\n## Local Development (pnpm)\n\n```bash\npnpm install --dir server\npnpm --dir server run build\npnpm --dir server start\n```\n\nThe workspace is defined at the repo root (`pnpm-workspace.yaml`) so you can also run commands from the top level:\n\n```bash\npnpm install\npnpm -C server run dev\n```\n\n## Share via Marketplace\n\nThis repo now doubles as a local marketplace (`.claude-plugin/marketplace.json`). To let teammates install Claude Track:\n\n1. Share the repo path (or host it on Git/GitHub)\n2. In Claude Code, run:\n   ```\n   /plugin marketplace add /full/path/to/claude-track\n   ```\n3. Install the plugin from that marketplace:\n   ```\n   /plugin install claude-track@claude-track-marketplace\n   ```\n4. Restart Claude Code so the hooks start the server automatically.\n\nTo bundle this marketplace with a project repo, add the following to that project's `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"claude-track-marketplace\": {\n      \"source\": {\n        \"source\": \"path\",\n        \"path\": \"/full/path/to/claude-track\"\n      }\n    }\n  },\n  \"enabledPlugins\": [\"claude-track@claude-track-marketplace\"]\n}\n```\n\n## Testing in Claude Code\n\n1. Add the marketplace and install the plugin (steps above)\n2. Open the Claude terminal logs to confirm the SessionStart hook builds the server\n3. The plugin will launch http://localhost:3333 automatically—verify the UI shows \"Loading tasks...\"\n4. Trigger a tool (e.g., `Write` or `Bash`) so the PostToolUse hook runs `update-progress`\n5. Inspect `${CLAUDE_PROJECT_DIR}/TODO.md` to confirm the writer updates tasks correctly\n\nIf you prefer manual testing without Claude, run `pnpm --dir server dev` and open the same URL.\n\n## TODO.md Format\n\n```markdown\n# Tasks for Project Name\n\n## Current Task\n- [ ] Current task description @id:current @priority:0\n\n## Upcoming Tasks\n- [ ] Task 1 @id:task-1 @priority:1\n- [ ] Task 2 @id:task-2 @priority:2\n\n## Metadata\n- Total: 3 tasks\n- Completed: 0 tasks\n- Progress: 0%\n```\n\n## Documentation References\n\n- Plugin system: https://docs.claude.com/en/docs/claude-code/plugins\n- Hooks: https://docs.claude.com/en/docs/claude-code/hooks\n- Skills: https://docs.claude.com/en/docs/claude-code/skills\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-track",
+          "source": "./",
+          "description": "Claude Track – visual task management interface with drag-and-drop prioritization for Claude Code workflows",
+          "version": "1.0.0",
+          "keywords": [
+            "tasks",
+            "todo",
+            "progress",
+            "workflow",
+            "ui"
+          ],
+          "author": {
+            "name": "Anton Cheng",
+            "email": "[email protected]"
+          },
+          "categories": [
+            "progress",
+            "tasks",
+            "todo",
+            "ui",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add antoncoding/claude-track",
+            "/plugin install claude-track@claude-track-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

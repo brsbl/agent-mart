@@ -6,6 +6,87 @@
   },
   "marketplaces": [
     {
+      "name": "bayesian-modeling-agent",
+      "version": null,
+      "description": "Claude agent ecosystem for creating and reviewing Bayesian model specification files supporting Stan (cmdstanr), PyMC (Python), JAGS (R2jags), and WinBUGS (R2WinBUGS)",
+      "repo_full_name": "choxos/BayesianAgent",
+      "repo_url": "https://github.com/choxos/BayesianAgent",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-11T23:05:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"bayesian-modeling-agent\",\n  \"owner\": {\n    \"name\": \"Ahmad Sofi-Mahmudi\",\n    \"email\": \"choxos@users.noreply.github.com\",\n    \"url\": \"https://github.com/choxos\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude agent ecosystem for creating and reviewing Bayesian model specification files supporting Stan (cmdstanr), PyMC (Python), JAGS (R2jags), and WinBUGS (R2WinBUGS)\",\n    \"version\": \"1.1.0\",\n    \"license\": \"MIT\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"bayesian-modeling\",\n      \"source\": \"./plugins/bayesian-modeling\",\n      \"description\": \"Create, review, and validate Bayesian models in Stan, PyMC, JAGS, and WinBUGS\",\n      \"version\": \"1.1.0\",\n      \"category\": \"statistics\",\n      \"strict\": false,\n      \"agents\": [\n        \"./agents/model-architect.md\",\n        \"./agents/stan-specialist.md\",\n        \"./agents/pymc-specialist.md\",\n        \"./agents/bugs-specialist.md\",\n        \"./agents/model-reviewer.md\",\n        \"./agents/test-runner.md\"\n      ],\n      \"commands\": [\n        \"./commands/create-model.md\",\n        \"./commands/review-model.md\",\n        \"./commands/run-diagnostics.md\"\n      ],\n      \"keywords\": [\n        \"bayesian\",\n        \"stan\",\n        \"pymc\",\n        \"jags\",\n        \"winbugs\",\n        \"mcmc\",\n        \"hierarchical\",\n        \"regression\",\n        \"time-series\",\n        \"survival\",\n        \"meta-analysis\",\n        \"cmdstanr\",\n        \"r2jags\",\n        \"arviz\",\n        \"python\",\n        \"probabilistic-programming\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# BayesianAgent\n\n> **Bayesian Modeling Agent Ecosystem** — Create, review, and validate Stan, PyMC, JAGS, and WinBUGS models with AI assistance\n\nA comprehensive [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) plugin providing **6 specialized agents**, **9 knowledge skills**, and **3 workflow commands** for Bayesian statistical modeling.\n\n## Overview\n\nThis plugin helps you create and review Bayesian models across four languages:\n\n- **Stan 2.37** (default for R) — Modern HMC/NUTS sampling with cmdstanr\n- **PyMC 5** (default for Python) — Python-native Bayesian modeling with ArviZ\n- **JAGS** — Cross-platform Gibbs sampling with R2jags\n- **WinBUGS** — Classic BUGS implementation with R2WinBUGS\n\n### Key Features\n\n- **Model Creation** — Generate complete, runnable models from natural language descriptions\n- **Model Review** — Analyze existing models for correctness, efficiency, and best practices\n- **Automatic Testing** — Run models with synthetic data to validate convergence\n- **R & Python Integration** — Complete code for cmdstanr, PyMC/ArviZ, R2jags, and R2WinBUGS\n- **All Experience Levels** — Adjustable verbosity from beginner (extensive comments) to advanced (minimal)\n\n## Quick Start\n\n### Step 1: Add the Marketplace\n\nAdd this plugin marketplace to Claude Code:\n\n```bash\n/plugin marketplace add choxos/BayesianAgent\n```\n\n### Step 2: Install the Plugin\n\n```bash\n/plugin install bayesian-modeling\n```\n\nThis loads the Bayesian modeling agents, commands, and skills into Claude's context.\n\n## Usage\n\n### Creating Models\n\nUse the `/create-model` command or describe what you need:\n\n**For R users (Stan):**\n```\nI need a hierarchical model for patient outcomes nested within hospitals.\nThe outcome is continuous, with patient-level predictors (age, treatment)\nand a hospital-level predictor (size). Use Stan.\n```\n\n**For Python users (PyMC):**\n```\nCreate a Bayesian logistic regression in Python using PyMC.\nI have binary outcomes and 3 predictor variables.\n```\n\nThe agent will:\n1. Ask clarifying questions about your data and preferences\n2. Generate complete Stan/PyMC/JAGS code with appropriate priors\n3. Provide integration code (R or Python) for model fitting\n4. Include posterior predictive checks\n\n### Reviewing Models\n\nUse the `/review-model` command or paste your model. The agent auto-detects the language:\n\n```python\n# PyMC model to review\nwith pm.Model() as model:\n    mu = pm.Normal(\"mu\", 0, 10)\n    sigma = pm.HalfNormal(\"sigma\", 1)\n    y = pm.Normal(\"y\", mu=mu, sigma=sigma, observed=data)\n```\n\nThe reviewer checks:\n- Syntax correctness\n- Prior completeness\n- Parameterization efficiency\n- Common errors (SD vs precision, missing constraints)\n\n### Running Diagnostics\n\nUse the `/run-diagnostics` command:\n\n```\nTest my hierarchical model with synthetic data and report convergence\n```\n\nReports include Rhat, ESS, divergences, and parameter recovery.\n\n## Supported Model Types\n\n| Model Type | Stan | PyMC | JAGS | WinBUGS |\n|------------|:----:|:----:|:----:|:-------:|\n| Linear regression | ✓ | ✓ | ✓ | ✓ |\n| Logistic regression | ✓ | ✓ | ✓ | ✓ |\n| Hierarchical/Multilevel | ✓ | ✓ | ✓ | ✓ |\n| Time series (AR, ARMA) | ✓ | ✓ | ✓ | ✓ |\n| Survival analysis | ✓ | ✓ | ✓ | ✓ |\n| Meta-analysis | ✓ | ✓ | ✓ | ✓ |\n\n## Components\n\n### Agents (6)\n\n| Agent | Model | Purpose |\n|-------|-------|---------|\n| `model-architect` | Haiku | Routes requests to specialists |\n| `stan-specialist` | Sonnet | Stan 2.37 expert with cmdstanr |\n| `pymc-specialist` | Sonnet | PyMC 5 expert with ArviZ |\n| `bugs-specialist` | Sonnet | BUGS/JAGS expert with precision parameterization |\n| `model-reviewer` | Sonnet | Reviews models for correctness & efficiency |\n| `test-runner` | Haiku | Executes models with synthetic data |\n\n### Skills (9)\n\n- **Language Skills**: `stan-fundamentals`, `pymc-fundamentals`, `bugs-fundamentals`\n- **Model Skills**: `hierarchical-models`, `regression-models`, `time-series-models`, `survival-models`, `meta-analysis`\n- **Diagnostics**: `model-diagnostics`\n\n### Commands (3)\n\n- `/create-model` — Interactive model creation workflow\n- `/review-model` — Review existing models\n- `/run-diagnostics` — Test model execution\n\n## Critical: Parameterization Differences\n\n**The most common source of errors when working across languages:**\n\n| Distribution | Stan | PyMC | JAGS/WinBUGS |\n|-------------|------|------|--------------|\n| Normal | `normal(mu, sigma)` — SD | `Normal(mu, sigma)` — SD | `dnorm(mu, tau)` — precision (τ = 1/σ²) |\n| Multivariate Normal | `multi_normal(mu, Sigma)` — cov | `MvNormal(mu, cov)` — cov | `dmnorm(mu, Omega)` — precision matrix |\n\n**Note:** Stan and PyMC both use SD parameterization. Only BUGS/JAGS uses precision.\n\nThe agents automatically handle these differences when creating or converting models.\n\n## Repository Structure\n\n```\nBayesianAgent/\n├── .claude-plugin/\n│   └── marketplace.json          # Plugin configuration\n├── plugins/bayesian-modeling/\n│   ├── agents/                   # 6 specialized agents\n│   ├── commands/                 # 3 workflow commands\n│   └── skills/                   # 9 knowledge skills\n├── tests/\n│   ├── models/                   # Stan, JAGS test models\n│   └── integration/              # R and Python tests\n└── .github/workflows/            # CI/CD pipelines\n```\n\n## Running Tests Locally\n\n### R Tests (Stan/JAGS)\n\n```bash\n# Install R dependencies\nRscript -e \"install.packages(c('testthat', 'here', 'cmdstanr', 'R2jags'))\"\n\n# Run all R tests\nRscript tests/run_tests.R\n\n# Run Stan tests only\nRscript tests/run_tests.R stan\n\n# Run JAGS tests only\nRscript tests/run_tests.R jags\n```\n\n### Python Tests (PyMC)\n\n```bash\n# Install Python dependencies\npip install pytest pymc arviz numpy\n\n# Run PyMC tests\npytest tests/integration/pymc/ -v\n```\n\n## License\n\nMIT License — see [LICENSE](LICENSE) for details.\n\n## Acknowledgments\n\n- [Stan Development Team](https://mc-stan.org/) for Stan 2.37\n- [PyMC Developers](https://www.pymc.io/) for PyMC 5\n- [JAGS](https://mcmc-jags.sourceforge.io/) for JAGS\n- [Anthropic](https://www.anthropic.com/) for Claude Code\n"
+      },
+      "plugins": [
+        {
+          "name": "bayesian-modeling",
+          "source": "./plugins/bayesian-modeling",
+          "description": "Create, review, and validate Bayesian models in Stan, PyMC, JAGS, and WinBUGS",
+          "version": "1.1.0",
+          "category": "statistics",
+          "strict": false,
+          "agents": [
+            "./agents/model-architect.md",
+            "./agents/stan-specialist.md",
+            "./agents/pymc-specialist.md",
+            "./agents/bugs-specialist.md",
+            "./agents/model-reviewer.md",
+            "./agents/test-runner.md"
+          ],
+          "commands": [
+            "./commands/create-model.md",
+            "./commands/review-model.md",
+            "./commands/run-diagnostics.md"
+          ],
+          "keywords": [
+            "bayesian",
+            "stan",
+            "pymc",
+            "jags",
+            "winbugs",
+            "mcmc",
+            "hierarchical",
+            "regression",
+            "time-series",
+            "survival",
+            "meta-analysis",
+            "cmdstanr",
+            "r2jags",
+            "arviz",
+            "python",
+            "probabilistic-programming"
+          ],
+          "categories": [
+            "arviz",
+            "bayesian",
+            "cmdstanr",
+            "hierarchical",
+            "jags",
+            "mcmc",
+            "meta-analysis",
+            "probabilistic-programming",
+            "pymc",
+            "python",
+            "r2jags",
+            "regression",
+            "stan",
+            "statistics",
+            "survival",
+            "time-series",
+            "winbugs"
+          ],
+          "install_commands": [
+            "/plugin marketplace add choxos/BayesianAgent",
+            "/plugin install bayesian-modeling@bayesian-modeling-agent"
+          ]
+        }
+      ]
+    },
+    {
       "name": "r-tidy-modelling",
       "version": null,
       "description": "Comprehensive R data science and biostatistics agents for tidy modelling workflows with 10 specialized agents, 12 methodology skills, and 7 workflow orchestrators following TMwR and tidyverse best practices",
