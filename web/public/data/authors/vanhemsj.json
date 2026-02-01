@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "vanhemsj",
+    "display_name": "vanhemsj",
+    "avatar_url": "https://avatars.githubusercontent.com/u/15094542?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lutecepowers-plugins",
+      "version": null,
+      "description": "Marketplace for Lutece plugins",
+      "repo_full_name": "vanhemsj/lutecepowers",
+      "repo_url": "https://github.com/vanhemsj/lutecepowers",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-01T12:24:20Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lutecepowers-plugins\",\n  \"description\": \"Marketplace for Lutece plugins\",\n  \"owner\": {\n    \"name\": \"vanhemsj\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lutecepowers-v8\",\n      \"description\": \"Claude Code plugin for Lutece 8 framework development. Rules, skills, Agents, and references.\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\"\n    }\n  ]\n}",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"lutecepowers-v8\",\n  \"description\": \"Claude Code plugin for Lutece 8 framework development. Rules, skills, Agents, and references.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"vanhemsj\"\n  }\n}\n",
+        "README.md": "# Lutecepowers-v8\n\nClaude Code plugin for **Lutece 8** framework development.\n\n## Installation\n\n```bash\n/plugin marketplace add vanhemsj/lutecepowers-v8\n/plugin install lutecepowers-v8\n```\n\n## Hook (SessionStart)\n\nAt session start, the plugin runs 3 hooks automatically:\n\n1. **System prompt injection** — Informs Claude of available skills and instructs it to always consult the reference repos (`~/.lutece-references/`) via Read/Grep/Glob before writing any Lutece code\n2. **Reference repos clone/update** — Clones or pulls 14 Lutece 8 repositories (lutece-core, plugin-forms, plugin-workflow, library-workflow-core, etc.) into `~/.lutece-references/` so Claude has real implementation examples to read\n3. **Rules copy** — Runs `scripts/lutece-rules-setup.sh` to copy rule templates into the target project's `.claude/rules/`\n\n## Rules\n\nRules are constraints automatically loaded when Claude touches matching files. They are copied to the target project's `.claude/rules/` at session start.\n\n| Rule | Scope | Description |\n|------|-------|-------------|\n| `java-conventions` | `**/*.java` | Global Java constraints: jakarta imports (with JDK javax exceptions), beans.xml requirement, field naming prefixes |\n| `web-bean` | `**/web/**/*.java` | JspBean/XPage constraints: CDI annotations, CRUD lifecycle, security tokens, pagination |\n| `service-layer` | `**/service/**/*.java` | Service layer constraints: CDI scopes, injection, events, configuration, cache integration |\n| `dao-patterns` | `**/business/**/*.java` | DAOUtil lifecycle, SQL constants, Home facade, CDI lookup |\n| `template-back-office` | `**/templates/admin/**/*.html` | Freemarker macros, layout structure, i18n, null safety, BS5/Tabler already loaded (prefer macros), vanilla JS, no CDN |\n| `template-front-office` | `**/templates/skin/**/*.html` | BS5/Tabler/core JS already loaded (no imports), BS5 classes only, vanilla JS (no jQuery), no CDN |\n| `jsp-admin` | `**/*.jsp` | Admin feature JSP boilerplate, bean naming, errorPage |\n| `plugin-descriptor` | `**/plugins/*.xml` | Mandatory tags, icon-url, core-version-dependency |\n| `messages-properties` | global | i18n constraints: no prefix in .properties, prefix in Java/templates |\n| `drykissyagni` | global | DRY, KISS, YAGNI principles |\n| `dependency-references` | global | Lutece deps: auto-fetch sources into `~/.lutece-references/`, v8 branch detection, warn if no v8. External deps: use Context7 MCP if available, suggest install otherwise |\n\n## Skills\n\nSkills are multi-step procedures loaded progressively by Claude on demand.\n\n| Skill | Description |\n|-------|-------------|\n| `lutece-migration-v8` | Migration v7 → v8 (Spring → CDI/Jakarta). 15 phases orchestrated via Claude Code Tasks (`TaskCreate`/`TaskUpdate` with `blockedBy` dependencies). |\n| `lutece-scaffold` | Interactive plugin scaffold generator. Creates plugins with optional XPage, Cache, RBAC and Site features. |\n| `lutece-site` | Interactive site generator. Creates a site with database configuration and optional plugin dependencies. |\n| `lutece-workflow` | Rules and patterns for creating/modifying workflow modules. Tasks, CDI producers, components, templates. |\n| `lutece-dao` | DAO and Home layer patterns: DAOUtil lifecycle, SQL constants, Home static facade, CDI lookup. |\n| `lutece-cache` | Cache implementation: AbstractCacheableService, CDI initialization, invalidation via CDI events. |\n| `lutece-rbac` | RBAC implementation: entity permissions, ResourceIdService, plugin.xml declaration, JspBean authorization. |\n| `lutece-lucene-indexer` | Plugin-internal Lucene search: custom index, daemon, CDI events, batch processing. |\n| `lutece-patterns` | Lutece 8 architecture reference: layered architecture, CDI patterns, CRUD lifecycle, pagination, XPages, daemons, security checklist. |\n| `using-lutecepowers` | Introduction to the lutecepowers skills library. |\n\n## Migration Samples\n\nThe `migrations-samples/` directory contains detailed analyses of real v7 → v8 migrations (14 plugins/modules/libraries). Each file documents the exact diffs per category (POM, imports, CDI, events, cache, templates, tests, etc.). These samples are consulted by the migration skill and by the v8-reviewer agent as reference.\n\n## Agents\n\nAgents are specialized subagents that run in their own context window with restricted tools.\n\n| Agent | Model | Tools | Description |\n|-------|-------|-------|-------------|\n| `lutece-v8-reviewer` | Haiku | Read, Grep, Glob, Bash | Reviews a Lutece plugin for v8 compliance. Checks CDI annotations, jakarta imports, POM dependencies, beans.xml, Spring residues. Produces a structured PASS/WARN/FAIL report. |\n\n## Tests\n\nTests are run via the Claude Agent SDK and defined in `tests/tests.json`. Each test case spins up a Claude session with the plugin loaded against a fixture project, then asserts expected behavior (tool usage, file reads, agent delegation).\n\n```bash\n# Install dependencies (first time only)\npip install -r tests/requirements.txt\n\n# Run all tests\npython3 -m pytest tests/test.py -v\n\n# Run a specific test\npython3 -m pytest tests/test.py -v -k \"v8_reviewer\"\n\n# Run tests in parallel\npython3 -m pytest tests/test.py -v -n 4\n```\n\nLatest results: [TEST_REPORT.md](TEST_REPORT.md)\n\n## Manual Testing\n\nTo test the plugin locally against a Lutece project:\n\n```bash\ncd /path/to/your-lutece-plugin-to-test\nclaude --plugin-dir /path/to/lutecepowers-v8\n```\n\nThis loads the plugin without installing it from the marketplace. SessionStart hooks will run normally (reference repos clone, rules copy, system prompt injection).\n"
+      },
+      "plugins": [
+        {
+          "name": "lutecepowers-v8",
+          "description": "Claude Code plugin for Lutece 8 framework development. Rules, skills, Agents, and references.",
+          "version": "1.0.0",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add vanhemsj/lutecepowers",
+            "/plugin install lutecepowers-v8@lutecepowers-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

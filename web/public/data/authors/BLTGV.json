@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "BLTGV",
+    "display_name": "BLT Global Ventures LLC",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1881099?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bltgv-plugins",
+      "version": null,
+      "description": "BLTGV Claude Code plugins for API integrations",
+      "repo_full_name": "BLTGV/agent-skills",
+      "repo_url": "https://github.com/BLTGV/agent-skills",
+      "repo_description": "Claude Code plugin for connecting to external APIs (Microsoft Graph, Notion)",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-03T19:44:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"bltgv-plugins\",\n  \"description\": \"BLTGV Claude Code plugins for API integrations\",\n  \"owner\": {\n    \"name\": \"BLTGV\",\n    \"email\": \"casey.benko@bltgv.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"api-skills\",\n      \"description\": \"Skills for connecting to external APIs with guided access scripts. Supports Microsoft Graph (emails, calendar, send email, create events) and Notion (search, pages, databases, blocks).\",\n      \"version\": \"0.4.0\",\n      \"author\": {\n        \"name\": \"Casey Benko\",\n        \"email\": \"casey.benko@bltgv.com\"\n      },\n      \"source\": \"./\",\n      \"category\": \"integration\",\n      \"homepage\": \"https://github.com/BLTGV/agent-skills\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"api-skills\",\n  \"version\": \"0.4.0\",\n  \"description\": \"Skills for connecting to external APIs with guided access scripts\",\n  \"author\": {\n    \"name\": \"Casey\"\n  },\n  \"keywords\": [\"api\", \"microsoft-graph\", \"notion\", \"integration\"]\n}\n",
+        "README.md": "# API Skills\n\nA Claude Code plugin providing skills for connecting to external APIs with guided access scripts.\n\n## Features\n\n- **Microsoft Graph API** - Access Microsoft 365 emails and calendar\n- **Notion API** - *(Coming soon)*\n\n## Prerequisites\n\n- [Bun](https://bun.sh/) runtime\n- Microsoft account (for Graph API)\n\n## Installation\n\n1. Clone this repository\n2. Install dependencies:\n   ```bash\n   bun install\n   ```\n3. Add to Claude Code:\n   ```bash\n   claude --plugin-dir /path/to/agent-skills\n   ```\n\n## Skills\n\n### Microsoft Graph\n\nAccess Microsoft 365 email and calendar.\n\n**Triggers:** \"read my emails\", \"check my calendar\", \"search emails\", \"what meetings do I have\"\n\n#### Quick Start (Default Client)\n\nWorks immediately for most personal accounts:\n\n```bash\nbun run skills/microsoft-graph/scripts/auth.ts\n```\n\n#### Using Your Own App Registration (Recommended)\n\nFor work/school accounts or production use, register your own Azure AD app:\n\n1. Go to [Azure Portal](https://portal.azure.com)\n2. Navigate to **Azure Active Directory** > **App registrations**\n3. Click **New registration**:\n   - **Name:** Your app name (e.g., \"My Graph CLI\")\n   - **Supported account types:** Choose based on your needs:\n     - \"Accounts in this organizational directory only\" (single tenant)\n     - \"Accounts in any organizational directory\" (multi-tenant)\n     - \"Accounts in any organizational directory and personal Microsoft accounts\"\n   - **Redirect URI:** Select \"Public client/native (mobile & desktop)\" and enter:\n     ```\n     https://login.microsoftonline.com/common/oauth2/nativeclient\n     ```\n4. Click **Register**\n5. Go to **Authentication**:\n   - Enable **Allow public client flows** (set to Yes)\n   - Click **Save**\n6. Go to **API permissions** > **Add a permission** > **Microsoft Graph** > **Delegated permissions**:\n   - `Mail.Read` - Read user mail\n   - `Calendars.Read` - Read user calendars\n   - `User.Read` - Sign in and read user profile\n   - Click **Add permissions**\n7. Copy the **Application (client) ID** from the Overview page\n\nThen authenticate with your app:\n\n```bash\n# Multi-tenant app\nbun run skills/microsoft-graph/scripts/auth.ts --client-id YOUR_CLIENT_ID\n\n# Single-tenant app (replace with your tenant ID)\nbun run skills/microsoft-graph/scripts/auth.ts \\\n  --client-id YOUR_CLIENT_ID \\\n  --tenant-id YOUR_TENANT_ID\n```\n\nThe client ID is saved with your credentials, so you only need to specify it once per profile.\n\n#### Usage Examples\n\n```bash\n# List emails\nbun run skills/microsoft-graph/scripts/emails.ts list\n\n# Today's calendar\nbun run skills/microsoft-graph/scripts/calendar.ts today\n\n# Search emails\nbun run skills/microsoft-graph/scripts/emails.ts search --query \"from:boss@company.com\"\n\n# List mail folders\nbun run skills/microsoft-graph/scripts/emails.ts folders\n```\n\n#### Multi-Account Support\n\n```bash\n# Add work account with custom app\nbun run auth.ts --profile work --client-id YOUR_WORK_APP_ID\n\n# Add personal account\nbun run auth.ts --profile personal\n\n# Use specific profile\nbun run emails.ts list --profile work\nbun run calendar.ts today --profile personal\n\n# List all profiles\nbun run auth.ts --list\n```\n\n## Credential Storage\n\nCredentials are stored in `~/.config/api-skills/credentials.json`:\n\n```json\n{\n  \"microsoft-graph\": {\n    \"default\": {\n      \"accessToken\": \"...\",\n      \"refreshToken\": \"...\",\n      \"expiresAt\": \"...\",\n      \"account\": \"user@example.com\",\n      \"scopes\": [\"Mail.Read\", \"Calendars.Read\"],\n      \"clientId\": \"your-app-id\",\n      \"tenantId\": \"your-tenant-id\"\n    }\n  }\n}\n```\n\n- Tokens are automatically refreshed when expired\n- Client ID and tenant ID are remembered per profile\n- Different profiles can use different app registrations\n\n## Troubleshooting\n\n### \"AADSTS50020: User account does not exist in tenant\"\n\nYour organization requires a single-tenant app. Register an app in your Azure AD tenant and use:\n```bash\nbun run auth.ts --client-id YOUR_APP_ID --tenant-id YOUR_TENANT_ID\n```\n\n### \"AADSTS65001: User has not consented to use the application\"\n\nYour organization requires admin consent for apps. Ask your IT admin to:\n1. Go to Azure AD > Enterprise applications > Your app\n2. Grant admin consent for the required permissions\n\n### \"AADSTS7000218: Request body must contain client_assertion or client_secret\"\n\nYour app is configured as a confidential client. Go to Azure Portal > Your app > Authentication and enable \"Allow public client flows\".\n\n## Adding New API Skills\n\nThis plugin is designed to be extensible. To add a new API integration:\n\n1. Create a new skill directory: `skills/your-api/`\n2. Add `SKILL.md` with triggers and usage documentation\n3. Create TypeScript scripts in `scripts/`\n4. Use the shared credential library for token storage\n\n## Development\n\n```bash\n# Type check\nbun run typecheck\n\n# Run a script\nbun run skills/microsoft-graph/scripts/auth.ts --help\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "api-skills",
+          "description": "Skills for connecting to external APIs with guided access scripts. Supports Microsoft Graph (emails, calendar, send email, create events) and Notion (search, pages, databases, blocks).",
+          "version": "0.4.0",
+          "author": {
+            "name": "Casey Benko",
+            "email": "casey.benko@bltgv.com"
+          },
+          "source": "./",
+          "category": "integration",
+          "homepage": "https://github.com/BLTGV/agent-skills",
+          "categories": [
+            "integration"
+          ],
+          "install_commands": [
+            "/plugin marketplace add BLTGV/agent-skills",
+            "/plugin install api-skills@bltgv-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

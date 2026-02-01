@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "oshiteku",
+    "display_name": "oshiteku",
+    "avatar_url": "https://avatars.githubusercontent.com/u/65475078?u=e1d57ffdea04ca4d34e5460491eb9cf33ede8033&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "tazuna-plugins",
+      "version": null,
+      "description": "Plugins for tazuna multi-session manager",
+      "repo_full_name": "oshiteku/tazuna",
+      "repo_url": "https://github.com/oshiteku/tazuna",
+      "repo_description": "TUI tool for managing multiple Claude Code sessions in parallel.",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-18T12:59:20Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://code.claude.com/schemas/marketplace.json\",\n  \"name\": \"tazuna-plugins\",\n  \"owner\": {\n    \"name\": \"oshiteku\",\n    \"url\": \"https://github.com/oshiteku\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugins for tazuna multi-session manager\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tazuna\",\n      \"description\": \"Session hooks for tazuna multi-session manager\",\n      \"version\": \"0.1.0\",\n      \"author\": { \"name\": \"oshiteku\" },\n      \"source\": \"./plugins/tazuna\",\n      \"category\": \"productivity\",\n      \"tags\": [\"session\", \"hooks\", \"notification\"]\n    }\n  ]\n}\n",
+        "README.md": "# tazuna\n\n[![Crates.io Version](https://img.shields.io/crates/v/tazuna)](https://crates.io/crates/tazuna)\n\nTUI tool for managing multiple Claude Code sessions in parallel.\n\n## Features\n\n- Multiple PTY-based Claude Code sessions\n- git worktree integration\n- Claude Code hooks-based notifications\n- Tab/popup UI with ratatui\n\n## Installation\n\n```bash\ncargo install tazuna\n```\n\n## Plugin Setup\n\ntazuna uses a Claude Code plugin for hooks integration (notifications, permission requests, etc.).\n\n### Installation\n\n1. Add tazuna marketplace:\n   ```bash\n   claude plugin marketplace add oshiteku/tazuna\n   ```\n\n2. Install the plugin:\n   ```bash\n   claude plugin install tazuna\n   ```\n\n3. Verify:\n   ```bash\n   claude plugin marketplace list\n   ```\n\n## Usage\n\n### Key Bindings\n\n#### Global\n\n| Key | Action |\n|-----|--------|\n| `Ctrl+w` | Terminate current session |\n| `Ctrl+n` / `Ctrl+p` | Switch to next/previous session |\n| `Ctrl+s` | Display workspace popup |\n| `Ctrl+q` | Exit tazuna |\n\n#### Workspace Popup\n\n| Key | Action |\n|-----|--------|\n| `Ctrl+n` | Next item (cross-section wrap) |\n| `Ctrl+p` | Previous item (cross-section wrap) |\n| `Ctrl+m` | Confirm selection (Enter) |\n| `Ctrl+g` | Cancel (close popup) |\n| `Tab` / `Shift+Tab` | Switch section |\n| `↑` / `↓` | Navigate within section |\n| `d` | Delete worktree (Worktrees section) |\n| `p` | Pull worktree (Worktrees section) |\n\n### Text Selection\n\nMouse events are captured by tazuna for tab switching and scrolling.\nTo select and copy text, use **Shift+drag** (standard terminal emulator behavior).\n\n## Configuration\n\nConfig file location: `~/.config/tazuna/config.toml`\n\n### Example\n\n```toml\n[session]\nmax_sessions = 10\n\n[worktree]\nauto_cleanup = false\nbranch_prefix = \"tazuna/\"\nbase_path = \"~/.tazuna/worktrees\"\npull_strategy = \"merge\"  # or \"rebase\"\n\n[notification]\nterminal_bell = true\n\n[notification.webhook]\nenabled = false\nurl = \"\"\n\n[log]\ndirectory = \"~/.local/share/tazuna/logs\"\n\n[claude]\ndefault_args = []\n```\n\n### Options\n\n| Section | Key | Default | Description |\n|---------|-----|---------|-------------|\n| session | max_sessions | 10 | Maximum concurrent sessions |\n| worktree | auto_cleanup | false | Auto-delete worktree on session end |\n| worktree | branch_prefix | \"tazuna/\" | Prefix for auto-generated branches |\n| worktree | base_path | ~/.tazuna/worktrees | Worktree storage location |\n| worktree | pull_strategy | \"merge\" | Pull strategy: \"merge\" or \"rebase\" |\n| notification | terminal_bell | true | Enable terminal bell |\n| notification.webhook | enabled | false | Enable webhook notifications |\n| notification.webhook | url | \"\" | Webhook URL (Slack, Discord, etc.) |\n| log | directory | ~/.local/share/tazuna/logs | Session log directory |\n| claude | default_args | [] | Default Claude Code CLI arguments |\n\n## Development\n\n### Pre-commit Hooks\n\n```bash\n# prek install\ncargo install --locked prek\n# or: brew install prek\n\n# enable hooks\nprek install\n```\n\nHooks: `cargo fmt`, `cargo clippy`, `typos`, `trailing-whitespace`, etc.\n\n## License\n\nMIT OR Apache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "tazuna",
+          "description": "Session hooks for tazuna multi-session manager",
+          "version": "0.1.0",
+          "author": {
+            "name": "oshiteku"
+          },
+          "source": "./plugins/tazuna",
+          "category": "productivity",
+          "tags": [
+            "session",
+            "hooks",
+            "notification"
+          ],
+          "categories": [
+            "hooks",
+            "notification",
+            "productivity",
+            "session"
+          ],
+          "install_commands": [
+            "/plugin marketplace add oshiteku/tazuna",
+            "/plugin install tazuna@tazuna-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
