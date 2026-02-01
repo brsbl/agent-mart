@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "xaneem",
+    "display_name": "Saneem",
+    "avatar_url": "https://avatars.githubusercontent.com/u/4448331?u=ec6e4195b3484648feb29a188687701f8824b3bf&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "looped-builder",
+      "version": null,
+      "description": "Local marketplace for looped-builder skill",
+      "repo_full_name": "xaneem/looped-builder-skill",
+      "repo_url": "https://github.com/xaneem/looped-builder-skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-28T04:51:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"looped-builder\",\n  \"description\": \"Local marketplace for looped-builder skill\",\n  \"owner\": {\n    \"name\": \"xaneem\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"looped-builder\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Scaffold large implementation tasks for iterative execution with Claude in a bash loop\",\n      \"author\": {\n        \"name\": \"xaneem\"\n      },\n      \"source\": \"./\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"looped-builder\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Scaffold large implementation tasks for iterative execution with Claude in a bash loop\",\n  \"author\": {\n    \"name\": \"xaneem\"\n  }\n}\n",
+        "README.md": "# Looped Builder Skill\n\nA Claude Code plugin for scaffolding large, complex implementation tasks that run iteratively using Claude in a bash loop.\n\n## Installation\n\n### Option 1: Install from GitHub (Recommended)\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add github:xaneem/looped-builder-skill\n\n# Install the plugin\nclaude plugin install looped-builder@looped-builder\n```\n\n### Option 2: Install from Local Directory\n\n```bash\n# Clone the repository\ngit clone https://github.com/xaneem/looped-builder-skill.git\n\n# Add as a local marketplace\nclaude plugin marketplace add /path/to/looped-builder-skill\n\n# Install the plugin\nclaude plugin install looped-builder@looped-builder\n```\n\n### Verify Installation\n\n```bash\nclaude plugin list\n```\n\nYou should see `looped-builder@looped-builder` with status `enabled`.\n\n## What It Does\n\nWhen you have a big feature, refactor, or exploration that's too large for a single Claude session, this skill helps you:\n\n1. **Create a detailed spec** - Clear requirements and success criteria\n2. **Generate a phased implementation plan** - Small, atomic steps sized for Claude's context window\n3. **Set up iterative execution** - A bash loop that runs Claude repeatedly until done\n\n## Usage\n\nIn any Claude Code session, invoke the skill:\n\n```\n/looped-builder\n```\n\nOr describe your task naturally:\n\n```\nUsing the looped builder skill, help me implement [feature description] in [project]\n```\n\nClaude will:\n1. Ask clarifying questions if needed\n2. Explore your codebase to understand patterns\n3. Generate `spec.md`, `implementation_plan.md`, `prompt.md`, and `run.sh`\n4. Ask you to review before execution\n\nThen run:\n```bash\ncd [feature-directory]\nchmod +x run.sh\n./run.sh\n```\n\n## How It Works\n\nThe bash loop:\n1. Reads `prompt.md` and sends it to Claude\n2. Claude finds the first unchecked `- [ ]` item in `implementation_plan.md`\n3. Claude implements that one step and marks it `- [x]`\n4. Loop repeats until all steps are done or max iterations reached\n\n## Key Design Principles\n\n### Context Window Management\nEach step is designed to fit within 50-60% of Claude's context window. This means:\n- Exploration steps focus on one area at a time\n- Implementation steps touch 1-3 files max\n- Each step is self-contained with enough context\n\n### Exploration Before Implementation\nThe plan always starts with exploration phases that document:\n- File locations and line numbers\n- Existing patterns to follow\n- Integration points\n\nThis information is captured in the plan itself, providing context for later steps.\n\n### Atomic Steps\nSteps are small and specific:\n- \"Add constant `PREF_X` to Settings.java\"\n- \"Create getter method for X\"\n- NOT: \"Implement the settings system\" (too broad)\n\n## Files Generated\n\n| File | Purpose |\n|------|---------|\n| `spec.md` | Requirements, user stories, success criteria |\n| `implementation_plan.md` | Phased checklist with atomic steps |\n| `prompt.md` | Instructions for each iteration |\n| `run.sh` | Bash loop that runs Claude iteratively |\n\n## Directory Structure\n\nThe skill creates files in a dedicated feature directory:\n\n```\nyour-project/\n  docs/\n    feature-name/\n      spec.md\n      implementation_plan.md\n      prompt.md\n      run.sh\n```\n\nOr:\n```\nyour-project/\n  .claude/\n    builds/\n      feature-name/\n        ...\n```\n\n## Configuration\n\nIn `run.sh`, adjust:\n- `MAX_ITERATIONS` - Default 50, increase for very large tasks\n- `PROJECT_DIR` - Path to project root (script runs Claude from here)\n\n## Tips\n\n1. **Review the plan** before running - adjust step granularity if needed\n2. **Run in tmux/screen** for long executions\n3. **Check progress** anytime by reading `implementation_plan.md`\n4. **Pause and resume** - just run `./run.sh` again, it continues from last completed step\n\n## Repository Structure\n\n```\nlooped-builder-skill/\n├── .claude-plugin/\n│   ├── plugin.json          # Plugin metadata\n│   └── marketplace.json     # Marketplace manifest\n├── skills/\n│   └── looped-builder/\n│       └── SKILL.md         # The skill instructions\n├── templates/               # Template files for reference\n├── examples/                # Example implementations\n└── README.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "looped-builder",
+          "version": "1.0.0",
+          "description": "Scaffold large implementation tasks for iterative execution with Claude in a bash loop",
+          "author": {
+            "name": "xaneem"
+          },
+          "source": "./",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add xaneem/looped-builder-skill",
+            "/plugin install looped-builder@looped-builder"
+          ]
+        }
+      ]
+    }
+  ]
+}

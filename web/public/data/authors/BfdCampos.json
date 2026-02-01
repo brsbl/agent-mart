@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "BfdCampos",
+    "display_name": "Bruno Campos",
+    "avatar_url": "https://avatars.githubusercontent.com/u/47187672?u=9cf655d5e9bb0b10f721c10131e59a939aa624cb&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mermaid-contrast",
+      "version": null,
+      "description": "Create beautiful, GitHub-compatible Mermaid diagrams with high contrast styling that works in both light and dark mode",
+      "repo_full_name": "BfdCampos/mermaid-contrast",
+      "repo_url": "https://github.com/BfdCampos/mermaid-contrast",
+      "repo_description": "Claude Code plugin for high-contrast Mermaid diagrams that work in light and dark mode",
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2025-12-10T15:20:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mermaid-contrast\",\n  \"owner\": {\n    \"name\": \"Bruno Campos\",\n    \"url\": \"https://github.com/BfdCampos\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mermaid-contrast\",\n      \"source\": \".\",\n      \"description\": \"Create beautiful, GitHub-compatible Mermaid diagrams with high contrast styling that works in both light and dark mode\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mermaid-contrast\",\n  \"description\": \"Create beautiful, GitHub-compatible Mermaid diagrams with high contrast styling that works in both light and dark mode\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Bruno Campos\"\n  },\n  \"keywords\": [\"mermaid\", \"diagrams\", \"github\", \"markdown\", \"flowchart\", \"dark-mode\", \"light-mode\"]\n}\n",
+        "README.md": "# mermaid-contrast\n\nA [Claude Code](https://claude.ai/code) plugin that helps you create beautiful, high-contrast Mermaid diagrams that work perfectly in both light and dark mode on GitHub.\n\n## The Problem\n\nMermaid diagrams often look great in one theme but break in another. Light fills disappear in dark mode. Coloured subgraphs clash with page backgrounds. Font Awesome icons render as literal text on GitHub.\n\n## The Solution\n\nThis plugin teaches Claude a simple principle: **dark fills + light strokes = readable everywhere**.\n\n```mermaid\nflowchart TD\n    classDef example fill:#5b21b6,stroke:#ddd6fe,stroke-width:2px,color:#fff\n    A([\"Dark fill\"]):::example --> B([\"Light stroke\"]):::example\n```\n\n## Full Example\n\nHere's a comprehensive example showing all the styling capabilities:\n\n```mermaid\nflowchart TD\n    %% --- STYLES ---\n    %% Dark fills + light strokes = readable in both light and dark mode\n    classDef user fill:#374151,stroke:#d1d5db,stroke-width:2px,color:#fff\n    classDef api fill:#5b21b6,stroke:#ddd6fe,stroke-width:2px,color:#fff\n    classDef service fill:#1e40af,stroke:#bfdbfe,stroke-width:2px,color:#fff\n    classDef database fill:#0f766e,stroke:#99f6e4,stroke-width:2px,color:#fff\n    classDef error fill:#b91c1c,stroke:#fecaca,stroke-width:2px,color:#fff\n    classDef success fill:#047857,stroke:#a7f3d0,stroke-width:2px,color:#fff\n    classDef decision fill:#c2410c,stroke:#fed7aa,stroke-width:2px,color:#fff\n\n    %% --- DIAGRAM ---\n    User((User)):::user\n    User --> Request([\"API Request\"]):::user\n\n    Request --> Gateway\n\n    subgraph Gateway[\"API Gateway\"]\n        direction TB\n        Auth([\"Authenticate\"]):::api\n        Validate([\"Validate\"]):::api\n        Auth --> Validate\n    end\n\n    Validate --> Check{{\"Authorised?\"}}:::decision\n\n    Check -->|No| Denied([\"403 Forbidden\"]):::error\n    Check -->|Yes| Services\n\n    subgraph Services[\"Microservices\"]\n        direction TB\n        OrderSvc([\"Order Service\"]):::service\n        PaymentSvc([\"Payment Service\"]):::service\n        NotifySvc([\"Notification Service\"]):::service\n        OrderSvc --> PaymentSvc\n        PaymentSvc --> NotifySvc\n    end\n\n    subgraph Data[\"Data Layer\"]\n        direction TB\n        Postgres[(PostgreSQL)]:::database\n        Redis[(Redis Cache)]:::database\n    end\n\n    Services --> Data\n    NotifySvc --> Response([\"200 OK\"]):::success\n    Response -.-> User\n\n    %% --- SUBGRAPH STYLES ---\n    %% fill:none allows subgraphs to adapt to any background\n    style Gateway fill:none,stroke:#8b5cf6,stroke-width:2px,stroke-dasharray:5 5,color:#8b5cf6\n    style Services fill:none,stroke:#3b82f6,stroke-width:2px,stroke-dasharray:5 5,color:#3b82f6\n    style Data fill:none,stroke:#14b8a6,stroke-width:2px,color:#14b8a6\n```\n\nThis example demonstrates:\n\n- **Multiple colour classes** — User, API, service, database, error, success, decision\n- **Various node shapes** — Circles `(())` for actors, stadiums `([\"\"])` for actions, hexagons `{{\"\"}}` for decisions, cylinders `[()]` for databases\n- **Nested subgraphs** — With transparent fills and dashed borders\n- **Different arrow types** — Solid `-->`, dashed `-.->`, and labelled `-->|text|`\n- **Semantic colouring** — Green for success, red for errors, orange for decisions\n\n## Installation\n\n1. Add the marketplace:\n   ```\n   /plugin marketplace add BfdCampos/mermaid-contrast\n   ```\n\n2. Install the plugin:\n   ```\n   /plugin install mermaid-contrast@mermaid-contrast\n   ```\n\n3. Restart Claude Code\n\n## Usage\n\nThe plugin adds a `mermaid` skill that Claude uses automatically when you ask it to create diagrams. Just ask Claude to create a flowchart, architecture diagram, or any Mermaid diagram — it will apply the high-contrast styling automatically.\n\n### Example prompts\n\n- \"Create a flowchart showing the user authentication flow\"\n- \"Draw an architecture diagram for this microservice\"\n- \"Visualise the data pipeline from ingestion to output\"\n\n## What You Get\n\n- **Universal readability** — Diagrams look great in light AND dark mode\n- **GitHub compatibility** — No Font Awesome icons, proper subgraph syntax\n- **Consistent styling** — Curated colour palette with dark/light pairings\n- **Best practices** — Rounded shapes, transparent subgraphs, proper quoting\n\n## Colour Palette\n\nThe skill includes these pre-defined colour pairings:\n\n| Colour | Fill | Stroke |\n|--------|------|--------|\n| Grey | `#374151` | `#d1d5db` |\n| Purple | `#5b21b6` | `#ddd6fe` |\n| Blue | `#1e40af` | `#bfdbfe` |\n| Orange | `#c2410c` | `#fed7aa` |\n| Green | `#047857` | `#a7f3d0` |\n| Red | `#b91c1c` | `#fecaca` |\n| Teal | `#0f766e` | `#99f6e4` |\n\n"
+      },
+      "plugins": [
+        {
+          "name": "mermaid-contrast",
+          "source": ".",
+          "description": "Create beautiful, GitHub-compatible Mermaid diagrams with high contrast styling that works in both light and dark mode",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add BfdCampos/mermaid-contrast",
+            "/plugin install mermaid-contrast@mermaid-contrast"
+          ]
+        }
+      ]
+    }
+  ]
+}

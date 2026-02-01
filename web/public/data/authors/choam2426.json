@@ -2,97 +2,24 @@
   "author": {
     "id": "choam2426",
     "display_name": "Yonghun Shin",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/117963215?u=7c192a79eb1edd62ce6c562b90546cda79704469&v=4",
-    "url": "https://github.com/choam2426",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 0,
-      "total_stars": 11,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/117963215?u=7c192a79eb1edd62ce6c562b90546cda79704469&v=4"
   },
   "marketplaces": [
     {
       "name": "cmdlens-marketplace",
       "version": null,
       "description": "CmdLens - Bash command explanation plugin",
-      "owner_info": {
-        "name": "choam2426"
-      },
-      "keywords": [],
       "repo_full_name": "choam2426/CmdLens",
       "repo_url": "https://github.com/choam2426/CmdLens",
       "repo_description": null,
-      "homepage": null,
       "signals": {
         "stars": 11,
         "forks": 0,
-        "pushed_at": "2026-01-28T12:34:01Z",
-        "created_at": "2026-01-19T13:51:05Z",
-        "license": "Apache-2.0"
+        "pushed_at": "2026-01-28T12:34:01Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 573
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/cmdlens",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/cmdlens/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/cmdlens/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 242
-        },
-        {
-          "path": "plugins/cmdlens/hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/cmdlens/hooks/hooks.json",
-          "type": "blob",
-          "size": 438
-        },
-        {
-          "path": "plugins/cmdlens/hooks/pre_tool_use.py",
-          "type": "blob",
-          "size": 5724
-        },
-        {
-          "path": "plugins/cmdlens/hooks/session_start.py",
-          "type": "blob",
-          "size": 1511
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"cmdlens-marketplace\",\n  \"owner\": {\n    \"name\": \"choam2426\"\n  },\n  \"metadata\": {\n    \"description\": \"CmdLens - Bash command explanation plugin\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cmdlens\",\n      \"source\": \"./plugins/cmdlens\",\n      \"description\": \"Displays risk level and recovery info before every Bash command execution\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"choam2426\"\n      },\n      \"keywords\": [\n        \"bash\",\n        \"safety\",\n        \"explanation\"\n      ],\n      \"license\": \"Apache-2.0\"\n    }\n  ]\n}",
-        "plugins/cmdlens/.claude-plugin/plugin.json": "{\n  \"name\": \"cmdlens\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Displays risk level and recovery info before every Bash command execution\",\n  \"author\": {\n    \"name\": \"choam2426\"\n  },\n  \"license\": \"Apache-2.0\",\n  \"hooks\": \"./hooks/hooks.json\"\n}",
-        "plugins/cmdlens/hooks/hooks.json": "{\n  \"hooks\": {\n    \"SessionStart\": [{\n      \"matcher\": \"*\",\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"python \\\"${CLAUDE_PLUGIN_ROOT}/hooks/session_start.py\\\"\",\n        \"timeout\": 5000\n      }]\n    }],\n    \"PreToolUse\": [{\n      \"matcher\": \"Bash\",\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"python \\\"${CLAUDE_PLUGIN_ROOT}/hooks/pre_tool_use.py\\\"\",\n        \"timeout\": 3000\n      }]\n    }]\n  }\n}\n",
-        "plugins/cmdlens/hooks/pre_tool_use.py": "#!/usr/bin/env python3\n\"\"\"CmdLens PreToolUse Hook\n\nParses risk level and recovery info from description field when Bash tool is called\nand displays it via systemMessage to the user.\n\"\"\"\n\nimport json\nimport re\nimport sys\nimport unicodedata\n\n\ndef get_display_width(text: str) -> int:\n    \"\"\"Calculate display width accounting for wide characters (emojis, CJK, etc.).\"\"\"\n    width = 0\n    for char in text:\n        # East Asian Width: F(ull), W(ide) = 2, others = 1\n        ea_width = unicodedata.east_asian_width(char)\n        if ea_width in ('F', 'W'):\n            width += 2\n        # Emojis and other symbols often have width 2\n        elif unicodedata.category(char) in ('So', 'Sk', 'Sm'):\n            width += 2\n        else:\n            width += 1\n    return width\n\n\ndef pad_to_width(text: str, target_width: int) -> str:\n    \"\"\"Pad text with spaces to reach target display width.\"\"\"\n    current_width = get_display_width(text)\n    padding = target_width - current_width\n    return text + \" \" * max(0, padding)\n\n\ndef parse_description(description: str) -> dict:\n    \"\"\"Parse description field and return structured information.\n\n    Expected format: [RiskLevel] Description | Recovery: RecoveryMethod\n    \"\"\"\n    result = {\n        \"risk_level\": None,\n        \"explanation\": None,\n        \"recovery\": None\n    }\n\n    if not description:\n        return result\n\n    # Parse risk level: [Safe], [Caution], [Danger]\n    risk_match = re.match(r'\\[(Safe|Caution|Danger)\\]\\s*(.+)', description, re.IGNORECASE)\n    if risk_match:\n        result[\"risk_level\"] = risk_match.group(1).capitalize()\n        rest = risk_match.group(2)\n    else:\n        rest = description\n\n    # Parse recovery info: | Recovery: ... or | 복구: ...\n    recovery_match = re.search(r'\\|\\s*(?:Recovery|복구):\\s*(.+)$', rest, re.IGNORECASE)\n    if recovery_match:\n        result[\"recovery\"] = recovery_match.group(1).strip()\n        rest = rest[:recovery_match.start()].strip()\n\n    result[\"explanation\"] = rest.strip() if rest.strip() else None\n\n    return result\n\n\ndef get_risk_icon(risk_level: str | None) -> str:\n    \"\"\"Return icon for risk level.\"\"\"\n    icons = {\n        \"Safe\": \"🟢\",\n        \"Caution\": \"🟡\",\n        \"Danger\": \"🔴\"\n    }\n    return icons.get(risk_level, \"⚪\")\n\n\ndef format_message(command: str, parsed: dict) -> str:\n    \"\"\"Format parsed info into a message for display.\"\"\"\n    # Truncate long commands (max 40 chars)\n    if len(command) > 40:\n        display_cmd = command[:37] + \"...\"\n    else:\n        display_cmd = command\n\n    lines = [\"\", \"┌─ 🔍 CmdLens ─────────────────────────────────\"]\n    lines.append(f\"│ {display_cmd}\")\n    lines.append(\"├──────────────────────────────────────────────\")\n\n    if parsed[\"explanation\"]:\n        lines.append(f\"│ 📋 {parsed['explanation']}\")\n\n    if parsed[\"risk_level\"]:\n        icon = get_risk_icon(parsed[\"risk_level\"])\n        lines.append(f\"│ ⚠️  Risk: {icon} {parsed['risk_level']}\")\n\n    if parsed[\"recovery\"]:\n        lines.append(f\"│ 💡 Recovery: {parsed['recovery']}\")\n\n    lines.append(\"└──────────────────────────────────────────────\")\n\n    return \"\\n\".join(lines)\n\n\ndef main() -> None:\n    try:\n        hook_input = json.load(sys.stdin)\n    except json.JSONDecodeError:\n        # Default behavior on JSON parse failure\n        output = {\"continue\": True}\n        print(json.dumps(output))\n        return\n\n    tool_input = hook_input.get(\"tool_input\", {})\n    command = tool_input.get(\"command\", \"\")\n    description = tool_input.get(\"description\", \"\")\n\n    # Truncate long commands for display\n    if len(command) > 40:\n        display_cmd = command[:37] + \"...\"\n    else:\n        display_cmd = command\n\n    # New format (starts with 📋): parse and display each part on separate lines\n    if description.startswith(\"📋\"):\n        # Parse: 📋 desc | 🟢 Safe | 💡 Recovery: ...\n        parts = [p.strip() for p in description.split(\"|\")]\n        desc_part = parts[0] if len(parts) > 0 else \"\"\n        risk_part = parts[1] if len(parts) > 1 else \"\"\n        recovery_part = parts[2] if len(parts) > 2 else \"\"\n\n        # Format risk part\n        if risk_part:\n            risk_part = f\"⚠️  Risk: {risk_part}\"\n\n        # Calculate max width for box\n        content_lines = [display_cmd, desc_part, risk_part, recovery_part]\n        content_lines = [l for l in content_lines if l]\n        max_width = max(get_display_width(line) for line in content_lines)\n        box_width = max_width + 2\n\n        lines = [\"\"]\n        lines.append(\"┌─ 🔍 CmdLens \" + \"─\" * (box_width - 11) + \"┐\")\n        lines.append(f\"│ {pad_to_width(display_cmd, max_width)} │\")\n        lines.append(\"├\" + \"─\" * box_width + \"┤\")\n        lines.append(f\"│ {pad_to_width(desc_part, max_width)} │\")\n        if risk_part:\n            lines.append(f\"│ {pad_to_width(risk_part, max_width)} │\")\n        if recovery_part:\n            lines.append(f\"│ {pad_to_width(recovery_part, max_width)} │\")\n        lines.append(\"└\" + \"─\" * box_width + \"┘\")\n        message = \"\\n\".join(lines)\n    elif description:\n        # Legacy format: parse and display\n        parsed = parse_description(description)\n        message = format_message(command, parsed)\n    else:\n        message = f\"[CmdLens] Executing: {display_cmd}\"\n\n    output = {\n        \"continue\": True,\n        \"systemMessage\": message\n    }\n\n    print(json.dumps(output, ensure_ascii=False))\n\n\nif __name__ == \"__main__\":\n    main()\n",
-        "plugins/cmdlens/hooks/session_start.py": "#!/usr/bin/env python3\n\"\"\"CmdLens SessionStart Hook\n\nClaude Code 세션 시작 시 additionalContext를 주입하여\nBash 도구의 description 필드에 위험도/복구 정보를 포함하도록 지시합니다.\n\"\"\"\n\nimport json\nimport os\nfrom pathlib import Path\n\n\ndef main() -> None:\n    # 플러그인 루트 경로 (환경변수 또는 파일 위치 기준)\n    plugin_root = os.environ.get(\"CLAUDE_PLUGIN_ROOT\")\n    if plugin_root:\n        prompt_path = Path(plugin_root) / \"prompts\" / \"description_guide.md\"\n    else:\n        # fallback: 스크립트 위치 기준\n        hook_dir = Path(__file__).parent\n        prompt_path = hook_dir.parent / \"prompts\" / \"description_guide.md\"\n\n    # 프롬프트 파일 읽기\n    if prompt_path.exists():\n        prompt = prompt_path.read_text(encoding=\"utf-8\")\n    else:\n        # fallback: 기본 프롬프트\n        prompt = \"\"\"# CmdLens Description Guide\n\nBash 도구 사용 시 description 필드를 다음 형식으로 작성하세요:\n\n[위험도] 설명 | 복구: 복구방법\n\n예시:\n- [Safe] 현재 디렉토리 파일 목록 조회 | 복구: 불필요\n- [Caution] 파일 이동 | 복구: mv target source\n- [Danger] 디렉토리 삭제 | 복구: 불가능, 백업 필요\"\"\"\n\n    # SessionStart 훅 출력 형식\n    output = {\n        \"hookSpecificOutput\": {\n            \"hookEventName\": \"SessionStart\",\n            \"additionalContext\": prompt\n        }\n    }\n\n    print(json.dumps(output, ensure_ascii=False))\n\n\nif __name__ == \"__main__\":\n    main()\n"
+        "README.md": "# CmdLens\n\n**A Claude Code plugin that automatically explains commands before execution.**\n\n> Every Bash command is displayed with risk level and recovery instructions.\n> [한국어](./README.ko.md)\n---\n\n## Before & After\n\n### Command Output\n\n| Before | After |\n|--------|-------|\n| ![before-output](docs/images/before-output2.png) | ![after-output](docs/images/after-output.png) |\n\n### Permission Approval Screen\n\n| Before | After |\n|--------|-------|\n| ![before-permission](docs/images/before-permission.png) | ![after-permission](docs/images/after-permission.png) |\n\n---\n\n## Features\n\n- **Automatic Explanation** — Shows risk and recovery info for every command\n- **Risk Level Indicator** — Visual assessment (🟢 Safe / 🟡 Caution / 🔴 Danger)\n- **Recovery Guide** — How to undo, or warns if irreversible\n- **Multilingual Support** — Explains in user's language (English/Korean)\n- **Zero Dependencies** — No external API calls, no additional packages\n\n---\n\n## Installation\n\n### Option 1: Marketplace (Recommended)\n\n```bash\n# Add marketplace\n/plugin marketplace add choam2426/CmdLens\n\n# Install plugin\n/plugin install cmdlens@cmdlens-marketplace\n```\n\n### Option 2: Manual Installation\n\n1. Clone the repository:\n\n```bash\ngit clone https://github.com/choam2426/CmdLens.git\n```\n\n2. Copy plugin to Claude Code plugins directory:\n\n```bash\ncp -r CmdLens/plugins/cmdlens ~/.claude/plugins/\n```\n\n3. Restart Claude Code\n\n---\n\n## How It Works\n\n```\nSession Start\n      ↓\nSessionStart Hook → Inject description guide to Claude\n      ↓\nUser requests task\n      ↓\nClaude prepares Bash command with description\n      ↓\nPreToolUse Hook → Display risk/recovery via systemMessage\n      ↓\nCommand executes\n```\n\n**Hybrid Approach:** Combines SessionStart (behavior modification) and PreToolUse (display) for consistent, reliable output.\n\n---\n\n## Risk Levels\n\n| Level | Icon | Description | Examples |\n|-------|------|-------------|----------|\n| Safe | 🟢 | Read-only, info query | `ls`, `cat`, `pwd`, `git status` |\n| Caution | 🟡 | File modification | `mv`, `cp`, `chmod`, `git commit` |\n| Danger | 🔴 | Deletion, system change | `rm -rf`, `sudo`, `git push --force` |\n\n---\n\n## Requirements\n\n- Python 3.10+\n- Claude Code\n\n---\n\n## Project Structure\n\n```\nCmdLens/\n├── .claude-plugin/\n│   └── marketplace.json\n├── plugins/\n│   └── cmdlens/\n│       ├── .claude-plugin/\n│       │   └── plugin.json\n│       ├── hooks/\n│       │   ├── hooks.json\n│       │   ├── session_start.py\n│       │   └── pre_tool_use.py\n│       └── prompts/\n│           └── description_guide.md\n├── docs/\n│   └── PRD.md\n└── README.md\n```\n\n---\n\n## License\n\n[MIT](LICENSE)\n"
       },
       "plugins": [
         {

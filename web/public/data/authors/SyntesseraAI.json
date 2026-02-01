@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "SyntesseraAI",
+    "display_name": "Syntessera",
+    "avatar_url": "https://avatars.githubusercontent.com/u/216688910?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "syntesseraai-local-recall",
+      "version": null,
+      "description": "Local markdown-powered memory system for AI coding assistants",
+      "repo_full_name": "SyntesseraAI/local-recall",
+      "repo_url": "https://github.com/SyntesseraAI/local-recall",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-23T09:03:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"syntesseraai-local-recall\",\n  \"owner\": {\n    \"name\": \"SyntesseraAI\",\n    \"url\": \"https://github.com/SyntesseraAI\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"local-recall\",\n      \"source\": \"./local-recall-plugin\",\n      \"description\": \"Local markdown-powered memory system for AI coding assistants\",\n      \"version\": \"0.1.13\",\n      \"author\": {\n        \"name\": \"SyntesseraAI\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"local-recall\",\n  \"description\": \"Local markdown-powered memory system for AI coding assistants. Enables persistent memory across sessions - stores decisions, preferences, and reasoning patterns. Search memories BEFORE making architectural decisions, debugging, or implementing features.\",\n  \"version\": \"0.1.13\",\n  \"author\": {\n    \"name\": \"SyntesseraAI\",\n    \"url\": \"https://github.com/SyntesseraAI\"\n  },\n  \"repository\": \"https://github.com/SyntesseraAI/local-recall\",\n  \"keywords\": [\n    \"memory\",\n    \"context\",\n    \"recall\",\n    \"decisions\",\n    \"history\",\n    \"persistent-memory\",\n    \"architectural-decisions\",\n    \"debugging\",\n    \"preferences\",\n    \"knowledge-base\"\n  ]\n}\n",
+        "README.md": "# Local Recall\n\nA local markdown-powered memory system that helps AI coding assistants retain information and context across sessions.\n\n## Features\n\n- **Persistent Memory**: Store contextual information in structured markdown files\n- **Semantic Search**: Find relevant memories using vector embeddings (Ollama + nomic-embed-text)\n- **Episodic Memories**: Facts, decisions, and patterns extracted from conversations\n- **Thinking Memories**: Claude's previous reasoning paired with outputs for better context\n- **Multi-Agent Support**: Multiple AI agents can read/write to the shared memory\n- **Claude Code Integration**: Hooks for automatic memory capture and retrieval\n- **MCP Server**: Expose memory tools to any MCP-compatible client\n\n## Quick Start\n\n### Prerequisites\n\n1. **Node.js 18+**\n2. **Ollama** for embeddings:\n   ```bash\n   # Install Ollama (macOS)\n   brew install ollama\n\n   # Pull the embedding model\n   ollama pull nomic-embed-text\n\n   # Start Ollama server\n   ollama serve\n   ```\n\n### Installation\n\n```bash\n# Clone the repository\ngit clone https://github.com/syntessera/local-recall.git\ncd local-recall\n\n# Install dependencies\nnpm install\n\n# Build the project\nnpm run build\n```\n\n### Claude Code Plugin (Recommended)\n\nInstall the plugin from `local-recall-plugin/` (or via the Claude marketplace at `syntessera-marketplace/local-recall`) to enable automatic memory integration:\n\n- **SessionStart Hook**: Loads recent memories when starting a session\n- **UserPromptSubmit Hook**: Searches for relevant episodic and thinking memories based on your prompt\n\n## How It Works\n\nLocal Recall stores memories as markdown files with YAML frontmatter containing metadata like subject, keywords, and scope. Memories are indexed using Orama (pure JavaScript) with vector embeddings from Ollama for semantic similarity search.\n\n### Memory Types\n\n**Episodic Memories** - Facts, decisions, and patterns:\n```markdown\n---\nid: abc123-...\nsubject: API authentication pattern\nkeywords: [auth, jwt, tokens, api]\napplies_to: global\noccurred_at: 2025-01-15T10:30:00Z\ncontent_hash: a1b2c3d4...\n---\n\nThe API uses JWT tokens for authentication...\n```\n\n**Thinking Memories** - Claude's reasoning paired with outputs:\n```markdown\n---\nid: def456-...\nsubject: Auto-generated from thinking content...\napplies_to: global\noccurred_at: 2025-01-15T10:30:00Z\ncontent_hash: e5f6g7h8...\n---\n\n## Thought\n\n[Claude's internal reasoning]\n\n## Output\n\n[The response that followed]\n```\n\n## MCP Server\n\nThe MCP server exposes memory tools and runs a background daemon for transcript processing.\n\n### Starting the Server\n\n```bash\nnpm run mcp:start\n```\n\n### Available Tools\n\n| Tool | Description |\n|------|-------------|\n| `episodic_create` | Create a new episodic memory |\n| `episodic_get` | Retrieve a specific episodic memory by ID |\n| `episodic_search` | Search episodic memories using semantic similarity |\n| `thinking_get` | Retrieve a specific thinking memory by ID |\n| `thinking_search` | Search thinking memories using semantic similarity |\n\n### Adding to Claude Code\n\nAdd to `.claude/settings.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"local-recall\": {\n      \"command\": \"node\",\n      \"args\": [\"./dist/mcp-server/server.js\"],\n      \"env\": {\n        \"LOCAL_RECALL_DIR\": \"./local-recall\"\n      }\n    }\n  }\n}\n```\n\n## Configuration\n\nCreate `.local-recall.json` in your project root:\n\n```json\n{\n  \"memoryDir\": \"./local-recall\",\n  \"episodicEnabled\": true,\n  \"episodicMaxTokens\": 1000,\n  \"episodicMinSimilarity\": 0.5,\n  \"thinkingEnabled\": true,\n  \"thinkingMaxTokens\": 1000,\n  \"thinkingMinSimilarity\": 0.5\n}\n```\n\nOr use environment variables:\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `LOCAL_RECALL_DIR` | `./local-recall` | Memory storage directory |\n| `LOCAL_RECALL_EPISODIC_ENABLED` | `true` | Enable episodic memory retrieval |\n| `LOCAL_RECALL_THINKING_ENABLED` | `true` | Enable thinking memory retrieval |\n| `LOCAL_RECALL_LOG_LEVEL` | `error` | Log level: debug, info, warn, error |\n\n## Documentation\n\nSee the [docs](./docs) folder for detailed documentation:\n\n- [Architecture](./docs/architecture.md) - System design and components\n- [Memory Format](./docs/memory-format.md) - Memory file structure\n- [Thinking Memories](./docs/thinking-memory.md) - How thinking memories work\n- [Claude Code Hooks](./docs/hooks.md) - Hook configuration and usage\n- [MCP Server](./docs/mcp-server.md) - MCP tools and daemon processing\n- [Configuration](./docs/configuration.md) - All configuration options\n\n## Development\n\n```bash\nnpm run dev          # Watch mode\nnpm run test         # Run tests\nnpm run lint         # Lint code\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "local-recall",
+          "source": "./local-recall-plugin",
+          "description": "Local markdown-powered memory system for AI coding assistants",
+          "version": "0.1.13",
+          "author": {
+            "name": "SyntesseraAI"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add SyntesseraAI/local-recall",
+            "/plugin install local-recall@syntesseraai-local-recall"
+          ]
+        }
+      ]
+    }
+  ]
+}

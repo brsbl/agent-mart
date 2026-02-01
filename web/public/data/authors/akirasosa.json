@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "akirasosa",
+    "display_name": "akirasosa",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1509852?u=c68de10d58c2cef1156de6b6c236356104941127&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "akirasosa-claude-plugins",
+      "version": null,
+      "description": "A collection of plugins for Claude Code",
+      "repo_full_name": "akirasosa/claude-plugins",
+      "repo_url": "https://github.com/akirasosa/claude-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-31T07:12:30Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"akirasosa-claude-plugins\",\n  \"owner\": {\n    \"name\": \"akirasosa\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tmux-worktree\",\n      \"source\": \"./plugins/tmux-worktree\",\n      \"description\": \"Git worktree workflow with tmux integration for parallel Claude Code sessions\"\n    },\n    {\n      \"name\": \"claude-monitoring\",\n      \"source\": \"./plugins/claude-monitoring\",\n      \"description\": \"Claude Code event monitoring with desktop notifications and DB logging\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugins\n\nA collection of plugins for Claude Code.\n\n## Prerequisites\n\n- [Bun](https://bun.sh/) - Required to run plugin scripts\n\n## Quick Start\n\n```bash\n# Add marketplace\nclaude plugin marketplace add https://github.com/akirasosa/claude-plugins\n\n# Install plugins\nclaude plugin install claude-monitoring\nclaude plugin install tmux-worktree\n```\n\n## Available Plugins\n\n| Plugin | Description | Requirements |\n|--------|-------------|--------------|\n| [claude-monitoring](./plugins/claude-monitoring/) | Event monitoring with desktop notifications and DB logging | - |\n| [tmux-worktree](./plugins/tmux-worktree/) | Git worktree workflow with tmux integration | tmux, [git-worktree-runner](https://github.com/coderabbitai/git-worktree-runner) |\n\n## Testing\n\nRun tests for individual plugins:\n\n```bash\n# claude-monitoring plugin\ncd plugins/claude-monitoring && bun test              # Run all tests\ncd plugins/claude-monitoring && bun test --watch      # Watch mode\n\n# claude-monitoring web\ncd plugins/claude-monitoring/web && bun test          # Run all tests\ncd plugins/claude-monitoring/web && bun test --watch  # Watch mode\ncd plugins/claude-monitoring/web && bun test --coverage  # With coverage\n```\n\n## Web UI (Optional)\n\n```bash\ngit clone https://github.com/akirasosa/claude-plugins\ncd claude-plugins && bun install\nbun run --cwd plugins/claude-monitoring/web start  # starts on port 3847\n```\n\nOr download pre-built binary from [Releases](https://github.com/akirasosa/claude-plugins/releases).\n\n## Tips\n\n**Serena users**: Include `.serena` in worktrees: `git config --global --add gtr.copy.includeDirs .serena`\n\n## Uninstalling\n\n```bash\nclaude plugin uninstall claude-monitoring\nclaude plugin marketplace remove akirasosa-claude-plugins\n```\n",
+        "plugins/tmux-worktree/README.md": "# tmux-worktree Plugin\n\nGit worktree workflow with tmux integration for parallel Claude Code sessions.\n\n## Overview\n\nDelegate tasks to parallel Claude Code sessions running in separate git worktrees. When a worker creates a PR, the orchestrator is automatically notified.\n\n## Prerequisites\n\n- **tmux**: Must be running inside a tmux session\n- **[git-gtr](https://github.com/coderabbitai/git-worktree-runner)**: Git worktree runner tool\n- **Claude Code**: Installed and configured\n\n## Installation\n\n```bash\nclaude plugin install /path/to/tmux-worktree\n```\n\n## Usage\n\n```\n/orchestrator-mode\n```\n\nThat's it. The orchestrator handles everything:\n1. Creates orchestrator session\n2. Starts background polling for notifications\n3. Delegates tasks to worker sessions in separate worktrees\n4. Receives automatic notification when workers create PRs\n5. Reviews and merges PRs\n\n## How it works\n\n```\nYou (human)\n    │\n    └─► /orchestrator-mode\n            │\n            ▼\n        Orchestrator (Claude)\n            │\n            ├─► Creates worktree + worker session\n            │\n            └─► Polls for messages\n                    ▲\n                    │ automatic notification\n                    │\n        Worker (Claude in worktree)\n            │\n            └─► gh pr create\n                    │\n                    ▼\n                PostToolUse hook detects PR → sends notification\n```\n\n## Note\n\nThe plugin creates `.claude/.orchestrator-id` in worktrees. Ensure your `.gitignore` includes `.claude/*` (with appropriate exceptions) to avoid committing this file.\n\n## Uninstalling\n\n```bash\nclaude plugin uninstall tmux-worktree\n```\n\n## Testing\n\nRun tests from the plugin directory:\n\n```bash\ncd plugins/tmux-worktree\nbun test\n```\n\nWatch mode for development:\n\n```bash\nbun test --watch\n```",
+        "plugins/claude-monitoring/README.md": "# Claude Monitoring Plugin\n\nClaude Code event monitoring plugin with browser notifications and database logging.\n\n## Overview\n\nThis plugin tracks Claude Code events and provides browser notifications via the Web UI when tasks complete or require input. All events are logged to a SQLite database for session tracking and querying.\n\n## Prerequisites\n\n- **bun**: TypeScript runtime\n- **gcloud**: Gemini API authentication (optional - only for summaries)\n\n## Installation\n\n```bash\nclaude plugin install /path/to/claude-monitoring\n```\n\nFor development:\n\n```bash\nclaude --plugin-dir /path/to/claude-monitoring\n```\n\n## What it does\n\n- **Event Logging**: Records all Claude Code events to SQLite database\n- **Browser Notifications**: Alerts via Web UI when tasks complete or require input\n- **Session Tracking**: Monitor active sessions via Web UI\n- **Tmux Integration**: Quick jump to Claude Code sessions running in tmux\n- **Auto Cleanup**: Records older than 30 days are automatically deleted\n\n## Events Tracked\n\n| Event | Notification | Description |\n|-------|--------------|-------------|\n| `Stop` | Yes | Task completed |\n| `Notification` | Yes | Waiting for user input |\n| `SessionStart` | No | Session started |\n| `SessionEnd` | No | Session ended |\n\n## Configuration\n\n### GCP Project (for Gemini API summaries)\n\nSummary generation uses Gemini API via Google Cloud. Configure in one of two ways:\n\n**Option 1: Environment variable**\n```bash\nexport GEMINI_GCP_PROJECT=your-project-id\nexport GEMINI_GCP_LOCATION=asia-northeast1  # optional, defaults to asia-northeast1\n```\n\n**Option 2: Settings file** (`~/.claude/claude-monitoring.local.md`)\n```yaml\n---\ngcp_project: your-project-id\ngcp_location: asia-northeast1\n---\n```\n\nIf neither is configured, the gcloud default project (`gcloud config get-value project`) will be used. If no project is available at all, notifications will show default messages (\"Task completed\", \"Waiting for input\") instead of AI-generated summaries.\n\n**Note**: Add `claude-monitoring.local.md` to `.gitignore` as it may contain project-specific settings.\n\n## Data Storage\n\n- **Database**: `~/.local/share/claude-monitoring/events.db`\n- **Retention**: 30 days (older records are automatically deleted)\n\n## Database Schema\n\n```sql\nCREATE TABLE events (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    event_id TEXT UNIQUE NOT NULL,\n    session_id TEXT NOT NULL,\n    event_type TEXT NOT NULL,\n    created_at TEXT NOT NULL,\n    project_dir TEXT,\n    summary TEXT,\n    tmux_window_id TEXT,\n    date_part TEXT,\n    git_branch TEXT\n);\n```\n\n## Migration from Existing Setup\n\nIf you were using the scripts from dotfiles (`~/.claude/hooks/notification.sh`), remove the hook configuration from `~/.claude/settings.json` after installing this plugin to avoid duplicate notifications.\n\n**Database Migration**: If you have an existing database at `~/.local/share/claude-code/events.db`, you can migrate it manually:\n\n```bash\nmkdir -p ~/.local/share/claude-monitoring\nmv ~/.local/share/claude-code/events.db ~/.local/share/claude-monitoring/events.db\n```\n\n## Uninstalling\n\n```bash\nclaude plugin uninstall claude-monitoring\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "tmux-worktree",
+          "source": "./plugins/tmux-worktree",
+          "description": "Git worktree workflow with tmux integration for parallel Claude Code sessions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add akirasosa/claude-plugins",
+            "/plugin install tmux-worktree@akirasosa-claude-plugins"
+          ]
+        },
+        {
+          "name": "claude-monitoring",
+          "source": "./plugins/claude-monitoring",
+          "description": "Claude Code event monitoring with desktop notifications and DB logging",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add akirasosa/claude-plugins",
+            "/plugin install claude-monitoring@akirasosa-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

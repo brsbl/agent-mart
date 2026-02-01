@@ -1,0 +1,95 @@
+{
+  "author": {
+    "id": "z-soulx",
+    "display_name": "soulx",
+    "avatar_url": "https://avatars.githubusercontent.com/u/38135909?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ai-toolkit",
+      "version": null,
+      "description": "Personal AI programming toolkit with skills for notes organization and productivity",
+      "repo_full_name": "z-soulx/ai-toolkit",
+      "repo_url": "https://github.com/z-soulx/ai-toolkit",
+      "repo_description": "my ai-toolkit",
+      "signals": {
+        "stars": 6,
+        "forks": 1,
+        "pushed_at": "2026-01-30T08:34:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ai-toolkit\",\n  \"owner\": {\n    \"name\": \"soulx\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal AI programming toolkit with skills for notes organization and productivity\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"notes-skills\",\n      \"description\": \"Collection of note organization and processing skills\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"skills\": [\n        \"./skills/notes/section-refactor-with-todo-routing\",\n        \"./skills/notes/note-outline-checklist\",\n        \"./skills/notes/learning-notes-organizer\",\n        \"./skills/notes/image-alt-title-filler\"\n      ],\n      \"commands\": [\n        \"./commands/section-refactor-with-todo-routing.md\",\n        \"./commands/note-outline-checklist.md\",\n        \"./commands/learning-notes-organizer.md\",\n        \"./commands/image-alt-title-filler.md\"\n      ]\n    },\n    {\n      \"name\": \"productivity-skills\",\n      \"description\": \"Collection of productivity and document processing skills\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"skills\": [\n        \"./skills/productivity/markdown-to-pdf\"\n      ],\n      \"commands\": [\n        \"./commands/markdown-to-pdf.md\"\n      ]\n    },\n    {\n      \"name\": \"planning-with-files\",\n      \"description\": \"Task planning and progress tracking\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"OthmanAdi/planning-with-files\"\n      }\n    },\n    {\n      \"name\": \"superpowers\",\n      \"description\": \"Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"obra/superpowers\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"notes-skills\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Collection of note organization and processing skills: learning notes organizer, image alt/title filler, note outline checklist, and section refactoring tools.\",\n  \"author\": {\n    \"name\": \"soulx\",\n    \"url\": \"https://github.com/z-soulx\"\n  },\n  \"repository\": \"https://github.com/z-soulx/ai-toolkit\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"notes\",\n    \"markdown\",\n    \"organization\",\n    \"refactoring\",\n    \"learning\",\n    \"knowledge-management\",\n    \"image-alt\",\n    \"accessibility\",\n    \"claude-code\",\n    \"skills\"\n  ]\n}\n",
+        "README.md": "# AI Programming Toolkit\n\n> 个人 AI 编程工具集 - Skills、Plugins、MCP Servers 等\n\n个人维护的 AI 编程相关工具集合，包含 Claude Code Skills、插件、MCP 服务器等，用于提升 AI 辅助编程效率。\n## Quick Install\n```bash\n/plugin marketplace add z-soulx/ai-toolkit\n/plugin install image-alt-title-filler@z-soulx\n```\n## 新手知识\n\n**Agent（智能体）**：负责“理解目标 → 拆解计划 → 调用工具 → 读结果 → 再迭代”的执行体（带状态、会规划、会行动）。\n\n- **勘误：** Agent 的“执行体”一定是一个 runtime（*CLI/SDK/程序*），可以是（Python/TS）来写“你自己的 Agent 程序”，也可以用*文件声明Subagent(但依赖主agent CLI本身，CLI就是一个agent执行体agentic runtime)*。\n- subagent相比skill 一个“分身”，**独立上下文**、独立权限/工具集，专门跑一类任务（比如 code review）。 可以把“噪音”隔离在子上下文里，主对话只拿总结\n\n**Tool（工具）**：确定性的能力接口（读写文件、跑命令、查 API、访问数据库……）。\n\n- 内置 tools 和 利用MCP扩展tool(:bulb: *Tool 和 MCP 不是同一层的概念,着重利用*)。\n\n**Command**：Slash command（/xxx）是“你手动触发的快捷指令 / 提示词模板 / 控制面板”\n\n**MCP**：让 agent/LLM 以**标准方式**连接到外部工具与数据源的“通用插口/协议”（客户端 ↔ 服务器）。\n\n**Skill（技能）**：把你团队/你个人的“做事流程与专业知识”封装成可复用模块，让 agent **更会做这类事**。\n\n**Hook（钩子）**：在 agent/工具链生命周期的关键节点插入“必定执行”的规则/脚本，用来做**强约束、审计、自动化**。\n\n**Plugin（插件）**：把 skills / hooks / agents / slash commands / MCP servers 等打包成可分发、可版本化、可团队复用的一套扩展。\n\n## 目录结构\n\n```\nai-toolkit/\n├── .claude-plugin/\n│   └── marketplace.json  # Marketplace 定义\n├── commands/             # Slash 命令（显示在命令列表中）\n│   ├── learning-notes-organizer.md\n│   ├── image-alt-title-filler.md\n│   ├── note-outline-checklist.md\n│   └── section-refactor-with-todo-routing.md\n├── skills/               # Claude Code Skills（详细工作流）\n│   ├── notes/            # 笔记整理相关\n│   └── productivity/     # 生产力工具\n├── plugins/              # 编辑器插件和扩展\n├── mcp-servers/          # Model Context Protocol 服务器\n└── README.md             # 本文档\n```\n\n综合参考源\n\n- [综合源-everything-claude-code](https://github.com/affaan-m/everything-claude-code)\n\n## Skills\n\nClaude Code 自定义技能，用于特定工作流。\n\n### 笔记整理 (notes/)\n\n- **learning-notes-organizer** - 学习笔记系统化整理\n- **image-alt-title-filler** - 图片 alt/title 批量补全\n- **note-outline-checklist** - 笔记大纲生成\n- **section-refactor-with-todo-routing** - 章节重构工具\n\n### 生产力工具 (productivity/)\n\n- **markdown-to-pdf** - Markdown 转专业 PDF 白皮书（苹果设计风格）\n\n### 外部 Skills\n\n> :registered: 本项目已经引入仓库，可直接安装skill无需单独再加入市场\n\n[:registered: planning-with-files](https://github.com/OthmanAdi/planning-with-files) - 任务规划和进度跟踪\n\n- 解决ai易在长上下文中迷失，出现”幻觉“或遗忘。\n\n[:registered: superpowers](https://github.com/obra/superpowers) - 头脑风暴、写计划、执行计划\n\n- An agentic skills framework & software development methodology that works.\n\n## Agents\n\n\n\n## Plugins\n\n编辑器插件和扩展（待添加）\n\n- [anthropics官方插件列表](https://github.com/anthropics/claude-code/tree/main/plugins)\n\n[ralph-wiggum](https://github.com/anthropics/claude-code/tree/main/plugins/ralph-wiggum) - Ralph 就是一个 Bash 循环,**自我纠正修复**\n\n- ⚠️--max-iterations 设置最大迭代次数，否者遇见死题上演token消失术。\n\n## MCP Servers\n\nModel Context Protocol 服务器（待添加）\n\n[notebooklm-mcp](https://github.com/PleasePrompto/notebooklm-mcp) - NotebookLM笔记操作，但是不支持上传文件\n\n## 使用说明\n\n### 手动安装 Skills\n\n```bash\n# 复制 skill 到 Claude Code 配置目录\ncp -r skills/notes/learning-notes-organizer ~/.claude/skills/\n\n# 或使用软链接（推荐开发时使用）\nln -s $(pwd)/skills/notes/learning-notes-organizer ~/.claude/skills/\n```\n\n### 使用 Skills\n\n在 Claude Code 中使用 `/` 命令调用已安装的 skills。\n\n## License\n\nMIT License - 详见 [LICENSE](LICENSE) 文件\n\n---\n\n**维护者**: [@soulx](https://github.com/soulx)\n**最后更新**: 2026-01-12\n"
+      },
+      "plugins": [
+        {
+          "name": "notes-skills",
+          "description": "Collection of note organization and processing skills",
+          "version": "1.0.0",
+          "source": "./",
+          "skills": [
+            "./skills/notes/section-refactor-with-todo-routing",
+            "./skills/notes/note-outline-checklist",
+            "./skills/notes/learning-notes-organizer",
+            "./skills/notes/image-alt-title-filler"
+          ],
+          "commands": [
+            "./commands/section-refactor-with-todo-routing.md",
+            "./commands/note-outline-checklist.md",
+            "./commands/learning-notes-organizer.md",
+            "./commands/image-alt-title-filler.md"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add z-soulx/ai-toolkit",
+            "/plugin install notes-skills@ai-toolkit"
+          ]
+        },
+        {
+          "name": "productivity-skills",
+          "description": "Collection of productivity and document processing skills",
+          "version": "1.0.0",
+          "source": "./",
+          "skills": [
+            "./skills/productivity/markdown-to-pdf"
+          ],
+          "commands": [
+            "./commands/markdown-to-pdf.md"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add z-soulx/ai-toolkit",
+            "/plugin install productivity-skills@ai-toolkit"
+          ]
+        },
+        {
+          "name": "planning-with-files",
+          "description": "Task planning and progress tracking",
+          "source": {
+            "source": "github",
+            "repo": "OthmanAdi/planning-with-files"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add z-soulx/ai-toolkit",
+            "/plugin install planning-with-files@ai-toolkit"
+          ]
+        },
+        {
+          "name": "superpowers",
+          "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+          "source": {
+            "source": "github",
+            "repo": "obra/superpowers"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add z-soulx/ai-toolkit",
+            "/plugin install superpowers@ai-toolkit"
+          ]
+        }
+      ]
+    }
+  ]
+}

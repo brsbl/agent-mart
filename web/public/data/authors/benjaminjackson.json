@@ -37,40 +37,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "ruby-lsp-marketplace",
-      "version": null,
-      "description": "Ruby LSP integration for Claude Code",
-      "repo_full_name": "benjaminjackson/ruby-lsp",
-      "repo_url": "https://github.com/benjaminjackson/ruby-lsp",
-      "repo_description": null,
-      "signals": {
-        "stars": 1,
-        "forks": 0,
-        "pushed_at": "2026-01-15T17:41:22Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ruby-lsp-marketplace\",\n  \"owner\": {\n    \"name\": \"Benjamin Jackson\",\n    \"email\": \"ben@hearmeout.co\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ruby-lsp\",\n      \"source\": \"./\",\n      \"description\": \"Ruby LSP integration for Claude Code\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Benjamin Jackson\"\n      }\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"ruby-lsp\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Ruby LSP integration with proactive SessionStart hook that guides Claude on when and how to use the 9 LSP operations for semantic code intelligence\",\n  \"lspServers\": \"./.lsp.json\",\n  \"skills\": [\n    \"./ruby-lsp\"\n  ]\n}\n",
-        "README.md": "# Ruby LSP Plugin for Claude Code\n\nDead-simple Ruby LSP integration for Claude Code with intelligent guidance on LSP usage.\n\n## What This Does\n\nConnects Claude Code to the Ruby LSP server, providing semantic code intelligence through the LSP tool:\n- Go-to-definition (with inheritance & mixins support)\n- Find references across project\n- Hover documentation with signatures\n- Document and workspace symbol navigation\n- Call hierarchy analysis (incoming/outgoing calls)\n- Implementation finding\n\n**Plus:** Automatic SessionStart hook that guides Claude on when and how to use the 9 LSP operations proactively, ensuring optimal use of semantic analysis over text-based searches.\n\n## Prerequisites\n\n```bash\ngem install ruby-lsp\n```\n\n## Installation\n\n```bash\n/plugin marketplace add benjaminjackson/ruby-lsp\n/plugin install ruby-lsp@ruby-lsp-marketplace\n```\n\n## How It Works\n\n### LSP Server Integration\n\nThe plugin automatically starts the Ruby LSP server when Claude Code launches in a Ruby project. The LSP tool is a first-class tool (like Read, Bash, Edit) that requires three parameters:\n- **filePath**: Absolute path to the Ruby file\n- **line**: Line number (1-indexed)\n- **character**: Character position (1-indexed)\n\n### SessionStart Hook\n\nOn session start, Claude receives comprehensive guidance on:\n- **9 available LSP operations** - goToDefinition, hover, findReferences, documentSymbol, workspaceSymbol, goToImplementation, prepareCallHierarchy, incomingCalls, outgoingCalls\n- **When to use LSP** - For definitions, references, hover docs, call analysis, symbol search\n- **When NOT to use LSP** - Clear guidance on when standard tools (Read, Grep) are better\n- **Best practices** - Optimal workflows combining LSP and standard tools\n\nThis ensures Claude uses semantic analysis when appropriate (finding definitions, understanding call chains) rather than text-based searches (Grep for \"def method_name\").\n\n## Available LSP Operations\n\nThe LSP tool provides 9 operations for Ruby code intelligence:\n\n### 1. goToDefinition\n**Find where a symbol is defined**\n- Supports: Classes, modules, methods (including inherited), singleton methods, instance variables, local variables, super keyword\n- Use case: Navigate to exact definition location\n- Why: Understands Ruby scope, inheritance, and mixins\n\n### 2. hover\n**Get hover information (documentation, type info)**\n- Supports: Methods, constants, instance variables (including inherited), Ruby core classes/methods\n- Use case: View method signatures, parameter info, documentation\n- Why: Provides formatted docs with parameter info\n\n### 3. findReferences\n**Find all references to a symbol**\n- Returns: All locations where symbol is referenced across project\n- Use case: See where methods/classes are used\n- Why: Understands Ruby semantics, not just text matches\n\n### 4. documentSymbol\n**Get all symbols in a document**\n- Returns: Hierarchical symbol tree of classes, modules, methods in file\n- Use case: Understand file structure quickly\n- Why: Provides structured view instantly\n\n### 5. workspaceSymbol\n**Search for symbols across workspace**\n- Returns: Matching symbols from entire workspace\n- Use case: Find classes, modules, methods across project\n- Why: LSP indexes workspace and understands Ruby structure\n\n### 6. goToImplementation\n**Find implementations of an interface or abstract method**\n- Returns: File paths and positions of implementations\n- Use case: Working with abstract methods, find concrete implementations\n- Why: Semantic understanding of Ruby class hierarchies\n\n### 7. prepareCallHierarchy\n**Get call hierarchy item at a position**\n- Returns: Call hierarchy item for the function\n- Use case: Understand call structure of methods\n- Why: Provides context for method call chains\n\n### 8. incomingCalls\n**Find all functions/methods that call the function at a position**\n- Returns: List of callers for the method\n- Use case: See what calls this method (\"who calls me?\")\n- Why: Understand method usage and dependencies\n\n### 9. outgoingCalls\n**Find all functions/methods called by the function at a position**\n- Returns: List of methods called by this method\n- Use case: See what this method calls (\"what do I call?\")\n- Why: Understand method dependencies and flow\n\n## Example Usage\n\n**Finding a method definition:**\n```\nUser: Where is the process_payment method defined?\nClaude: [Uses LSP operation=\"goToDefinition\" instead of Grep]\n        [Supports inherited methods from superclasses and mixins]\n```\n\n**Understanding method signature:**\n```\nUser: What parameters does process_payment accept?\nClaude: [Uses LSP operation=\"hover\" to get signature and docs]\n```\n\n**Finding all uses of a method:**\n```\nUser: Where is process_payment called?\nClaude: [Uses LSP operation=\"findReferences\" across entire project]\n        [Not just text matches - understands Ruby semantics]\n```\n\n**Exploring unfamiliar codebase:**\n```\nUser: Show me all payment-related classes\nClaude: [Uses LSP operation=\"workspaceSymbol\" to search across project]\n        [Uses operation=\"goToDefinition\" to navigate to each]\n        [Uses operation=\"documentSymbol\" to see file structure]\n```\n\n**Analyzing call chains:**\n```\nUser: What calls the validate_payment method?\nClaude: [Uses LSP operation=\"incomingCalls\" to find all callers]\n\nUser: What does validate_payment call?\nClaude: [Uses LSP operation=\"outgoingCalls\" to see dependencies]\n```\n\n**Refactoring safely:**\n```\nUser: I want to refactor this method\nClaude: [Uses LSP operation=\"findReferences\" to find all usages first]\n        [Uses operation=\"incomingCalls\" to see all callers]\n        [Makes changes with Edit]\n        [Uses operation=\"findReferences\" again to verify]\n```\n\n## Key Advantages\n\n- **Semantic understanding** - LSP understands Ruby scope, inheritance, and mixins, not just text patterns\n- **Proactive guidance** - Claude knows when to use LSP vs standard tools automatically\n- **Call analysis** - Understand method dependencies with incomingCalls/outgoingCalls\n- **Project-wide search** - Find references and symbols across entire workspace\n- **First-class tool** - LSP is a built-in tool like Read, Bash, and Edit\n"
-      },
-      "plugins": [
-        {
-          "name": "ruby-lsp",
-          "source": "./",
-          "description": "Ruby LSP integration for Claude Code",
-          "version": "1.0.0",
-          "author": {
-            "name": "Benjamin Jackson"
-          },
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add benjaminjackson/ruby-lsp",
-            "/plugin install ruby-lsp@ruby-lsp-marketplace"
-          ]
-        }
-      ]
     }
   ]
 }

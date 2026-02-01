@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "sonesuke",
+    "display_name": "sonesuke",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1407772?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "docgraph-claude-plugins",
+      "version": null,
+      "description": "Docgraph plugin for Claude",
+      "repo_full_name": "sonesuke/docgraph",
+      "repo_url": "https://github.com/sonesuke/docgraph",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-31T23:21:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"docgraph-claude-plugins\",\n    \"owner\": {\n        \"name\": \"sonesuke\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"docgraph-plugin\",\n            \"version\": \"0.1.0\",\n            \"source\": \"./docgraph-plugin\",\n            \"description\": \"Docgraph plugin for Claude\"\n        }\n    ]\n}",
+        "README.md": "# docgraph\n\n[![CI](https://github.com/sonesuke/docgraph/actions/workflows/ci.yml/badge.svg)](https://github.com/sonesuke/docgraph/actions/workflows/ci.yml)\n[![Security audit](https://github.com/sonesuke/docgraph/actions/workflows/ci.yml/badge.svg)](https://github.com/sonesuke/docgraph/actions/workflows/ci.yml)\n[![Coverage](https://img.shields.io/badge/coverage-view-blue)](https://github.com/sonesuke/docgraph/actions/workflows/ci.yml)\n\nA powerful lint tool and graph generator designed to build and verify directed graphs embedded in standard Markdown files. `docgraph` ensures your documentation is consistent, traceable, and AI-ready.\n\n## Overview\n\n`docgraph` treats Markdown blocks as nodes in a graph. By using HTML anchors (`<a id=\"...\"></a>`) and standard Markdown links, you can define structured relationships (edges) between documents. This enables automated traceability across your entire documentation suite—from business actors and use cases down to technical requirements and architecture decisions.\n\nFor a comprehensive guide on concepts, architecture, and specifications, please refer to the **[Documentation Overview](./doc/overview.md)**.\n\n## Key Features\n\n- **Graph Validation**: Automated checks for broken links, duplicate IDs, and relationship rule violations defined in `docgraph.toml`.\n- **Traceability Analysis**: Tools to search, trace, and describe complex node relationships.\n- **AI-Agent Ready**: Built-in support for GraphRAG knowledge construction. AI Agents can consume `docgraph` outputs to assist in documentation and development workflows.\n- **Modern IDE Integration**: A dedicated VS Code plugin with full LSP support.\n\n## Quick Start: Claude Code (AI-First)\n\nThe fastest way to start using `docgraph` is via Claude Desktop.\n\n### 1. Install the Plugin\n\nIn a Claude chat, run the following commands to add the official marketplace and install the plugin:\n\n```text\n/plugin marketplace add sonesuke/docgraph\n/plugin install docgraph-plugin@docgraph-claude-plugins\n```\n\n### 2. Use with AI Agent\n\nOnce installed, the AI agent can automatically build a knowledge graph of your project and assist you:\n\n> \"Building knowledge graph... Done. Found 15 spec blocks and 24 relationships.\"\n>\n> **You**: \"What are the dependencies for UC_WRITE?\"\n> **Claude**: \"UC_WRITE depends on ACT_USER and is realized by IF_CLI_LINT.\"\n\n## Quick Start: CLI\n\nFor local development and CI/CD integration.\n\n### 1. Installation\n\n```bash\ncargo install --path .\n```\n\n### 2. Define a SpecBlock\n\nIn any Markdown file, define an ID followed by a heading:\n\n```markdown\n<a id=\"UC_LOGIN\"></a>\n\n## User Login\n\nThe system shall allow users to log in to their accounts ([FR_EMAIL_LOGIN](#FR_EMAIL_LOGIN)).\n```\n\n### 3. Define a Relationship\n\nReference another ID using standard Markdown links. Functional Requirements must be realized by a Module:\n\n```markdown\n<a id=\"FR_EMAIL_LOGIN\"></a>\n\n## Email Login Requirement\n\nUsers must be able to log in using their email address.\n\n**Realized by:**\n\n- [MOD_CORE (Core Modules)](./doc/architecture/view/module.md#MOD_CORE)\n```\n\n### 4. Run Validation\n\n```bash\ndocgraph check .\n```\n\n## CLI Commands\n\n- `check [path]`: Validate the graph for broken links and rule violations.\n- `fmt [path]`: Automatically fix fixable formatting and lint issues.\n- `list <query>`: Search for spec blocks matching a pattern (supports wildcards).\n- `trace <from> <to>`: Trace and visualize relationship paths between nodes.\n- `describe <id>`: Show detailed bidirectional relationships for a specific node.\n- `graph [path]`: Generate raw graph data as JSON for AI agents or external analysis.\n- `lsp`: Start the Language Server for interactive IDE support.\n\n## Configuration (`docgraph.toml`)\n\n`docgraph` is highly configurable. Enforce your documentation architecture by defining strict node types and relationship rules. Refer to the **[Configuration Specification](./doc/requirements/interfaces/config-specs.md)** for details.\n\n```toml\n[node_types]\nUC = { desc = \"Use Case\" }\nFR = { desc = \"Functional Requirement\" }\n\n[references.FR]\nrules = [\n  { dir = \"from\", targets = [\"UC\"], min = 1, desc = \"Requirements must be derived from a use case\" }\n]\n```\n\n---\n\n## Contributing\n\nContributions are welcome! If you're interested in helping improve `docgraph`, please check out our **[Developer Guide](./doc/architecture/view/guide.md)** for more information.\n\nDetailed technical documentation and use cases can be found in the **[doc/](./doc/overview.md)** directory.\n"
+      },
+      "plugins": [
+        {
+          "name": "docgraph-plugin",
+          "version": "0.1.0",
+          "source": "./docgraph-plugin",
+          "description": "Docgraph plugin for Claude",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sonesuke/docgraph",
+            "/plugin install docgraph-plugin@docgraph-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

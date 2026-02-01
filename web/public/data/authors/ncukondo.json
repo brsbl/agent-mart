@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "ncukondo",
+    "display_name": "Takeshi Kondo",
+    "avatar_url": "https://avatars.githubusercontent.com/u/17022138?u=9ef3b339c3e20b7546f270c99949c016c00c06d1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-plugins",
+      "version": null,
+      "description": "Custom Claude Code skills and plugins collection",
+      "repo_full_name": "ncukondo/agent-plugins",
+      "repo_url": "https://github.com/ncukondo/agent-plugins",
+      "repo_description": "Claude Code skills marketplace - Custom plugins collection",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-26T07:48:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-plugins\",\n  \"description\": \"Custom Claude Code skills and plugins collection\",\n  \"owner\": {\n    \"name\": \"ncukondo\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"thematic-analysis\",\n      \"source\": \"./plugins/thematic-analysis\",\n      \"description\": \"テーマ分析 (Thematic Analysis) - テキストファイル群から質的研究のテーマ分析を行うスキル\"\n    }\n  ]\n}\n",
+        "README.md": "# agent-plugins\n\nClaude Code用のカスタムスキル・プラグインを集積したマーケットプレイスです。\n\n## インストール\n\n### 1. マーケットプレイスの追加\n\nClaude Codeで以下のコマンドを実行：\n\n```\n/plugin marketplace add ncukondo/agent-plugins\n```\n\n### 2. プラグインのインストール\n\n利用したいプラグインをインストール：\n\n```\n/plugin add <プラグイン名>@agent-plugins\n```\n\n例：\n```\n/plugin add thematic-analysis@agent-plugins\n```\n\n### 3. インストール済みプラグインの確認\n\n```\n/plugin list\n```\n\n## 利用可能なプラグイン\n\n| プラグイン名 | 説明 |\n|-------------|------|\n| [thematic-analysis](#thematic-analysis) | 質的研究のテーマ分析スキル |\n\n---\n\n## プラグイン詳細\n\n### thematic-analysis\n\nテキストファイル群から質的研究のテーマ分析（Thematic Analysis）を実行するスキル。\n\n#### 機能\n\n- ファイル名へのインデックス自動付与\n- 文単位でのCSV出力\n- テーマの抽出・命名\n- 深層構造分析（テーマ間の関係性、背景メカニズム等）\n\n#### 使い方\n\n```\n/thematic-analysis\n```\n\nまたは、対象ディレクトリで「テーマ分析して」「質的分析」などと依頼すると自動的に起動します。\n\n#### 対象ファイル\n\n- `.txt`, `.md`, `.docx` ファイル\n- `context.md` - 分析の文脈情報（任意）\n\n#### 出力ファイル\n\n- `sentences.csv` - 全文のインデックス付きデータ\n- `themes.md` - テーマ分析結果\n\n---\n\n## 新しいプラグインの追加方法\n\n### ディレクトリ構造\n\n```\nagent-plugins/\n├── .claude-plugin/\n│   └── marketplace.json       # マーケットプレイスカタログ\n└── plugins/\n    └── <プラグイン名>/\n        ├── .claude-plugin/\n        │   └── plugin.json    # プラグインメタデータ\n        └── skills/\n            └── <スキル名>/\n                ├── SKILL.md   # スキル定義\n                └── scripts/   # 補助スクリプト（任意）\n```\n\n### 手順\n\n#### 1. プラグインディレクトリを作成\n\n```bash\nmkdir -p plugins/<プラグイン名>/.claude-plugin\nmkdir -p plugins/<プラグイン名>/skills/<スキル名>\n```\n\n#### 2. plugin.json を作成\n\n```json\n{\n  \"name\": \"<プラグイン名>\",\n  \"description\": \"プラグインの説明\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"作成者名\"\n  }\n}\n```\n\n#### 3. SKILL.md を作成\n\n```markdown\n---\nname: <スキル名>\ndescription: スキルの説明（Claudeが自動判断に使用）\n---\n\n# スキル名\n\nスキルの詳細な説明と実行手順...\n```\n\n#### 4. marketplace.json に追加\n\n`.claude-plugin/marketplace.json` の `plugins` 配列に追加：\n\n```json\n{\n  \"plugins\": [\n    {\n      \"name\": \"<プラグイン名>\",\n      \"source\": \"./plugins/<プラグイン名>\",\n      \"description\": \"プラグインの説明\"\n    }\n  ]\n}\n```\n\n### SKILL.md の書き方\n\n#### 基本構造\n\n```markdown\n---\nname: skill-name\ndescription: スキルの説明（自動実行の判断に使用される）\n---\n\n# スキル名\n\n## 概要\n何をするスキルか\n\n## 使い方\n具体的な手順\n\n## 入出力\n入力ファイル、出力ファイルの説明\n```\n\n#### オプション設定\n\n| フィールド | 説明 | 例 |\n|-----------|------|-----|\n| `disable-model-invocation` | `true`で手動呼び出しのみ | デプロイなど副作用のある操作 |\n| `user-invocable` | `false`でユーザーから非表示 | 背景知識のみのスキル |\n| `allowed-tools` | 使用可能なツールを制限 | `Read, Grep, Bash(python:*)` |\n| `context` | `fork`で独立エージェントで実行 | 大量ファイル処理 |\n\n#### スクリプトの参照\n\nプラグイン内のスクリプトは `$SKILL_ROOT` 変数を使用：\n\n```markdown\n```bash\npython \"$SKILL_ROOT/scripts/my_script.py\" [引数]\n```\n```\n\n---\n\n## アンインストール\n\n### プラグインの削除\n\n```\n/plugin remove thematic-analysis@agent-plugins\n```\n\n### マーケットプレイスの削除\n\n```\n/plugin marketplace remove agent-plugins\n```\n\n---\n\n## ライセンス\n\nMIT License\n"
+      },
+      "plugins": [
+        {
+          "name": "thematic-analysis",
+          "source": "./plugins/thematic-analysis",
+          "description": "テーマ分析 (Thematic Analysis) - テキストファイル群から質的研究のテーマ分析を行うスキル",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ncukondo/agent-plugins",
+            "/plugin install thematic-analysis@agent-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

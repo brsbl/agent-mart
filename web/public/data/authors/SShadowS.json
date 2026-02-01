@@ -1,0 +1,162 @@
+{
+  "author": {
+    "id": "SShadowS",
+    "display_name": "Torben Leth",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3491765?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-lsps",
+      "version": null,
+      "description": "AL Language Server wrappers for Claude Code - Business Central development",
+      "repo_full_name": "SShadowS/claude-code-lsps",
+      "repo_url": "https://github.com/SShadowS/claude-code-lsps",
+      "repo_description": "AL LSP marketplace for Claude Code",
+      "signals": {
+        "stars": 16,
+        "forks": 0,
+        "pushed_at": "2026-01-22T18:36:26Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-lsps\",\n  \"description\": \"AL Language Server wrappers for Claude Code - Business Central development\",\n  \"owner\": {\n    \"name\": \"SShadowS\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"al-language-server-python\",\n      \"version\": \"1.3.12\",\n      \"source\": \"./al-language-server-python\",\n      \"description\": \"[DEPRECATED] Use al-language-server-go-* instead. This wrapper lacks Code Lens and Call Hierarchy support.\",\n      \"category\": \"development\",\n      \"tags\": [\n        \"al\",\n        \"dynamics\",\n        \"business-central\",\n        \"lsp\",\n        \"language-server\",\n        \"python\",\n        \"deprecated\"\n      ],\n      \"author\": {\n        \"name\": \"SShadowS\"\n      }\n    },\n    {\n      \"name\": \"al-language-server-go-windows\",\n      \"version\": \"1.3.12\",\n      \"source\": \"./al-language-server-go-windows\",\n      \"description\": \"AL language server wrapper (Go) for Windows - includes Code Lens, Call Hierarchy, and unused procedure detection\",\n      \"category\": \"development\",\n      \"tags\": [\n        \"al\",\n        \"dynamics\",\n        \"business-central\",\n        \"lsp\",\n        \"language-server\",\n        \"go\",\n        \"windows\"\n      ],\n      \"author\": {\n        \"name\": \"SShadowS\"\n      }\n    },\n    {\n      \"name\": \"al-language-server-go-linux\",\n      \"version\": \"1.3.12\",\n      \"source\": \"./al-language-server-go-linux\",\n      \"description\": \"AL language server wrapper (Go) for Linux - includes Code Lens, Call Hierarchy, and unused procedure detection\",\n      \"category\": \"development\",\n      \"tags\": [\n        \"al\",\n        \"dynamics\",\n        \"business-central\",\n        \"lsp\",\n        \"language-server\",\n        \"go\",\n        \"linux\"\n      ],\n      \"author\": {\n        \"name\": \"SShadowS\"\n      }\n    },\n    {\n      \"name\": \"al-language-server-go-darwin\",\n      \"version\": \"1.3.12\",\n      \"source\": \"./al-language-server-go-darwin\",\n      \"description\": \"AL language server wrapper (Go) for macOS - includes Code Lens, Call Hierarchy, and unused procedure detection\",\n      \"category\": \"development\",\n      \"tags\": [\n        \"al\",\n        \"dynamics\",\n        \"business-central\",\n        \"lsp\",\n        \"language-server\",\n        \"go\",\n        \"macos\",\n        \"darwin\"\n      ],\n      \"author\": {\n        \"name\": \"SShadowS\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# AL LSP Wrappers for Claude Code\n\nClaude Code marketplace providing AL Language Server wrappers for Business Central development.\n\n## Available Wrappers\n\n| Wrapper | Platform | Description |\n|---------|----------|-------------|\n| `al-language-server-go-windows` | Windows | **Recommended** - Go wrapper with Code Lens & Call Hierarchy |\n| `al-language-server-go-linux` | Linux | **Recommended** - Go wrapper with Code Lens & Call Hierarchy |\n| `al-language-server-go-darwin` | macOS | **Recommended** - Go wrapper with Code Lens & Call Hierarchy |\n| `al-language-server-python` | Cross-platform | *Deprecated* - Basic LSP features only |\n\n> **Migration Note:** If you're using the Python wrapper, switch to the Go wrapper for your platform to get Code Lens (reference counts) and Call Hierarchy features.\n\n## Features\n\n- **Hover** - Type information and documentation\n- **Go to Definition** - Jump to symbol definitions (tables, codeunits, enums, procedures)\n- **Document Symbols** - List all symbols in a file\n- **Find References** - Find all references to a symbol\n- **Call Hierarchy** - Find incoming and outgoing calls for procedures\n- **Multi-project support** - Workspaces with multiple AL apps\n\n## Prerequisites\n\n1. **VS Code** with the [AL Language extension](https://marketplace.visualstudio.com/items?itemName=ms-dynamics-smb.al) installed\n\nThe Go wrappers are compiled binaries with no runtime dependencies. The wrapper automatically finds the newest AL extension version in your VS Code extensions folder.\n\n## Installation\n\n### 1. Enable LSP Tool\n\n```powershell\n# PowerShell (current session)\n$env:ENABLE_LSP_TOOL = \"1\"\nclaude\n\n# PowerShell (permanent)\n[Environment]::SetEnvironmentVariable(\"ENABLE_LSP_TOOL\", \"1\", \"User\")\n```\n\n```bash\n# Bash\nexport ENABLE_LSP_TOOL=1\nclaude\n```\n\n### 2. Add Marketplace\n\n```\n/plugin marketplace add SShadowS/claude-code-lsps\n```\n\n### 3. Install Plugin\n\n1. Type `/plugins`\n2. Tab to `Marketplaces`\n3. Enter `claude-code-lsps` marketplace\n4. Select the Go wrapper for your platform:\n   - Windows: `al-language-server-go-windows`\n   - Linux: `al-language-server-go-linux`\n   - macOS: `al-language-server-go-darwin`\n5. Press \"i\" to install\n6. Restart Claude Code\n\n## LSP Operations\n\nClaude can use these LSP operations on AL files:\n\n| Operation | Status | Description |\n|-----------|--------|-------------|\n| `goToDefinition` | Working | Go to symbol definition |\n| `goToImplementation` | Working | Go to implementation |\n| `hover` | Working | Get type/documentation info |\n| `documentSymbol` | Working | List symbols in file |\n| `findReferences` | Working | Find all references |\n| `prepareCallHierarchy` | Working | Get call hierarchy item at position |\n| `incomingCalls` | Working | Find callers of a procedure |\n| `outgoingCalls` | Working | Find calls made by a procedure |\n| `workspaceSymbol` | Bug | See [Known Issues](KnownIssues.md) |\n\n## Known Issues\n\n### workspaceSymbol Returns Empty Results\n\nClaude Code's LSP tool has a bug where it doesn't pass the required `query` parameter for `workspaceSymbol`. This causes the operation to always return 0 symbols.\n\n**Workarounds:**\n- Use `documentSymbol` to list symbols in a specific file\n- Use `Grep` to search for symbol names across the workspace\n\nSee [KnownIssues.md](KnownIssues.md) for full details and technical analysis.\n\n## License\n\n[GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)\n"
+      },
+      "plugins": [
+        {
+          "name": "al-language-server-python",
+          "version": "1.3.12",
+          "source": "./al-language-server-python",
+          "description": "[DEPRECATED] Use al-language-server-go-* instead. This wrapper lacks Code Lens and Call Hierarchy support.",
+          "category": "development",
+          "tags": [
+            "al",
+            "dynamics",
+            "business-central",
+            "lsp",
+            "language-server",
+            "python",
+            "deprecated"
+          ],
+          "author": {
+            "name": "SShadowS"
+          },
+          "categories": [
+            "al",
+            "business-central",
+            "deprecated",
+            "development",
+            "dynamics",
+            "language-server",
+            "lsp",
+            "python"
+          ],
+          "install_commands": [
+            "/plugin marketplace add SShadowS/claude-code-lsps",
+            "/plugin install al-language-server-python@claude-code-lsps"
+          ]
+        },
+        {
+          "name": "al-language-server-go-windows",
+          "version": "1.3.12",
+          "source": "./al-language-server-go-windows",
+          "description": "AL language server wrapper (Go) for Windows - includes Code Lens, Call Hierarchy, and unused procedure detection",
+          "category": "development",
+          "tags": [
+            "al",
+            "dynamics",
+            "business-central",
+            "lsp",
+            "language-server",
+            "go",
+            "windows"
+          ],
+          "author": {
+            "name": "SShadowS"
+          },
+          "categories": [
+            "al",
+            "business-central",
+            "development",
+            "dynamics",
+            "go",
+            "language-server",
+            "lsp",
+            "windows"
+          ],
+          "install_commands": [
+            "/plugin marketplace add SShadowS/claude-code-lsps",
+            "/plugin install al-language-server-go-windows@claude-code-lsps"
+          ]
+        },
+        {
+          "name": "al-language-server-go-linux",
+          "version": "1.3.12",
+          "source": "./al-language-server-go-linux",
+          "description": "AL language server wrapper (Go) for Linux - includes Code Lens, Call Hierarchy, and unused procedure detection",
+          "category": "development",
+          "tags": [
+            "al",
+            "dynamics",
+            "business-central",
+            "lsp",
+            "language-server",
+            "go",
+            "linux"
+          ],
+          "author": {
+            "name": "SShadowS"
+          },
+          "categories": [
+            "al",
+            "business-central",
+            "development",
+            "dynamics",
+            "go",
+            "language-server",
+            "linux",
+            "lsp"
+          ],
+          "install_commands": [
+            "/plugin marketplace add SShadowS/claude-code-lsps",
+            "/plugin install al-language-server-go-linux@claude-code-lsps"
+          ]
+        },
+        {
+          "name": "al-language-server-go-darwin",
+          "version": "1.3.12",
+          "source": "./al-language-server-go-darwin",
+          "description": "AL language server wrapper (Go) for macOS - includes Code Lens, Call Hierarchy, and unused procedure detection",
+          "category": "development",
+          "tags": [
+            "al",
+            "dynamics",
+            "business-central",
+            "lsp",
+            "language-server",
+            "go",
+            "macos",
+            "darwin"
+          ],
+          "author": {
+            "name": "SShadowS"
+          },
+          "categories": [
+            "al",
+            "business-central",
+            "darwin",
+            "development",
+            "dynamics",
+            "go",
+            "language-server",
+            "lsp",
+            "macos"
+          ],
+          "install_commands": [
+            "/plugin marketplace add SShadowS/claude-code-lsps",
+            "/plugin install al-language-server-go-darwin@claude-code-lsps"
+          ]
+        }
+      ]
+    }
+  ]
+}
