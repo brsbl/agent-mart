@@ -2,92 +2,25 @@
   "author": {
     "id": "otahontas",
     "display_name": "Otto Ahoniemi",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/43019238?u=3859e8830c8a7740b08dcfc48324e3c68296594d&v=4",
-    "url": "https://github.com/otahontas",
-    "bio": "Fullstack dev with multiple years of experience.\r\n\r\nFinishing masters of audio tech & acoustics at Aalto University.",
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 1,
-      "total_stars": 2,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/43019238?u=3859e8830c8a7740b08dcfc48324e3c68296594d&v=4"
   },
   "marketplaces": [
     {
       "name": "jira-cli-skill",
       "version": null,
       "description": null,
-      "owner_info": {
-        "name": "Otahontas"
-      },
-      "keywords": [],
       "repo_full_name": "otahontas/jira-cli-skill",
       "repo_url": "https://github.com/otahontas/jira-cli-skill",
       "repo_description": "Claude Code plugin that teaches Claude how to use the jira CLI",
-      "homepage": "",
       "signals": {
         "stars": 2,
         "forks": 0,
-        "pushed_at": "2025-11-16T16:36:59Z",
-        "created_at": "2025-11-12T08:18:17Z",
-        "license": "MIT"
+        "pushed_at": "2025-11-16T16:36:59Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 148
-        },
-        {
-          "path": ".claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 401
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 1216
-        },
-        {
-          "path": "skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/jira",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/jira/SKILL.md",
-          "type": "blob",
-          "size": 4094
-        },
-        {
-          "path": "skills/jira/references",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "skills/jira/references/mcp-parity.md",
-          "type": "blob",
-          "size": 7796
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"jira-cli-skill\",\n  \"owner\": {\n    \"name\": \"Otahontas\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jira\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
         ".claude-plugin/plugin.json": "{\n  \"name\": \"jira\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Manage Jira projects, issues, boards, and sprints via the jira CLI\",\n  \"author\": {\n    \"name\": \"Otahontas\"\n  },\n  \"homepage\": \"https://github.com/otahontas/jira-cli-skill\",\n  \"repository\": \"https://github.com/otahontas/jira-cli-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"jira\", \"atlassian\", \"issue-tracking\", \"project-management\", \"cli\"]\n}\n",
-        "README.md": "# jira-cli-skill\n\nClaude Code plugin that teaches Claude how to use the [jira CLI](https://github.com/ankitpokhrel/jira-cli)\n\n## What you need\n\nFirst, install and configure the jira CLI:\n\n```bash\n# macOS/Linux\nbrew install jira-cli\n\n# Other platforms: https://github.com/ankitpokhrel/jira-cli#installation\n\n# Set up your credentials\njira init\n```\n\n## Install the plugin\n\n```bash\nclaude plugin marketplace add otahontas/jira-cli-skill\nclaude plugin install jira\n```\n\n## How it works\n\nThe plugin doesn't do anything itself - it's pure documentation. It teaches Claude:\n- Which jira commands to use for common tasks\n- Flags like `--plain` and `--columns` for parseable output\n- Patterns that work reliably (no interactive prompts, deterministic results)\n\nSo when you ask Claude to \"list sprint issues\" or \"create a bug\", it should know how to use jira CLI.\n\n## What's inside\n\n```\nskills/jira/SKILL.md              # Main guide - common workflows\nskills/jira/scripts/check-environment.sh  # Verifies jira CLI works\nskills/jira/references/mcp-parity.md      # Maps Jira MCP → CLI commands\n```\n\nThe plugin runs the environment check automatically. If jira isn't set up, Claude should mention it to you.\n\n## License\n\nMIT\n",
-        "skills/jira/SKILL.md": "---\nname: jira\ndescription: Operate Atlassian Jira through the official jira CLI; trigger this skill to list, inspect, create, update, triage, or report on Jira work using deterministic shell commands aligned with Jira MCP workflows.\nversion: 0.1.0\n---\n\n# Jira Issue Management\n\n**Use this skill whenever Jira work is requested.**\n\n## Setup\n\n- Run `./scripts/check-environment.sh`. The skill halts with explicit instructions when `jira` is missing or not authenticated (`jira init` required once).\n- Ensure the `jira` CLI remains in PATH after the check.\n- Use upstream flags like `--project`, `--board`, etc., for context as needed; no extra configuration lives in the skill.\n\n## Command Pattern\n\n```bash\njira <command> <subcommand> [arguments] [flags]\n```\n\nPrimary commands: `issue`, `project`, `board`, `sprint`, `epic`, `release`, `open`, `me`, `serverinfo`.\n\nKeep outputs deterministic:\n\n- Run `./scripts/check-environment.sh` at the start of every session; abort work if it reports an error.\n- Add `--plain` plus `--columns ...` for TSV tables that stream cleanly.\n- Use `--raw` (alias for JSON) when structured data is required.\n- Provide explicit ranges via `--paginate start:limit` to cap interactive views.\n\n## Core Workflows\n\n- **Projects** – enumerate available projects  \n  ```bash\n  jira project list --plain --columns key,name,type\n  ```\n\n- **Issues**  \n  - Search / filter:\n    ```bash\n    jira issue list --status Done --assignee \"$(jira me)\" --plain --columns key,summary,status,assignee\n    jira issue search 'project = PROJ AND status = \"In Progress\"' --plain --columns key,summary,status\n    jira issue list --raw --jql 'label = backend' --paginate 0:50\n    ```\n  - View details: `jira issue view PROJ-123 --plain --comments 5`\n  - Create:\n    ```bash\n    jira issue create \\\n      --type Bug \\\n      --summary \"API returns 500\" \\\n      --description-file docs/bug.md \\\n      --priority High \\\n      --assignee \"$(jira me)\" \\\n      --label backend --label urgent\n    ```\n  - Update:\n    ```bash\n    jira issue edit PROJ-123 --summary \"Refine API contract\" --priority Medium\n    jira issue move PROJ-123 \"In Review\" --comment \"Ready for QA\"\n    jira issue assign PROJ-123 user@example.com\n    ```\n  - Comment / worklog:\n    ```bash\n    jira issue comment add PROJ-123 \"Investigating...\" --no-input\n    jira issue worklog add PROJ-123 \"1h 30m\" --comment \"Debugging\"\n    ```\n  - Linking: `jira issue link PROJ-1 PROJ-2 \"Blocks\"` (remove with `jira issue unlink ...`).\n\n- **Epics**  \n  - Create: `jira epic create --name \"Platform Stability\" --summary \"Q3 initiative\"`  \n  - List: `jira epic list --plain --columns key,summary,status`  \n  - Attach issues: `jira epic add EPIC-1 PROJ-123 PROJ-456`\n\n- **Boards & Sprints**  \n  - Boards: `jira board list --plain --columns id,name,type`\n  - Sprint overview: `jira sprint list --plain --columns id,name,state,start,end`\n  - Sprint issues: `jira sprint list <SPRINT_ID> --plain --columns key,summary,status,assignee`\n  - Move issues: `jira sprint add <SPRINT_ID> PROJ-123 PROJ-456`\n  - Close sprint: `jira sprint close <SPRINT_ID>`\n\n- **Releases (Versions)** – `jira release list --plain --columns name,start,end,state`\n\n- **Open in browser** – `jira open PROJ-123 --no-browser` (omit flag to launch UI).\n\n- **User / Instance context** – `jira me`, `jira serverinfo`, `jira version`.\n\n## Output Strategies\n\n- Issues default to `key,summary,status,assignee`; sprints to `id,name,state,start,end`. Override with `--columns`.\n- `--raw` returns JSON for downstream processing (`jq`, scripting).\n- Combine commands with standard Unix tooling:\n  ```bash\n  jira issue list --plain --columns key,status,assignee | rg \"In Progress\"\n  jira issue view PROJ-123 --plain --comments 10 | tee PROJ-123.txt\n  ```\n\n## Reference Material\n\n- `references/mcp-parity.md` contains a Jira MCP → CLI mapping, including attachments, watchers, and worklogs.\n- For authentication or environment issues\n    - re-run `jira init` and review `~/.config/.jira/.config.yml`.\n    - check that JIRA_API_TOKEN is set or `~/.netrc` contains proper jira setup\n",
-        "skills/jira/references/mcp-parity.md": "# Jira MCP Parity Mapping\n\nHigh-level equivalence table between Jira MCP API operations and the `jira` CLI commands exposed through `jira-cli-skill`. Load this reference when planning workflows that depend on specific MCP actions.\n\n## Projects\n\n| MCP capability               | CLI command                                                      | Notes |\n|------------------------------|------------------------------------------------------------------|-------|\n| List projects                | `jira project list --plain --columns key,name,type`              | `--plain` recommended for deterministic TSV output. |\n| Get project details          | `jira project view <KEY>`                                        | Use `--raw` for JSON payload. |\n\n## Issues\n\n| MCP capability                     | CLI command                                                                                       | Notes |\n|------------------------------------|-----------------------------------------------------------------------------------------------------|-------|\n| Search issues (JQL)                | `jira issue search '<JQL>' --plain --columns key,summary,status`                                   | Add `--raw` for JSON. |\n| List issues by status/assignee     | `jira issue list --status \"In Progress\" --assignee \"$(jira me)\" --plain --columns key,summary,status,assignee` | Default columns recommended for parsing. |\n| Get issue details                  | `jira issue view PROJ-123 --plain --comments 5`                                                    | Increase comments via `--comments N`. |\n| Create issue                       | `jira issue create --type Task --summary \"Title\" --description-file path.md --priority High`       | Use `--assignee`, `--label`, `--component`, `--custom key=value`. |\n| Update fields                      | `jira issue edit PROJ-123 --summary \"New\" --priority Low --custom story-points=5`                   | Combine with `issue move` for status transitions. |\n| Transition workflow                | `jira issue move PROJ-123 \"In Review\" --comment \"Ready\"`                                           | Accepts `--resolution`, `--assignee`. |\n| Assign issue                       | `jira issue assign PROJ-123 user@example.com`                                                      | Accepts email, display name, or `default`. |\n| Comment                            | `jira issue comment add PROJ-123 \"Body\" --no-input`                                                | `--template -` reads stdin. |\n| Delete issue                       | `jira issue delete PROJ-123 --cascade`                                                             | Warn: irreversible unless Jira config allows recovery. |\n| Clone issue                        | `jira issue clone PROJ-123 --summary \"Copy\"`                                                       | Supports overrides for fields. |\n| Link issues                        | `jira issue link PROJ-1 PROJ-2 \"Blocks\"`                                                           | Remove via `jira issue unlink PROJ-1 PROJ-2`. |\n| Manage attachments                 | `jira issue attach add PROJ-123 ./file.txt --name \"spec.txt\"`                                      | Remove via `attach remove`. |\n| Watchers                           | `jira issue watch PROJ-123 user@example.com`                                                       | Omit user to watch/unwatch self. |\n| Worklogs                           | `jira issue worklog add PROJ-123 \"2h\" --started \"2024-06-01 09:00\" --timezone \"America/New_York\"`  | `worklog edit` and `worklog delete` mirror MCP updates. |\n\n## Epics\n\n| MCP capability           | CLI command                                                                  | Notes |\n|--------------------------|------------------------------------------------------------------------------|-------|\n| Create epic              | `jira epic create --name \"Epic\" --summary \"Goal\" --label initiative`         | Provide `--type` if org uses custom epic issue types. |\n| List epics               | `jira epic list --plain --columns key,summary,status`                        | Use filters: `--status`, `--priority`, `--label`. |\n| Attach issues to epic    | `jira epic add EPIC-1 PROJ-1 PROJ-2`                                         | Up to 50 issues per call. |\n| Remove issues from epic  | `jira epic remove PROJ-1 PROJ-2`                                             | Equivalent to MCP unlink. |\n\n## Boards & Sprints\n\n| MCP capability                   | CLI command                                                                                  | Notes |\n|----------------------------------|----------------------------------------------------------------------------------------------|-------|\n| List boards                      | `jira board list --plain --columns id,name,type`                                             | Requires project context. |\n| List sprints on board            | `jira sprint list --plain --columns id,name,state,start,end`                                 | `--paginate` limits results. |\n| View issues in sprint            | `jira sprint list <SPRINT_ID> --plain --columns key,summary,status,assignee`                 | Add `--state active` etc. |\n| Add issues to sprint             | `jira sprint add <SPRINT_ID> PROJ-123 PROJ-456`                                              | Mirrors MCP batch add. |\n| Remove issues from sprint        | `jira sprint remove <SPRINT_ID> PROJ-123`                                                    | Use when unassigning sprints. |\n| Close sprint                     | `jira sprint close <SPRINT_ID>`                                                              | Equivalent to MCP close. |\n\n## Releases / Versions\n\n| MCP capability         | CLI command                                                                    | Notes |\n|------------------------|--------------------------------------------------------------------------------|-------|\n| List releases          | `jira release list --plain --columns name,start,end,state`                     | CLI uses \"release\" for Jira versions. |\n| Create release         | `jira release create --name \"v1.5.0\" --release-date 2024-08-01`                | Additional flags: `--description`, `--project`. |\n| Update release         | `jira release edit <ID> --name \"v1.5.1\"`                                       | Equivalent to MCP update. |\n| Archive/delete release | `jira release archive <ID>` / `jira release delete <ID>`                       | Deletes require confirmation; use `--confirm`. |\n\n## User & Instance\n\n| MCP capability        | CLI command                          | Notes |\n|-----------------------|--------------------------------------|-------|\n| Current user          | `jira me`                            | Returns display name and account ID. |\n| Instance metadata     | `jira serverinfo`                    | Mirrors MCP server info. |\n| CLI version           | `jira version`                       | Helpful for troubleshooting. |\n\n## Attachments & Assets\n\n- Upload file: `jira issue attach add PROJ-123 ./design.pdf`\n- Download attachment: `jira issue attach get PROJ-123 <attachment-id> --output ./design.pdf`\n- List attachments: `jira issue attach list PROJ-123 --plain --columns id,filename,author`\n\n## Tips\n\n- Combine CLI options to keep parity with MCP filters (`--status`, `--priority`, `--label`, `--assignee`, `--jql`).\n- Use `--raw` when Claude must parse JSON; otherwise rely on the TSV defaults to minimise tokens.\n- Env overrides:\n  - `JIRA_PROJECT` auto-applies `--project` when omitted.\n  - `JIRA_CLI_PATH` points the wrapper to a custom binary location.\n- When the CLI reports \"interactive view\", re-run with `--plain` or `--raw` to keep outputs deterministic.\n"
+        "README.md": "# jira-cli-skill\n\nClaude Code plugin that teaches Claude how to use the [jira CLI](https://github.com/ankitpokhrel/jira-cli)\n\n## What you need\n\nFirst, install and configure the jira CLI:\n\n```bash\n# macOS/Linux\nbrew install jira-cli\n\n# Other platforms: https://github.com/ankitpokhrel/jira-cli#installation\n\n# Set up your credentials\njira init\n```\n\n## Install the plugin\n\n```bash\nclaude plugin marketplace add otahontas/jira-cli-skill\nclaude plugin install jira\n```\n\n## How it works\n\nThe plugin doesn't do anything itself - it's pure documentation. It teaches Claude:\n- Which jira commands to use for common tasks\n- Flags like `--plain` and `--columns` for parseable output\n- Patterns that work reliably (no interactive prompts, deterministic results)\n\nSo when you ask Claude to \"list sprint issues\" or \"create a bug\", it should know how to use jira CLI.\n\n## What's inside\n\n```\nskills/jira/SKILL.md              # Main guide - common workflows\nskills/jira/scripts/check-environment.sh  # Verifies jira CLI works\nskills/jira/references/mcp-parity.md      # Maps Jira MCP → CLI commands\n```\n\nThe plugin runs the environment check automatically. If jira isn't set up, Claude should mention it to you.\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

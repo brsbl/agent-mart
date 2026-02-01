@@ -6,47 +6,45 @@
   },
   "marketplaces": [
     {
-      "name": "daily-work-tracker",
+      "name": "claude-pr-logger",
       "version": null,
-      "description": "여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다",
-      "repo_full_name": "MMMIIIN/daily-work-tracker",
-      "repo_url": "https://github.com/MMMIIIN/daily-work-tracker",
+      "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
+      "repo_full_name": "MMMIIIN/claude-pr-logger",
+      "repo_url": "https://github.com/MMMIIIN/claude-pr-logger",
       "repo_description": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-05T13:38:23Z"
+        "pushed_at": "2025-12-22T08:52:36Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"daily-work-tracker\",\n  \"owner\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"daily-work-tracker\",\n      \"description\": \"여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"repository\": \"https://github.com/MMMIIIN/daily-work-tracker\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"daily\", \"work\", \"tracker\", \"logging\", \"productivity\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"daily-work-tracker\",\n  \"version\": \"1.0.0\",\n  \"description\": \"여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다\",\n  \"author\": {\n    \"name\": \"chemi\"\n  },\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
-        "README.md": "# Daily Work Tracker\n\n여러 프로젝트에서 작업한 내역을 날짜별로 자동 추적하는 Claude Code 플러그인입니다.\n\n## 주요 기능\n\n- **자동 작업 기록**: 대화할 때마다 프로젝트별로 자동 기록\n- **프로젝트별 분리**: 여러 프로젝트 작업을 하나의 파일에서 섹션별로 관리\n- **날짜별 파일**: `~/.claude/daily-work/YYYY-MM-DD.md` 형식으로 저장\n- **Notion 연동**: Notion MCP를 통해 자동 동기화 (선택)\n- **로컬 저장**: Notion 미연결 시 로컬 MD 파일로 저장\n- **저장 경로 설정**: 로그 및 요약 파일 경로 커스터마이징 가능\n\n## 설치\n\n### 1단계: 마켓플레이스 추가\n\nClaude Code 터미널에서:\n\n```\n/plugin marketplace add MMMIIIN/daily-work-tracker\n```\n\n### 2단계: 플러그인 설치\n\n```\n/plugin install daily-work-tracker@daily-work-tracker\n```\n\n### 설치 확인\n\n```\n/plugin list\n```\n\n**참고**: 설치 후 Claude Code를 재시작하면 플러그인이 활성화됩니다.\n\n## 설정\n\n### 빠른 설정 (권장)\n\n```\n/daily-work-tracker:daily-setup\n```\n\n대화형으로 모든 설정을 진행합니다:\n1. **저장 경로** - 로그 파일 저장 위치 선택\n2. **Notion 연동** - Notion MCP 활성화 여부\n\n### 설정 파일 구조\n\n`~/.claude/daily-work-tracker/config.json`:\n\n```json\n{\n  \"notion_mcp\": {\n    \"enabled\": true,\n    \"page_id\": \"your-notion-page-id\"\n  },\n  \"storage\": {\n    \"log_path\": \"~/.claude/daily-work\",\n    \"summary_path\": \"~/.claude/daily-summaries\"\n  },\n  \"sync_history\": [\"2026-01-04\", \"2026-01-05\"]\n}\n```\n\n### Notion MCP 연동 (선택)\n\nNotion에 일일 작업 요약을 자동 동기화하려면:\n\n#### 1단계: Notion Integration 생성\n\n1. [Notion Integrations](https://www.notion.so/my-integrations) 페이지 접속\n2. \"New integration\" 클릭\n3. 이름 입력 후 생성\n4. **Internal Integration Secret** 복사 (`ntn_` 또는 `secret_`으로 시작)\n\n#### 2단계: Notion MCP 서버 설정\n\n`~/.claude.json`에 추가:\n\n```json\n{\n  \"mcpServers\": {\n    \"notion\": {\n      \"type\": \"stdio\",\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@notionhq/notion-mcp-server\"],\n      \"env\": {\n        \"OPENAPI_MCP_HEADERS\": \"{\\\"Authorization\\\": \\\"Bearer YOUR_API_KEY\\\", \\\"Notion-Version\\\": \\\"2022-06-28\\\"}\"\n      }\n    }\n  }\n}\n```\n\n#### 3단계: Notion 페이지에 Integration 연결\n\n1. 동기화할 Notion 페이지 열기\n2. 우측 상단 `⋯` 클릭\n3. \"연결\" → 생성한 Integration 선택\n4. 페이지 URL에서 ID 복사: `notion.so/페이지이름-{페이지ID}`\n\n#### 4단계: 플러그인 설정\n\n```\n/daily-work-tracker:daily-setup\n```\n\n- Notion 활성화 선택\n- 복사한 페이지 ID 입력\n\n### 동기화 형식\n\nNotion에 Toggle 블록으로 날짜+시간별 정리:\n\n```\n📅 2026-01-05 17:30 | 4개 프로젝트 | 29개 대화\n├─ 🔹 project-name\n│   ├─ [15:23] 질문 내용\n│   ├─ [16:00] 다른 질문\n│   └─ 📝 요약: Claude가 생성한 프로젝트 요약\n└─ 📊 전체 요약\n```\n\n## 명령어\n\n| 명령어 | 설명 |\n|--------|------|\n| `/daily-work-tracker:daily-setup` | 초기 설정 (저장 경로, Notion) |\n| `/daily-work-tracker:daily-sync` | Notion/로컬에 동기화 (미동기화 날짜 일괄 처리) |\n| `/daily-work-tracker:daily-summary` | 오늘 작업 내역 보기 |\n| `/daily-work-tracker:daily-week` | 이번 주 작업 요약 |\n| `/daily-work-tracker:daily-status` | 설정 상태 확인 |\n| `/daily-work-tracker:daily-path` | 저장 경로 변경 |\n| `/daily-work-tracker:daily-clear` | 오늘 기록 삭제 |\n\n## 저장 위치\n\n### 기본 경로\n\n```\n~/.claude/daily-work/          # 작업 로그\n├── 2026-01-05.md\n├── 2026-01-04.md\n└── ...\n\n~/.claude/daily-summaries/     # 일일 요약\n├── 2026-01-05-summary.md\n└── ...\n\n~/.claude/daily-work-tracker/  # 설정\n└── config.json\n```\n\n### 경로 변경\n\n`/daily-work-tracker:daily-path` 명령어로 저장 경로 변경 가능\n\n## 파일 형식\n\n```markdown\n# 📅 2026-01-05 작업 기록\n\n## 🔹 flutter-app\n> `/Users/username/projects/flutter-app`\n\n- **[14:30]** 사용자 인증 어떻게 구현하면 좋을까? → Riverpod 추천\n- **[15:00]** 로그인 화면 만들어줘 → `login_page.dart` 생성\n\n## 🔹 backend-api\n> `/Users/username/projects/backend-api`\n\n- **[16:00]** API 엔드포인트 설계 → REST API 구조 제안\n```\n\n## 동작 방식\n\n1. **UserPromptSubmit Hook**: 사용자가 질문할 때마다 `log-daily.py` 실행\n2. **프로젝트 감지**: `pubspec.yaml`, `package.json` 또는 폴더명으로 프로젝트 식별\n3. **자동 기록**: 날짜별 MD 파일에 타임스탬프와 함께 저장\n4. **요약 트리거**: 이전 답변 요약을 자동으로 추가하도록 Claude에게 알림\n\n## 스킬 (Skills)\n\n플러그인에 포함된 스킬은 Claude가 특정 작업을 수행할 때 참조하는 가이드라인입니다.\n\n### generate-summary\n\n`/daily-sync` 실행 시 Claude가 작업 기록을 분석하여 요약을 생성할 때 사용됩니다.\n\n**동작 방식:**\n1. 작업 기록 파일(`.md`)을 읽음\n2. 프로젝트별로 작업 내용 분석\n3. 스킬에 정의된 가이드라인에 따라 요약 생성\n4. Notion에 토글 형태로 저장\n\n**생성되는 요약:**\n- **프로젝트별 요약**: 각 프로젝트에서 수행한 주요 작업 1-2문장\n- **전체 요약**: 하루 전체 작업 2-3문장\n\n**예시:**\n```\n▶ 📅 2026-01-15 14:30 작업 기록 | 2개 프로젝트\n    ▶ 🔹 shopping-app\n        - [10:30] 장바구니 기능 구현 요청\n        - [11:20] 결제 페이지 연동\n        📝 요약: 장바구니 기능 구현 (상품 추가/삭제, 결제 연동)\n    ▶ 🔹 admin-dashboard\n        - [14:00] 사용자 목록 API 연결\n        📝 요약: 사용자 목록 API 연동 및 테이블 UI 개선\n    📊 전체 요약: shopping-app 장바구니 완성, admin-dashboard UI 개선\n```\n\n스킬 파일 위치: `skills/generate-summary.md`\n\n## 삭제\n\n### 플러그인 완전 삭제\n\n```\n/plugin uninstall daily-work-tracker\n```\n\n### 플러그인 비활성화\n\n```\n/plugin disable daily-work-tracker@daily-work-tracker\n```\n\n### 데이터 삭제 (선택)\n\n플러그인 삭제 후에도 기록된 데이터는 유지됩니다. 데이터도 삭제하려면:\n\n```bash\n# 작업 로그 삭제\nrm -rf ~/.claude/daily-work/\n\n# 일일 요약 삭제\nrm -rf ~/.claude/daily-summaries/\n\n# 설정 파일 삭제\nrm -rf ~/.claude/daily-work-tracker/\n```\n\n## 라이선스\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-pr-logger\",\n  \"owner\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pr-logger\",\n      \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./\",\n      \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"pr-logger\",\n  \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n  \"version\": \"1.0.2\",\n  \"author\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"],\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "README.md": "# Claude PR Logger\n\nClaude Code에서 개발 과정을 자동으로 기록하여 PR 작성 시 활용할 수 있는 플러그인입니다.\n\n## 왜 만들었나요?\n\n### AI 시대의 코드 리뷰 패러다임 변화\n\nAI를 활용한 개발이 보편화되면서 개발 속도와 생성되는 코드의 양이 급격히 증가했습니다.\n하지만 기존의 코드 리뷰 방식은 이러한 변화를 따라가지 못하고 있습니다.\n\n**기존 방식의 한계:**\n- 한 PR에 수백, 수천 줄의 변경사항\n- 모든 코드를 라인 바이 라인으로 검토하기 어려움\n- AI가 생성한 코드의 의도를 파악하기 힘듦\n\n### 새로운 코드 리뷰: 컨텍스트 리뷰\n\n이제는 `\"어떤 코드가 생성되었는가\"`보다 `\"어떤 맥락에서, 어떤 명령으로 코드가 생성되었는가\"`를 리뷰해야 합니다.\n\n**컨텍스트 리뷰의 장점:**\n- 개발자가 AI에게 내린 명령과 의도를 확인\n- 문제 해결 과정과 의사결정 흐름을 추적\n- 코드 변경의 \"왜\"를 이해하고 리뷰\n\n### PR Logger의 역할\n\n이 플러그인은 개발자와 AI 간의 대화를 자동으로 기록하여:\n\n1. **개발 컨텍스트 보존** - 어떤 요청으로 코드가 생성되었는지 기록\n2. **의사결정 추적** - 왜 이런 방식으로 구현했는지 확인 가능\n3. **효율적인 리뷰** - 코드보다 맥락을 중심으로 빠른 리뷰\n4. **지식 공유** - 팀원들이 개발 과정을 이해하고 학습\n\n## 기능\n\n- **브랜치별 로그 분리**: Git 브랜치마다 별도의 로그 파일 자동 생성\n- **자동 질문 기록**: 사용자의 모든 질문을 타임스탬프와 함께 기록\n- **답변 요약 트리거**: 이전 답변을 요약하도록 Claude에게 자동 알림\n- **에러 메시지 요약**: 긴 에러 메시지를 자동으로 요약 (30줄 이상)\n- **PR용 로그**: 개발 과정을 PR에 그대로 활용 가능\n\n### 브랜치별 로그 파일\n\n```\n.claude/pr-logger/\n├── session-log-feature-10-geofence-management.md\n├── session-log-feature-11-worker-api.md\n├── session-log-develop.md\n└── session-log-main.md\n```\n\n브랜치를 전환하면 자동으로 해당 브랜치의 로그 파일을 사용합니다.\n\n## 설치 방법\n\n### 방법 1: GitHub에서 설치 (권장)\n\n```bash\n# Claude Code에서 실행\n/plugin install pr-logger@MMMIIIN/claude-pr-logger\n```\n\n설치 후 Claude Code를 재시작하세요.\n\n### 방법 2: 마켓플레이스 등록 후 설치\n\n```bash\n# 1. 마켓플레이스 추가\n/plugin marketplace add MMMIIIN/claude-pr-logger\n\n# 2. 플러그인 설치\n/plugin install pr-logger\n```\n\n## 삭제 방법\n\n### 방법 1: 명령어로 삭제 (권장)\n\n```bash\n# Claude Code에서 실행\n/pr-logger:uninstall\n```\n\nClaude가 캐시, 마켓플레이스, 설정 파일을 모두 정리합니다.\n\n### 방법 2: 기본 삭제\n\n```bash\n/plugin uninstall pr-logger\n```\n\n> **주의**: 기본 삭제 후 Hook 에러가 발생하면 `/pr-logger:uninstall` 명령어를 사용하세요.\n\n삭제 후 Claude Code를 재시작하세요.\n\n## 동작 원리\n\n플러그인은 다음과 같은 흐름으로 동작합니다:\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                        첫 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 질문 입력                                           │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Claude가 답변                                                │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n┌─────────────────────────────────────────────────────────────────┐\n│                        두 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 다음 질문 입력                                       │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Hook이 <pr-log-reminder> 메시지를 Claude에게 전달            │\n│  4. Claude가 이전 답변을 요약하여 session-log.md에 추가           │\n│  5. Claude가 현재 질문에 답변                                    │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n                        (반복...)\n```\n\n**핵심 포인트:**\n- 질문은 **입력 즉시** 자동 기록됩니다\n- 답변 요약은 **다음 질문 시** Claude가 작성합니다\n- 이를 통해 질문-답변 쌍이 순차적으로 기록됩니다\n\n## 사용법\n\n### 자동 기록\n\n플러그인 설치 후 자동으로 동작합니다:\n\n1. 질문을 입력하면 `.claude/pr-logger/session-log.md`에 기록됨\n2. 다음 질문 시 이전 답변 요약을 자동으로 추가\n\n### 슬래시 명령어\n\n| 명령어 | 설명 |\n|--------|------|\n| `/pr-logger:pr-log` | 현재 PR용 개발 로그 확인 |\n| `/pr-logger:pr-log-clear` | PR 작성 완료 마커 추가 |\n| `/pr-logger:pr-log-all` | 전체 개발 로그 확인 |\n| `/pr-logger:uninstall` | 플러그인 완전 삭제 (캐시, 설정 파일 모두 정리) |\n\n## 로그 형식\n\n```markdown\n# PR 개발 로그\n\n브랜치: `feature-10-geofence-management`\n세션 ID: `abc123`\n시작 시간: 2025-12-22 10:00:00\n\n---\n\n## [2025-12-22 10:00:00] 질문\n\n사용자 질문 내용\n\n### 답변 요약\n- 수행한 작업 1\n- 수행한 작업 2\n- 커밋: `abc1234`\n```\n\n## CLAUDE.md 설정 (권장)\n\n프로젝트의 `CLAUDE.md`에 다음 내용을 추가하면 더 정확하게 동작합니다:\n\n```markdown\n## PR 개발 로그 자동화\n\n`<pr-log-reminder>` 메시지가 표시되면:\n\n1. `.claude/pr-logger/session-log.md`를 읽어서 마지막 질문 확인\n2. 해당 질문에 대한 이전 답변을 간결하게 요약 (2-5줄)\n3. 요약 내용을 `### 답변 요약` 형식으로 추가\n4. 그 후 현재 질문에 대한 답변 진행\n```\n\n## 파일 구조\n\n```\nclaude-pr-logger/\n├── .claude-plugin/\n│   ├── plugin.json          # 플러그인 매니페스트\n│   └── marketplace.json     # 마켓플레이스 등록 정보\n├── hooks/\n│   └── hooks.json           # Hook 설정\n├── scripts/\n│   └── log-prompt.py        # 로깅 스크립트\n├── commands/\n│   ├── pr-log.md            # 로그 확인 명령어\n│   ├── pr-log-clear.md      # 완료 마커 명령어\n│   └── pr-log-all.md        # 전체 로그 명령어\n└── README.md\n```\n\n## 라이선스\n\nMIT License\n"
       },
       "plugins": [
         {
-          "name": "daily-work-tracker",
-          "description": "여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다",
-          "version": "1.0.0",
+          "name": "pr-logger",
+          "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
+          "version": "1.0.2",
           "source": "./",
-          "repository": "https://github.com/MMMIIIN/daily-work-tracker",
+          "repository": "https://github.com/MMMIIIN/claude-pr-logger",
           "license": "MIT",
           "keywords": [
-            "daily",
-            "work",
-            "tracker",
+            "pr",
             "logging",
-            "productivity"
+            "documentation",
+            "development-log"
           ],
           "categories": [
-            "daily",
+            "development-log",
+            "documentation",
             "logging",
-            "productivity",
-            "tracker",
-            "work"
+            "pr"
           ],
           "install_commands": [
-            "/plugin marketplace add MMMIIIN/daily-work-tracker",
-            "/plugin install daily-work-tracker@daily-work-tracker"
+            "/plugin marketplace add MMMIIIN/claude-pr-logger",
+            "/plugin install pr-logger@claude-pr-logger"
           ]
         }
       ]

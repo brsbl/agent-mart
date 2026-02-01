@@ -1,0 +1,89 @@
+{
+  "author": {
+    "id": "kylesnowschwartz",
+    "display_name": "kylesnowschwartz",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11069001?u=61eff4bb9e80c12b27732be3aa7ea04ef112011d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-handoff",
+      "version": "1.0.0",
+      "description": "Local marketplace for Claude-Handoff plugin development",
+      "repo_full_name": "kylesnowschwartz/claude-handoff",
+      "repo_url": "https://github.com/kylesnowschwartz/claude-handoff",
+      "repo_description": null,
+      "signals": {
+        "stars": 25,
+        "forks": 2,
+        "pushed_at": "2026-01-05T07:09:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-handoff\",\n  \"owner\": {\n    \"name\": \"Kyle Snow Schwartz\",\n    \"email\": \"kyle.snowschwartz@gmail.com\"\n  },\n  \"description\": \"Local marketplace for Claude-Handoff plugin development\",\n  \"version\": \"1.0.0\",\n  \"plugins\": [\n    {\n      \"name\": \"claude-handoff\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./handoff-plugin\",\n      \"description\": \"Intelligent context transfer for focused thread transitions\"\n    }\n  ]\n}\n",
+        "README.md": "![Handoff](banner.png)\n\nGoal-focused context transfer for Claude Code - transform `/compact` into system instructions that preserves the current task post-compact\n\n## What It Does\n\nClaude-Handoff extends `/compact` with optional goal-focused handoff. When you run `/compact handoff:<your goal>` the plugin:\n\n1. Captures your goal and current session state before compaction\n2. Analyzes the previous thread to extract an immediate handoff instructions\n3. Injects the handoff as a system message in the new, compacted session\n4. Automatically starts the new session ready to execute your goal\n\nSimply prompt the agent to 'proceed' and you're away.\n\n## How It Works\n\n1. **PreCompact Hook**: Activates only when you use `/compact handoff:...` format\n   - Extracts your goal from the `handoff:` prefix\n   - Uses `claude --resume <session> --fork-session --model haiku --print <prompt>` to generate handoff immediately\n   - Saves pre-generated handoff content and goal to `.git/handoff-pending/handoff-context.json` temporarily\n\n2. **Compact**: Proceeds normally\n\n3. **SessionStart Hook**: Runs in the continued session\n   - Reads pre-generated handoff content from saved state\n   - Injects handoff as system message\n   - Cleans up state file\n\n4. **Result**: Session continues with focused context injected, ready to execute your goal, just prompt it to go\n\n## Why?\n\nTraditional compaction is lossy and unfocused - each summary degrades context quality. Goal-focused handoffs produce sharper results and get you back where you left off.\n\n## Trade-offs\n\nInspired by [AmpCode's handoff model](https://ampcode.com/news/handoff), and my own observations, this plugin auto-injects generated context without human review. Claude Code hooks can't pause for user editing.\n\nPreCompact prompting for handoff adds some execution time to `/compact`, approximately ~20s.\n\n## Installation\n\n```bash\n# From your project directory\nclaude plugin marketplace add kylesnowschwartz/claude-handoff\nclaude plugin install claude-handoff\n```\n\n## Usage\n\n**Trigger goal-focused handoff:**\n```bash\n/compact handoff:now implement this for teams as well, not just individual users\n/compact handoff:execute phase one of the created plan\n/compact handoff:find other places in the codebase that need this same fix\n```\n\n**Regular compact (no handoff):**\n```bash\n/compact\n/compact keep the context tight\n```\n\n## Configuration\n\nEnable debug logging: Edit `handoff-plugin/hooks/lib/logging.sh` and set `LOGGING_ENABLED=true`\n\nView logs:\n```bash\ntail -f /tmp/handoff-precompact.log /tmp/handoff-sessionstart.log\n```\n\n## Development\n\nThis plugin follows the Claude Code plugin architecture:\n- `.claude-plugin/marketplace.json` - Local marketplace definition\n- `handoff-plugin/.claude-plugin/plugin.json` - Plugin metadata\n- `handoff-plugin/commands/` - Slash commands\n- `handoff-plugin/hooks/` - Hook implementations\n\n## License\n\nMIT - See LICENSE file for details\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-handoff",
+          "version": "1.0.0",
+          "source": "./handoff-plugin",
+          "description": "Intelligent context transfer for focused thread transitions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kylesnowschwartz/claude-handoff",
+            "/plugin install claude-handoff@claude-handoff"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "jira-cli-skill",
+      "version": null,
+      "description": "Jira integration via jira-cli with wiki markup formatting support",
+      "repo_full_name": "kylesnowschwartz/jira-cli-skill",
+      "repo_url": "https://github.com/kylesnowschwartz/jira-cli-skill",
+      "repo_description": "Claude Code plugin for Jira integration via jira-cli",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-26T01:14:28Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jira-cli-skill\",\n  \"owner\": {\n    \"name\": \"Kyle Snow Schwartz\",\n    \"url\": \"https://github.com/kylesnowschwartz\"\n  },\n  \"metadata\": {\n    \"description\": \"Jira integration via jira-cli with wiki markup formatting support\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jira-cli-skill\",\n      \"source\": \"./\",\n      \"description\": \"Jira integration via jira-cli with wiki markup formatting support\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\n        \"jira\",\n        \"jira-cli\",\n        \"atlassian\",\n        \"issue-tracking\",\n        \"project-management\",\n        \"wiki-markup\",\n        \"agile\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"jira-cli-skill\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Jira integration via jira-cli with wiki markup formatting support\",\n  \"repository\": \"https://github.com/kylesnowschwartz/jira-cli-skill\",\n  \"license\": \"MIT\",\n  \"author\": {\n    \"name\": \"Kyle Snow Schwartz\"\n  },\n  \"keywords\": [\n    \"jira\",\n    \"jira-cli\",\n    \"atlassian\",\n    \"issue-tracking\",\n    \"project-management\",\n    \"wiki-markup\",\n    \"agile\"\n  ]\n}\n",
+        "README.md": "# jira-cli-skill\n\nA Claude Code plugin for Jira integration via [jira-cli](https://github.com/ankitpokhrel/jira-cli).\n\n## Features\n\n- **Issue operations**: Search, create, edit, transition, comment, worklog, sprint, board management\n- **Wiki markup**: Syntax reference, validation script, and templates (Jira doesn't use Markdown)\n- **Field discovery**: Python script for finding custom field IDs (the one thing jira-cli can't do)\n\n## Installation\n\n### Prerequisites\n\n```bash\n# Install jira-cli (macOS)\nbrew install jira-cli\n\n# Install uv (for field discovery script)\nbrew install uv\n```\n\n### Configure jira-cli\n\n```bash\n# Interactive setup - follow prompts\njira init\n\n# Verify\njira serverinfo\njira me\n```\n\n### Install the plugin\n\n```bash\n# Via Claude Code\n/install-plugin /path/to/jira-cli-skill\n```\n\n## Quick Start\n\n```bash\n# Search issues\njira issue list -p PROJ -s \"In Progress\"\n\n# View issue\njira issue view PROJ-123\n\n# Create issue (use wiki markup for description!)\njira issue create -p PROJ -t Bug -s \"Login fails\" -b \"h2. Steps\n# Navigate to login\n# Enter credentials\n\nh2. Expected\nLogin succeeds\"\n\n# Transition\njira issue move PROJ-123 \"Done\"\n\n# Find custom field IDs\nuv run skills/jira/scripts/jira-fields.py search \"story points\"\n\n# Validate wiki markup\nskills/jira/scripts/validate-jira-syntax.sh description.txt\n```\n\n## Wiki Markup (Not Markdown!)\n\nJira uses wiki markup. Common conversions:\n\n| Markdown | Jira |\n|----------|------|\n| `## Heading` | `h2. Heading` |\n| `**bold**` | `*bold*` |\n| `` `code` `` | `{{code}}` |\n| `[text](url)` | `[text\\|url]` |\n| `- item` | `* item` |\n\nSee [SKILL.md](skills/jira/SKILL.md) for full reference.\n\n## Field Discovery\n\njira-cli cannot list available fields. The included Python script fills this gap:\n\n```bash\nuv run skills/jira/scripts/jira-fields.py search \"sprint\"\nuv run skills/jira/scripts/jira-fields.py list --type custom --json\n```\n\nRequires separate auth via `~/.env.jira`:\n\n```bash\n# Jira Cloud\nJIRA_URL=https://company.atlassian.net\nJIRA_USERNAME=your-email@example.com\nJIRA_API_TOKEN=your-api-token\n\n# Jira Server/DC\nJIRA_URL=https://jira.yourcompany.com\nJIRA_PERSONAL_TOKEN=your-personal-access-token\n```\n\n## Documentation\n\n- [Jira SKILL.md](skills/jira/SKILL.md) - Full command and syntax reference\n- [JQL Quick Reference](skills/jira/references/jql-quick-reference.md)\n- [Backlog Quick Wins](skills/jira/references/backlog-quick-wins.md)\n- [Syntax Reference](skills/jira/references/syntax-reference.md)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "jira-cli-skill",
+          "source": "./",
+          "description": "Jira integration via jira-cli with wiki markup formatting support",
+          "version": "1.0.0",
+          "keywords": [
+            "jira",
+            "jira-cli",
+            "atlassian",
+            "issue-tracking",
+            "project-management",
+            "wiki-markup",
+            "agile"
+          ],
+          "category": "productivity",
+          "categories": [
+            "agile",
+            "atlassian",
+            "issue-tracking",
+            "jira",
+            "jira-cli",
+            "productivity",
+            "project-management",
+            "wiki-markup"
+          ],
+          "install_commands": [
+            "/plugin marketplace add kylesnowschwartz/jira-cli-skill",
+            "/plugin install jira-cli-skill@jira-cli-skill"
+          ]
+        }
+      ]
+    }
+  ]
+}
