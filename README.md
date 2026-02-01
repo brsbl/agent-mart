@@ -1,14 +1,14 @@
-<img width="1536" height="688" alt="Agent Mart" src="https://github.com/user-attachments/assets/757896e8-1add-4809-aa98-fdf2b01fced7" />
-
 # Agent Mart
 
-Discover and install plugins for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
+Discover and install [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub.
 
 **[agentmart.cc](https://agentmart.cc)**
 
+<img width="1536" height="688" alt="Agent Mart" src="https://github.com/user-attachments/assets/757896e8-1add-4809-aa98-fdf2b01fced7" />
+
 ### Home Page
 
-Agent Mart indexes [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces) published on GitHub. The home page displays all indexed marketplaces as cards. Each card shows:
+The home page displays all indexed marketplaces as cards. Each card shows:
 
 - Marketplace name and description
 - Author name and avatar
