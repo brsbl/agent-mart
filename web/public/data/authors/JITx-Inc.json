@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "JITx-Inc",
+    "display_name": "JITX",
+    "avatar_url": "https://avatars.githubusercontent.com/u/31145087?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jitx-skills",
+      "version": null,
+      "description": "JITX hardware design automation skills for PCB design, component modeling, and circuit creation",
+      "repo_full_name": "JITx-Inc/jitx-skills",
+      "repo_url": "https://github.com/JITx-Inc/jitx-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-30T21:03:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jitx-skills\",\n  \"owner\": {\n    \"name\": \"Duncan Haldane\",\n    \"email\": \"duncan@jitx.com\"\n  },\n  \"metadata\": {\n    \"description\": \"JITX hardware design automation skills for PCB design, component modeling, and circuit creation\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jitx-skills\",\n      \"description\": \"JITX workflow skills: base environment setup, component modeling from datasheets (BGA, QFN, SOIC, etc.), with support for multi-unit symbols, thermal pads, and non-uniform packages\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./jitx\",\n        \"./jitx-component-modeler\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# JITX Skills\n\nClaude Code skills for JITX hardware design automation. These skills help Claude work effectively with JITX Python projects for PCB design, circuit creation, and component modeling.\n\n## Installation\n\nInside Claude Code, run these slash commands:\n\n```\n/plugin marketplace add JITx-Inc/jitx-skills\n/plugin install jitx-skills@JITx-Inc/jitx-skills\n```\n\n## Skills\n\n### jitx (Base Skill)\n\nBase workflow skill for JITX projects. Triggers on any JITX-related task and provides:\n\n- Automatic environment setup (venv creation, dependency installation)\n- Build commands for designs\n- Project structure guidance\n- Navigation to specialized subskills\n\n**Example triggers:**\n- \"Build my JITX design\"\n- \"Set up JITX environment\"\n- \"Create a circuit for...\"\n\n### jitx-component-modeler\n\nGenerate JITX Python component code from datasheets. Supports:\n\n- **Package types:** BGA, QFN, SOIC, SON, SOT\n- **Features:** Multi-unit symbols, thermal pads, complex pin mappings\n- **Batch creation:** Organized component folder structure\n\n**Example triggers:**\n- \"Create a JITX component from this datasheet\"\n- \"Model the RP2040 for my project\"\n- \"Add an LDO component from the TI datasheet\"\n\n## Project Structure\n\n```\njitx-skills/\n├── jitx/                      # Base JITX workflow skill\n│   └── SKILL.md\n├── jitx-component-modeler/    # Component generation skill\n│   ├── SKILL.md\n│   └── scripts/\n│       └── extract_pages.py   # PDF extraction utility\n└── .claude-plugin/\n    └── marketplace.json\n```\n\n## Requirements\n\n- A JITX Python project (with `pyproject.toml` containing jitx dependency)\n- Python 3.10+\n- For datasheet processing: `pip install pymupdf`\n\n## Usage Examples\n\n### Generate a Component from Datasheet\n\n```\nUser: Create a JITX component for the NE555 timer from this datasheet\nClaude: [Uses jitx-component-modeler skill to generate component code]\n```\n\n### Build a Design\n\n```\nUser: Build my power supply design\nClaude: [Uses jitx skill to set up environment and run build]\n```\n\n### Extract Datasheet Pages\n\nThe `extract_pages.py` script helps extract relevant pages from large datasheets:\n\n```bash\n# Find pages with package info\npython extract_pages.py datasheet.pdf --find \"pinout\" \"dimension\" \"package\"\n\n# Extract specific pages\npython extract_pages.py datasheet.pdf --pages 10 11 12 -o extract.pdf\n```\n\n## Supported Package Generators\n\n| Package Type | Generator | Use Case |\n|-------------|-----------|----------|\n| SOT-23 | `SOT23_3`, `SOT23_5`, `SOT23_6` | Small transistors, simple ICs |\n| SOIC | `SOIC` | Standard gull-wing ICs |\n| SON | `SON` | No-lead 2-sided packages |\n| QFN | `QFN` | 4-sided no-lead packages |\n| QFP | `QFP` | 4-sided gull-wing packages |\n| BGA | `BGA` | Ball grid arrays |\n\n## Contributing\n\nSkills follow the Claude Code skill format with:\n\n- `SKILL.md` containing frontmatter (name, description) and instructions\n- Optional `scripts/` for executable utilities\n- Optional `references/` for documentation loaded on demand\n- Optional `assets/` for templates and resources\n"
+      },
+      "plugins": [
+        {
+          "name": "jitx-skills",
+          "description": "JITX workflow skills: base environment setup, component modeling from datasheets (BGA, QFN, SOIC, etc.), with support for multi-unit symbols, thermal pads, and non-uniform packages",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./jitx",
+            "./jitx-component-modeler"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JITx-Inc/jitx-skills",
+            "/plugin install jitx-skills@jitx-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

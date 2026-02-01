@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "artemnovichkov",
+    "display_name": "Artem Novichkov",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5051597?u=5cc400e820aa689279184b2cd1eba2afc3cd6525&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-plugins",
+      "version": null,
+      "description": "A marketplace for Claude Code plugins",
+      "repo_full_name": "artemnovichkov/claude-code-plugins",
+      "repo_url": "https://github.com/artemnovichkov/claude-code-plugins",
+      "repo_description": "Collection of Claude Code plugins for enhanced development workflows.",
+      "signals": {
+        "stars": 7,
+        "forks": 0,
+        "pushed_at": "2025-11-04T11:43:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-plugins\",\n  \"owner\": {\n    \"name\": \"Artem Novichkov\",\n    \"email\": \"mail@artemnovichkov.com\",\n    \"url\": \"https://artemnovichkov.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A marketplace for Claude Code plugins\",\n    \"version\": \"1.1.0\",\n    \"homepage\": \"https://github.com/artemnovichkov/claude-code-plugins\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"crashlytics\",\n      \"description\": \"Generate crash reports from Firebase Crashlytics with fix proposals and developer assignments\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Artem Novichkov\",\n        \"email\": \"mail@artemnovichkov.com\",\n        \"url\": \"https://artemnovichkov.com\"\n      },\n      \"source\": \"./plugins/crashlytics\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins Marketplace\n\nCollection of Claude Code plugins for enhanced development workflows.\n\n## Available Plugins\n\n### Crashlytics\nGenerate crash reports from Firebase Crashlytics with automated fix proposals and developer assignments.\n\n**Features:**\n- Fetches fatal errors from Firebase Crashlytics\n- Analyzes stack traces and identifies root causes\n- Proposes specific fixes with code snippets\n- Assigns crashes to developers via git blame\n- Calculates severity scores (0-100)\n- Groups related crashes\n- Generates comprehensive markdown reports\n\n**Category:** Development\n**Version:** 1.0.0\n\n## Structure\n\n```\n.\n├── .claude-plugin/\n│   └── marketplace.json       # Marketplace config\n└── plugins/\n    └── crashlytics/          # Crashlytics plugin\n        ├── .claude-plugin/\n        │   └── plugin.json   # Plugin metadata\n        ├── .mcp.json         # MCP server config\n        ├── README.md         # Plugin docs\n        └── commands/\n            └── crash-report.md\n```\n\n## Installation\n\n```bash\n/plugin marketplace add artemnovichkov/claude-code-plugins\n```\n\n## Author\n\nArtem Novichkov, https://artemnovichkov.com/\n\n## License\n\nThe project is available under the MIT license. See the [LICENSE](./LICENSE) file for more info.\n",
+        "plugins/crashlytics/README.md": "# Crashlytics Plugin\n\nGenerate crash reports from Firebase Crashlytics for iOS and Android with automated fix proposals and developer assignments.\n\n## Features\n\n- **Fetches Fatal Errors**: Retrieves top crashes from Firebase Crashlytics via MCP server\n- **Stack Trace Analysis**: Identifies exact crash locations in codebase\n- **Root Cause Detection**: Analyzes code context to determine failure patterns\n- **Severity Scoring**: Calculates 0-100 score based on frequency, users affected, pattern criticality\n- **Fix Proposals**: Generates specific code changes following platform best practices (Swift, Kotlin, Java)\n- **Developer Assignment**: Uses git blame/log to assign crashes to responsible developers\n- **Crash Grouping**: Groups related issues by pattern/file/root cause\n- **Comprehensive Reports**: Generates markdown reports with stats, trends, priorities\n\n## Requirements\n\n- Firebase project with Crashlytics enabled\n- Git repository\n- Claude Code\n\n## Commands\n\n### `/crash-report`\n\nAnalyzes Crashlytics crashes and generates triage report.\n\n**Process:**\n1. Validates Firebase MCP server connection\n2. Fetches fatal errors from Crashlytics\n3. Launches subagents for deep analysis of each crash\n4. Extracts stack traces, searches codebase for crash locations\n5. Identifies root causes and calculates severity scores\n6. Proposes fixes with before/after code snippets\n7. Uses git blame to assign developers\n8. Generates `crash-report-[YYYY-MM-DD].md`\n\n**Report Sections:**\n- Summary (total errors, quick wins, critical issues)\n- Crashes by severity (high -> medium -> low)\n- Stack traces, affected files, root cause analysis\n- Proposed fixes with code snippets\n- Developer assignments with git history\n- Crash groups\n- Aggregate stats (patterns, OS versions, devices)\n\n**Severity Score Calculation:**\n- Crash frequency: 40%\n- Affected users: 30%\n- Pattern criticality: 30%\n\n**Developer Assignment Logic:**\n1. Last modifier of crashing line (git blame)\n2. CODEOWNERS file owner\n3. Most frequent contributor (git log)\n4. Module owner (Package.swift or build.gradle)\n5. Excludes devs with no commits in 6 months\n\n## Configuration\n\nPlugin uses `.mcp.json` to configure Firebase MCP server:\n\n```json\n{\n  \"mcpServers\": {\n    \"firebase\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"firebase-tools@latest\", \"experimental:mcp\", \"--only\", \"crashlytics\"]\n    }\n  }\n}\n```\n\n## Error Handling\n\n- **Firebase MCP unavailable**: Provides setup instructions\n- **Crashlytics access fails**: Verifies service account permissions\n- **No crashes found**: Reports success with no fatal crashes\n- **Git history unavailable**: Notes inability to assign developer\n- **Code files missing**: Flags deleted/moved files\n- **Rate limiting**: Processes max 10 concurrent analyses\n\n## Output Format\n\nMarkdown file `crash-report-[YYYY-MM-DD].md` with:\n- Concise descriptions\n- Detailed code analysis\n- Actionable fix guidance\n- Ready for sprint planning triage\n"
+      },
+      "plugins": [
+        {
+          "name": "crashlytics",
+          "description": "Generate crash reports from Firebase Crashlytics with fix proposals and developer assignments",
+          "version": "1.1.0",
+          "author": {
+            "name": "Artem Novichkov",
+            "email": "mail@artemnovichkov.com",
+            "url": "https://artemnovichkov.com"
+          },
+          "source": "./plugins/crashlytics",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add artemnovichkov/claude-code-plugins",
+            "/plugin install crashlytics@claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

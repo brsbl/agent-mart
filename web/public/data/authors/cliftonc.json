@@ -37,6 +37,69 @@
           ]
         }
       ]
+    },
+    {
+      "name": "cliftonc-plugins",
+      "version": null,
+      "description": "Personal Claude Code marketplace with TypeScript quality tools, architectural review commands, and development utilities",
+      "repo_full_name": "cliftonc/claude-plugins",
+      "repo_url": "https://github.com/cliftonc/claude-plugins",
+      "repo_description": "Repo for my re-usable claude skills / commands etc.",
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2025-11-01T06:27:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cliftonc-plugins\",\n  \"owner\": {\n    \"name\": \"Clifton Cunningham\",\n    \"email\": \"clifton.cunningham@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code marketplace with TypeScript quality tools, architectural review commands, and development utilities\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ts-quality\",\n      \"source\": \"./plugins/ts-quality\",\n      \"description\": \"TypeScript quality enforcement with instant file-scoped checks and architectural review. Auto-activated skill runs typecheck and lint after each file write. Includes /ts-review command for comprehensive code analysis.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Clifton Cunningham\",\n        \"email\": \"clifton.cunningham@gmail.com\"\n      },\n      \"keywords\": [\"typescript\", \"quality\", \"linting\", \"typecheck\", \"pre-commit\", \"architecture\", \"review\", \"refactoring\", \"solid\", \"design-patterns\", \"code-quality\", \"instant-feedback\", \"file-scoped\"]\n    }\n  ]\n}\n",
+        "README.md": "# Clifton's Claude Code Marketplace\n\nPersonal collection of Claude Code **skills** and **commands** for TypeScript development, code quality, and architectural review.\n\n## Overview\n\nThis marketplace provides reusable Claude Code skills and slash commands focused on:\n\n- **Code Quality**: Automated type checking, linting, building, and testing\n- **Architectural Review**: Deep analysis of TypeScript code structure and design patterns\n- **Development Workflows**: Pragmatic tools for day-to-day development\n\n## What's Included\n\n### `ts-quality` - TypeScript Quality Plugin\n**Version:** 1.0.0\n\nA comprehensive TypeScript quality plugin that includes both an auto-activated skill and an on-demand architectural review command.\n\n#### Auto-Activated Skill\n\nInstantly runs quality checks **after each TypeScript file write** for immediate feedback.\n\n**What it does:**\n- ✓ File-scoped type checking (`pnpm exec tsc --noEmit <file>`)\n- ✓ File-scoped linting (`pnpm lint <file>`)\n- 📢 Announces checks with: `🔍 Checking {filename}...`\n- ✅ Reports results: `✓ {filename}: typecheck and lint passed`\n\n**Key features:**\n- **Instant feedback**: Runs immediately after writing/editing files\n- **File-scoped**: Only checks the changed file, not entire project\n- **Fast**: Quick targeted checks instead of slow project-wide scans\n- **Visible**: Announces when running and reports clear results\n\n**When it activates:**\n- Immediately after writing or editing any `.ts` or `.tsx` file\n- When quality checks, typecheck, or lint are mentioned\n\n#### `/ts-review` Command\n\nPerforms comprehensive architectural review of uncommitted TypeScript code.\n\n**What it does:**\n1. Runs quality checks: typecheck and lint\n2. Analyzes architecture: SOLID principles, design patterns, code structure\n3. Reviews type safety, error handling, testability\n4. Provides concrete, pragmatic suggestions with examples\n\n**Usage:**\n```bash\n/ts-review\n```\n\n**When to use:**\n- Before committing significant TypeScript changes\n- When refactoring code\n- For architectural guidance on new features\n- To get concrete improvement suggestions\n\n**Documentation:** [plugins/ts-quality/commands/README.md](./plugins/ts-quality/commands/README.md)\n\n## Installation\n\nThis is a Claude Code plugin marketplace. Use the built-in `/plugin` commands to install skills and commands.\n\n### Step 1: Add the Marketplace\n\nAdd this marketplace to your Claude Code configuration:\n\n```bash\n# From GitHub (recommended)\n/plugin marketplace add cliftonc/claude-plugins\n\n# Or for local development\n/plugin marketplace add ~/work/claude-plugins\n```\n\n### Step 2: Browse Available Plugins\n\nSee what's available in this marketplace:\n\n```bash\n/plugin\n```\n\nThis shows all available skills and commands from registered marketplaces.\n\n### Step 3: Install the Plugin\n\nInstall the ts-quality plugin (includes both skill and command):\n\n```bash\n/plugin install ts-quality@cliftonc-plugins\n```\n\nOnce installed:\n- The skill auto-activates when you work with TypeScript files\n- The `/ts-review` command is available for architectural review\n\n## Managing Plugins\n\n### List Installed Plugins\n\n```bash\n/plugin list\n```\n\n### Update from Marketplace\n\nGet the latest versions:\n\n```bash\n/plugin marketplace update\n```\n\n### Remove a Plugin\n\n```bash\n/plugin remove ts-quality\n```\n\n## Features\n\n- **Instant feedback**: File-scoped checks run immediately after each file write\n- **Fast & targeted**: Checks only the changed file, not entire project\n- **Visible announcements**: Clear reporting with 🔍 and ✓/✗ indicators\n- **Combined functionality**: Single plugin with both auto-activated skill and on-demand command\n- **Architectural review**: Deep `/ts-review` analysis of code structure and design patterns\n- **Cross-project**: Install once, use in any project\n- **Version control**: All plugins are versioned using semantic versioning\n- **Zero dependencies**: Plugins work with your existing tools\n- **Quality-focused**: Promotes best practices and clean code\n\n## Requirements\n\nPlugins in this marketplace are designed for projects using:\n\n- **pnpm** installed\n- **TypeScript** for type safety\n- **Modern linters** (Biome, ESLint, etc.)\n\n## Marketplace Structure\n\n```\nclaude-plugins/\n├── .claude-plugin/\n│   └── marketplace.json              # Marketplace configuration\n├── plugins/                           # Plugin directory\n│   └── ts-quality/                    # Single plugin with both skill and command\n│       ├── .claude-plugin/\n│       │   └── plugin.json           # Plugin manifest (REQUIRED)\n│       ├── commands/                  # Slash commands\n│       │   ├── ts-review.md          # /ts-review command\n│       │   └── README.md\n│       └── skills/                    # Auto-activated skills\n│           ├── ts-quality/\n│           │   └── SKILL.md          # Skill definition\n│           └── README.md\n└── README.md                          # This file\n```\n\n## Development\n\n### Adding New Plugins\n\nEach plugin requires a plugin wrapper with a `plugin.json` manifest. Plugins can contain skills, commands, or both.\n\n**1. Create plugin structure:**\n```bash\nmkdir -p plugins/my-plugin/.claude-plugin\nmkdir -p plugins/my-plugin/skills/my-skill  # If adding a skill\nmkdir -p plugins/my-plugin/commands          # If adding a command\n```\n\n**2. Create plugin.json (REQUIRED):**\n```json\n{\n  \"name\": \"my-plugin\",\n  \"description\": \"What this plugin does\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Your Name\",\n    \"email\": \"your.email@example.com\"\n  },\n  \"homepage\": \"https://github.com/your-username/your-repo\",\n  \"keywords\": [\"keyword1\", \"keyword2\"],\n  \"skills\": [\"skills/my-skill\"],      // Optional: if plugin has skills\n  \"commands\": \"./commands/\"            // Optional: if plugin has commands\n}\n```\n\n**3. Add skill (if needed):**\n\nCreate `plugins/my-plugin/skills/my-skill/SKILL.md`:\n```markdown\n---\nname: my-skill\ndescription: When and how this skill activates\n---\n\n# Skill Title\nInstructions for Claude...\n```\n\n**4. Add command (if needed):**\n\nCreate `plugins/my-plugin/commands/my-command.md`:\n```markdown\n---\nname: my-command\ndescription: What this command does\n---\n\n# Command Title\nInstructions for Claude...\n```\n\n**Important:** Command filename MUST match the command name (e.g., `my-command.md` for `/my-command`).\n\n**5. Update marketplace.json:**\n```json\n{\n  \"plugins\": [\n    {\n      \"name\": \"my-plugin\",\n      \"source\": \"./plugins/my-plugin\",\n      \"description\": \"What this plugin does\",\n      \"version\": \"1.0.0\",\n      \"author\": {...},\n      \"keywords\": [...]\n    }\n  ]\n}\n```\n\n**6. Test locally:**\n```bash\n/plugin marketplace add ~/work/claude-plugins\n/plugin install my-plugin@cliftonc-plugins\n```\n\n**7. Commit and push:**\n```bash\ngit add .\ngit commit -m \"feat: add my-plugin v1.0.0\"\ngit push origin main\n```\n\n**8. Users update:**\n```bash\n/plugin marketplace update\n```\n\n### Updating Existing Plugins\n\n1. Modify skill or command files in `plugins/plugin-name/`\n2. Update README.md if user-facing changes\n3. Bump version in both `plugin.json` and `marketplace.json`\n4. Commit with semantic versioning message:\n   ```bash\n   git commit -m \"feat: add new feature (v1.1.0)\"\n   git commit -m \"fix: bug fix (v1.0.1)\"\n   ```\n\n## Versioning\n\nAll plugins use semantic versioning (MAJOR.MINOR.PATCH):\n\n- **MAJOR**: Breaking changes to skill behavior\n- **MINOR**: New features, backward compatible\n- **PATCH**: Bug fixes and improvements\n\n## Contributing\n\nThis is a personal marketplace, but suggestions are welcome! Open an issue or submit a pull request.\n\n## License\n\nMIT - See [LICENSE](./LICENSE) for details\n\n## Author\n\n**Clifton Cunningham**\n- GitHub: [@cliftonc](https://github.com/cliftonc)\n- Email: clifton.cunningham@gmail.com\n\n## Resources\n\n- [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code)\n- [Plugin Marketplace Guide](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)\n- [Creating Skills](https://docs.claude.com/en/docs/claude-code/skills)\n\n---\n\n**Version:** 1.0.0\n**Last Updated:** 2025-11-01\n"
+      },
+      "plugins": [
+        {
+          "name": "ts-quality",
+          "source": "./plugins/ts-quality",
+          "description": "TypeScript quality enforcement with instant file-scoped checks and architectural review. Auto-activated skill runs typecheck and lint after each file write. Includes /ts-review command for comprehensive code analysis.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Clifton Cunningham",
+            "email": "clifton.cunningham@gmail.com"
+          },
+          "keywords": [
+            "typescript",
+            "quality",
+            "linting",
+            "typecheck",
+            "pre-commit",
+            "architecture",
+            "review",
+            "refactoring",
+            "solid",
+            "design-patterns",
+            "code-quality",
+            "instant-feedback",
+            "file-scoped"
+          ],
+          "categories": [
+            "architecture",
+            "code-quality",
+            "design-patterns",
+            "file-scoped",
+            "instant-feedback",
+            "linting",
+            "pre-commit",
+            "quality",
+            "refactoring",
+            "review",
+            "solid",
+            "typecheck",
+            "typescript"
+          ],
+          "install_commands": [
+            "/plugin marketplace add cliftonc/claude-plugins",
+            "/plugin install ts-quality@cliftonc-plugins"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,41 @@
+{
+  "author": {
+    "id": "durandom",
+    "display_name": "Marcel Hild",
+    "avatar_url": "https://avatars.githubusercontent.com/u/161888?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "rhdh",
+      "version": null,
+      "description": "Orchestrator skill for RHDH plugin development - onboard, update, and maintain plugins in the Extensions Catalog",
+      "repo_full_name": "durandom/rhdh-skill",
+      "repo_url": "https://github.com/durandom/rhdh-skill",
+      "repo_description": "Claude Code skill for RHDH plugin lifecycle management",
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2026-01-30T11:39:58Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rhdh\",\n  \"owner\": {\n    \"name\": \"RHDH Store Manager\"\n  },\n  \"metadata\": {\n    \"description\": \"Orchestrator skill for RHDH plugin development - onboard, update, and maintain plugins in the Extensions Catalog\",\n    \"version\": \"0.0.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"rhdh\",\n      \"source\": \"./\",\n      \"description\": \"Skills and commands for RHDH plugin lifecycle management\",\n      \"version\": \"0.0.1\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"rhdh\",\n  \"description\": \"Orchestrator skill for RHDH plugin development - onboard, update, and maintain plugins in the Extensions Catalog\",\n  \"version\": \"0.0.1\",\n  \"author\": {\n    \"name\": \"RHDH Store Manager\"\n  },\n  \"homepage\": \"https://github.com/redhat-developer/rhdh-skill\",\n  \"repository\": \"https://github.com/redhat-developer/rhdh-skill\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\n    \"rhdh\",\n    \"backstage\",\n    \"plugins\",\n    \"dynamic-plugins\",\n    \"extensions-catalog\",\n    \"red-hat-developer-hub\"\n  ]\n}\n",
+        "README.md": "# RHDH Skill\n\nA Claude Code skill for managing Red Hat Developer Hub plugins — onboarding, updating, and triaging plugins in the Extensions Catalog.\n\n## Installation\n\n### From Local Checkout (Development)\n\n```bash\nclaude plugin marketplace add ~/src/rhdh/store-manager/rhdh-skill\nclaude plugin install --scope project rhdh\n```\n\n### From Published Plugin\n\n```bash\nclaude plugin marketplace add durandom/rhdh-skill\nclaude plugin install --scope project rhdh\n```\n\n> **Note:** Always install in project scope. The skill references repository-specific paths.\n\n## Setup\n\nAfter installation, run the skill to check environment:\n\n```bash\n/rhdh\n```\n\nIf `needs_setup: true`, follow the setup instructions to configure required repositories.\n\n## Architecture\n\nThe skill is split into two focused components:\n\n| Skill | Purpose | Contents |\n|-------|---------|----------|\n| `rhdh` | Orchestrator | Python CLI + routing logic |\n| `overlay` | Workflows | Markdown-only workflow definitions |\n\nThis separation allows the orchestrator to be portable (stdlib-only Python) while keeping workflow documentation easy to maintain.\n\n## The RHDH CLI\n\nThe `rhdh` CLI is a lightweight Python tool that provides **session context** for Claude Code. It exists because:\n\n1. **Environment Discovery** — Detects overlay repo, rhdh-local, container runtime, and tool availability\n2. **Cross-Session Memory** — Worklog and todo tracking let Claude resume work without re-explaining context\n3. **Machine-Readable Output** — Auto-detects TTY vs pipe, outputting JSON when Claude reads it\n4. **Configuration Management** — Stores repo paths in `.rhdh/config.json` for consistent discovery\n\nThe CLI is **stdlib-only** (no dependencies) and runs on any Python 3.9+.\n\n### Storage Locations\n\nAll state is stored in a `.rhdh/` directory at the project root (git repo), with fallback to `~/.config/rhdh/` when outside a repo:\n\n| File | Purpose |\n|------|---------|\n| `config.json` | Repo paths, settings |\n| `worklog.jsonl` | Append-only activity log |\n| `TODO.md` | Section-based task tracking |\n\nThe `.rhdh/` directory should be added to `.gitignore` — it contains session-specific state, not project configuration.\n\n### Quick Reference\n\n```bash\n./skills/rhdh/scripts/rhdh              # Status / orientation\n./skills/rhdh/scripts/rhdh doctor       # Full environment check\n./skills/rhdh/scripts/rhdh config init  # Create config with auto-detection\n./skills/rhdh/scripts/rhdh workspace list  # List plugin workspaces\n\n# Activity tracking\n./skills/rhdh/scripts/rhdh log add \"Started onboard\" --tag onboard\n./skills/rhdh/scripts/rhdh todo add \"Check license\" --context aws-appsync\n```\n\n## Slash Commands\n\n| Command | Description |\n|---------|-------------|\n| `/rhdh` | Show status and route to appropriate workflow |\n| `/onboard-plugin` | Add a new plugin to Extensions Catalog |\n| `/update-plugin` | Bump plugin to newer upstream version |\n| `/fix-plugin-build` | Debug CI/publish failures |\n| `/triage-overlay-prs` | Prioritize open PRs (Core Team) |\n| `/analyze-overlay-pr` | Analyze specific PR (Core Team) |\n\n## Project Structure\n\n```\nrhdh-skill/\n├── skills/\n│   ├── rhdh/              # Orchestrator skill\n│   │   ├── rhdh/          # Python CLI package (stdlib only)\n│   │   ├── scripts/rhdh   # Entry point\n│   │   ├── references/    # GitHub, JIRA tool guides\n│   │   └── SKILL.md       # Routing logic\n│   └── overlay/           # Workflow skill (markdown only)\n│       ├── workflows/     # onboard, update, fix, triage\n│       ├── references/    # Overlay-specific docs\n│       └── SKILL.md       # Workflow definitions\n├── tests/                 # pytest test suite\n└── pyproject.toml         # Dev dependencies\n```\n\n## Development\n\n```bash\n# Install dev dependencies\nuv sync --extra dev\n\n# Run tests\nuv run pytest\n\n# Run CLI directly\n./skills/rhdh/scripts/rhdh --help\n```\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "rhdh",
+          "source": "./",
+          "description": "Skills and commands for RHDH plugin lifecycle management",
+          "version": "0.0.1",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add durandom/rhdh-skill",
+            "/plugin install rhdh@rhdh"
+          ]
+        }
+      ]
+    }
+  ]
+}
