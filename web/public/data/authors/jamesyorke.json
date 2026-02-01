@@ -1,0 +1,73 @@
+{
+  "author": {
+    "id": "jamesyorke",
+    "display_name": "James Yorke",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7203530?u=2b15d398f560c11d9966f89519aceef45358d489&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "worktree-agent-skill",
+      "version": "1.0.0",
+      "description": "Git worktree management: create, list, remove, and prune worktrees with flexible placement strategies.",
+      "repo_full_name": "jamesyorke/worktree-agent-skill",
+      "repo_url": "https://github.com/jamesyorke/worktree-agent-skill",
+      "repo_description": "Git worktree management agent skill for Claude Code and other AI coding tools",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-01T12:53:49Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"worktree-agent-skill\",\n  \"version\": \"1.0.0\",\n  \"owner\": {\n    \"name\": \"James Yorke\"\n  },\n  \"metadata\": {\n    \"description\": \"Git worktree management: create, list, remove, and prune worktrees with flexible placement strategies.\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"worktree-manager\",\n      \"description\": \"Git worktree management skill: create, list, remove, and prune worktrees with flexible placement (subfolder or sibling directory).\",\n      \"repository\": \"https://github.com/jamesyorke/worktree-agent-skill\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"James Yorke\"\n      },\n      \"license\": \"MIT\",\n      \"category\": \"development\",\n      \"keywords\": [\n        \"git\",\n        \"worktree\",\n        \"worktrees\",\n        \"branching\",\n        \"parallel-development\",\n        \"workflow\"\n      ],\n      \"tags\": [\n        \"git\",\n        \"worktree\",\n        \"workflow\",\n        \"developer-tools\"\n      ],\n      \"source\": \"./\",\n      \"skills\": [\n        \"./worktree-manager\"\n      ],\n      \"strict\": false\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"worktree-manager\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Git worktree management skill: create, list, remove, and prune worktrees with flexible placement (subfolder or sibling directory).\",\n  \"author\": {\n    \"name\": \"James Yorke\"\n  },\n  \"repository\": \"https://github.com/jamesyorke/worktree-agent-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"git\",\n    \"worktree\",\n    \"worktrees\",\n    \"branching\",\n    \"parallel-development\",\n    \"workflow\"\n  ],\n  \"skills\": [\"./worktree-manager\"]\n}\n",
+        "README.md": "# Worktree Agent Skill\n\nGit worktree management for any AI coding tool that supports the [Agent Skills open format](https://agentskills.io/home) — create, list, remove, and prune worktrees with flexible placement strategies.\n\n## Who this is for\n\n- Developers who work on multiple branches simultaneously and want a consistent worktree workflow\n- Teams who want their AI agent to handle worktree operations with safe defaults (force removal, auto-prune, .gitignore management)\n- Anyone tired of remembering the `git worktree` command syntax\n\n## How to Use This Skill\n\n### Option A: Using skills.sh (recommended)\n\nInstall this skill with a single command:\n```bash\nnpx skills add https://github.com/jamesyorke/worktree-agent-skill --skill worktree-manager\n```\n\nThen use the skill in your AI agent, for example:\n> Use the worktree skill to create a new worktree for feature/auth off develop\n\n### Option B: Claude Code Plugin\n\n#### Personal Usage\n\nTo install this Skill for your personal use in Claude Code:\n\n1. Add the marketplace:\n   ```bash\n   /plugin marketplace add jamesyorke/worktree-agent-skill\n   ```\n\n2. Install the Skill:\n   ```bash\n   /plugin install worktree-manager@worktree-agent-skill\n   ```\n\n#### Project Configuration\n\nTo automatically provide this Skill to everyone working in a repository, configure the repository's `.claude/settings.json`:\n\n```json\n{\n  \"enabledPlugins\": {\n    \"worktree-manager@worktree-agent-skill\": true\n  },\n  \"extraKnownMarketplaces\": {\n    \"worktree-agent-skill\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"jamesyorke/worktree-agent-skill\"\n      }\n    }\n  }\n}\n```\n\n### Option C: Manual install\n\n1. **Clone** this repository.\n2. **Install or symlink** the `worktree-manager/` folder following your tool's official skills installation docs.\n3. **Use your AI tool** as usual and ask it to use the \"worktree-manager\" skill.\n\n## What This Skill Offers\n\n### Create Worktrees\n- Create a new branch and worktree in one step\n- Check out an existing branch into a new worktree\n- Choose between subfolder (`.worktrees/`) or sibling directory placement\n- Automatic `.gitignore` management for subfolder worktrees\n\n### List Worktrees\n- View all worktrees with their paths, commits, and branches\n- Porcelain output for scripting\n\n### Remove Worktrees\n- Safe removal with `--force` (handles submodules automatically)\n- Automatic pruning of stale references after removal\n- Cleanup of empty `.worktrees/` directories\n\n### Troubleshooting\n- Submodule removal errors\n- Branch already checked out conflicts\n- Stale worktree references\n- `.gitignore` issues\n\n## Skill Structure\n\n```\nworktree-manager/\n├── SKILL.md                    # Main skill file with routing and agent contract\n└── references/\n    ├── _index.md               # Navigation index\n    ├── creating.md             # Creating worktrees (new branch or existing)\n    ├── listing.md              # Listing and inspecting worktrees\n    ├── placement.md            # Subfolder vs parent folder strategies\n    ├── removing.md             # Removing, pruning, cleanup\n    └── troubleshooting.md      # Common errors and fixes\n```\n\n## License\n\nThis skill is open-source and available under the MIT License. See [LICENSE](LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "worktree-manager",
+          "description": "Git worktree management skill: create, list, remove, and prune worktrees with flexible placement (subfolder or sibling directory).",
+          "repository": "https://github.com/jamesyorke/worktree-agent-skill",
+          "version": "1.0.0",
+          "author": {
+            "name": "James Yorke"
+          },
+          "license": "MIT",
+          "category": "development",
+          "keywords": [
+            "git",
+            "worktree",
+            "worktrees",
+            "branching",
+            "parallel-development",
+            "workflow"
+          ],
+          "tags": [
+            "git",
+            "worktree",
+            "workflow",
+            "developer-tools"
+          ],
+          "source": "./",
+          "skills": [
+            "./worktree-manager"
+          ],
+          "strict": false,
+          "categories": [
+            "branching",
+            "developer-tools",
+            "development",
+            "git",
+            "parallel-development",
+            "workflow",
+            "worktree",
+            "worktrees"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jamesyorke/worktree-agent-skill",
+            "/plugin install worktree-manager@worktree-agent-skill"
+          ]
+        }
+      ]
+    }
+  ]
+}

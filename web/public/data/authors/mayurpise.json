@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "mayurpise",
+    "display_name": "Mayur Pise",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8236171?u=8c8bd9c2b9d02f535a777b7a255ac91c5ee26b4a&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "draft-plugins",
+      "version": null,
+      "description": "Context-Driven Development plugins for Claude Code",
+      "repo_full_name": "mayurpise/draft",
+      "repo_url": "https://github.com/mayurpise/draft",
+      "repo_description": "Context-Driven Development plugin for Claude Code",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-01-28T00:54:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"draft-plugins\",\n  \"owner\": {\n    \"name\": \"mayurpise\",\n    \"url\": \"https://github.com/mayurpise\"\n  },\n  \"metadata\": {\n    \"description\": \"Context-Driven Development plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"draft\",\n      \"source\": \"./\",\n      \"description\": \"Context-Driven Development: draft specs and plans before implementation. Structured workflows for features and fixes.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"mayurpise\"\n      },\n      \"homepage\": \"https://github.com/mayurpise/draft\",\n      \"license\": \"Apache-2.0\",\n      \"keywords\": [\n        \"context-driven-development\",\n        \"planning\",\n        \"specifications\",\n        \"tdd\",\n        \"workflow\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"draft\",\n  \"description\": \"Context-Driven Development: draft specs and plans before implementation. Structured workflows for features and fixes.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"mayurpise\"\n  },\n  \"homepage\": \"https://github.com/mayurpise/draft\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\n    \"context-driven-development\",\n    \"planning\",\n    \"specifications\",\n    \"tdd\",\n    \"workflow\"\n  ]\n}\n",
+        "README.md": "# Draft\n\n**Measure twice, code once.**\n\nA Claude Code plugin for Context-Driven Development. Draft specs and plans before implementation with structured workflows for features and fixes.\n\nAlso available for [Cursor](#cursor-integration).\n\n## Installation\n\n### Claude Code\n\n**Step 1: Clone the plugin**\n\n```bash\ngit clone https://github.com/mayurpise/draft.git ~/.claude/plugins/draft\n```\n\n**Step 2: Run Claude Code with the plugin**\n\n```bash\nclaude --plugin-dir ~/.claude/plugins/draft\n```\n\n**Tip:** Add an alias to your shell config (`~/.bashrc` or `~/.zshrc`) for convenience:\n\n```bash\nalias claude-draft='claude --plugin-dir ~/.claude/plugins/draft'\n```\n\nThen just run `claude-draft` to start Claude Code with Draft enabled.\n\n---\n\n**Verify installation:** Type `/draft` and you should see the commands appear.\n\n> **Note:** The `/plugin marketplace` installation method requires [SSH keys for GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) due to a [known Claude Code issue](https://github.com/anthropics/claude-code/issues/9719). The `--plugin-dir` method above works without SSH configuration.\n\n## Quick Start\n\n```bash\n/draft:init                               # Initialize project (once)\n/draft:new-track \"Add user authentication\"  # Create a track\n/draft:implement                          # Start implementing\n/draft:status                             # Check progress\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/draft` | Show overview and available commands |\n| `/draft:init` | Initialize project context (run once) |\n| `/draft:new-track` | Create a new feature/bug track with spec and plan |\n| `/draft:implement` | Execute tasks from the current plan with TDD |\n| `/draft:status` | Display progress overview |\n| `/draft:revert` | Git-aware rollback of tasks/phases/tracks |\n| `/draft:jira-preview` | Generate Jira export file for review |\n| `/draft:jira-create` | Create Jira issues from export via MCP |\n\n## Workflow\n\n```\n┌───────────────────────────────────────────────────────────────┐\n│                       DRAFT WORKFLOW                          │\n├───────────────────────────────────────────────────────────────┤\n│                                                               │\n│   /draft:init             One-time project initialization    │\n│        │                                                      │\n│        ▼                                                      │\n│   /draft:new-track        Create spec.md + plan.md           │\n│        │                                                      │\n│        ├──────────────────────────────────┐                   │\n│        │                                  │ (optional)        │\n│        ▼                                  ▼                   │\n│   /draft:implement        /draft:jira-preview → jira-create  │\n│        │                                                      │\n│        ▼                                                      │\n│   /draft:status           Check progress anytime              │\n│        │                                                      │\n│        ▼                                                      │\n│   /draft:revert           Git-aware rollback if needed        │\n│                                                               │\n└───────────────────────────────────────────────────────────────┘\n```\n\n## Project Structure (After Setup)\n\n```\nyour-project/\n├── draft/\n│   ├── product.md              # Product vision and goals\n│   ├── product-guidelines.md   # Style, branding, UX standards (optional)\n│   ├── tech-stack.md           # Technical choices\n│   ├── workflow.md             # TDD and commit preferences\n│   ├── jira.md                 # Jira project configuration (optional)\n│   ├── tracks.md               # Master track list\n│   └── tracks/\n│       └── <track-id>/\n│           ├── spec.md         # Requirements\n│           ├── plan.md         # Phased task breakdown\n│           ├── metadata.json   # Status and timestamps\n│           └── jira-export.md  # Jira stories for export (optional)\n```\n\n## Core Concepts\n\n### Tracks\n\nA **track** is a high-level unit of work (feature, bug fix, refactor):\n- `spec.md` - Requirements and acceptance criteria\n- `plan.md` - Phased task breakdown\n- `metadata.json` - Status and timestamps\n\n### Status Markers\n\n| Marker | Meaning |\n|--------|---------|\n| `[ ]` | Pending/New |\n| `[~]` | In Progress |\n| `[x]` | Completed |\n| `[!]` | Blocked |\n\n### TDD Workflow\n\nWhen enabled in workflow.md:\n1. **Red** - Write failing test first\n2. **Green** - Implement minimum code to pass\n3. **Refactor** - Clean up with tests green\n4. **Commit** - Following project conventions\n\n### Jira Integration\n\nSync tracks to Jira with two-step workflow:\n1. `/draft:jira-preview` - Generate `jira-export.md` with epic and stories\n2. Review and adjust story points, descriptions as needed\n3. `/draft:jira-create` - Push to Jira via MCP server\n\nStory points auto-calculated: 1-2 tasks = 1pt, 3-4 = 2pt, 5-6 = 3pt, 7+ = 5pt\n\n## Plugin Structure\n\n```\ndraft/\n├── .claude-plugin/\n│   └── plugin.json       # Plugin manifest\n├── CLAUDE.md             # Context file (auto-loaded)\n├── skills/               # Skill definitions\n│   ├── draft/SKILL.md       # Overview skill\n│   ├── init/SKILL.md        # /draft:init\n│   ├── new-track/SKILL.md   # /draft:new-track\n│   ├── implement/SKILL.md   # /draft:implement\n│   ├── status/SKILL.md      # /draft:status\n│   ├── revert/SKILL.md      # /draft:revert\n│   ├── jira-preview/SKILL.md # /draft:jira-preview\n│   └── jira-create/SKILL.md  # /draft:jira-create\n├── core/                 # Shared methodology\n│   ├── methodology.md       # Master methodology docs\n│   ├── templates/           # Templates for init\n│   │   ├── product.md\n│   │   ├── product-guidelines.md\n│   │   ├── tech-stack.md\n│   │   ├── workflow.md\n│   │   └── jira.md\n│   └── agents/              # Specialized agent behaviors\n│       ├── debugger.md\n│       └── reviewer.md\n└── integrations/\n    └── cursor/           # Cursor integration\n        └── .cursorrules\n```\n\n## Cursor Integration\n\nCopy `.cursorrules` to your project root:\n\n```bash\ncp /path/to/draft/integrations/cursor/.cursorrules ~/my-project/.cursorrules\n```\n\nThen use in Cursor:\n```\n@draft init\n@draft new-track \"Add user authentication\"\n@draft implement\n```\n\nSee [integrations/cursor/README.md](integrations/cursor/README.md) for details.\n\n## Credits\n\nAdapted from [gemini-cli-extensions/conductor](https://github.com/gemini-cli-extensions/conductor).\n\n## License\n\nApache 2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "draft",
+          "source": "./",
+          "description": "Context-Driven Development: draft specs and plans before implementation. Structured workflows for features and fixes.",
+          "version": "1.0.0",
+          "author": {
+            "name": "mayurpise"
+          },
+          "homepage": "https://github.com/mayurpise/draft",
+          "license": "Apache-2.0",
+          "keywords": [
+            "context-driven-development",
+            "planning",
+            "specifications",
+            "tdd",
+            "workflow"
+          ],
+          "categories": [
+            "context-driven-development",
+            "planning",
+            "specifications",
+            "tdd",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mayurpise/draft",
+            "/plugin install draft@draft-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "author": {
+    "id": "ericfisherdev",
+    "display_name": "Eric Fisher",
+    "avatar_url": "https://avatars.githubusercontent.com/u/110886313?u=dba7093dc77b61544d3507db3cb0c16ce0201205&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ericfisherdev-plugins",
+      "version": null,
+      "description": "QOL plugins for Claude Code by ericfisherdev",
+      "repo_full_name": "ericfisherdev/claude-plugins",
+      "repo_url": "https://github.com/ericfisherdev/claude-plugins",
+      "repo_description": "Some QOL Claude Code plugins that I wrote",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-10T06:36:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\r\n  \"name\": \"ericfisherdev-plugins\",\r\n  \"owner\": {\r\n    \"name\": \"ericfisherdev\"\r\n  },\r\n  \"description\": \"QOL plugins for Claude Code by ericfisherdev\",\r\n  \"plugins\": [\r\n    {\r\n      \"name\": \"jira-tools\",\r\n      \"source\": \"./plugins/jira-tools\",\r\n      \"description\": \"Jira integration tools for issues, sprints, and agile workflows\",\r\n      \"version\": \"1.3.0\",\r\n      \"keywords\": [\"jira\", \"atlassian\", \"issues\", \"tickets\", \"workflow\", \"project-management\", \"sprint\", \"agile\", \"scrum\", \"backlog\"]\r\n    },\r\n    {\r\n      \"name\": \"confluence-tools\",\r\n      \"source\": \"./plugins/confluence-tools\",\r\n      \"description\": \"Confluence integration tools for token-efficient page and folder management with caching\",\r\n      \"version\": \"1.2.1\",\r\n      \"keywords\": [\"confluence\", \"atlassian\", \"wiki\", \"documentation\", \"pages\", \"knowledge-base\", \"blog\"]\r\n    }\r\n  ]\r\n}\r\n",
+        "README.md": "# ericfisherdev-plugins\n\nQOL plugins for Claude Code by ericfisherdev.\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```bash\nclaude plugins:add https://github.com/ericfisherdev/claude-plugins\n```\n\nOr install individual plugins:\n\n```bash\nclaude plugins:add ericfisherdev-plugins/jira-tools\n```\n\n## Available Plugins\n\n| Plugin | Description | Version |\n|--------|-------------|---------|\n| [jira-tools](#jira-tools) | Jira integration tools for issues, sprints, and agile workflows | 1.3.0 |\n| [confluence-tools](#confluence-tools) | Confluence integration tools for token-efficient page and folder management with caching | 1.2.1 |\n\n---\n\n## Plugin Details\n\n### jira-tools\n\nJira integration tools for managing issues, sprints, and agile workflows. Uses shared caching to reduce API calls and provides token-efficient output.\n\n**Skills:**\n\n| Skill | Description |\n|-------|-------------|\n| `/jira-issue` | Fetch single issue details with preset-based truncation |\n| `/create-issue` | Create Jira issues with cached metadata lookups |\n| `/update-issue` | Update issues (status, assignee, labels, comments) |\n| `/search-issues` | Search issues using JQL queries |\n| `/link-issues` | Create relationships between issues (blocks, duplicates, etc.) |\n| `/watch-issue` | Add/remove watchers on issues |\n| `/log-work` | Log time entries on issues |\n| `/backlog-summary` | Get summary of backlog or sprint issues |\n| `/issue-analysis` | Analyze an issue and create implementation plans |\n| `/analyze-backlog` | Auto-analyze top 3 unanalyzed backlog issues |\n| `/sprint-info` | Get sprint details and issue list |\n| `/sprint-report` | Get sprint metrics, velocity, and burndown |\n| `/manage-sprint` | Create, start, or complete sprints |\n| `/move-to-sprint` | Move issues between sprints or backlog |\n\n**Features:**\n- Token-efficient output with configurable truncation\n- Preset profiles (minimal, standard, full) for common use cases\n- Sprint-aware caching with different TTLs per category\n- Shared cache for metadata (users, priorities, components)\n- Full agile/scrum workflow support\n- JQL-based search capabilities\n- Human-readable names instead of IDs\n\n**Usage Examples:**\n\n```bash\n# Fetch issue with minimal output\n/jira-issue PROJ-123 --preset minimal\n\n# Search for bugs assigned to me\n/search-issues --jql \"project = PROJ AND type = Bug AND assignee = currentUser()\"\n\n# Create a bug\n/create-issue --project PROJ --type Bug --summary \"Login fails\"\n\n# Update issue status\n/update-issue PROJ-123 --status \"In Progress\"\n\n# Log 2 hours of work\n/log-work PROJ-123 --time 2h --comment \"Fixed authentication\"\n\n# Get current sprint info\n/sprint-info --board 42 --sprint active\n\n# Move issue to current sprint\n/move-to-sprint PROJ-123 --sprint 100\n\n# Analyze an issue for implementation\n/issue-analysis PROJ-123\n```\n\n**Requirements:**\n- Environment variables: `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`\n\n**Cache Location:**\n```\n~/.jira-tools-cache.json\n```\n\n---\n\n### confluence-tools\n\nConfluence integration tools for managing wiki pages and folders efficiently. Uses shared caching to reduce API calls and provides token-efficient output.\n\n**Skills:**\n\n| Skill | Description |\n|-------|-------------|\n| `/confluence-page` | Fetch single page details with preset-based truncation |\n| `/list-pages` | List pages and folders in a space with type indicators (`[F]`/`[P]`) |\n| `/create-page` | Create Confluence pages with storage format support |\n| `/update-page` | Update pages (title, body, labels) with version management |\n| `/create-folder` | Create true Confluence folders (not page containers) |\n| `/search-content` | Search Confluence using CQL with parent hierarchy info |\n| `/delete-page` | Delete pages or folders with auto-detection |\n| `/create-blog-post` | Create blog posts with markdown support |\n\n**Features:**\n- Token-efficient output with configurable truncation\n- Preset profiles (minimal, standard, full) for common use cases\n- Full folder support with type indicators in tree views\n- Parent hierarchy information in search results\n- Shared cache for spaces, pages, and labels\n- Automatic version management for updates\n- CQL-based search with multiple filters\n\n**Usage Examples:**\n\n```bash\n# Fetch page with minimal output\n/confluence-page 123456 --preset minimal\n\n# List pages and folders as tree with type indicators\n/list-pages --space DEV --depth 2 --format tree\n\n# Create a new page\n/create-page --space DEV --title \"API Docs\" --body \"<p>Content here</p>\"\n\n# Update page content\n/update-page 123456 --body \"<p>Updated content</p>\"\n\n# Create a true folder\n/create-folder --space DEV --title \"Documentation\"\n\n# Search for pages (includes parent info)\n/search-content \"authentication\" --space DEV\n\n# Delete a page or folder\n/delete-page --id 123456\n\n# Create a blog post\n/create-blog-post --space DEV --title \"Sprint Retrospective\" --body-file retro.md --markdown\n```\n\n**Requirements:**\n- Environment variables: `CONFLUENCE_BASE_URL`, `CONFLUENCE_EMAIL`, `CONFLUENCE_API_TOKEN`\n\n**Cache Location:**\n```\n~/.confluence-tools-cache.json\n```\n\n---\n\n## Contributing\n\nTo add a new plugin:\n\n1. Create a directory under `plugins/{plugin-name}/`\n2. Add a `plugin.json` manifest in `plugins/{plugin-name}/.claude-plugin/`\n3. Add commands, agents, skills, or hooks as needed\n4. Register the plugin in `.claude-plugin/marketplace.json`\n5. Document the plugin in this README\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "jira-tools",
+          "source": "./plugins/jira-tools",
+          "description": "Jira integration tools for issues, sprints, and agile workflows",
+          "version": "1.3.0",
+          "keywords": [
+            "jira",
+            "atlassian",
+            "issues",
+            "tickets",
+            "workflow",
+            "project-management",
+            "sprint",
+            "agile",
+            "scrum",
+            "backlog"
+          ],
+          "categories": [
+            "agile",
+            "atlassian",
+            "backlog",
+            "issues",
+            "jira",
+            "project-management",
+            "scrum",
+            "sprint",
+            "tickets",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ericfisherdev/claude-plugins",
+            "/plugin install jira-tools@ericfisherdev-plugins"
+          ]
+        },
+        {
+          "name": "confluence-tools",
+          "source": "./plugins/confluence-tools",
+          "description": "Confluence integration tools for token-efficient page and folder management with caching",
+          "version": "1.2.1",
+          "keywords": [
+            "confluence",
+            "atlassian",
+            "wiki",
+            "documentation",
+            "pages",
+            "knowledge-base",
+            "blog"
+          ],
+          "categories": [
+            "atlassian",
+            "blog",
+            "confluence",
+            "documentation",
+            "knowledge-base",
+            "pages",
+            "wiki"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ericfisherdev/claude-plugins",
+            "/plugin install confluence-tools@ericfisherdev-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

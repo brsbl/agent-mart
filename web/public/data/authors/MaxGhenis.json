@@ -6,42 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "maxghenis-plugins",
-      "version": "0.1.0",
-      "description": "Max Ghenis plugins - forecasting, decision-making tools",
-      "repo_full_name": "MaxGhenis/farness",
-      "repo_url": "https://github.com/MaxGhenis/farness",
-      "repo_description": null,
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2025-12-20T19:16:59Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"maxghenis-plugins\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Max Ghenis plugins - forecasting, decision-making tools\",\n  \"owner\": {\n    \"name\": \"Max Ghenis\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"farness\",\n      \"description\": \"Decision-making framework that reframes subjective questions as forecasting problems with explicit KPIs, option expansion, and calibration tracking\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Max Ghenis\"\n      },\n      \"source\": \"./claude-plugin\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
-        "README.md": "# Farness\n\n**Forecasting as a harness for decision-making.**\n\nInstead of asking \"Is X good?\" or \"Should I do Y?\", farness helps you:\n1. Define what success looks like (KPIs)\n2. Expand your options (including ones you didn't consider)\n3. Make explicit forecasts (with confidence intervals)\n4. Track outcomes to improve calibration over time\n\n## Installation\n\n```bash\npip install farness\n```\n\n## Quick Start\n\n### As a Python package\n\n```python\nfrom farness import Decision, KPI, Option, Forecast, DecisionStore\nfrom datetime import datetime, timedelta\n\n# Create a decision\ndecision = Decision(\n    question=\"Should I take the new job offer?\",\n    kpis=[\n        KPI(name=\"income\", description=\"Total comp after 2 years\", unit=\"$\"),\n        KPI(name=\"satisfaction\", description=\"Job satisfaction 1-10\"),\n    ],\n    options=[\n        Option(\n            name=\"Take new job\",\n            description=\"Accept the offer at Company X\",\n            forecasts={\n                \"income\": Forecast(\n                    point_estimate=300000,\n                    confidence_interval=(250000, 400000),\n                    reasoning=\"Base + equity, assuming normal vesting\",\n                ),\n                \"satisfaction\": Forecast(\n                    point_estimate=7.5,\n                    confidence_interval=(6, 9),\n                    reasoning=\"Interesting work, but unknown team\",\n                ),\n            }\n        ),\n        Option(\n            name=\"Stay at current job\",\n            description=\"Decline and stay\",\n            forecasts={\n                \"income\": Forecast(\n                    point_estimate=250000,\n                    confidence_interval=(230000, 280000),\n                    reasoning=\"Known trajectory, likely promotion\",\n                ),\n                \"satisfaction\": Forecast(\n                    point_estimate=6.5,\n                    confidence_interval=(6, 7),\n                    reasoning=\"Comfortable but plateauing\",\n                ),\n            }\n        ),\n    ],\n    review_date=datetime.now() + timedelta(days=180),\n)\n\n# Save it\nstore = DecisionStore()\nstore.save(decision)\n```\n\n### Command Line\n\n```bash\n# List decisions\nfarness list\n\n# Show a specific decision\nfarness show abc123\n\n# Check calibration\nfarness calibration\n\n# See what needs review\nfarness pending\n```\n\n### Claude Code Plugin\n\nInstall the plugin for interactive decision analysis:\n\n```bash\nclaude plugin marketplace add MaxGhenis/farness\nclaude plugin install farness@maxghenis-plugins\n```\n\nThen use `/farness:decide` to run a structured decision analysis.\n\n## The Framework\n\nFarness implements a structured decision process:\n\n1. **KPI Definition** - What outcomes actually matter? Make them measurable.\n\n2. **Option Expansion** - Don't just compare A vs B. What about C? What about waiting? What about hybrid approaches?\n\n3. **Decomposition** - Break forecasts into estimable components (Fermi-style).\n\n4. **Outside View** - Start with base rates before adjusting for specifics.\n\n5. **Confidence Intervals** - Point estimates aren't enough. How uncertain are you?\n\n6. **Tracking** - Log decisions and review outcomes to calibrate over time.\n\n## Why This Works\n\n- **Reduces sycophancy** - Harder to just agree when making numeric predictions\n- **Forces mechanism thinking** - Must reason about cause and effect\n- **Creates accountability** - Predictions can be scored later\n- **Separates values from facts** - You pick KPIs (values), forecasts are facts\n- **Builds calibration** - Track predictions over time to improve\n\n## Development\n\n```bash\ngit clone https://github.com/MaxGhenis/farness\ncd farness\npip install -e \".[dev]\"\npytest\n```\n\n### Publishing to PyPI\n\nThe package is automatically published to PyPI when a new release is created on GitHub.\n\n**Setup (one-time):**\n1. Add `PYPI_API_TOKEN` secret to the GitHub repository\n   - Go to repository Settings > Secrets and variables > Actions\n   - Add a new repository secret named `PYPI_API_TOKEN`\n   - Value should be your PyPI API token (starts with `pypi-`)\n\n**To publish a new version:**\n1. Update version in `pyproject.toml`\n2. Create a new release on GitHub with a tag (e.g., `v0.1.1`)\n3. The GitHub Actions workflow will automatically build and publish to PyPI\n\n**Manual publishing:**\n```bash\n# Build the package\npython -m build\n\n# Upload to PyPI\ntwine upload dist/* --username __token__ --password $PYPI_API_TOKEN\n```\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "farness",
-          "description": "Decision-making framework that reframes subjective questions as forecasting problems with explicit KPIs, option expansion, and calibration tracking",
-          "version": "0.1.0",
-          "author": {
-            "name": "Max Ghenis"
-          },
-          "source": "./claude-plugin",
-          "category": "productivity",
-          "categories": [
-            "productivity"
-          ],
-          "install_commands": [
-            "/plugin marketplace add MaxGhenis/farness",
-            "/plugin install farness@maxghenis-plugins"
-          ]
-        }
-      ]
-    },
-    {
       "name": "namecast",
       "version": null,
       "description": "AI-powered brand name oracle - generate, filter, and evaluate brand names",

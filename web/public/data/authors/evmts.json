@@ -1,0 +1,41 @@
+{
+  "author": {
+    "id": "evmts",
+    "display_name": "tevm",
+    "avatar_url": "https://avatars.githubusercontent.com/u/125341713?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "smithers",
+      "version": "1.0.0",
+      "description": "Smithers — JSX workflow engine for Claude Code: durable, resumable orchestration with SQLite state (phases/steps), tool-scoped agents, and observable logs.",
+      "repo_full_name": "evmts/smithers",
+      "repo_url": "https://github.com/evmts/smithers",
+      "repo_description": "Advanced AI Agents in React",
+      "signals": {
+        "stars": 48,
+        "forks": 4,
+        "pushed_at": "2026-01-31T19:46:00Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"smithers\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Smithers — JSX workflow engine for Claude Code: durable, resumable orchestration with SQLite state (phases/steps), tool-scoped agents, and observable logs.\",\n  \"owner\": { \"name\": \"William Cory\" },\n  \"plugins\": [\n    {\n      \"name\": \"smithers\",\n      \"description\": \"Smithers (smithers-orchestrator): write durable JSX workflows for Claude Code (SQLite-backed state, phases/steps, retries, observability).\",\n      \"source\": \"./plugins/smithers\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# Smithers\n\n[![npm version](https://img.shields.io/npm/v/smithers-orchestrator.svg)](https://www.npmjs.com/package/smithers-orchestrator)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\n**Ralph the plan, not the agent.**\n\n\n\nYour orchestrating agent writes React code that spawns and controls other agents. [Let your agents write agents](https://smithers.sh/harness-integration#claude-code-plugin).\n\nUsed to orchestrate coding agents that run for days, ship PRs autonomously, and self-heal when they fail.\n\n```tsx\n#!/usr/bin/env smithers\nimport {\n  createSmithersRoot,\n  createSmithersDB,\n  SmithersProvider,\n  Claude,\n} from \"smithers-orchestrator\";\n\nconst db = createSmithersDB({ path: \".smithers/demo.db\" });\nconst executionId = db.execution.start(\"Demo\", \"demo.tsx\");\n\nfunction Demo() {\n  return (\n    <SmithersProvider db={db} executionId={executionId} maxIterations={5}>\n      <Claude model=\"sonnet\" onFinished={(r) => console.log(r.output)}>\n        Fix the failing tests in this repository.\n      </Claude>\n    </SmithersProvider>\n  );\n}\n\nconst root = createSmithersRoot();\nawait root.mount(Demo);\nawait db.close();\n```\n\nRun it and monitor the execution frame by frame:\n\n```bash\nsmithers demo.tsx\n```\n\nSmithers is a React framework for coding agents. Write the plan in any coding harness, then monitor your agents as they execute it. The plan is a mix of hardcoded logic and agent output that evolves reactively.\n\nBy evolving a declarative plan rather than wiring up every agent interaction, Smithers excels at:\n\n1. **One-time agents** that accomplish a task and discard\n2. **Long-running agents** that run for days or weeks\n\n---\n\n## Core Idea\n\nYou program the **plan**, not the agents. The plan is real executable code: React components that declare what should happen.\n\n| Other Frameworks     | Smithers                   |\n| -------------------- | -------------------------- |\n| `agent.do_step_1()`  | `<Phase name=\"implement\">` |\n| `agent.do_step_2()`  | `<Step name=\"code\">`       |\n| `if failed: retry()` | `<Claude>Fix it</Claude>`  |\n\nThe plan is declarative. Plans evolve in an easy-to-understand way over time, and if the plan breaks for any reason, your monitoring agent can edit the code and restart.\n\nWhat renders is the current state of the multi-agent setup as readable XML, with SQLite durably persisting state.\n\nEach iteration:\n\n1. Render React to execution plan\n2. Execute runnable agents\n3. Agent output updates state\n4. State change triggers re-render\n5. Loop until done\n\nThe plan runs as deterministic code, but agents can read it to understand the larger context they're operating within.\n\nRalph (the [autonomous agent loop pattern](https://ghuntley.com/ralph/)) handles the render cycle, allowing the plan to run and evolve indefinitely. React handles the diffing.\n\n---\n\n## Why React?\n\nLLMs and humans perform well writing declarative React code. All coding agents can one-shot valid Smithers workflows naturally.\n\nMost multi-agent frameworks fail. They add coordination overhead that costs more than it saves, and you end up worse than a simple while loop. Smithers avoids this by making the plan declarative and the state durable. React's functional nature makes even complex multiagent setups easy to modularize and easy to reason about.\n\nReact has a rich ecosystem that works well with agents: Zustand, React Query, and reactive versions of most libraries plug directly into React's reactivity system. This lets you compose declarative plans from battle-tested primitives.\n\nReact gives you:\n\n- Composition and reuse\n- Version control diffs that make sense\n- Agent-generated code you can review\n- A massive ecosystem of reactive hooks to reuse\n\n**React Hook Compatibility**: All [TanStack AI](https://tanstack.com/ai/latest/docs) and [Vercel AI SDK](https://ai-sdk.dev/docs) React hooks work in Smithers components.\n\n---\n\n## Quick Examples\n\n### Sequential Phases\n\n```tsx\n<SmithersProvider db={db} executionId={executionId} maxIterations={10}>\n  <Phase name=\"implement\">\n    <Step name=\"code\">\n      <Claude>Implement the feature</Claude>\n    </Step>\n    <Step name=\"test\">\n      <Claude>Write tests</Claude>\n    </Step>\n  </Phase>\n  <Phase name=\"review\">\n    <Claude>Review the changes</Claude>\n  </Phase>\n</SmithersProvider>\n```\n\n### Parallel Agents\n\n```tsx\n<Parallel>\n  <Claude>Fix auth</Claude>\n  <Claude>Fix database</Claude>\n  <Claude>Fix API</Claude>\n</Parallel>\n```\n\n### Structured Output\n\n```tsx\nconst ReviewSchema = z.object({\n  approved: z.boolean(),\n  issues: z.array(z.string()),\n});\n\n<Claude schema={ReviewSchema}>Review the PR.</Claude>;\n// result.structured: { approved: boolean, issues: string[] }\n```\n\n### Worktree Isolation\n\n```tsx\n<Worktree branch=\"feature-auth\" cleanup>\n  <Claude>Implement authentication</Claude>\n</Worktree>\n```\n\n---\n\n## Persistence\n\nState lives in SQLite. Survives restarts.\n\n```tsx\n// Set state\ndb.state.set(\"phase\", \"review\");\n\n// Get state\nconst phase = db.state.get(\"phase\");\n\n// Resume after crash\nconst incomplete = db.execution.findIncomplete();\nif (incomplete) {\n  executionId = incomplete.id;\n}\n```\n\n---\n\n## Observability\n\nThe React tree is the observability. What you write is what gets logged.\n\n```tsx\n<Phase name=\"deploy\">\n  <Step name=\"build\" status=\"completed\">\n    ...\n  </Step>\n  <Step name=\"test\" status=\"running\">\n    ...\n  </Step>\n</Phase>\n```\n\nSQLite stores every frame. Use version control to rewind.\n\n---\n\n## Install\n\n```bash\nbun add -g smithers-orchestrator\n```\n\nThis installs the `smithers` CLI globally. Requires [Bun](https://bun.sh/) 1.0+.\n\nOr install as a plugin:\n\n```bash\n# Claude Code\n/plugin add evmts/smithers\n\n# OpenCode\nopencode plugin add evmts/smithers\n```\n\n---\n\n## Roadmap\n\n**North Star: SuperSmithers**: A meta-agent that watches your agents and rewrites their code to optimize. The architecture is ready. Coming soon.\n\n---\n\n## More\n\n- [Documentation](https://smithers.sh)\n- [Examples](./examples)\n- [Contributing](./CONTRIBUTING.md)\n"
+      },
+      "plugins": [
+        {
+          "name": "smithers",
+          "description": "Smithers (smithers-orchestrator): write durable JSX workflows for Claude Code (SQLite-backed state, phases/steps, retries, observability).",
+          "source": "./plugins/smithers",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add evmts/smithers",
+            "/plugin install smithers@smithers"
+          ]
+        }
+      ]
+    }
+  ]
+}

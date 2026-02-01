@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "daishiman",
+    "display_name": "daishiman",
+    "avatar_url": "https://avatars.githubusercontent.com/u/71166086?u=af730c22c57c401d383d525e8c8d2abf1fffbfdd&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "daishiman-skills",
+      "version": null,
+      "description": "Claude Code用スキルコレクション。様々な用途のスキルを提供するマーケットプレイス。",
+      "repo_full_name": "daishiman/daishiman-skills",
+      "repo_url": "https://github.com/daishiman/daishiman-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 9,
+        "forks": 0,
+        "pushed_at": "2026-01-31T11:41:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"daishiman-skills\",\n  \"description\": \"Claude Code用スキルコレクション。様々な用途のスキルを提供するマーケットプレイス。\",\n  \"owner\": {\n    \"name\": \"daishiman\",\n    \"email\": \"daishimanju@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"daishiman-skill-creator\",\n      \"source\": \"./\",\n      \"description\": \"スキルを作成・更新・プロンプト改善するためのメタスキル。ユーザーと対話しながら共創し、抽象的なアイデアから具体的な実装まで柔軟に対応。\",\n      \"skills\": [\"./skills/skill-creator\"]\n    },\n    {\n      \"name\": \"daishiman-google-forms-generator\",\n      \"source\": \"./\",\n      \"description\": \"Google Forms APIを使用してフォームを自動生成するスキル。対話型インタビューでフォーム要件を収集し、GASデプロイ可能なフォームを作成。\",\n      \"skills\": [\"./skills/google-forms-generator\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"daishiman-skills\",\n  \"description\": \"Claude Code用スキルコレクション。スキル作成メタツール、Google Forms自動生成など、様々なスキルを提供。\",\n  \"author\": {\n    \"name\": \"daishiman\",\n    \"email\": \"daishimanju@gmail.com\"\n  }\n}\n",
+        "README.md": "# daishiman-skills\n\nClaude Code用スキルコレクション。様々な用途のスキルをプラグインとして提供します。\n\n[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)]()\n\n---\n\n## 収録スキル\n\n| スキル | 説明 | バージョン |\n|--------|------|------------|\n| **[skill-creator](docs/skill-creator/README.md)** | スキル作成・更新・プロンプト改善のためのメタスキル。Problem First + DDD/Clean Architectureで高品質なスキルを自動生成 | v8.1.0 |\n| **[google-forms-generator](docs/google-forms-generator/README.md)** | Google Forms APIを使用したフォーム自動生成。対話形式で要件をヒアリングし、11種類の質問タイプに対応 | v1.3.0 |\n\n---\n\n## 前提条件\n\n| 要件 | バージョン | 備考 |\n|------|------------|------|\n| Claude Code | 1.0.0以上 | **必須** - https://claude.ai/download |\n| Node.js | 18.0.0以上 | スクリプト実行に必要 |\n\n> **重要**: このプラグインは**Claude Code**上で動作します。ターミナルで直接実行するものではありません。\n\n---\n\n## インストール\n\n### Step 1: マーケットプレイスを追加\n\nClaude Codeを起動した状態で以下を実行：\n\n```bash\n/plugin marketplace add daishiman/daishiman-skills\n```\n\n### Step 2: スキルをインストール\n\n必要なスキルを個別にインストールします：\n\n#### Skill Creator（スキル作成メタツール）\n\n```bash\n/plugin install daishiman-skill-creator\n```\n\n#### Google Forms Generator（フォーム自動生成）\n\n```bash\n/plugin install daishiman-google-forms-generator\n```\n\n### Step 3: Claude Codeを再起動\n\nインストール完了後、Claude Codeを再起動してください。\n\n---\n\n## アップグレード\n\n各スキルを最新バージョンに更新するには：\n\n```bash\n# Skill Creatorをアップグレード\n/plugin update daishiman-skill-creator\n\n# Google Forms Generatorをアップグレード\n/plugin update daishiman-google-forms-generator\n```\n\n---\n\n## アンインストール\n\n```bash\n# Skill Creatorをアンインストール\n/plugin uninstall daishiman-skill-creator\n\n# Google Forms Generatorをアンインストール\n/plugin uninstall daishiman-google-forms-generator\n```\n\n---\n\n## ローカル開発用インストール\n\n開発者向けのローカルインストール方法：\n\n```bash\n# リポジトリをクローン\ngit clone https://github.com/daishiman/daishiman-skills.git\ncd daishiman-skills\n\n# シンボリックリンクを作成\nln -sf $(pwd) ~/.claude/plugins/marketplaces/daishiman-skills\n\n# known_marketplaces.json に追加（手動）\n# ~/.claude/plugins/known_marketplaces.json を編集\n\n# settings.json で有効化（手動）\n# ~/.claude/settings.json の enabledPlugins に追加\n```\n\n---\n\n## 各スキルの概要\n\n### Skill Creator\n\nClaude Codeでスキルを作成・更新・プロンプト改善するためのメタスキル。\n\n**主な機能：**\n\n- **Problem First** - 5 Whysで問題の根本原因を特定してから設計\n- **DDD / Clean Architecture** - ドメイン構造と層分離でスキルを設計\n- **対話型インタビュー** - 8段階の質問で要件を明確化（選択肢から選ぶだけ）\n- **Collaborative / Orchestrate** - 2つのモードで柔軟に対応\n- **24種類のスクリプト** - API連携、データ処理、開発ツールなど\n\n**使い方：**\n\nClaude Codeに話しかけるだけでワークフローが開始されます：\n\n```\n「新しいスキルを作成したい」\n「〇〇を自動化するスキルを作って」\n```\n\n詳細 → [Skill Creator ドキュメント](docs/skill-creator/README.md)\n\n---\n\n### Google Forms Generator\n\nGoogle Forms APIを使用してフォームを自動生成するスキル。\n\n**主な機能：**\n\n- **11種類の質問タイプ** - 短文/長文/ラジオ/チェック/プルダウン/スケール/選択式グリッド/チェックボックスグリッド/日付/時刻/評価\n- **フォーム設定** - クイズモード、メール収集、公開設定\n- **高度な機能** - 条件分岐、セクション、画像/動画埋め込み\n- **連携** - Google Drive（フォルダ移動）、Google Sheets（回答取得）\n- **テンプレート** - 6種類のフォームパターンから素早く作成\n\n**使い方：**\n\nClaude Codeに話しかけるだけでワークフローが開始されます：\n\n```\n「Googleフォームを作成したい」\n「アンケートフォームを作って」\n```\n\n詳細 → [Google Forms Generator ドキュメント](docs/google-forms-generator/README.md)\n\n---\n\n## ドキュメント\n\n### Skill Creator\n\n| ドキュメント | 内容 |\n|-------------|------|\n| [概要・詳細](docs/skill-creator/README.md) | 機能説明、設計原則、ワークフロー |\n| [インストールガイド](docs/skill-creator/INSTALLATION.md) | インストール手順、プラグイン構造 |\n| [使い方ガイド](docs/skill-creator/USAGE.md) | 各フェーズの詳細、ベストプラクティス |\n| [トラブルシューティング](docs/skill-creator/TROUBLESHOOTING.md) | 問題解決、FAQ |\n| [変更履歴](docs/skill-creator/CHANGELOG.md) | バージョン履歴 |\n\n### Google Forms Generator\n\n| ドキュメント | 内容 |\n|-------------|------|\n| [概要・詳細](docs/google-forms-generator/README.md) | 機能説明、対応質問タイプ、ワークフロー |\n| [インストールガイド](docs/google-forms-generator/INSTALLATION.md) | OAuth認証設定、環境構築 |\n| [使い方ガイド](docs/google-forms-generator/USAGE.md) | フォーム作成手順、テンプレート活用 |\n| [トラブルシューティング](docs/google-forms-generator/TROUBLESHOOTING.md) | API エラー、認証問題の解決 |\n| [変更履歴](docs/google-forms-generator/CHANGELOG.md) | バージョン履歴 |\n\n---\n\n## ライセンス\n\nMIT License\n\n---\n\n## サポート\n\n[Issues](https://github.com/daishiman/daishiman-skills/issues)\n"
+      },
+      "plugins": [
+        {
+          "name": "daishiman-skill-creator",
+          "source": "./",
+          "description": "スキルを作成・更新・プロンプト改善するためのメタスキル。ユーザーと対話しながら共創し、抽象的なアイデアから具体的な実装まで柔軟に対応。",
+          "skills": [
+            "./skills/skill-creator"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add daishiman/daishiman-skills",
+            "/plugin install daishiman-skill-creator@daishiman-skills"
+          ]
+        },
+        {
+          "name": "daishiman-google-forms-generator",
+          "source": "./",
+          "description": "Google Forms APIを使用してフォームを自動生成するスキル。対話型インタビューでフォーム要件を収集し、GASデプロイ可能なフォームを作成。",
+          "skills": [
+            "./skills/google-forms-generator"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add daishiman/daishiman-skills",
+            "/plugin install daishiman-google-forms-generator@daishiman-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
