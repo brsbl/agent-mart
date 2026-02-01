@@ -6,34 +6,34 @@
   },
   "marketplaces": [
     {
-      "name": "agent-ide-skills",
+      "name": "mongo-ts-skills",
       "version": null,
-      "description": "AI code intelligence toolkit for refactoring, analysis, and quality assessment",
-      "repo_full_name": "vivalalova/agent-ide",
-      "repo_url": "https://github.com/vivalalova/agent-ide",
+      "description": "MongoDB CLI tool for direct query execution with CRUD, aggregation, and index management",
+      "repo_full_name": "vivalalova/mongo-ts",
+      "repo_url": "https://github.com/vivalalova/mongo-ts",
       "repo_description": null,
       "signals": {
-        "stars": 2,
-        "forks": 1,
-        "pushed_at": "2026-01-31T01:51:37Z"
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-06T13:48:26Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agent-ide-skills\",\n  \"description\": \"AI code intelligence toolkit for refactoring, analysis, and quality assessment\",\n  \"owner\": {\n    \"name\": \"vivalalova\",\n    \"email\": \"vivalalova@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-ide\",\n      \"description\": \"Refactoring & analysis: rename, move, dependency cycles, impact analysis, deadcode detection, snapshots. TS/JS.\",\n      \"source\": \"./plugins/skills/agent-ide\",\n      \"category\": \"development\",\n      \"version\": \"0.13.6\"\n    }\n  ]\n}\n",
-        "README.md": "# Agent IDE\n\n**Minimize tokens, maximize accuracy for AI Agents**\n\nCode intelligence toolkit designed for AI agents, providing search, refactoring, and dependency analysis capabilities.\n\n## Features\n\n- **Parser**: TypeScript / JavaScript\n- **Unicode identifiers**: Supports non-ASCII variable names\n- **Glob patterns**: `move` supports `*.ts`, `**/*.ts`, etc.\n- **Output formats**: `--format json | summary | diff`\n\n## Quick Start\n\n### CLI Usage\n\n```bash\nnpx agent-ide <command> [options]\n```\n\nFrom source:\n\n```bash\ngit clone https://github.com/vivalalova/agent-ide.git\ncd agent-ide\npnpm install && pnpm build && npm link\n```\n\n### Claude Code Plugin Installation\n\nIn Claude Code conversation:\n\n```text\n/plugin marketplace add vivalalova/agent-ide\n/plugin install agent-ide@agent-ide-skills\n```\n\nOr from terminal:\n\n```bash\nclaude plugin marketplace add vivalalova/agent-ide\nclaude plugin install agent-ide@agent-ide-skills\n```\n\n### Recommended: Add to CLAUDE.md\n\nTo help Claude Code automatically use agent-ide when appropriate, add the following to your `~/.claude/CLAUDE.md`:\n\n```markdown\n## Agent IDE Integration\n\nUse the `agent-ide` skill for TS/JS code intelligence operations. **Prefer agent-ide over manual Edit/Grep** for:\n\n| Operation | Command | Instead of |\n|-----------|---------|------------|\n| Rename symbol | `/agent-ide rename` | Multiple Edit calls |\n| Move file/member | `/agent-ide move` | Write + Delete + Edit imports |\n| Find references | `/agent-ide find-references` | Grep + manual filtering |\n| Detect dead code | `/agent-ide deadcode` | Manual analysis |\n| Analyze impact | `/agent-ide impact` | Manual tracing |\n| Check cycles | `/agent-ide cycles` | Manual dependency review |\n| Function refactor | `/agent-ide change-signature` | Multiple Edit calls |\n| API snapshot | `/agent-ide snapshot` | Multiple Read calls |\n| Undo changes | `/agent-ide undo` | Manual revert |\n\n**Trigger keywords**: rename, move file, move function, find references, dead code, unused code, circular dependency, call hierarchy, refactor parameters, impact analysis\n\n**Benefits**: Automatic reference updates, atomic operations, zero missed references, undo support\n```\n\n## Commands\n\n### Query (Read-only)\n\n| Command           | Description                            |\n| ----------------- | -------------------------------------- |\n| `cycles`          | Detect circular dependencies (Tarjan)  |\n| `impact`          | Analyze change impact range (BFS)      |\n| `snapshot`        | Generate module API snapshots |\n| `find-references` | Find symbol definitions and references |\n| `call-hierarchy`  | Analyze function call hierarchy        |\n| `deadcode`        | Detect unused code                     |\n\n### Mutation (supports `--dry-run`)\n\n| Command            | Description                                      |\n| ------------------ | ------------------------------------------------ |\n| `rename`           | Rename symbols and update all references         |\n| `change-signature` | Refactor function parameters (reorder/add/remove)|\n| `move`             | Move files/directories and update imports        |\n| `move` (with line) | Move members across files (`path:line` syntax)   |\n\n## Documentation\n\n- [Command Reference](./plugins/skills/agent-ide/SKILL.md) - Quick reference for all commands\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mongo-ts-skills\",\n  \"owner\": {\n    \"name\": \"vivalalova\",\n    \"email\": \"vivalalova@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"MongoDB CLI tool for direct query execution with CRUD, aggregation, and index management\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mongo-ts\",\n      \"description\": \"MongoDB CLI 工具，直接執行查詢語法，支援 CRUD、聚合、索引管理。預設唯讀模式保護生產環境。\",\n      \"source\": \"./plugins/skills/mongo-ts\",\n      \"strict\": false,\n      \"skills\": [\"./\"]\n    }\n  ]\n}\n",
+        "README.md": "# mongo-ts\n\nMongoDB CLI 工具，直接執行 MongoDB 查詢語法。\n\n## Claude Code Skill 安裝\n\n```bash\n/install vivalalova/mongo-ts\n```\n\n## 使用說明\n\n詳見 [SKILL.md](plugins/skills/mongo-ts/SKILL.md)\n\n## 開發\n\n```bash\npnpm install      # 安裝依賴\npnpm build        # 編譯\npnpm typecheck    # 型別檢查\npnpm test         # 執行測試\n```\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
-          "name": "agent-ide",
-          "description": "Refactoring & analysis: rename, move, dependency cycles, impact analysis, deadcode detection, snapshots. TS/JS.",
-          "source": "./plugins/skills/agent-ide",
-          "category": "development",
-          "version": "0.13.6",
-          "categories": [
-            "development"
+          "name": "mongo-ts",
+          "description": "MongoDB CLI 工具，直接執行查詢語法，支援 CRUD、聚合、索引管理。預設唯讀模式保護生產環境。",
+          "source": "./plugins/skills/mongo-ts",
+          "strict": false,
+          "skills": [
+            "./"
           ],
+          "categories": [],
           "install_commands": [
-            "/plugin marketplace add vivalalova/agent-ide",
-            "/plugin install agent-ide@agent-ide-skills"
+            "/plugin marketplace add vivalalova/mongo-ts",
+            "/plugin install mongo-ts@mongo-ts-skills"
           ]
         }
       ]

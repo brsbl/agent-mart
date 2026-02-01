@@ -6,6 +6,89 @@
   },
   "marketplaces": [
     {
+      "name": "desplega-ai-toolbox",
+      "version": null,
+      "description": "A collection of AI tools and plugins for enhanced agentic development.",
+      "repo_full_name": "desplega-ai/ai-toolbox",
+      "repo_url": "https://github.com/desplega-ai/ai-toolbox",
+      "repo_description": "AI toolbox, intended to be developed and used by agents!",
+      "signals": {
+        "stars": 12,
+        "forks": 1,
+        "pushed_at": "2026-02-01T00:24:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"desplega-ai-toolbox\",\n    \"owner\": {\n        \"name\": \"desplega.ai\",\n        \"email\": \"contact@desplega.ai\"\n    },\n    \"metadata\": {\n        \"description\": \"A collection of AI tools and plugins for enhanced agentic development.\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"desplega\",\n            \"source\": \"./cc-plugin/base\",\n            \"description\": \"Plugin for effective agentic development\"\n        },\n        {\n            \"name\": \"agent-swarm\",\n            \"source\": \"./cc-plugin/swarm\",\n            \"description\": \"Plugin for multi-agent coordination using agent-swarm MCP\"\n        },\n        {\n            \"name\": \"wts\",\n            \"source\": \"./cc-plugin/wts\",\n            \"description\": \"Plugin for Git worktree management using @desplega.ai/wts\"\n        },\n        {\n            \"name\": \"file-review\",\n            \"source\": \"./cc-plugin/file-review\",\n            \"description\": \"Plugin for reviewing markdown files with inline comments using file-review GUI\"\n        },\n        {\n            \"name\": \"brain\",\n            \"source\": \"./cc-plugin/brain\",\n            \"description\": \"Plugin for the `brain` tool to manage and retrieve information from your personal local brain\"\n        },\n        {\n            \"name\": \"remarkable\",\n            \"source\": \"./cc-plugin/remarkable\",\n            \"description\": \"Plugin to interact with your reMarkable tablet\"\n        }\n    ]\n}\n",
+        "README.md": "# AI Toolbox\n\nMonorepo of AI and developer tools by [desplega.ai](https://desplega.ai). Each subdirectory is a standalone tool with its own README.\n\n## Repository Structure\n\n| Tool | Description | Stack |\n|------|-------------|-------|\n| [ai-tracker](./ai-tracker) | Track AI vs human code contributions | Python, uv, SQLite |\n| [brain](./brain) | Personal knowledge management with semantic search | TypeScript, Bun, SQLite |\n| [cc-hooks](./cc-hooks) | macOS notifications for Claude Code | Bash |\n| [cc-notch](./cc-notch) | Menu bar cost tracker (SwiftBar) | Shell |\n| [cc-plugin](./cc-plugin) | Claude Code plugins | YAML/Markdown |\n| [cc-what](./cc-what) | SDK & CLI for analyzing Claude Code usage data | TypeScript, Bun |\n| [dns](./dns) | DNS TXT record query utility | - |\n| [file-review](./file-review) | File review tool | - |\n| [hive](./hive) | macOS app for Claude Code sessions | TypeScript, Electron, Vite |\n| [hn-sql](./hn-sql) | HN data with Parquet + SQL | - |\n| [invoice-cli](./invoice-cli) | Invoice email fetcher | - |\n| [thoughts](./thoughts) | Research notes & plans (via /desplega:\\*) | Markdown |\n| [willitfront.page](./willitfront.page) | HN analysis with natural language | - |\n| [wts](./wts) | Git worktree manager | TypeScript, Bun |\n\n## Thoughts\n\nThe [thoughts](./thoughts) directory contains research notes and implementation plans generated via Claude Code skills from the [base plugin](./cc-plugin/base):\n\n- `/desplega:research` - Document codebase state with research notes\n- `/desplega:create-plan` - Create detailed implementation plans\n- `/desplega:implement-plan` - Execute plans from a plan file\n\n## Claude Plugins\n\n### Installation\n\nFrom inside Claude Code:\n\n```bash\n/plugin marketplace add desplega-ai/ai-toolbox\n```\n\nOr from the terminal:\n\n```bash\nclaude plugin marketplace add desplega-ai/ai-toolbox\n```\n\n### Available Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| `desplega` | Base agentic coding patterns (research, planning, implementation) |\n| `agent-swarm` | Multi-agent coordination |\n| `wts` | Git worktree manager |\n| `brain` | Personal knowledge management integration |\n| `file-review` | File review with inline comments |\n| `remarkable` | reMarkable tablet integration (get, put, ls) |\n\n```bash\n/plugin install desplega@desplega-ai-toolbox\n/plugin install agent-swarm@desplega-ai-toolbox\n/plugin install wts@desplega-ai-toolbox\n/plugin install brain@desplega-ai-toolbox\n/plugin install file-review@desplega-ai-toolbox\n/plugin install remarkable@desplega-ai-toolbox\n```\n\n### Bash Install\n\nYou can also install from the terminal:\n```bash\n# Scope can be 'user' (default), 'project' or 'local'\nclaude plugin install desplega@desplega-ai-toolbox --scope user\nclaude plugin install agent-swarm@desplega-ai-toolbox --scope user\nclaude plugin install wts@desplega-ai-toolbox --scope user\nclaude plugin install brain@desplega-ai-toolbox --scope user\nclaude plugin install file-review@desplega-ai-toolbox --scope user\nclaude plugin install remarkable@desplega-ai-toolbox --scope user\n```\n\nPlugin structure: `cc-plugin/{base,swarm,wts,brain,file-review,remarkable}/` with hooks, skills, and agents.\n\n## Key Tools\n\n**ai-tracker** (Python):\n```bash\nuvx cc-ai-tracker install   # Install hooks\nuvx cc-ai-tracker stats     # View AI/human contribution stats\n```\n\n**brain** (TypeScript/Bun):\n```bash\nnpm install -g @desplega.ai/brain\nbrain init && brain add \"My first note\"\nbrain search \"ideas\"        # Semantic search\n```\n\n**cc-what** (TypeScript/Bun):\n```bash\nnpm install -g @desplega.ai/cc-what\ncc-what                     # Summary of Claude Code usage\ncc-what stats --daily       # Daily activity stats\ncc-what costs --models      # Cost breakdown by model\n```\n\n**wts** (TypeScript/Bun):\n```bash\nnpm install -g @desplega.ai/wts\nwts init && wts create feature --new-branch\n```\n\n## Development\n\nEach tool is independent - check its README for specific setup. General pattern:\n- Python tools: `uv` or `uvx`\n- TypeScript tools: `bun` or `pnpm`\n- Plugins: YAML/Markdown configs in `cc-plugin/`\n\nNew tools: Create folder with minimal slug, add README.md.\n",
+        "cc-plugin/base/README.md": "# Agentic Coding 101 with Claude Code\n\n> A Claude Code plugin markteplace to help you start applying effective agentic coding patterns in your projects.\n\n## Motivation\n\nAgentic coding with Claude Code might seem \"trivial\" at first, as by just writing a prompt it seems that it all \"just works\". But in reality is not that simple... let me try to explain why.\n\n### Problem 1: Writing Prompts\n\nWriting good prompts is hard, but it's the first step to get good results, specially at scale or in non-greenfield projects. What you pass to the LLM matters a lot as it will steer the conversation, it's has a butterfly effect.\n\nThe set of plugins offered here aim to help reducing the effect of a bad prompt, by providing ways to iterate, breakdown and reduce the compounding effect of a bad prompt by splitting the development process in smaller steps.\n\n### Problem 2: Context management\n\nOn the other hand, leaving CC running for long periods of times yield to high context usage, unwanted compactifications and overall needle in a haystack situations. For that, the process mentioned above in which we break down the development in smaller steps helps a lot to control that.\n\nAlso, as a general rule, _emprical research_ has shown that having context usage above 40% tends to yield bad results by default (see DEX videos below for more details).\n\nHere's an [article that I wrote regarding context engineering](https://www.tarasyarema.com/blog/agent-context-engineering).\n\n### Problem 3: Human in the loop\n\nFinally, some of the keys of the proposed agentic coding patterns described in these plugins are to forcefully insert human in the loop at key points of the development process. \n\nThis is important, as some of the patterns described here go \"against\" one-shotting your solutions, but rather do an iterative \"gradien descent\" approach to get to the desired solution.\n\n## How does it work?\n\n### Installation\n\nFrom inside Claude Code, run:\n\n```bash\n/plugin marketplace add desplega-ai/ai-toolbox\n```\n\nor from the terminal\n\n```bash\nclaude plugin marketplace add desplega-ai/ai-toolbox\n```\n\nThen install the plugin inside it with:\n\n```bash\n/plugin install desplega@desplega-ai-toolbox\n```\n\n### What's inside?\n\nInside you will find:\n\n- [commands](./commands) - Entrypoint commands, the important part\n- [agents](./agents) - Sub-agents to be used by the commands\n- [skills](./skills)\n\n#### Commands\n\nThe basic commands provided are:\n\n1. `research`\n2. `create-plan`\n3. `implement-plan`\n\n## Inspiration\n\nHighly inspired on [Humanlayer](https://www.humanlayer.dev/) and it's github repository [`humanlayer/humanlayer`](https://github.com/humanlayer/humanlayer). Highly recommend checking it out!\n\nAlso, some of the videos from DEX, here are some good ones to start with:\n\n- [Advanced Context Engineering for Agents](https://www.youtube.com/watch?v=IS_y40zY-hc)\n- [12-Factor Agents: Patterns of reliable LLM applications — Dex Horthy, HumanLayer](https://www.youtube.com/watch?v=8kMaTybvDUw)\n\nAlso you should check the [12 factor agents](https://github.com/humanlayer/12-factor-agents) repository.\n\n## License\n\nMIT, some commands Apache 2.0 (check each file for details).\n",
+        "cc-plugin/swarm/README.md": "# Swarm Plugin\n\nMulti-agent coordination plugin for agent-swarm MCP.\n\n## Prerequisites\n\nThis plugin requires the [agent-swarm](https://github.com/desplega-ai/agent-swarm) MCP server to be configured.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/swarm-status` | Quick overview of agents and tasks |\n| `/kick-task <description>` | Send a task to the pool |\n| `/teleport` | Transfer current context to a swarm worker |\n\n## Skills\n\n### swarm-expert\n\nComprehensive guidance for multi-agent coordination:\n- Joining swarms as leader or worker\n- Delegating and claiming tasks\n- Agent-to-agent messaging\n- Task lifecycle management\n\n## Installation\n\nAdd this plugin to your Claude Code configuration.\n\n## Usage\n\nAsk about swarm coordination and Claude will automatically use the swarm-expert skill:\n\n- \"How do I join the swarm as a leader?\"\n- \"Delegate this task to the agent pool\"\n- \"Check the swarm status\"\n- \"Send a message to the dev channel\"\n",
+        "cc-plugin/wts/README.md": "# WTS Plugin for Claude Code\n\nA Claude Code plugin that provides expert assistance for [@desplega.ai/wts](https://www.npmjs.com/package/@desplega.ai/wts), a Git worktree management CLI tool.\n\n## What is WTS?\n\nWTS (Worktree Switch) simplifies Git worktree management with:\n- Organized worktree creation at `.worktrees/<project>/<date>-<alias>/`\n- tmux window integration\n- Claude Code auto-launch\n- GitHub PR creation from worktrees\n- Cleanup of merged worktrees\n\n## Installation\n\n### Install the WTS CLI\n\n```bash\nnpm install -g @desplega.ai/wts\n```\n\n### Install the Plugin\n\n```bash\n# From marketplace\n/plugin marketplace add desplega-ai/ai-toolbox\n\n# Install the wts plugin\n/plugin install wts@desplega-ai-toolbox\n```\n\n## Usage\n\nInvoke the WTS expert with `/wts`:\n\n```\n/wts                              # Start interactive assistant\n/wts create my-feature            # Get help creating a worktree\n/wts how do I switch worktrees?   # Ask a question\n/wts cleanup                      # Get help cleaning up\n```\n\n## What the Skill Can Do\n\n- **Answer questions** about wts usage and workflows\n- **Execute commands** like create, switch, delete, pr, cleanup\n- **Troubleshoot** common issues\n- **Guide setup** if wts isn't installed or initialized\n- **Explain concepts** about Git worktrees and wts configuration\n\n## Quick Command Reference\n\n| Command | Description |\n|---------|-------------|\n| `wts init` | Initialize project for wts |\n| `wts create <alias>` | Create a new worktree |\n| `wts list` | List worktrees |\n| `wts switch` | Switch worktree (fzf picker) |\n| `wts delete <alias>` | Delete a worktree |\n| `wts pr` | Create PR from worktree |\n| `wts cleanup` | Clean up merged worktrees |\n\n## Links\n\n- [WTS on npm](https://www.npmjs.com/package/@desplega.ai/wts)\n- [desplega.ai](https://desplega.ai)\n",
+        "cc-plugin/brain/README.md": "# Brain Plugin for Claude Code\n\nPersonal knowledge management integration with the `brain` CLI.\n\n## Installation\n\n```bash\n# First, install the brain CLI\ncd ai-toolbox/brain && bun install && bun link\n\n# Then install the Claude Code plugin\n/plugin install brain@desplega-ai-toolbox\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/brain:note` | Quickly capture a note to your brain |\n| `/brain:todos` | Manage todos with projects and due dates |\n| `/brain:cron` | Manage automatic background sync |\n\n## Skill\n\nThe `brain-expert` skill provides Claude with knowledge about how to use the brain CLI for:\n- Capturing timestamped notes\n- Creating structured entries\n- Searching via FTS5 or semantic search\n- Syncing and managing the database\n\n## Requirements\n\n- `brain` CLI installed and linked (`bun link` in brain directory)\n- Brain initialized (`brain init`)\n- For semantic search: `OPENAI_API_KEY` environment variable\n"
+      },
+      "plugins": [
+        {
+          "name": "desplega",
+          "source": "./cc-plugin/base",
+          "description": "Plugin for effective agentic development",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add desplega-ai/ai-toolbox",
+            "/plugin install desplega@desplega-ai-toolbox"
+          ]
+        },
+        {
+          "name": "agent-swarm",
+          "source": "./cc-plugin/swarm",
+          "description": "Plugin for multi-agent coordination using agent-swarm MCP",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add desplega-ai/ai-toolbox",
+            "/plugin install agent-swarm@desplega-ai-toolbox"
+          ]
+        },
+        {
+          "name": "wts",
+          "source": "./cc-plugin/wts",
+          "description": "Plugin for Git worktree management using @desplega.ai/wts",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add desplega-ai/ai-toolbox",
+            "/plugin install wts@desplega-ai-toolbox"
+          ]
+        },
+        {
+          "name": "file-review",
+          "source": "./cc-plugin/file-review",
+          "description": "Plugin for reviewing markdown files with inline comments using file-review GUI",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add desplega-ai/ai-toolbox",
+            "/plugin install file-review@desplega-ai-toolbox"
+          ]
+        },
+        {
+          "name": "brain",
+          "source": "./cc-plugin/brain",
+          "description": "Plugin for the `brain` tool to manage and retrieve information from your personal local brain",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add desplega-ai/ai-toolbox",
+            "/plugin install brain@desplega-ai-toolbox"
+          ]
+        },
+        {
+          "name": "remarkable",
+          "source": "./cc-plugin/remarkable",
+          "description": "Plugin to interact with your reMarkable tablet",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add desplega-ai/ai-toolbox",
+            "/plugin install remarkable@desplega-ai-toolbox"
+          ]
+        }
+      ]
+    },
+    {
       "name": "desplega.ai",
       "version": null,
       "description": "desplega.ai Marketplace - Plugins for `qa-use` and other Vibe QA testing tools",

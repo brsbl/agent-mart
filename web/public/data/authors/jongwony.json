@@ -15,7 +15,7 @@
       "signals": {
         "stars": 41,
         "forks": 4,
-        "pushed_at": "2026-01-28T08:03:28Z"
+        "pushed_at": "2026-02-01T03:33:59Z"
       },
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"epistemic-protocols\",\n  \"owner\": {\n    \"name\": \"jongwony\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"prothesis\",\n      \"source\": \"./prothesis\",\n      \"description\": \"Place epistemic perspectives before inquiry (πρόθεσις)\"\n    },\n    {\n      \"name\": \"syneidesis\",\n      \"source\": \"./syneidesis\",\n      \"description\": \"Surface potential gaps at decision points (συνείδησις)\"\n    },\n    {\n      \"name\": \"reflexion\",\n      \"source\": \"./reflexion\",\n      \"description\": \"Cross-session learning via Reflexion pattern\"\n    },\n    {\n      \"name\": \"write\",\n      \"source\": \"./write\",\n      \"description\": \"Multi-perspective blog drafting from session insights\"\n    },\n    {\n      \"name\": \"hermeneia\",\n      \"source\": \"./hermeneia\",\n      \"description\": \"Clarify intent-expression gaps through dialogue\"\n    }\n  ]\n}\n",
@@ -73,6 +73,166 @@
           "install_commands": [
             "/plugin marketplace add jongwony/epistemic-protocols",
             "/plugin install hermeneia@epistemic-protocols"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "cc-plugin",
+      "version": null,
+      "description": "Deep web research agent powered by Tavily search API",
+      "repo_full_name": "jongwony/cc-plugin",
+      "repo_url": "https://github.com/jongwony/cc-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-01T02:34:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-plugin\",\n  \"owner\": {\n    \"name\": \"jongwony\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tavily\",\n      \"source\": \"./external-plugin/tavily\",\n      \"description\": \"Deep web research agent powered by Tavily search API\"\n    },\n    {\n      \"name\": \"bigquery\",\n      \"source\": \"./external-plugin/bigquery\",\n      \"description\": \"BigQuery data analysis agent with SQL generation and schema exploration\"\n    },\n    {\n      \"name\": \"google\",\n      \"source\": \"./google\",\n      \"description\": \"Google services: Gemini CLI, Veo, video understanding, image prompts, calendar sync\"\n    },\n    {\n      \"name\": \"session\",\n      \"source\": \"./session\",\n      \"description\": \"Session utilities: search history, git stash linking\"\n    },\n    {\n      \"name\": \"linear\",\n      \"source\": \"./linear\",\n      \"description\": \"Linear integration: activity reports, documents, milestones\"\n    },\n    {\n      \"name\": \"amplitude-user-lookup\",\n      \"source\": \"./amplitude-user-lookup\",\n      \"description\": \"Amplitude user behavior queries\"\n    },\n    {\n      \"name\": \"claude-code-internals\",\n      \"source\": \"./claude-code-internals\",\n      \"description\": \"Claude Code internals explorer\"\n    },\n    {\n      \"name\": \"codex\",\n      \"source\": \"./codex\",\n      \"description\": \"OpenAI Codex CLI integration\"\n    },\n    {\n      \"name\": \"fossil-ui\",\n      \"source\": \"./fossil-ui\",\n      \"description\": \"Git to Fossil export\"\n    },\n    {\n      \"name\": \"github-activity\",\n      \"source\": \"./github-activity\",\n      \"description\": \"GitHub activity reports\"\n    },\n    {\n      \"name\": \"pdf-split\",\n      \"source\": \"./pdf-split\",\n      \"description\": \"PDF chapter splitting\"\n    },\n    {\n      \"name\": \"activity-workflow\",\n      \"source\": \"./activity-workflow\",\n      \"description\": \"Orchestrates activity collection and Google Calendar sync\"\n    },\n    {\n      \"name\": \"slack\",\n      \"source\": \"./slack\",\n      \"description\": \"Slack utilities: search messages, fetch threads\"\n    },\n    {\n      \"name\": \"release\",\n      \"source\": \"./release\",\n      \"description\": \"Automated version bump, git tag, and GitHub release creation\"\n    }\n  ]\n}\n",
+        "README.md": "CLAUDE.md",
+        "linear/README.md": "# Linear Extended Skill\n\nClaude Code 스킬로 Linear GraphQL API를 직접 사용하여 Document와 ProjectMilestone을 생성/수정/삭제할 수 있습니다.\n\n## 개요\n\nLinear MCP 서버는 읽기 작업만 제공하지만, 이 스킬은 다음 기능을 추가합니다:\n\n### Document 기능\n- ✅ `documentCreate` - 문서 생성\n- ✅ `documentUpdate` - 문서 수정\n- ✅ `documentDelete` - 문서 삭제\n- ✅ `documentUnarchive` - 문서 복원\n\n### ProjectMilestone 기능\n- ✅ `projectMilestoneCreate` - 마일스톤 생성\n- ✅ `projectMilestoneUpdate` - 마일스톤 수정\n- ✅ `projectMilestoneDelete` - 마일스톤 삭제\n- ✅ `projectMilestones` - 마일스톤 조회 (리스트)\n- ✅ `projectMilestone` - 마일스톤 조회 (단일)\n- ✅ `projectMilestoneMove` - 마일스톤 이동\n\n## 설치\n\n이미 설치되었습니다:\n```\n~/.claude/skills/linear-extended/\n├── SKILL.md                    # 메인 스킬 정의\n├── README.md                   # 이 문서\n└── references/\n    ├── document-schema.md      # Document GraphQL 스키마\n    ├── milestone-schema.md     # ProjectMilestone GraphQL 스키마\n    └── examples.md             # 사용 예제 모음\n```\n\n## 사전 준비\n\n### 1. Linear API 키 발급\n\n1. Linear 설정으로 이동: https://linear.app/settings/api\n2. \"Personal API keys\" 섹션에서 새 키 생성\n3. 키를 안전한 곳에 저장 (한 번만 표시됨)\n\n### 2. 환경 변수 설정\n\n```bash\n# ~/.zshrc 또는 ~/.bashrc에 추가\nexport LINEAR_API_KEY=\"lin_api_xxxxxxxxxxxxxxxxxxxxx\"\n```\n\n적용:\n```bash\nsource ~/.zshrc  # 또는 ~/.bashrc\n```\n\n확인:\n```bash\necho $LINEAR_API_KEY  # 키가 출력되어야 함\n```\n\n## 테스트\n\n### API 연결 테스트\n\n```bash\ncurl -X POST https://api.linear.app/graphql \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: $LINEAR_API_KEY\" \\\n  -d '{\"query\": \"{ viewer { id name email } }\"}' | jq '.'\n```\n\n**예상 출력:**\n```json\n{\n  \"data\": {\n    \"viewer\": {\n      \"id\": \"...\",\n      \"name\": \"Your Name\",\n      \"email\": \"your.email@example.com\"\n    }\n  }\n}\n```\n\n### 프로젝트 목록 조회\n\n```bash\ncurl -X POST https://api.linear.app/graphql \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: $LINEAR_API_KEY\" \\\n  -d '{\"query\": \"{ projects(first: 5) { nodes { id name state } } }\"}' | jq '.'\n```\n\n## 사용 방법\n\n### Claude Code에서 사용\n\n이 스킬이 설치되면 Claude Code가 자동으로 인식합니다:\n\n```\nYou: \"프로젝트 abc123에 'Technical Spec' 문서를 만들어줘\"\n\nClaude: [SKILL.md의 documentCreate 예제를 사용하여 문서 생성]\n```\n\n### 직접 사용 (bash)\n\n#### 문서 생성\n\n```bash\nPROJECT_ID=\"your-project-id\"\n\n# Create temp file with Python for proper JSON encoding\nTEMP_FILE=$(mktemp)\npython3 << EOF > \"$TEMP_FILE\"\nimport json\ndata = {\n    \"query\": \"\"\"mutation DocumentCreate(\\$input: DocumentCreateInput!) {\n        documentCreate(input: \\$input) {\n            success\n            document { id url }\n        }\n    }\"\"\",\n    \"variables\": {\n        \"input\": {\n            \"title\": \"Technical Specification\",\n            \"content\": \"# Overview\\\\n\\\\nTBD\",\n            \"projectId\": \"$PROJECT_ID\"\n        }\n    }\n}\nprint(json.dumps(data, ensure_ascii=False))\nEOF\n\ncurl -X POST https://api.linear.app/graphql \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: $LINEAR_API_KEY\" \\\n  -d @\"$TEMP_FILE\" | jq '.'\n\nrm \"$TEMP_FILE\"\n```\n\n#### 마일스톤 생성\n\n```bash\nPROJECT_ID=\"your-project-id\"\n\n# Create temp file with Python for proper JSON encoding\nTEMP_FILE=$(mktemp)\npython3 << EOF > \"$TEMP_FILE\"\nimport json\ndata = {\n    \"query\": \"\"\"mutation ProjectMilestoneCreate(\\$input: ProjectMilestoneCreateInput!) {\n        projectMilestoneCreate(input: \\$input) {\n            success\n            projectMilestone { id name status }\n        }\n    }\"\"\",\n    \"variables\": {\n        \"input\": {\n            \"projectId\": \"$PROJECT_ID\",\n            \"name\": \"Beta Launch\",\n            \"targetDate\": \"2025-06-30\"\n        }\n    }\n}\nprint(json.dumps(data, ensure_ascii=False))\nEOF\n\ncurl -X POST https://api.linear.app/graphql \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: $LINEAR_API_KEY\" \\\n  -d @\"$TEMP_FILE\" | jq '.'\n\nrm \"$TEMP_FILE\"\n```\n\n#### 마일스톤 조회\n\n```bash\ncurl -X POST https://api.linear.app/graphql \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: $LINEAR_API_KEY\" \\\n  -d '{\"query\": \"{ projectMilestones(first: 10) { nodes { id name status progress targetDate project { name } } } }\"}' | jq '.'\n```\n\n## Linear MCP와 함께 사용\n\n### 권장 워크플로우\n\n1. **Linear MCP로 ID 조회**\n   ```\n   You: \"list projects\"\n   Claude: [Linear MCP의 list_projects 도구 사용]\n   ```\n\n2. **이 스킬로 생성/수정**\n   ```\n   You: \"프로젝트 abc123에 문서 만들어줘\"\n   Claude: [linear-extended 스킬의 documentCreate 사용]\n   ```\n\n3. **Linear MCP로 확인**\n   ```\n   You: \"문서 목록 보여줘\"\n   Claude: [Linear MCP의 list_documents 도구 사용]\n   ```\n\n### 도구 분담\n\n| 작업 | 사용할 도구 |\n|------|------------|\n| 프로젝트 조회 | Linear MCP (`list_projects`) |\n| 이슈 조회 | Linear MCP (`list_issues`) |\n| 문서 조회 | Linear MCP (`list_documents`, `get_document`) |\n| 문서 생성/수정/삭제 | **linear-extended** (이 스킬) |\n| 마일스톤 조회 | **linear-extended** (이 스킬) |\n| 마일스톤 생성/수정/삭제 | **linear-extended** (이 스킬) |\n\n## 검증 결과\n\n✅ **API 연결**: 정상 작동\n✅ **프로젝트 조회**: 정상 작동 (5개 프로젝트 확인)\n✅ **마일스톤 조회**: 정상 작동 (10개 마일스톤 확인, 다양한 상태)\n✅ **문서 조회**: 정상 작동 (5개 문서 확인)\n\n## 문서\n\n- **SKILL.md**: 메인 스킬 정의 (Claude Code가 읽음)\n- **references/document-schema.md**: Document API 완전한 스키마\n- **references/milestone-schema.md**: ProjectMilestone API 완전한 스키마\n- **references/examples.md**: 실전 예제 모음\n\n## 예제 시나리오\n\n### 1. 프로젝트 문서화 자동화\n\n```bash\n# 1. 프로젝트 ID 얻기 (Linear MCP 사용)\n# 2. 기술 문서 생성\ncurl -X POST https://api.linear.app/graphql \\\n  -H \"Authorization: $LINEAR_API_KEY\" \\\n  -d '{\n    \"query\": \"mutation { documentCreate(input: { title: \\\"API Design\\\", content: \\\"# API Endpoints\\\\n\\\\n- POST /users\\\\n- GET /users/:id\\\", projectId: \\\"PROJECT_ID\\\" }) { success document { url } } }\"\n  }'\n```\n\n### 2. 마일스톤 기반 프로젝트 관리\n\n```bash\n# 분기별 마일스톤 생성\nfor MONTH in 03 06 09 12; do\n  QUARTER=$(((10#$MONTH - 1) / 3 + 1))\n  TEMP_FILE=$(mktemp)\n\n  python3 << EOF > \"$TEMP_FILE\"\nimport json\ndata = {\n    \"query\": \"\"\"mutation ProjectMilestoneCreate(\\$input: ProjectMilestoneCreateInput!) {\n        projectMilestoneCreate(input: \\$input) {\n            success\n        }\n    }\"\"\",\n    \"variables\": {\n        \"input\": {\n            \"projectId\": \"PROJECT_ID\",\n            \"name\": f\"Q{$QUARTER} Delivery\",\n            \"targetDate\": f\"2025-{$MONTH}-31\"\n        }\n    }\n}\nprint(json.dumps(data, ensure_ascii=False))\nEOF\n\n  curl -X POST https://api.linear.app/graphql \\\n    -H \"Content-Type: application/json\" \\\n    -H \"Authorization: $LINEAR_API_KEY\" \\\n    -d @\"$TEMP_FILE\"\n\n  rm \"$TEMP_FILE\"\ndone\n```\n\n### 3. 진행 상황 리포트\n\n```bash\n# 모든 마일스톤의 진행률 확인\ncurl -X POST https://api.linear.app/graphql \\\n  -H \"Authorization: $LINEAR_API_KEY\" \\\n  -d '{\"query\": \"{ projectMilestones(first: 50) { nodes { name progress status targetDate } } }\"}' \\\n  | jq -r '.data.projectMilestones.nodes[] | \"\\(.name): \\((.progress * 100 | round))% (\\(.status))\"'\n```\n\n## 문제 해결\n\n### API 키가 작동하지 않음\n\n```bash\n# 키 확인\necho $LINEAR_API_KEY\n\n# 키 형식 확인 (lin_api_로 시작해야 함)\necho $LINEAR_API_KEY | grep \"^lin_api_\"\n```\n\n### GraphQL 에러\n\n에러 메시지를 확인:\n```bash\ncurl ... | jq '.errors'\n```\n\n흔한 에러:\n- `UNAUTHENTICATED`: API 키 확인\n- `NOT_FOUND`: ID가 존재하는지 확인\n- `RATE_LIMITED`: 잠시 후 재시도\n\n## 참고 자료\n\n- [Linear GraphQL API 공식 문서](https://linear.app/developers/graphql)\n- [Linear GraphQL Schema](https://github.com/linear/linear/blob/master/packages/sdk/src/schema.graphql)\n- [Claude Code Skills 가이드](https://raw.githubusercontent.com/anthropics/claude-plugins-official/refs/heads/main/plugins/plugin-dev/skills/skill-development/SKILL.md)\n\n## 라이선스\n\n이 스킬은 학습 및 개인 사용 목적으로 제공됩니다.\n"
+      },
+      "plugins": [
+        {
+          "name": "tavily",
+          "source": "./external-plugin/tavily",
+          "description": "Deep web research agent powered by Tavily search API",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install tavily@cc-plugin"
+          ]
+        },
+        {
+          "name": "bigquery",
+          "source": "./external-plugin/bigquery",
+          "description": "BigQuery data analysis agent with SQL generation and schema exploration",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install bigquery@cc-plugin"
+          ]
+        },
+        {
+          "name": "google",
+          "source": "./google",
+          "description": "Google services: Gemini CLI, Veo, video understanding, image prompts, calendar sync",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install google@cc-plugin"
+          ]
+        },
+        {
+          "name": "session",
+          "source": "./session",
+          "description": "Session utilities: search history, git stash linking",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install session@cc-plugin"
+          ]
+        },
+        {
+          "name": "linear",
+          "source": "./linear",
+          "description": "Linear integration: activity reports, documents, milestones",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install linear@cc-plugin"
+          ]
+        },
+        {
+          "name": "amplitude-user-lookup",
+          "source": "./amplitude-user-lookup",
+          "description": "Amplitude user behavior queries",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install amplitude-user-lookup@cc-plugin"
+          ]
+        },
+        {
+          "name": "claude-code-internals",
+          "source": "./claude-code-internals",
+          "description": "Claude Code internals explorer",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install claude-code-internals@cc-plugin"
+          ]
+        },
+        {
+          "name": "codex",
+          "source": "./codex",
+          "description": "OpenAI Codex CLI integration",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install codex@cc-plugin"
+          ]
+        },
+        {
+          "name": "fossil-ui",
+          "source": "./fossil-ui",
+          "description": "Git to Fossil export",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install fossil-ui@cc-plugin"
+          ]
+        },
+        {
+          "name": "github-activity",
+          "source": "./github-activity",
+          "description": "GitHub activity reports",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install github-activity@cc-plugin"
+          ]
+        },
+        {
+          "name": "pdf-split",
+          "source": "./pdf-split",
+          "description": "PDF chapter splitting",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install pdf-split@cc-plugin"
+          ]
+        },
+        {
+          "name": "activity-workflow",
+          "source": "./activity-workflow",
+          "description": "Orchestrates activity collection and Google Calendar sync",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install activity-workflow@cc-plugin"
+          ]
+        },
+        {
+          "name": "slack",
+          "source": "./slack",
+          "description": "Slack utilities: search messages, fetch threads",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install slack@cc-plugin"
+          ]
+        },
+        {
+          "name": "release",
+          "source": "./release",
+          "description": "Automated version bump, git tag, and GitHub release creation",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/cc-plugin",
+            "/plugin install release@cc-plugin"
           ]
         }
       ]

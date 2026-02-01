@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "Coobaha",
+    "display_name": "Alexander Ryzhikov",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2446638?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jjtask-marketplace",
+      "version": null,
+      "description": "Structured task management using JJ (Jujutsu). Uses empty revisions as TODO markers with [task:*] flags, forming a DAG of plannable and executable tasks.",
+      "repo_full_name": "Coobaha/jjtask",
+      "repo_url": "https://github.com/Coobaha/jjtask",
+      "repo_description": "Structured task management using JJ (Jujutsu). Uses empty revisions as TODO markers with [task:*] flags, forming a DAG of plannable and executable tasks.",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-01-30T04:47:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jjtask-marketplace\",\n  \"owner\": {\n    \"name\": \"Alexander Ryzhikov\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jjtask\",\n      \"description\": \"Structured task management using JJ (Jujutsu). Uses empty revisions as TODO markers with [task:*] flags, forming a DAG of plannable and executable tasks.\",\n      \"source\": \"./claude-plugin\",\n      \"keywords\": [\n        \"task-management\",\n        \"jujutsu\",\n        \"jj\",\n        \"version-control\",\n        \"ai-workflow\",\n        \"todo\",\n        \"dag\",\n        \"parallel-agents\",\n        \"claude-code\",\n        \"agentic\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# jjtask\n\n[![Test](https://github.com/Coobaha/jjtask/actions/workflows/ci.yml/badge.svg)](https://github.com/Coobaha/jjtask/actions/workflows/ci.yml)\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)\n\nStructured task management using JJ (Jujutsu). Uses empty revisions as TODO markers with `[task:*]` flags, forming a DAG of plannable and executable tasks.\n\n<img width=\"711\" height=\"667\" alt=\"jjtask log\" src=\"https://github.com/user-attachments/assets/9784a47c-5826-4aff-b9cb-dbed4d23469a\" />\n\n## Prerequisites\n\n- [JJ (Jujutsu)](https://martinvonz.github.io/jj/) - install with `cargo install jj-cli` or `brew install jj`\n\n## Quick Start\n\n```bash\n# Claude Code plugin\nclaude plugin marketplace add Coobaha/jjtask\nclaude plugin install jjtask@jjtask-marketplace\n```\n\n<img width=\"775\" height=\"245\" alt=\"Claude Code installation\" src=\"https://github.com/user-attachments/assets/81607621-6ed3-4374-92a5-c007b5f8986f\" />\n\n\n## Workflow\n\njjtask uses a \"mega-merge\" model: @ is always a merge of all active work.\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                     PLANNING PHASE                          │\n├─────────────────────────────────────────────────────────────┤\n│  1. Create task DAG with specifications                     │\n│     jjtask create \"Add user auth\" \"## Requirements...\"      │\n│     jjtask parallel \"Frontend\" \"Backend\" \"Tests\"            │\n│                                                             │\n│  2. Review structure                                        │\n│     jjtask find                                             │\n│                                                             │\n│  Result: Empty revisions with [task:todo] flags             │\n└─────────────────────────────────────────────────────────────┘\n                              │\n                              ▼\n┌─────────────────────────────────────────────────────────────┐\n│                     WORKING PHASE                           │\n├─────────────────────────────────────────────────────────────┤\n│  3. Start working on a task (@ becomes merge of active)     │\n│     jjtask wip <task-id>                                    │\n│                                                             │\n│  4. Work directly in @ - changes go to merged tasks         │\n│     # write code, make changes                              │\n│                                                             │\n│  5. Complete task when ALL criteria met                     │\n│     jjtask done                                             │\n│                                                             │\n│  6. Ready to push? Flatten the merge                        │\n│     jjtask squash                                           │\n└─────────────────────────────────────────────────────────────┘\n```\n\n### Workflow Rules\n\n- Never mark `done` unless ALL acceptance criteria pass\n- Use `jjtask flag blocked/review/untested` if criteria aren't fully met\n- Task descriptions are specifications - follow them exactly\n- @ is always a merge of all WIP + done-with-content tasks\n\n## Task Flags\n\nStatus progression: `draft` → `todo` → `wip` → `done`\n\n| Flag | Meaning |\n| --- | --- |\n| `draft` | Placeholder, needs full specification |\n| `todo` | Ready to work, complete specs |\n| `wip` | Work in progress |\n| `blocked` | Waiting on external dependency |\n| `standby` | Awaits decision |\n| `untested` | Implementation done, needs testing |\n| `review` | Needs review |\n| `done` | Complete, all acceptance criteria met |\n\n## Log Colors\n\njjtask config adds colored task flags to `jj log`:\n\n```\n○  k [task:todo] Add user authentication +12L\n│     Implement OAuth2 flow with Google provider...\n○  m [task:wip] Fix database connection pooling\n○  n [task:done] Update dependencies\n```\n\nColors: `todo` yellow, `wip` cyan, `done` green, `blocked` red, `draft` dim, `review` blue, `untested` magenta.\n\nThe `+12L` hint shows description length (specs with >3 lines).\n\n### Adding to your jj log template\n\nTo show colored task flags in your custom log template, use the `task_flag` and `task_title` aliases from jjtask config:\n\n```toml\n# In your jj config [templates] section\nlog = '''\n...\nif(description.starts_with(\"[task:\"),\n  label(\"task \" ++ task_flag, \"[task:\" ++ task_flag ++ \"]\") ++ \" \" ++ task_title,\n  description.first_line(),\n),\n...\n'''\n```\n\nThe `label(\"task \" ++ task_flag, ...)` applies colors defined in jjtask's `[colors]` section.\n\n## Commands\n\n| Command | Action |\n| --- | --- |\n| `jjtask create <title> [desc]` | Create task revision |\n| `jjtask wip [task]` | Mark WIP, rebuild @ as merge |\n| `jjtask done [task]` | Mark done (stays in @ if content) |\n| `jjtask drop <task>` | Remove from @ (mark standby) |\n| `jjtask squash` | Flatten @ merge for push |\n| `jjtask find [-s status]` | List tasks by status |\n| `jjtask flag <status> [-r rev]` | Update task status |\n| `jjtask parallel <t1> <t2>...` | Create sibling tasks |\n| `jjtask show-desc [-r rev]` | Print revision description |\n| `jjtask checkpoint [name]` | Create named checkpoint |\n\nMulti-repo support (requires `.jj-workspaces.yaml`):\n\n| Command | Action |\n| --- | --- |\n| `jjtask all <cmd> [args]` | Run jj command across repos |\n\n## Installation\n\n### Option 1: PATH + Config (Recommended)\n\n```bash\n# Clone\ngit clone https://github.com/coobaha/jjtask.git ~/jjtask\n\n# Add to PATH (add to ~/.bashrc or ~/.config/fish/config.fish)\nexport PATH=\"$HOME/jjtask/bin:$PATH\"\n\n# Merge config into your jj config\ncat ~/jjtask/config/conf.d/10-jjtask.toml >> ~/.config/jj/config.toml\n```\n\nThis gives you both `jjtask` CLI and `jj task` subcommand.\n\n### Option 2: Fish Shell Function\n\n```fish\n# Source the function (add to config.fish for persistence)\nsource ~/jjtask/shell/fish/functions/jjtask-env.fish\n\njjtask-env       # activate (adds PATH, layers config)\njjtask-env off   # deactivate\n```\n\n### Option 3: Install Script\n\n```bash\n./install.sh              # Merge config into ~/.config/jj/config.toml\n./install.sh --agent      # Agent mode: set JJ_CONFIG env var\n./install.sh --uninstall  # Remove\n```\n\n## Multi-Repo Projects\n\nCreate `.jj-workspaces.yaml` in project root:\n\n```yaml\nrepos:\n  - path: frontend\n    name: frontend\n  - path: backend\n    name: backend\n```\n\nThen `jjtask find` and `jjtask all` operate across all repos.\n\n## Writing Good Task Descriptions\n\n```\nShort title (< 50 chars)\n\n## Context\nWhy this task exists, what problem it solves.\n\n## Requirements\n- Specific requirement 1\n- Specific requirement 2\n\n## Acceptance criteria\n- Criterion 1 (testable)\n- Criterion 2 (testable)\n```\n\n## Development\n\nRequires [mise](https://mise.jdx.dev/) for toolchain management.\n\n```bash\nmise install      # Install Go 1.25 + golangci-lint\nmise run build    # Build binary to bin/jjtask-go\nmise run test     # Run integration tests\nmise run lint     # Run golangci-lint\n```\n\n## Documentation\n\n- [CLAUDE.md](CLAUDE.md) - Architecture and development details\n- [claude-plugin/skills/jjtask/SKILL.md](claude-plugin/skills/jjtask/SKILL.md) - Full workflow documentation\n\n## Acknowledgments\n\nInspired by:\n- [beads](https://github.com/steveyegge/beads) - AI-supervised issue tracker by Steve Yegge\n- [jj-todo-workflow](https://github.com/YPares/agent-skills/blob/master/jj-todo-workflow/SKILL.md) - JJ-based TODO workflow skill by Yves Parès\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "jjtask",
+          "description": "Structured task management using JJ (Jujutsu). Uses empty revisions as TODO markers with [task:*] flags, forming a DAG of plannable and executable tasks.",
+          "source": "./claude-plugin",
+          "keywords": [
+            "task-management",
+            "jujutsu",
+            "jj",
+            "version-control",
+            "ai-workflow",
+            "todo",
+            "dag",
+            "parallel-agents",
+            "claude-code",
+            "agentic"
+          ],
+          "categories": [
+            "agentic",
+            "ai-workflow",
+            "claude-code",
+            "dag",
+            "jj",
+            "jujutsu",
+            "parallel-agents",
+            "task-management",
+            "todo",
+            "version-control"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Coobaha/jjtask",
+            "/plugin install jjtask@jjtask-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

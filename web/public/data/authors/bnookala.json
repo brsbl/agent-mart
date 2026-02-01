@@ -1,0 +1,45 @@
+{
+  "author": {
+    "id": "bnookala",
+    "display_name": "Bhargav Nookala",
+    "avatar_url": "https://avatars.githubusercontent.com/u/87996?u=ed9240da002ed676ae9eeb50afb0566164f30079&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "flappy-claude",
+      "version": "1.0.0",
+      "description": "Play Flappy Bird while Claude works!",
+      "repo_full_name": "bnookala/flappy-claude",
+      "repo_url": "https://github.com/bnookala/flappy-claude",
+      "repo_description": "Play flappy claude while claude works",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-13T10:35:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"flappy-claude\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Play Flappy Bird while Claude works!\",\n  \"owner\": {\n    \"name\": \"bnookala\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"flappy-claude\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"bnookala/flappy-claude\",\n        \"path\": \"plugins/flappy-claude\"\n      },\n      \"description\": \"Play Flappy Bird while Claude works! Automatically prompts to play during long tasks, pauses when Claude asks questions, and notifies when Claude is ready.\",\n      \"version\": \"0.2.0\",\n      \"source\": \".\",\n      \"category\": \"entertainment\",\n      \"author\": {\n        \"name\": \"bnookala\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Flappy Claude\n\nA terminal-based Flappy Bird game that integrates with Claude Code hooks to provide entertainment during wait times.\n\n## Quick Start\n\n```bash\nuvx flappy-claude\n```\n\n## Controls\n\n- `SPACE` - Flap / Resume from pause\n- `Y` - Return to Claude (when Claude is waiting)\n- `Q` / `ESC` - Quit\n\n## Claude Code Integration\n\nFlappy Claude integrates with Claude Code hooks to automatically:\n- **Prompt to play** when Claude is working on a long task\n- **Pause the game** when Claude asks you a question\n- **Notify you** when Claude finishes and is ready for input\n\n### How It Works\n\n1. **PreToolUse Hook**: Monitors Claude's tool usage. After several tool calls in a conversation turn, prompts you to play while Claude works.\n2. **Stop Hook**: Fires when Claude finishes a response. Signals the game that Claude is ready, showing a prompt to return.\n3. **Pause on Question**: When Claude uses `AskUserQuestion`, the game pauses with a 4-second cooldown so you can switch to answer Claude.\n\n### Installation\n\n#### Option 1: Claude Code Plugin (Recommended)\n\nInstall as a Claude Code plugin for automatic hook configuration:\n\n```bash\n# Add the marketplace (if using a custom marketplace)\n/plugin marketplace add bnookala/flappy-claude\n\n# Install the plugin\n/plugin install flappy-claude\n```\n\nOr install directly from GitHub:\n\n```bash\n/plugin install github:bnookala/flappy-claude\n```\n\nThat's it! The hooks are automatically configured.\n\n#### Option 2: Manual Installation\n\nIf you prefer manual setup:\n\n1. **Copy the hook scripts** to your Claude Code hooks directory:\n\n   ```bash\n   mkdir -p ~/.claude/hooks\n   curl -o ~/.claude/hooks/pretooluse.sh https://raw.githubusercontent.com/bnookala/flappy-claude/main/hooks/pretooluse.sh\n   curl -o ~/.claude/hooks/stop.sh https://raw.githubusercontent.com/bnookala/flappy-claude/main/hooks/stop.sh\n   chmod +x ~/.claude/hooks/*.sh\n   ```\n\n2. **Configure Claude Code** by adding hooks to your settings file.\n\n   Edit `~/.claude/settings.json` (create if it doesn't exist):\n\n   ```json\n   {\n     \"hooks\": {\n       \"PreToolUse\": [\n         {\n           \"matcher\": \"*\",\n           \"hooks\": [\"~/.claude/hooks/pretooluse.sh\"]\n         }\n       ],\n       \"Stop\": [\n         {\n           \"matcher\": \"*\",\n           \"hooks\": [\"~/.claude/hooks/stop.sh\"]\n         }\n       ]\n     }\n   }\n   ```\n\nThe game runs via `uvx flappy-claude` - no Python installation required!\n\n### Hook Behavior\n\n#### PreToolUse Hook (`pretooluse.sh`)\n\nTriggers during Claude's tool execution with the following conditions:\n- Only prompts once every **10 conversation turns**\n- Requires at least **5 tool calls** in the current turn before prompting\n- Only prompts when a **terminal app is in focus** (macOS)\n- **Pauses the game immediately** when Claude asks a question (`AskUserQuestion` tool)\n\nConfiguration variables at the top of `pretooluse.sh`:\n```bash\nTURNS_BETWEEN_PROMPTS=10    # Conversation turns between play prompts\nMIN_TOOL_CALLS=5            # Minimum tool calls before prompting\n```\n\n#### Stop Hook (`stop.sh`)\n\nTriggers when Claude finishes a response:\n- Writes \"ready\" signal if game is running\n- Game shows prompt: \"Claude has finished! [Y] Return to Claude [N] Keep playing\"\n- Auto-closes after 10 seconds if no input\n\n### Game States\n\n| State | Description | Controls |\n|-------|-------------|----------|\n| **Waiting** | Start screen before playing | `SPACE` to start |\n| **Playing** | Active gameplay | `SPACE` to flap, `Q` to quit |\n| **Paused** | Claude asked a question | Wait 4s, then `SPACE` to resume |\n| **Prompted** | Claude finished working | `Y` to return, `N` to keep playing |\n| **Claude Waiting** | Playing after dismissing prompt | Header shows \"CLAUDE WAITING\", `Y` to return |\n\n### File Locations\n\n| File | Purpose |\n|------|---------|\n| `/tmp/flappy-claude-signal` | IPC signal file (\"ready\" or \"pause\") |\n| `/tmp/flappy-claude-lock` | Lock directory (indicates game is running) |\n| `/tmp/flappy-claude-hook.log` | Debug log for hook activity |\n| `~/.flappy-claude/highscore` | Persistent high score |\n\n### Troubleshooting\n\n**Game doesn't pause when Claude asks a question:**\n- Ensure the game was started after the hook updates (restart the game)\n- Check that the lock directory exists: `ls -la /tmp/flappy-claude-lock`\n- Check the hook log: `tail -f /tmp/flappy-claude-hook.log`\n\n**Prompt to play never appears:**\n- Verify hooks are installed: `ls ~/.claude/hooks/`\n- Check Claude Code settings include the hooks configuration\n- Ensure terminal is in focus (hook checks frontmost app on macOS)\n- May need to wait for 5+ tool calls and 10+ conversation turns\n\n**Game doesn't detect Claude is ready:**\n- Check signal file: `cat /tmp/flappy-claude-signal`\n- Verify stop hook is configured in settings.json\n\n## Development\n\n```bash\n# Run locally\nuv run python -m flappy_claude\n\n# Run tests\nuv run pytest\n\n# Single-life mode (exit on death instead of auto-restart)\nuv run python -m flappy_claude --single-life\n\n# Custom signal file location\nuv run python -m flappy_claude --signal-file /tmp/my-signal\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "flappy-claude",
+          "source": ".",
+          "description": "Play Flappy Bird while Claude works! Automatically prompts to play during long tasks, pauses when Claude asks questions, and notifies when Claude is ready.",
+          "version": "0.2.0",
+          "category": "entertainment",
+          "author": {
+            "name": "bnookala"
+          },
+          "categories": [
+            "entertainment"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bnookala/flappy-claude",
+            "/plugin install flappy-claude@flappy-claude"
+          ]
+        }
+      ]
+    }
+  ]
+}

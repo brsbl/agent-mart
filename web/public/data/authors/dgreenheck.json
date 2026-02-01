@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "dgreenheck",
+    "display_name": "Dan Greenheck",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3814912?u=3277a136707242b8032acb03f1c219f8ec35632c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "webgpu-threejs-tsl",
+      "version": null,
+      "description": "Claude skill for WebGPU-enabled Three.js development with TSL (Three.js Shading Language)",
+      "repo_full_name": "dgreenheck/webgpu-claude-skill",
+      "repo_url": "https://github.com/dgreenheck/webgpu-claude-skill",
+      "repo_description": "A Claude skill for developing WebGPU applications with Three.js",
+      "signals": {
+        "stars": 314,
+        "forks": 29,
+        "pushed_at": "2026-01-23T04:35:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"webgpu-threejs-tsl\",\n  \"owner\": {\n    \"name\": \"Dan Greenheck\",\n    \"email\": \"dgreenheck@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude skill for WebGPU-enabled Three.js development with TSL (Three.js Shading Language)\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"webgpu-threejs-tsl\",\n      \"description\": \"Comprehensive guide for WebGPU Three.js with TSL - covers renderer setup, node materials, compute shaders, post-processing, and WGSL integration\",\n      \"source\": \"./\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"webgpu-threejs-tsl\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude skill for WebGPU-enabled Three.js development with TSL (Three.js Shading Language)\",\n  \"author\": {\n    \"name\": \"Dan Greenheck\",\n    \"url\": \"https://github.com/dgreenheck\"\n  },\n  \"repository\": \"https://github.com/dgreenheck/webgpu-claude-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"webgpu\",\n    \"three.js\",\n    \"threejs\",\n    \"tsl\",\n    \"shaders\",\n    \"graphics\",\n    \"3d\",\n    \"compute\",\n    \"wgsl\"\n  ],\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# WebGPU Three.js TSL Skill\n\nAn Agent Skill for developing WebGPU-enabled Three.js applications using TSL (Three.js Shading Language).\n\n## Overview\n\nThis skill provides Claude with comprehensive knowledge for:\n\n- Setting up Three.js with WebGPU renderer\n- Writing shaders using TSL (Three.js Shading Language)\n- Creating node-based materials\n- Building GPU compute shaders\n- Implementing post-processing effects\n- Integrating custom WGSL code\n\n## Installation\n\n### Claude Code\n\n```bash\n# Install from this repository\n/skill install webgpu-threejs-tsl@<your-github-username>/webgpu-claude-skill\n```\n\n### Manual Installation\n\nCopy the `skills/webgpu-threejs-tsl` folder to:\n- **Global**: `~/.claude/skills/`\n- **Project**: `<project>/.claude/skills/`\n\n## Skill Structure\n\n```\nskills/webgpu-threejs-tsl/\n├── SKILL.md                    # Entry point with overview\n├── REFERENCE.md                # Quick reference cheatsheet\n├── docs/\n│   ├── core-concepts.md        # Types, operators, uniforms, control flow\n│   ├── materials.md            # Node materials and properties\n│   ├── compute-shaders.md      # GPU compute documentation\n│   ├── post-processing.md      # Built-in and custom effects\n│   └── wgsl-integration.md     # Custom WGSL functions\n├── examples/\n│   ├── basic-setup.js          # Minimal WebGPU project\n│   ├── custom-material.js      # Custom shader material\n│   ├── particle-system.js      # GPU compute particles\n│   ├── post-processing.js      # Effect pipeline\n│   └── earth-shader.js         # Complete Earth with atmosphere\n└── templates/\n    ├── webgpu-project.js       # Starter project template\n    └── compute-shader.js       # Compute shader template\n```\n\n## Topics Covered\n\n### Core Concepts\n- Types and constructors (float, vec2, vec3, vec4, color, uniform)\n- Vector swizzling\n- Operators and math functions\n- Control flow (If, Loop, Fn)\n- Time and animation\n\n### Materials\n- All node material types\n- Material properties (color, roughness, metalness, etc.)\n- Physical material features (clearcoat, transmission, iridescence)\n- Vertex displacement\n\n### Compute Shaders\n- Instanced array buffers\n- Parallel physics simulation\n- Particle systems\n- Atomic operations and barriers\n\n### Post-Processing\n- Built-in effects (bloom, blur, FXAA, DOF)\n- Custom effects with Fn()\n- Effect chaining\n- Multiple render targets\n\n### WGSL Integration\n- Custom WGSL functions with wgslFn()\n- Hybrid TSL/WGSL approaches\n- Performance optimization\n\n## Quick Example\n\n```javascript\nimport * as THREE from 'three/webgpu';\nimport { color, time, oscSine, normalWorld, cameraPosition, positionWorld, Fn, float } from 'three/tsl';\n\n// WebGPU renderer\nconst renderer = new THREE.WebGPURenderer();\nawait renderer.init();\n\n// TSL material with animated fresnel\nconst material = new THREE.MeshStandardNodeMaterial();\n\nmaterial.colorNode = color(0x0066ff);\n\nmaterial.emissiveNode = Fn(() => {\n  const viewDir = cameraPosition.sub(positionWorld).normalize();\n  const fresnel = float(1).sub(normalWorld.dot(viewDir).saturate()).pow(3);\n  return color(0x00ffff).mul(fresnel).mul(oscSine(time));\n})();\n```\n\n## Resources\n\n- [Three.js Shading Language Wiki](https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language)\n- [Three.js WebGPU Examples](https://github.com/mrdoob/three.js/tree/master/examples)\n- [Agent Skills Specification](https://github.com/anthropics/skills)\n\n## License\n\nMIT License\n\nCode examples derived from [Three.js](https://github.com/mrdoob/three.js) (MIT License).\n"
+      },
+      "plugins": [
+        {
+          "name": "webgpu-threejs-tsl",
+          "description": "Comprehensive guide for WebGPU Three.js with TSL - covers renderer setup, node materials, compute shaders, post-processing, and WGSL integration",
+          "source": "./",
+          "strict": false,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add dgreenheck/webgpu-claude-skill",
+            "/plugin install webgpu-threejs-tsl@webgpu-threejs-tsl"
+          ]
+        }
+      ]
+    }
+  ]
+}

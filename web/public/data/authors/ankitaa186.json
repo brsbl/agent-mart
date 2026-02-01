@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "ankitaa186",
+    "display_name": "Ankit",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7693795?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "host-terminal-marketplace",
+      "version": null,
+      "description": "Terminal access plugins for Claude Cowork",
+      "repo_full_name": "ankitaa186/host-terminal-mcp",
+      "repo_url": "https://github.com/ankitaa186/host-terminal-mcp",
+      "repo_description": "Terminal App for Claude co-work",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-01T04:09:20Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"host-terminal-marketplace\",\n  \"owner\": {\n    \"name\": \"Ankit\"\n  },\n  \"description\": \"Terminal access plugins for Claude Cowork\",\n  \"plugins\": [\n    {\n      \"name\": \"host-terminal\",\n      \"source\": \".\",\n      \"description\": \"Execute terminal commands on the host machine with configurable permissions. Includes /shell, /git, /explore commands and developer workflow skills.\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"host-terminal\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Execute terminal commands on the host machine with configurable permissions. Provides secure shell access for developers with allowlist-based command filtering, directory restrictions, and multiple permission modes.\",\n  \"author\": {\n    \"name\": \"Ankit\",\n    \"email\": \"ankit.ag.in@gmail.com\"\n  },\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\n    \"terminal\",\n    \"shell\",\n    \"bash\",\n    \"command-line\",\n    \"developer-tools\",\n    \"git\",\n    \"system\"\n  ],\n  \"categories\": [\n    \"developer-tools\",\n    \"productivity\",\n    \"system\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/yourusername/host-terminal-mcp\"\n  },\n  \"engines\": {\n    \"python\": \">=3.10\"\n  },\n  \"capabilities\": {\n    \"terminal\": true,\n    \"fileSystem\": \"read\",\n    \"network\": false\n  }\n}\n",
+        "README.md": "# Host Terminal MCP\n\nRun terminal commands on your computer through Claude.\n\n**Why?** Claude Cowork runs inside a sandboxed VM and can't access your host machine's terminal. This MCP plugin bridges that gap, letting Claude run commands directly on your computer (with permission controls).\n\n## Install\n\n```bash\n# Clone\ngit clone https://github.com/ankitag-in/host-terminal-mcp.git\ncd host-terminal-mcp\n\n# Install\nuv tool install .\n```\n\n## Configure Claude Desktop\n\nAdd to `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac) or `~/.config/claude/claude_desktop_config.json` (Linux):\n\n```json\n{\n  \"mcpServers\": {\n    \"host-terminal\": {\n      \"command\": \"host-terminal-mcp\"\n    }\n  }\n}\n```\n\nRestart Claude Desktop.\n\n## Use\n\nAsk Claude:\n- \"List files in my home directory\"\n- \"Show git status\"\n- \"What's running on port 3000?\"\n\n## Permission Modes\n\n| Mode | Description |\n|------|-------------|\n| `allowlist` | Only pre-approved commands (default, safest) |\n| `ask` | Prompts for unknown commands |\n| `allow_all` | Allows everything (dangerous!) |\n\nCommon read commands are pre-approved: `ls`, `cat`, `grep`, `git status`, `ps`, etc.\n\nDangerous commands are always blocked: `sudo`, `rm -rf /`, etc.\n\n## Commands\n\n```bash\n# Create config file\nhost-terminal-mcp --init-config\n\n# Run in ask mode (approve commands on the fly)\nhost-terminal-mcp --mode ask\n\n# Show help\nhost-terminal-mcp --help\n```\n\n## Config\n\nEdit `~/.config/host-terminal-mcp/config.yaml` to customize allowed commands.\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "host-terminal",
+          "source": ".",
+          "description": "Execute terminal commands on the host machine with configurable permissions. Includes /shell, /git, /explore commands and developer workflow skills.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ankitaa186/host-terminal-mcp",
+            "/plugin install host-terminal@host-terminal-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
