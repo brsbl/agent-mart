@@ -2,87 +2,24 @@
   "author": {
     "id": "fakebizprez",
     "display_name": "Anthony Fecarotta",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/160489593?u=7deacb13b05aa21ee621b4ee320e7e2780247ace&v=4",
-    "url": "https://github.com/fakebizprez",
-    "bio": "Founder of @linehaul-ai & @freightCognition ",
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 3,
-      "total_skills": 0,
-      "total_stars": 2,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/160489593?u=7deacb13b05aa21ee621b4ee320e7e2780247ace&v=4"
   },
   "marketplaces": [
     {
       "name": "interview-marketplace",
       "version": "0.1.0",
       "description": "Strategic roadmap planning through developer interviews",
-      "owner_info": {
-        "name": "fakebizprez",
-        "email": "anthony@linehaul.ai"
-      },
-      "keywords": [],
       "repo_full_name": "fakebizprez/interview-marketplace",
       "repo_url": "https://github.com/fakebizprez/interview-marketplace",
       "repo_description": "Claude Code plugin that interviews developers to generate strategic roadmaps and feature specs",
-      "homepage": "",
       "signals": {
         "stars": 2,
         "forks": 0,
-        "pushed_at": "2026-01-08T01:35:41Z",
-        "created_at": "2026-01-04T07:39:47Z",
-        "license": null
+        "pushed_at": "2026-01-08T01:35:41Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 565
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/interview-mode",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/interview-mode/commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/interview-mode/commands/interview-add-to-roadmap.md",
-          "type": "blob",
-          "size": 1609
-        },
-        {
-          "path": "plugins/interview-mode/commands/interview-roadmap.md",
-          "type": "blob",
-          "size": 2090
-        },
-        {
-          "path": "plugins/interview-mode/commands/interview-spec.md",
-          "type": "blob",
-          "size": 495
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"interview-marketplace\",\n  \"description\": \"Strategic roadmap planning through developer interviews\",\n  \"version\": \"0.1.0\",\n  \"owner\": {\n    \"name\": \"fakebizprez\",\n    \"email\": \"anthony@linehaul.ai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"interview-mode\",\n      \"description\": \"Interview-driven strategic roadmap generator for brownfield codebases - scan codebases, ask strategic questions, and generate prioritized development roadmaps with dependency tracking\",\n      \"source\": \"./plugins/interview-mode\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
-        "plugins/interview-mode/commands/interview-add-to-roadmap.md": "---\nname: interview-add-to-roadmap\ndescription: Interview to add a single new spec to the roadmap\nmodel: opus\n---\n\n## Step 1: Understand Existing Roadmap\n\nRead `.claude/planning/roadmap/roadmap.toml` and scan existing spec files to understand:\n\n- Current numbering scheme (e.g., `01-auth.md`, `02-dashboard.md`)\n- Existing priorities and dependencies\n- Where this new item fits\n\n## Step 2: Quick Capture Interview\n\nUse AskUserQuestionTool to ask **2-4 focused questions** to capture:\n\n1. **What** is this feature? (one sentence)\n2. **Why** does it matter? (the problem it solves)\n3. **Priority** relative to existing items\n4. **Dependencies** on other roadmap items\n\nKeep it brief. This is idea capture, not implementation planning.\n\n## Step 3: Create Roadmap Entry\n\nCreate a new file in `.claude/planning/roadmap/`:\n\n- Use next available number (e.g., `05-feature-name.md`)\n- Keep it concise:\n\n```markdown\n# Feature Name\n\n## Overview\n1-2 paragraphs: what this does and why it matters.\n\n## Priority\nP0/P1/P2 with one-sentence justification.\n\n## Dependencies\n- Requires: [list specs that must come first]\n- Enables: [list specs that depend on this]\n\n## Scope Boundaries\n- **In**: [key things included]\n- **Out**: [explicitly excluded for now]\n```\n\n## Step 4: Update Roadmap\n\nAdd the new entry to `.claude/planning/roadmap/roadmap.toml`.\n\n## Guidelines\n\n- **This is quick capture, not spec building.** Keep it under 5 minutes.\n- Save deep technical details for `/interview-spec` when ready to implement.\n- Focus on \"what\" and \"why\", defer \"how\" to spec phase.\n- One paragraph beats three. Brevity is a feature.\n",
-        "plugins/interview-mode/commands/interview-roadmap.md": "---\nname: interview-roadmap\ndescription: Scan codebase and create development roadmap\nmodel: opus\n---\n\n## Step 1: Scan the Codebase\n\nUnderstand the following aspects:\n\n- Current architecture and tech stack\n- Database schema and migrations\n- Existing patterns and conventions (even if inconsistent)\n- Incomplete features or TODOs\n- Technical debt areas\n- Recent development patterns\n- What's working well vs what's problematic\n- Legacy code that may have hidden business logic\n- Workflows\n- Integrations\n\n## Step 2: Interview the Developer\n\nUse AskUserQuestionTool to interview me about:\n\n- Feature requests from users/stakeholders\n- Technical debt that's blocking progress\n- Which existing patterns should we preserve vs refactor\n- Why certain architectural decisions were made\n- Integration requirements\n- Performance or scalability concerns\n- UI/UX improvements needed\n- What's off-limits to change\n- ANYTHING you think is relevant\n\n## Step 3: Create Prioritized Roadmap\n\nBased on the scan and interview, create a prioritized roadmap by generating separate spec files in `.claude/planning/roadmap/`:\n\n- `{feature-name-01}.md`, `{feature-name-02}.md`, etc. for each major initiative\n- Include dependencies between specs\n- Assign rough priority (P0/P1/P2)\n- Note which specs require refactoring existing code vs greenfield\n- Order them logically (prerequisites first)\n\n## Step 4: Create Roadmap Overview\n\nCreate `.claude/planning/roadmap/roadmap.toml` with:\n\n- Overview of all specs\n- References to mermaid diagram files\n- Recommended implementation order\n- Notes on brownfield considerations\n\nCreate two mermaid diagram files:\n\n- `.claude/planning/roadmap/dependencies.mmd` - Dependency graph showing relationships between specs (blocking/blocked-by)\n- `.claude/planning/roadmap/vision.mmd` - Projection of what the entire project will look like when complete (architecture, components, data flow)\n\n## Guidelines\n\n- Make sure questions are strategic, not obvious\n- Focus on \"why\" and tradeoffs, not just \"what\"\n- Respect existing architecture unless there's clear justification for change\n",
-        "plugins/interview-mode/commands/interview-spec.md": "---\nname: interview-spec\ndescription: Interview me about the plan\nargument-hint: [plan]\nmodel: opus\n---\n\nRead the plan file at `.claude/planning/roadmap/$ARGUMENTS.md` and interview me in detail using the AskUserQuestionTool about literally anything: technical implementation, UI & UX, concerns, tradeoffs, etc. Make sure the questions are not obvious.\n\nBe very in-depth and continue interviewing me until complete, then write the spec to the file `./claude/planning/spec/$ARGUMENTS-{{spec}}.md`"
+        "README.md": "# Interview Marketplace\n\nStrategic roadmap planning through developer interviews. Scan existing codebases, ask strategic questions, and generate prioritized development roadmaps with dependency tracking.\n\n## Commands\n\n### /interview-roadmap\nScans a codebase and creates a strategic development roadmap by interviewing you about features, technical concerns, and implementation priorities. Generates a structured roadmap with dependencies and estimated effort.\n\n### /interview-spec [plan]\nDeep dive interview for a specific feature or plan. Ask detailed questions about technical implementation, UI/UX, concerns, and tradeoffs before writing the specification.\n\n### /interview-add-to-roadmap\nInterview to add a single new spec to an existing roadmap. Scans current roadmap structure, conducts open-ended interview, creates numbered spec file, and updates `roadmap.toml`.\n\n## Installation\n\nInstall this plugin from GitHub:\n\n```bash\nclaude plugin add github.com/fakebizprez/interview-marketplace\n```\n\n\nInspired by <a href=\"https://github.com/ThariqS\">@ThariqS</a>\n\n<img width=\"740\" height=\"648\" alt=\"image\" src=\"https://github.com/user-attachments/assets/18e5b6bd-c98b-4a5c-af38-38e6ff338f0c\" />\n"
       },
       "plugins": [
         {

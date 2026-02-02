@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "gcswan",
+    "display_name": "Greg Swan",
+    "avatar_url": "https://avatars.githubusercontent.com/u/25067888?u=4fb4c533f09df1cceb282847b392c5b534057aaf&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "hindsight-cc",
+      "version": "1.0.0",
+      "description": "Persistent memory across Claude Code conversations using Hindsight vector database",
+      "repo_full_name": "gcswan/hindsight-cc",
+      "repo_url": "https://github.com/gcswan/hindsight-cc",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-12T18:13:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"hindsight-cc\",\n  \"version\": \"1.0.0\",\n  \"owner\": {\n    \"name\": \"gcswan\",\n    \"email\": \"greg.c.swan@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"hindsight-cc\",\n      \"description\": \"Persistent memory across Claude Code conversations using Hindsight vector database\",\n      \"version\": \"1.3.0\",\n      \"author\": {\n        \"name\": \"gcswan\",\n        \"email\": \"noreply@github.com\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"hindsight-cc\",\n  \"version\": \"1.3.0\",\n  \"description\": \"Persistent memory across Claude Code conversations using Hindsight vector database\",\n  \"author\": {\n    \"name\": \"gcswan\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"memory\", \"context\", \"hindsight\", \"persistence\", \"recall\"]\n}\n",
+        "README.md": "# hindsight-cc\n\n![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)\n![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)\n![Docker Required](https://img.shields.io/badge/docker-required-blue.svg)\n\nA Claude Code plugin that provides persistent memory across conversations using the [Hindsight](https://github.com/vectorize-io/hindsight) vector database.\n\n## Installation\n\n**IMPORTANT**\nSet the LLM provider, model, and token in your environment before installing in\nclaude code.\n\nInstall directly from the GitHub marketplace:\n\n```bash\nclaude plugin add gcswan/hindsight-cc\n```\n\nAfter installation, the first time you try to run Claude it will take longer\nthan usual as it's installing dependencies.\n\nTo verify installation:\n\n```bash\nclaude plugin list\n```\n\n## Features\n\n- **Automatic Memory Injection**: Relevant context from past conversations is automatically injected into your prompts\n- **Prompt Retention**: User prompts are stored for future semantic search\n- **Transcript Retention**: Complete conversation segments are stored at session end\n- **Per-Project Isolation**: Each project has its own memory bank\n- **Automatic Server Management**: Hindsight Docker container starts automatically when you begin a session\n\n## Requirements\n\n- Docker installed and running\n- Python 3.10+\n\n```bash\n# Groq (recommended for fast inference)\nexport HINDSIGHT_API_LLM_PROVIDER=groq\nexport HINDSIGHT_API_LLM_API_KEY=gsk_xxxxxxxxxxxx\nexport HINDSIGHT_API_LLM_MODEL=openai/gpt-oss-20b\n# For free tier users: override to on_demand if you get service_tier errors\n# export HINDSIGHT_API_LLM_GROQ_SERVICE_TIER=on_demand\n\n# OpenAI\nexport HINDSIGHT_API_LLM_PROVIDER=openai\nexport HINDSIGHT_API_LLM_API_KEY=sk-xxxxxxxxxxxx\nexport HINDSIGHT_API_LLM_MODEL=gpt-4o\n\n# Gemini\nexport HINDSIGHT_API_LLM_PROVIDER=gemini\nexport HINDSIGHT_API_LLM_API_KEY=xxxxxxxxxxxx\nexport HINDSIGHT_API_LLM_MODEL=gemini-2.0-flash\n\n# Anthropic\nexport HINDSIGHT_API_LLM_PROVIDER=anthropic\nexport HINDSIGHT_API_LLM_API_KEY=sk-ant-xxxxxxxxxxxx\nexport HINDSIGHT_API_LLM_MODEL=claude-sonnet-4-20250514\n\n# Ollama (local, no API key)\nexport HINDSIGHT_API_LLM_PROVIDER=ollama\nexport HINDSIGHT_API_LLM_BASE_URL=http://localhost:11434/v1\nexport HINDSIGHT_API_LLM_MODEL=llama3\n\n# LM Studio (local, no API key)\nexport HINDSIGHT_API_LLM_PROVIDER=lmstudio\nexport HINDSIGHT_API_LLM_BASE_URL=http://localhost:1234/v1\nexport HINDSIGHT_API_LLM_MODEL=your-local-model\n\n# OpenAI-compatible endpoint\nexport HINDSIGHT_API_LLM_PROVIDER=openai\nexport HINDSIGHT_API_LLM_BASE_URL=https://your-endpoint.com/v1\nexport HINDSIGHT_API_LLM_API_KEY=your-api-key\nexport HINDSIGHT_API_LLM_MODEL=your-model-name\n```\n\n## Usage\n\nOnce installed, the plugin works automatically:\n\n1. **On session start**: Dependencies are installed and Hindsight server is started if not already running\n2. **On each prompt**: Your prompt is stored, and relevant memories are injected\n3. **On session end**: The conversation transcript is stored\n\n### Slash Commands\n\n- `/hindsight-cc:memory-search <query>` - Search your project's memory bank\n- `/hindsight-cc:memory-status` - Check server status and bank info\n\n## How It Works\n\n### Memory Bank System\n\nEach project gets its own isolated memory bank based on git repository identity (when available) or project path. **The plugin auto-detects the project directory from git root or current working directory - no environment variables needed.**\n\n**Git-based (preferred)**: Extracts owner/repo from git remote origin\n\n- Any clone of `gcswan/hindsight-cc` → `claude-code--gcswan-hindsight-cc`\n- Same memories across all paths: `/home/user/hindsight-cc`, `/mnt/work/hindsight-cc`, etc.\n\n**Path-based (fallback)**: Uses last 2 path components when not in a git repo\n\n- `/home/user/code/myapp` → `claude-code--code-myapp`\n- `/projects/demo` → `claude-code--projects-demo`\n\nThis ensures working on the same repository from different paths shares the same memory bank.\n\n### Hook Flow\n\n1. **SessionStart**: Starts Hindsight server if not running\n2. **UserPromptSubmit**:\n   - Stores the prompt for future search\n   - Queries for relevant memories and injects them\n3. **Stop**: Stores the conversation transcript\n\n### Memory Format\n\nMemories are injected as:\n\n```xml\n<hindsight-memories>\nmemory text 1\nmemory text 2\n</hindsight-memories>\n```\n\n## Configuration\n\n### Environment Variables\n\n| Variable                    | Description                                  | Default                                 |\n| --------------------------- | -------------------------------------------- | --------------------------------------- |\n| `HINDSIGHT_API_LLM_API_KEY` | API key for Hindsight LLM operations         | (required)                              |\n| `HINDSIGHT_API_LLM_MODEL`   | LLM model for Hindsight                      | `gpt-4o-mini`                           |\n| `HINDSIGHT_DEBUG`           | Enable debug logging (`1`, `true`, or `yes`) | (disabled)                              |\n| `HINDSIGHT_IMAGE`           | Docker image for Hindsight server            | `ghcr.io/vectorize-io/hindsight:0.1.16` |\n\n### Data Storage\n\nMemory data is stored in `~/hindsight-data/`.\n\n### Data Handling & Privacy\n\n- Prompts and transcript segments are stored locally in the Hindsight data directory.\n- Hindsight may send stored content to its configured LLM provider for embeddings and recall; avoid retaining sensitive or regulated data if you do not want it transmitted.\n\n### Server Ports\n\n- API: <http://localhost:8888>\n- UI: <http://localhost:9999>\n\n## Troubleshooting\n\n### Debug Logging\n\nEnable debug logging to see detailed output from plugin operations:\n\n```bash\nexport HINDSIGHT_DEBUG=1\n```\n\nDebug messages are prefixed with the script name and written to stderr:\n\n```text\n[hindsight-cc:retain-prompt] Detected project directory: /home/user/code/hindsight-cc\n[hindsight-cc:retain-prompt] Bank ID: claude-code--gcswan-hindsight-cc\n[hindsight-cc:inject-memories] Found 3 memories\n```\n\nFor combined Claude Code and plugin debugging:\n\n```bash\nexport HINDSIGHT_DEBUG=1\nclaude --debug \"hooks\"\n```\n\nThis shows hook execution, plugin debug messages, and success/failure status.\n\n### Server Issues\n\nCheck server health:\n\n```bash\ncurl http://localhost:8888/health\n```\n\nView container status:\n\n```bash\ndocker ps -f name=hindsight-cc\n```\n\nCheck container logs:\n\n```bash\ndocker logs hindsight-cc\n```\n\nRestart the server:\n\n```bash\ndocker restart hindsight-cc\n```\n\n## Testing\n\nRun tests and checks from the repo root using the scripts venv:\n\n```bash\n./scripts/.venv/bin/pytest scripts/test\n./scripts/.venv/bin/ruff check scripts/test/test_bank_utils.py\n./scripts/.venv/bin/pyright scripts/test/test_bank_utils.py\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "hindsight-cc",
+          "description": "Persistent memory across Claude Code conversations using Hindsight vector database",
+          "version": "1.3.0",
+          "author": {
+            "name": "gcswan",
+            "email": "noreply@github.com"
+          },
+          "source": "./",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add gcswan/hindsight-cc",
+            "/plugin install hindsight-cc@hindsight-cc"
+          ]
+        }
+      ]
+    }
+  ]
+}

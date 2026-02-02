@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "Bparsons0904",
+    "display_name": "Bob Parsons",
+    "avatar_url": "https://avatars.githubusercontent.com/u/27661234?u=1162676a24a3e0f83fd1527037ac938cde409fa0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "personal-marketplace",
+      "version": null,
+      "description": "A minimal example plugin demonstrating the basic plugin structure with agent, command, skill, and MCP configuration examples",
+      "repo_full_name": "Bparsons0904/claude-marketplace",
+      "repo_url": "https://github.com/Bparsons0904/claude-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-13T03:47:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"personal-marketplace\",\n  \"owner\": {\n    \"name\": \"Bob Parsons\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"example-plugin\",\n      \"source\": \"./example\",\n      \"description\": \"A minimal example plugin demonstrating the basic plugin structure with agent, command, skill, and MCP configuration examples\"\n    },\n    {\n      \"name\": \"development-agents\",\n      \"source\": \"./development-agents\",\n      \"description\": \"Backend (Go/Fiber/GORM) and frontend (SolidJS) development agents with opinionated code patterns from production codebases. Includes skills for logging, GORM, routing, DI, and API integration.\"\n    }\n  ]\n}\n",
+        "README.md": "# Personal Claude Code Plugin Marketplace\n\nA minimal template for creating and organizing your own Claude Code plugins.\n\n## Overview\n\nThis repository provides a basic framework for developing Claude Code plugins. It includes a simple example plugin that demonstrates the core plugin architecture.\n\n### What's Included\n\n- **Example Plugin** - A minimal plugin with basic examples of:\n  - Agent (hello-agent)\n  - Command (/hello)\n  - Skill (code_style)\n  - MCP server configuration\n\n## Quick Start\n\n### 1. Clone and Customize\n\n```bash\n# Clone or copy this repository\ngit clone <your-repo-url>\ncd marketplace\n\n# Update marketplace configuration\n# Edit .claude-plugin/marketplace.json with your name\n```\n\n### 2. Create Your First Plugin\n\n```bash\n# Copy the example plugin as a template\ncp -r example my-plugin\n\n# Update plugin metadata\n# Edit my-plugin/plugin.json and my-plugin/.claude-plugin/plugin.json\n```\n\n### 3. Register Your Plugin\n\nAdd your plugin to `.claude-plugin/marketplace.json`:\n\n```json\n{\n  \"plugins\": [\n    {\n      \"name\": \"my-plugin\",\n      \"source\": \"./my-plugin\",\n      \"description\": \"Your plugin description\"\n    }\n  ]\n}\n```\n\n### 4. Test in Claude Code\n\n```bash\n# Start Claude Code in this directory\nclaude code\n\n# Test your command\n/hello\n```\n\n## Plugin Structure\n\n```\nmarketplace/\n├── .claude-plugin/\n│   └── marketplace.json          # Plugin registry\n├── example/                       # Example plugin\n│   ├── .claude-plugin/\n│   │   └── plugin.json           # Plugin metadata\n│   ├── agents/\n│   │   └── hello-agent.md        # Agent definition\n│   ├── commands/\n│   │   └── hello.md              # Command definition\n│   ├── skills/\n│   │   └── code_style.md         # Skill definition\n│   ├── .mcp.json                 # MCP server config (optional)\n│   └── plugin.json               # Plugin metadata\n└── README.md\n```\n\n## Plugin Components\n\n### Commands\n\nCommands are user-facing actions invoked via `/command-name`.\n\n**Structure:**\n```markdown\n---\ndescription: Brief description of what this command does\n---\n\n# Command Instructions\n\nDetailed instructions for Claude on how to respond...\n```\n\n**File location:** `plugin/commands/command-name.md`\n\n### Agents\n\nAgents are specialized autonomous workers for complex tasks.\n\n**Structure:**\n```markdown\n---\nname: agent-name\ndescription: When to use this agent\nmodel: sonnet\ncolor: blue\n---\n\n# Agent Prompt\n\nCore competencies and instructions...\n```\n\n**File location:** `plugin/agents/agent-name.md`\n\n### Skills\n\nSkills are reusable patterns and expertise that Claude can reference.\n\n**Structure:**\n```markdown\n---\nname: Skill Name\ndescription: When to use this skill\n---\n\n# Skill Content\n\nGuidelines, patterns, and examples...\n```\n\n**File location:** `plugin/skills/skill-name.md`\n\n### MCP Servers (Optional)\n\nMCP (Model Context Protocol) servers enable integration with external services.\n\n**Structure:**\n```json\n{\n  \"mcpServers\": {\n    \"ServerName\": {\n      \"command\": \"npx|docker\",\n      \"args\": [\"...\"],\n      \"env\": {\n        \"ENV_VAR\": \"${SYSTEM_ENV_VAR}\"\n      }\n    }\n  }\n}\n```\n\n**File location:** `plugin/.mcp.json`\n\n## Development Workflow\n\n### Adding a Command\n\n1. Create `plugin/commands/my-command.md`\n2. Add YAML frontmatter with description\n3. Write instructions for Claude\n4. Test with `/my-command`\n\n### Adding an Agent\n\n1. Create `plugin/agents/my-agent.md`\n2. Add YAML frontmatter (name, description, model, color)\n3. Write agent prompt with core competencies\n4. Agent is automatically available\n\n### Adding a Skill\n\n1. Create `plugin/skills/my-skill.md`\n2. Add YAML frontmatter with name and description\n3. Write skill content (patterns, guidelines, examples)\n4. Reference in commands or agent prompts\n\n### Adding MCP Integration\n\n1. Create or update `plugin/.mcp.json`\n2. Add server configuration with command and args\n3. Use environment variables for secrets\n4. Restart Claude Code session to load MCP servers\n\n## Best Practices\n\n### Naming Conventions\n\n- **Commands:** lowercase-with-hyphens.md → `/command-name`\n- **Agents:** descriptive-name.md\n- **Skills:** snake_case.md\n- **Plugins:** lowercase-with-hyphens\n\n### Security\n\n- **Never commit credentials** - use environment variables\n- Reference env vars: `${VAR_NAME}` in configuration\n- Use minimal required permissions for service accounts\n\n### Organization\n\n- Keep plugins focused on a specific domain or workflow\n- Group related commands, agents, and skills together\n- Use clear, descriptive names for all components\n\n## Example Plugin\n\nThe included `example` plugin demonstrates:\n\n- **hello-agent** - Shows basic agent structure with YAML frontmatter\n- **/hello command** - Demonstrates simple command with instructions\n- **code_style skill** - Shows how to define reusable guidelines\n- **.mcp.json** - Template for MCP server configuration\n\nUse these as templates for your own plugins.\n\n## Troubleshooting\n\n### Plugin not loading\n- Verify plugin is registered in `.claude-plugin/marketplace.json`\n- Check that `plugin.json` exists in both root and `.claude-plugin/` directories\n- Validate JSON syntax\n- Restart Claude Code\n\n### Command not found\n- Verify command file exists in `commands/` directory\n- Check YAML frontmatter is valid\n- Ensure filename matches command name\n- Restart Claude Code\n\n### MCP connection failed\n- Verify environment variables are set\n- Check Docker is running (if using Docker-based MCP servers)\n- Validate network connectivity\n- Check MCP server URL and credentials\n\n## Resources\n\n- [Claude Code Documentation](https://docs.claude.com/en/docs/claude-code)\n- [MCP Documentation](https://github.com/anthropics/mcp)\n\n## License\n\nCustomize this section with your preferred license.\n"
+      },
+      "plugins": [
+        {
+          "name": "example-plugin",
+          "source": "./example",
+          "description": "A minimal example plugin demonstrating the basic plugin structure with agent, command, skill, and MCP configuration examples",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Bparsons0904/claude-marketplace",
+            "/plugin install example-plugin@personal-marketplace"
+          ]
+        },
+        {
+          "name": "development-agents",
+          "source": "./development-agents",
+          "description": "Backend (Go/Fiber/GORM) and frontend (SolidJS) development agents with opinionated code patterns from production codebases. Includes skills for logging, GORM, routing, DI, and API integration.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Bparsons0904/claude-marketplace",
+            "/plugin install development-agents@personal-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
