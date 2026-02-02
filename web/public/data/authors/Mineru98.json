@@ -6,6 +6,57 @@
   },
   "marketplaces": [
     {
+      "name": "notebooklm-researcher",
+      "version": null,
+      "description": "NotebookLM research automation plugin - orchestrates deep research, source discovery, and presentation slide creation using the nlm CLI",
+      "repo_full_name": "Mineru98/notebooklm-skills",
+      "repo_url": "https://github.com/Mineru98/notebooklm-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-31T10:46:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"notebooklm-researcher\",\n  \"description\": \"NotebookLM research automation plugin - orchestrates deep research, source discovery, and presentation slide creation using the nlm CLI\",\n  \"owner\": {\n    \"name\": \"Mineru\",\n    \"email\": \"mineru@usefullabs.co.kr\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"notebooklm-researcher\",\n      \"description\": \"NotebookLM research automation plugin - orchestrates deep research, source discovery, and presentation slide creation using the nlm CLI\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Mineru\",\n        \"email\": \"mineru@usefullabs.co.kr\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/Mineru98/notebooklm-skills\",\n      \"tags\": [\"notebooklm\", \"research\", \"slides\", \"automation\", \"nlm-cli\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"notebooklm-researcher\",\n  \"version\": \"1.0.0\",\n  \"description\": \"NotebookLM research automation plugin - orchestrates deep research, source discovery, and presentation slide creation using the nlm CLI tool\",\n  \"author\": {\n    \"name\": \"Mineru\",\n    \"email\": \"mineru@usefullabs.co.kr\",\n    \"url\": \"https://github.com/Mineru98\"\n  },\n  \"homepage\": \"https://github.com/Mineru98/notebooklm-skills#readme\",\n  \"repository\": \"https://github.com/Mineru98/notebooklm-skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"notebooklm\",\n    \"research\",\n    \"slides\",\n    \"automation\",\n    \"nlm-cli\",\n    \"presentation\"\n  ]\n}\n",
+        "README.md": "# NotebookLM Research Skills\n\nNotebookLM 리서치 자동화 플러그인 - `nlm` CLI를 활용한 리서치부터 슬라이드 생성까지 자동화합니다.\n\n## Overview\n\n이 플러그인은 Google NotebookLM을 활용하여 다음 워크플로우를 자동화합니다:\n\n1. **인증 확인** - nlm CLI 프로필 인증 상태 확인\n2. **노트북 생성** - 리서치 프로젝트용 노트북 생성\n3. **딥 리서치** - 웹 소스 자동 탐색 및 수집 (최대 40개 소스)\n4. **슬라이드 생성** - 수집된 소스 기반 발표 자료 자동 생성\n\n## Installation\n\n### Claude Code 마켓플레이스에서 설치 (권장)\n\n```bash\n# 마켓플레이스에서 플러그인 추가\n/plugin marketplace add Mineru98/notebooklm-skills\n\n# 플러그인 설치\n/plugin install notebooklm-skills\n```\n\n### 수동 설치\n\n프로젝트 루트의 `.claude/plugins.json`에 직접 추가할 수도 있습니다:\n\n```json\n{\n  \"plugins\": [\n    {\n      \"name\": \"notebooklm-researcher\",\n      \"source\": \"github:Mineru98/notebooklm-skills\"\n    }\n  ]\n}\n```\n\n### 사전 요구사항\n\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI 설치\n- [nlm CLI](https://github.com/jacob-bd/notebooklm-mcp-cli) 설치\n- NotebookLM 인증 완료 (`nlm login --profile work`)\n\n## Usage\n\nClaude Code에서 다음과 같이 사용:\n\n```\n리서치해줘: AI 에이전트 프레임워크 비교 분석\n```\n\n또는 직접 스킬 호출:\n\n```\n/notebooklm-researcher AI 에이전트 프레임워크 비교 분석\n```\n\n## Workflow\n\n```\nAuth Check → Notebook Create → Deep Research → Import Sources → Create Slides\n```\n\n## Plugin Structure\n\n```\nnotebooklm-skills/\n├── .claude-plugin/\n│   ├── marketplace.json      # 마켓플레이스 메타데이터\n│   └── plugin.json           # 플러그인 설정\n├── skills/\n│   └── notebooklm-researcher/\n│       └── SKILL.md          # 메인 오케스트레이션 스킬\n├── agents/\n│   ├── auth-checker/\n│   │   └── AGENT.md          # 인증 확인 에이전트\n│   ├── notebook-manager/\n│   │   └── AGENT.md          # 노트북 관리 에이전트\n│   ├── research-conductor/\n│   │   └── AGENT.md          # 리서치 수행 에이전트\n│   └── slides-creator/\n│       └── AGENT.md          # 슬라이드 생성 에이전트\n└── README.md\n```\n\n## Agents\n\n| Agent | Role |\n|-------|------|\n| **auth-checker** | nlm CLI 인증 상태 확인 및 재인증 안내 |\n| **notebook-manager** | 노트북 목록 조회, 생성, 선택 |\n| **research-conductor** | 딥 리서치 시작, 상태 모니터링, 소스 임포트 |\n| **slides-creator** | 발표 슬라이드 생성 및 다운로드 안내 |\n\n## Configuration\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| Profile | `work` | nlm 인증 프로필 |\n| Research Mode | `deep` | `deep` (5분, 40소스) / `fast` (30초, 10소스) |\n| Slide Format | `presenter_slides` | `presenter_slides` / `detailed_deck` |\n| Slide Language | `ko` | BCP-47 언어 코드 |\n| Slide Length | `default` | `default` / `short` |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "notebooklm-researcher",
+          "description": "NotebookLM research automation plugin - orchestrates deep research, source discovery, and presentation slide creation using the nlm CLI",
+          "version": "1.0.0",
+          "author": {
+            "name": "Mineru",
+            "email": "mineru@usefullabs.co.kr"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/Mineru98/notebooklm-skills",
+          "tags": [
+            "notebooklm",
+            "research",
+            "slides",
+            "automation",
+            "nlm-cli"
+          ],
+          "categories": [
+            "automation",
+            "nlm-cli",
+            "notebooklm",
+            "productivity",
+            "research",
+            "slides"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Mineru98/notebooklm-skills",
+            "/plugin install notebooklm-researcher@notebooklm-researcher"
+          ]
+        }
+      ]
+    },
+    {
       "name": "dev-consultant",
       "version": null,
       "description": "Web application development consulting plugin with specialized agents for requirements gathering, UI/UX design, technical specification, and project planning",

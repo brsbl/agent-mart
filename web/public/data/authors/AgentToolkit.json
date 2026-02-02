@@ -2,118 +2,25 @@
   "author": {
     "id": "AgentToolkit",
     "display_name": "AgentToolkit",
-    "type": "Organization",
-    "avatar_url": "https://avatars.githubusercontent.com/u/231742966?v=4",
-    "url": "https://github.com/AgentToolkit",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 2,
-      "total_stars": 6,
-      "total_forks": 2
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/231742966?v=4"
   },
   "marketplaces": [
     {
       "name": "kaizen-marketplace",
       "version": null,
       "description": "Kaizen plugins for Claude Code - continuous improvement through auto-generated guidelines",
-      "owner_info": {
-        "name": "Vinod Muthusamy"
-      },
-      "keywords": [],
       "repo_full_name": "AgentToolkit/kaizen",
       "repo_url": "https://github.com/AgentToolkit/kaizen",
       "repo_description": "Self improving agents through iterations",
-      "homepage": null,
       "signals": {
         "stars": 6,
         "forks": 2,
-        "pushed_at": "2026-01-29T18:54:30Z",
-        "created_at": "2025-12-12T20:14:48Z",
-        "license": "Apache-2.0"
+        "pushed_at": "2026-02-02T00:57:08Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 559
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/kaizen",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/kaizen/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/kaizen/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 194
-        },
-        {
-          "path": "plugins/kaizen/README.md",
-          "type": "blob",
-          "size": 2797
-        },
-        {
-          "path": "plugins/kaizen/hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/kaizen/hooks/hooks.json",
-          "type": "blob",
-          "size": 488
-        },
-        {
-          "path": "plugins/kaizen/skills",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/kaizen/skills/guideline-generator",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/kaizen/skills/guideline-generator/SKILL.md",
-          "type": "blob",
-          "size": 3126
-        },
-        {
-          "path": "plugins/kaizen/skills/guideline-retrieval",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/kaizen/skills/guideline-retrieval/SKILL.md",
-          "type": "blob",
-          "size": 1280
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"kaizen-marketplace\",\n  \"description\": \"Kaizen plugins for Claude Code - continuous improvement through auto-generated guidelines\",\n  \"owner\": {\n    \"name\": \"Vinod Muthusamy\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"kaizen\",\n      \"description\": \"Learn from conversations with auto-generated guidelines\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Vinod Muthusamy\"\n      },\n      \"source\": \"./plugins/kaizen\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
-        "plugins/kaizen/.claude-plugin/plugin.json": "{\n  \"name\": \"kaizen\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Learn from conversations with auto-generated guidelines\",\n  \"author\": {\n    \"name\": \"Vinod Muthusamy\"\n  },\n  \"skills\": \"./skills/\"\n}",
-        "plugins/kaizen/README.md": "# Guidelines Plugin for Claude Code\n\nA plugin that helps Claude Code learn from conversations by automatically extracting and applying guidelines.\n\n## Features\n\n- **Automatic Learning**: At the end of each conversation, guidelines are extracted and saved\n- **Context-Aware Retrieval**: At the start of each prompt, relevant guidelines are injected\n- **No Manual Configuration**: Hooks are automatically installed when the plugin is enabled\n\n## Installation\n\n```bash\n# Load plugin for current session\nclaude --plugin-dir ./kaizen\n\n# Or with absolute path\nclaude --plugin-dir /path/to/kaizen\n```\n\nSee [INSTALL.md](INSTALL.md) for making it permanent, loading multiple plugins, and troubleshooting.\n\n## How It Works\n\n### Guideline Retrieval (UserPromptSubmit hook)\n\nWhen you submit a prompt, the plugin:\n1. Loads all stored guidelines from `.claude/guidelines.json`\n2. Formats and injects them into the conversation context\n3. Claude applies relevant guidelines to the current task\n\n### Guideline Generation (Stop hook)\n\nWhen a conversation ends, the plugin:\n1. Analyzes the conversation trajectory\n2. Extracts actionable guidelines from what worked/failed\n3. Saves new guidelines to `.claude/guidelines.json`\n\n## Skills Included\n\n### `/guidelines:generator`\n\nManually invoke to extract guidelines from the current conversation:\n- Analyzes task, steps taken, successes and failures\n- Generates proactive guidelines (what to do, not what to avoid)\n- Outputs JSON for storage\n\n### `/guidelines:retrieval`\n\nManually invoke to retrieve and display stored guidelines.\n\n## Guidelines Storage\n\nGuidelines are stored in `.claude/guidelines.json`:\n\n```json\n{\n  \"guidelines\": [\n    {\n      \"content\": \"Use Python PIL/Pillow for image metadata extraction in sandboxed environments\",\n      \"rationale\": \"System tools like exiftool may not be available\",\n      \"category\": \"strategy\",\n      \"trigger\": \"When extracting image metadata in containerized environments\"\n    }\n  ]\n}\n```\n\n## Environment Variables\n\n- `GUIDELINES_FILE`: Override the default guidelines storage location\n- `CLAUDE_PROJECT_ROOT`: Set by Claude Code, used to locate project-level guidelines\n\n## Verification\n\nAfter installation, run `claude plugin list` to confirm the plugin is enabled. See [INSTALL.md](INSTALL.md) for detailed verification steps.\n\n## Plugin Structure\n\n```text\nkaizen/\n├── .claude-plugin/\n│   └── plugin.json              # Plugin manifest\n├── skills/\n│   ├── guideline-generator/\n│   │   └── SKILL.md\n│   └── guideline-retrieval/\n│       └── SKILL.md\n├── hooks/\n│   └── hooks.json               # Auto-configured hooks\n├── scripts/\n│   ├── save_guidelines.py\n│   └── retrieve_guidelines.py\n└── README.md\n```\n\n## License\n\nMIT\n",
-        "plugins/kaizen/hooks/hooks.json": "{\n  \"hooks\": {\n    \"UserPromptSubmit\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"python3 ${CLAUDE_PLUGIN_ROOT}/scripts/retrieve_guidelines.py\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"python3 ${CLAUDE_PLUGIN_ROOT}/scripts/save_guidelines.py\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
-        "plugins/kaizen/skills/guideline-generator/SKILL.md": "---\nname: guideline-generator\ndescription: Extract actionable guidelines from conversation trajectories. Analyzes user requests, steps taken, successes and failures to generate proactive guidelines that help on similar future tasks.\n---\n\n# Guideline Generator\n\n## Overview\n\nThis skill analyzes conversation trajectories to extract actionable guidelines that would help on similar tasks in the future. It transforms reactive learnings (what failed) into proactive recommendations (what to do first).\n\n## Workflow\n\n### Step 1: Analyze the Conversation\n\nIdentify from your current conversation:\n\n- **Task/Request**: What was the user asking for?\n- **Steps Taken**: What reasoning, actions, and observations occurred?\n- **What Worked**: Which approaches succeeded?\n- **What Failed**: Which approaches didn't work and why?\n\n### Step 2: Extract Guidelines\n\nExtract 3-5 proactive guidelines following these principles:\n\n1. **Reframe failures as proactive recommendations:**\n   - If an approach failed due to permissions → recommend the alternative FIRST\n   - If a system tool wasn't available → recommend what worked instead\n   - If an approach hit environment constraints → recommend the constraint-aware approach\n\n2. **Focus on what worked, stated as the primary approach:**\n   - Bad: \"If exiftool fails, use PIL instead\"\n   - Good: \"In sandboxed environments, use Python libraries (PIL/Pillow) for image metadata extraction\"\n\n3. **Triggers should be situational context, not failure conditions:**\n   - Bad trigger: \"When apt-get fails\"\n   - Good trigger: \"When working in containerized/sandboxed environments\"\n\n### Step 3: Output Guidelines JSON\n\nOutput guidelines in the following JSON format:\n\n```json\n{\n  \"guidelines\": [\n    {\n      \"content\": \"Proactive guideline stating what TO DO\",\n      \"rationale\": \"Why this approach works better\",\n      \"category\": \"strategy|recovery|optimization\",\n      \"trigger\": \"Situational context when this applies\"\n    }\n  ]\n}\n```\n\n## Guideline Categories\n\n- **strategy**: High-level approach or methodology choices\n- **recovery**: Handling errors, edge cases, or unexpected situations\n- **optimization**: Improving efficiency, performance, or code quality\n\n## Examples\n\n### Good vs Bad Guidelines\n\n**BAD (reactive):**\n```json\n{\n  \"content\": \"Fall back to Python PIL when exiftool is not available\",\n  \"trigger\": \"When exiftool command fails\"\n}\n```\n\n**GOOD (proactive):**\n```json\n{\n  \"content\": \"Use Python PIL/Pillow for image metadata extraction in sandboxed environments\",\n  \"rationale\": \"System tools like exiftool may not be available; PIL is always installable via pip\",\n  \"category\": \"strategy\",\n  \"trigger\": \"When extracting image metadata in containerized or sandboxed environments\"\n}\n```\n\n## Best Practices\n\n1. **Be specific**: Generic guidelines are less useful than context-specific ones\n2. **Be actionable**: Guidelines should clearly state what to do\n3. **Include rationale**: Explain why the approach works\n4. **Use situational triggers**: Context-based triggers are more useful than failure-based ones\n5. **Limit to 3-5 guidelines**: Focus on the most impactful learnings\n",
-        "plugins/kaizen/skills/guideline-retrieval/SKILL.md": "---\nname: guideline-retrieval\ndescription: Retrieves relevant guidelines from a knowledge base. Designed to be invoked automatically via hooks to inject context-appropriate guidelines before task execution.\n---\n\n# Guideline Retrieval\n\n## Overview\n\nThis skill retrieves relevant guidelines from a stored knowledge base based on the current task context. It loads all stored guidelines and presents them to Claude for relevance filtering.\n\n## How It Works\n\n1. Hook fires on user prompt submission\n2. Script reads prompt from stdin (JSON with `prompt` field)\n3. Loads all guidelines from the guidelines JSON file\n4. Outputs formatted guidelines to stdout\n5. Claude receives guidelines as additional context and applies relevant ones\n\n## Guidelines Storage\n\nGuidelines are stored in `.claude/guidelines.json` in the project root:\n\n```json\n{\n  \"guidelines\": [\n    {\n      \"content\": \"Use context managers for file operations\",\n      \"rationale\": \"Ensures proper resource cleanup\",\n      \"category\": \"strategy\",\n      \"trigger\": \"When processing files or managing resources\"\n    }\n  ]\n}\n```\n\n## Environment Variables\n\n- `GUIDELINES_FILE`: Optional path to guidelines JSON file (defaults to `.claude/guidelines.json`)\n- `CLAUDE_PROJECT_ROOT`: Project root directory (set by Claude Code)\n"
+        "README.md": "# Kaizen\n\nSelf-improving agents through iterations.\n\nKaizen is a system designed to help agents improve over time by learning from their trajectories. It uses a combination of an MCP server for tool integration, vector storage for memory, and LLM-based conflict resolution to refine its knowledge base.\n\n## Features\n\n- **MCP Server**: Exposes tools to get guidelines and save trajectories.\n- **Conflict Resolution**: Intelligently merges new insights with existing guidelines using LLMs.\n- **Trajectory Analysis**: Automatically analyzes agent trajectories to generate tips and best practices.\n- **Milvus Integration**: Uses Milvus (or Milvus Lite) for efficient vector storage and retrieval.\n\n## Architecture\n\n<img src=\"docs/assets/architecture.png\" alt=\"Architecture\" width=\"480\">\n\n## Quick Start\n\n### Installation\n\nPrerequisites:\n- Python 3.12 or higher\n- `uv` (recommended) or `pip`\n\n```bash\ngit clone <repository_url>\ncd kaizen\nuv sync && source .venv/bin/activate\n```\n\n### Configuration\n\nSet your OpenAI API key:\n```bash\nexport OPENAI_API_KEY=sk-...\n```\n\nFor detailed configuration options (custom LLM providers, backends, etc.), see [CONFIGURATION.md](CONFIGURATION.md).\n\n### Running the MCP Server\n\n```bash\nuv run fastmcp run kaizen/frontend/mcp/mcp_server.py --transport sse --port 8201\n```\n\nVerify it's running:\n```bash\nnpx @modelcontextprotocol/inspector@latest http://127.0.0.1:8201/sse --cli --method tools/list\n```\n\n**Available tools:**\n- `get_guidelines(task: str)`: Get relevant guidelines for a specific task.\n- `save_trajectory(trajectory_data: str, task_id: str | None)`: Save a conversation trajectory and generate new tips.\n- `create_entity(content: str, entity_type: str, metadata: str | None, enable_conflict_resolution: bool)`: Create a single entity in the namespace.\n- `delete_entity(entity_id: str)`: Delete a specific entity by its ID.\n\n## Documentation\n\n- [CONFIGURATION.md](CONFIGURATION.md) - Detailed configuration options\n- [CLI.md](CLI.md) - Command-line interface documentation\n- [CLAUDE_CODE_DEMO.md](CLAUDE_CODE_DEMO.md) - Claude Code demo walkthrough\n\n## Development\n\n### Running Tests\n\n```bash\nuv run pytest\n```\n\n#### Phoenix Sync Tests\n\nTests for the Phoenix trajectory sync functionality are **skipped by default** since they require familiarity with the Phoenix integration. To include them:\n\n```bash\n# Run all tests including Phoenix tests\nuv run pytest --run-phoenix\n\n# Run only Phoenix tests\nuv run pytest -m phoenix\n```\n\n#### End-to-End (E2E) Low-Code Verification\n\nTo run the full end-to-end verification pipeline (Agent -> Trace -> Tip):\n\n```bash\nKAIZEN_E2E=true uv run pytest tests/e2e/test_e2e_pipeline.py -s\n```\n\nSee [docs/LOW_CODE_TRACING.md](docs/LOW_CODE_TRACING.md#end-to-end-verification) for more details.\n",
+        "plugins/kaizen/README.md": "# Guidelines Plugin for Claude Code\n\nA plugin that helps Claude Code learn from conversations by automatically extracting and applying guidelines.\n\n## Features\n\n- **Automatic Retrieval**: At the start of each prompt, relevant guidelines are automatically injected\n- **Manual Learning**: Use the `/kaizen:learn` skill to extract and save guidelines from conversations\n- **Zero-config Retrieval**: Hooks are automatically installed when the plugin is enabled\n\n## Installation\n\n### From Local Directory\n\n```bash\nclaude --plugin-dir /path/to/kaizen/repo/plugins/kaizen\n```\n\n### From Marketplace\n\n1. Add the marketplace and plugin:\n   ```bash\n   claude plugin marketplace add AgentToolkit/kaizen\n   claude plugin install kaizen@kaizen-marketplace\n   ```\n\n\n## How It Works\n\n### Guideline Retrieval (Automatic)\n\nWhen you submit a prompt, the plugin automatically:\n1. Loads all stored guidelines from `.claude/guidelines.json`\n2. Formats and injects them into the conversation context\n3. Claude applies relevant guidelines to the current task\n\n### Guideline Generation (Manual by Default)\n\nBy default, you must manually invoke the `/kaizen:learn` skill to extract guidelines:\n1. Complete a conversation or task\n2. Invoke `/kaizen:learn` \n3. The plugin analyzes the conversation trajectory\n4. Extracts actionable guidelines from what worked/failed\n5. Saves new guidelines to `.claude/guidelines.json`\n\n## Skills Included\n\n### `/kaizen:learn`\n\nManually invoke to extract guidelines from the current conversation:\n- Analyzes task, steps taken, successes and failures\n- Generates proactive guidelines (what to do, not what to avoid)\n- Outputs JSON for storage\n\n### `/kaizen:recall`\n\nManually invoke to retrieve and display stored guidelines.\n\n### `/kaizen:save`\n\nManually invoke to capture successful workflows from your current session and save them as reusable skills:\n- Analyzes conversation history (user requests, reasoning, tool calls, responses)\n- Generates parameterized SKILL.md documentation\n- Creates Python helper scripts for programmatic operations (when applicable)\n- Saves to `~/.claude/skills/{skill-name}/` for cross-project availability\n\n**Quick Start:**\n```\nUser: [Complete a successful task]\nUser: \"save\"\nAssistant: \"What would you like to name this skill?\"\nUser: \"my-workflow-name\"\n```\n\nSee [SAVE_SKILL.md](SAVE_SKILL.md) for detailed documentation.\n\n## Guidelines Storage\n\nGuidelines are stored in `.claude/guidelines.json`:\n\n```json\n{\n  \"guidelines\": [\n    {\n      \"content\": \"Use Python PIL/Pillow for image metadata extraction in sandboxed environments\",\n      \"rationale\": \"System tools like exiftool may not be available\",\n      \"category\": \"strategy\",\n      \"trigger\": \"When extracting image metadata in containerized environments\"\n    }\n  ]\n}\n```\n\n## Environment Variables\n\n- `GUIDELINES_FILE`: Override the default guidelines storage location\n- `CLAUDE_PROJECT_ROOT`: Set by Claude Code, used to locate project-level guidelines\n\n## Verification\n\nAfter installation, run `claude plugin list` to confirm the plugin is enabled.\n\n## Plugin Structure\n\n```text\nkaizen/\n├── .claude-plugin/\n│   └── plugin.json              # Plugin manifest\n├── skills/\n│   ├── learn/\n│   │   └── SKILL.md\n│   ├── recall/\n│   │   └── SKILL.md\n│   └── save/\n│       └── SKILL.md\n├── hooks/\n│   └── hooks.json               # Auto-configured hooks\n├── scripts/\n│   ├── save_guidelines.py\n│   └── retrieve_guidelines.py\n└── README.md\n```\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {

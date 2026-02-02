@@ -6,55 +6,80 @@
   },
   "marketplaces": [
     {
-      "name": "age-of-claude",
-      "version": "1.0.0",
-      "description": "Age of Empires sound effects for Claude Code - wololo your way through coding sessions",
-      "repo_full_name": "kylesnowschwartz/age-of-claude",
-      "repo_url": "https://github.com/kylesnowschwartz/age-of-claude",
-      "repo_description": "Age of Empires sound effects for Claude Code - wololo your way through coding sessions",
+      "name": "claude-bumper-lanes",
+      "version": null,
+      "description": "Local marketplace for Bumper Lanes plugin development",
+      "repo_full_name": "kylesnowschwartz/claude-bumper-lanes",
+      "repo_url": "https://github.com/kylesnowschwartz/claude-bumper-lanes",
+      "repo_description": null,
       "signals": {
-        "stars": 6,
-        "forks": 0,
-        "pushed_at": "2025-12-20T10:30:18Z"
+        "stars": 28,
+        "forks": 2,
+        "pushed_at": "2026-01-23T08:11:01Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"age-of-claude\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Age of Empires sound effects for Claude Code - wololo your way through coding sessions\",\n  \"owner\": {\n    \"name\": \"Kyle Snow Schwartz\",\n    \"url\": \"https://github.com/kylesnowschwartz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"age-of-claude\",\n      \"description\": \"Age of Empires sound effects for Claude Code events - wololo your way through coding sessions\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Kyle Snow Schwartz\"\n      },\n      \"source\": \"./age-of-claude-plugin\",\n      \"homepage\": \"https://github.com/kylesnowschwartz/age-of-claude\",\n      \"repository\": \"https://github.com/kylesnowschwartz/age-of-claude\",\n      \"license\": \"MIT\",\n      \"category\": \"fun\",\n      \"keywords\": [\n        \"sounds\",\n        \"age-of-empires\",\n        \"notifications\",\n        \"audio\",\n        \"fun\",\n        \"claude-code\",\n        \"wololo\"\n      ]\n    }\n  ]\n}\n",
-        "README.md": "# Age of Claude\n\nAge of Empires sound effects for Claude Code events. Wololo your way through coding sessions.\n\n## Installation\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add https://github.com/kylesnowschwartz/age-of-claude\n\n# Install the plugin\nclaude plugin install age-of-claude\n```\n\nOr from within Claude Code:\n\n```bash\n/plugin marketplace add https://github.com/kylesnowschwartz/age-of-claude\n/plugin install age-of-claude\n```\n\n## What It Does\n\nPlays Age of Empires II sound effects during Claude Code events:\n\n| Event | Sounds |\n|-------|--------|\n| **Session Start** | Villager select sounds, \"Start the game already!\" |\n| **Notification** | Priest wololo, \"Hey I'm in your town!\" |\n| **Stop** | Villager work sounds, \"I just got some satisfaction\" |\n| **Session End** | Soldier death sounds, crowd wailing |\n\n46 authentic AoE II sound files included.\n\n## Enabling Sounds\n\nSounds are disabled by default. Use the included command to toggle:\n\n```bash\n/age-of-claude:sounds on    # Enable AoE sounds\n/age-of-claude:sounds off   # Disable sounds\n/age-of-claude:sounds       # Check current state\n```\n\nOr manually:\n\n```bash\nmkdir -p ~/.config/claude\necho \"SOUND_MODE=aoe\" > ~/.config/claude/sounds.conf\n```\n\n## Requirements\n\n- macOS (uses `afplay` for audio playback)\n- Ruby (for hook execution)\n\n## Acknowledgments\n\nInspired by [aliparoya/age-of-claude](https://github.com/aliparoya/age-of-claude).\n\nSound effects from Age of Empires II by Ensemble Studios/Microsoft.\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-bumper-lanes\",\n  \"owner\": {\n    \"name\": \"Kyle Snow Schwartz\",\n    \"email\": \"kyle.snowschwartz@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Local marketplace for Bumper Lanes plugin development\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-bumper-lanes\",\n      \"source\": \"./bumper-lanes-plugin\"\n    }\n  ]\n}\n",
+        "README.md": "# Bumper Lanes\n\nBumper lanes gives you two features native to Claude-Code:\n1. A 'Heads Up Display' of the changes Claude makes via unique git-diff visualizations in the status line\n2. A configurable circuit breaker that blocks Claude from continuing until you review and approve the accumulated changes\n\n![Threshold exceeded demo](assets/bumper-demo.gif)\n\n![View modes demo](assets/diff-viz-demo.gif)\n\n## What It Does\n\nBumper-Lanes tracks how much code Claude has written or edited, blocking further edits when a threshold is exceeded. 600 points corresponds roughly to that many lines of code added, depending on the mix of new files vs edits.\n\nWhen the threshold is exceeded:\n\n1. **Fuel gauge warnings** show escalating alerts after each Write/Edit (70% NOTICE → 90% WARNING) to you and to Claude\n2. **Stop hook** blocks Claude from continuing when threshold exceeded\n3. **Reset command** (`/bumper-reset`) restores the budget after you review\n\n## Installation\n\n```bash\nclaude plugin marketplace add kylesnowschwartz/claude-bumper-lanes\nclaude plugin install claude-bumper-lanes\n```\n\n**Requirements:** Go 1.21+ (binaries are built automatically on first session start)\n\n## Usage\n\nWork normally with Claude. If the configurable threshold is exceeded:\n\n1. Claude will be blocked from continuing\n2. Review your changes\n3. Optionally commit: `git add -u && git commit -m \"message\"` (resets the baseline automatically)\n4. Or Manually reset the baseline: `/bumper-reset`\n5. Continue working with restored budget\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/bumper-reset` | Reset baseline after reviewing changes |\n| `/bumper-pause` | Pause threshold enforcement (session only) |\n| `/bumper-resume` | Resume threshold enforcement |\n| `/bumper-config` | Show current configuration |\n| `/bumper-config <n>` | Set repo threshold (0=disabled, 50-2000) |\n\n### View Modes\n\n| Command | Description |\n|---------|-------------|\n| `/bumper-tree` | Indented file tree with +/- stats |\n| `/bumper-smart` | Multi-column table sorted by magnitude |\n| `/bumper-sparkline-tree` | Rainbow sidebar tree with sparkline bars |\n| `/bumper-hotpath` | Hot trail view (follows largest child) |\n| `/bumper-icicle` | Horizontal area chart |\n| `/bumper-brackets` | Nested `[dir file]` single-line |\n| `/bumper-gauge` | Progress gauge showing change magnitude |\n| `/bumper-depth` | Nested gauges by depth level |\n| `/bumper-stat` | Native git diff --stat output |\n\n## Status Line Setup\n\nStatus line is **auto-configured** on first session. No manual setup needed, though you may want to tweak if you use a custom setup.\n\nIf you need to configure manually:\n\nAuto-setup writes this to `~/.claude/settings.json`:\n\n```json\n{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"/path/to/.claude/plugins/cache/.../bumper-lanes status\",\n    \"padding\": 0\n  }\n}\n```\n\nThe path is versioned and changes on plugin updates—auto-setup handles this automatically.\n\n**Want just the diff visualization?** Install [diff-viz](https://github.com/kylesnowschwartz/diff-viz) globally:\n\n```bash\ngo install github.com/kylesnowschwartz/diff-viz/v2/cmd/git-diff-tree@latest\n```\n\nThen use `git-diff-tree` directly in your custom status line scripts. This optionally gives you the tree visualization without the threshold enforcement as well.\n\n### Opting Out of Auto-Setup\n\nTo prevent bumper-lanes from modifying your statusline script, add this comment anywhere in your script:\n\n```bash\n# BUMPER_HANDS_OFF\n```\n\nThis tells bumper-lanes to leave your configuration alone. The plugin will not wrap, update, or regenerate any script containing this marker.\n\n## Configuration\n\nConfig files (in precedence order):\n1. `.bumper-lanes.json` at repo root (highest priority)\n2. `~/.config/bumper-lanes/config.json` (global fallback)\n3. Built-in defaults\n\n```json\n{\n  \"threshold\": 400,\n  \"default_view_mode\": \"tree\",\n  \"default_view_opts\": \"--width 80 --depth 3\",\n  \"show_diff_viz\": true\n}\n```\n\n| Field | Description |\n|-------|-------------|\n| `threshold` | Points limit. `0` = disabled, `50-2000` = active (default: 600) |\n| `default_view_mode` | Visualization mode (default: tree) |\n| `default_view_opts` | Options passed to diff-viz renderer (e.g., `--width 80 --depth 3`) |\n| `show_diff_viz` | Show diff visualization in status line (default: true) |\n\n**Available view modes:** tree, smart, sparkline-tree, hotpath, icicle, brackets, gauge, depth, stat\n\n### Viz-Only Mode (Global Config)\n\nWant the diff visualization without threshold enforcement? Create a global config:\n\n```bash\nmkdir -p ~/.config/bumper-lanes\necho '{\"threshold\": 0}' > ~/.config/bumper-lanes/config.json\n```\n\nThis disables enforcement across all repos while keeping the status line diff visualization. Individual repos can override with their own `.bumper-lanes.json`.\n\nRun `/bumper-config` to see which config files are active.\n\n### Other Options\n\n**Disabling per-repo:** Set `\"threshold\": 0` in `.bumper-lanes.json` to disable for a specific repo.\n\n**Hiding diff visualization:** Set `\"show_diff_viz\": false` to hide the diff tree from the status line. Running any view command (`/bumper-tree`, etc.) restores it for the current session.\n\n### Weighted Scoring\n\n- **New file additions**: 1.0x weight\n- **Edits to existing files**: 1.3x weight (harder to review)\n- **Scatter penalty**: Extra points when touching many files\n- **Deletions**: Not counted (removing code is good)\n\n## Requirements\n\n- Go 1.21+ (for automatic binary compilation)\n- Git 2.x+\n- Claude Code with hooks support\n\n## Project Structure\n\n```\nbumper-lanes-plugin/\n├── bin/                    # Built binaries (auto-generated)\n│   ├── bumper-lanes        # Hook handler\n│   └── git-diff-tree       # Diff visualization (from diff-viz)\n├── scripts/\n│   └── ensure-binaries.sh  # Auto-builds on first run\n├── tools/\n│   └── bumper-lanes/       # Hook handler source (Go)\n├── commands/               # Slash command definitions\n└── hooks/\n    └── hooks.json          # Hook configuration\n```\n\nDiff visualization is provided by [diff-viz](https://github.com/kylesnowschwartz/diff-viz).\n"
       },
       "plugins": [
         {
-          "name": "age-of-claude",
-          "description": "Age of Empires sound effects for Claude Code events - wololo your way through coding sessions",
+          "name": "claude-bumper-lanes",
+          "source": "./bumper-lanes-plugin",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kylesnowschwartz/claude-bumper-lanes",
+            "/plugin install claude-bumper-lanes@claude-bumper-lanes"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "jira-cli-skill",
+      "version": null,
+      "description": "Jira integration via jira-cli with wiki markup formatting support",
+      "repo_full_name": "kylesnowschwartz/jira-cli-skill",
+      "repo_url": "https://github.com/kylesnowschwartz/jira-cli-skill",
+      "repo_description": "Claude Code plugin for Jira integration via jira-cli",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-26T01:14:28Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jira-cli-skill\",\n  \"owner\": {\n    \"name\": \"Kyle Snow Schwartz\",\n    \"url\": \"https://github.com/kylesnowschwartz\"\n  },\n  \"metadata\": {\n    \"description\": \"Jira integration via jira-cli with wiki markup formatting support\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jira-cli-skill\",\n      \"source\": \"./\",\n      \"description\": \"Jira integration via jira-cli with wiki markup formatting support\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\n        \"jira\",\n        \"jira-cli\",\n        \"atlassian\",\n        \"issue-tracking\",\n        \"project-management\",\n        \"wiki-markup\",\n        \"agile\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"jira-cli-skill\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Jira integration via jira-cli with wiki markup formatting support\",\n  \"repository\": \"https://github.com/kylesnowschwartz/jira-cli-skill\",\n  \"license\": \"MIT\",\n  \"author\": {\n    \"name\": \"Kyle Snow Schwartz\"\n  },\n  \"keywords\": [\n    \"jira\",\n    \"jira-cli\",\n    \"atlassian\",\n    \"issue-tracking\",\n    \"project-management\",\n    \"wiki-markup\",\n    \"agile\"\n  ]\n}\n",
+        "README.md": "# jira-cli-skill\n\nA Claude Code plugin for Jira integration via [jira-cli](https://github.com/ankitpokhrel/jira-cli).\n\n## Features\n\n- **Issue operations**: Search, create, edit, transition, comment, worklog, sprint, board management\n- **Wiki markup**: Syntax reference, validation script, and templates (Jira doesn't use Markdown)\n- **Field discovery**: Python script for finding custom field IDs (the one thing jira-cli can't do)\n\n## Installation\n\n### Prerequisites\n\n```bash\n# Install jira-cli (macOS)\nbrew install jira-cli\n\n# Install uv (for field discovery script)\nbrew install uv\n```\n\n### Configure jira-cli\n\n```bash\n# Interactive setup - follow prompts\njira init\n\n# Verify\njira serverinfo\njira me\n```\n\n### Install the plugin\n\n```bash\n# Via Claude Code\n/install-plugin /path/to/jira-cli-skill\n```\n\n## Quick Start\n\n```bash\n# Search issues\njira issue list -p PROJ -s \"In Progress\"\n\n# View issue\njira issue view PROJ-123\n\n# Create issue (use wiki markup for description!)\njira issue create -p PROJ -t Bug -s \"Login fails\" -b \"h2. Steps\n# Navigate to login\n# Enter credentials\n\nh2. Expected\nLogin succeeds\"\n\n# Transition\njira issue move PROJ-123 \"Done\"\n\n# Find custom field IDs\nuv run skills/jira/scripts/jira-fields.py search \"story points\"\n\n# Validate wiki markup\nskills/jira/scripts/validate-jira-syntax.sh description.txt\n```\n\n## Wiki Markup (Not Markdown!)\n\nJira uses wiki markup. Common conversions:\n\n| Markdown | Jira |\n|----------|------|\n| `## Heading` | `h2. Heading` |\n| `**bold**` | `*bold*` |\n| `` `code` `` | `{{code}}` |\n| `[text](url)` | `[text\\|url]` |\n| `- item` | `* item` |\n\nSee [SKILL.md](skills/jira/SKILL.md) for full reference.\n\n## Field Discovery\n\njira-cli cannot list available fields. The included Python script fills this gap:\n\n```bash\nuv run skills/jira/scripts/jira-fields.py search \"sprint\"\nuv run skills/jira/scripts/jira-fields.py list --type custom --json\n```\n\nRequires separate auth via `~/.env.jira`:\n\n```bash\n# Jira Cloud\nJIRA_URL=https://company.atlassian.net\nJIRA_USERNAME=your-email@example.com\nJIRA_API_TOKEN=your-api-token\n\n# Jira Server/DC\nJIRA_URL=https://jira.yourcompany.com\nJIRA_PERSONAL_TOKEN=your-personal-access-token\n```\n\n## Documentation\n\n- [Jira SKILL.md](skills/jira/SKILL.md) - Full command and syntax reference\n- [JQL Quick Reference](skills/jira/references/jql-quick-reference.md)\n- [Backlog Quick Wins](skills/jira/references/backlog-quick-wins.md)\n- [Syntax Reference](skills/jira/references/syntax-reference.md)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "jira-cli-skill",
+          "source": "./",
+          "description": "Jira integration via jira-cli with wiki markup formatting support",
           "version": "1.0.0",
-          "author": {
-            "name": "Kyle Snow Schwartz"
-          },
-          "source": "./age-of-claude-plugin",
-          "homepage": "https://github.com/kylesnowschwartz/age-of-claude",
-          "repository": "https://github.com/kylesnowschwartz/age-of-claude",
-          "license": "MIT",
-          "category": "fun",
           "keywords": [
-            "sounds",
-            "age-of-empires",
-            "notifications",
-            "audio",
-            "fun",
-            "claude-code",
-            "wololo"
+            "jira",
+            "jira-cli",
+            "atlassian",
+            "issue-tracking",
+            "project-management",
+            "wiki-markup",
+            "agile"
           ],
+          "category": "productivity",
           "categories": [
-            "age-of-empires",
-            "audio",
-            "claude-code",
-            "fun",
-            "notifications",
-            "sounds",
-            "wololo"
+            "agile",
+            "atlassian",
+            "issue-tracking",
+            "jira",
+            "jira-cli",
+            "productivity",
+            "project-management",
+            "wiki-markup"
           ],
           "install_commands": [
-            "/plugin marketplace add kylesnowschwartz/age-of-claude",
-            "/plugin install age-of-claude@age-of-claude"
+            "/plugin marketplace add kylesnowschwartz/jira-cli-skill",
+            "/plugin install jira-cli-skill@jira-cli-skill"
           ]
         }
       ]

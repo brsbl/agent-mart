@@ -15,7 +15,7 @@
       "signals": {
         "stars": 1221,
         "forks": 52,
-        "pushed_at": "2026-01-28T23:51:59Z"
+        "pushed_at": "2026-02-01T21:49:09Z"
       },
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"criterium\",\n  \"metadata\": {\n    \"description\": \"Claude Code plugin for Clojure benchmarking with criterium\"\n  },\n  \"owner\": {\n    \"name\": \"Criterium Team\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"criterium\",\n      \"source\": \"./\",\n      \"description\": \"Benchmarking library for Clojure\",\n      \"version\": \"0.5.0\",\n      \"license\": \"EPL-1.0\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
@@ -90,50 +90,78 @@
       ]
     },
     {
-      "name": "mcp-clj-tools",
+      "name": "mcp-vector-search-plugins",
       "version": null,
-      "description": "Announce when Claude Code is idle or needs your input",
-      "repo_full_name": "hugoduncan/claude-marketplace",
-      "repo_url": "https://github.com/hugoduncan/claude-marketplace",
-      "repo_description": null,
+      "description": "Claude Code plugins for mcp-vector-search configuration and library integration",
+      "repo_full_name": "hugoduncan/mcp-vector-search",
+      "repo_url": "https://github.com/hugoduncan/mcp-vector-search",
+      "repo_description": "Semantic search for your documents, available to AI agents via MCP",
       "signals": {
-        "stars": 1,
+        "stars": 2,
         "forks": 0,
-        "pushed_at": "2025-12-23T21:39:33Z"
+        "pushed_at": "2025-11-06T23:13:19Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mcp-clj-tools\",\n  \"owner\": {\n    \"name\": \"Hugo Duncan\",\n    \"email\": \"hugo@hugoduncan.org\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"announce-notification\",\n      \"source\": \"./plugins/announce-notification\",\n      \"description\": \"Announce when Claude Code is idle or needs your input\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Hugo Duncan\"\n      }\n    },\n    {\n      \"name\": \"clojure-lsp\",\n      \"source\": \"./plugins/clojure-lsp\",\n      \"description\": \"Clojure/ClojureScript language server integration for Claude Code\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Hugo Duncan\"\n      }\n    }\n  ]\n}\n",
-        "README.md": "# mcp-clj-tools Plugin Marketplace\n\nA Claude Code plugin marketplace containing productivity-enhancing plugins.\n\n## Overview\n\nThis repository serves as a plugin marketplace for Claude Code,\nproviding a collection of plugins that extend Claude Code's\nfunctionality with custom hooks, tools, and integrations.\n\n## Available Plugins\n\n### announce-notification\n\nAudio notifications when Claude Code is idle or needs your input.\n\n**Features:**\n- Announces \"Claude idle in [directory]\" when Claude becomes idle\n- Provides audio feedback with directory context\n- Works seamlessly across multiple projects\n- Cross-platform support for macOS and Linux\n\n**Requirements:**\n- `jq` JSON processor\n- macOS: `say` command (built-in)\n- Linux: `spd-say` (speech-dispatcher) or `espeak`\n\n[Full documentation](plugins/announce-notification/README.md) | [Linux setup instructions](plugins/announce-notification/README.md#linux)\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```\n/plugin marketplace add hugoduncan/claude-marketplace\n```\n\nThen install plugins from this marketplace. For example, to install the\nannounce-notification plugin:\n\n```\n/plugin install announce-notification\n```\n",
-        "plugins/announce-notification/README.md": "# Announce Notification Plugin\n\nAudio notifications when Claude Code is idle or needs your input.\n\n## Description\n\nThis plugin uses Claude Code's notification hooks to provide audio announcements when Claude becomes idle or is waiting for your input. The announcement includes the current directory name for context when working across multiple projects.\n\n## Features\n\n- Announces \"Claude idle in [directory]\" when Claude Code becomes idle\n- Announces other notification messages with directory context\n- Cross-platform text-to-speech support:\n  - macOS: Uses `say` command\n  - Linux: Automatically detects and uses `spd-say` (speech-dispatcher) or falls back to `espeak`\n\n## Requirements\n\n### All Platforms\n\n- `jq` command-line JSON processor\n\n### macOS\n\n- `say` command (built-in on macOS)\n\n### Linux\n\nOne of the following text-to-speech engines (the plugin will automatically use the first available):\n\n1. **speech-dispatcher** (recommended) - provides `spd-say` command\n2. **espeak** - fallback option\n\n## Installation\n\n### macOS\n\nInstall jq using Homebrew:\n```bash\nbrew install jq\n```\n\nThe `say` command is available by default on macOS.\n\n### Linux\n\n#### Debian/Ubuntu\n```bash\n# Install jq and speech-dispatcher (recommended)\nsudo apt install jq speech-dispatcher\n\n# Or install jq and espeak (alternative)\nsudo apt install jq espeak\n```\n\n#### Fedora/RHEL\n```bash\n# Install jq and speech-dispatcher (recommended)\nsudo dnf install jq speech-dispatcher\n\n# Or install jq and espeak (alternative)\nsudo dnf install jq espeak\n```\n\n#### Arch Linux\n```bash\n# Install jq and speech-dispatcher (recommended)\nsudo pacman -S jq speech-dispatcher\n\n# Or install jq and espeak (alternative)\nsudo pacman -S jq espeak\n```\n\n## How It Works\n\nThe plugin registers a notification hook that:\n1. Receives notification events from Claude Code as JSON\n2. Extracts the notification message\n3. Detects the platform and available text-to-speech command:\n   - macOS: Uses `say`\n   - Linux: Tries `spd-say` first, falls back to `espeak` if unavailable\n4. Gets the current working directory name\n5. Uses text-to-speech to announce the event\n\n## Files\n\n- `hooks/hooks.json` - Hook configuration\n- `scripts/idle_notification.sh` - Notification script\n- `package.json` - Plugin metadata\n\n## Plugin Installation\n\nThis plugin is part of the mcp-clj-tools marketplace. Install it through the Claude Code plugin system.\n",
-        "plugins/clojure-lsp/README.md": "# Clojure LSP Plugin\n\nProvides [clojure-lsp](https://clojure-lsp.io) integration for Claude Code, enabling real-time diagnostics, code navigation, and language awareness for Clojure, ClojureScript, and EDN files.\n\n## Prerequisites\n\nInstall clojure-lsp before using this plugin:\n\n**macOS (Homebrew):**\n```bash\nbrew install clojure-lsp/brew/clojure-lsp-native\n```\n\n**Linux/macOS (Script):**\n```bash\ncurl -fsSL https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install | bash\n```\n\n**Windows:**\n```bash\nscoop bucket add scoop-clojure https://github.com/littleli/scoop-clojure\nscoop install clojure-lsp\n```\n\nSee [clojure-lsp installation docs](https://clojure-lsp.io/installation/) for more options.\n\n## Features\n\n- Real-time error and warning diagnostics\n- Go to definition\n- Find references\n- Hover documentation\n- Symbol information\n\n## Supported File Types\n\n- `.clj` - Clojure\n- `.cljs` - ClojureScript\n- `.cljc` - Clojure/ClojureScript\n- `.edn` - EDN data files\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mcp-vector-search-plugins\",\n  \"owner\": {\n    \"name\": \"Hugo Duncan\",\n    \"email\": \"hugo_duncan@yahoo.com\",\n    \"url\": \"https://github.com/hugoduncan\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for mcp-vector-search configuration and library integration\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"config-guide\",\n      \"description\": \"Guide for writing mcp-vector-search configuration files\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Hugo Duncan\",\n        \"email\": \"hugo_duncan@yahoo.com\",\n        \"url\": \"https://github.com/hugoduncan\"\n      },\n      \"source\": \"./.claude-plugin/plugins/config-guide\",\n      \"category\": \"configuration\",\n      \"tags\": [\"mcp-vector-search\", \"setup\", \"config\"],\n      \"strict\": true,\n      \"license\": \"EPL-1.0\"\n    },\n    {\n      \"name\": \"embed-guide\",\n      \"description\": \"Guide for embedding mcp-vector-search as a library in MCP servers\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Hugo Duncan\",\n        \"email\": \"hugo_duncan@yahoo.com\",\n        \"url\": \"https://github.com/hugoduncan\"\n      },\n      \"source\": \"./.claude-plugin/plugins/embed-guide\",\n      \"category\": \"integration\",\n      \"tags\": [\"mcp-vector-search\", \"library\", \"embedding\"],\n      \"strict\": true,\n      \"license\": \"EPL-1.0\"\n    }\n  ]\n}\n",
+        "README.md": "# mcp-vector-search\n\n**Semantic search for your documents, available to AI agents via MCP.**\n\nIndex documentation, code, and knowledge bases with semantic embeddings. AI assistants can search on-demand without loading everything into context.\n\n```clojure\n;; .mcp-vector-search/config.edn\n{:sources [{:path \"/docs/**/*.md\"}]}\n```\n\n```\n# Search from Claude Code\n\"Find authentication documentation\"\n→ Returns relevant docs based on semantic similarity\n```\n\n**Quick Links**: [Quick Start](#quick-start) · [Installation](#installation) · [What & Why](#what--why) · [Advanced Features](#advanced-features)\n\n---\n\n## Table of Contents\n\n- [Quick Start](#quick-start)\n- [What & Why](#what--why)\n- [Installation](#installation)\n- [Basic Configuration](#basic-configuration)\n- [Using the Search Tool](#using-the-search-tool)\n- [Claude Code Plugins](#claude-code-plugins)\n- [Advanced Features](#advanced-features)\n- [Development](#development)\n- [Documentation](#documentation)\n\n## Quick Start\n\n**1. Install the MCP server** (requires Clojure CLI tools):\n\n```bash\n# Add to ~/.clojure/deps.edn\n{:aliases\n {:mcp-vector-search\n  {:replace-paths []\n   :replace-deps {org.hugoduncan/mcp-vector-search\n                  {:git/url \"https://github.com/hugoduncan/mcp-vector-search\"\n                   :git/sha \"LATEST_SHA_HERE\"}\n                  org.clojure/clojure {:mvn/version \"1.12.3\"}}\n   :jvm-opts [\"--enable-native-access=ALL-UNNAMED\"]\n   :exec-fn mcp-vector-search.main/start}}}\n\n# Configure Claude Code\nclaude mcp add mcp-vector-search -- $(which clojure) -X:mcp-vector-search\n```\n\n**2. Create config file** at `~/.mcp-vector-search/config.edn` or `.mcp-vector-search/config.edn`:\n\n```clojure\n{:sources [{:path \"/path/to/your/docs/**/*.md\"}]}\n```\n\n**3. Restart Claude Code** - the search tool is now available.\n\n**4. Search from Claude Code**:\n\n```\n\"Search for authentication best practices\"\n\"Find code examples for user validation\"\n\"Show me documentation about API rate limiting\"\n```\n\nThe assistant will use the search tool to find relevant content semantically, without you loading all documents into context.\n\n## What & Why\n\n### What It Does\n\nmcp-vector-search is an MCP server that:\n- **Indexes documents** using semantic embeddings (AllMiniLmL6V2 model)\n- **Provides a search tool** to AI assistants via the Model Context Protocol\n- **Enables semantic search** - find content by meaning, not just keywords\n- **Filters by metadata** - narrow searches to specific projects, categories, or file types\n- **Works as a library** - embed in your own MCP servers with bundled documentation\n\n### Why Use It\n\n**Expand what's accessible, not what's loaded.** AI agents have limited context windows. Instead of loading all documentation upfront, they search when needed.\n\n**Key benefits**:\n- Work with knowledge bases larger than context windows\n- Discover related content through semantic similarity\n- Retrieve information just-in-time, not speculatively\n- The search tool doesn't consume context - only results do\n\n**When to use**:\n- Large documentation sets (hundreds of pages)\n- Multi-project codebases (find patterns across projects)\n- Historical context (design docs, decision logs)\n- API references (look up functions and examples as needed)\n- Custom MCP servers needing semantic search over bundled documentation\n\nSee [doc/about.md](doc/about.md) for a detailed explanation of the problem and solution.\n\n**Library usage**: mcp-vector-search can be embedded in your own MCP servers to provide semantic search over bundled resources. See [doc/library-usage.md](doc/library-usage.md) for details.\n\n## Installation\n\n### Prerequisites\n\n- Clojure CLI tools\n- Java 11+ (required for embedding model)\n\n### Configure Clojure Alias\n\nAdd to `~/.clojure/deps.edn`:\n\n```clojure\n{:aliases\n {:mcp-vector-search\n  {:replace-paths []\n   :replace-deps {org.hugoduncan/mcp-vector-search\n                  {:git/url \"https://github.com/hugoduncan/mcp-vector-search\"\n                   :git/sha \"LATEST_SHA_HERE\"}\n                  org.clojure/clojure {:mvn/version \"1.12.3\"}}\n   :jvm-opts [\"--enable-native-access=ALL-UNNAMED\"]\n   :exec-fn mcp-vector-search.main/start}}}\n```\n\n**Note**: Replace `LATEST_SHA_HERE` with the latest commit SHA from this repository.\n\n### Add to MCP Client\n\n**Claude Code:**\n```bash\nclaude mcp add mcp-vector-search -- $(which clojure) -X:mcp-vector-search\n```\n\n**Claude Desktop, Cline, and other MCP clients:** See [doc/install.md](doc/install.md) for setup instructions and troubleshooting.\n\n## Basic Configuration\n\nConfiguration file location (first found is used):\n- `.mcp-vector-search/config.edn` (project-specific)\n- `~/.mcp-vector-search/config.edn` (global)\n\n### Minimal Example\n\n```clojure\n{:sources [{:path \"/docs/**/*.md\"}]}\n```\n\nIndexes all markdown files recursively under `/docs/`.\n\n### Path Patterns and Metadata\n\nPath specs support globs (`*`, `**`), regex captures, and custom metadata:\n\n```clojure\n;; Basic: recursive glob\n{:sources [{:path \"/docs/**/*.md\"}]}\n\n;; With capture and metadata\n{:sources [{:path \"/docs/(?<category>[^/]+)/*.md\"\n            :project \"myapp\"\n            :type \"documentation\"}]}\n;; File /docs/api/auth.md gets metadata:\n;; {:project \"myapp\", :type \"documentation\", :category \"api\"}\n```\n\nAny config keys except `:path`, `:name`, `:ingest`, and `:watch?` become metadata. See [doc/path-spec.md](doc/path-spec.md) and [doc/using.md](doc/using.md) for full syntax and examples.\n\n## Using the Search Tool\n\nSimply ask the AI assistant to find information:\n\n```\n\"Find documentation about rate limiting\"\n\"Search for API documentation in the admin category\"\n\"Show me code examples of input validation\"\n```\n\nThe assistant uses semantic search automatically. Searches can filter by metadata (e.g., category, project, type).\n\n**Tool parameters:**\n- `query` (required): Search text\n- `limit` (optional): Max results (default: 10)\n- `metadata` (optional): Filter by key-value pairs (AND logic)\n\n## Claude Code Plugins\n\nTwo Claude Code skills are available to guide configuration and library integration:\n\n### Installing Plugins\n\nAdd the mcp-vector-search marketplace to Claude Code:\n\n```bash\n/plugin marketplace add hugoduncan/mcp-vector-search\n```\n\nThen install both plugins:\n\n```bash\n/plugin install config-guide@mcp-vector-search-plugins\n/plugin install embed-guide@mcp-vector-search-plugins\n```\n\nOr install the marketplace from a local clone:\n\n```bash\n# From the mcp-vector-search directory\n/plugin marketplace add ./\n```\n\n### Available Plugins\n\n**config-guide** - Interactive guide for writing `.mcp-vector-search/config.edn` files:\n- Path specifications (filesystem/classpath, globs, captures)\n- Ingest strategies (whole-document, namespace-doc, code-analysis, chunked, file-path)\n- Metadata extraction\n- File watching setup\n\nUsage: `/config-guide` in Claude Code\n\n**embed-guide** - Interactive guide for embedding mcp-vector-search as a library:\n- Adding dependencies\n- Resource bundling\n- Classpath vs filesystem sources\n- JAR packaging with build scripts\n\nUsage: `/embed-guide` in Claude Code\n\nBoth skills provide comprehensive, interactive guidance with examples and best practices.\n\n## Advanced Features\n\n### Ingest Strategies\n\nControl how documents are processed, embedded, and stored:\n\n- **`:whole-document`** (default) - Embeds and stores complete file content\n- **`:namespace-doc`** - Embeds Clojure namespace docstrings, returns full source\n- **`:file-path`** - Embeds content but stores only the file path (saves memory)\n- **`:code-analysis`** - Analyzes code structure, creates segments per element (functions, classes, etc.)\n- **`:chunked`** - Splits large documents into smaller segments\n\n```clojure\n{:sources [{:path \"/src/**/*.clj\"\n            :ingest :namespace-doc}]}\n```\n\n### File Watching\n\nAuto-reindex when files change:\n\n```clojure\n{:watch? true\n :sources [{:path \"/docs/**/*.md\"}]}\n```\n\n### Custom Tool Description\n\nCustomize the search tool description for AI assistants:\n\n```clojure\n{:description \"Search internal API documentation and code examples\"\n :sources [{:path \"/docs/**/*.md\"}]}\n```\n\n**For complete configuration details**, including strategy options, advanced path patterns, metadata filtering, and troubleshooting, see [doc/using.md](doc/using.md).\n\n## Development\n\n### Setup\n\n```bash\ngit clone https://github.com/hugoduncan/mcp-vector-search\ncd mcp-vector-search\n```\n\n### Running Locally\n\n```bash\n# Start server with default config (~/.mcp-vector-search/config.edn)\nclojure -X:run\n\n# Use custom config\nclojure -X:run :config-path '\"/path/to/config.edn\"'\n```\n\n### Testing\n\n```bash\n# Run all tests\nclojure -M:test\n\n# Run specific namespace\nclojure -M:test --focus mcp-vector-search.config-test\n```\n\n### REPL Development\n\n```clojure\n(require 'clojure.repl.deps)\n(clojure.repl.deps/sync-deps)\n```\n\n### Project Structure\n\n- `main.clj` - Server startup and coordination\n- `config.clj` - Configuration parsing and path spec handling\n- `ingest.clj` - File matching, embedding, and storage (with strategy multimethods)\n- `tools.clj` - MCP search tool definition\n- `lifecycle.clj` - System lifecycle management\n- `server.clj` - MCP protocol implementation\n\n### Contributing\n\nContributions welcome! Please:\n1. Run tests before submitting PRs\n2. Follow existing code style\n3. Add tests for new features\n4. Update documentation\n\n### Releasing\n\nSee [doc/releasing.md](doc/releasing.md) for the release process and version scheme.\n\n## Documentation\n\n- **[doc/about.md](doc/about.md)** - Project purpose, problem/solution, use cases\n- **[doc/install.md](doc/install.md)** - Detailed installation for various MCP clients\n- **[doc/using.md](doc/using.md)** - Complete configuration reference, strategies, troubleshooting\n- **[doc/library-usage.md](doc/library-usage.md)** - Using mcp-vector-search as a library in custom MCP servers\n- **[doc/path-spec.md](doc/path-spec.md)** - Formal path specification syntax and grammar\n- **[CLAUDE.md](CLAUDE.md)** - Developer/AI assistant technical reference with architecture details\n\n## License\n\nCopyright © 2025 Hugo Duncan\n\nDistributed under the Eclipse Public License 2.0.\n"
       },
       "plugins": [
         {
-          "name": "announce-notification",
-          "source": "./plugins/announce-notification",
-          "description": "Announce when Claude Code is idle or needs your input",
+          "name": "config-guide",
+          "description": "Guide for writing mcp-vector-search configuration files",
           "version": "1.0.0",
           "author": {
-            "name": "Hugo Duncan"
+            "name": "Hugo Duncan",
+            "email": "hugo_duncan@yahoo.com",
+            "url": "https://github.com/hugoduncan"
           },
-          "categories": [],
+          "source": "./.claude-plugin/plugins/config-guide",
+          "category": "configuration",
+          "tags": [
+            "mcp-vector-search",
+            "setup",
+            "config"
+          ],
+          "strict": true,
+          "license": "EPL-1.0",
+          "categories": [
+            "config",
+            "configuration",
+            "mcp-vector-search",
+            "setup"
+          ],
           "install_commands": [
-            "/plugin marketplace add hugoduncan/claude-marketplace",
-            "/plugin install announce-notification@mcp-clj-tools"
+            "/plugin marketplace add hugoduncan/mcp-vector-search",
+            "/plugin install config-guide@mcp-vector-search-plugins"
           ]
         },
         {
-          "name": "clojure-lsp",
-          "source": "./plugins/clojure-lsp",
-          "description": "Clojure/ClojureScript language server integration for Claude Code",
+          "name": "embed-guide",
+          "description": "Guide for embedding mcp-vector-search as a library in MCP servers",
           "version": "1.0.0",
           "author": {
-            "name": "Hugo Duncan"
+            "name": "Hugo Duncan",
+            "email": "hugo_duncan@yahoo.com",
+            "url": "https://github.com/hugoduncan"
           },
-          "categories": [],
+          "source": "./.claude-plugin/plugins/embed-guide",
+          "category": "integration",
+          "tags": [
+            "mcp-vector-search",
+            "library",
+            "embedding"
+          ],
+          "strict": true,
+          "license": "EPL-1.0",
+          "categories": [
+            "embedding",
+            "integration",
+            "library",
+            "mcp-vector-search"
+          ],
           "install_commands": [
-            "/plugin marketplace add hugoduncan/claude-marketplace",
-            "/plugin install clojure-lsp@mcp-clj-tools"
+            "/plugin marketplace add hugoduncan/mcp-vector-search",
+            "/plugin install embed-guide@mcp-vector-search-plugins"
           ]
         }
       ]
