@@ -15,7 +15,47 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Check if we should run tests (skip for data-only changes)
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_test: ${{ steps.check.outputs.should_test }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for code changes
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_test=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Get changed files
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.event.after }}"
+          fi
+
+          # Check if any non-data files changed
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD" | grep -v -E '^(web/public/data/|data/signals-history\.json)' || true)
+
+          if [ -n "$CHANGED" ]; then
+            echo "Code changes detected:"
+            echo "$CHANGED"
+            echo "should_test=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Only data files changed, skipping tests"
+            echo "should_test=false" >> "$GITHUB_OUTPUT"
+          fi
+
   test:
+    needs: changes
+    if: needs.changes.outputs.should_test == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
