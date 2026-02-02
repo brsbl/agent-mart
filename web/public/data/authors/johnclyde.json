@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "johnclyde",
+    "display_name": "John Clyde",
+    "avatar_url": "https://avatars.githubusercontent.com/u/175860?u=e51e519154ab792c02cdd59011cbf9edd0a1b923&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "clydehub",
+      "version": null,
+      "description": "Opinionated Git workflow plugin - clean commits, smart staging, zero attribution",
+      "repo_full_name": "johnclyde/clydehub",
+      "repo_url": "https://github.com/johnclyde/clydehub",
+      "repo_description": "Opinionated Git workflow plugin for Claude Code - clean commits, smart staging, zero attribution",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-10-09T18:28:59Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"clydehub\",\n  \"owner\": {\n    \"name\": \"John Clyde\",\n    \"url\": \"https://github.com/johnclyde\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"clydehub\",\n      \"source\": \"./\",\n      \"description\": \"Opinionated Git workflow plugin - clean commits, smart staging, zero attribution\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"clydehub\",\n  \"description\": \"Comprehensive Git workflow management plugin with CI automation and lint fixing\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"John Clyde\"\n  }\n}\n",
+        "README.md": "# Clydehub - Git Workflow Plugin\n\nA comprehensive Claude Code plugin for managing Git workflows with automated linting, type checking, and CI validation.\n\n## Features\n\n- **Smart commits** with automatic lint fixing and type checking\n- **Pull request creation** with GitHub PR checks monitoring\n- **Branch syncing** with clean rebase workflow\n- **Test debugging** for investigating specific failures\n- **CI validation** without running full test suites locally\n- **Zero Claude attribution** in commits\n\n## Tech Stack Preferences\n\n### JavaScript/TypeScript\n- Package manager: **pnpm**\n- Linting/Formatting: **biome**\n- Type checking: **tsc**\n- Tests: **pnpm test**\n\n### Python\n- Package manager: **uv**\n- Linting: **ruff check --fix**\n- Formatting: **ruff format**\n- Type checking: **ty check**\n- Tests: **uv run pytest**\n\n## Commands\n\n### `/commit [message]`\nCreate a smart commit with automatic linting and type checking.\n\n**Workflow:**\n1. Stage relevant files\n2. Run linters and auto-fix\n3. Run type checking\n4. Stage fixes\n5. Create commit\n\n**Important:** Does NOT run tests. No Claude attribution added.\n\n### `/pr [title]`\nCreate a pull request with validation.\n\n**Workflow:**\n1. Lint and type check\n2. Commit any pending changes\n3. Push to remote\n4. Create PR with `gh pr create`\n5. Monitor PR checks with `gh pr checks`\n6. Return PR URL and deployment info\n\n**Important:** Relies on GitHub PR checks, not local test runs.\n\n### `/lint-fix`\nRun all linters and automatically fix issues.\n\n**Detects and runs:**\n- JavaScript/TypeScript: `pnpm biome check --write`\n- Python: `uv run ruff check --fix`, `uv run ruff format`\n\n### `/ci-check`\nRun comprehensive CI validation locally.\n\n**Runs in order:**\n1. Linters (auto-fix)\n2. Type checking\n3. Tests\n4. Build (if applicable)\n\n**Important:** Stops at first failure.\n\n### `/sync`\nSync current branch with main/master.\n\n**Workflow:**\n1. Fetch latest\n2. Ensure clean working directory\n3. Rebase on main\n4. Handle conflicts if needed\n5. Run linters\n6. Report status\n\n**Important:** No stashing. Requires clean working directory.\n\n### `/test-debug [test-name]`\nDebug a specific failing test.\n\n**Workflow:**\n1. Run specific test\n2. Analyze failures\n3. Iterate on fixes\n4. After test passes: lint → type check → test again\n5. Stage all changes\n\n**Important:** For investigating specific failures, not running full suite.\n\n## Custom Agent\n\n### `@git-workflow`\nSpecialized agent for Git operations with strict adherence to:\n- No Claude Code attribution\n- Always lint before commits\n- Use pnpm/uv, biome/ruff\n- Clean workflows (no stashing)\n- Fail fast with clear errors\n\n## Hooks\n\n### PreToolUse\n- **lint-before-commit**: Validates linting before git commits\n\n### PostToolUse\n- **verify-no-claude-attribution**: Ensures no Claude Code attribution in commit messages\n\n## Installation\n\n```bash\n/plugin install clydehub\n```\n\n## Configuration\n\nThis plugin is opinionated and configured for:\n- Modern JavaScript/TypeScript development with pnpm and biome\n- Python development with uv and ruff\n- Clean Git workflows without attribution noise\n- GitHub-centric CI/CD (gh CLI)\n\n## What This Plugin Does NOT Do\n\n- ❌ Add Claude Code attribution to commits\n- ❌ Suggest npm, yarn, eslint, prettier, or black\n- ❌ Use git stash\n- ❌ Run full test suites as part of commit flow\n- ❌ Force-push without confirmation\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "clydehub",
+          "source": "./",
+          "description": "Opinionated Git workflow plugin - clean commits, smart staging, zero attribution",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add johnclyde/clydehub",
+            "/plugin install clydehub@clydehub"
+          ]
+        }
+      ]
+    }
+  ]
+}

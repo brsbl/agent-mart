@@ -6,53 +6,96 @@
   },
   "marketplaces": [
     {
-      "name": "yw-claude-marketplace-demo",
+      "name": "yoshiwatanabe-plugins",
       "version": null,
-      "description": "[DEMO] Claude marketplace package showing working structure, metadata layout, and live Claude Skills",
-      "repo_full_name": "yoshiwatanabe/yw-claude-marketplace-demo",
-      "repo_url": "https://github.com/yoshiwatanabe/yw-claude-marketplace-demo",
+      "description": "Personal Claude Code plugins for domain-specific memory and configuration management",
+      "repo_full_name": "yoshiwatanabe/yoshiwatanabe-plugins",
+      "repo_url": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
       "repo_description": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-13T07:57:57Z"
+        "pushed_at": "2026-02-02T03:02:26Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"yw-claude-marketplace-demo\",\n  \"description\": \"[DEMO] Claude marketplace package showing working structure, metadata layout, and live Claude Skills\",\n  \"owner\": {\n    \"name\": \"Yoshi Watanabe\",\n    \"email\": \"yoshiwatanabe@users.noreply.github.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"demo-skills\",\n      \"source\": \"./plugins/demo-skills\",\n      \"description\": \"[DEMO] Skill patterns: minimal, references, scripts, assets\"\n    },\n    {\n      \"name\": \"demo-commands\",\n      \"source\": \"./plugins/demo-commands\",\n      \"description\": \"[DEMO] Slash command patterns: simple, arguments, workflows\"\n    },\n    {\n      \"name\": \"demo-mcp\",\n      \"source\": \"./plugins/demo-mcp\",\n      \"description\": \"[DEMO] MCP server patterns: minimal, multiple tools, external API\"\n    }\n  ]\n}",
-        "README.md": "# yw-claude-marketplace-demo\n\n> A **Claude Marketplace** — a working example of how to package and distribute plugins for Anthropic's Claude Code.\n\n## What Is This?\n\nThis is a **marketplace repository** that demonstrates Anthropic Claude's plugin extensibility system. It contains a collection of low-cognitive-load examples and demos showcasing various Claude extensibility features.\n\n### Key Intent\n\n- **Educational focus**: Each demo is intentionally minimal to illustrate ONE concept clearly\n- **Hands-on learning**: Copy, modify, and adapt examples to understand Claude extensibility\n- **Extensibility showcase**: Demonstrates core Claude extension mechanisms like Skills, MCP Servers, CLAUDE.md, Slash Commands, Subagents, Hooks, and more\n\n## ⚠️ Important Platform Limitations\n\n**This marketplace is designed exclusively for Claude Code** (Anthropic's Claude environment). \n\n- ✅ Works with: Claude Code (Claude IDE)\n- ❌ Does NOT work with: GitHub Copilot in VS Code, or other third-party AI environments\n- ❌ Cannot be imported as a standard VS Code extension marketplace\n\nThe plugin mechanism described here is specific to Anthropic's Claude platform and cannot be ported to other environments.\n\n## Installation (Claude Code)\n\n```bash\n# Step 1: Add this marketplace\n/plugin marketplace add https://github.com/yoshiwatanabe/yw-claude-marketplace-demo.git\n\n# Step 2: Browse available demo plugins\n/plugin\n\n# Step 3: Install a specific demo plugin\n/plugin install <plugin-name>@yw-claude-marketplace-demo\n```\n\n## Plugin Catalog\n\nA detailed catalog of available plugins, features, and installation instructions will be published here as more content is added to this repository.\n\nIn the meantime, see the [plugins/](plugins/) directory for available examples.\n",
-        "plugins/demo-skills/README.md": "# Demo: Skills\n\n**Feature:** Progressive-disclosure knowledge files  \n**Cognitive Load:** ⭐⭐ Low\n\n## What This Demonstrates\n\nSkills are knowledge files that Claude can discover and load on-demand. They use progressive disclosure to minimize token usage while providing deep context when needed.\n\n## Skills Included\n\n### 1. Minimal Skill\n**Path:** `skills/minimal-skill/`  \n**Demo:** Simplest possible skill with just description + workflow\n\n### 2. Skill with References\n**Path:** `skills/skill-with-references/`  \n**Demo:** Skill that loads additional documentation on demand\n\n### 3. Skill with Scripts\n**Path:** `skills/skill-with-scripts/`  \n**Demo:** Skill that can execute helper scripts\n\n### 4. Skill with Assets\n**Path:** `skills/skill-with-assets/`  \n**Demo:** Skill with bundled configuration files\n\n### 5. Greeting Skill\n**Path:** `skills/greeting-skill/`  \n**Demo:** Auto-triggered skill that responds to keywords\n\n## Test Scenarios\n\n1. **Install the plugin**\n   ```bash\n   /plugin install demo-skills@yw-claude-marketplace-demo\n   ```\n\n2. **Test auto-trigger**\n   - Say \"hello\" and observe the greeting-skill activate\n\n3. **Test progressive disclosure**\n   - Ask about something that matches a skill description\n   - Observe how metadata loads first, then content as needed\n\n4. **Test scripts**\n   - Trigger the skill-with-scripts and observe execution\n\n## Skill Structure\n\nEach skill follows this structure:\n```\nskill-name/\n├── SKILL.md          # Main skill definition\n├── references/       # Optional: Reference docs\n│   └── *.md\n├── scripts/          # Optional: Executable scripts\n│   └── *.py, *.sh\n└── assets/           # Optional: Data files\n    └── *.json, *.yaml\n```\n\n## Learning Points\n\n- Skills use progressive disclosure (load only what's needed)\n- Skills can auto-trigger based on keywords/context\n- Skills can bundle references, scripts, and assets\n- Skills reduce always-on context compared to CLAUDE.md\n",
-        "plugins/demo-commands/README.md": "# demo-commands - Slash Commands Demo\n\nHello World examples for Claude Code slash commands.\n\n## Installation\n\n```\n/plugin install demo-commands@yw-claude-marketplace-demo\n```\n\n## Available Commands\n\n| Command | Type | Example |\n|---------|------|---------|\n| `/hello` | Static prompt | `/hello` |\n| `/greet` | With arguments | `/greet Alice` |\n| `/summarize` | Project analysis | `/summarize` |\n| `/analyze-code` | Code file analysis | `/analyze-code src/main.ts` |\n| `/explain-code` | Code explanation | `/explain-code src/main.ts` |\n| `/check-types` | TypeScript checker | `/check-types` |\n| `/test-report` | Test suite runner | `/test-report` |\n\n## What This Demonstrates\n\nEach command shows a different slash command pattern:\n- **Simple static prompts** (`/hello`)\n- **Commands with arguments** (`/greet $ARGUMENTS`)\n- **Multi-step workflows** (`/summarize`)\n- **Tool integration** (`/check-types`, `/test-report`)\n\n## How to Use\n\nAfter installation, commands are available immediately:\n\n1. Type `/` in Claude Code\n2. Select a command from the autocomplete\n3. Provide arguments if needed (shown with `$ARGUMENTS`)\n\n## Examples\n\n```\n/hello\n→ Friendly greeting message\n\n/greet Yoshi\n→ Personalized greeting with fun facts about the name\n\n/summarize\n→ Analysis of the current project\n\n/analyze-code src/main.ts\n→ Analysis of the specified file\n```\n\n## Testing\n\nSee TESTING.md in the plugin directory for detailed testing instructions.",
-        "plugins/demo-mcp/README.md": "# demo-mcp - MCP Servers Demo\n\nHello World examples for Claude Code MCP (Model Context Protocol) server integration.\n\n## Installation\n\n```bash\n/plugin install demo-mcp@yw-claude-marketplace-demo\n```\n\n### Dependencies\n\nThe weather server requires the `requests` library:\n\n```bash\npip install requests\n```\n\n(Or install all server dependencies: \\`pip install -r plugins/demo-mcp/servers/weather-server/requirements.txt\\`)\n\n## Available Servers\n\n| Server | Tools | Pattern | Dependencies |\n|--------|-------|---------|---|\n| **echo** | \\`echo\\` | Minimal MCP | None |\n| **calculator** | \\`add, subtract, multiply, divide\\` | Multiple tools | None |\n| **weather** | \\`get_weather\\` | External API integration | requests |\n\n## What This Demonstrates\n\nEach server shows a different MCP pattern:\n\n- **echo-server** - Minimal MCP with a single tool\n- **calculator-server** - Multiple tools in one server with error handling\n- **weather-server** - Real-world API integration (Open-Meteo)\n\n## How to Use\n\nAfter installation, tools are available automatically in Claude Code.\n\n### Echo Example\nAsk Claude: \"Echo hello world\"\n- Tool used: echo\n- Response: \"Echo: hello world\"\n\n### Calculator Example\nAsk Claude: \"What is 45 + 27?\" or \"Calculate 10 × 5\"\n- Tools used: add, multiply\n- Handles division by zero gracefully\n\n### Weather Example\nAsk Claude: \"What's the weather in Berlin?\" or \"Get weather for latitude 40.71, longitude -74.01\"\n- Tool used: get_weather\n- Returns current conditions + 3-hour forecast\n- Uses Open-Meteo API (no auth required)\n\n## Architecture\n\n### Server Configuration (.mcp.json)\n\nMaps server names to Python executables:\n\n```json\n{\n  \"mcpServers\": {\n    \"echo\": {\n      \"command\": \"python\",\n      \"args\": [\"${CLAUDE_PLUGIN_ROOT}/servers/echo-server/server.py\"]\n    },\n    \"calculator\": {\n      \"command\": \"python\",\n      \"args\": [\"${CLAUDE_PLUGIN_ROOT}/servers/calculator-server/server.py\"]\n    },\n    \"weather\": {\n      \"command\": \"python\",\n      \"args\": [\"${CLAUDE_PLUGIN_ROOT}/servers/weather-server/server.py\"]\n    }\n  }\n}\n```\n\n### Tool Definitions\n\nEach server declares its tools with:\n- **name** - Tool identifier\n- **description** - What the tool does\n- **inputSchema** - JSON Schema for parameters\n\nClaude automatically discovers and uses these tools.\n\n## Testing Locally\n\n### List Available Tools\n\n```bash\n# Test any server's tool definitions\necho '{\"method\": \"tools/list\"}' | python3 servers/echo-server/server.py\n```\n\n### Call a Tool\n\n```bash\n# Test calculator add\necho '{\"method\": \"tools/call\", \"params\": {\"name\": \"add\", \"arguments\": {\"a\": 15, \"b\": 27}}}' \\\\\n  | timeout 1 python3 servers/calculator-server/server.py\n# Response: {\"content\": [{\"type\": \"text\", \"text\": \"Result: 42\"}]}\n\n# Test weather\necho '{\"method\": \"tools/call\", \"params\": {\"name\": \"get_weather\", \"arguments\": {\"latitude\": 52.52, \"longitude\": 13.41}}}' \\\\\n  | timeout 3 python3 servers/weather-server/server.py\n```\n\n## File Structure Reference\n\n**Development Project** (.claude/mcp/):\n- Servers are in active development\n- Includes MIGRATION.md for developer reference\n- Local testing during development\n\n**Marketplace Project** (plugins/demo-mcp/):\n- Servers in production structure\n- Proper plugin metadata (plugin.json)\n- User-facing README.md\n- .mcp.json configured for marketplace paths\n\n## Key Points\n\n✅ Each server is **self-contained** and **independent**\n✅ Servers use **standard Python** (no complex frameworks)\n✅ All tested and **working examples**\n✅ Progressive complexity: minimal → multiple tools → external API\n✅ Error handling included (e.g., division by zero)\n\n## Updating Servers\n\nIf you update a server in development:\n\n1. Test it locally in the development project\n2. Copy updated files to `plugins/demo-mcp/servers/`\n3. Update `plugin.json` version number\n4. Test in marketplace\n5. Commit with message: \"Update demo-mcp: [what changed]\"\n\n## Troubleshooting\n\n### Server not found or not responding\n- Check `.mcp.json` paths are correct\n- Verify server files exist in the `servers/` directory\n- Ensure Python 3 is available\n\n### Weather server fails\n- Install requests: \\`pip install requests\\`\n- Check internet connectivity (API call to Open-Meteo)\n- Verify latitude/longitude format (decimal degrees)\n\n### Tool not working in Claude Code\n- Restart Claude Code after plugin installation\n- Check that `.mcp.json` is in the plugin root\n- Verify server definitions in the Python files\n\n## Questions?\n\nRefer to:\n- Server README in this directory for architecture details\n- development-plan.md in the project root for context\n- The marketplace README for general plugin information\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"yoshiwatanabe-plugins\",\n  \"owner\": {\n    \"name\": \"Yoshi Watanabe\",\n    \"email\": \"yoshi.watanabe@example.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code plugins for domain-specific memory and configuration management\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"yoshiwatanabe-dev\",\n      \"source\": \"./dev-memory\",\n      \"description\": \"Development domain memory management: Track coding sessions, repositories, and development work across multiple machines\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Yoshi Watanabe\",\n        \"email\": \"yoshi.watanabe@example.com\"\n      },\n      \"category\": \"development\",\n      \"keywords\": [\n        \"memory\",\n        \"episodes\",\n        \"repositories\",\n        \"development\",\n        \"tracking\",\n        \"git\",\n        \"cross-machine\"\n      ],\n      \"license\": \"MIT\",\n      \"homepage\": \"https://github.com/yoshiwatanabe/yoshiwatanabe-plugins\",\n      \"repository\": \"https://github.com/yoshiwatanabe/yoshiwatanabe-plugins\"\n    }\n  ]\n}\n",
+        "README.md": "# yoshiwatanabe-plugins\n\nPersonal Claude Code plugins for domain-specific memory and configuration management.\n\n## Plugins\n\n### `dev-memory/` - Development Domain Memory\n\nTrack coding sessions, repositories, and development work across multiple machines.\n\n**Features:**\n- Save coding session progress\n- Repository metadata management\n- Cross-machine repository discovery\n- Memory search by keywords\n- Local repository scanning\n- Archive/unarchive obsolete repositories\n\n**Status:** ✅ Production Ready\n\n[View Documentation →](dev-memory/README.md)\n\n### Future Plugins\n\n- `health/` - Health and medical tracking\n- `vehicles/` - Vehicle maintenance and specs\n- `finance/` - Financial planning and allocations\n\n## Architecture\n\nEach plugin is domain-focused and independent:\n- Has its own skills, agents, and scripts\n- Manages domain-specific memory and configuration\n- Stores data in separate domain directories\n- Can be installed and used independently\n\n## Installation\n\n**[📖 View Complete Installation Guide →](INSTALL.md)**\n\n### Quick Start\n\n```\n/plugin marketplace add yoshiwatanabe/yoshiwatanabe-plugins\n/plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins\n```\n\nThen add to `~/.claude/settings.json`:\n```json\n{\n  \"env\": {\n    \"YW_CONFIG_REPO_PATH\": \"/path/to/your-config-repo\"\n  }\n}\n```\n\n## Configuration Repository\n\nPlugins require a configuration repository with domain structure:\n\n```\nyour-config-repo/\n├── domains/\n│   ├── dev/           # Development domain\n│   ├── health/        # Health domain (future)\n│   ├── vehicles/      # Vehicles domain (future)\n│   └── finance/       # Finance domain (future)\n└── machines/          # Cross-domain machine configs\n```\n\n## Contributing\n\nIssues and pull requests welcome!\n\n## License\n\nMIT\n",
+        "dev-memory/README.md": "# yoshiwatanabe-dev\n\nDevelopment domain memory management plugin for Claude Code.\n\nTrack your coding sessions, repositories, and development work across multiple machines with persistent memory.\n\n## Features\n\n- 📝 **Save coding sessions** - Capture progress, goals, and context\n- 📦 **Repository metadata** - Describe repos with tags and notes\n- 🔍 **Find repo clones** - Locate repositories across machines\n- 🔎 **Search memory** - Find past work by keywords\n- 📊 **Scan repositories** - Discover untracked repos\n- 📅 **Recent activity** - See what you worked on recently\n\n## Installation\n\n### Prerequisites\n\n- Python 3.8+\n- Claude Code CLI\n- A configuration repository with domain structure (see Setup below)\n\n### Install Plugin\n\n**Linux/WSL:**\n```bash\ncd install\nchmod +x install.sh\n./install.sh\n```\n\n**Windows:**\n```powershell\ncd install\n.\\install.ps1\n```\n\n### Configure\n\nSet the path to your configuration repository:\n```bash\nclaude config set yoshiwatanabe-dev.configRepoPath \"/path/to/your-config-repo\"\n```\n\n## Configuration Repository Setup\n\nYour configuration repository needs this structure:\n\n```\nyour-config-repo/\n├── domains/\n│   └── dev/\n│       └── memory/\n│           ├── episodes/        # Coding session memory\n│           ├── repositories/    # Repository metadata\n│           ├── machines/        # Machine configs\n│           └── index/          # Search indices (optional)\n└── machines/                   # Cross-domain machine configs\n```\n\n**Example:** Clone and set up a config repo:\n```bash\n# Create your config repo\ngit clone https://github.com/yourusername/your-config-repo.git\ncd your-config-repo\n\n# Create domain structure\nmkdir -p domains/dev/memory/{episodes,repositories,machines,index}\nmkdir -p machines\n\n# Initialize as git repo (if new)\ngit init\ngit remote add origin https://github.com/yourusername/your-config-repo.git\n```\n\n## Skills\n\n### `/save-memory`\nSave your current coding session progress.\n\n**Example:** \"hey remember the progress in this session\"\n\nCaptures:\n- Current repository, branch, commit\n- Machine and OS\n- Session summary and keywords\n- Goals and next steps\n\n### `/describe-repo`\nAdd metadata to a repository.\n\n**Example:** \"This repo contains the auth service. It requires security team approval for PRs.\"\n\n### `/find-repo`\nFind where a repository is cloned across your machines.\n\n**Example:** \"where else do I have clones of this repo?\"\n\n### `/scan-repos`\nDiscover repositories on your machine that aren't being tracked.\n\n**Example:** \"scan my repos and show what's not tracked\"\n\n### `/list-recent-repos`\nShow recently accessed repositories across all machines.\n\n**Example:** \"show me 5 repos I worked on recently\"\n\n### `/search-memory`\nSearch your development memory by keywords.\n\n**Example:** \"I worked on Azure key vault isolation, which repo was that?\"\n\n## Documentation\n\n- [Architecture Overview](docs/design/01-architecture-overview.md)\n- [Data Model](docs/design/02-data-model.md)\n- [Python Implementation](docs/design/06-python-implementation.md)\n\n## Python Scripts\n\nScripts can also be run directly for testing:\n\n```bash\ncd ~/.claude/plugins/yoshiwatanabe-dev\nsource venv/bin/activate  # or .\\venv\\Scripts\\Activate.ps1 on Windows\n\n# Save memory episode\npython scripts/manage_memory.py save --config-repo /path/to/config ...\n\n# Query repositories\npython scripts/query_memory.py find-repo --config-repo /path/to/config ...\n\n# Scan local repos\npython scripts/scan_repos.py scan-repos --config-repo /path/to/config ...\n```\n\n## How It Works\n\n1. **Skills** define Claude Code commands (YAML frontmatter + Markdown)\n2. **Subagent** (memory-manager) handles operations in isolated context\n3. **Python scripts** perform git operations, save/query memory\n4. **Data** stored in your config repo's `domains/dev/memory/` directory\n5. **Git sync** keeps memory synchronized across machines\n\n## Cross-Platform\n\nWorks on:\n- ✅ Windows\n- ✅ WSL (Windows Subsystem for Linux)\n- ✅ Linux\n- ✅ macOS\n\n## Domain-Focused\n\nThis plugin focuses on the **development domain**. Other plugins can be created for other life domains:\n- `yoshiwatanabe-health` - Health and medical tracking\n- `yoshiwatanabe-vehicles` - Car/boat maintenance\n- `yoshiwatanabe-finance` - Financial planning\n\nEach domain is independent with its own memory structure.\n\n## License\n\nMIT\n\n## Contributing\n\nIssues and PRs welcome at: https://github.com/yoshiwatanabe/yoshiwatanabe-plugins\n"
       },
       "plugins": [
         {
-          "name": "demo-skills",
-          "source": "./plugins/demo-skills",
-          "description": "[DEMO] Skill patterns: minimal, references, scripts, assets",
+          "name": "yoshiwatanabe-dev",
+          "source": "./dev-memory",
+          "description": "Development domain memory management: Track coding sessions, repositories, and development work across multiple machines",
+          "version": "1.0.0",
+          "author": {
+            "name": "Yoshi Watanabe",
+            "email": "yoshi.watanabe@example.com"
+          },
+          "category": "development",
+          "keywords": [
+            "memory",
+            "episodes",
+            "repositories",
+            "development",
+            "tracking",
+            "git",
+            "cross-machine"
+          ],
+          "license": "MIT",
+          "homepage": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
+          "repository": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
+          "categories": [
+            "cross-machine",
+            "development",
+            "episodes",
+            "git",
+            "memory",
+            "repositories",
+            "tracking"
+          ],
+          "install_commands": [
+            "/plugin marketplace add yoshiwatanabe/yoshiwatanabe-plugins",
+            "/plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "yw-claude-marketplace",
+      "version": null,
+      "description": "Claude marketplace with custom plugins and skills",
+      "repo_full_name": "yoshiwatanabe/yw-claude-marketplace",
+      "repo_url": "https://github.com/yoshiwatanabe/yw-claude-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-24T08:46:35Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"yw-claude-marketplace\",\n  \"description\": \"Claude marketplace with custom plugins and skills\",\n  \"owner\": {\n    \"name\": \"Yoshi Watanabe\",\n    \"email\": \"yoshiwatanabe@users.noreply.github.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"yw-visualizer\",\n      \"source\": \"./plugins/yw-visualizer\",\n      \"description\": \"Visualization plugin with hello world skills\"\n    },\n    {\n      \"name\": \"cmd-learner\",\n      \"source\": \"./plugins/cmd-learner\",\n      \"description\": \"Commandline learning plugin\"\n    }\n  ]\n}\n",
+        "plugins/yw-visualizer/README.md": "# yw-visualizer Plugin\n\nA visualization plugin for Claude marketplace demonstrating hello world skills.\n\n## Installation\n\n```\n/plugin install yw-visualizer@yw-claude-marketplace\n```\n\n## Features\n\n- Hello skill: A simple greeting skill to demonstrate the plugin system\n\n## Skills\n\n### hello\n\nA simple greeting skill that demonstrates basic skill functionality.\n\nTo use this skill, you can reference it when you need visualization capabilities.\n"
+      },
+      "plugins": [
+        {
+          "name": "yw-visualizer",
+          "source": "./plugins/yw-visualizer",
+          "description": "Visualization plugin with hello world skills",
           "categories": [],
           "install_commands": [
-            "/plugin marketplace add yoshiwatanabe/yw-claude-marketplace-demo",
-            "/plugin install demo-skills@yw-claude-marketplace-demo"
+            "/plugin marketplace add yoshiwatanabe/yw-claude-marketplace",
+            "/plugin install yw-visualizer@yw-claude-marketplace"
           ]
         },
         {
-          "name": "demo-commands",
-          "source": "./plugins/demo-commands",
-          "description": "[DEMO] Slash command patterns: simple, arguments, workflows",
+          "name": "cmd-learner",
+          "source": "./plugins/cmd-learner",
+          "description": "Commandline learning plugin",
           "categories": [],
           "install_commands": [
-            "/plugin marketplace add yoshiwatanabe/yw-claude-marketplace-demo",
-            "/plugin install demo-commands@yw-claude-marketplace-demo"
-          ]
-        },
-        {
-          "name": "demo-mcp",
-          "source": "./plugins/demo-mcp",
-          "description": "[DEMO] MCP server patterns: minimal, multiple tools, external API",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add yoshiwatanabe/yw-claude-marketplace-demo",
-            "/plugin install demo-mcp@yw-claude-marketplace-demo"
+            "/plugin marketplace add yoshiwatanabe/yw-claude-marketplace",
+            "/plugin install cmd-learner@yw-claude-marketplace"
           ]
         }
       ]

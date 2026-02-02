@@ -6,6 +6,63 @@
   },
   "marketplaces": [
     {
+      "name": "sttts-skills",
+      "version": null,
+      "description": "Stefan Schimanski's Claude Code skills",
+      "repo_full_name": "sttts/skills",
+      "repo_url": "https://github.com/sttts/skills",
+      "repo_description": "sttts's Claude skills",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-27T18:15:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"sttts-skills\",\n  \"description\": \"Stefan Schimanski's Claude Code skills\",\n  \"owner\": {\n    \"name\": \"Stefan Schimanski\",\n    \"url\": \"https://github.com/sttts\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"beads\",\n      \"description\": \"Beads issue tracking workflow integration for Claude Code\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Stefan Schimanski\",\n        \"url\": \"https://github.com/sttts\"\n      },\n      \"source\": \"./plugins/beads\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/sttts/skills\"\n    },\n    {\n      \"name\": \"worktree\",\n      \"description\": \"Git worktree management for Claude Code\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Stefan Schimanski\",\n        \"url\": \"https://github.com/sttts\"\n      },\n      \"source\": \"./plugins/worktree\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/sttts/skills\"\n    }\n  ]\n}\n",
+        "README.md": "# Skills for Claude Code\n\nClaude Code skills for local issue tracking with [beads](https://github.com/sttts/beads) and git worktree management.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add https://github.com/sttts/skills.git\n\n# Install plugins\n/plugin install beads\n/plugin install worktree\n```\n\n## Plugins\n\n### Beads Issue Tracking\n\nLocal issue tracking workflow integration using the [beads](https://github.com/sttts/beads) CLI.\n\n**Triggers on:** `bd`, `beads`, `what's next`, `add task`, `add epic`, or issue tracking questions\n\n**Requires:** `.beads` directory in project root (run `bd init` to create)\n\n#### Features\n\n- **Session priming** - Run `bd prime` at session start for AI-optimized context\n- **Task discovery** - Ask \"What's next?\" to see in-progress and ready tasks\n- **Issue creation** - Create tasks and epics with structured IDs\n- **State management** - Track task status and link to PRs/MRs\n- **Session completion** - Structured workflow for landing work safely\n\n#### Issue ID Convention\n\nUse the pattern `<prefix>-<epic>-<task>`:\n- `prefix`: domain area (e.g., `infra`, `api`, `ui`)\n- `epic`: one or two keywords for the epic\n- `task`: one keyword for the specific task\n\n```bash\n# Create a task\nbd create \"Allow blueprints to run in plan only mode\" --id infra-blueprint-planonly --type task\n\n# Create an epic\nbd create \"Expose Terraform errors to conditions\" --id infra-tferrors --type epic\n\n# Create a task under an epic\nbd create \"Phase 1: Enable log subresource\" --id infra-tferrors-logsub --type task --parent infra-tferrors\n```\n\n#### Session Completion Workflow\n\nWhen ending a session, the skill ensures:\n1. File issues for remaining work\n2. Run quality gates (tests, linters, builds)\n3. Update issue status\n4. Push to remote (mandatory - work is not complete until pushed)\n5. Label tasks with PR/MR URLs\n6. Add handoff comments for the next agent\n\n### Git Worktree Rules\n\nGit worktree management guidance for isolated branch work.\n\n**Triggers on:** `worktree`, `worktrees`, `create worktree`, or working in a separate branch directory\n\n#### Rules\n\n- Create worktrees inside `.git/checkouts/` directory\n- Never leave a worktree once working in it\n- Never touch main when working in a worktree\n- Never delete a worktree before confirming content is merged\n- Never mark a task as completed until the branch is merged\n\n#### Usage with Beads\n\nEvery epic should have a dedicated worktree:\n\n```bash\nbd worktree create .git/checkouts/<branch-name>\n```\n\n## Usage Examples\n\n```\n# Start a session\nbd prime\n\n# Check what to work on\nWhat's next?\n\n# Create a new task\nAdd task: Implement user authentication\n\n# Create a worktree for an epic\nCreate a worktree for the auth-refactor epic\n\n# End a session\nLand the plane\n```\n\n## Requirements\n\n- [beads CLI](https://github.com/sttts/beads) installed and configured\n- Git repository with worktree support\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "beads",
+          "description": "Beads issue tracking workflow integration for Claude Code",
+          "version": "0.1.0",
+          "author": {
+            "name": "Stefan Schimanski",
+            "url": "https://github.com/sttts"
+          },
+          "source": "./plugins/beads",
+          "category": "productivity",
+          "homepage": "https://github.com/sttts/skills",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sttts/skills",
+            "/plugin install beads@sttts-skills"
+          ]
+        },
+        {
+          "name": "worktree",
+          "description": "Git worktree management for Claude Code",
+          "version": "0.1.0",
+          "author": {
+            "name": "Stefan Schimanski",
+            "url": "https://github.com/sttts"
+          },
+          "source": "./plugins/worktree",
+          "category": "productivity",
+          "homepage": "https://github.com/sttts/skills",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sttts/skills",
+            "/plugin install worktree@sttts-skills"
+          ]
+        }
+      ]
+    },
+    {
       "name": "sttts-beads-skill",
       "version": null,
       "description": "Beads issue tracking workflow integration for Claude Code",
@@ -39,44 +96,6 @@
           "install_commands": [
             "/plugin marketplace add sttts/beads-skill",
             "/plugin install beads@sttts-beads-skill"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "sttts-worktree-skill",
-      "version": null,
-      "description": "Git worktree workflow rules for Claude Code",
-      "repo_full_name": "sttts/worktree-skill",
-      "repo_url": "https://github.com/sttts/worktree-skill",
-      "repo_description": "Claude skill to work with git worktrees",
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-01-27T18:39:57Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"sttts-worktree-skill\",\n  \"description\": \"Git worktree workflow rules for Claude Code\",\n  \"owner\": {\n    \"name\": \"Stefan Schimanski\",\n    \"url\": \"https://github.com/sttts\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"worktree\",\n      \"description\": \"Git worktree workflow rules for Claude Code\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Stefan Schimanski\",\n        \"url\": \"https://github.com/sttts\"\n      },\n      \"source\": \"./plugins/worktree\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/sttts/worktree-skill\"\n    }\n  ]\n}\n",
-        "README.md": "# worktree-skill\n\n> **Note:** This skill has moved to [github.com/sttts/skills](https://github.com/sttts/skills) and will be maintained there going forward.\n\nClaude Code plugin for git worktree workflow rules.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add sttts/worktree-skill\n\n# Install the plugin\n/plugin install worktree\n```\n\n## What it does\n\nThis plugin provides rules that apply whenever you work with git worktrees:\n\n- Creates worktrees in `.git/checkouts/` directory (invisible to git)\n- Prevents accidentally touching main branch while in a worktree\n- Ensures worktrees aren't deleted before merging\n- Prevents marking tasks complete before branches are merged\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "worktree",
-          "description": "Git worktree workflow rules for Claude Code",
-          "version": "0.1.0",
-          "author": {
-            "name": "Stefan Schimanski",
-            "url": "https://github.com/sttts"
-          },
-          "source": "./plugins/worktree",
-          "category": "productivity",
-          "homepage": "https://github.com/sttts/worktree-skill",
-          "categories": [
-            "productivity"
-          ],
-          "install_commands": [
-            "/plugin marketplace add sttts/worktree-skill",
-            "/plugin install worktree@sttts-worktree-skill"
           ]
         }
       ]
