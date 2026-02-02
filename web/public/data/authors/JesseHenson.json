@@ -1,0 +1,63 @@
+{
+  "author": {
+    "id": "JesseHenson",
+    "display_name": "Jesse Henson",
+    "avatar_url": "https://avatars.githubusercontent.com/u/29315680?u=883836dca5ae6ca1a9b9538f46e5a80595bdacc5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-apex-marketplace",
+      "version": null,
+      "description": "Pipeline for discovering, validating, building, and publishing MCP servers to monetization marketplaces (Apify, Smithery, etc.)",
+      "repo_full_name": "JesseHenson/claude_code_apex_marketplace",
+      "repo_url": "https://github.com/JesseHenson/claude_code_apex_marketplace",
+      "repo_description": "Claude Code plugins for MCP marketplaces (Apify, MCPrize, etc.)",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-20T21:11:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-apex-marketplace\",\n  \"owner\": {\n    \"name\": \"Jesse Henson\",\n    \"url\": \"https://github.com/JesseHenson\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mcp-opportunity-pipeline\",\n      \"source\": \"./plugins/mcp-opportunity-pipeline\",\n      \"description\": \"Pipeline for discovering, validating, building, and publishing MCP servers to monetization marketplaces (Apify, Smithery, etc.)\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"spec-iterator-mcp\",\n      \"source\": \"./plugins/spec-iterator-mcp\",\n      \"description\": \"MCP server that conducts structured multi-turn clarification dialogues to transform rough ideas into complete technical specifications with gap tracking and completeness scoring.\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"agent-opportunity-pipeline\",\n      \"source\": \"./plugins/agent-opportunity-pipeline\",\n      \"description\": \"Pipeline to discvoer, validate and build agent servers for automating or helping busineses and entrepreneurs with AI\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Apex Marketplace\n\nPrivate marketplace for Claude Code plugins targeting MCP marketplaces (Apify, MCPrize, etc).\n\n## Structure\n\n```\nclaude_code_apex_marketplace/\n├── .claude-plugin/\n│   └── marketplace.json      # Marketplace metadata\n├── README.md\n└── plugins/\n    └── <plugin-name>/\n        ├── .claude-plugin/\n        │   └── plugin.json   # Plugin metadata\n        ├── README.md\n        ├── CHANGELOG.md\n        ├── commands/         # Slash commands (*.md)\n        ├── skills/           # Skills (SKILL.md in subdirs)\n        ├── agents/           # Agent definitions (*.md)\n        └── hooks/            # Lifecycle hooks (*.sh)\n```\n\n## Installation\n\n```bash\n# Add marketplace to Claude Code\nclaude plugin marketplace add JesseHenson/claude_code_apex_marketplace\n\n# Or for local development\nclaude plugin marketplace add --path /path/to/claude_code_apex_marketplace\n```\n\n## Creating a New Plugin\n\n1. Create plugin directory: `plugins/<plugin-name>/`\n2. Add `plugin.json` in `.claude-plugin/`\n3. Add commands, skills, agents, or hooks as needed\n4. Register in `marketplace.json`\n\n## Plugins\n\n*No plugins yet. Add your first plugin!*\n",
+        "plugins/mcp-opportunity-pipeline/README.md": " # MCP Opportunity Pipeline\n\nEnd-to-end pipeline for discovering, validating, building, and publishing MCP servers to monetization marketplaces (Apify, Smithery, etc.).\n\n## Pipeline Stages\n\n| Stage | Command | Description |\n|-------|---------|-------------|\n| 1 | `/mcp-pipeline:discover` | Scrape marketplaces for opportunities |\n| 2 | `/mcp-pipeline:analyze-gaps` | Score and rank opportunities |\n| 3 | `/mcp-pipeline:validate` | Validate against Reddit pain signals |\n| 4 | `/mcp-pipeline:spec` | Generate buildable product specs |\n| 5 | `/mcp-pipeline:build` | Implement MCP server/Apify Actor |\n| 6 | `/mcp-pipeline:qa` | Automated testing |\n| 7 | `/mcp-pipeline:package` | Generate docs and marketing |\n| 8 | `/mcp-pipeline:publish` | Deploy to marketplace |\n\n## Quick Start\n\n### Full Pipeline\n```\n/mcp-pipeline:run --phase casual --target apify\n```\n\n### Step by Step\n```\n/mcp-pipeline:discover --marketplaces apify,smithery\n/mcp-pipeline:analyze-gaps --phase casual\n/mcp-pipeline:validate --days 14\n/mcp-pipeline:spec --select top-3\n/mcp-pipeline:build\n/mcp-pipeline:qa\n/mcp-pipeline:package\n/mcp-pipeline:publish --dry-run\n```\n\n## Configuration\n\nEdit `.claude-plugin/config.json` to customize:\n- Target marketplaces\n- Subreddit lists for validation\n- Scoring weights\n- QA thresholds\n- Publishing settings\n\n## Output Structure\n\n```\noutputs/\n├── discover/      # Raw marketplace data\n├── analyze/       # Scored opportunities\n├── validate/      # Reddit-validated opportunities\n├── spec/          # Product specifications\n├── build/         # Built MCP servers\n├── qa/            # QA reports\n├── package/       # Docs and marketing materials\n└── publish/       # Publication logs\n```\n\n## Agents\n\n- `marketplace-scraper` - Scrapes Apify, Smithery, MCP Registry\n- `gap-analyzer` - Scores opportunities on sentiment, staleness, fit\n- `reddit-validator` - Validates against Reddit pain signals\n- `spec-generator` - Creates buildable product specs\n- `mcp-builder` - Implements Apify Actors with PPE charging\n- `qa-harness` - Automated testing with synthetic test cases\n- `publisher` - Packaging and marketplace deployment\n\n## Environment Variables\n\n- `APIFY_TOKEN` - Required for publishing to Apify\n\n## License\n\nPrivate - Not for distribution\n",
+        "plugins/agent-opportunity-pipeline/README.md": "# Agent Opportunity Pipeline\n\nDiscover multi-agent system opportunities from Reddit and build Claude Code plugins to solve them.\n\n## What It Does\n\nThis pipeline helps you:\n1. **Discover** automation pain points from Reddit communities\n2. **Validate** opportunities for multi-agent system fit\n3. **Spec** detailed Claude Code plugin designs\n4. **Build** complete .claude/ folder structures\n5. **Package** distribution-ready plugins with docs\n\n## Quick Start\n\n```bash\n# Run the ideation phase\n/agent-opportunity-pipeline:run --run ideate\n\n# Build a specific opportunity\n/agent-opportunity-pipeline:run --run make --name notion-blog-publisher\n```\n\n## Pipeline Stages\n\n### IDEATE Phase (discover → validate → spec)\n\nFind and validate opportunities:\n\n```bash\n/agent-opportunity-pipeline:run --run ideate\n```\n\n**Output:** Validated opportunity specs ready to build\n\n### MAKE Phase (build → package)\n\nBuild and package a plugin:\n\n```bash\n/agent-opportunity-pipeline:run --run make --name {spec-name}\n```\n\n**Output:** Complete Claude Code plugin with docs\n\n## Individual Commands\n\n### Discover\nScrape Reddit for automation pain points:\n\n```bash\n/agent-opportunity-pipeline:discover --subreddits ClaudeAI,nocode,Notion\n/agent-opportunity-pipeline:discover --category productivity\n```\n\n### Validate\nScore opportunities for multi-agent fit:\n\n```bash\n/agent-opportunity-pipeline:validate\n```\n\n### Spec\nGenerate plugin specification:\n\n```bash\n/agent-opportunity-pipeline:spec --name notion-blog-publisher\n```\n\n### Build\nBuild Claude Code plugin from spec:\n\n```bash\n/agent-opportunity-pipeline:build --name notion-blog-publisher\n```\n\n### Package\nGenerate distribution materials:\n\n```bash\n/agent-opportunity-pipeline:package --name notion-blog-publisher\n```\n\n## Target Subreddits\n\nThe pipeline searches these communities:\n\n**Automation:** r/AutomateYourself, r/nocode, r/n8n, r/zapier, r/IFTTT\n\n**AI/Claude:** r/ClaudeAI, r/ChatGPT, r/OpenAI, r/LocalLLaMA, r/LangChain\n\n**Entrepreneur:** r/SideProject, r/EntrepreneurRideAlong, r/indiehackers\n\n**Productivity:** r/Notion, r/productivity, r/Obsidian, r/PKM\n\n## Output Structure\n\n```\noutputs/\n├── discover/\n│   └── reddit-opportunities-{date}.json\n├── validate/\n│   └── validated-opportunities-{date}.json\n├── spec/\n│   └── {name}/\n│       └── spec.md\n├── build/\n│   └── {name}/\n│       ├── .claude/\n│       │   ├── agents/\n│       │   ├── commands/\n│       │   └── settings.json\n│       └── README.md\n└── package/\n    └── {name}/\n        ├── README.md\n        ├── INSTALL.md\n        ├── QUICKSTART.md\n        └── {name}.zip\n```\n\n## Agent Architecture Patterns\n\nThe pipeline generates plugins using three patterns:\n\n### Single Agent\nOne agent handles the entire workflow. Best for simple tasks.\n\n### Coordinator\nMain agent delegates to specialized sub-agents. Best for multi-step workflows.\n\n### Swarm\nMultiple autonomous agents collaborate. Best for complex, parallel tasks.\n\n## Validation Scoring\n\nOpportunities are scored on:\n\n| Factor | Weight | Description |\n|--------|--------|-------------|\n| Agent Fit | 0.30 | Does this need multi-agent reasoning? |\n| Pain Intensity | 0.25 | How much do users suffer? |\n| Frequency | 0.25 | How many people have this problem? |\n| Recency | 0.20 | How recent are the signals? |\n\nThreshold: 6.0 minimum score to pass validation\n\n## Configuration\n\nEdit `.claude-plugin/config.json` to customize:\n- Subreddit lists\n- Scoring weights\n- Output settings\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "mcp-opportunity-pipeline",
+          "source": "./plugins/mcp-opportunity-pipeline",
+          "description": "Pipeline for discovering, validating, building, and publishing MCP servers to monetization marketplaces (Apify, Smithery, etc.)",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JesseHenson/claude_code_apex_marketplace",
+            "/plugin install mcp-opportunity-pipeline@claude-code-apex-marketplace"
+          ]
+        },
+        {
+          "name": "spec-iterator-mcp",
+          "source": "./plugins/spec-iterator-mcp",
+          "description": "MCP server that conducts structured multi-turn clarification dialogues to transform rough ideas into complete technical specifications with gap tracking and completeness scoring.",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JesseHenson/claude_code_apex_marketplace",
+            "/plugin install spec-iterator-mcp@claude-code-apex-marketplace"
+          ]
+        },
+        {
+          "name": "agent-opportunity-pipeline",
+          "source": "./plugins/agent-opportunity-pipeline",
+          "description": "Pipeline to discvoer, validate and build agent servers for automating or helping busineses and entrepreneurs with AI",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JesseHenson/claude_code_apex_marketplace",
+            "/plugin install agent-opportunity-pipeline@claude-code-apex-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

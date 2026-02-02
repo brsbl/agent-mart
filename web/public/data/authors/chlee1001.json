@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "chlee1001",
+    "display_name": "Chaehyeon Lee",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2025813?u=579a1958329f60295ae9e99d8f059bf19486365a&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "omc-mcp-extension",
+      "version": null,
+      "description": "MCP server extension for oh-my-claudecode - adds Serena, Sequential-Thinking, and Morphllm",
+      "repo_full_name": "chlee1001/omc-mcp-extension",
+      "repo_url": "https://github.com/chlee1001/omc-mcp-extension",
+      "repo_description": "MCP server integration for oh-my-claudecode - adds Context7, Serena, Sequential, and Morphllm",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-01T15:30:59Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"omc-mcp-extension\",\n  \"description\": \"MCP server extension for oh-my-claudecode - adds Serena, Sequential-Thinking, and Morphllm\",\n  \"owner\": {\n    \"name\": \"chlee1001\",\n    \"email\": \"chlee1001@users.noreply.github.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"omc-mcp-extension\",\n      \"description\": \"Adds Serena, Sequential-Thinking, and Morphllm MCP servers to oh-my-claudecode\",\n      \"version\": \"1.9.0\",\n      \"author\": {\n        \"name\": \"chlee1001\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/chlee1001/omc-mcp-extension\",\n      \"tags\": [\"mcp\", \"serena\", \"sequential-thinking\", \"morphllm\", \"oh-my-claudecode\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"omc-mcp-extension\",\n  \"version\": \"1.9.0\",\n  \"description\": \"MCP server extension for oh-my-claudecode - adds Serena, Sequential-Thinking, and Morphllm\",\n  \"author\": {\n    \"name\": \"chlee1001\"\n  },\n  \"repository\": \"https://github.com/chlee1001/omc-mcp-extension\",\n  \"homepage\": \"https://github.com/chlee1001/omc-mcp-extension#readme\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"claude-code\",\n    \"mcp\",\n    \"oh-my-claudecode\",\n    \"extension\",\n    \"serena\",\n    \"sequential-thinking\",\n    \"morphllm\"\n  ],\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# omc-mcp-extension\n\n> MCP server extension for oh-my-claudecode\n\nA lightweight extension plugin that adds additional MCP servers to [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)'s powerful skill/hook/agent system.\n\n---\n\n## Features\n\n| MCP Server | Purpose | Required |\n|------------|---------|----------|\n| **Context7** | Official library documentation lookup | npx |\n| **Serena** | Semantic code analysis + session memory persistence | uvx |\n| **Sequential** | Structured multi-step reasoning (30-50% token savings) | npx |\n| **Morphllm** | Pattern-based bulk code editing | npx + API Key |\n\n---\n\n## Installation\n\n### Prerequisites\n\n```bash\n# Node.js 18+ required\nnode --version   # v18.0.0 or higher\n\n# uvx required (for Serena)\npip install uv   # or: pipx install uv\nwhich uvx        # verify installation\n\n# jq required (for setup skill)\nbrew install jq  # macOS\n```\n\n### Install\n\n```bash\n# 1. Install OMC first (skip if already installed)\nclaude plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode\nclaude plugin install oh-my-claudecode@omc\n\n# 2. Install this extension plugin\nclaude plugin marketplace add https://github.com/chlee1001/omc-mcp-extension\nclaude plugin install omc-mcp-extension@omc-mcp-extension\n```\n\n### Post-Installation Setup (Required)\n\nRun the setup skill to complete installation:\n\n```\n/omc-mcp-extension:setup\n```\n\nThis will:\n- ✅ Backup `~/.claude.json` and `~/.claude/CLAUDE.md`\n- ✅ Update `~/.claude.json` mcpServers (skips duplicates)\n- ✅ Copy MCP behavior guides to `~/.claude/`\n- ✅ Add `@import` references to `~/.claude/CLAUDE.md`\n- ✅ Configure Morphllm with API key directly in mcpServers\n\n> ⚠️ **Restart Claude Code after setup to apply MCP changes!**\n\n---\n\n## Skills\n\n| Skill | Description | Usage |\n|-------|-------------|-------|\n| **setup** | Complete MCP setup with backups | `/omc-mcp-extension:setup` |\n\n### What Setup Does\n\n```\n~/.claude.json             # mcpServers updated (skips duplicates)\n~/.claude/\n├── CLAUDE.md              # Updated with @import references\n├── MCP_Context7.md        # Behavior guide (copied)\n├── MCP_Serena.md          # Behavior guide (copied)\n├── MCP_Sequential.md      # Behavior guide (copied)\n├── MCP_Morphllm.md        # Behavior guide (copied)\n└── backups/\n    ├── claude.json.backup_[timestamp]\n    └── CLAUDE.md.backup_[timestamp]\n```\n\n**~/.claude.json mcpServers:**\n```json\n{\n  \"mcpServers\": {\n    \"context7\": { \"command\": \"npx\", \"args\": [\"-y\", \"@upstash/context7-mcp\"] },\n    \"serena\": { \"command\": \"uvx\", \"args\": [...] },\n    \"sequential-thinking\": { \"command\": \"npx\", \"args\": [...] },\n    \"morphllm-fast-apply\": {\n      \"command\": \"npx\",\n      \"args\": [\"@morph-llm/morph-fast-apply\"],\n      \"env\": { \"MORPH_API_KEY\": \"your-key-here\" }\n    }\n  }\n}\n```\n\n**CLAUDE.md additions:**\n```markdown\n<!-- OMC-MCP-EXT:START -->\n# MCP Server Guides (omc-mcp-extension)\n\n@MCP_Context7.md\n@MCP_Serena.md\n@MCP_Sequential.md\n@MCP_Morphllm.md\n<!-- OMC-MCP-EXT:END -->\n```\n\n---\n\n## How It Works\n\n### Architecture\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                    Claude Code Runtime                       │\n├─────────────────────────────────────────────────────────────┤\n│                                                              │\n│  MCP Servers (in ~/.claude/settings.json)                   │\n│  ├── OMC Built-in                                           │\n│  │   ├─ \"t\" (OMC Bridge) - LSP, AST tools (18 tools)       │\n│  │   └─ context7 - Official docs lookup (built-in)         │\n│  │                                                          │\n│  └── omc-mcp-extension (added by setup skill)              │\n│      ├─ serena             → Semantic analysis + memory     │\n│      ├─ sequential-thinking → Structured reasoning          │\n│      └─ morphllm-fast-apply → Bulk editing                  │\n│                                                              │\n└─────────────────────────────────────────────────────────────┘\n```\n\n### Workflow Example\n\n```\nUser: \"autopilot: refactor the authentication module\"\n         │\n         ▼\nOMC Hook: keyword-detector\n  → Detects \"autopilot\" → Injects skill\n         │\n         ▼\nOMC Agents + MCP Tools Collaboration\n  Analyst  → mcp__t__lsp_diagnostics (code analysis)\n  Architect → mcp__sequential-thinking__* (structured reasoning)\n  Executor → mcp__serena__find_symbol (navigation)\n           → mcp__morphllm-fast-apply__edit_file (bulk editing)\n```\n\n---\n\n## MCP Selection Guide\n\n| When you need... | Use | Example |\n|------------------|-----|---------|\n| Official library docs | **Context7** (OMC built-in) | \"How to use React useEffect\" |\n| Symbol rename/find refs | **Serena** | \"Rename getUserData to fetchUser\" |\n| Complex multi-step analysis | **Sequential** | \"Why is this API slow?\" |\n| Pattern-based bulk edits | **Morphllm** | \"Convert all var to const\" |\n| Simple tasks | **Native Claude** | \"Explain this function\" |\n\n### Collaboration Patterns\n\n| Scenario | Workflow |\n|----------|----------|\n| Build React app | Context7(docs) → Sequential(design) → Serena(implement) |\n| Refactor legacy code | Serena(analyze) → Sequential(plan) → Morphllm(transform) |\n| Debug issues | Sequential(analyze) → Serena(navigate) |\n| Unify code style | Morphllm(bulk transform) |\n\n---\n\n## MCP Behavior Guides\n\nDetailed usage guides for each MCP server:\n\n| File | Description |\n|------|-------------|\n| `MCP_Serena.md` | Semantic analysis, symbol operations, session memory |\n| `MCP_Sequential.md` | Structured reasoning, multi-step analysis |\n| `MCP_Morphllm.md` | Bulk editing, pattern-based transformations |\n\nThese are automatically copied to `~/.claude/` and imported via `@` references when you run `/omc-mcp-extension:setup`.\n\n---\n\n## Compatibility\n\n| Component | Version |\n|-----------|---------|\n| **oh-my-claudecode** | 3.x+ |\n| **Claude Code** | Latest |\n| **Node.js** | 18+ |\n| **Python** | 3.10+ (for Serena) |\n| **jq** | Latest (for setup) |\n\n### Namespace Separation (No Conflicts)\n\n| Source | Namespace | Tools |\n|--------|-----------|-------|\n| OMC | `mcp__t__*`, `mcp__context7__*` | LSP, AST, Context7 |\n| Extension | `mcp__serena__*`, `mcp__sequential-thinking__*`, `mcp__morphllm-fast-apply__*` | 3 servers |\n\n---\n\n## Troubleshooting\n\n### MCP servers not showing\n\n```bash\n# Verify settings.json has mcpServers\ncat ~/.claude/settings.json | jq '.mcpServers | keys'\n\n# Expected: [\"serena\", \"sequential-thinking\", \"morphllm-fast-apply\", ...]\n\n# If missing, re-run setup\n/omc-mcp-extension:setup\n```\n\n### Morphllm not working\n\n```bash\n# Check API key in settings.json\ncat ~/.claude/settings.json | jq '.env.MORPH_API_KEY'\n\n# If null, add it manually\nclaude config set env.MORPH_API_KEY \"your-key-here\"\n```\n\n### Serena not starting\n\n```bash\n# Verify uvx installation\nwhich uvx\n\n# If not found, install\npip install uv\n```\n\n### Restore from backup\n\n```bash\n# List backups\nls -la ~/.claude/backups/\n\n# Restore settings.json\ncp ~/.claude/backups/settings.json.backup_[timestamp] ~/.claude/settings.json\n\n# Restore CLAUDE.md\ncp ~/.claude/backups/CLAUDE.md.backup_[timestamp] ~/.claude/CLAUDE.md\n```\n\n---\n\n## Uninstall\n\n### Remove MCP configuration\n\n```bash\n# Remove MCP servers from settings.json\njq 'del(.mcpServers.serena, .mcpServers[\"sequential-thinking\"], .mcpServers[\"morphllm-fast-apply\"])' \\\n  ~/.claude/settings.json > tmp.json && mv tmp.json ~/.claude/settings.json\n\n# Remove MORPH_API_KEY\njq 'del(.env.MORPH_API_KEY)' ~/.claude/settings.json > tmp.json && mv tmp.json ~/.claude/settings.json\n\n# Remove from CLAUDE.md\nsed -i '' '/<!-- OMC-MCP-EXT:START -->/,/<!-- OMC-MCP-EXT:END -->/d' ~/.claude/CLAUDE.md\n\n# Remove MCP guide files\nrm -f ~/.claude/MCP_Serena.md ~/.claude/MCP_Sequential.md ~/.claude/MCP_Morphllm.md\n```\n\n### Remove plugin\n\n```bash\nclaude plugin uninstall omc-mcp-extension@omc-mcp-extension\nclaude plugin marketplace remove omc-mcp-extension\n```\n\n---\n\n## Credits\n\n- Built to extend [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)\n- MCP Servers: [Serena](https://github.com/oraios/serena), [Sequential-Thinking](https://github.com/modelcontextprotocol/servers), [Morphllm](https://morphllm.com)\n\n---\n\n## License\n\nMIT"
+      },
+      "plugins": [
+        {
+          "name": "omc-mcp-extension",
+          "description": "Adds Serena, Sequential-Thinking, and Morphllm MCP servers to oh-my-claudecode",
+          "version": "1.9.0",
+          "author": {
+            "name": "chlee1001"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/chlee1001/omc-mcp-extension",
+          "tags": [
+            "mcp",
+            "serena",
+            "sequential-thinking",
+            "morphllm",
+            "oh-my-claudecode"
+          ],
+          "categories": [
+            "mcp",
+            "morphllm",
+            "oh-my-claudecode",
+            "productivity",
+            "sequential-thinking",
+            "serena"
+          ],
+          "install_commands": [
+            "/plugin marketplace add chlee1001/omc-mcp-extension",
+            "/plugin install omc-mcp-extension@omc-mcp-extension"
+          ]
+        }
+      ]
+    }
+  ]
+}
