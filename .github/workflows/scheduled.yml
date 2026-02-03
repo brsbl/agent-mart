@@ -90,22 +90,15 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Create branch with date
-          BRANCH="data/update-$(date +%Y-%m-%d)"
+          # Use a single branch name to avoid conflicts between date-based PRs
+          BRANCH="data/update"
 
-          # Check if branch exists remotely
-          if git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
-            echo "Branch $BRANCH exists, updating it"
-            git fetch origin "$BRANCH"
-            git checkout -B "$BRANCH" "origin/$BRANCH"
-          else
-            echo "Creating new branch $BRANCH"
-            git checkout -b "$BRANCH"
-          fi
+          # Always reset to main and force-push to keep the branch clean
+          git checkout -b "$BRANCH"
 
           git add -f web/public/data/ data/signals-history.json
           git commit -m "chore: update directory data $(date +%Y-%m-%d)" --no-verify
-          git push -u origin "$BRANCH" --force-with-lease --no-verify
+          git push -u origin "$BRANCH" --force --no-verify
 
           # Check if PR already exists for this branch
           EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
@@ -116,7 +109,7 @@ jobs:
 
           # Create PR
           gh pr create \
-            --title "chore: update directory data $(date +%Y-%m-%d)" \
+            --title "chore: update directory data" \
             --body "Automated data update from scheduled pipeline run.
 
           ## Changes
