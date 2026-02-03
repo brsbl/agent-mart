@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "nilpath",
+    "display_name": "Christoffer Åhrling",
+    "avatar_url": "https://avatars.githubusercontent.com/u/879826?u=2c1772a6bc9d22f01d76728ff5deb7ef8b2d5b09&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nilpath-marketplace",
+      "version": null,
+      "description": "A marketplace for my claude code extensions",
+      "repo_full_name": "nilpath/nilpath-marketplace",
+      "repo_url": "https://github.com/nilpath/nilpath-marketplace",
+      "repo_description": "A marketplace for my claude code extensions",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-03T20:24:59Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nilpath-marketplace\",\n  \"owner\": {\n      \"name\": \"Christoffer Ahrling\",\n      \"url\": \"https://github.com/nilpath\"\n  },\n  \"metadata\": {\n    \"description\": \"A marketplace for my claude code extensions\",\n    \"version\": \"0.0.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-code-tools\",\n      \"source\": \"./plugins/claude-code-tools\",\n      \"description\": \"A collection Agents and Skills I use for coding with Claude.\",\n      \"version\": \"0.5.2\",\n      \"author\": {\n        \"name\": \"Christoffer Ahrling\",\n        \"url\": \"https://github.com/nilpath\"\n      },\n      \"homepage\": \"https://github.com/nilpath/nilpath-marketplace\",\n      \"tags\": []\n    }\n  ]\n}\n",
+        "README.md": "# nilpath-marketplace\n\nA marketplace for storing my claude code extensions. Inspired by [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin).\n",
+        "plugins/claude-code-tools/README.md": "# Claude Code Tools\n\nA collection of Agents and Skills for coding with Claude.\n\n## Version\n\n0.5.2\n\n## Components\n\n### Agents (1)\n\n| Agent | Description |\n|-------|-------------|\n| **code-reviewer** | Expert code reviewer for quality, security, and best practices. Can add line comments to GitHub PRs. |\n\n### Agent Details\n\n**code-reviewer**\n- Comprehensive review checklist: code quality, error handling, security, performance, testing, architecture, documentation\n- Structured output with file:line references for all issues\n- **GitHub PR integration**: Creates pending reviews with line-specific comments\n- Proactive invocation after code changes\n- Tools: Read, Glob, Grep, Bash (restricted to gh/git via skill)\n- Skills: gh-pr-review\n- Model: sonnet\n\n### Skills (8)\n\n| Skill | Description |\n|-------|-------------|\n| **creating-agents** | Expert guidance for designing and implementing Claude Code subagents |\n| **create-agent-skills** | Expert guidance for creating, writing, and refining Claude Code Skills |\n| **creating-mermaid-diagrams** | Create, edit, and validate Mermaid diagrams (flowcharts, sequence, class, ER, etc.) |\n| **gh-pr-review** | GitHub PR review operations: create pending reviews with line comments, submit reviews |\n| **gh-address-comments** | Address review/issue comments on the open GitHub PR for the current branch |\n| **git-commits** | Git commit best practices and message formatting guidelines |\n| **git-stacked-prs** | Stacked (dependent) pull request workflow and management |\n| **git-advanced** | Advanced git operations, analysis tools, recovery, and command reference |\n\n### Skill Details\n\n**creating-agents** (~280 lines)\n- Comprehensive guide for designing and implementing Claude Code subagents\n- Core principles: context preservation, parallelization, specialization\n- References: official-spec.md, orchestration-patterns.md, tool-permissions.md, anti-patterns.md\n- Workflows: create-read-only-agent.md, create-code-writer-agent.md, create-research-agent.md, audit-existing-agent.md\n- Templates: code-reviewer.md, debugger.md, researcher.md, domain-expert.md\n- Examples: real-world-agents.md with battle-tested configurations\n\n**create-agent-skills**\n- Expert guidance for authoring Claude Code Skills\n- References: 10+ reference files covering best practices\n- Workflows: Multiple workflow files for skill creation\n- Templates: Skill templates for quick starts\n\n**creating-mermaid-diagrams**\n- Create, edit, and validate all Mermaid diagram types\n- **References**: 12 quick reference files (~50 lines each)\n  - Flowchart, Sequence, Class, State, ER, Gantt, Pie, Mindmap, Timeline, Git Graph\n  - Styling/themes, common patterns\n- **Templates**: 5 starter templates (flowchart, sequence, class, architecture, ER)\n- **Workflows**: create-diagram.md, edit-diagram.md, validate-diagram.md\n- **Scripts**: `validate-mermaid.sh` - Syntax validation via mermaid-cli\n- Progressive disclosure: Links to official Mermaid docs for advanced features\n\n**gh-pr-review**\n- GitHub PR review operations via gh CLI\n- **Scripts**: 3 automation scripts\n  - `pr-info.sh` - Get PR context (number, repo, diff files)\n  - `create-review.sh` - Create pending review with line comments\n  - `submit-review.sh` - Submit pending review (approve/reject/comment)\n- References: api-reference.md with GitHub API details\n- Creates PENDING reviews so user can edit before submitting\n\n**gh-address-comments**\n- Address review/issue comments on open PR for current branch\n- Complements gh-pr-review (creating reviews) with responding to reviews\n- **Scripts**: `fetch-comments.sh` - Fetch all PR comments via GitHub GraphQL API\n- Workflow: Fetch comments → Summarize actionable items → Apply fixes\n- Fetches: conversation comments, reviews, inline review threads (with resolved/outdated state)\n\n**git-commits** (241 lines)\n- Commit best practices and conventional commits format\n- References: commit-guidelines.md\n- Templates: commit-message.txt\n\n**git-stacked-prs** (311 lines)\n- Stacked PR creation, management, and troubleshooting\n- References: stacked-prs.md\n- Workflows: create-stacked-prs.md, update-stack-after-merge.md, recover-from-rebase.md\n- Templates: pr-description.md\n- **Scripts**: 4 automation scripts (820 lines total)\n  - `stack-status.sh` - Display visual tree of stack structure with PR status\n  - `stack-backup.sh` - Create and restore backups before risky operations\n  - `stack-rebase.sh` - Automate sequential rebasing with safety features\n  - `update-pr-targets.sh` - Batch update PR targets after merges\n\n**git-advanced** (350 lines)\n- Interactive rebase, cherry-pick, reflog, stash, reset, clean, bisect\n- History analysis: blame, search, bisect\n- Recovery: lost commits, deleted branches, undo reset\n- References: advanced-operations.md, common-commands.md\n\n## Credits\n\nInspired by:\n- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin)\n- [Anthropic Agent Skills Documentation](https://code.claude.com/docs/en/skills)\n\n### Sourced Skills\n\n| Skill | Source |\n|-------|--------|\n| create-agent-skills | [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) |\n| gh-address-comments | [openai/skills](https://github.com/openai/skills/tree/main/skills/.curated/gh-address-comments) |\n\n### Sourced Commands\n\n| Command | Source |\n|---------|--------|\n| create-agent-skill | [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) |\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-code-tools",
+          "source": "./plugins/claude-code-tools",
+          "description": "A collection Agents and Skills I use for coding with Claude.",
+          "version": "0.5.2",
+          "author": {
+            "name": "Christoffer Ahrling",
+            "url": "https://github.com/nilpath"
+          },
+          "homepage": "https://github.com/nilpath/nilpath-marketplace",
+          "tags": [],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add nilpath/nilpath-marketplace",
+            "/plugin install claude-code-tools@nilpath-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
