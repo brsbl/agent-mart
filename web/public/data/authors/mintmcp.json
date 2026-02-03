@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "mintmcp",
+    "display_name": "MintMCP",
+    "avatar_url": "https://avatars.githubusercontent.com/u/231290795?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-security",
+      "version": "0.1.14",
+      "description": "Security plugins for Claude Code and Cursor: secret scanning and safe coding patterns",
+      "repo_full_name": "mintmcp/agent-security",
+      "repo_url": "https://github.com/mintmcp/agent-security",
+      "repo_description": "Hooks for Claude Code and Cursor for secrets scanning",
+      "signals": {
+        "stars": 58,
+        "forks": 4,
+        "pushed_at": "2025-10-21T19:44:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agent-security\",\n  \"version\": \"0.1.14\",\n  \"description\": \"Security plugins for Claude Code and Cursor: secret scanning and safe coding patterns\",\n  \"owner\": {\n    \"name\": \"MintMCP\",\n    \"email\": \"support@mintmcp.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"secrets-scanner\",\n      \"description\": \"Scans for common credentials across cloud, source control, payment, and collaboration providers\",\n      \"version\": \"0.1.14\",\n      \"author\": {\n        \"name\": \"MintMCP\",\n        \"email\": \"support@mintmcp.com\"\n      },\n      \"source\": \"./plugins/secrets_scanner\",\n      \"category\": \"security\",\n      \"keywords\": [\"security\", \"secrets\", \"credentials\", \"scanning\"]\n    }\n  ]\n}\n",
+        "README.md": "<picture>\n  <source media=\"(prefers-color-scheme: dark)\" srcset=\"https://github.com/user-attachments/assets/00dd06e9-8a2e-495a-8466-e68ed4c918d1\">\n  <img alt=\"Text changing depending on mode. Light: 'So light!' Dark: 'So dark!'\" src=\"https://github.com/user-attachments/assets/9aee367d-3d66-491a-9e04-a67944cb1c4c\">\n</picture>\n\n[![PyPI version](https://badge.fury.io/py/claude-secret-scan.svg)](https://badge.fury.io/py/claude-secret-scan)\n[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)\n[![Dependencies](https://img.shields.io/badge/dependencies-zero-success.svg)]()\n[![CI](https://github.com/mintmcp/agent-security/workflows/CI/badge.svg)](https://github.com/mintmcp/agent-security/actions)\n[![Downloads](https://pepy.tech/badge/claude-secret-scan)](https://pepy.tech/project/claude-secret-scan)\n\n## Security plugins for Claude Code and Cursor\nThis repository currently provides a secrets scanner plugin.\n\n## Motivation\n\nCoding agents are powerful, but we've repeatedly seen them read and propagate sensitive data during everyday work. That can be acceptable for casual \"vibe coding\" experiments, but it's not acceptable for production software engineering. We built this to make accidental leakage much harder: a standalone, local-first scanner with minimal footprint (no external dependencies, regex-only), running as editor/agent hooks entirely on your machine, and easy to set up so teams can adopt it without friction.\n\n![Claude Secret Scan demo](assets/Claude-Secret-Scan.gif)\n\n## Install\n\n### Claude Code Plugin Marketplace\n\nInstall via the [Claude Code plugin marketplace](https://www.anthropic.com/news/claude-code-plugins):\n\n```bash\n/plugin marketplace add mintmcp/agent-security\n/plugin install secrets-scanner@agent-security\n```\n\n### PyPI (manual hooks)\n\n```bash\npipx install claude-secret-scan\n# or\npython3 -m pip install --user claude-secret-scan\n```\n\nAdd hooks to `~/.claude/settings.json` if using PyPI:\n\n```json\n{\n  \"hooks\": {\n    \"UserPromptSubmit\": [\n      {\"hooks\": [{\"type\": \"command\", \"command\": \"claude-secret-scan --mode=pre\"}]} \n    ],\n    \"PreToolUse\": [\n      {\"matcher\": \"Read|read\", \"hooks\": [{\"type\": \"command\", \"command\": \"claude-secret-scan --mode=pre\"}]}\n    ],\n    \"PostToolUse\": [\n      {\"matcher\": \"Read|read\", \"hooks\": [{\"type\": \"command\", \"command\": \"claude-secret-scan --mode=post\"}]},\n      {\"matcher\": \"Bash|bash\", \"hooks\": [{\"type\": \"command\", \"command\": \"claude-secret-scan --mode=post\"}]}\n    ]\n  }\n}\n```\n\n### Cursor\n\nCopy `examples/configs/cursor-hooks.json` to `~/.cursor/hooks.json` or configure similarly:\n\n```json\n{\n  \"version\": 1,\n  \"hooks\": {\n    \"beforeReadFile\": [{\"command\": \"cursor-secret-scan --mode=pre\"}],\n    \"beforeSubmitPrompt\": [{\"command\": \"cursor-secret-scan --mode=pre\"}]\n  }\n}\n```\n\n## Repository Layout\n\n```\n.\n├── .claude-plugin/\n│   └── marketplace.json\n├── plugins/\n│   └── secrets_scanner/\n│       ├── .claude-plugin/\n│       │   └── plugin.json\n│       ├── hooks/\n│       │   ├── hooks.json\n│       │   └── secrets_scanner_hook.py\n│       ├── tests/\n│       │   └── read_hook_test.py\n│       ├── TESTING.md\n│       └── README.md\n├── examples/\n│   └── configs/\n├── pyproject.toml\n└── README.md\n```\n\n## Notes\n\n- Pre hooks block when secrets are detected. Post hooks print warnings.\n- No external dependencies. The scanner uses only Python's built-in regexes and simple pattern matching.\n- Runs completely locally. No code, prompts, or files leave your system.\n- Curious how it works? See `plugins/secrets_scanner/hooks/secrets_scanner_hook.py` for the core implementation and patterns.\n- No telemetry by default. For org-wide visibility and governance (dashboards, metrics, alerting), see https://mintmcp.com.\n\n## License\n\nApache License 2.0. See `LICENSE`.\n\n## Acknowledgements\n\nRegex patterns were informed by or adapted from `detect-secrets` (Apache 2.0).\n",
+        "plugins/secrets_scanner/README.md": "# Secrets Scanner Plugin\n\nBlocks sending secrets to Claude Code or Cursor by scanning inputs and outputs.\n\n## Installation\n\n### Claude Code Plugin Marketplace\n\nInstall via the [Claude Code plugin marketplace](https://www.anthropic.com/news/claude-code-plugins):\n\n```bash\n/plugin marketplace add mintmcp/agent-security\n/plugin install secrets-scanner@agent-security\n```\n\n### PyPI\n\n```bash\npipx install claude-secret-scan\n# or\npython3 -m pip install --user claude-secret-scan\n```\n\nFor manual usage, run `secrets_scanner_hook.py` with `python3` via hooks.\n\n## Behavior\n\n- `PreToolUse` / Cursor `beforeReadFile`: blocks when secrets are detected.\n- `UserPromptSubmit` / Cursor `beforeSubmitPrompt`: blocks when secrets are detected.\n- `PostToolUse`: prints a warning (cannot block after execution).\n\nDetected classes include common cloud credentials, source control tokens, webhook URLs, payment provider keys, private keys, and JWTs. See `PATTERNS` in `hooks/secrets_scanner_hook.py` for details.\n\n## Configuration\n\n- `MAX_SCAN_BYTES` (default 5 MB)\n- `PATTERNS` (regex map for credential types)\n\nBinary content is skipped using a simple heuristic.\n\n## Testing\n\nSee `tests/read_hook_test.py` and `TESTING.md` for examples and guidance.\n\n## Notes\n\n- Regex detection is best-effort. Rotate real secrets immediately.\n- No external dependencies. Uses only Python's built-in regexes and simple pattern matching.\n- Runs completely locally. No code, prompts, or files leave your system.\n- Curious how it works? See `hooks/secrets_scanner_hook.py` for the core implementation and patterns.\n- Python 3.7+.\n\n## License\n\nApache License 2.0. See `../../LICENSE`.\n\n## Acknowledgements\n\nRegex patterns were informed by or adapted from `detect-secrets` (Apache 2.0).\n"
+      },
+      "plugins": [
+        {
+          "name": "secrets-scanner",
+          "description": "Scans for common credentials across cloud, source control, payment, and collaboration providers",
+          "version": "0.1.14",
+          "author": {
+            "name": "MintMCP",
+            "email": "support@mintmcp.com"
+          },
+          "source": "./plugins/secrets_scanner",
+          "category": "security",
+          "keywords": [
+            "security",
+            "secrets",
+            "credentials",
+            "scanning"
+          ],
+          "categories": [
+            "credentials",
+            "scanning",
+            "secrets",
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mintmcp/agent-security",
+            "/plugin install secrets-scanner@agent-security"
+          ]
+        }
+      ]
+    }
+  ]
+}

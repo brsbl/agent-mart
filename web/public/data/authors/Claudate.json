@@ -66,59 +66,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "context-sync-marketplace",
-      "version": null,
-      "description": "Official marketplace for Context Sync plugin - session management for Claude Code",
-      "repo_full_name": "Claudate/claude-code-context-sync",
-      "repo_url": "https://github.com/Claudate/claude-code-context-sync",
-      "repo_description": "Save and resume Claude Code session context across multiple windows",
-      "signals": {
-        "stars": 18,
-        "forks": 0,
-        "pushed_at": "2025-12-11T08:41:24Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"context-sync-marketplace\",\n  \"owner\": {\n    \"name\": \"Nano-AI Team\",\n    \"email\": \"contact@nano-ai.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"Official marketplace for Context Sync plugin - session management for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"context-sync\",\n      \"source\": \"./\",\n      \"description\": \"Save and resume Claude Code session context across multiple windows. Perfect for developers juggling multiple tasks.\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"tags\": [\n        \"session\",\n        \"context\",\n        \"workflow\",\n        \"task-management\",\n        \"multi-window\"\n      ],\n      \"author\": {\n        \"name\": \"Nano-AI Team\",\n        \"email\": \"contact@nano-ai.dev\"\n      },\n      \"homepage\": \"https://github.com/Claudate/claude-code-context-sync#readme\",\n      \"repository\": \"https://github.com/Claudate/claude-code-context-sync\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"context-sync\",\n  \"version\": \"1.0.1\",\n  \"description\": \"Save and resume Claude Code session context across multiple windows. Preserves work progress, pending tasks, key files, and technical notes. Perfect for complex projects requiring context switching between sessions.\",\n  \"author\": {\n    \"name\": \"Nano-AI Team\",\n    \"email\": \"contact@nano-ai.dev\"\n  },\n  \"homepage\": \"https://github.com/Claudate/claude-code-context-sync#readme\",\n  \"repository\": \"https://github.com/Claudate/claude-code-context-sync\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"context\",\n    \"session\",\n    \"productivity\",\n    \"workflow\",\n    \"multi-window\",\n    \"task-management\"\n  ],\n  \"skills\": [\n    \"./skills/context-save/\",\n    \"./skills/context-resume/\"\n  ],\n  \"commands\": [\n    \"./commands/save-session.md\",\n    \"./commands/resume-session.md\"\n  ]\n}\n",
-        "README.md": "# Context Sync Plugin for Claude Code\n\nEnglish | [简体中文](README.zh-CN.md)\n\nSave and resume Claude Code session context across multiple windows. Never lose track of your work progress when switching between different projects or tasks.\n\n## Features\n\n- **Smart Context Saving**: Automatically extracts and saves:\n  - Completed and pending tasks\n  - Key files being worked on\n  - Technical decisions and notes\n  - Priority-based task organization\n\n- **Easy Session Recovery**: Resume previous work sessions with:\n  - Full context restoration\n  - Task progress tracking\n  - Automatic file reference linking\n\n- **Multi-Window Support**: Perfect for developers who:\n  - Work on multiple projects simultaneously\n  - Need to switch context frequently\n  - Want to preserve work state across sessions\n\n## Installation\n\n### From GitHub (Recommended)\n\n```bash\n# Add the marketplace\n/plugin marketplace add Claudate/claude-code-context-sync\n\n# Install the plugin\n/plugin install context-sync\n```\n\n### Update Plugin (Recommended)\n\nTo update the plugin to the latest version (easiest way):\n\n```bash\n# Simply reload the plugin\n/plugin reload context-sync\n```\n\nOr if you want to pull the latest version from GitHub:\n\n```bash\n# Update to latest version\n/plugin update context-sync\n```\n\n### Reinstallation (If Already Installed)\n\nIf you get an error saying the marketplace is already installed:\n\n```bash\n# Option 1: Just reload (quickest)\n/plugin reload context-sync\n\n# Option 2: Full reinstall (if reload doesn't work)\n/plugin marketplace remove context-sync-marketplace\n/plugin marketplace add Claudate/claude-code-context-sync\n/plugin install context-sync\n```\n\n### Local Development\n\n```bash\n# Clone the repository\ngit clone https://github.com/Claudate/claude-code-context-sync.git\n\n# Create a development marketplace\nmkdir dev-marketplace\ncp -r claude-code-context-sync dev-marketplace/\n\n# Install locally in Claude Code\n/plugin marketplace add ./dev-marketplace\n/plugin install context-sync@dev-marketplace\n```\n\n## Usage\n\n### Save Current Session\n\nWhen you need to switch to another task or window:\n\n```bash\n/save-session\n```\n\nOr simply say:\n```\n换窗口处理-\n```\n\nThe plugin will:\n1. Analyze your current work context\n2. Extract all tasks (completed and pending)\n3. Save to `docs/context-sessions/YYYYMMDD-HHMM-description.md`\n\n### Resume Previous Session\n\nIn a new window, restore your previous work:\n\n```bash\n/resume-session\n```\n\nThe plugin will:\n1. Show all available saved sessions\n2. Let you select which one to resume\n3. Load the full context and pending tasks\n4. Help you continue from where you left off\n\n### Example Workflow\n\n```bash\n# Window 1: Working on feature A\n> Implementing user authentication...\n> /save-session\n✅ Context saved: docs/context-sessions/20251210-1430-user-auth.md\n\n# Switch to Window 2: Work on bug fix\n> Fixed critical bug in payment flow\n> /save-session\n✅ Context saved: docs/context-sessions/20251210-1500-payment-bug.md\n\n# Back to Window 1 (or new window)\n> /resume-session\n📋 Available sessions:\n1. 20251210-1430-user-auth.md (3 pending tasks)\n2. 20251210-1500-payment-bug.md (1 pending task)\n\n> Select: 1\n📂 Loaded session: user-auth\n🎯 Continuing with authentication implementation...\n```\n\n## Session File Format\n\nSessions are saved as markdown files in `docs/context-sessions/`:\n\n```markdown\n# Session: User Authentication Implementation\n\n## 元信息\n- **创建时间**: 2025-12-10 14:30\n- **状态**: 进行中\n\n## 上下文摘要\nImplementing JWT-based authentication with refresh tokens...\n\n## 已完成任务\n- [x] Set up JWT library\n- [x] Create auth middleware\n\n## 未完成任务\n- [ ] 🔴 高优先级: Implement token refresh logic\n- [ ] 🟡 中优先级: Add password hashing\n- [ ] 🟢 低优先级: Add OAuth integration\n\n## 关键文件\n- `backend/auth/jwt.service.ts` - JWT token management\n- `backend/middleware/auth.middleware.ts` - Authentication middleware\n\n## 注意事项\n- Token expiry set to 1 hour\n- Refresh tokens stored in httpOnly cookies\n\n## 下一步行动\n1. Review current JWT implementation\n2. Add token refresh endpoint\n3. Test with Postman\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/save-session` | Save current work context |\n| `/resume-session` | Resume a previous session |\n\n## Skills\n\nThis plugin includes two AI skills that Claude can invoke automatically:\n\n### `context-save`\nTriggered when you say \"换窗口处理-\" or use `/save-session`. Analyzes the conversation and saves structured context.\n\n### `context-resume`\nTriggered with `/resume-session`. Lists available sessions and helps restore work context.\n\n## Priority Markers\n\nTasks are marked with priority indicators:\n\n| Marker | Priority | Use Case |\n|--------|----------|----------|\n| 🔴 | High | Blocking tasks, core features |\n| 🟡 | Medium | Important but not urgent |\n| 🟢 | Low | Nice-to-have, optimizations |\n\n## Requirements\n\n- Claude Code CLI\n- Project must have a `docs/` directory (created automatically if missing)\n\n## Configuration\n\nNo configuration needed! The plugin works out of the box.\n\nSessions are saved to `docs/context-sessions/` by default.\n\n## Contributing\n\nContributions welcome! Please:\n\n1. Fork the repository\n2. Create a feature branch\n3. Make your changes\n4. Submit a pull request\n\n## License\n\nMIT License - see [LICENSE](LICENSE) file for details\n\n## Documentation\n\n### Quick Links\n\n- 📚 [Quick Reference Guide](QUICK_REFERENCE.md) - Common commands at a glance\n- 🔧 [Troubleshooting Guide](TROUBLESHOOTING.md) - Solutions to common issues\n- 🚀 [Quick Start Guide](QUICK_START.zh-CN.md) - Get started in 5 minutes\n\n### Other Languages\n\n- 🇨🇳 [简体中文](README.zh-CN.md)\n- 📖 [All Languages](LANGUAGES.md)\n\n## Support\n\n- **Issues**: https://github.com/Claudate/claude-code-context-sync/issues\n- **Discussions**: https://github.com/Claudate/claude-code-context-sync/discussions\n\n## Changelog\n\n### v1.0.0 (2025-12-10)\n\n- Initial release\n- Context save/resume functionality\n- Slash command support\n- Priority-based task tracking\n\n## Credits\n\nDeveloped by the Nano-AI Team for the Claude Code community.\n\n---\n\n**Made with ❤️ for Claude Code developers who juggle multiple tasks**\n"
-      },
-      "plugins": [
-        {
-          "name": "context-sync",
-          "source": "./",
-          "description": "Save and resume Claude Code session context across multiple windows. Perfect for developers juggling multiple tasks.",
-          "version": "1.0.0",
-          "category": "productivity",
-          "tags": [
-            "session",
-            "context",
-            "workflow",
-            "task-management",
-            "multi-window"
-          ],
-          "author": {
-            "name": "Nano-AI Team",
-            "email": "contact@nano-ai.dev"
-          },
-          "homepage": "https://github.com/Claudate/claude-code-context-sync#readme",
-          "repository": "https://github.com/Claudate/claude-code-context-sync",
-          "license": "MIT",
-          "categories": [
-            "context",
-            "multi-window",
-            "productivity",
-            "session",
-            "task-management",
-            "workflow"
-          ],
-          "install_commands": [
-            "/plugin marketplace add Claudate/claude-code-context-sync",
-            "/plugin install context-sync@context-sync-marketplace"
-          ]
-        }
-      ]
     }
   ]
 }

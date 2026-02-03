@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "aws-samples",
+    "display_name": "AWS Samples",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8931462?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aws-emr-utilities",
+      "version": null,
+      "description": "AWS Spark Analysis plugin for Claude Code - troubleshoot Spark workloads on AWS Glue, EMR, and EMR Serverless",
+      "repo_full_name": "aws-samples/aws-emr-utilities",
+      "repo_url": "https://github.com/aws-samples/aws-emr-utilities",
+      "repo_description": null,
+      "signals": {
+        "stars": 42,
+        "forks": 22,
+        "pushed_at": "2026-01-09T18:06:30Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aws-emr-utilities\",\n  \"owner\": {\n    \"name\": \"Amazon Web Services\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"spark-analysis\",\n      \"source\": \"./utilities/apache-spark-agents/spark-analysis-claude-plugin\",\n      \"description\": \"AWS Spark Analysis plugin for Claude Code - troubleshoot Spark workloads on AWS Glue, EMR, and EMR Serverless\",\n      \"version\": \"0.1.2\",\n      \"author\": {\n        \"name\": \"AWS SageMaker Unified Studio\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Amazon EMR Utilities\n\nThis repository contains sample code and utilities for using Amazon EMR on EC2. This package is structured based on the following directories:\n\n- applications - application specific patches, plugins, etc.\n- utilities - administrative and maintenance utilities for working with EMR\n\n## Security\n\nSee [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.\n\n## License\n\nThis library is licensed under the MIT-0 License. See the LICENSE file.\n\n## Disclaimer\n\nThe examples provided in this repository are not supported by AWS EMR. The use of this code is your responsibility and at your own risk.  \n",
+        "utilities/apache-spark-agents/spark-analysis-claude-plugin/README.md": "# Spark Analysis Plugin for Claude Code\n\nAnalyze and troubleshoot Apache Spark workloads running on AWS Glue, EMR, and EMR Serverless.\n\n## Features\n\n- **Workload Analysis**: Analyze Spark job executions for performance issues and optimization opportunities\n- **Code Recommendations**: Automatically generate code fix recommendations when issues are detected\n- **Multi-Platform Support**: Works with AWS Glue Jobs, EMR Steps, and EMR Serverless Job Runs\n- **Multi-Account Support**: Analyze workloads across different AWS accounts using different profiles\n- **Batch Analysis**: Process multiple workloads from spreadsheets or lists with per-workload profile support\n\n## Architecture\n\nThis plugin uses a **script-based architecture** that makes direct MCP tool calls for each analysis request. This design enables:\n\n- **No LLM overhead**: Direct MCP calls without intermediate LLM processing\n- **Profile isolation**: Each analysis runs in its own process with its own AWS credentials\n- **Multi-account support**: Different workloads can use different AWS profiles without affecting Claude Code's Bedrock connection\n- **Batch processing**: Analyze multiple workloads from different accounts in sequence\n\n```\nClaude Code Agent\n       │\n       ▼\n  Bash Tool (uv run)\n       │\n       ▼\n  troubleshoot_spark_workload.py\n       │\n       ▼\n  Direct MCP Tool Calls\n       │\n       ▼\n  Raw JSON Output → Claude Code parses & presents\n```\n\n## Prerequisites\n\n- **AWS Credentials**: Valid AWS credentials with access to the SageMaker Unified Studio MCP service\n- **Python/uv**: The `uv` tool must be available (install via `pip install uv` or `pipx install uv`)\n\n## Installation\n\nInstall this plugin in Claude Code:\n\n```bash\nclaude plugin marketplace add aws-samples/aws-emr-utilities\nclaude plugin install spark-analysis@aws-emr-utilities\n```\n\nOr test locally:\n\n```bash\nclaude --plugin-dir /path/to/spark-analysis-claude-plugin\n```\n\n## Usage\n\n### Command: Analyze Spark Workload\n\n```\n/spark-analysis:troubleshoot-spark-workload <execution-id> <execution-type-id> [options]\n```\n\n**Arguments:**\n- `execution-id`: The execution identifier\n  - For Glue: Job Run ID (e.g., `jr_abc123`)\n  - For EMR: Step ID (e.g., `s-1234567890ABC`)\n  - For EMR Serverless: Job Run ID\n- `execution-type-id`: The resource identifier\n  - For Glue: Job Name\n  - For EMR: Cluster ID (e.g., `j-ABC123`)\n  - For EMR Serverless: Application ID\n\n**Options:**\n- `--platform <type>`: Platform type (`glue`, `emr_serverless`, `emr_ec2`) - auto-detected if not specified\n- `--profile <name>`: AWS profile name\n- `--region <region>`: AWS region (default: `us-east-1`)\n\n**Examples:**\n\n```bash\n# Analyze a Glue job run\n/spark-analysis:troubleshoot-spark-workload jr_abc123 my-glue-job\n\n# Analyze an EMR step\n/spark-analysis:troubleshoot-spark-workload s-1234567890ABC j-CLUSTERID123\n\n# Analyze with specific profile and region\n/spark-analysis:troubleshoot-spark-workload jr_def456 my-job --profile prod-account --region us-west-2\n```\n\n### Batch Analysis from Spreadsheets\n\nYou can analyze multiple workloads by running the command multiple times. Claude Code can run these in parallel.\n\nFor a spreadsheet with columns: `execution_id`, `job_name`, `profile`, `region`:\n\n```bash\n# Run multiple analyses (Claude Code handles parallelization)\n/spark-analysis:troubleshoot-spark-workload jr_abc123 job-1 --profile account-a --region us-east-1\n/spark-analysis:troubleshoot-spark-workload jr_def456 job-2 --profile account-b --region us-west-2\n```\n\n## Multi-Account Workflow\n\n### Why Multi-Account Support Matters\n\nIn enterprise environments, Spark workloads often span multiple AWS accounts:\n- Different accounts for dev/staging/prod\n- Different teams with separate accounts\n- Cross-account data pipelines\n\n### How It Works\n\n1. Each analysis spawns a new Python process via `uv run`\n2. The process creates a boto3 session with the specified profile\n3. Direct MCP tool calls are made using those credentials\n4. Raw JSON results are returned to Claude Code for presentation\n\nThis architecture ensures:\n- Claude Code's Bedrock connection remains unaffected\n- Each workload can use different credentials\n- No credential conflicts between analyses\n\n### Example: Cross-Account Debugging Report\n\n```bash\n# Analyze jobs from different accounts\n/spark-analysis:troubleshoot-spark-workload jr_abc123 etl-job-1 --profile prod-account --region us-east-1\n/spark-analysis:troubleshoot-spark-workload jr_def456 etl-job-2 --profile dev-account --region us-east-1\n/spark-analysis:troubleshoot-spark-workload jr_ghi789 etl-job-3 --profile staging-account --region us-east-1\n```\n\n## Troubleshooting\n\n### Connection Issues\n\nIf you encounter connection errors:\n\n1. Verify your AWS credentials are valid: `aws sts get-caller-identity --profile <profile>`\n2. Ensure you have network access to the SageMaker Unified Studio MCP endpoint\n3. Check that the `uv` tool is installed: `which uv`\n\n### Permission Errors\n\nEnsure your AWS profile has:\n- Access to the SageMaker Unified Studio MCP service\n\n### Timeout Issues\n\nAnalysis can take up to 3 minutes per workload. For batch analysis of many workloads, expect proportionally longer total time.\n\n### Script Errors\n\nIf the analysis script fails, check:\n- AWS credentials are configured correctly for the specified profile\n- The execution IDs and type IDs are valid\n- Network connectivity to AWS services\n\n## Files\n\n```\nspark-analysis-claude-plugin/\n├── .claude-plugin/\n│   └── plugin.json              # Plugin manifest\n├── commands/\n│   └── troubleshoot-spark-workload.md    # Slash command\n├── scripts/\n│   └── troubleshoot_spark_workload.py    # Analysis script (direct MCP calls)\n├── .gitignore\n└── README.md\n```\n\n## Support\n\nFor issues and feature requests, please contact the AWS Data Platform team.\n"
+      },
+      "plugins": [
+        {
+          "name": "spark-analysis",
+          "source": "./utilities/apache-spark-agents/spark-analysis-claude-plugin",
+          "description": "AWS Spark Analysis plugin for Claude Code - troubleshoot Spark workloads on AWS Glue, EMR, and EMR Serverless",
+          "version": "0.1.2",
+          "author": {
+            "name": "AWS SageMaker Unified Studio"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add aws-samples/aws-emr-utilities",
+            "/plugin install spark-analysis@aws-emr-utilities"
+          ]
+        }
+      ]
+    }
+  ]
+}

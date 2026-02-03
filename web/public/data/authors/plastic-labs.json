@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "plastic-labs",
+    "display_name": "Plastic Labs",
+    "avatar_url": "https://avatars.githubusercontent.com/u/123981229?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "honcho",
+      "version": null,
+      "description": "Honcho plugins for Claude Code - memory, development tools, and more",
+      "repo_full_name": "plastic-labs/claude-honcho",
+      "repo_url": "https://github.com/plastic-labs/claude-honcho",
+      "repo_description": "Make Claude happy. Give it Honcho.",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-02T21:36:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"honcho\",\n  \"owner\": {\n    \"name\": \"Plastic Labs\",\n    \"email\": \"hello@plasticlabs.ai\"\n  },\n  \"metadata\": {\n    \"description\": \"Honcho plugins for Claude Code - memory, development tools, and more\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"honcho\",\n      \"source\": \"./plugins/code\",\n      \"description\": \"Persistent memory for Claude Code sessions using Honcho\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"memory\", \"context\", \"persistence\"],\n      \"strict\": false\n    },\n    {\n      \"name\": \"honcho-dev\",\n      \"source\": \"./plugins/dev\",\n      \"description\": \"Skills for building AI applications with the Honcho SDK\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"sdk\", \"development\", \"migration\"],\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# Honcho Memory for Claude Code\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n[![Honcho](https://img.shields.io/badge/Honcho-Memory%20API-blue)](https://honcho.dev)\n\n**Persistent memory for Claude Code using [Honcho](https://honcho.dev) by Plastic Labs.**\n\nGive Claude Code long-term memory that survives context wipes, session restarts, and even `ctrl+c`. Claude remembers what you're working on, your preferences, and what it was doing — across all your projects.\n\n---\n\n## Prerequisites\n\n**Bun** is required to run this plugin. Install it with:\n\n```bash\ncurl -fsSL https://bun.sh/install | bash\n```\n\n---\n\n## Quick Start (5 minutes)\n\n### Step 1: Get Your Honcho API Key\n\n1. Go to **[app.honcho.dev](https://app.honcho.dev)**\n2. Sign up or log in\n3. Copy your API key (starts with `hch-`)\n\n### Step 2: Set Environment Variables\n\nAdd these to your shell config (`~/.zshrc`, `~/.bashrc`, or `~/.profile`):\n\n```bash\n# Required\nexport HONCHO_API_KEY=\"hch-your-api-key-here\"\n\n# Optional (defaults shown)\nexport HONCHO_PEER_NAME=\"$USER\"           # Your name/identity\nexport HONCHO_WORKSPACE=\"claude_code\"     # Workspace name\n```\n\nThen reload your shell:\n\n```bash\nsource ~/.zshrc  # or ~/.bashrc\n```\n\n### Step 3: Install the Plugin\n\nOpen Claude Code and run:\n\n```\n/plugin marketplace add plastic-labs/honcho-claude-code-plugin\n```\n\nThen install:\n\n```\n/plugin install honcho@honcho-memory\n```\n\n### Step 4: Restart Claude Code\n\n```bash\n# Exit Claude Code (ctrl+c or /exit)\n# Start it again\nclaude\n```\n\n**That's it!** You should see the Honcho pixel art and memory loading on startup.\n\n---\n\n## What You Get\n\n- **Persistent Memory** — Claude remembers your preferences, projects, and context across sessions\n- **Survives Context Wipes** — Even when Claude's context window resets, memory persists\n- **Git Awareness** — Detects branch switches, commits, and changes made outside Claude\n- **Per-Project Sessions** — Each directory has its own conversation history\n- **AI Self-Awareness** — Claude knows what it was working on, even after restarts\n\n---\n\n## Environment Variables Reference\n\n| Variable | Required | Default | Description |\n|----------|----------|---------|-------------|\n| `HONCHO_API_KEY` | **Yes** | — | Your Honcho API key from [app.honcho.dev](https://app.honcho.dev) |\n| `HONCHO_PEER_NAME` | No | `$USER` | Your identity in the memory system |\n| `HONCHO_WORKSPACE` | No | `claude_code` | Workspace name (groups your sessions) |\n| `HONCHO_CLAUDE_PEER` | No | `claude` | How the AI is identified |\n| `HONCHO_ENDPOINT` | No | `production` | `production`, `local`, or a custom URL |\n| `HONCHO_ENABLED` | No | `true` | Set to `false` to disable |\n| `HONCHO_SAVE_MESSAGES` | No | `true` | Set to `false` to stop saving messages |\n\n### Example Full Configuration\n\n```bash\n# ~/.zshrc or ~/.bashrc\n\n# Honcho Memory for Claude Code\nexport HONCHO_API_KEY=\"hch-v2-abc123...\"\nexport HONCHO_PEER_NAME=\"alice\"\nexport HONCHO_WORKSPACE=\"my-projects\"\n```\n\n---\n\n## Verifying It Works\n\nAfter installation, start Claude Code. Just ask Claude if Honcho context is available, or run `/honcho:status`.\n\n---\n\n## Skills (Slash Commands)\n\n| Command | Description |\n|---------|-------------|\n| `/honcho:status` | Show current memory status and configuration |\n\n---\n\n## Troubleshooting\n\n### \"Not configured\" or no memory loading\n\n1. **Check your API key is set:**\n   ```bash\n   echo $HONCHO_API_KEY\n   ```\n   If empty, add it to your shell config and `source` it.\n\n2. **Check the plugin is installed:**\n   ```\n   /plugin\n   ```\n   Go to \"Installed\" tab — you should see `honcho@honcho-memory`.\n\n3. **Restart Claude Code** after making changes.\n\n### Memory not persisting between sessions\n\nMake sure `HONCHO_SAVE_MESSAGES` is not set to `false`.\n\n### Using a local Honcho instance\n\n```bash\nexport HONCHO_ENDPOINT=\"local\"  # Uses localhost:8000\n# or\nexport HONCHO_ENDPOINT=\"http://your-server:8000/v3\"\n```\n\n### Temporarily disabling memory\n\n```bash\nexport HONCHO_ENABLED=\"false\"\n```\n\nThen restart Claude Code. Set back to `true` (or remove the line) to re-enable.\n\n---\n\n## How It Works\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                        Claude Code                              │\n├─────────────────────────────────────────────────────────────────┤\n│  SessionStart   │  UserPrompt     │  PostToolUse   │ SessionEnd │\n│  ───────────    │  ───────────    │  ────────────  │ ────────── │\n│  Load context   │  Save message   │  Log activity  │ Upload all │\n│  from Honcho    │  to Honcho      │  to Honcho     │ + summary  │\n└─────────────────────────────────────────────────────────────────┘\n                              │\n                              ▼\n┌─────────────────────────────────────────────────────────────────┐\n│                         Honcho API                              │\n│                                                                 │\n│   Your messages and Claude's work → Persistent Memory →         │\n│   Retrieved as context at session start                         │\n└─────────────────────────────────────────────────────────────────┘\n```\n\nThe plugin hooks into Claude Code's lifecycle events:\n- **SessionStart**: Loads your context and history from Honcho\n- **UserPrompt**: Saves your messages and retrieves relevant context\n- **PostToolUse**: Logs Claude's actions (file edits, commands, etc.)\n- **SessionEnd**: Uploads any remaining messages and generates a summary\n\n---\n\n## Uninstalling\n\n```\n/plugin uninstall honcho@honcho-memory\n/plugin marketplace remove honcho-memory\n```\n\nThen remove the environment variables from your shell config if desired.\n\n---\n\n## Links\n\n- **Honcho**: [honcho.dev](https://honcho.dev) — The memory API\n- **Documentation**: [docs.honcho.dev](https://docs.honcho.dev)\n- **Issues**: [GitHub Issues](https://github.com/plastic-labs/honcho-claude-code-plugin/issues)\n- **Plastic Labs**: [plasticlabs.ai](https://plasticlabs.ai)\n\n---\n\n## License\n\nMIT — see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "honcho",
+          "source": "./plugins/code",
+          "description": "Persistent memory for Claude Code sessions using Honcho",
+          "version": "0.1.0",
+          "keywords": [
+            "memory",
+            "context",
+            "persistence"
+          ],
+          "strict": false,
+          "categories": [
+            "context",
+            "memory",
+            "persistence"
+          ],
+          "install_commands": [
+            "/plugin marketplace add plastic-labs/claude-honcho",
+            "/plugin install honcho@honcho"
+          ]
+        },
+        {
+          "name": "honcho-dev",
+          "source": "./plugins/dev",
+          "description": "Skills for building AI applications with the Honcho SDK",
+          "version": "0.1.0",
+          "keywords": [
+            "sdk",
+            "development",
+            "migration"
+          ],
+          "strict": false,
+          "categories": [
+            "development",
+            "migration",
+            "sdk"
+          ],
+          "install_commands": [
+            "/plugin marketplace add plastic-labs/claude-honcho",
+            "/plugin install honcho-dev@honcho"
+          ]
+        }
+      ]
+    }
+  ]
+}
