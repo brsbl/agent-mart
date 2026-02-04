@@ -84,7 +84,7 @@ export function output({ onProgress: _onProgress } = {}) {
       marketplaces
     };
 
-    const authorPath = `${AUTHORS_DIR}/${sanitizeFilename(author.id)}.json`;
+    const authorPath = `${AUTHORS_DIR}/${sanitizeFilename(author.id.toLowerCase())}.json`;
     saveJson(authorPath, authorData);
   }
 
