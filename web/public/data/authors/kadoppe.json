@@ -6,32 +6,45 @@
   },
   "marketplaces": [
     {
-      "name": "cc-marketplace",
+      "name": "claude-code-kadoppe",
       "version": null,
-      "description": "kadoppe's Claude Code plugin marketplace",
-      "repo_full_name": "kadoppe/cc-marketplace",
-      "repo_url": "https://github.com/kadoppe/cc-marketplace",
+      "description": "kadoppe's digital twin - plugins that embody kadoppe's knowledge, workflows, and coding style",
+      "repo_full_name": "kadoppe/claude-code-kadoppe",
+      "repo_url": "https://github.com/kadoppe/claude-code-kadoppe",
       "repo_description": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-11-19T15:11:35Z"
+        "pushed_at": "2025-12-30T14:59:52Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-marketplace\",\n  \"description\": \"kadoppe's Claude Code plugin marketplace\",\n  \"owner\": {\n    \"name\": \"kadoppe\",\n    \"email\": \"kkadowakix@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"obsidian-logger\",\n      \"source\": \"./plugins/obsidian-logger\",\n      \"description\": \"A plugin to automatically log Claude Code work sessions to Obsidian Daily Notes\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
-        "README.md": "# cc-marketplace\n\nkadoppe's Claude Code Plugin Marketplace\n\n## Overview\n\nThis repository is a marketplace that provides custom plugins for Claude Code.\n\n## Available Plugins\n\n### obsidian-logger\n\nA plugin that automatically logs Claude Code work sessions to Obsidian Daily Notes. When a session ends, it uses a Stop hook to automatically append the work summary to the Daily Note in your Obsidian vault.\n\n- **Version**: 0.1.0\n- **Features**: Automatic logging via Stop hook\n- **Details**: [obsidian-logger/README.md](./obsidian-logger/README.md)\n\n## Installation\n\n### 1. Add the Marketplace\n\nRun the following command in Claude Code to add this marketplace:\n\n```bash\n/plugin marketplace add /Users/kadoppe/Sources/github.com/kadoppe/cc-marketplace\n```\n\nOr, if cloned from GitHub:\n\n```bash\n/plugin marketplace add ./cc-marketplace\n```\n\n### 2. Install a Plugin\n\n```bash\n/plugin install obsidian-logger@cc-marketplace\n```\n\n### 3. Verify Installed Plugins\n\n```bash\n/plugin list\n```\n\n## Development\n\n### Adding a New Plugin\n\n1. Create a new plugin directory inside the `plugins/` directory:\n\n```bash\nmkdir -p plugins/my-new-plugin/.claude-plugin\ncd plugins/my-new-plugin\n```\n\n2. Create `.claude-plugin/plugin.json` to define the plugin manifest\n\n3. Add necessary components (commands, agents, skills, scripts, etc.) to the plugin root\n\n4. Add plugin information to `.claude-plugin/marketplace.json`\n\n### Updating a Plugin\n\nWhen you update a plugin:\n\n1. Uninstall the plugin:\n   ```bash\n   /plugin uninstall plugin-name@cc-marketplace\n   ```\n\n2. Reinstall:\n   ```bash\n   /plugin install plugin-name@cc-marketplace\n   ```\n\n## Marketplace Structure\n\n```\ncc-marketplace/\n├── .claude-plugin/\n│   └── marketplace.json      # Marketplace metadata\n├── README.md                 # This file\n├── .gitignore                # Git exclusion settings\n└── plugins/\n    └── obsidian-logger/      # Plugin\n        ├── .claude-plugin/\n        │   └── plugin.json   # Plugin manifest\n        ├── hooks/\n        │   └── hooks.json    # Hook configuration\n        ├── scripts/          # Scripts\n        │   └── append-to-daily-note.py  # Main processing\n        ├── config.example.json  # Sample configuration file\n        └── README.md         # Plugin documentation\n```\n\n## License\n\nMIT\n\n## Author\n\nkadoppe\n",
-        "plugins/obsidian-logger/README.md": "# Obsidian Logger Plugin\n\nA plugin that automatically logs Claude Code work sessions to Obsidian Daily Notes.\n\n## Overview\n\nThis plugin automatically appends work summaries to Obsidian Daily Notes using a Stop hook when Claude Code sessions end.\n\n## Features\n\n- **Stop Hook**: Automatically executes when Claude Code ends\n- **Daily Note Integration**: Appends work summaries to Daily Notes in your Obsidian vault\n- **Flexible Configuration**: Customize vault path, Daily Notes folder, date format, and more\n- **Git Information Recording**: Automatically records working directory and Git branch (optional)\n\n## Installation\n\n### 1. Install from Marketplace\n\n```bash\n# Add the marketplace (first time only)\n/plugin marketplace add /Users/kadoppe/Sources/github.com/kadoppe/cc-marketplace\n\n# Install the plugin\n/plugin install obsidian-logger@cc-marketplace\n```\n\n## Requirements\n\n- **Python 3.7+** (pre-installed on macOS 12.3 and later)\n\n## Environment Variables\n\nThe plugin uses the following environment variables (automatically set from `config.json`):\n\n### Required\n\n- `CC_PLUGIN_OBSIDIAN_LOGGER_VAULT_PATH`: Absolute path to your Obsidian vault\n\n### Optional\n\n- `CC_PLUGIN_OBSIDIAN_LOGGER_DAILY_NOTES_PATH`: Path to Daily Notes folder (relative to vault)\n  - Default: `\"Daily Notes\"`\n- `CC_PLUGIN_OBSIDIAN_LOGGER_DATE_FORMAT`: Date format for Daily Note filenames\n  - Default: `\"YYYY-MM-DD\"`\n- `CC_PLUGIN_OBSIDIAN_LOGGER_TEMPLATE_HEADER`: Header template for session records\n  - Default: `\"\\n\\n## Claude Code Session - {{timestamp}}\\n\\n\"`\n  - Use `{{timestamp}}` as a placeholder for the current time\n- `CC_PLUGIN_OBSIDIAN_LOGGER_INCLUDE_WORKING_DIRECTORY`: Whether to record working directory\n  - Default: `\"true\"`\n  - Accepts: `\"true\"` or `\"false\"`\n\n> **Note**: You typically don't need to set these environment variables manually. The plugin automatically reads settings from `config.json` and converts them to environment variables.\n\n## Usage\n\nOnce the plugin is installed and configured, work summaries are automatically recorded to Obsidian Daily Notes whenever you end a Claude Code session.\n\n### Recorded Information\n\n- Session timestamp\n- Working directory (if enabled in configuration)\n- Git branch (if enabled in configuration)\n- Work summary\n\n### Example Record\n\n```markdown\n## Claude Code Session - 2025/11/16 14:30:15\n\n**Working Directory:** `/Users/kadoppe/projects/my-app`\n\n**Git Branch:** `feature/new-feature`\n\nCreated plugin template.\n\n---\n```\n\n## Scripts\n\nCore functionality is extracted to the `scripts/` directory:\n\n- `append-to-daily-note.py`: Main script that handles appending to Daily Notes\n\n### Manual Execution\n\nScripts can also be executed manually:\n\n```bash\n# Specify summary as an argument\npython3 scripts/append-to-daily-note.py \"Work summary\"\n\n# Read summary from standard input\necho \"Work summary\" | python3 scripts/append-to-daily-note.py\n```\n\n## Troubleshooting\n\n### Daily Note Not Created\n\n- Check that `obsidianVaultPath` in `config.json` is correct\n- Verify you have filesystem write permissions\n\n### Git Branch Not Recorded\n\n- Verify the working directory is a Git repository\n- Check that `includeGitBranch` is set to `true` in `config.json`\n\n## Development\n\n### Updating the Plugin\n\n```bash\n# Uninstall\n/plugin uninstall obsidian-logger@cc-marketplace\n\n# Reinstall\n/plugin install obsidian-logger@cc-marketplace\n```\n\n### Directory Structure\n\n```\nobsidian-logger/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin manifest\n├── hooks/\n│   └── hooks.json           # Hook configuration\n├── scripts/                 # Scripts\n│   └── append-to-daily-note.py  # Main processing\n├── config.example.json      # Sample configuration file\n└── README.md                # This file\n```\n\n### About Hook Configuration\n\nThis plugin defines a Stop hook in `hooks/hooks.json` as follows:\n\n```json\n{\n  \"Stop\": [\n    {\n      \"matcher\": \".*\",\n      \"hooks\": [\n        {\n          \"type\": \"command\",\n          \"command\": \"python3 ${CLAUDE_PLUGIN_ROOT}/scripts/append-to-daily-note.py\"\n        }\n      ]\n    }\n  ]\n}\n```\n\n`.claude-plugin/plugin.json` references this hooks.json file:\n\n```json\n{\n  \"hooks\": \"./hooks/hooks.json\"\n}\n```\n\n- **Stop**: Event that executes when Claude Code session ends\n- **matcher**: `.*` matches all stop events\n- **command**: Executes the script (`${CLAUDE_PLUGIN_ROOT}` is automatically expanded to the plugin's root directory)\n\n## License\n\nMIT\n\n## Author\n\nkadoppe\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-kadoppe\",\n  \"owner\": {\n    \"name\": \"kadoppe\"\n  },\n  \"metadata\": {\n    \"description\": \"kadoppe's digital twin - plugins that embody kadoppe's knowledge, workflows, and coding style\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"kadoppe-constitution\",\n      \"source\": \"./plugins/kadoppe-constitution\",\n      \"description\": \"Enforce software development constitution - kadoppe's principles and standards\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"constitution\", \"principles\", \"standards\", \"code-review\", \"quality\"],\n      \"category\": \"quality\"\n    }\n  ]\n}\n",
+        "README.md": "# claude-code-kadoppe\n\nkadoppeの分身 - kadoppeの知識、ワークフロー、コーディングスタイルを体現するClaude Codeプラグイン集\n\n## Usage\n\n### Add this marketplace\n\n```bash\n/plugin marketplace add kadoppe/claude-code-kadoppe\n```\n\n### Discover plugins\n\n```bash\n/plugin discover\n```\n\n### Install a plugin\n\n```bash\n/plugin install <plugin-name>@claude-code-kadoppe\n```\n\n## Available Plugins\n\nComing soon...\n\n## Adding a new plugin\n\n1. Create a new directory under `plugins/`\n2. Add `.claude-plugin/plugin.json` manifest\n3. Add components (commands, agents, skills, hooks, etc.)\n4. Register the plugin in `.claude-plugin/marketplace.json`\n"
       },
       "plugins": [
         {
-          "name": "obsidian-logger",
-          "source": "./plugins/obsidian-logger",
-          "description": "A plugin to automatically log Claude Code work sessions to Obsidian Daily Notes",
-          "version": "0.1.0",
-          "categories": [],
+          "name": "kadoppe-constitution",
+          "source": "./plugins/kadoppe-constitution",
+          "description": "Enforce software development constitution - kadoppe's principles and standards",
+          "version": "1.0.0",
+          "keywords": [
+            "constitution",
+            "principles",
+            "standards",
+            "code-review",
+            "quality"
+          ],
+          "category": "quality",
+          "categories": [
+            "code-review",
+            "constitution",
+            "principles",
+            "quality",
+            "standards"
+          ],
           "install_commands": [
-            "/plugin marketplace add kadoppe/cc-marketplace",
-            "/plugin install obsidian-logger@cc-marketplace"
+            "/plugin marketplace add kadoppe/claude-code-kadoppe",
+            "/plugin install kadoppe-constitution@claude-code-kadoppe"
           ]
         }
       ]

@@ -6,67 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "starship-claude",
-      "version": null,
-      "description": "starship-claude statusline setup wizard",
-      "repo_full_name": "martinemde/starship-claude",
-      "repo_url": "https://github.com/martinemde/starship-claude",
-      "repo_description": "✳ claude statusline via starship",
-      "signals": {
-        "stars": 4,
-        "forks": 0,
-        "pushed_at": "2026-02-01T05:33:01Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"starship-claude\",\n  \"owner\": {\n    \"name\": \"Martin Emde\",\n    \"email\": \"me@martinemde.com\"\n  },\n  \"metadata\": {\n    \"description\": \"starship-claude statusline setup wizard\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"starship-claude\",\n      \"source\": \"./plugin\",\n      \"description\": \"Configure starship-claude statusline with customizable palettes and styles\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Martin Emde\",\n        \"email\": \"me@martinemde.com\"\n      },\n      \"homepage\": \"https://github.com/martinemde/starship-claude\",\n      \"repository\": \"https://github.com/martinemde/starship-claude\",\n      \"keywords\": [\n        \"starship\",\n        \"statusline\",\n        \"prompt\",\n        \"catppuccin\",\n        \"gruvbox\",\n        \"dracula\",\n        \"nord\"\n      ],\n      \"category\": \"statusline\",\n      \"tags\": [\"starship\", \"prompt\", \"customization\"]\n    }\n  ]\n}\n",
-        "README.md": "# starship-claude\n\n[![CI](https://github.com/martinemde/starship-claude/actions/workflows/ci.yml/badge.svg)](https://github.com/martinemde/starship-claude/actions/workflows/ci.yml)\n\n![starship-claude screenshot](screenshot.png)\n\n_Use [Starship](https://starship.rs) for your [`claude` code](https://claude.ai/products/claude-code) status line._\n\n## Quick Start\n\n> [!TIP]\n> Run each of the following commands in `claude` _one at a time_.\n\n```claude\n/plugin marketplace add martinemde/starship-claude\n```\n\n```claude\n/plugin install starship-claude@starship-claude\n```\n\nThen run the setup wizard:\n\n```claude\n/starship\n```\n\n![starship-claude setup wizard screenshot](setupwizard.png)\n\nThe wizard is just instructions to claude that will help with setup:\n\n1. Check if starship is installed (offers to install if missing)\n2. Detect existing configuration and ask what to do\n3. Ask about Nerd Font support\n4. Let you choose a color palette\n5. Let you choose a prompt style\n6. Install the script and generate your config\n7. Update your Claude Code settings\n8. Verify everything works\n\n## Manual Install\n\nYou'll need [starship](https://starship.rs/#quick-install) to render the statusline:\n\n```bash\n# If you don't already have starship...\ncurl -sS https://starship.rs/install.sh | sh\n\n```\n\nYou'll probably want a [Nerd Font](https://www.nerdfonts.com/) (optional) for the robot icons.\n\nWhen you're ready to install, run these in your terminal (not in claude):\n\n```bash\n# Download the script from this repository\nmkdir -p ~/.local/bin\ncurl -fsSL https://raw.githubusercontent.com/martinemde/starship-claude/main/plugin/bin/starship-claude \\\n  -o ~/.local/bin/starship-claude && chmod +x ~/.local/bin/starship-claude\n\n# Get the config file that you can customize\nmkdir -p ~/.claude\ncurl -fsSL https://raw.githubusercontent.com/martinemde/starship-claude/main/plugin/templates/minimal-nerd.toml \\\n  -o ~/.claude/starship.toml\n```\n\nAdd the statusline in your Claude Code settings (`~/.claude/settings.json`):\n\n```jsonc\n{\n  // ... other stuff\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"~/.local/bin/starship-claude\",\n  },\n}\n```\n\nRun it directly to test it out but you'll need to grab a [test fixture JSON file](https://raw.githubusercontent.com/martinemde/starship-claude/refs/heads/main/test/fixtures/low_cost_session.json).\n\n```sh\n./starship-claude < test/fixtures/low_cost_session.json\n```\n\n## My Favorite Feature: Context Window Progress Bar\n\nShow progress bars for context usage percentages in terminals like Ghostty. (I love it!)\n\nWe use [Dex Horthy's \"dumb zone\" (video)][dumb-zone] to start warning at 40%.\n\n- Progress bar scales for 80% compaction.\n  - 0-40%: Normal - You're good.\n  - 40-60%: Warning - Reset if it's not going well.\n  - 60%+: Error - Compacting soon...\n\nWarning does not mean stop, but be aware of your context usage.\n\n> [!NOTE]\n> This doesn't work in tmux even if you are using Ghostty.\n> Let me know if you find a workaround.\n\n[dumb-zone]: https://www.youtube.com/watch?v=rmvDxxNubIg 'YouTube: No Vibes Allowed: Solving Hard Problems in Complex Codebases – Dex Horthy, HumanLayer'\n\n### Customize\n\nAdd these options to the `~/.claude/settings.json` if you want do things differently.\n\n```sh\n# custom config file\nstarship-claude --config ~/.config/starship/claude.toml\n\n# disable terminal context progress bar (maybe it's printing weird characters?)\nstarship-claude --no-progress\n```\n\n### Running Tests\n\nInstall BATS and run tests:\n\n```bash\n# Install BATS via mise\nmise use bats@latest\nmise install\n\n# Run all tests\nmise exec -- bats test/\n\n# Run specific test file\nmise exec -- bats test/model_extraction.bats\n```\n\n## License\n\nMIT License © 2026 Martin Emde\n",
-        "plugin/README.md": "# starship-claude plugin\n\nA Claude Code plugin that provides an interactive setup wizard for configuring\n[starship-claude](https://github.com/martinemde/starship-claude) as your\nClaude Code statusline.\n\n## Installation\n\n> [!TIP]\n> Run each of the following commands in `claude` _one at a time_.\n\n```claude\n/plugin marketplace add martinemde/starship-claude\n```\n\n```claude\n/plugin install starship-claude@starship-claude\n```\n\nThen run the setup wizard as many times as you want:\n\n```claude\n/starship\n```\n\nThe wizard will:\n\n1. Check if starship is installed (offers to install if missing)\n2. Detect existing configuration and ask what to do\n3. Ask about Nerd Font support\n4. Let you choose a color palette\n5. Let you choose a prompt style\n6. Install the script and generate your config\n7. Update your Claude Code settings\n8. Verify everything works\n\n## What Gets Installed\n\nAfter setup completes, you'll have:\n\n- `~/.local/bin/starship-claude` - The statusline script\n- `~/.claude/starship.toml` - Starship configuration for Claude Code\n- `~/.claude/settings.json` - Updated with statusLine configuration\n\n## Reconfiguring\n\nTo change your palette, style, or other options, re-run the setup wizard:\n\n```claude\n/starship\n```\n"
-      },
-      "plugins": [
-        {
-          "name": "starship-claude",
-          "source": "./plugin",
-          "description": "Configure starship-claude statusline with customizable palettes and styles",
-          "version": "1.0.0",
-          "author": {
-            "name": "Martin Emde",
-            "email": "me@martinemde.com"
-          },
-          "homepage": "https://github.com/martinemde/starship-claude",
-          "repository": "https://github.com/martinemde/starship-claude",
-          "keywords": [
-            "starship",
-            "statusline",
-            "prompt",
-            "catppuccin",
-            "gruvbox",
-            "dracula",
-            "nord"
-          ],
-          "category": "statusline",
-          "tags": [
-            "starship",
-            "prompt",
-            "customization"
-          ],
-          "categories": [
-            "catppuccin",
-            "customization",
-            "dracula",
-            "gruvbox",
-            "nord",
-            "prompt",
-            "starship",
-            "statusline"
-          ],
-          "install_commands": [
-            "/plugin marketplace add martinemde/starship-claude",
-            "/plugin install starship-claude@starship-claude"
-          ]
-        }
-      ]
-    },
-    {
       "name": "martinemde-marketplace",
       "version": null,
       "description": "Claude Code extensions including agents, skills, and commands for enhanced development workflows",

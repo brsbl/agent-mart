@@ -6,65 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "claude-alchemy",
-      "version": null,
-      "description": "Custom plugins for Claude Alchemy",
-      "repo_full_name": "sequenzia/claude-alchemy",
-      "repo_url": "https://github.com/sequenzia/claude-alchemy",
-      "repo_description": "Supercharge your Claude Code workflow with powerful plugins and a visual task manager.  Claude Alchemy is a collection of tools and applications designed to help developers get the most out of Claude Code. ",
-      "signals": {
-        "stars": 2,
-        "forks": 0,
-        "pushed_at": "2026-02-03T05:15:35Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-alchemy\",\n  \"description\": \"Custom plugins for Claude Alchemy\",\n  \"owner\": {\n    \"name\": \"Stephen Sequenzia\",\n    \"email\": \"sequenzia@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-alchemy-tools\",\n      \"description\": \"General Developer Skills & Agents for Claude Alchemy\",\n      \"version\": \"0.1.2\",\n      \"author\": {\n        \"name\": \"Stephen Sequenzia\",\n        \"email\": \"sequenzia@gmail.com\"\n      },\n      \"source\": \"./plugins/tools/\",\n      \"category\": \"development\",\n      \"homepage\": \"https://github.com/sequenzia/claude-alchemy/tree/main/plugins/tools\"\n    },\n    {\n      \"name\": \"claude-alchemy-sdd\",\n      \"description\": \"SDD (Spec Driven Development) Skills & Agents for Claude Alchemy\",\n      \"version\": \"0.1.3\",\n      \"author\": {\n        \"name\": \"Stephen Sequenzia\",\n        \"email\": \"sequenzia@gmail.com\"\n      },\n      \"source\": \"./plugins/sdd/\",\n      \"category\": \"development\",\n      \"homepage\": \"https://github.com/sequenzia/claude-alchemy/tree/main/plugins/sdd\"\n    }\n  ]\n}\n",
-        "README.md": "# Claude Alchemy\n\n**Supercharge your Claude Code workflow with powerful plugins and a visual task manager.**\n\nClaude Alchemy is a collection of tools and apps designed to help developers get the most out of [Claude Code](https://docs.anthropic.com/en/docs/claude-code).\n\n![Claude Task Manager](./internal/images/claude-task-manager.png)\n\n**See more screenshots [screenshots](#screenshots) below**\n\n## Task Manager\n\n**See your Claude Code Tasks in real-time.**\n\nThe Task Manager is a real-time Kanban board that visualizes Claude's native task system (`~/.claude/tasks/`). Watch tasks flow from Pending → In Progress → Completed as Claude works through your project.\n\n**Key Features:**\n- **Real-time updates** — Tasks update instantly via Server-Sent Events as Claude works\n- **Dependency tracking** — See which tasks block others and track completion flow\n- **Statistics dashboard** — Monitor progress with completion percentages and blocked task counts\n- **Search & filter** — Quickly find tasks across large task lists\n- **Dark/light themes** — Easy on the eyes during those long coding sessions\n\n```bash\ncd apps/task-manager\npnpm install && pnpm dev  # Starts on http://localhost:3030\n```\n\n> **New to Claude Code Tasks?** Check out the [Tasks Cheatsheet](./internal/docs/claude-tasks-cheatsheet.md) for tips on setting up `CLAUDE_CODE_TASK_LIST_ID`, task dependencies, and best practices.\n\n## Architecture\n\nClaude Alchemy is a pnpm monorepo with two systems:\n\n| Component | Location | Description |\n|-----------|----------|-------------|\n| **Tools Plugin** | `plugins/tools/` | 5 agents, 10 skills for code exploration, architecture, review, and release workflows |\n| **SDD Plugin** | `plugins/sdd/` | 2 agents, 4 skills for spec-driven development (create-spec → create-tasks → execute-tasks) |\n| **Task Manager** | `apps/task-manager/` | Next.js 16 app with real-time Kanban board for Claude Code Tasks |\n\n### Plugins\n\nThe plugin system uses a \"markdown-as-code\" design — all workflow logic lives in declarative `SKILL.md` and agent markdown files. Skills orchestrate specialized agents in parallel using Claude Code's Task tool.\n\n**Tools Plugin (`claude-alchemy-tools`):**\n- `/codebase-analysis` — 4-phase codebase exploration with parallel agents\n- `/feature-dev` — 7-phase feature development (explore → design → implement → review)\n- `/git-commit` — Conventional commit creation\n- `/bump-plugin-version` — Semantic version management\n\n**SDD Plugin (`claude-alchemy-sdd`):**\n- `/create-spec` — Adaptive interview to generate specifications\n- `/analyze-spec` — Spec quality analysis\n- `/create-tasks` — Decompose specs into Claude Code Tasks with dependency inference\n- `/execute-tasks` — Autonomous task execution with shared context\n\n## Screenshots\n\n### Task Manager Kanban View\n![Claude Task Manager](./internal/images/claude-task-manager.png)\n\n### Tasks Generated from sdd-tools\n![Spec Tasks](./internal/images/tasks-generated-by-sdd-tools.png)\n\n### Single Task View with Dependencies, Test Cases and Acceptance Criteria\n![Task Detail View](./internal/images/task-in-task-manager.png)\n\n### Completed Tasks in Claude Code\n![Completed Tasks](./internal/images/completed-tasks-in-claude.png)\n\n\n## Development\n\n### Prerequisites\n\n- Node.js >= 18\n- pnpm >= 8\n\n### Setup\n\n```bash\n# Clone the repository\ngit clone https://github.com/sequenzia/claude-alchemy.git\ncd claude-alchemy\n\n# Install dependencies\npnpm install\n\n# Start task-manager\npnpm dev:task-manager\n```\n\n### Workspace Commands\n\n```bash\npnpm dev:task-manager     # Start task-manager dev server\npnpm build:task-manager   # Build task-manager for production\npnpm lint                 # Run linting across all workspaces\n```\n\n## License\n\nMIT\n",
-        "plugins/tools/README.md": "# Claude Alchemy Tools Plugin\n\nDeveloper tools for feature development, codebase analysis, documentation management, Git workflows, and release automation.\n\n## Agents\n\n| Agent | Model | Description |\n|-------|-------|-------------|\n| `code-explorer` | sonnet | Explores codebases to find relevant files, trace execution paths, and map architecture |\n| `code-architect` | opus | Designs implementation blueprints using exploration findings and architectural best practices |\n| `code-reviewer` | opus | Reviews code for correctness, security, and maintainability with confidence-scored findings |\n| `codebase-synthesizer` | opus | Synthesizes raw exploration findings from multiple code-explorer agents into unified analysis |\n| `docs-writer` | opus | Generates MkDocs-flavored Markdown documentation from codebase analysis findings |\n| `researcher` | inherit | Researches technical documentation and domain knowledge via web search and Context7 |\n\n## Skills\n\n### User-Invocable\n\n| Skill | Model | Description |\n|-------|-------|-------------|\n| `feature-dev` | inherit | 7-phase feature development workflow with exploration, architecture, implementation, and review |\n| `codebase-analysis` | inherit | 4-phase codebase exploration and analysis workflow |\n| `docs-manager` | inherit | 5-phase documentation management workflow for MkDocs sites |\n| `git-commit` | haiku | Commit staged changes with conventional commit messages |\n| `release` | haiku | Prepare and execute a Python package release with verification steps |\n| `bump-plugin-version` | haiku | Bump plugin version in plugin.json and marketplace.json |\n\n### Supporting Skills\n\n| Skill | Description |\n|-------|-------------|\n| `architecture-patterns` | Architectural pattern knowledge (MVC, event-driven, microservices, CQRS) |\n| `language-patterns` | Language-specific patterns and idioms |\n| `project-conventions` | Project convention detection and guidance |\n| `code-quality` | Code quality review standards |\n| `changelog-format` | Keep a Changelog formatting guidelines |",
-        "plugins/sdd/README.md": "# Claude Alchemy SDD (Spec Driven Development) Plugin"
-      },
-      "plugins": [
-        {
-          "name": "claude-alchemy-tools",
-          "description": "General Developer Skills & Agents for Claude Alchemy",
-          "version": "0.1.2",
-          "author": {
-            "name": "Stephen Sequenzia",
-            "email": "sequenzia@gmail.com"
-          },
-          "source": "./plugins/tools/",
-          "category": "development",
-          "homepage": "https://github.com/sequenzia/claude-alchemy/tree/main/plugins/tools",
-          "categories": [
-            "development"
-          ],
-          "install_commands": [
-            "/plugin marketplace add sequenzia/claude-alchemy",
-            "/plugin install claude-alchemy-tools@claude-alchemy"
-          ]
-        },
-        {
-          "name": "claude-alchemy-sdd",
-          "description": "SDD (Spec Driven Development) Skills & Agents for Claude Alchemy",
-          "version": "0.1.3",
-          "author": {
-            "name": "Stephen Sequenzia",
-            "email": "sequenzia@gmail.com"
-          },
-          "source": "./plugins/sdd/",
-          "category": "development",
-          "homepage": "https://github.com/sequenzia/claude-alchemy/tree/main/plugins/sdd",
-          "categories": [
-            "development"
-          ],
-          "install_commands": [
-            "/plugin marketplace add sequenzia/claude-alchemy",
-            "/plugin install claude-alchemy-sdd@claude-alchemy"
-          ]
-        }
-      ]
-    },
-    {
       "name": "sequenzia-claude-plugins",
       "version": null,
       "description": "Directory of popular Claude Code extensions including development tools, productivity plugins, and MCP integrations",
