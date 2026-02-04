@@ -22,7 +22,7 @@ function GitHubLink() {
 
 function AsciiLogo() {
   return (
-    <pre className="text-foreground leading-none font-mono text-[5px] tracking-tight">
+    <pre className="text-foreground leading-none font-mono text-[4px] xl:text-[5px] tracking-tight">
 {`  █████╗  ██████╗ ███████╗███╗   ██╗████████╗    ███╗   ███╗ █████╗ ██████╗ ████████╗
  ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝    ████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
  ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║       ██╔████╔██║███████║██████╔╝   ██║
@@ -66,27 +66,26 @@ export function NavBar() {
           )}
         </div>
 
-        {/* Desktop layout (lg+): original absolute positioning */}
-        <div className="hidden lg:block">
-          {/* Logo - far left */}
-          <Link href="/" className="absolute left-6 top-1/2 -translate-y-1/2 hover:opacity-80 transition-opacity">
+        {/* Desktop layout (lg+): single flex row */}
+        <div className="hidden lg:flex items-center gap-4">
+          {/* Logo - shrinks at smaller widths */}
+          <Link href="/" className="shrink-0 hover:opacity-80 transition-opacity">
             <AsciiLogo />
           </Link>
 
-          {/* GitHub - far right */}
-          <div className="absolute right-6 top-1/2 -translate-y-1/2">
-            <GitHubLink />
-          </div>
-
-          {/* Search/Filter/Sort - grid-aligned (home page only) */}
-          {isHomePage && (
-            <div className="max-w-6xl mx-auto px-6">
+          {/* Search/Filter/Sort - fills remaining space */}
+          {isHomePage ? (
+            <div className="flex-1 min-w-0">
               <SearchFilterControls />
             </div>
+          ) : (
+            <div className="flex-1" />
           )}
 
-          {/* Spacer for non-home pages */}
-          {!isHomePage && <div className="h-[38px]" />}
+          {/* GitHub - fixed size on right */}
+          <div className="shrink-0">
+            <GitHubLink />
+          </div>
         </div>
       </div>
     </header>
