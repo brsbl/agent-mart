@@ -19,7 +19,7 @@ The home page displays all indexed marketplaces as cards. Each card shows:
 - **Filter** - Narrow results by selecting one or more categories
 - **Sort** - Order by popularity, trending, or last updated
   - **Popularity** - Total GitHub stars
-  - **Trending** - Recent star velocity compared to historical average (z-score algorithm)
+  - **Trending** - Time-decayed star velocity (recent gains weighted more heavily)
   - **Last Updated** - Most recently pushed to GitHub
  
 Filter state is synced to URL parameters for shareable links.
