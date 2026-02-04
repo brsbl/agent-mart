@@ -29,12 +29,35 @@ import { useFetch } from "@/hooks";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import type { AuthorDetail, Marketplace, Category } from "@/lib/types";
 
-// Custom sanitize schema that allows external images (for badges like shields.io)
+// Custom sanitize schema that matches GitHub's markdown rendering
+// Allows: external images, picture/source elements, sizing attributes
 const sanitizeSchema = {
   ...defaultSchema,
+  tagNames: [
+    ...(defaultSchema.tagNames ?? []),
+    "picture",
+    "source",
+  ],
+  attributes: {
+    ...defaultSchema.attributes,
+    img: [
+      ...(defaultSchema.attributes?.img ?? []),
+      "height",
+      "width",
+      "align",
+    ],
+    source: ["media", "srcset", "type"],
+    // Allow align on block elements for centering (GitHub supports this)
+    p: [...(defaultSchema.attributes?.p ?? []), "align"],
+    h1: [...(defaultSchema.attributes?.h1 ?? []), "align"],
+    h2: [...(defaultSchema.attributes?.h2 ?? []), "align"],
+    h3: [...(defaultSchema.attributes?.h3 ?? []), "align"],
+    div: [...(defaultSchema.attributes?.div ?? []), "align"],
+  },
   protocols: {
     ...defaultSchema.protocols,
     src: ["http", "https", "data"],
+    srcset: ["http", "https"],
   },
 };
 import {
@@ -423,14 +446,19 @@ export default function MarketplaceDetailPage() {
                     remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema]]}
                     components={{
-                      img: ({ src, alt, ...props }) => {
+                      img: ({ src, alt, height, width, ...props }) => {
                         // Transform relative URLs to GitHub raw URLs
                         let imgSrc = typeof src === "string" ? src : "";
                         if (imgSrc && !imgSrc.startsWith("http") && !imgSrc.startsWith("data:")) {
                           imgSrc = `https://raw.githubusercontent.com/${marketplace.repo_full_name}/HEAD/${imgSrc.replace(/^\.?\//, "")}`;
                         }
+                        // Apply height/width as inline styles to override .prose CSS
+                        // This matches GitHub's behavior of respecting HTML img attributes
+                        const style: React.CSSProperties = {};
+                        if (height) style.height = typeof height === "number" ? `${height}px` : height;
+                        if (width) style.width = typeof width === "number" ? `${width}px` : width;
                         // eslint-disable-next-line @next/next/no-img-element
-                        return <img src={imgSrc} alt={alt || ""} {...props} />;
+                        return <img src={imgSrc} alt={alt || ""} style={style} {...props} />;
                       },
                       // Strip links from images (badges shouldn't be clickable)
                       a: ({ href, children, node }) => {
