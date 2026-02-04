@@ -45,8 +45,8 @@ export function useFetch<T>(
       return;
     }
 
-    // Reset state when URL changes to a valid URL
-    setData(null);
+    // Reset loading/error state when URL changes, but keep stale data visible
+    // to prevent flash of empty content (stale-while-revalidate pattern)
     setError(null);
     setLoading(true);
 
