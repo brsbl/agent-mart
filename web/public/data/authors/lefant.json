@@ -8,60 +8,27 @@
     {
       "name": "lefant-claude-code-plugins",
       "version": null,
-      "description": "Beads plugin with skill instead of MCP server",
+      "description": "Claude Code plugins for development workflows",
       "repo_full_name": "lefant/claude-code-plugins",
       "repo_url": "https://github.com/lefant/claude-code-plugins",
       "repo_description": null,
       "signals": {
         "stars": 2,
         "forks": 0,
-        "pushed_at": "2026-01-28T09:07:03Z"
+        "pushed_at": "2026-02-04T11:01:05Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lefant-claude-code-plugins\",\n  \"owner\": {\n    \"name\": \"Fabian Linzberger\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"beads\",\n      \"source\": \"./beads\",\n      \"description\": \"Beads plugin with skill instead of MCP server\"\n    },\n    {\n      \"name\": \"context7\",\n      \"source\": \"./context7\",\n      \"description\": \"Context7 MCP server for up-to-date library documentation\"\n    },\n    {\n      \"name\": \"github-access\",\n      \"source\": \"./github-access\",\n      \"description\": \"GitHub access Skill with gh/REST paths\"\n    },\n    {\n      \"name\": \"lefant\",\n      \"source\": \"./lefant\",\n      \"description\": \"Utility commands: devlog and handover\"\n    },\n    {\n      \"name\": \"ntfy\",\n      \"source\": \"./ntfy\",\n      \"description\": \"Send Claude Code notifications via ntfy\"\n    },\n    {\n      \"name\": \"rpi\",\n      \"source\": \"./rpi\",\n      \"description\": \"HumanLayer-style research/plan/implement agents and commands\"\n    }\n  ]\n}\n",
-        "README.md": "# claude-code-plugins\n",
-        "beads/README.md": "# my plugin to package up beads related things without the mcp and using the skill instead\n\n./skills/beads is just a copy of https://github.com/steveyegge/beads/tree/main/examples/claude-code-skill\n\n",
-        "context7/README.md": "# Context7 Plugin\n\nContext7 MCP server integration for accessing up-to-date library documentation directly from Claude Code.\n\n## Contents\n\n- **Skill**: `context7` - Generic instructions for using Context7 to fetch library docs\n- **MCP Server**: `.mcp.json` - Configuration for Context7 MCP server\n\n## Usage\n\nThis plugin provides the Context7 skill and MCP server configuration, which allows Claude to fetch current, version-specific documentation for any library.\n\n**Key commands:**\n- `resolve-library-id` - Find the Context7 ID for a library\n- `get-library-docs` - Fetch documentation for a specific topic\n\n## Project-Specific Libraries\n\nThe list of libraries for your specific project should be maintained in a `LIBRARIES.md` file in your project root, which references this plugin.\n\n## Configuration\n\nThe Context7 MCP server requires a `CONTEXT7_API_KEY` environment variable. Set this in your environment or in your Claude Code configuration:\n\n```bash\nexport CONTEXT7_API_KEY=ctx7sk_your_api_key\n```\n\n## See Also\n\n- Context7 skill documentation in `skills/context7/SKILL.md`\n- Context7 website: https://context7.com\n",
-        "github-access/README.md": "# GitHub Access Plugin\n\nProvides the `github-access` Skill for Claude Code. It guides the model through authenticated GitHub operations using either the `gh` CLI or REST API via `curl`, with detailed references for issues, pull requests, workflows, and troubleshooting.\n\n## Contents\n- `.claude-plugin/plugin.json` — plugin manifest\n- `skills/github-access/SKILL.md` — main Skill instructions\n- `skills/github-access/references/` — command and API reference material\n\n## Usage\nInstall this plugin (or load from a local marketplace) to make the `github-access` Skill available in Claude Code sessions. Ensure `GH_TOKEN` is set; the Skill will choose between `gh` CLI and REST calls depending on tool availability.\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lefant-claude-code-plugins\",\n  \"description\": \"Claude Code plugins for development workflows\",\n  \"owner\": {\n    \"name\": \"Fabian Linzberger\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lefant\",\n      \"source\": \"./lefant\",\n      \"description\": \"Development commands: /devlog, /handover, /adr, /changelog, /spec\"\n    },\n    {\n      \"name\": \"ntfy\",\n      \"source\": \"./ntfy\",\n      \"description\": \"Send Claude Code notifications via ntfy\"\n    },\n    {\n      \"name\": \"rpi\",\n      \"source\": \"./rpi\",\n      \"description\": \"Research/Plan/Implement workflow with specialized agents\"\n    }\n  ]\n}\n",
+        "README.md": "# lefant-claude-code-plugins\n\nClaude Code plugins for development workflows.\n\n## Plugins\n\n- **lefant** - Commands: /devlog, /handover, /adr, /changelog, /spec\n- **ntfy** - Notifications via ntfy.sh\n- **rpi** - Research/Plan/Implement workflow agents\n\n## Related\n\nSkills have been migrated to [lefant/agent-skills](https://github.com/lefant/agent-skills).\n",
         "lefant/README.md": "# Lefant Misc Commands\n\nCollection of utility commands (currently `devlog` and `handover`) extracted from the monorepo for reuse as a plugin.\n\n## Structure\n- `.claude-plugin/plugin.json` — plugin manifest\n- `commands/` — slash commands (`devlog.md`, `handover.md`)\n\n## Usage\nInstall this plugin (or load via a local marketplace) to expose the commands in Claude Code sessions. No external dependencies required.\n",
         "ntfy/README.md": "# Ntfy Plugin\n\nSend Claude Code notifications via [ntfy](https://ntfy.sh) when sessions complete or events occur.\n\n## Features\n\n- Sends notifications on Claude Code events (primarily `Notification` hook)\n- Includes session context: project name, branch, directory, token usage\n- Extracts token usage from session transcripts\n- Supports authenticated ntfy topics\n\n## Configuration\n\nThis plugin requires environment variables to be set:\n\n### Required\n- `NTFY_URL` - Your ntfy topic URL (e.g., `https://ntfy.sh/claude-your-topic`)\n\n### Optional\n- `NTFY_TOKEN` - Bearer token for authenticated topics (e.g., `tk_...`)\n\n### Setup\n\nSet these environment variables in your shell or environment configuration:\n\n```bash\nexport NTFY_URL=https://ntfy.sh/claude-your-topic\nexport NTFY_TOKEN=tk_your_token_here\n```\n\nThe environment variables need to be available when Claude Code runs.\n\n## How It Works\n\nThe plugin hooks into Claude Code's `Notification` event and sends:\n- **Title**: Event type (e.g., \"Claude: Notification\")\n- **Body**: Project context + message\n  - Project name and branch (from git)\n  - Current directory\n  - Token usage statistics\n  - Event message (if available)\n\n## Requirements\n\n- `jq` - JSON parsing\n- `curl` - Sending notifications\n- `git` (optional) - For project/branch detection\n\n## Hook Configuration\n\nThe plugin registers a `Notification` hook that runs the `claude-ntfy.sh` script using `${CLAUDE_PLUGIN_ROOT}` to ensure it works regardless of working directory.\n\n## Testing\n\nYou can test the hook manually by sending JSON to the script:\n\n```bash\necho '{\"hook_event_name\":\"Test\",\"session_id\":\"test123\",\"message\":\"Hello\"}' | \\\n  NTFY_URL=https://ntfy.sh/your-topic \\\n  .claude/plugins/ntfy/scripts/claude-ntfy.sh\n```\n\nCheck your ntfy topic to see if the notification arrived.\n\n## Disabling\n\nTo disable notifications without uninstalling the plugin, either:\n1. Unset the `NTFY_URL` environment variable\n2. Disable the plugin using `/plugin disable ntfy`\n3. Add to `.claude/settings.json`:\n   ```json\n   {\n     \"disabledPlugins\": [\"ntfy\"]\n   }\n   ```\n",
         "rpi/README.md": "# RPI Plugin\n\nRPI (Research/Plan/Implement) workflow agents and commands for structured development.\n\nFor a broader introduction, check out the [Advanced Context Engineering for Coding Agents talk](https://www.youtube.com/watch?v=IS_y40zY-hc) and the companion [ACE Framework for Coding Agents guide](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/ace-fca.md). Command catalog lives in the [HumanLayer Claude commands reference](https://github.com/humanlayer/humanlayer/tree/main/.claude).\n\n## Structure\n- `.claude-plugin/plugin.json` — plugin manifest\n- `agents/` — specialized agents (`codebase-analyzer`, `locator`, `pattern-finder`, `web-search-researcher`, etc.)\n- `commands/` — slash commands (`research_codebase`, `create_plan`, `implement_plan`)\n\n## Usage\nInstall this plugin (or load via a local marketplace) to enable the RPI workflow in Claude Code. Requires no external dependencies beyond standard tool access used by the original agents/commands.\n"
       },
       "plugins": [
         {
-          "name": "beads",
-          "source": "./beads",
-          "description": "Beads plugin with skill instead of MCP server",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add lefant/claude-code-plugins",
-            "/plugin install beads@lefant-claude-code-plugins"
-          ]
-        },
-        {
-          "name": "context7",
-          "source": "./context7",
-          "description": "Context7 MCP server for up-to-date library documentation",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add lefant/claude-code-plugins",
-            "/plugin install context7@lefant-claude-code-plugins"
-          ]
-        },
-        {
-          "name": "github-access",
-          "source": "./github-access",
-          "description": "GitHub access Skill with gh/REST paths",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add lefant/claude-code-plugins",
-            "/plugin install github-access@lefant-claude-code-plugins"
-          ]
-        },
-        {
           "name": "lefant",
           "source": "./lefant",
-          "description": "Utility commands: devlog and handover",
+          "description": "Development commands: /devlog, /handover, /adr, /changelog, /spec",
           "categories": [],
           "install_commands": [
             "/plugin marketplace add lefant/claude-code-plugins",
@@ -81,7 +48,7 @@
         {
           "name": "rpi",
           "source": "./rpi",
-          "description": "HumanLayer-style research/plan/implement agents and commands",
+          "description": "Research/Plan/Implement workflow with specialized agents",
           "categories": [],
           "install_commands": [
             "/plugin marketplace add lefant/claude-code-plugins",

@@ -1,0 +1,68 @@
+{
+  "author": {
+    "id": "marketcalls",
+    "display_name": "Marketcalls",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8728989?u=1fd3ade538e61fab50745fd8a65e2b1dd04a0281&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "openalgo-marketplace",
+      "version": null,
+      "description": "Official OpenAlgo marketplace for Claude Code trading and algorithmic trading extensions. Build trading strategies, real-time dashboards, and full-stack trading applications.",
+      "repo_full_name": "marketcalls/openalgo-claude-plugin",
+      "repo_url": "https://github.com/marketcalls/openalgo-claude-plugin",
+      "repo_description": "OpenAlgo Claude Code Plugin Marketplace - Algorithmic trading with 25+ Indian brokers",
+      "signals": {
+        "stars": 2,
+        "forks": 2,
+        "pushed_at": "2026-01-04T17:23:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"openalgo-marketplace\",\n  \"owner\": {\n    \"name\": \"OpenAlgo\",\n    \"url\": \"https://github.com/marketcalls/openalgo\"\n  },\n  \"metadata\": {\n    \"description\": \"Official OpenAlgo marketplace for Claude Code trading and algorithmic trading extensions. Build trading strategies, real-time dashboards, and full-stack trading applications.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"openalgo-python\",\n      \"description\": \"Complete OpenAlgo Python SDK integration for algorithmic trading. Build trading strategies, options strategies, real-time dashboards, and full-stack trading applications. Supports 25+ Indian brokers with unified API. Includes 6 skills.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"OpenAlgo\",\n        \"url\": \"https://github.com/marketcalls/openalgo\"\n      },\n      \"homepage\": \"https://openalgo.in\",\n      \"tags\": [\n        \"trading\",\n        \"algorithmic-trading\",\n        \"options\",\n        \"nse\",\n        \"bse\",\n        \"mcx\",\n        \"python-sdk\",\n        \"real-time\",\n        \"websocket\",\n        \"indian-markets\"\n      ],\n      \"source\": \"./plugins/openalgo-python\"\n    }\n  ]\n}\n",
+        "README.md": "# OpenAlgo Marketplace\n\nOfficial Claude Code plugin marketplace for [OpenAlgo](https://openalgo.in) - the unified algorithmic trading platform for Indian markets.\n\n## About OpenAlgo\n\nOpenAlgo provides a single API to connect with [25+ Indian brokers](https://docs.openalgo.in/connect-brokers/brokers). Write your trading strategy once, deploy it with any broker.\n\n## Available Plugins\n\n### openalgo-python\n\nComplete OpenAlgo Python SDK integration for algorithmic trading. Includes 6 skills:\n\n| Skill | Description |\n|-------|-------------|\n| **trading-core** | Order placement, smart orders, basket orders, split orders |\n| **options-trading** | Options strategies (Iron Condor, Straddle, Spreads), Greeks calculation |\n| **market-data** | Real-time quotes, historical data, WebSocket streaming, option chains |\n| **visualization** | Candlestick charts, payoff diagrams, Streamlit dashboards |\n| **portfolio** | Funds, positions, holdings, margin calculator |\n| **technical-indicators** | TA-Lib indicators (RSI, MACD, Bollinger), signals, pattern scanner |\n\n## Installation\n\n### 1. Add the Marketplace\n\n```\n/plugin marketplace add https://github.com/marketcalls/openalgo-claude-plugin\n```\n\n### 2. Install the Plugin\n\n```\n/plugin install openalgo-python@openalgo-marketplace\n```\n\n### 3. Restart Claude Code\n\nAfter installation, restart Claude Code to load the new plugins.\n\n### 4. Set Environment Variables\n\n```bash\n# Linux/macOS\nexport OPENALGO_API_KEY=\"your_api_key_here\"\nexport OPENALGO_HOST=\"http://127.0.0.1:5000\"\n\n# Windows\nsetx OPENALGO_API_KEY \"your_api_key_here\"\nsetx OPENALGO_HOST \"http://127.0.0.1:5000\"\n```\n\n## Quick Start\n\n### Place an Order\n\n```\nclaude \"buy 1 share of RELIANCE at market price\"\n```\n\n### Create Options Strategy\n\n```\nclaude \"create an iron condor on NIFTY expiring 07JAN25 with 65 quantity\"\n```\n\n> Note: NIFTY weekly options expire on Tuesday. Lot size is 65.\n\n### Get Market Data\n\n```\nclaude \"get the current price of NIFTY and BANKNIFTY\"\n```\n\n### Build a Dashboard\n\n```\nclaude \"create a Streamlit dashboard showing my portfolio positions and P&L\"\n```\n\n## Features\n\n### Unified Symbol Format\n\nOpenAlgo standardizes symbols across all brokers:\n\n| Type | Format | Example |\n|------|--------|---------|\n| Equity | `SYMBOL` | `RELIANCE`, `TCS` |\n| Future | `SYMBOL[DDMMMYY]FUT` | `NIFTY30JAN25FUT` |\n| Option | `SYMBOL[DDMMMYY][STRIKE][CE/PE]` | `NIFTY30JAN2526000CE` |\n\n### Supported Exchanges\n\n- **NSE** - National Stock Exchange (Equity)\n- **BSE** - Bombay Stock Exchange (Equity)\n- **NFO** - NSE Futures & Options\n- **BFO** - BSE Futures & Options\n- **CDS** - NSE Currency Derivatives\n- **BCD** - BSE Currency Derivatives\n- **MCX** - Multi Commodity Exchange\n- **NSE_INDEX** - NSE Indices (NIFTY, BANKNIFTY)\n- **BSE_INDEX** - BSE Indices (SENSEX, BANKEX)\n\n### Options Offset System\n\nSelect strikes relative to ATM:\n\n| Offset | Meaning |\n|--------|---------|\n| `ATM` | At The Money |\n| `ITM1`-`ITM10` | In The Money |\n| `OTM1`-`OTM10` | Out of The Money |\n\n### Real-time Streaming\n\nWebSocket support for live data:\n\n```python\nfrom openalgo import api\n\nclient = api(\n    api_key='your_key',\n    host='http://127.0.0.1:5000',\n    ws_url='ws://127.0.0.1:8765'\n)\n\nclient.connect()\nclient.subscribe_ltp([\n    {\"exchange\": \"NSE_INDEX\", \"symbol\": \"NIFTY\"},\n    {\"exchange\": \"NSE\", \"symbol\": \"RELIANCE\"}\n], on_data_received=lambda data: print(data))\n```\n\n## Documentation\n\n- [OpenAlgo Documentation](https://docs.openalgo.in)\n- [API Reference](https://docs.openalgo.in/api-documentation/v1)\n- [Python SDK](https://pypi.org/project/openalgo/)\n\n## Supported Brokers\n\nOpenAlgo supports 25+ Indian brokers. See the complete list at:\n\n**[https://docs.openalgo.in/connect-brokers/brokers](https://docs.openalgo.in/connect-brokers/brokers)**\n\n## Contributing\n\nContributions are welcome! Please read the [CLAUDE.md](CLAUDE.md) for development guidelines.\n\n## License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n\n## Links\n\n- [OpenAlgo Website](https://openalgo.in)\n- [OpenAlgo GitHub](https://github.com/marketcalls/openalgo)\n- [Claude Code Plugins](https://docs.claude.com/en/docs/claude-code/plugins)\n",
+        "plugins/openalgo-python/README.md": "# OpenAlgo Python Plugin for Claude Code\n\nComplete OpenAlgo Python SDK integration for algorithmic trading. Build trading strategies, options strategies, real-time dashboards, and full-stack trading applications. Supports 25+ Indian brokers with a unified API.\n\n## Skills Included (6)\n\n### 1. trading-core\nCore trading operations - place orders, smart orders, basket orders, split orders, and order management.\n\n```bash\npython scripts/place_order.py --symbol RELIANCE --exchange NSE --action BUY --quantity 1 --product MIS\n```\n\n### 2. options-trading\nOptions strategies - single leg orders, multi-leg strategies (Iron Condor, Straddle, Strangle, Spreads), Greeks calculation.\n\n```bash\npython scripts/iron_condor.py --underlying NIFTY --expiry 30JAN25 --quantity 75\n```\n\n### 3. market-data\nMarket data retrieval - real-time quotes, historical OHLCV, market depth, option chains, WebSocket streaming.\n\n```bash\npython scripts/stream.py --symbols NIFTY,BANKNIFTY --exchange NSE_INDEX --mode ltp\n```\n\n### 4. visualization\nData visualization - candlestick charts, options payoff diagrams, P&L dashboards, Streamlit apps.\n\n```bash\npython scripts/candlestick.py --symbol SBIN --exchange NSE --interval 5m --days 5\n```\n\n### 5. portfolio\nPortfolio management - funds, positions, holdings, order book, trade book, margin calculator.\n\n```bash\npython scripts/portfolio.py --summary\n```\n\n### 6. technical-indicators\nTechnical analysis with TA-Lib - moving averages, RSI, MACD, Bollinger Bands, Stochastic, candlestick patterns, and strategy signals.\n\n```bash\npython scripts/indicators.py --symbol SBIN --exchange NSE --interval 5m --days 5\npython scripts/signals.py --symbol NIFTY --exchange NSE_INDEX --strategy all\npython scripts/scanner.py --watchlist nifty50 --pattern bullish\n```\n\n## Installation\n\n```bash\n# Install OpenAlgo SDK\npip install openalgo\n\n# Set environment variables\nexport OPENALGO_API_KEY=\"your_api_key\"\nexport OPENALGO_HOST=\"http://127.0.0.1:5000\"\n```\n\n## Quick Start\n\n```python\nfrom openalgo import api\n\nclient = api(\n    api_key='your_api_key',\n    host='http://127.0.0.1:5000'\n)\n\n# Place a market order\nresponse = client.placeorder(\n    strategy=\"MyStrategy\",\n    symbol=\"RELIANCE\",\n    action=\"BUY\",\n    exchange=\"NSE\",\n    price_type=\"MARKET\",\n    product=\"MIS\",\n    quantity=1\n)\n\nprint(response)\n# {'orderid': '250408000989443', 'status': 'success'}\n```\n\n## Symbol Format\n\n| Type | Format | Example |\n|------|--------|---------|\n| Equity | `SYMBOL` | `RELIANCE` |\n| Future | `SYMBOL[DDMMMYY]FUT` | `NIFTY30JAN25FUT` |\n| Option | `SYMBOL[DDMMMYY][STRIKE][CE/PE]` | `NIFTY30JAN2526000CE` |\n\n## Exchanges\n\n- `NSE` - NSE Equity\n- `BSE` - BSE Equity\n- `NFO` - NSE Futures & Options\n- `BFO` - BSE Futures & Options\n- `CDS` - NSE Currency Derivatives\n- `MCX` - MCX Commodity\n- `NSE_INDEX` - NSE Indices\n- `BSE_INDEX` - BSE Indices\n\n## Paper Trading\n\nAlways test strategies in analyzer mode first:\n\n```python\n# Enable paper trading\nclient.analyzertoggle(mode=True)\n\n# Place test orders (won't execute)\nresponse = client.placeorder(...)\n\n# Check analyzer status\nstatus = client.analyzerstatus()\n```\n\n## Requirements\n\n- Python 3.8+\n- openalgo >= 1.0.45\n- httpx\n- pandas\n- numpy\n- plotly (for visualization)\n- streamlit (for dashboards)\n- TA-Lib (for technical indicators)\n\n## License\n\nMIT License - See [LICENSE](LICENSE) for details.\n\n## Links\n\n- [OpenAlgo Documentation](https://docs.openalgo.in)\n- [OpenAlgo GitHub](https://github.com/marketcalls/openalgo)\n- [PyPI Package](https://pypi.org/project/openalgo/)\n"
+      },
+      "plugins": [
+        {
+          "name": "openalgo-python",
+          "description": "Complete OpenAlgo Python SDK integration for algorithmic trading. Build trading strategies, options strategies, real-time dashboards, and full-stack trading applications. Supports 25+ Indian brokers with unified API. Includes 6 skills.",
+          "version": "1.0.0",
+          "author": {
+            "name": "OpenAlgo",
+            "url": "https://github.com/marketcalls/openalgo"
+          },
+          "homepage": "https://openalgo.in",
+          "tags": [
+            "trading",
+            "algorithmic-trading",
+            "options",
+            "nse",
+            "bse",
+            "mcx",
+            "python-sdk",
+            "real-time",
+            "websocket",
+            "indian-markets"
+          ],
+          "source": "./plugins/openalgo-python",
+          "categories": [
+            "algorithmic-trading",
+            "bse",
+            "indian-markets",
+            "mcx",
+            "nse",
+            "options",
+            "python-sdk",
+            "real-time",
+            "trading",
+            "websocket"
+          ],
+          "install_commands": [
+            "/plugin marketplace add marketcalls/openalgo-claude-plugin",
+            "/plugin install openalgo-python@openalgo-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

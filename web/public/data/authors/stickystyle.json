@@ -6,6 +6,60 @@
   },
   "marketplaces": [
     {
+      "name": "stickystyle-skills",
+      "version": null,
+      "description": "Index-based file discovery using ABOUTME headers. Use INSTEAD of grep or Explore agent when searching for files by purpose or feature. Faster and more accurate than scanning code.",
+      "repo_full_name": "stickystyle/claude-skills",
+      "repo_url": "https://github.com/stickystyle/claude-skills",
+      "repo_description": "Claude skills I've developed for my use",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2025-12-18T01:07:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"stickystyle-skills\",\n  \"owner\": {\n    \"name\": \"Ryan Parrish\",\n    \"url\": \"https://github.com/stickystyle\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aboutme-index\",\n      \"source\": \"./skills/aboutme-index\",\n      \"description\": \"Index-based file discovery using ABOUTME headers. Use INSTEAD of grep or Explore agent when searching for files by purpose or feature. Faster and more accurate than scanning code.\",\n      \"version\": \"1.0.2\",\n      \"author\": {\n        \"name\": \"Ryan Parrish\"\n      },\n      \"homepage\": \"https://github.com/stickystyle/claude-skills\",\n      \"repository\": \"https://github.com/stickystyle/claude-skills\",\n      \"license\": \"MIT\"\n    },\n    {\n      \"name\": \"uv\",\n      \"source\": \"./skills/uv\",\n      \"description\": \"Python package manager and project tooling using uv. Use when working with Python projects, managing dependencies, creating virtual environments, running Python scripts, configuring workspaces/monorepos, or troubleshooting uv issues.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Ryan Parrish\"\n      },\n      \"homepage\": \"https://github.com/stickystyle/claude-skills\",\n      \"repository\": \"https://github.com/stickystyle/claude-skills\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Skills\n\nA collection of Claude Code skills by Ryan Parrish.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add stickystyle/claude-skills\n\n# Install a specific skill\n/plugin install aboutme-index@stickystyle-skills\n```\n\n## Available Skills\n\n### aboutme-index\n\nSemantic file discovery using ABOUTME headers. Instead of grep-searching or spawning Explore agents, this skill maintains a JSON index of human-written file descriptions.\n\n**How it works:**\n\n1. Add ABOUTME comments to your files:\n   ```python\n   # ABOUTME: JWT authentication module for AWS Cognito access tokens.\n   # ABOUTME: Handles token validation, JWKS caching, and user context.\n   ```\n\n2. The index auto-rebuilds on session start\n\n3. Claude reads one file to find what you need\n\n[Full documentation](skills/aboutme-index/README.md)\n\n## License\n\nMIT\n",
+        "skills/aboutme-index/README.md": "# ABOUTME Index\n\nA Claude Code skill for semantic file discovery using ABOUTME headers.\n\n## What It Does\n\nInstead of grep-searching or spawning Explore agents to find relevant files, this skill maintains a JSON index of human-written file descriptions. When you ask \"where is authentication handled?\", Claude reads one file and instantly finds the answer.\n\n## Example\n\n```\n> which files handle authentication?\n\n⏺ Let me check the ABOUTME index for authentication-related files.\n\n⏺ Read(.claude/aboutme-index.json)\n  ⎿  Read 85 lines\n\n⏺ Authentication is handled by these files:\n\n  Core Authentication:\n  - app/src/auth.py - JWT authentication module for AWS Cognito access tokens.\n    Handles token validation, JWKS caching, and user context management\n  - app/src/context.py - GraphQL context with authenticated user and application\n    services. Provides CustomContext class for type-safe access in resolvers\n\n  Tests:\n  - app/src/tests/unit/test_auth_config.py - Cognito configuration loading from SSM\n  - app/src/tests/unit/test_auth_module.py - JWKS client factory and JWT components\n  - app/src/tests/unit/test_jwks_caching.py - JWKS key caching behavior\n  - app/src/tests/unit/test_jwt_validation.py - JWT validation FastAPI dependency\n  - app/src/tests/unit/test_context.py - CustomContext class and get_context()\n  - app/src/tests/integration/test_graphql_auth.py - GraphQL HTTP auth flow\n```\n\n**1 tool call.** Without the index, this would require an Explore agent or multiple grep searches.\n\n## How It Works\n\n1. **Convention**: All code files start with ABOUTME comments:\n   ```python\n   # ABOUTME: JWT authentication module for AWS Cognito access tokens.\n   # ABOUTME: Handles token validation, JWKS caching, and user context.\n   ```\n\n2. **Indexer**: A Python script extracts these into `.claude/aboutme-index.json`\n\n3. **Hooks**: The index auto-rebuilds on session start and updates incrementally on edits\n\n## Setup Your Project\n\n1. Add ABOUTME headers to your files (first 2 lines):\n   ```python\n   # ABOUTME: Brief description of what this file does.\n   # ABOUTME: Additional context about its purpose.\n   ```\n\n2. Add to your `CLAUDE.md` (global `~/.claude/CLAUDE.md` or project-level):\n   ```markdown\n   # Writing code\n\n   - All code files should start with a brief 2 line comment explaining what the file does. Each line of the comment should start with the string \"ABOUTME: \" to make it easy to grep for.\n   ```\n\n   **This makes the system self-updating** - Claude will automatically add ABOUTME headers to any new files it creates.\n\n3. Add to your project's `CLAUDE.md` to tell Claude how to use the index:\n   ```markdown\n   ## File Discovery\n\n   This project has ABOUTME headers in all files. When searching for relevant files,\n   read the index at `.claude/aboutme-index.json` instead of using grep or Explore.\n   ```\n\n4. Optionally add `.claude/aboutme-index.json` to `.gitignore` (it rebuilds on session start)\n\n## Bootstrapping an Existing Codebase\n\nFor projects with existing code that lacks ABOUTME headers, use Claude to help add them:\n\n1. Run `/aboutme-check` to find files missing headers\n\n2. Copy-paste the check output back to Claude. The output is formatted as a ready-to-use prompt.\n\n3. Claude will read each file, understand its purpose, and add appropriate headers.\n\n4. The index rebuilds automatically on session start, or run `/aboutme-rebuild`\n\n## Automatic Hooks\n\nWhen installed as a plugin, this skill automatically configures two hooks:\n\n- **SessionStart**: Rebuilds the entire index when you start a Claude Code session (catches external changes)\n- **PostToolUse**: Updates just the edited file when Claude modifies files (fast incremental updates)\n\nNo manual configuration required - the hooks are bundled with the plugin.\n\n## Slash Commands\n\nThe plugin provides these slash commands:\n\n| Command | Description |\n|---------|-------------|\n| `/aboutme-check` | Find files missing ABOUTME headers |\n| `/aboutme-rebuild` | Rebuild the entire index from scratch |\n| `/aboutme-stale` | Check for headers that may be out of date |\n\nYou can also read the index directly: `cat .claude/aboutme-index.json`\n\n## Index Format\n\n```json\n{\n  \"app/src/auth.py\": \"JWT authentication module for AWS Cognito access tokens...\",\n  \"app/src/config.py\": \"Centralized configuration using Pydantic settings...\"\n}\n```\n\n## Why This Pattern?\n\n- **Speed**: 1 file read vs. multiple grep/glob operations\n- **Accuracy**: Human-curated descriptions beat pattern matching\n- **Semantic**: Natural language queries match natural language descriptions\n- **Low overhead**: 2-line comments per file, auto-maintained index\n\n## Supported File Types\n\nThe indexer looks for ABOUTME headers in:\n- `.py` - Python (`# ABOUTME:`)\n- `.sh` - Shell scripts (`# ABOUTME:`)\n- `.yml`, `.yaml` - YAML configs (`# ABOUTME:`)\n- `.toml` - TOML configs (`# ABOUTME:`)\n- `.js` - JavaScript (`// ABOUTME:`)\n- `.ts` - TypeScript (`// ABOUTME:`)\n- `.jsx` - React JSX (`// ABOUTME:`)\n- `.tsx` - React TSX (`// ABOUTME:`)\n"
+      },
+      "plugins": [
+        {
+          "name": "aboutme-index",
+          "source": "./skills/aboutme-index",
+          "description": "Index-based file discovery using ABOUTME headers. Use INSTEAD of grep or Explore agent when searching for files by purpose or feature. Faster and more accurate than scanning code.",
+          "version": "1.0.2",
+          "author": {
+            "name": "Ryan Parrish"
+          },
+          "homepage": "https://github.com/stickystyle/claude-skills",
+          "repository": "https://github.com/stickystyle/claude-skills",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add stickystyle/claude-skills",
+            "/plugin install aboutme-index@stickystyle-skills"
+          ]
+        },
+        {
+          "name": "uv",
+          "source": "./skills/uv",
+          "description": "Python package manager and project tooling using uv. Use when working with Python projects, managing dependencies, creating virtual environments, running Python scripts, configuring workspaces/monorepos, or troubleshooting uv issues.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Ryan Parrish"
+          },
+          "homepage": "https://github.com/stickystyle/claude-skills",
+          "repository": "https://github.com/stickystyle/claude-skills",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add stickystyle/claude-skills",
+            "/plugin install uv@stickystyle-skills"
+          ]
+        }
+      ]
+    },
+    {
       "name": "regent-plugins",
       "version": null,
       "description": "Spec-driven development workflow for Claude Code",

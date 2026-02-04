@@ -15,7 +15,7 @@
       "signals": {
         "stars": 10,
         "forks": 1,
-        "pushed_at": "2026-01-31T02:59:57Z"
+        "pushed_at": "2026-02-04T17:28:35Z"
       },
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"flowspec-marketplace\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Official marketplace for Flowspec - A comprehensive Spec-Driven Development toolkit\",\n  \"owner\": {\n    \"name\": \"Jason Poley\",\n    \"url\": \"https://github.com/jpoley\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"flowspec\",\n      \"source\": \".\",\n      \"description\": \"Comprehensive Spec-Driven Development toolkit with multi-language support, specialized agents, and integrated security/observability tools\",\n      \"version\": \"0.0.20\",\n      \"author\": \"Jason Poley\",\n      \"homepage\": \"https://github.com/jpoley/flowspec\",\n      \"repository\": \"https://github.com/jpoley/flowspec\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"spec-driven\",\n        \"sdd\",\n        \"development-workflow\",\n        \"agents\",\n        \"ci-cd\",\n        \"sre\",\n        \"devops\",\n        \"security\",\n        \"observability\",\n        \"kubernetes\",\n        \"multi-language\"\n      ],\n      \"features\": [\n        \"6 workflow slash commands (specify, plan, research, implement, validate, operate)\",\n        \"15 specialized agents for full SDLC coverage\",\n        \"9 pre-configured MCP servers (GitHub, Serena, Context7, Playwright, Trivy, Semgrep, Figma, shadcn-ui, Chrome DevTools)\",\n        \"Multi-language support (C, C++, C#, Go, Java, Kotlin, Python, Rust, TypeScript/JavaScript, Dart/Flutter)\",\n        \"Integrated DevSecOps and observability\",\n        \"SRE best practices and operational excellence\"\n      ],\n      \"requirements\": {\n        \"claudeCode\": \">=2.0.0\",\n        \"python\": \">=3.11\",\n        \"node\": \">=18.0.0\"\n      }\n    }\n  ],\n  \"installation\": {\n    \"instructions\": [\n      \"Add marketplace: /plugin marketplace add jpoley/flowspec\",\n      \"Install plugin: /plugin install flowspec\",\n      \"Verify installation: /flow:specify --help\"\n    ],\n    \"alternativeMethods\": [\n      \"Direct from GitHub: /plugin install jpoley/flowspec\",\n      \"Local development: /plugin install /path/to/flowspec\",\n      \"CLI tool (multi-agent): pip install flowspec-cli\"\n    ]\n  },\n  \"support\": {\n    \"documentation\": \"https://github.com/jpoley/flowspec/blob/main/README.md\",\n    \"issues\": \"https://github.com/jpoley/flowspec/issues\",\n    \"discussions\": \"https://github.com/jpoley/flowspec/discussions\"\n  }\n}\n",
@@ -74,39 +74,6 @@
           "install_commands": [
             "/plugin marketplace add jpoley/flowspec",
             "/plugin install flowspec@flowspec-marketplace"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "yt-summary-marketplace",
-      "version": null,
-      "description": "YouTube video summarization commands",
-      "repo_full_name": "jpoley/yt-summary",
-      "repo_url": "https://github.com/jpoley/yt-summary",
-      "repo_description": null,
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-01-08T01:41:08Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"yt-summary-marketplace\",\n  \"owner\": {\n    \"name\": \"jpoley\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"yt-summary\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"jpoley/yt-summary\"\n      },\n      \"description\": \"YouTube video summarization commands\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"yt-summary\",\n  \"version\": \"1.0.0\",\n  \"description\": \"YouTube video summarization commands\",\n  \"author\": {\n    \"name\": \"jpoley\"\n  }\n}\n",
-        "README.md": "# yt-summary\n\nA Claude AI plugin that downloads YouTube video transcripts and generates well-structured markdown summaries with key insights, timestamps, and references.\n\n## Features\n\n- Downloads transcripts using `yt-dlp` with automatic fallback strategies\n- Extracts video metadata (title, channel, duration, upload date)\n- Parses video descriptions for referenced links and resources\n- Generates comprehensive markdown summaries with:\n  - TL;DR executive summary\n  - Key takeaways\n  - Detailed section-by-section breakdown\n  - Notable quotes with timestamps\n  - Categorized references and resources\n  - Collapsible full transcript\n\n## Requirements\n\n**Required:**\n- [yt-dlp](https://github.com/yt-dlp/yt-dlp) - YouTube video/audio downloader\n\n**Optional:**\n- [openai-whisper](https://github.com/openai/whisper) - For audio transcription when subtitles are unavailable\n\n## Installation\n\n### 1. Install Dependencies\n\n```bash\n# macOS\nbrew install yt-dlp\n\n# All platforms\npip3 install yt-dlp\n\n# Optional: Whisper for audio transcription\npip3 install openai-whisper\n```\n\n### 2. Install the Plugin\n\nAdd this plugin to your Claude Code configuration. The plugin will be available from the GitHub repository `jpoley/yt-summary`.\n\n## Usage\n\n### Download Transcript Only\n\n```\n/youtube:transcript https://www.youtube.com/watch?v=VIDEO_ID\n```\n\nOutput: `./yt-transcripts/VIDEO_TITLE.txt`\n\n### Download and Summarize\n\n```\n/yt-summarize https://www.youtube.com/watch?v=VIDEO_ID\n```\n\nOutput: `./yt-transcripts/VIDEO_TITLE.summary.md`\n\nBoth commands support standard YouTube URLs:\n- `https://www.youtube.com/watch?v=VIDEO_ID`\n- `https://youtu.be/VIDEO_ID`\n\n## How It Works\n\n### Transcript Download Strategy\n\nThe transcript command attempts to fetch subtitles in priority order:\n\n1. **Manual subtitles** - Highest quality, human-created\n2. **Auto-generated subtitles** - YouTube's automatic captions\n3. **Whisper transcription** - Last resort, requires user confirmation\n\nDownloaded VTT files are processed to remove duplicates, clean HTML entities, and convert to plain text.\n\n### Summary Generation\n\nThe summarizer extracts metadata and generates a structured markdown document:\n\n```markdown\n# Video Title\n\n**Channel:** Channel Name | **Date:** YYYY-MM-DD | **Duration:** HH:MM:SS\n\n## TL;DR\nBrief 2-3 sentence executive summary.\n\n## Key Takeaways\n- Main insight 1\n- Main insight 2\n- ...\n\n## Summary\nDetailed breakdown organized by topic or timestamp.\n\n## Notable Quotes\n> \"Exact quote from the video\" - Speaker (timestamp)\n\n## References & Resources\n- [Resource Name](url) - Description\n\n<details>\n<summary>Full Transcript</summary>\nComplete transcript text...\n</details>\n```\n\n## Output Directory\n\nAll output files are saved to `./yt-transcripts/` in the current working directory:\n\n```\nyt-transcripts/\n├── Video Title.txt           # Raw transcript\n└── Video_Title.summary.md    # Generated summary\n```\n\n## License\n\nThis project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.\n"
-      },
-      "plugins": [
-        {
-          "name": "yt-summary",
-          "source": {
-            "source": "github",
-            "repo": "jpoley/yt-summary"
-          },
-          "description": "YouTube video summarization commands",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add jpoley/yt-summary",
-            "/plugin install yt-summary@yt-summary-marketplace"
           ]
         }
       ]

@@ -1,0 +1,69 @@
+{
+  "author": {
+    "id": "PostHog",
+    "display_name": "PostHog",
+    "avatar_url": "https://avatars.githubusercontent.com/u/60330232?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-share-plugin",
+      "version": null,
+      "description": "Plugin marketplace for sharing Claude Code sessions to GitHub",
+      "repo_full_name": "PostHog/claude-code-share-plugin",
+      "repo_url": "https://github.com/PostHog/claude-code-share-plugin",
+      "repo_description": "Plugin to add a `/share` command to claude code",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2025-10-22T10:26:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-share-plugin\",\n  \"owner\": {\n    \"name\": \"PostHog\",\n    \"email\": \"hey@posthog.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugin marketplace for sharing Claude Code sessions to GitHub\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"share\",\n      \"source\": \"./\",\n      \"description\": \"Share Claude Code sessions to GitHub repositories as markdown\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"PostHog\",\n        \"email\": \"hey@posthog.com\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"github\", \"sharing\", \"sessions\", \"markdown\", \"documentation\"],\n      \"category\": \"productivity\",\n      \"tags\": [\"github\", \"git\", \"sharing\", \"export\"],\n      \"strict\": true\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"share\",\n  \"description\": \"Share Claude Code sessions to GitHub repositories\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"PostHog\",\n    \"email\": \"hey@posthog.com\"\n  }\n}\n",
+        "README.md": "# Claude Code Session Sharing Plugin\n\nA Claude Code plugin that saves and shares your coding sessions to GitHub repositories in readable markdown format.\n\n## Features\n\n- Converts JSONL session logs to clean, readable markdown\n- Automatically commits and pushes to any GitHub repository\n- Organizes sessions by username in configurable directory structure\n- Supports optional session descriptions\n- Collapses tool usage details by default for cleaner reading\n- Fully configurable via environment variables\n\n## Prerequisites\n\n- Python 3.6+\n- [GitHub CLI (`gh`)](https://cli.github.com/) installed and authenticated\n- A GitHub repository to store sessions (public or private)\n\n## Installation\n\n### Quick Install (Recommended)\n\n**One-liner installation:**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/PostHog/claude-code-share-plugin/main/install.sh | \\\n  bash -s -- --claude-share-repo repo-owner/repo-name\n```\n\nReplace `repo-owner/repo-name` with your sessions repository.\n\n**What gets auto-detected:**\n- GitHub username (from `gh` CLI)\n- Current session log (from `~/.claude/projects/` based on working directory)\n- Branch (defaults to `main`)\n- Path (defaults to `sessions`)\n\n**Configuration is saved automatically** to `~/.claude/share-plugin-config.json` during installation - no environment variables needed!\n\n### Manual Installation\n\n#### Option 1: Install from GitHub\n\nIn Claude Code, run:\n\n```\n/plugin marketplace add PostHog/claude-code-share-plugin\n/plugin install share@claude-code-share-plugin\n```\n\n#### Option 2: Install locally\n\nClone the repository:\n\n```bash\ngh repo clone PostHog/claude-code-share-plugin ~/claude-plugins/claude-code-share-plugin\n```\n\nIn Claude Code:\n\n```\n/plugin marketplace add ~/claude-plugins/claude-code-share-plugin\n/plugin install share@claude-code-share-plugin\n```\n\n### Manual Configuration (Optional)\n\nThe Quick Install automatically saves configuration to `~/.claude/share-plugin-config.json`.\n\nIf you need to change the repository later, you can either:\n\n1. **Re-run the installer** with a new repo\n2. **Edit the config file** directly:\n   ```bash\n   cat > ~/.claude/share-plugin-config.json <<EOF\n   {\n     \"repo\": \"new-owner/new-repo\"\n   }\n   EOF\n   ```\n3. **Use environment variable** (takes precedence over config file):\n   ```bash\n   export CLAUDE_SHARE_REPO=\"repo-owner/repo-name\"\n   ```\n\n### Team/Project Configuration (Optional)\n\nFor automatic plugin installation across your team, add to your project's `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"claude-code-share-plugin\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"PostHog/claude-code-share-plugin\"\n      }\n    }\n  },\n  \"enabledPlugins\": [\n    \"share@claude-code-share-plugin\"\n  ]\n}\n```\n\nWhen team members trust the repository, Claude Code will automatically install the marketplace and plugin.\n\n## Usage\n\n### Basic usage\n\nShare the current session with no description:\n\n```\n/share\n```\n\n### With description\n\nShare with a descriptive name:\n\n```\n/share fixing authentication bug\n```\n\nThis creates a file like: `20251021-142530-fixing-authentication-bug.md`\n\n### Output structure\n\nSessions are organized as:\n\n```\nyour-sessions-repo/\n└── sessions/\n    └── username/       # Auto-detected from gh CLI\n        ├── 20251021-142530-fixing-auth.md\n        ├── 20251021-153245-adding-tests.md\n        └── ...\n```\n\n### Example markdown output\n\n```markdown\n# Claude Code Session\n\n**Date:** 2025-10-21 14:25:30\n\n---\n\n## User\n\nCan you help me fix the authentication bug?\n\n## Claude\n\nI'll help you investigate the authentication issue. Let me first check the relevant files.\n\n<details>\n<summary>Tool: read_any_files</summary>\n\n```json\n{\n  \"files\": [\n    {\n      \"path\": \"/src/auth/login.py\"\n    }\n  ]\n}\n```\n\n</details>\n\n## Configuration\n\n| What | How |\n|------|-----|\n| **Configured during install** | Repository saved to `~/.claude/share-plugin-config.json` |\n| **Auto-detected** | Username (from `gh` CLI) |\n| **Auto-detected** | Session log (from `~/.claude/projects/` based on working directory) |\n| **Defaults** | Branch: `main`, Path: `sessions` |\n\n## Troubleshooting\n\n### \"Error: Repository not configured\"\n\nThe plugin needs to know which GitHub repository to use. Run the installer:\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/PostHog/claude-code-share-plugin/main/install.sh | \\\n  bash -s -- repo-owner/repo-name\n```\n\nOr create the config file manually:\n\n```bash\ncat > ~/.claude/share-plugin-config.json <<EOF\n{\n  \"repo\": \"repo-owner/repo-name\"\n}\nEOF\n```\n\n### \"Error cloning repository\"\n\nEnsure:\n1. The `gh` CLI is installed: `gh --version`\n2. You're authenticated: `gh auth status`\n3. You have access to the target repository\n4. The repository exists\n\n### \"Error pushing to GitHub\"\n\nCheck that:\n1. You have write access to the repository\n2. The branch exists (or create it first)\n3. Your authentication hasn't expired: `gh auth refresh`\n\n## Development\n\nTo modify the plugin:\n\n1. Edit files in this directory\n2. Uninstall the old version: `/plugin uninstall share`\n3. Reinstall: `/plugin install share@claude-code-share-plugin`\n4. Test your changes\n\n## How It Works\n\n1. Reads the current Claude Code session log (JSONL format)\n2. Parses each message (user/assistant/tool calls)\n3. Converts to readable markdown with:\n   - User messages\n   - Claude responses\n   - Tool usage in collapsible `<details>` sections\n4. Clones target repo to `/tmp/claude-share-temp`\n5. Creates session file with timestamp and description\n6. Commits and pushes to GitHub\n7. Provides direct link to view the session\n\n## Privacy & Security\n\n- Session logs may contain sensitive information from your codebase\n- Consider using a **private repository** for session storage\n- Review the generated markdown before sharing links publicly\n- The plugin uses `gh` CLI which respects your existing GitHub authentication\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "share",
+          "source": "./",
+          "description": "Share Claude Code sessions to GitHub repositories as markdown",
+          "version": "1.0.0",
+          "author": {
+            "name": "PostHog",
+            "email": "hey@posthog.com"
+          },
+          "license": "MIT",
+          "keywords": [
+            "github",
+            "sharing",
+            "sessions",
+            "markdown",
+            "documentation"
+          ],
+          "category": "productivity",
+          "tags": [
+            "github",
+            "git",
+            "sharing",
+            "export"
+          ],
+          "strict": true,
+          "categories": [
+            "documentation",
+            "export",
+            "git",
+            "github",
+            "markdown",
+            "productivity",
+            "sessions",
+            "sharing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add PostHog/claude-code-share-plugin",
+            "/plugin install share@claude-code-share-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

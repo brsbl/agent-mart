@@ -6,34 +6,94 @@
   },
   "marketplaces": [
     {
-      "name": "ralph-eats-beads",
+      "name": "vibecad",
       "version": null,
-      "description": "Autonomous AI coding loop using bd (beads) for task management with parallel tmux subagents.",
-      "repo_full_name": "rawwerks/ralph-eats-beads",
-      "repo_url": "https://github.com/rawwerks/ralph-eats-beads",
-      "repo_description": "Autonomous AI coding loop using bd for task management",
+      "description": "Skills for using Build123D - a Python CAD library for creating parametric 3D models with code",
+      "repo_full_name": "rawwerks/VibeCAD",
+      "repo_url": "https://github.com/rawwerks/VibeCAD",
+      "repo_description": "A library of Claude Code skills for teaching coding agents how to use various CAD tools",
       "signals": {
-        "stars": 2,
-        "forks": 0,
-        "pushed_at": "2026-01-21T20:48:06Z"
+        "stars": 10,
+        "forks": 2,
+        "pushed_at": "2026-01-05T15:48:50Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ralph-eats-beads\",\n  \"owner\": {\n    \"name\": \"rawwerks\"\n  },\n  \"metadata\": {\n    \"description\": \"Autonomous AI coding loop using bd (beads) for task management with parallel tmux subagents.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ralph-eats-beads\",\n      \"description\": \"Autonomous AI coding loop that ships features while you sleep. Uses tmux for observability and parallel subagents picking work from bd ready.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./\"\n      ]\n    }\n  ]\n}\n",
-        "README.md": "# Ralph Eats Beads\n\n![Ralph Eats Beads](ralph-eats-beads.jpg)\n\n\"[Ralph Wiggum](https://ghuntley.com/ralph/)\" autonomous AI coding loop, using [bd (beads)](https://github.com/steveyegge/beads) for task management with parallel tmux subagents.\n\nRalph ships features while you sleep, by eating all of the beads. \n\nFor those in the know, you can think of Ralph Eats Beads as \"Gas Town Lite\". I find it much more powerful than a \"vanilla Ralph\" loop, yet much faster to start and easier to wield than [Gas Town](https://github.com/steveyegge/gastown).\n\n## Installation\n\n### Claude Code (Interactive)\n\n```\n/plugin marketplace add rawwerks/ralph-eats-beads\n/plugin install ralph-eats-beads@ralph-eats-beads\n```\n\n### Claude CLI\n\n```bash\nclaude plugin marketplace add rawwerks/ralph-eats-beads\nclaude plugin install ralph-eats-beads@ralph-eats-beads\n```\n\n## What It Does\n\nThe \"parent\" Ralph/Claude picks issues from `bd ready`, spawns parallel Ralph/Claude subagents in tmux windows to implement them, and closes issues on success. Each iteration:\n\n1. Parent agent checks `bd ready` for available work\n2. Spawns 3-5 subagent tmux windows (one per issue)\n3. Each subagent implements ONE issue, commits, closes it\n4. Watchdog monitors for stuck agents and nudges/kills them\n5. Loop repeats until no work remains or max iterations hit\n\n```\nralph (tmux session)\n├── parent (window 0) - orchestrator\n├── watchdog (window 1) - health monitor  \n├── issue-1 (window 2) - subagent\n├── issue-2 (window 3) - subagent\n└── issue-3 (window 4) - subagent\n```\n\n## Prerequisites\n\n- **[bd (beads)](https://github.com/steveyegge/beads)** - Issue tracker (beads)\n- **tmux** - Terminal multiplexer\n- **claude** - Claude CLI with `--dangerously-skip-permissions`\n\n## Quick Start\n\n```bash\n# 1. Create issues to work on\nbd create --type epic \"Feature: User Auth\"\nbd create \"Add login form\" --parent <epic-id>\nbd create \"Add validation\" --parent <epic-id>\n\n# 2. Start Ralph (default: 10 iterations max)\n./scripts/ralph.sh\n\n# 3. Or specify max iterations\n./scripts/ralph.sh 25\n\n# 4. Watch progress\ntmux attach -t ralph-<project>\n```\n\n## How Iterations Work\n\n- **Max iterations** = how many times the parent can spawn a batch of subagents\n- Each iteration handles multiple issues in parallel (3-5 concurrent)\n- Loop exits early if `bd ready` returns no work\n- Default timeout: 1 hour per iteration\n\n## On Failure\n\n- Subagent adds comment: `bd comments add <id> \"Blocked: <reason>\"`\n- Issue stays open for next iteration or manual fix\n- Watchdog kills stuck windows after 2 nudge attempts\n\n## Planning: Converting Requirements to Issues\n\nIn a typical \"Ralph eats beads\" workflow, you would have already converted your plan into bd epics, issues, dependencies, and notes before running `ralph.sh`. This is the recommended approach: carefully curate the plan, collaborate with Claude/Codex/etc to convert to bd and make sure that the agent does not miss any details. I often find it helpful to ask Claude to spin up an \"auditor\" subagent to check that every aspect of the plan was converted to bd. I also include in my CLAUDE.md: `When exiting Plan Mode, all plans must be fully converted into bd epics, issues, dependencies, and notes`.\n\nHowever, if you haven't done that step yet, you can use the **planner script** to generate bd issues from a requirements file:\n\n```bash\n# From a requirements file\n./scripts/planner.sh requirements.md\n\n# From inline text\n./scripts/planner.sh <<< \"Add OAuth2 authentication with Google and GitHub\"\n\n# From a pipe\ncat feature-spec.md | ./scripts/planner.sh\n```\n\nThe planner runs a recursive loop that:\n1. Reads your requirements\n2. Creates an epic and stories in bd\n3. Sets up dependencies between issues\n4. Iterates until the plan fully covers the requirements\n\nOnce planning is complete, run `ralph.sh` to implement.\n\n## Files\n\n| File | Purpose |\n|------|---------|\n| `scripts/ralph.sh` | Main entry point |\n| `scripts/planner.sh` | Generate issues from requirements |\n| `scripts/watchdog.sh` | Health monitor |\n| `SKILL.md` | Full agent instructions |\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"vibecad\",\n  \"owner\": {\n    \"name\": \"Raymond Weitekamp\",\n    \"email\": \"raymond@nething.xyz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"build123d\",\n      \"source\": \"./plugins/build123d\",\n      \"description\": \"Skills for using Build123D - a Python CAD library for creating parametric 3D models with code\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"cad\", \"3d\", \"parametric\", \"python\", \"build123d\"]\n    },\n    {\n      \"name\": \"render-glb\",\n      \"source\": \"./plugins/render-glb\",\n      \"description\": \"Render GLB 3D models to PNG images for visual verification\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"glb\", \"render\", \"3d\", \"png\", \"visualization\"]\n    },\n    {\n      \"name\": \"gltf-transform\",\n      \"source\": \"./plugins/gltf-transform\",\n      \"description\": \"Optimize and post-process GLB/glTF 3D models\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"gltf\", \"glb\", \"optimize\", \"compress\", \"draco\", \"meshopt\"]\n    }\n  ]\n}\n",
+        "README.md": "# VibeCAD\n\nA library of Claude Code skills for teaching coding agents how to use various CAD tools.\n\nSponsored by [neThing.xyz](https://neThing.xyz)\n\n## Installation\n\nAdd the marketplace to Claude Code:\n\n```\n/plugin marketplace add raymondweitekamp/VibeCAD\n```\n\nThen install the plugins you need:\n\n```\n/plugin install build123d@vibecad\n/plugin install render-glb@vibecad\n/plugin install gltf-transform@vibecad\n```\n\n## Using Skills\n\nAfter installation, invoke skills using the format `<plugin-name>:<skill-name>`:\n\n| Plugin | Skill Invocation |\n|--------|------------------|\n| build123d | `build123d:build123d` |\n| build123d | `build123d:model-compare` |\n| render-glb | `render-glb:render-glb` |\n| gltf-transform | `gltf-transform:gltf-transform` |\n\nSkills are automatically triggered when Claude detects relevant tasks (CAD modeling, GLB rendering, model optimization), or you can explicitly load them.\n\n## Available Plugins\n\n### build123d\n\nSkills for using [Build123D](https://github.com/gumyr/build123d) - a Python CAD library for creating parametric 3D models with code.\n\n**Skills:**\n- `build123d` - CAD modeling with algebra-style syntax\n- `model-compare` - Compare 3D models using IoU, Dice, precision/recall metrics\n\n**Features:**\n- Algebra-style syntax for intuitive model creation\n- Parametric design patterns\n- Export to GLB, STL, STEP, and other formats\n- Includes bd_warehouse (threads, fasteners, pipes, flanges, bearings)\n- Includes gggears (spur, helical, bevel, planetary, cycloid gears)\n- Model comparison for evaluating ML-generated models against gold references\n\n### render-glb\n\nRender GLB 3D models to PNG images for visual verification.\n\n- Zero-setup with `bunx render-glb model.glb output.png`\n- Enables agents to see what they build and iterate visually\n- Configurable resolution and background color\n\n### gltf-transform\n\nOptimize and post-process GLB/glTF 3D models.\n\n- Draco/Meshopt compression for web delivery\n- Texture compression (WebP)\n- Mesh simplification and welding\n- Model inspection and merging\n\n## Contributing\n\nWe welcome contributions! To add a new CAD tool:\n\n1. Create a new plugin directory under `plugins/`\n2. Add `.claude-plugin/plugin.json` with the plugin manifest\n3. Add skills under `skills/` with `SKILL.md` files\n4. Update the marketplace.json to include your plugin\n5. Submit a PR\n\n### Skill Format\n\nEach skill requires a `SKILL.md` with YAML frontmatter:\n\n```yaml\n---\nname: skill-name\ndescription: What the skill does and when to use it\n---\n\n# Skill Name\n\nInstructions for using the skill...\n```\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n"
       },
       "plugins": [
         {
-          "name": "ralph-eats-beads",
-          "description": "Autonomous AI coding loop that ships features while you sleep. Uses tmux for observability and parallel subagents picking work from bd ready.",
-          "source": "./",
-          "strict": false,
-          "skills": [
-            "./"
+          "name": "build123d",
+          "source": "./plugins/build123d",
+          "description": "Skills for using Build123D - a Python CAD library for creating parametric 3D models with code",
+          "version": "0.1.0",
+          "keywords": [
+            "cad",
+            "3d",
+            "parametric",
+            "python",
+            "build123d"
           ],
-          "categories": [],
+          "categories": [
+            "3d",
+            "build123d",
+            "cad",
+            "parametric",
+            "python"
+          ],
           "install_commands": [
-            "/plugin marketplace add rawwerks/ralph-eats-beads",
-            "/plugin install ralph-eats-beads@ralph-eats-beads"
+            "/plugin marketplace add rawwerks/VibeCAD",
+            "/plugin install build123d@vibecad"
+          ]
+        },
+        {
+          "name": "render-glb",
+          "source": "./plugins/render-glb",
+          "description": "Render GLB 3D models to PNG images for visual verification",
+          "version": "0.1.0",
+          "keywords": [
+            "glb",
+            "render",
+            "3d",
+            "png",
+            "visualization"
+          ],
+          "categories": [
+            "3d",
+            "glb",
+            "png",
+            "render",
+            "visualization"
+          ],
+          "install_commands": [
+            "/plugin marketplace add rawwerks/VibeCAD",
+            "/plugin install render-glb@vibecad"
+          ]
+        },
+        {
+          "name": "gltf-transform",
+          "source": "./plugins/gltf-transform",
+          "description": "Optimize and post-process GLB/glTF 3D models",
+          "version": "0.1.0",
+          "keywords": [
+            "gltf",
+            "glb",
+            "optimize",
+            "compress",
+            "draco",
+            "meshopt"
+          ],
+          "categories": [
+            "compress",
+            "draco",
+            "glb",
+            "gltf",
+            "meshopt",
+            "optimize"
+          ],
+          "install_commands": [
+            "/plugin marketplace add rawwerks/VibeCAD",
+            "/plugin install gltf-transform@vibecad"
           ]
         }
       ]
