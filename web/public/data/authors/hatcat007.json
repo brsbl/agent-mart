@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "hatcat007",
+    "display_name": "hatcat007",
+    "avatar_url": "https://avatars.githubusercontent.com/u/60032898?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "memvid",
+      "version": null,
+      "description": "Official Memvid plugins for Claude Code",
+      "repo_full_name": "hatcat007/OpenMindAI",
+      "repo_url": "https://github.com/hatcat007/OpenMindAI",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-03T16:41:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"memvid\",\n  \"description\": \"Official Memvid plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"Memvid\",\n    \"url\": \"https://memvid.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mind\",\n      \"description\": \"Claude Brain - Give Claude photographic memory in ONE portable file\",\n      \"version\": \"1.0.11\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mind\",\n  \"description\": \"Claude Mind - Give Claude photographic memory in ONE portable file. Share, version, and transfer your Claude's brain.\",\n  \"version\": \"1.0.11\",\n  \"author\": {\n    \"name\": \"Memvid\",\n    \"url\": \"https://memvid.com\"\n  },\n  \"repository\": \"https://github.com/memvid/claude-brain\",\n  \"homepage\": \"https://memvid.com\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# Opencode Brain\n\nMemory persistence for Opencode. Remember everything across sessions without user effort.\n\n## Features\n\n- ✨ **Automatic memory capture** — Tool use, file changes, errors, and decisions\n- 🔍 **Search memories** — `/mind search <query>` finds relevant context\n- 📊 **View statistics** — `/mind stats` shows memory overview\n- 💬 **Natural language queries** — `/mind ask <question>` for intelligent answers\n- 🔒 **100% local storage** — No cloud, no external APIs\n- ⚡ **Zero configuration** — Works out of the box after installation\n\n## Installation\n\n```bash\nnpm install opencode-brain\n```\n\nAdd to your `opencode.json`:\n\n```json\n{\n  \"plugin\": [\"opencode-brain\"]\n}\n```\n\nThe plugin auto-initializes on first run — no additional configuration needed.\n\n## Quick Start\n\nAfter installation, Opencode will automatically:\n1. Create `.opencode/mind.mv2` on first run (SQLite storage)\n2. Capture session context, tool executions, and file changes\n3. Inject relevant memories into new sessions\n4. Make context available for natural queries\n\n## Commands\n\nOnce installed, use these slash commands in Opencode:\n\n- `/mind stats` — Show memory statistics (entries, sessions, size)\n- `/mind search <query>` — Search memories for keywords\n- `/mind ask <question>` — Query with natural language\n- `/mind recent` — Show recent session activity\n- `/mind timeline` — View chronological session history\n- `/mind import` — Import from claude-brain (migration)\n\n## Configuration\n\nThe plugin works out of the box with sensible defaults. Configuration can be controlled via environment variables:\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `OPENCODE_BRAIN_STORAGE_PATH` | `.opencode/mind.mv2` | Path to SQLite database file |\n| `OPENCODE_BRAIN_DEBUG` | `false` | Enable debug logging (`true` or `false`) |\n\n### Storage Location\n\nBy default, memories are stored in `.opencode/mind.mv2` (SQLite format) within your project directory.\n\n**Important:** Add this to your `.gitignore`:\n\n```\n.opencode/mind.mv2\n.opencode/mind.mv2.lock\n.opencode/mind.mv2-shm\n.opencode/mind.mv2-wal\n```\n\nThe storage file contains:\n- Session metadata and context\n- Tool execution history\n- File change tracking\n- Error patterns and solutions\n- User decisions and preferences\n\n## Privacy & Security\n\n- **100% local** — All data stored in your project directory\n- **No external APIs** — No cloud services or network calls\n- **Sensitive data filtering** — Passwords, `.env` files, and secrets are excluded\n- **User control** — You control what gets captured and when to reset\n\n## Architecture\n\nOpencode Brain consists of:\n\n1. **Storage Layer** — Bun-native SQLite with bun:sqlite\n2. **Plugin Interface** — @opencode-ai/plugin SDK integration\n3. **Event Handlers** — Capture tool.execute.after, file.edited, session.error\n4. **Context Injection** — Load relevant memories at session start\n5. **Commands** — User-facing slash commands for memory interaction\n\n## Development Setup\n\nFor contributors and developers:\n\n```bash\n# Clone the repository\ngit clone https://github.com/your-org/opencode-brain.git\ncd opencode-brain\n\n# Install dependencies\nbun install\n\n# Run tests\nbun test\n\n# Build\nbun run build\n\n# Watch mode for development\nbun run dev\n```\n\n### Project Structure\n\n```\nsrc/\n├── index.ts          # Plugin entry point\n├── plugin.ts         # @opencode-ai/plugin integration\n├── config.ts         # Configuration handling\n├── storage/          # SQLite storage layer\n│   ├── index.ts\n│   ├── database.ts\n│   └── schema.ts\n├── hooks/            # Event handlers\n│   ├── session.ts\n│   └── tool.ts\n└── commands/         # Slash command implementations\n    ├── stats.ts\n    ├── search.ts\n    └── ask.ts\n```\n\n## Requirements\n\n- **Bun** >= 1.0.0 (required, Opencode's runtime)\n- **Opencode** >= 1.0.0\n- **@opencode-ai/plugin** >= 1.0.0 (peer dependency)\n\n## Migration from claude-brain\n\nIf you're migrating from claude-brain, use the import command:\n\n```bash\n# In Opencode\n/mind import\n```\n\nThis will migrate your `.claude/mind.mv2` file to `.opencode/mind.mv2` format.\n\n**Note:** The storage formats are compatible but path conventions differ:\n- claude-brain: `.claude/mind.mv2`\n- opencode-brain: `.opencode/mind.mv2`\n\n## Troubleshooting\n\n### Plugin not loading\n\n1. Verify `opencode.json` has `\"plugin\": [\"opencode-brain\"]`\n2. Check that `node_modules/opencode-brain` exists\n3. Restart Opencode after plugin installation\n\n### Storage not created\n\n1. Check write permissions in project directory\n2. Verify Bun is installed: `bun --version`\n3. Try manual initialization: create `.opencode/` directory\n\n### Search not finding results\n\n1. Verify `.opencode/mind.mv2` exists and has content\n2. Check that events are being captured (look for memory entries)\n3. Try broader search terms\n\n### Performance issues\n\n1. Large memory files (>10MB) may slow down searches\n2. Consider compressing old sessions: `/mind compact` (Phase 5)\n3. File size stays manageable with automatic pruning\n\n## Contributing\n\nContributions welcome! Please:\n\n1. Fork the repository\n2. Create a feature branch\n3. Make your changes\n4. Add tests for new functionality\n5. Submit a pull request\n\nSee `CONTRIBUTING.md` for detailed guidelines.\n\n## License\n\nMIT License — see [LICENSE](LICENSE) for details.\n\n## Related\n\n- [Opencode](https://opencode.ai/) — The AI coding agent this plugin extends\n- [@opencode-ai/plugin](https://www.npmjs.com/package/@opencode-ai/plugin) — Plugin SDK\n- [bun:sqlite](https://bun.com/docs/runtime/sqlite) — Bun's native SQLite driver\n- [claude-brain](https://github.com/memvid/claude-brain) — Inspiration and prior art\n\n---\n\n**Built for Opencode with Bun and SQLite.**\n\n*If Opencode isn't remembering your context, install this plugin and never repeat yourself again.*\n"
+      },
+      "plugins": [
+        {
+          "name": "mind",
+          "description": "Claude Brain - Give Claude photographic memory in ONE portable file",
+          "version": "1.0.11",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hatcat007/OpenMindAI",
+            "/plugin install mind@memvid"
+          ]
+        }
+      ]
+    }
+  ]
+}

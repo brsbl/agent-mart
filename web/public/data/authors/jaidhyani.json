@@ -2,126 +2,25 @@
   "author": {
     "id": "jaidhyani",
     "display_name": "Jai Dhyani",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/381155?u=8622d32ed9ff47935cc63cfd04d9f2fe4a234190&v=4",
-    "url": "https://github.com/jaidhyani",
-    "bio": null,
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 5,
-      "total_skills": 0,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/381155?u=8622d32ed9ff47935cc63cfd04d9f2fe4a234190&v=4"
   },
   "marketplaces": [
     {
       "name": "cc-plugin-marketplace",
       "version": null,
       "description": "Claude Code plugins by jaidhyani",
-      "owner_info": {
-        "name": "jaidhyani"
-      },
-      "keywords": [],
       "repo_full_name": "jaidhyani/cc-plugin-marketplace",
       "repo_url": "https://github.com/jaidhyani/cc-plugin-marketplace",
       "repo_description": "Claude Code plugin marketplace",
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-14T05:57:55Z",
-        "created_at": "2026-01-14T05:33:45Z",
-        "license": null
+        "pushed_at": "2026-02-03T00:57:55Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 440
-        },
-        {
-          "path": "plugins",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/claude-archivist",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/claude-archivist/.claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/claude-archivist/.claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 302
-        },
-        {
-          "path": "plugins/claude-archivist/README.md",
-          "type": "blob",
-          "size": 1672
-        },
-        {
-          "path": "plugins/claude-archivist/commands",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/claude-archivist/commands/archive-all.md",
-          "type": "blob",
-          "size": 387
-        },
-        {
-          "path": "plugins/claude-archivist/commands/archive-status.md",
-          "type": "blob",
-          "size": 1022
-        },
-        {
-          "path": "plugins/claude-archivist/commands/archive.md",
-          "type": "blob",
-          "size": 709
-        },
-        {
-          "path": "plugins/claude-archivist/commands/configure-archive.md",
-          "type": "blob",
-          "size": 999
-        },
-        {
-          "path": "plugins/claude-archivist/commands/restore-from-archive.md",
-          "type": "blob",
-          "size": 1007
-        },
-        {
-          "path": "plugins/claude-archivist/hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "plugins/claude-archivist/hooks/hooks.json",
-          "type": "blob",
-          "size": 886
-        }
-      ],
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-plugin-marketplace\",\n  \"owner\": {\n    \"name\": \"jaidhyani\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by jaidhyani\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-archivist\",\n      \"source\": \"./plugins/claude-archivist\",\n      \"description\": \"Automatically archive Claude Code session transcripts to prevent data loss\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Jai\"\n      }\n    }\n  ]\n}\n",
-        "plugins/claude-archivist/.claude-plugin/plugin.json": "{\n  \"name\": \"claude-archivist\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Automatically archive Claude Code session transcripts to prevent data loss\",\n  \"author\": {\n    \"name\": \"Jai\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"sessions\", \"archive\", \"backup\", \"transcripts\"],\n  \"commands\": [\"./commands/\"]\n}\n",
-        "plugins/claude-archivist/README.md": "# claude-archivist\n\nAutomatically archive Claude Code session transcripts to prevent data loss from automatic cleanup.\n\n## Features\n\n- **Automatic archival** on SessionEnd and PreCompact hooks\n- **Periodic backup** during long sessions (configurable interval, default 30 min)\n- **Incremental** - only archives files that have changed\n- **Gzip compression** to save disk space\n- **Safe restore** - never overwrites existing sessions\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/claude-archivist:archive` | Archive current session |\n| `/claude-archivist:archive-all` | Archive all sessions (full scan) |\n| `/claude-archivist:archive-status` | Show archive statistics |\n| `/claude-archivist:restore-from-archive` | Restore deleted sessions |\n| `/claude-archivist:configure-archive` | Configure plugin settings |\n\n## Configuration\n\nSettings are stored in `~/.claude/claude-archivist.local.md`:\n\n```yaml\n---\narchive_path: ~/.claude-archive\nbackup_interval_minutes: 30\nenabled: true\n---\n```\n\n| Setting | Default | Description |\n|---------|---------|-------------|\n| `archive_path` | `~/.claude-archive` | Where archives are stored |\n| `backup_interval_minutes` | `30` | Minutes between periodic backups |\n| `enabled` | `true` | Enable/disable automatic archiving |\n\n## How It Works\n\n1. **SessionEnd hook**: Archives current session when you exit Claude Code\n2. **PreCompact hook**: Archives current session before context compaction\n3. **Stop hook**: Periodic backup - archives current session if interval exceeded\n\nArchives mirror the source structure:\n```\n~/.claude-archive/\n└── [encoded-project-path]/\n    └── [session-uuid].jsonl.gz\n```\n",
-        "plugins/claude-archivist/commands/archive-all.md": "---\ndescription: Archive all session transcripts (full scan)\nallowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/scripts/*)\n---\n\n# Archive All Sessions\n\nRun a full scan and archive all session transcripts.\n\nExecute:\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/archive.sh --full\n```\n\nAfter running, report:\n- Whether the archive completed successfully\n- The archive location (default: ~/.claude-archive)\n",
-        "plugins/claude-archivist/commands/archive-status.md": "---\ndescription: Show archive status and statistics\nallowed-tools: Bash(find:*), Bash(wc:*), Bash(du:*), Bash(cat:*), Bash(stat:*), Bash(date:*)\n---\n\n# Archive Status Command\n\nShow statistics about the session archive.\n\nGather and report the following information:\n\n1. **Configuration**:\n   - Read from `~/.claude/claude-archivist.local.md` if it exists\n   - Show archive path (default: ~/.claude-archive)\n   - Show backup interval setting\n\n2. **Archive Statistics**:\n   - Total number of archived sessions: `find ~/.claude-archive -name \"*.jsonl.gz\" -type f | wc -l`\n   - Total archive size: `du -sh ~/.claude-archive`\n   - Last backup timestamp: read from `~/.claude-archive/.last-backup-timestamp`\n\n3. **Source Statistics**:\n   - Total sessions in source: `find ~/.claude/projects -name \"*.jsonl\" -type f | wc -l`\n   - Sessions not yet archived (if any)\n\n4. **Restorable Sessions**:\n   - Count of sessions that exist in archive but not in source (can be restored)\n\nPresent this information in a clear, readable format.\n",
-        "plugins/claude-archivist/commands/archive.md": "---\ndescription: Archive the current session transcript\nallowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/scripts/*), Bash(find:*), Bash(head:*)\n---\n\n# Archive Current Session\n\nArchive the most recently modified session in the current project.\n\nFirst, find the current project's session directory and most recent session:\n```bash\nPROJECT_DIR=$(echo \"$PWD\" | sed 's|/|-|g')\nSESSION_DIR=\"$HOME/.claude/projects/$PROJECT_DIR\"\nLATEST=$(find \"$SESSION_DIR\" -name \"*.jsonl\" -type f -printf '%T@ %p\\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)\n```\n\nThen archive it:\n```bash\necho \"{\\\"transcript_path\\\": \\\"$LATEST\\\"}\" | ${CLAUDE_PLUGIN_ROOT}/scripts/archive.sh\n```\n\nReport whether the archive completed successfully.\n",
-        "plugins/claude-archivist/commands/configure-archive.md": "---\ndescription: Configure archive settings\nallowed-tools: Read(*), Write(~/.claude/claude-archivist.local.md)\n---\n\n# Configure Archive Command\n\nConfigure the claude-archivist plugin settings.\n\n## Configuration File\n\nSettings are stored in `~/.claude/claude-archivist.local.md` with YAML frontmatter.\n\n## Available Settings\n\n| Setting | Default | Description |\n|---------|---------|-------------|\n| `archive_path` | `~/.claude-archive` | Directory where archives are stored |\n| `backup_interval_minutes` | `30` | Minutes between periodic backups during long sessions |\n| `enabled` | `true` | Enable or disable automatic archiving |\n\n## Example Configuration\n\n```yaml\n---\narchive_path: ~/.claude-archive\nbackup_interval_minutes: 30\nenabled: true\n---\n```\n\n## Instructions\n\n1. First, check if the config file exists and read current settings\n2. Ask the user what they want to change\n3. Write the updated configuration\n\nIf the file doesn't exist, create it with the user's desired settings or defaults.\n",
-        "plugins/claude-archivist/commands/restore-from-archive.md": "---\ndescription: Restore deleted sessions from archive\nallowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/scripts/*)\n---\n\n# Restore From Archive Command\n\nRestore sessions that have been deleted from the source but exist in the archive.\n\n## Default Behavior\n\nRestore all sessions that are missing from the source:\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/restore.sh\n```\n\n## List Restorable Sessions\n\nTo see what can be restored without actually restoring:\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/restore.sh --list\n```\n\n## Restore Specific Session\n\nTo restore a specific session by ID:\n```bash\n${CLAUDE_PLUGIN_ROOT}/scripts/restore.sh --session <session-id>\n```\n\n## Important Notes\n\n- This command NEVER overwrites existing sessions in the source\n- Only sessions that no longer exist in ~/.claude/projects/ will be restored\n- Restored sessions will be available in Claude Code after restart\n\nAsk the user what they want to do:\n1. List restorable sessions first\n2. Restore all missing sessions\n3. Restore a specific session\n",
-        "plugins/claude-archivist/hooks/hooks.json": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"prompt\",\n            \"prompt\": \"${CLAUDE_PLUGIN_ROOT}/scripts/check-first-run.sh\"\n          }\n        ]\n      }\n    ],\n    \"SessionEnd\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/archive.sh\",\n            \"timeout\": 60\n          }\n        ]\n      }\n    ],\n    \"PreCompact\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/archive.sh\",\n            \"timeout\": 60\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/archive.sh --periodic\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-plugin-marketplace\",\n  \"owner\": {\n    \"name\": \"jaidhyani\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by jaidhyani\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-archivist\",\n      \"source\": \"./plugins/claude-archivist\",\n      \"description\": \"Automatically archive Claude Code session transcripts to prevent data loss\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Jai\"\n      }\n    },\n    {\n      \"name\": \"timestamp-tracker\",\n      \"source\": \"./plugins/timestamp-tracker\",\n      \"description\": \"Track timestamps of user prompts and Claude responses for temporal context\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Jai\"\n      }\n    },\n    {\n      \"name\": \"imagine\",\n      \"source\": \"./plugins/imagine\",\n      \"description\": \"Generate images using Gemini 3 Pro (Nano Banana Pro)\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Jai\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Claude Marketplace\n\nClaude Code plugins by jaidhyani.\n\n## Installation\n\nAdd this marketplace:\n```bash\n/plugin marketplace add jaidhyani/cc-plugin-marketplace\n```\n\n## Available Plugins\n\n### claude-archivist\n\nAutomatically archive Claude Code session transcripts to prevent data loss.\n\n**Install:**\n```bash\n/plugin install claude-archivist@cc-plugin-marketplace\n```\n\n**Features:**\n- Archives sessions on SessionEnd, PreCompact, and periodically during long sessions\n- Incremental backup - only copies changed files\n- Gzip compression\n- Mirrors source directory structure to `~/.claude-archive/`\n- Restore deleted sessions without overwriting existing ones\n\n**Commands:**\n- `/claude-archivist:archive` - Archive current session\n- `/claude-archivist:archive-all` - Archive all sessions (full scan)\n- `/claude-archivist:archive-status` - Show backup statistics\n- `/claude-archivist:restore-from-archive` - Restore deleted sessions\n- `/claude-archivist:configure-archive` - Configure settings\n\n**Configuration:**\n\nCreate `~/.claude/claude-archivist.local.md`:\n```yaml\n---\narchive_path: ~/.claude-archive\nbackup_interval_minutes: 30\nenabled: true\n---\n```\n",
+        "plugins/claude-archivist/README.md": "# claude-archivist\n\nAutomatically archive Claude Code session transcripts to prevent data loss from automatic cleanup.\n\n## Features\n\n- **Automatic archival** on SessionEnd and PreCompact hooks\n- **Periodic backup** during long sessions (configurable interval, default 30 min)\n- **Incremental** - only archives files that have changed\n- **Gzip compression** to save disk space\n- **Safe restore** - never overwrites existing sessions\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/claude-archivist:archive` | Archive current session |\n| `/claude-archivist:archive-all` | Archive all sessions (full scan) |\n| `/claude-archivist:archive-status` | Show archive statistics |\n| `/claude-archivist:restore-from-archive` | Restore deleted sessions |\n| `/claude-archivist:configure-archive` | Configure plugin settings |\n\n## Configuration\n\nSettings are stored in `~/.claude/claude-archivist.local.md`:\n\n```yaml\n---\narchive_path: ~/.claude-archive\nbackup_interval_minutes: 30\nenabled: true\n---\n```\n\n| Setting | Default | Description |\n|---------|---------|-------------|\n| `archive_path` | `~/.claude-archive` | Where archives are stored |\n| `backup_interval_minutes` | `30` | Minutes between periodic backups |\n| `enabled` | `true` | Enable/disable automatic archiving |\n\n## How It Works\n\n1. **SessionEnd hook**: Archives current session when you exit Claude Code\n2. **PreCompact hook**: Archives current session before context compaction\n3. **Stop hook**: Periodic backup - archives current session if interval exceeded\n\nArchives mirror the source structure:\n```\n~/.claude-archive/\n└── [encoded-project-path]/\n    └── [session-uuid].jsonl.gz\n```\n"
       },
       "plugins": [
         {
@@ -136,6 +35,34 @@
           "install_commands": [
             "/plugin marketplace add jaidhyani/cc-plugin-marketplace",
             "/plugin install claude-archivist@cc-plugin-marketplace"
+          ]
+        },
+        {
+          "name": "timestamp-tracker",
+          "source": "./plugins/timestamp-tracker",
+          "description": "Track timestamps of user prompts and Claude responses for temporal context",
+          "version": "1.0.0",
+          "author": {
+            "name": "Jai"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jaidhyani/cc-plugin-marketplace",
+            "/plugin install timestamp-tracker@cc-plugin-marketplace"
+          ]
+        },
+        {
+          "name": "imagine",
+          "source": "./plugins/imagine",
+          "description": "Generate images using Gemini 3 Pro (Nano Banana Pro)",
+          "version": "1.0.0",
+          "author": {
+            "name": "Jai"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jaidhyani/cc-plugin-marketplace",
+            "/plugin install imagine@cc-plugin-marketplace"
           ]
         }
       ]
