@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "gaodes",
+    "display_name": "El Che",
+    "avatar_url": "https://avatars.githubusercontent.com/u/80869138?u=2c34eff3de1bea39f2efbc9dd9fc8d4862db9977&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-ecosystem",
+      "version": null,
+      "description": "Claude Code Memory System - File-based learning and memory management",
+      "repo_full_name": "gaodes/cc-ecosystem",
+      "repo_url": "https://github.com/gaodes/cc-ecosystem",
+      "repo_description": "El Che's Claude Code Plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-03T19:12:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-ecosystem\",\n  \"owner\": {\n    \"name\": \"El Che\",\n    \"email\": \"elche@elches.dev\"\n  },\n  \"meta\": {\n    \"description\": \"El Che's Claude Code Ecosystem - A collection of plugins, skills and tools for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ccmem\",\n      \"version\": \"1.1.0\",\n      \"description\": \"Claude Code Memory System - File-based learning and memory management\",\n      \"source\": \"./plugins/ccmem\",\n      \"category\": \"memory\",\n      \"keywords\": [\n        \"memory\",\n        \"learning\",\n        \"preferences\",\n        \"patterns\",\n        \"claude-code\"\n      ]\n    }\n  ]\n}\n",
+        "plugins/ccmem/README.md": "# ccmem - Claude Code Memory System\n\nA file-based memory system for Claude Code that learns from observations and improves over time.\n\n## Installation\n\n### As Claude Code Plugin (Recommended)\n\n```bash\n# Add the plugin marketplace\n/plugin marketplace add /path/to/ccmem\n\n# Install the plugin\n/plugin install ccmem@ccmem-dev\n\n# Restart Claude Code to activate\n```\n\n### Manual Installation\n\n```bash\n# Clone or copy to ~/.claude/memory/\n# Set up hooks in Claude Code settings\n```\n\n### CLI Setup (Optional)\n\nTo use the `ccmem` CLI directly from your terminal, add the plugin's bin directory to your PATH:\n\n```bash\n# Find where the plugin is installed\nCCMEM_PATH=$(find ~/.claude/plugins -name \"ccmem\" -type f -path \"*/bin/*\" 2>/dev/null | head -1 | xargs dirname)\n\n# Add to your shell profile (~/.zshrc or ~/.bashrc)\nexport PATH=\"$CCMEM_PATH:$PATH\"\n```\n\nAlternatively, use slash commands in Claude Code (no PATH setup needed):\n- `/ccmem-stats` — View statistics\n- `/ccmem-list` — List memories\n- `/ccmem-search <query>` — Search memories\n- `/ccmem-show <id>` — Show memory details\n- `/ccmem-remember <description>` — Create a memory\n- `/ccmem-reinforce <id>` — Positive feedback\n- `/ccmem-correct <id>` — Negative feedback\n- `/ccmem-promote` — Review and promote to CLAUDE.md\n- `/ccmem-cleanup` — Review low-confidence memories\n\n## Quick Start\n\n```bash\n# View statistics\nccmem stats\n\n# Search memories\nccmem search \"pnpm\"\nccmem search \"workflow\"\n\n# List all memories\nccmem list\n\n# Show specific memory\nccmem show <memory-id>\n\n# Provide feedback\nccmem reinforce <memory-id>    # Positive feedback\nccmem correct <memory-id>      # Negative feedback\n\n# Run maintenance manually\nccmem maintenance\n\n# Check automation status\nccmem automation status\n\n# Unload automation\nccmem automation unload\n```\n\n## Orphaned Session Recovery\n\nIf Claude Code crashes or is killed abruptly (terminal closed, process killed), sessions may be left without a proper `session_end` event. The system automatically detects and recovers these orphaned sessions:\n\n- Recovery happens at the start of each new session\n- Orphaned sessions are finalized with synthetic `session_end` events\n- Marked with `\"recovered\": true` in `sessions.json`\n- Current active session is never recovered\n\n## Configuration\n\nSet `CLAUDE_MEMORY_DIR` environment variable to customize where memory data is stored:\n\n```bash\nexport CLAUDE_MEMORY_DIR=\"/custom/path/to/memory\"\n```\n\nDefault: `~/.claude/memory/`\n\n## Directory Structure\n\n```\n~/.claude/memory/\n├── config.json              # System configuration\n├── index.json               # Master memory index\n├── observations.jsonl       # Event stream (hooks write here)\n├── feedback.jsonl           # User feedback log\n├── search-index.json        # Full-text search index\n├── memories/\n│   ├── global/              # Global memories\n│   └── projects/            # Per-project memories\n├── hooks/                   # Claude Code hooks\n├── scripts/                 # Utility scripts\n├── skills/                  # Claude Code skills\n└── bin/                     # CLI commands\n```\n\n## How It Works\n\n1. **Capture**: Hooks capture session events (prompts, tool uses) to `observations.jsonl`\n2. **Analyze**: The analyzer detects patterns and creates memory files\n3. **Retrieve**: The system searches relevant memories based on context\n4. **Learn**: Feedback adjusts confidence; unused memories decay over time\n5. **Sync**: High-confidence memories (≥0.8) automatically sync to CLAUDE.md\n\n## CLAUDE.md Integration\n\nHigh-confidence memories (≥0.8) are automatically synced to your CLAUDE.md file at session start:\n\n```markdown\n<!-- memory-sync: start -->\n<!-- These sections are auto-updated from high-confidence memories -->\n\n### Active Memories (High Confidence)\n- prefer-pnpm-over-npm (0.85) — Suggest pnpm for Node.js projects\n- prefer-task-based-workflow (0.90) — Use TodoWrite for complex tasks\n...\n\n<!-- memory-sync: end -->\n```\n\n**How it works:**\n- The `on-start.sh` hook automatically runs `ccmem sync --promote`\n- Memories with confidence ≥0.8 are formatted and inserted between sync markers\n- Manual sections outside sync markers are preserved\n- Memories can be reinforced (`ccmem reinforce`) or corrected (`ccmem correct`)\n\n**Manual sync:**\n```bash\n# Promote high-confidence memories to CLAUDE.md\nccmem sync --promote\n\n# Import CLAUDE.md rules back to memories\nccmem sync --import\n\n# Two-way sync\nccmem sync\n```\n\n## Automation\n\n### Option 1: Launch Agent (macOS)\n\n```bash\n# Install the launch agent\ncp ~/.claude/memory/com.elche.memory-maintenance.plist ~/Library/LaunchAgents/\nlaunchctl load ~/Library/LaunchAgents/com.elche.memory-maintenance.plist\n\n# Verify it's loaded\nlaunchctl list | grep memory-maintenance\n```\n\nRuns daily at midnight.\n\n### Option 2: Cron (Linux/macOS)\n\n```bash\n# Edit crontab\ncrontab -e\n\n# Add line for daily maintenance at 2 AM\n0 2 * * * ~/.claude/memory/scripts/maintenance.sh run\n```\n\n### Option 3: Manual\n\nRun maintenance whenever convenient:\n```bash\nccmem maintenance\n```\n\n## CLI Commands\n\n### Core Commands\n\n| Command | Description |\n|---------|-------------|\n| `ccmem search <query>` | Search memories by content |\n| `ccmem list` | List all memories |\n| `ccmem show <id>` | Show memory details |\n| `ccmem reinforce <id>` | Positive feedback (increases confidence) |\n| `ccmem correct <id>` | Negative feedback (decreases confidence) |\n| `ccmem stats` | Show system statistics |\n\n### Analysis Commands\n\n| Command | Description |\n|---------|-------------|\n| `ccmem analyze` | Run pattern analysis on observations |\n| `ccmem index` | Rebuild search index |\n| `ccmem sync` | Sync with CLAUDE.md |\n\n### Automation Commands\n\n| Command | Description |\n|---------|-------------|\n| `ccmem maintenance` | Run maintenance manually |\n| `ccmem automation status` | Check automation status |\n| `ccmem automation load` | Load launch agent |\n| `ccmem automation unload` | Unload launch agent |\n\n## Memory Types\n\n| Type | Description | Example |\n|------|-------------|---------|\n| preference | User likes/dislikes | \"Prefer pnpm over npm\" |\n| pattern | Code/workflow patterns | \"Use early returns\" |\n| correction | Learned from mistakes | \"User prefers Zod\" |\n| workflow | Preferred processes | \"Run tests first\" |\n| negative | What NOT to do | \"Never suggest MD5\" |\n\n## Confidence System\n\n- **Initial**: Based on pattern strength (0.5 - 0.95)\n- **Reinforcement**: +0.1 for positive feedback\n- **Correction**: -0.2 for negative feedback\n- **Decay**: Loses ~1% per day of inactivity\n- **Archive**: Memories below 0.1 confidence are archived\n\n## Skills\n\nUse these Claude Code skills for memory operations:\n\n- `memory-create` - Create new memories\n- `memory-retrieve` - Load and apply memories\n- `memory-feedback` - Provide feedback on memories\n\n## Files\n\n| File | Purpose |\n|------|---------|\n| `config.json` | System identity, settings, timestamps |\n| `index.json` | Master index of all memories |\n| `observations.jsonl` | Append-only event stream |\n| `feedback.jsonl` | User feedback and corrections |\n| `search-index.json` | Inverted index for search |\n\n## Current Status\n\nRun `ccmem stats` to see:\n- Total observations captured\n- Number of memories\n- Last analysis timestamp\n- Last maintenance timestamp\n\n## Troubleshooting\n\n**No memories found?**\n- Check if analyzer has run: `cat config.json | grep last_analysis`\n- Run manually: `python3 ~/.claude/memory/scripts/lib/memory_lib.py`\n\n**Search not working?**\n- Rebuild index: `~/.claude/memory/scripts/build-index.py`\n\n**Maintenance failing?**\n- Check logs: `cat ~/.claude/memory/logs/maintenance-error.log`\n\n## Privacy\n\n100% local. All data stays in `~/.claude/memory/`. No external services.\n"
+      },
+      "plugins": [
+        {
+          "name": "ccmem",
+          "version": "1.1.0",
+          "description": "Claude Code Memory System - File-based learning and memory management",
+          "source": "./plugins/ccmem",
+          "category": "memory",
+          "keywords": [
+            "memory",
+            "learning",
+            "preferences",
+            "patterns",
+            "claude-code"
+          ],
+          "categories": [
+            "claude-code",
+            "learning",
+            "memory",
+            "patterns",
+            "preferences"
+          ],
+          "install_commands": [
+            "/plugin marketplace add gaodes/cc-ecosystem",
+            "/plugin install ccmem@cc-ecosystem"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,59 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "vibe-haptic",
-      "version": null,
-      "description": "Haptic feedback plugin for Claude Code using macOS Force Touch trackpad",
-      "repo_full_name": "devxoul/vibe-haptic",
-      "repo_url": "https://github.com/devxoul/vibe-haptic",
-      "repo_description": "🫨 Haptic feedback from your coding agents – Get notified physically.",
-      "signals": {
-        "stars": 24,
-        "forks": 0,
-        "pushed_at": "2026-01-21T12:18:29Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"vibe-haptic\",\n  \"description\": \"Haptic feedback plugin for Claude Code using macOS Force Touch trackpad\",\n  \"owner\": {\n    \"name\": \"Jeon Suyeol\",\n    \"url\": \"https://github.com/devxoul\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"vibe-haptic\",\n      \"description\": \"Feel tactile feedback when tasks complete or when input is needed through your MacBook's Force Touch trackpad\",\n      \"version\": \"1.0.3\",\n      \"author\": {\n        \"name\": \"Jeon Suyeol\",\n        \"url\": \"https://github.com/devxoul\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/devxoul/vibe-haptic\",\n      \"keywords\": [\"haptic\", \"feedback\", \"macos\", \"trackpad\", \"force-touch\", \"accessibility\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"vibe-haptic\",\n  \"version\": \"1.0.5\",\n  \"description\": \"Haptic feedback for Claude Code using macOS Force Touch trackpad. Feel tactile feedback when tasks complete or when input is needed.\",\n  \"author\": {\n    \"name\": \"Jeon Suyeol\",\n    \"url\": \"https://github.com/devxoul\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"haptic\", \"feedback\", \"macos\", \"trackpad\", \"force-touch\", \"accessibility\"],\n  \"homepage\": \"https://github.com/devxoul/vibe-haptic\",\n  \"repository\": \"https://github.com/devxoul/vibe-haptic\"\n}\n",
-        "README.md": "# Vibe Haptic 🫨\n\nHaptic feedback from your coding agents.\n\n![Vibe Haptic](https://github.com/user-attachments/assets/4e80abbf-e61a-43b1-ad17-14ea8f480cdd)\n\nGet tactile feedback when your AI agent completes tasks, encounters errors, or requests input — feel the rhythm of your coding session through your MacBook's trackpad.\n\n## Why?\n\n\"Why not just use system notifications?\"\n\nI tried that. Banners popping up, sounds dinging — it felt noisy and annoying. Every notification pulled my eyes away from what I was doing, broke my flow, and honestly just became another thing to dismiss.\n\nI wanted something quieter. A subtle nudge that says \"hey, I'm done\" without screaming for attention. Something I could feel without having to look. (I'm the kind of person who always has Do Not Disturb on.)\n\nThat's what haptic feedback does — it's silent, ambient, and stays out of your way until you need it.\n\n## How It Works\n\nModern MacBooks have a Force Touch trackpad that doesn't physically click. Instead, it uses a linear actuator (Taptic Engine) to simulate the sensation of a click through precise vibrations.\n\nVibe Haptic taps into macOS's private `MultitouchSupport.framework` to trigger these haptic actuations programmatically. When your AI agent finishes a task or needs attention, the trackpad vibrates with distinct patterns you can feel under your fingers.\n\n## Installation\n\n### Claude Code\n\n```bash\nclaude plugin marketplace add devxoul/vibe-haptic\nclaude plugin install vibe-haptic\n```\n\nOr within Claude Code:\n\n```\n/plugin marketplace add devxoul/vibe-haptic\n/plugin install vibe-haptic\n```\n\n### OpenCode\n\nAdd to your `opencode.jsonc`:\n\n```jsonc\n{\n  \"plugins\": [\n    \"vibe-haptic@1.0.5\"\n  ]\n}\n```\n\n## Configuration\n\nEverything works out of the box — just install and go. But if you want to tweak the patterns or map different events, here's how.\n\n### Configuration File\n\nCreate `vibe-haptic.json` in your config directory:\n\n- **Claude Code**: `~/.claude/vibe-haptic.json` or `.claude/vibe-haptic.json`\n- **OpenCode**: `~/.config/opencode/vibe-haptic.json` or `.opencode/vibe-haptic.json`\n\n```json\n{\n  \"patterns\": {\n    \"success\": { \"beat\": \"6/1.5 6/0.8  4/0.5\" },\n    \"error\": { \"beat\": \"6/2.0 6/2.0 6/2.0\" }\n  },\n  \"events\": {\n    \"stop\": \"dopamine\",\n    \"prompt\": \"alert\"\n  }\n}\n```\n\n### Events\n\nEvents map agent actions to haptic patterns:\n\n| Event | Trigger | Claude Code | OpenCode |\n|-------|---------|-------------|----------|\n| `stop` | Agent finishes and becomes idle | ✓ | ✓ |\n| `prompt` | Agent asks for input (select option, permission, etc.) | ✓ | ✓ |\n\n#### Trigger Details\n\n**`stop` event** — Fires when the agent completes its work:\n- **Claude Code**: Triggered by the `Stop` hook event when the agent finishes responding\n- **OpenCode**: Triggered when session status changes to `idle`\n\n**`prompt` event** — Fires when the agent needs your attention:\n- **Claude Code**: Triggered by `Notification` hook events (permission requests, tool approvals, etc.)\n- **OpenCode**: Triggered by `permission.updated` or `question.asked` events\n\n### Beat Patterns\n\nHaptic feedback is defined using a beat notation:\n\n```\n\"6/0.8 4/1.0  6/0.5\"\n```\n\n- **Digits (3-6)**: Actuation strength — `3` minimal, `4` medium, `5` weak, `6` strong\n- **`/intensity`**: Optional intensity (0.0-2.0) — `6/0.5` = strong actuation at half intensity\n- **Spaces**: Pauses between taps (100ms per space)\n\nExamples:\n- `6 6 6` — three strong taps with short pauses\n- `6/2.0 6/0.5` — loud tap followed by soft tap\n- `66` — rapid double tap (no pause)\n- `6  6` — two taps with longer pause\n\n### Built-in Patterns\n\n| Pattern | Beat | Description |\n|---------|------|-------------|\n| `vibe` | `6/0.8 3/1.0   6/1.0` | Signature rhythm (default for stop event) |\n| `alert` | `6/0.5 6/1.0 6/0.5` | Attention pulse (default for prompt event) |\n| `dopamine` | `6666666 5/1.0 4/1.0 3/1.0` | Reward cascade |\n| `noise` | `6543654365436543` | Rapid texture |\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "vibe-haptic",
-          "description": "Feel tactile feedback when tasks complete or when input is needed through your MacBook's Force Touch trackpad",
-          "version": "1.0.3",
-          "author": {
-            "name": "Jeon Suyeol",
-            "url": "https://github.com/devxoul"
-          },
-          "source": "./",
-          "category": "productivity",
-          "homepage": "https://github.com/devxoul/vibe-haptic",
-          "keywords": [
-            "haptic",
-            "feedback",
-            "macos",
-            "trackpad",
-            "force-touch",
-            "accessibility"
-          ],
-          "categories": [
-            "accessibility",
-            "feedback",
-            "force-touch",
-            "haptic",
-            "macos",
-            "productivity",
-            "trackpad"
-          ],
-          "install_commands": [
-            "/plugin marketplace add devxoul/vibe-haptic",
-            "/plugin install vibe-haptic@vibe-haptic"
-          ]
-        }
-      ]
-    },
-    {
       "name": "agent-messenger",
       "version": null,
       "description": "Messaging platform interaction skills for AI agents - Slack workspaces and Discord servers",

@@ -6,49 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "neonwatty-plugins",
-      "version": null,
-      "description": "Claude Code plugins by Jeremy Watt",
-      "repo_full_name": "neonwatty/job-apply-plugin",
-      "repo_url": "https://github.com/neonwatty/job-apply-plugin",
-      "repo_description": "AI-powered job application assistant for Claude Code - fills LinkedIn, Greenhouse, Ashby, and Workday applications",
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-01-08T23:36:46Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"neonwatty-plugins\",\n  \"description\": \"Claude Code plugins by Jeremy Watt\",\n  \"owner\": {\n    \"name\": \"Jeremy Watt\",\n    \"github\": \"neonwatty\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"job-apply\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"neonwatty/job-apply-plugin\"\n      },\n      \"description\": \"AI-powered job application assistant for LinkedIn, Greenhouse, Ashby, and Workday\",\n      \"version\": \"1.0.0\",\n      \"tags\": [\"productivity\", \"job-search\", \"browser-automation\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"job-apply\",\n  \"version\": \"1.0.0\",\n  \"description\": \"AI-powered job application assistant for LinkedIn Easy Apply, Greenhouse, Ashby, and Workday\",\n  \"author\": {\n    \"name\": \"Jeremy Watt\",\n    \"url\": \"https://github.com/neonwatty\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"job-application\",\n    \"linkedin\",\n    \"greenhouse\",\n    \"workday\",\n    \"ashby\",\n    \"browser-automation\",\n    \"resume\"\n  ],\n  \"skills\": \"./skills\",\n  \"repository\": \"https://github.com/neonwatty/job-apply-plugin\"\n}\n",
-        "README.md": "# Job Apply Plugin for Claude Code\n\nAI-powered job application assistant that automatically fills out job applications on LinkedIn Easy Apply, Greenhouse, Ashby, and Workday using browser automation.\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `/job-apply` | Fill out job applications automatically using your resume |\n| `/job-search` | Search LinkedIn for jobs with connections and hiring manager insights |\n\n## Features\n\n### Job Apply (`/job-apply`)\n- **One-time profile setup**: Extract your information from a resume (PDF, DOCX, or TXT)\n- **Multi-platform support**: LinkedIn Easy Apply, Greenhouse, Ashby, Workday\n- **Smart field mapping**: Automatically matches your profile to form fields\n- **Safety first**: Never submits without your explicit confirmation\n- **Resume storage**: Profile saved locally for reuse across applications\n\n### Job Search (`/job-search`)\n- **Smart keyword suggestions**: Auto-generates search terms from your resume\n- **Connection insights**: Finds jobs at companies where you have connections\n- **Hiring manager discovery**: Identifies jobs with hiring managers listed\n- **Auto-inferred filters**: Location and experience level from your profile\n- **Results saved**: All searches saved to `~/.claude-job-searches/` as JSON\n\n## Requirements\n\n- [Claude Code](https://claude.ai/code) CLI\n- [Claude in Chrome](https://chromewebstore.google.com/detail/claude-in-chrome) MCP server for browser automation\n\n## Installation\n\n### From GitHub Marketplace\n\n```bash\n/plugin marketplace add neonwatty/job-apply-plugin\n/plugin install job-apply\n```\n\n### Manual Installation\n\nClone this repository to your local machine:\n\n```bash\ngit clone https://github.com/neonwatty/job-apply-plugin.git\ncd job-apply-plugin\n```\n\nThen in Claude Code:\n```bash\n/plugin install /path/to/job-apply-plugin\n```\n\n### Claude Desktop Installation\n\nClaude Desktop requires manual skill upload:\n\n1. **Download the ZIP file** from the [latest release](https://github.com/neonwatty/job-apply-plugin/releases/latest)\n\n2. **Open Claude Desktop** and go to **Settings**\n\n3. **Click \"Upload skill\"** and select the downloaded `.zip` file\n\n4. **Restart Claude Desktop** to load the skill\n\n> **Note:** Claude Desktop does not have marketplace support. You'll need to manually download updates from the releases page.\n\n## Usage\n\n### First Time Setup\n\n1. Invoke the skill:\n   ```\n   /job-apply\n   ```\n\n2. Provide your resume path when prompted:\n   ```\n   ~/Documents/resume.pdf\n   ```\n\n3. Review and confirm extracted profile information\n\n### Applying to Jobs\n\nOnce your profile is set up:\n\n1. Invoke the skill:\n   ```\n   /job-apply\n   ```\n\n2. Provide a job URL:\n   ```\n   https://www.linkedin.com/jobs/view/123456789\n   ```\n\n3. Watch as Claude fills out the application\n\n4. Review the summary and confirm submission\n\n### Searching for Jobs\n\nUse `/job-search` to find jobs where you have an advantage:\n\n1. Invoke the skill:\n   ```\n   /job-search\n   ```\n\n2. Claude will suggest keywords based on your resume:\n   ```\n   Based on your resume, I suggest searching for:\n   - Keywords: \"Senior Software Engineer\", \"Staff Engineer\"\n   - Location: San Francisco, CA\n   - Experience: Mid-Senior (7 years)\n\n   Ready to search, or would you like to adjust?\n   ```\n\n3. Confirm or modify the suggestions\n\n4. Review results prioritized by:\n   - Jobs with hiring managers listed (highest priority)\n   - Jobs with 1st-degree connections\n   - Jobs with alumni connections\n\nResults are automatically saved to `~/.claude-job-searches/`.\n\n## Supported Platforms\n\n| Platform | URL Pattern | Status |\n|----------|-------------|--------|\n| LinkedIn Easy Apply | `linkedin.com/jobs/view/*` | Supported |\n| Greenhouse | `boards.greenhouse.io/*` | Supported |\n| Ashby | `jobs.ashbyhq.com/*` | Supported |\n| Workday | `*.myworkdayjobs.com/*` | Supported |\n| Lever | `jobs.lever.co/*` | Supported |\n\n## Profile Storage\n\nYour profile is stored at `~/.claude-job-profile.json` and includes:\n\n- Personal information (name, email, phone, location)\n- Work history\n- Education\n- Skills\n- Social links (LinkedIn, GitHub, portfolio)\n\nTo reset your profile:\n```\n/job-apply reset profile\n```\n\n## Search Results Storage\n\nJob search results are saved to `~/.claude-job-searches/` with timestamped filenames:\n\n```\n~/.claude-job-searches/\n  search-2026-01-06T10-30-00.json\n  search-2026-01-07T14-15-00.json\n```\n\nEach file contains:\n- Search parameters (keywords, location, filters)\n- List of jobs with full details\n- Connection and hiring manager information\n- Priority ranking\n\n## Safety Features\n\n- **Never enters passwords** - Stops if login is required\n- **Never creates accounts** - You must create accounts yourself\n- **Never submits without confirmation** - Always shows summary first\n- **Never enters payment info** - Skips premium features\n- **Confirms sensitive questions** - Salary, visa status, etc.\n\n## License\n\nMIT License - See [LICENSE](LICENSE) for details.\n\n## Contributing\n\nContributions welcome! Please open an issue or PR on GitHub.\n\n## Author\n\nJeremy Watt ([@neonwatty](https://github.com/neonwatty))\n"
-      },
-      "plugins": [
-        {
-          "name": "job-apply",
-          "source": {
-            "source": "github",
-            "repo": "neonwatty/job-apply-plugin"
-          },
-          "description": "AI-powered job application assistant for LinkedIn, Greenhouse, Ashby, and Workday",
-          "version": "1.0.0",
-          "tags": [
-            "productivity",
-            "job-search",
-            "browser-automation"
-          ],
-          "categories": [
-            "browser-automation",
-            "job-search",
-            "productivity"
-          ],
-          "install_commands": [
-            "/plugin marketplace add neonwatty/job-apply-plugin",
-            "/plugin install job-apply@neonwatty-plugins"
-          ]
-        }
-      ]
-    },
-    {
       "name": "claude-skills",
       "version": null,
       "description": "Validation, PR creation, workflow testing, and feature planning skills",
