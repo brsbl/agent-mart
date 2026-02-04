@@ -25,8 +25,8 @@ export function SearchFilterControls() {
 
 function SearchFilterControlsSkeleton() {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <div className="flex-1 min-w-[200px] h-[38px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+    <div className="flex items-center gap-2">
+      <div className="flex-1 min-w-0 h-[38px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
       <div className="w-[140px] h-[38px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
       <div className="w-[160px] h-[38px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
     </div>
@@ -207,9 +207,9 @@ function SearchFilterControlsContent() {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex items-center gap-2">
       {/* Search Bar - expands to fill available space */}
-      <div className="flex-1 min-w-[200px]">
+      <div className="flex-1 min-w-0">
         <form onSubmit={handleSearch}>
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground-muted" size={16} />

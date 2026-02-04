@@ -6,55 +6,48 @@
   },
   "marketplaces": [
     {
-      "name": "stickystyle-skills",
+      "name": "regent-plugins",
       "version": null,
-      "description": "Index-based file discovery using ABOUTME headers. Use INSTEAD of grep or Explore agent when searching for files by purpose or feature. Faster and more accurate than scanning code.",
-      "repo_full_name": "stickystyle/claude-skills",
-      "repo_url": "https://github.com/stickystyle/claude-skills",
-      "repo_description": "Claude skills I've developed for my use",
+      "description": "Spec-driven development workflow for Claude Code",
+      "repo_full_name": "stickystyle/regent",
+      "repo_url": "https://github.com/stickystyle/regent",
+      "repo_description": null,
       "signals": {
-        "stars": 1,
+        "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-12-18T01:07:04Z"
+        "pushed_at": "2026-01-02T13:30:00Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"stickystyle-skills\",\n  \"owner\": {\n    \"name\": \"Ryan Parrish\",\n    \"url\": \"https://github.com/stickystyle\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aboutme-index\",\n      \"source\": \"./skills/aboutme-index\",\n      \"description\": \"Index-based file discovery using ABOUTME headers. Use INSTEAD of grep or Explore agent when searching for files by purpose or feature. Faster and more accurate than scanning code.\",\n      \"version\": \"1.0.2\",\n      \"author\": {\n        \"name\": \"Ryan Parrish\"\n      },\n      \"homepage\": \"https://github.com/stickystyle/claude-skills\",\n      \"repository\": \"https://github.com/stickystyle/claude-skills\",\n      \"license\": \"MIT\"\n    },\n    {\n      \"name\": \"uv\",\n      \"source\": \"./skills/uv\",\n      \"description\": \"Python package manager and project tooling using uv. Use when working with Python projects, managing dependencies, creating virtual environments, running Python scripts, configuring workspaces/monorepos, or troubleshooting uv issues.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Ryan Parrish\"\n      },\n      \"homepage\": \"https://github.com/stickystyle/claude-skills\",\n      \"repository\": \"https://github.com/stickystyle/claude-skills\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
-        "README.md": "# Claude Skills\n\nA collection of Claude Code skills by Ryan Parrish.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add stickystyle/claude-skills\n\n# Install a specific skill\n/plugin install aboutme-index@stickystyle-skills\n```\n\n## Available Skills\n\n### aboutme-index\n\nSemantic file discovery using ABOUTME headers. Instead of grep-searching or spawning Explore agents, this skill maintains a JSON index of human-written file descriptions.\n\n**How it works:**\n\n1. Add ABOUTME comments to your files:\n   ```python\n   # ABOUTME: JWT authentication module for AWS Cognito access tokens.\n   # ABOUTME: Handles token validation, JWKS caching, and user context.\n   ```\n\n2. The index auto-rebuilds on session start\n\n3. Claude reads one file to find what you need\n\n[Full documentation](skills/aboutme-index/README.md)\n\n## License\n\nMIT\n",
-        "skills/aboutme-index/README.md": "# ABOUTME Index\n\nA Claude Code skill for semantic file discovery using ABOUTME headers.\n\n## What It Does\n\nInstead of grep-searching or spawning Explore agents to find relevant files, this skill maintains a JSON index of human-written file descriptions. When you ask \"where is authentication handled?\", Claude reads one file and instantly finds the answer.\n\n## Example\n\n```\n> which files handle authentication?\n\n⏺ Let me check the ABOUTME index for authentication-related files.\n\n⏺ Read(.claude/aboutme-index.json)\n  ⎿  Read 85 lines\n\n⏺ Authentication is handled by these files:\n\n  Core Authentication:\n  - app/src/auth.py - JWT authentication module for AWS Cognito access tokens.\n    Handles token validation, JWKS caching, and user context management\n  - app/src/context.py - GraphQL context with authenticated user and application\n    services. Provides CustomContext class for type-safe access in resolvers\n\n  Tests:\n  - app/src/tests/unit/test_auth_config.py - Cognito configuration loading from SSM\n  - app/src/tests/unit/test_auth_module.py - JWKS client factory and JWT components\n  - app/src/tests/unit/test_jwks_caching.py - JWKS key caching behavior\n  - app/src/tests/unit/test_jwt_validation.py - JWT validation FastAPI dependency\n  - app/src/tests/unit/test_context.py - CustomContext class and get_context()\n  - app/src/tests/integration/test_graphql_auth.py - GraphQL HTTP auth flow\n```\n\n**1 tool call.** Without the index, this would require an Explore agent or multiple grep searches.\n\n## How It Works\n\n1. **Convention**: All code files start with ABOUTME comments:\n   ```python\n   # ABOUTME: JWT authentication module for AWS Cognito access tokens.\n   # ABOUTME: Handles token validation, JWKS caching, and user context.\n   ```\n\n2. **Indexer**: A Python script extracts these into `.claude/aboutme-index.json`\n\n3. **Hooks**: The index auto-rebuilds on session start and updates incrementally on edits\n\n## Setup Your Project\n\n1. Add ABOUTME headers to your files (first 2 lines):\n   ```python\n   # ABOUTME: Brief description of what this file does.\n   # ABOUTME: Additional context about its purpose.\n   ```\n\n2. Add to your `CLAUDE.md` (global `~/.claude/CLAUDE.md` or project-level):\n   ```markdown\n   # Writing code\n\n   - All code files should start with a brief 2 line comment explaining what the file does. Each line of the comment should start with the string \"ABOUTME: \" to make it easy to grep for.\n   ```\n\n   **This makes the system self-updating** - Claude will automatically add ABOUTME headers to any new files it creates.\n\n3. Add to your project's `CLAUDE.md` to tell Claude how to use the index:\n   ```markdown\n   ## File Discovery\n\n   This project has ABOUTME headers in all files. When searching for relevant files,\n   read the index at `.claude/aboutme-index.json` instead of using grep or Explore.\n   ```\n\n4. Optionally add `.claude/aboutme-index.json` to `.gitignore` (it rebuilds on session start)\n\n## Bootstrapping an Existing Codebase\n\nFor projects with existing code that lacks ABOUTME headers, use Claude to help add them:\n\n1. Run `/aboutme-check` to find files missing headers\n\n2. Copy-paste the check output back to Claude. The output is formatted as a ready-to-use prompt.\n\n3. Claude will read each file, understand its purpose, and add appropriate headers.\n\n4. The index rebuilds automatically on session start, or run `/aboutme-rebuild`\n\n## Automatic Hooks\n\nWhen installed as a plugin, this skill automatically configures two hooks:\n\n- **SessionStart**: Rebuilds the entire index when you start a Claude Code session (catches external changes)\n- **PostToolUse**: Updates just the edited file when Claude modifies files (fast incremental updates)\n\nNo manual configuration required - the hooks are bundled with the plugin.\n\n## Slash Commands\n\nThe plugin provides these slash commands:\n\n| Command | Description |\n|---------|-------------|\n| `/aboutme-check` | Find files missing ABOUTME headers |\n| `/aboutme-rebuild` | Rebuild the entire index from scratch |\n| `/aboutme-stale` | Check for headers that may be out of date |\n\nYou can also read the index directly: `cat .claude/aboutme-index.json`\n\n## Index Format\n\n```json\n{\n  \"app/src/auth.py\": \"JWT authentication module for AWS Cognito access tokens...\",\n  \"app/src/config.py\": \"Centralized configuration using Pydantic settings...\"\n}\n```\n\n## Why This Pattern?\n\n- **Speed**: 1 file read vs. multiple grep/glob operations\n- **Accuracy**: Human-curated descriptions beat pattern matching\n- **Semantic**: Natural language queries match natural language descriptions\n- **Low overhead**: 2-line comments per file, auto-maintained index\n\n## Supported File Types\n\nThe indexer looks for ABOUTME headers in:\n- `.py` - Python (`# ABOUTME:`)\n- `.sh` - Shell scripts (`# ABOUTME:`)\n- `.yml`, `.yaml` - YAML configs (`# ABOUTME:`)\n- `.toml` - TOML configs (`# ABOUTME:`)\n- `.js` - JavaScript (`// ABOUTME:`)\n- `.ts` - TypeScript (`// ABOUTME:`)\n- `.jsx` - React JSX (`// ABOUTME:`)\n- `.tsx` - React TSX (`// ABOUTME:`)\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"regent-plugins\",\n  \"owner\": {\n    \"name\": \"Ryan Parrish\"\n  },\n  \"metadata\": {\n    \"description\": \"Spec-driven development workflow for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"regent\",\n      \"source\": \"./\",\n      \"description\": \"Spec-driven development workflow for Claude Code\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Ryan Parrish\"\n      },\n      \"license\": \"AGPL-3.0\",\n      \"keywords\": [\"spec-driven\", \"tdd\", \"workflow\", \"development\"],\n      \"repository\": \"https://github.com/stickystyle/regent\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"regent\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Spec-driven development workflow for Claude Code\",\n  \"author\": {\n    \"name\": \"Ryan Parrish\"\n  },\n  \"license\": \"AGPL-3.0\",\n  \"keywords\": [\"spec-driven\", \"tdd\", \"workflow\", \"development\"],\n  \"commands\": [\n    \"./plugin/commands/brainstorm.md\",\n    \"./plugin/commands/design.md\",\n    \"./plugin/commands/execute-epic.md\",\n    \"./plugin/commands/execute-issue.md\",\n    \"./plugin/commands/execute.md\",\n    \"./plugin/commands/init.md\",\n    \"./plugin/commands/plan.md\",\n    \"./plugin/commands/specify.md\"\n  ],\n  \"agents\": [\n    \"./plugin/agents/regent-brainstorm-writer.md\",\n    \"./plugin/agents/regent-cdk-architect.md\",\n    \"./plugin/agents/regent-code-reviewer.md\",\n    \"./plugin/agents/regent-design-writer.md\",\n    \"./plugin/agents/regent-engineer.md\",\n    \"./plugin/agents/regent-python-engineer.md\",\n    \"./plugin/agents/regent-requirements-writer.md\",\n    \"./plugin/agents/regent-spec-validator.md\",\n    \"./plugin/agents/regent-tasks-writer.md\",\n    \"./plugin/agents/regent-typescript-engineer.md\"\n  ]\n}\n",
+        "README.md": "# Regent\n\n**The architect who listens to your team argue, writes down what matters, and hands developers a crystal-clear blueprint.**\n\nRegent turns vague ideas into production-ready code through structured brainstorming. Instead of jumping straight to implementation, Regent asks the right questions—one at a time—to build a complete spec before anyone writes a line of code.\n\n## How It Works\n\n```\nBrainstorm → Specify → Design → Plan → Execute\n```\n\n1. **Brainstorm** — An AI asks probing questions about your feature, learning your codebase as it goes\n2. **Specify** — Answers become formal EARS-format requirements\n3. **Design** — Architecture and correctness properties are generated\n4. **Plan** — TDD-ordered tasks with test-first implementation\n5. **Execute** — Each task becomes a focused PR with tests\n\n## Why It Matters\n\n- Specs capture the *why*, not just the *what*\n- Voice discussions don't disappear into the ether\n- Junior devs get senior-quality specs to implement against\n- Every feature starts with tests, ends with a PR\n\n## The Team Experience\n\nStart a brainstorm in Slack with `/brainstorm --huddle --repo acme/api`. Regent spins up a voice call and listens while your team talks through the problem. When someone types `@regent JWT for stateless auth`, the bot already heard the debate about revocation tradeoffs—and asks smarter follow-up questions because of it.\n\n## Packages\n\n| Package | Description |\n|---------|-------------|\n| [plugin/](./plugin/) | Claude Code plugin for local spec-driven development |\n| [slackbot/](./slackbot/) | Slack bot (ROSI) for collaborative spec development in teams |\n\n## Quick Start\n\n### Claude Code Plugin (Solo Development)\n\n```bash\n# Add the marketplace\n/plugin marketplace add stickystyle/regent\n\n# Install the plugin\n/plugin install regent@stickystyle-regent\n\n# Initialize in your project\n/regent:init\n\n# Start brainstorming\n/regent:brainstorm\n```\n\nFor local development, add the local directory as a marketplace:\n```bash\n# Add local marketplace (run inside Claude Code)\n/plugin marketplace add /path/to/regent\n\n# Install from local marketplace\n/plugin install regent@regent-plugins\n```\n\nSee [plugin/README.md](./plugin/README.md) for full documentation.\n\n### Slack Bot (Team Collaboration)\n\n```bash\ncd slackbot\nslack login\nslack run\n```\n\nSee [slackbot/README.md](./slackbot/README.md) for development setup.\n\n## Dogfooding\n\nWe're building Regent using Regent. The [Slack Bot Epic](https://github.com/stickystyle/regent/issues/42) tracks the complete spec-driven development of ROSI—from brainstorm through implementation—all generated by the workflow itself.\n\nThis gives us:\n- Real-world validation of the spec format\n- A working example of what Regent produces\n- Continuous feedback on the developer experience\n\n## Repository Structure\n\n```\nregent/\n├── .claude-plugin/    # Plugin manifest\n├── plugin/            # Claude Code plugin\n│   ├── commands/      # Slash commands (/regent:brainstorm, etc.)\n│   └── agents/        # Specialized agents (writers, validators)\n└── slackbot/          # Slack ROSI app (Deno/TypeScript)\n    ├── functions/     # Custom Slack functions\n    ├── workflows/     # Workflow definitions\n    └── triggers/      # Trigger configurations\n```\n\n## License\n\nAGPL\n"
       },
       "plugins": [
         {
-          "name": "aboutme-index",
-          "source": "./skills/aboutme-index",
-          "description": "Index-based file discovery using ABOUTME headers. Use INSTEAD of grep or Explore agent when searching for files by purpose or feature. Faster and more accurate than scanning code.",
-          "version": "1.0.2",
-          "author": {
-            "name": "Ryan Parrish"
-          },
-          "homepage": "https://github.com/stickystyle/claude-skills",
-          "repository": "https://github.com/stickystyle/claude-skills",
-          "license": "MIT",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add stickystyle/claude-skills",
-            "/plugin install aboutme-index@stickystyle-skills"
-          ]
-        },
-        {
-          "name": "uv",
-          "source": "./skills/uv",
-          "description": "Python package manager and project tooling using uv. Use when working with Python projects, managing dependencies, creating virtual environments, running Python scripts, configuring workspaces/monorepos, or troubleshooting uv issues.",
+          "name": "regent",
+          "source": "./",
+          "description": "Spec-driven development workflow for Claude Code",
           "version": "1.0.0",
           "author": {
             "name": "Ryan Parrish"
           },
-          "homepage": "https://github.com/stickystyle/claude-skills",
-          "repository": "https://github.com/stickystyle/claude-skills",
-          "license": "MIT",
-          "categories": [],
+          "license": "AGPL-3.0",
+          "keywords": [
+            "spec-driven",
+            "tdd",
+            "workflow",
+            "development"
+          ],
+          "repository": "https://github.com/stickystyle/regent",
+          "categories": [
+            "development",
+            "spec-driven",
+            "tdd",
+            "workflow"
+          ],
           "install_commands": [
-            "/plugin marketplace add stickystyle/claude-skills",
-            "/plugin install uv@stickystyle-skills"
+            "/plugin marketplace add stickystyle/regent",
+            "/plugin install regent@regent-plugins"
           ]
         }
       ]

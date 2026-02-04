@@ -152,6 +152,7 @@ function HomePageContent() {
       author_id={marketplace.author_id}
       author_display_name={marketplace.author_display_name}
       author_avatar_url={marketplace.author_avatar_url}
+      showTrendingBadge={sortBy === "trending"}
     />
   );
 

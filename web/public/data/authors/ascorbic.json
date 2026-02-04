@@ -6,40 +6,32 @@
   },
   "marketplaces": [
     {
-      "name": "ascorbic-skills",
+      "name": "macrodata",
       "version": null,
-      "description": "Skills for web development",
-      "repo_full_name": "ascorbic/skills",
-      "repo_url": "https://github.com/ascorbic/skills",
-      "repo_description": null,
+      "description": "Stateful agent tools. Learns who you are, remembers what you're working on, schedules tasks, maintains itself.",
+      "repo_full_name": "ascorbic/macrodata",
+      "repo_url": "https://github.com/ascorbic/macrodata",
+      "repo_description": "Give Claude Code and OpenCode persistent, self-refining memory and autonomous scheduling.",
       "signals": {
-        "stars": 1,
-        "forks": 0,
-        "pushed_at": "2025-12-13T21:58:56Z"
+        "stars": 22,
+        "forks": 1,
+        "pushed_at": "2026-02-04T07:23:45Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ascorbic-skills\",\n  \"owner\": {\n    \"name\": \"Matt Kane\"\n  },\n  \"metadata\": {\n    \"description\": \"Skills for web development\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"astro\",\n      \"description\": \"Astro development skills and documentation\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/astro-v6-upgrade\"\n      ],\n      \"mcpServers\": {\n        \"astro-docs\": {\n          \"type\": \"http\",\n          \"url\": \"https://mcp.docs.astro.build/mcp\"\n        }\n      }\n    }\n  ]\n}\n",
-        "README.md": "# ascorbic/skills\n\nA Claude Code plugin marketplace for web development.\n\n## Installation\n\n```bash\n/plugin marketplace add ascorbic/skills\n/plugin install astro@ascorbic-skills\n```\n\n## Plugins\n\n### astro-skills\n\nAstro development tools including:\n\n**Skills:**\n- `astro-v6-upgrade` - Guide for upgrading from Astro v5 to v6 with progressive disclosure\n\n**MCP Servers:**\n- `astro-docs` - Real-time access to Astro documentation\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n\t\"name\": \"macrodata\",\n\t\"owner\": {\n\t\t\"name\": \"Matt Kane\",\n\t\t\"url\": \"https://mk.gg\"\n\t},\n\t\"metadata\": {\n\t\t\"description\": \"Stateful agent tools. Learns who you are, remembers what you're working on, schedules tasks, maintains itself.\"\n\t},\n\t\"plugins\": [\n\t\t{\n\t\t\t\"name\": \"macrodata\",\n\t\t\t\"source\": \"./plugins/macrodata\",\n\t\t\t\"description\": \"Stateful agent tools for Claude Code. Local-only memory, scheduling, and autonomy.\",\n\t\t\t\"version\": \"0.1.1\"\n\t\t}\n\t]\n}\n",
+        "README.md": "# Macrodata\n\nGive Claude Code and OpenCode persistent, self-maintaining memory and autonomous scheduling.\n\n> This is experimental software. Use at your own risk.\n\n- **Layered memory** - identity, journal, topics, semantic search across sessions\n- **Scheduling and autonomy** - recurring background tasks, reminders, morning prep, self-maintenance\n- **Memory distillation** - consolidates learnings into structured knowledge\n- **Dream time** - overnight reflection, pattern recognition, self-improvement\n- **Uses your existing tools** – no new APIs or third-party skills needed, but if you have them, it can use them.\n- **No security nightmares** - runs with your existing security rules. No external APIs or third-party skills.\n- **Local-only** - all memories stored as markdown and JSON you can read and edit.\n\n## What It Does\n\nLearns and remembers who you are, what you're working on, and how you like to work. Analyzes your past conversations to build context. Puts working memory into every session so you never start from scratch.\n\n### Working Memory\n\nEvery session starts with context injection - your identity, current projects, daily focus, and recent activity. The agent knows who you are and what you're doing before you type anything.\n\nState files track what matters right now:\n- **identity.md** - how the agent should behave with you\n- **human.md** - who you are, your preferences, your projects\n- **today.md** - daily focus and priorities\n- **workspace.md** - current project context\n- **topics** - working knowledge the agent has built up\n\n### Journals\n\nObservations, decisions, and learnings get logged to a searchable journal. Semantic search finds relevant context across all your history - journal entries, entity files, and past conversations.\n\n### Conversation Analysis\n\nIndexes your past Claude Code and OpenCode sessions. When you're stuck on something similar to before, it finds and retrieves the relevant context from previous conversations.\n\n### Distillation\n\nPeriodically consolidates scattered learnings into structured knowledge. Patterns noticed across conversations become permanent understanding in your state files.\n\n### Dream Time\n\nScheduled reflection that runs while you're away. Reviews recent activity, notices patterns, updates state files, and prepares for tomorrow. Researches best practices. The agent maintains itself.\n\n## Security\n\nSome autonomous agent systems run their own shell, execute third-party skills, and expose APIs - creating prompt injection vectors, credential leaks, and remote code execution risks.\n\nMacrodata runs inside Claude Code's existing permission model. It uses only the tools you've already installed and approved. No external APIs, no third-party skill downloads, no new attack surface. Scheduled tasks run through the same Claude Code instance with the same permissions you've already granted.\n\nThe daemon is a simple cron runner that spawns Claude Code when reminders fire. All state is local markdown files. Nothing phones home.\n\n## Installation\n\n### Claude Code\n\n```bash\n/plugin marketplace add ascorbic/macrodata\n/plugin install macrodata@macrodata\n```\n\n### OpenCode\n\n**~/.config/opencode/opencode.json:**\n```json\n{\n  \"plugin\": [\"@macrodata/opencode\"]\n}\n```\n\nLaunch the app and ask to set up Macrodata.\n\n## License\n\nMIT\n",
+        "plugins/macrodata/README.md": "# Macrodata\n\nA Claude Code and OpenCode plugin that gives it the tools of a stateful agent, packaged so you can still use it for normal work.\n\n- **Layered memory** - identity, journal, semantic search across sessions\n- **Scheduling and autonomy** - background tasks, morning prep, maintenance\n- **Memory distillation** - consolidates learnings into structured knowledge\n- **Dream time** - overnight reflection, pattern recognition, self-improvement\n- **No security nightmares** - runs with your existing tools and security rules. No external APIs or third-party skills. Memory stays in local files.\n\nLocal-only. Everything stored as markdown and JSON you can read and edit.\n\n## What It Does\n\nLearns and remembers who you are, what you're working on, and how you like to work. Analyses your past conversations to build context. Puts working memory into every session so you never start from scratch.\n\n### Working Memory\n\nEvery session starts with context injection - your identity, current projects, daily focus, and recent activity. The agent knows who you are before you type anything.\n\nState files track what matters right now:\n- **identity.md** - how the agent should behave with you\n- **human.md** - who you are, your preferences, your projects\n- **today.md** - daily focus and priorities\n- **workspace.md** - current project context\n- **topics** - working knowledge the agent has built up\n\n### Journals\n\nObservations, decisions, and learnings get logged to a searchable journal. Semantic search finds relevant context across all your history - journal entries, entity files, and past conversations.\n\n### Conversation Analysis\n\nIndexes your past Claude Code and OpenCode sessions. When you're stuck on something similar to before, it finds and retrieves the relevant context from previous conversations.\n\n### Distillation\n\nPeriodically consolidates scattered learnings into structured knowledge. Patterns noticed across conversations become permanent understanding in your state files.\n\n### Dream Time\n\nScheduled reflection that runs while you're away. Reviews recent activity, notices patterns, updates state files, and prepares for tomorrow. Researches best practices. The agent maintains itself.\n\n## Installation\n\n### Claude Code\n\n```bash\n/plugin marketplace add ascorbic/macrodata\n/plugin install macrodata@macrodata\n```\n\n### OpenCode\n\n**~/.config/opencode/opencode.json:**\n```json\n{\n  \"plugin\": [\"@macrodata/opencode\"]\n}\n```\n\nLaunch the app and ask to set up Macrodata.\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
-          "name": "astro",
-          "description": "Astro development skills and documentation",
-          "source": "./",
-          "strict": false,
-          "skills": [
-            "./skills/astro-v6-upgrade"
-          ],
-          "mcpServers": {
-            "astro-docs": {
-              "type": "http",
-              "url": "https://mcp.docs.astro.build/mcp"
-            }
-          },
+          "name": "macrodata",
+          "source": "./plugins/macrodata",
+          "description": "Stateful agent tools for Claude Code. Local-only memory, scheduling, and autonomy.",
+          "version": "0.1.1",
           "categories": [],
           "install_commands": [
-            "/plugin marketplace add ascorbic/skills",
-            "/plugin install astro@ascorbic-skills"
+            "/plugin marketplace add ascorbic/macrodata",
+            "/plugin install macrodata@macrodata"
           ]
         }
       ]

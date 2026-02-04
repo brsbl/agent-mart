@@ -23,6 +23,7 @@ export interface MarketplaceCardProps {
   author_id: string;
   author_display_name: string;
   author_avatar_url: string;
+  showTrendingBadge?: boolean;
 }
 
 export function MarketplaceCard({
@@ -30,6 +31,7 @@ export function MarketplaceCard({
   author_id,
   author_display_name,
   author_avatar_url,
+  showTrendingBadge = false,
 }: MarketplaceCardProps) {
   const [hasOverflow, setHasOverflow] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
@@ -97,6 +99,11 @@ export function MarketplaceCard({
         <div className="flex items-center gap-3 text-xs font-medium text-foreground-secondary">
           <span className="flex items-center gap-1">
             <Star size={12} className="text-yellow-500" fill="currentColor" /> {formatNumber(marketplace.signals.stars)}
+            {showTrendingBadge && marketplace.signals.stars_gained_7d != null && marketplace.signals.stars_gained_7d > 0 && (
+              <sup className="text-[10px] text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100">
+                +{formatNumber(marketplace.signals.stars_gained_7d)}
+              </sup>
+            )}
           </span>
           <span className="flex items-center gap-1">
             <GitFork size={12} /> {formatNumber(marketplace.signals.forks)}

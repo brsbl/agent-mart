@@ -109,7 +109,11 @@ export function output({ onProgress: _onProgress } = {}) {
       // Calculate trending score from history
       const repoHistory = signalsHistory.repositories[marketplace.repo_full_name];
       const currentStars = marketplace.signals?.stars || 0;
-      const trendingData = calculateTrendingScore(repoHistory, currentStars);
+      const trendingData = calculateTrendingScore(
+        repoHistory,
+        currentStars,
+        marketplace.signals?.pushed_at
+      );
 
       marketplacesBrowse.push({
         name: marketplace.name,

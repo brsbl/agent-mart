@@ -6,54 +6,111 @@
   },
   "marketplaces": [
     {
-      "name": "glm-ensemble",
-      "version": null,
-      "description": "z.ai GLM-4.7 멀티에이전트 앙상블 플러그인. 4개 역할(분석/검토/최적화/보안)의 병렬 처리로 최상의 응답 제공",
-      "repo_full_name": "m16khb/glm-ensemble",
-      "repo_url": "https://github.com/m16khb/glm-ensemble",
-      "repo_description": "z.ai GLM-4.7 멀티에이전트 앙상블 플러그인 for Claude Code",
+      "name": "claude-integration",
+      "version": "2.1.1",
+      "description": "Claude Code 생산성 향상을 위한 스마트 커맨드 및 에이전트 마켓플레이스",
+      "repo_full_name": "m16khb/claude-integration",
+      "repo_url": "https://github.com/m16khb/claude-integration",
+      "repo_description": "Claude Code 플러그인 - 스마트 Git 커맨드 및 유틸리티",
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-12-28T08:24:00Z"
+        "pushed_at": "2025-12-14T09:16:20Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"glm-ensemble\",\n  \"description\": \"z.ai GLM-4.7 멀티에이전트 앙상블 플러그인. 4개 역할(분석/검토/최적화/보안)의 병렬 처리로 최상의 응답 제공\",\n  \"owner\": {\n    \"name\": \"m16khb\",\n    \"email\": \"m16khb@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"glm-ensemble\",\n      \"description\": \"z.ai GLM-4.7 멀티에이전트 앙상블 시스템\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"m16khb\",\n        \"email\": \"m16khb@gmail.com\"\n      },\n      \"source\": \"./\",\n      \"category\": \"ai\",\n      \"homepage\": \"https://github.com/m16khb/glm-ensemble\",\n      \"keywords\": [\"glm\", \"multiagent\", \"ensemble\", \"parallel\", \"z.ai\", \"glm-4.7\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"glm-ensemble\",\n  \"version\": \"0.1.0\",\n  \"description\": \"z.ai GLM-4.7 기반 멀티에이전트 앙상블 시스템. 4개 역할(분석/검토/최적화/보안)의 병렬 처리로 최상의 응답 제공\",\n  \"author\": {\n    \"name\": \"m16khb\",\n    \"email\": \"m16khb@gmail.com\"\n  },\n  \"keywords\": [\"glm\", \"multiagent\", \"ensemble\", \"parallel\", \"z.ai\", \"glm-4.7\"],\n  \"license\": \"MIT\",\n  \"mcpServers\": \"../.mcp.json\"\n}\n",
-        "README.md": "# glm-ensemble\n\nz.ai GLM-4.7 기반 멀티에이전트 앙상블 시스템. 4개 역할(분석/검토/최적화/보안)의 병렬 처리로 최상의 응답을 제공합니다.\n\n## 기능\n\n- **병렬 멀티에이전트**: 4개 전문 역할이 동시에 분석\n  - 🔍 Analyst: 심층 분석\n  - 📋 Reviewer: 코드/문서 검토\n  - ⚡ Optimizer: 성능 최적화\n  - 🔒 Security: 보안 검토\n- **앙상블 종합**: 모든 관점을 통합한 최적 솔루션\n- **하이브리드 트리거**: 명령어 + 키워드 자동 감지\n\n## 설치\n\n```bash\n# GitHub에서 클론\ngit clone https://github.com/m16khb/glm-ensemble.git ~/.claude/plugins/glm-ensemble\n\n# MCP 서버 의존성 설치\ncd ~/.claude/plugins/glm-ensemble/mcp-server\nnpm install\n```\n\n## 설정\n\n`~/.claude/glm-ensemble.local.md` 파일 생성:\n\n```markdown\n# GLM Ensemble 설정\n\n## API 설정\n- GLM_API_KEY: your-api-key-here\n- GLM_API_BASE: https://api.z.ai/api/coding/paas/v4\n- GLM_MODEL: glm-4.7\n\n## 병렬 처리 설정\n- MAX_PARALLEL: 4\n- THINKING_MODE: interleaved\n```\n\n## 사용법\n\n### 명령어\n\n```bash\n# 멀티에이전트로 질문\n/glm-ask 이 코드를 어떻게 개선할 수 있을까?\n\n# 코드/문서 병렬 분석\n/glm-analyze src/main.ts\n\n# 설정 확인\n/glm-config\n```\n\n### 자동 트리거\n\n다음 키워드가 포함되면 자동으로 GLM 앙상블이 활성화됩니다:\n- \"분석해줘\", \"분석해주세요\"\n- \"최적화해줘\", \"최적화해주세요\"\n- \"GLM으로\", \"GLM 사용해서\"\n- \"검토해줘\", \"리뷰해줘\"\n\n## 아키텍처\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                     glm-ensemble                             │\n├─────────────────────────────────────────────────────────────┤\n│   사용자 요청 ──▶ glm-coordinator                            │\n│                         │                                    │\n│         ┌───────────────┼───────────────┐                   │\n│         ▼               ▼               ▼               ▼   │\n│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │\n│   │ Analyst  │  │ Reviewer │  │ Optimizer│  │ Security │   │\n│   │ (분석)    │  │ (검토)    │  │ (최적화)  │  │ (보안)    │   │\n│   └──────────┘  └──────────┘  └──────────┘  └──────────┘   │\n│         │               │               │               │   │\n│         └───────────────┴───────────────┴───────────────┘   │\n│                         ▼                                    │\n│                  앙상블 종합 결과                             │\n└─────────────────────────────────────────────────────────────┘\n```\n\n## 구성 요소\n\n| 컴포넌트 | 설명 |\n|----------|------|\n| `/glm-ask` | 멀티에이전트 질의 명령어 |\n| `/glm-analyze` | 병렬 분석 명령어 |\n| `/glm-config` | 설정 관리 명령어 |\n| `glm-coordinator` | 결과 조율 에이전트 |\n| `glm-prompting` | GLM 활용 가이드 스킬 |\n| `glm-api` | MCP 서버 (GLM API 통신) |\n\n## 라이선스\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"claude-integration\",\n  \"version\": \"2.1.1\",\n  \"description\": \"Claude Code 생산성 향상을 위한 스마트 커맨드 및 에이전트 마켓플레이스\",\n  \"owner\": {\n    \"name\": \"m16khb\",\n    \"email\": \"m16khb@gmail.com\",\n    \"url\": \"https://github.com/m16khb\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nestjs-backend\",\n      \"source\": \"./plugins/nestjs-backend\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"code-quality\",\n      \"source\": \"./plugins/code-quality\",\n      \"category\": \"quality\"\n    },\n    {\n      \"name\": \"full-stack-orchestration\",\n      \"source\": \"./plugins/full-stack-orchestration\",\n      \"category\": \"workflows\"\n    },\n    {\n      \"name\": \"documentation-generation\",\n      \"source\": \"./plugins/documentation-generation\",\n      \"category\": \"documentation\"\n    },\n    {\n      \"name\": \"git-workflows\",\n      \"source\": \"./plugins/git-workflows\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"context-management\",\n      \"source\": \"./plugins/context-management\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"automation-tools\",\n      \"source\": \"./plugins/automation-tools\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Integration\n\nClaude Code 생산성 향상을 위한 스마트 커맨드 및 에이전트 마켓플레이스입니다.\n\n## 아키텍처\n\n이 마켓플레이스는 **단일 책임 원칙**을 중심으로 설계되었습니다:\n\n- **5개 전문화된 플러그인**\n- **8개 전문 에이전트 + 1개 오케스트레이터**\n- **7개 슬래시 커맨드**\n- **1개 에이전트 스킬**\n\n각 플러그인은 필요한 컴포넌트만 컨텍스트에 로드하여 **토큰 효율성**을 극대화합니다.\n\n## 설치\n\n### 마켓플레이스 추가 후 설치 (권장)\n\n```bash\n# 1. 마켓플레이스 추가\n/plugin marketplace add m16khb/claude-integration\n\n# 2. 전체 플러그인 설치\n/plugin install claude-integration\n\n# 또는 개별 플러그인 설치\n/plugin install backend-development\n/plugin install documentation-generation\n/plugin install git-workflows\n/plugin install context-management\n/plugin install automation-tools\n```\n\n## 플러그인 목록\n\n| 플러그인 | 카테고리 | 설명 |\n|---------|---------|------|\n| `backend-development` | development | NestJS + Fastify 백엔드 개발 에이전트 |\n| `documentation-generation` | documentation | CLAUDE.md 및 agent-docs 문서 생성 |\n| `git-workflows` | development | Git Flow 기반 스마트 커밋 |\n| `context-management` | productivity | 대용량 파일 청킹 및 컨텍스트 관리 |\n| `automation-tools` | productivity | Agent, Skill, Command 자동 생성 |\n\n## 커맨드 목록\n\n| 커맨드 | 플러그인 | 설명 |\n|--------|---------|------|\n| `/git-commit` | git-workflows | Git Flow 기반 스마트 커밋 |\n| `/continue-context` | context-management | 컨텍스트 분석 및 작업 추천 |\n| `/inject-context` | context-management | 대용량 파일 구조 인식 청킹 |\n| `/factory` | automation-tools | Agent, Skill, Command 생성기 |\n| `/setup-statusline` | automation-tools | YAML 기반 status line 구성 |\n| `/claude-sync` | automation-tools | CLAUDE.md 자동 동기화 |\n\n## 에이전트 목록\n\n### Orchestrator (1개)\n\n| 에이전트 | 모델 | 설명 |\n|---------|------|------|\n| `nestjs-fastify-expert` | Opus | NestJS + Fastify 오케스트레이터 |\n\n### Experts (8개)\n\n| 에이전트 | 모델 | 설명 |\n|---------|------|------|\n| `typeorm-expert` | Sonnet | TypeORM 엔티티, 마이그레이션, 트랜잭션 |\n| `redis-cache-expert` | Sonnet | Redis 캐싱, @nestjs/cache-manager |\n| `bullmq-queue-expert` | Sonnet | BullMQ 작업 큐 |\n| `cqrs-expert` | Sonnet | CQRS 패턴, Command/Query/Event/Saga |\n| `microservices-expert` | Sonnet | 마이크로서비스, RabbitMQ, gRPC |\n| `suites-testing-expert` | Sonnet | Suites(Automock), Jest, E2E |\n| `document-builder` | Sonnet | 계층적 CLAUDE.md 및 agent-docs 생성 |\n\n## 프로젝트 구조\n\n```\nclaude-integration/\n├── .claude-plugin/\n│   └── marketplace.json       # 플러그인 레지스트리\n├── plugins/                   # 5개 전문화된 플러그인\n│   ├── backend-development/   # NestJS 생태계 에이전트\n│   │   ├── agents/\n│   │   ├── commands/\n│   │   └── skills/\n│   ├── documentation-generation/\n│   ├── git-workflows/\n│   ├── context-management/\n│   └── automation-tools/\n├── agent-docs/                # 상세 문서\n│   ├── constitution.md        # 프로젝트 헌법\n│   ├── architecture.md        # 아키텍처 설계 원칙\n│   ├── references/            # 레퍼런스\n│   │   ├── agents.md\n│   │   ├── plugins.md\n│   │   └── agent-skills.md\n│   └── guides/\n│       └── usage.md           # 사용 가이드\n├── CLAUDE.md                  # 프로젝트 루트 설정\n└── README.md\n```\n\n## MCP 서버 (내장)\n\n플러그인 활성화 시 자동 로드:\n\n| MCP 서버 | 설명 | 요구사항 |\n|----------|------|---------|\n| `playwright` | 브라우저 자동화 | Node.js 18+ |\n| `context7` | 최신 문서 주입 | Node.js 18+ |\n| `sequential-thinking` | 단계별 사고 | Node.js 18+ |\n| `chrome-devtools` | 크롬 개발자 도구 | Node.js 22+, Chrome |\n\n```bash\n# MCP 상태 확인\nclaude mcp list\n```\n\n## 상세 문서\n\n- [Constitution](agent-docs/constitution.md) - 프로젝트 헌법 (필수 규칙)\n- [Architecture](agent-docs/architecture.md) - 아키텍처 설계 원칙\n- [Agents](agent-docs/references/agents.md) - 에이전트 레퍼런스\n- [Plugins](agent-docs/references/plugins.md) - 플러그인 레퍼런스\n- [Usage](agent-docs/guides/usage.md) - 사용 가이드\n- [Agent Skills](agent-docs/references/agent-skills.md) - 스킬 개발 가이드\n\n## 빠른 시작\n\n### NestJS 백엔드 개발\n\n```typescript\n// Orchestrator를 통해 자동 위임\nTask(\n  subagent_type=\"nestjs-fastify-expert\",\n  prompt=\"Redis 캐시 설정하고 BullMQ 큐도 추가해줘\"\n)\n```\n\n### 스마트 Git 커밋\n\n```bash\n/git-commit push\n```\n\n### 대용량 파일 처리\n\n```bash\n/inject-context ./large-file.ts \"리팩토링해줘\"\n```\n\n## 기여\n\n이슈와 PR을 환영합니다!\n\n## 라이선스\n\nMIT License\n"
       },
       "plugins": [
         {
-          "name": "glm-ensemble",
-          "description": "z.ai GLM-4.7 멀티에이전트 앙상블 시스템",
-          "version": "0.1.0",
-          "author": {
-            "name": "m16khb",
-            "email": "m16khb@gmail.com"
-          },
-          "source": "./",
-          "category": "ai",
-          "homepage": "https://github.com/m16khb/glm-ensemble",
-          "keywords": [
-            "glm",
-            "multiagent",
-            "ensemble",
-            "parallel",
-            "z.ai",
-            "glm-4.7"
-          ],
+          "name": "nestjs-backend",
+          "source": "./plugins/nestjs-backend",
+          "category": "development",
+          "description": null,
           "categories": [
-            "ai",
-            "ensemble",
-            "glm",
-            "glm-4.7",
-            "multiagent",
-            "parallel",
-            "z.ai"
+            "development"
           ],
           "install_commands": [
-            "/plugin marketplace add m16khb/glm-ensemble",
-            "/plugin install glm-ensemble@glm-ensemble"
+            "/plugin marketplace add m16khb/claude-integration",
+            "/plugin install nestjs-backend@claude-integration"
+          ]
+        },
+        {
+          "name": "code-quality",
+          "source": "./plugins/code-quality",
+          "category": "quality",
+          "description": null,
+          "categories": [
+            "quality"
+          ],
+          "install_commands": [
+            "/plugin marketplace add m16khb/claude-integration",
+            "/plugin install code-quality@claude-integration"
+          ]
+        },
+        {
+          "name": "full-stack-orchestration",
+          "source": "./plugins/full-stack-orchestration",
+          "category": "workflows",
+          "description": null,
+          "categories": [
+            "workflows"
+          ],
+          "install_commands": [
+            "/plugin marketplace add m16khb/claude-integration",
+            "/plugin install full-stack-orchestration@claude-integration"
+          ]
+        },
+        {
+          "name": "documentation-generation",
+          "source": "./plugins/documentation-generation",
+          "category": "documentation",
+          "description": null,
+          "categories": [
+            "documentation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add m16khb/claude-integration",
+            "/plugin install documentation-generation@claude-integration"
+          ]
+        },
+        {
+          "name": "git-workflows",
+          "source": "./plugins/git-workflows",
+          "category": "development",
+          "description": null,
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add m16khb/claude-integration",
+            "/plugin install git-workflows@claude-integration"
+          ]
+        },
+        {
+          "name": "context-management",
+          "source": "./plugins/context-management",
+          "category": "productivity",
+          "description": null,
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add m16khb/claude-integration",
+            "/plugin install context-management@claude-integration"
+          ]
+        },
+        {
+          "name": "automation-tools",
+          "source": "./plugins/automation-tools",
+          "category": "productivity",
+          "description": null,
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add m16khb/claude-integration",
+            "/plugin install automation-tools@claude-integration"
           ]
         }
       ]

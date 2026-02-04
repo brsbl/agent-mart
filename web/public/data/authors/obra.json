@@ -13,8 +13,8 @@
       "repo_url": "https://github.com/obra/superpowers",
       "repo_description": "An agentic skills framework & software development methodology that works.",
       "signals": {
-        "stars": 43405,
-        "forks": 3293,
+        "stars": 43847,
+        "forks": 3322,
         "pushed_at": "2026-01-30T17:51:30Z"
       },
       "files": {
@@ -36,6 +36,41 @@
           "install_commands": [
             "/plugin marketplace add obra/superpowers",
             "/plugin install superpowers@superpowers-dev"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "superpowers-chrome-dev",
+      "version": null,
+      "description": "Development marketplace for Chrome DevTools Protocol plugin",
+      "repo_full_name": "obra/superpowers-chrome",
+      "repo_url": "https://github.com/obra/superpowers-chrome",
+      "repo_description": "Claude Code plugin for direct Chrome browser control via DevTools Protocol - zero dependencies",
+      "signals": {
+        "stars": 152,
+        "forks": 26,
+        "pushed_at": "2026-01-31T18:50:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"superpowers-chrome-dev\",\n  \"description\": \"Development marketplace for Chrome DevTools Protocol plugin\",\n  \"owner\": {\n    \"name\": \"Jesse Vincent\",\n    \"email\": \"jesse@fsck.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"superpowers-chrome\",\n      \"description\": \"Direct Chrome DevTools Protocol access. Control Chrome via MCP tool or CLI skill. Auto-starts browser, zero dependencies.\",\n      \"version\": \"1.6.2\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Jesse Vincent\",\n        \"email\": \"jesse@fsck.com\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"superpowers-chrome\",\n  \"version\": \"1.6.1\",\n  \"description\": \"BETA: VERY LIGHTLY TESTED - Direct Chrome DevTools Protocol access via 'browsing' skill. Skill mode (17 CLI commands) + MCP mode (single use_browser tool). Zero dependencies, auto-starts Chrome.\",\n  \"author\": {\n    \"name\": \"Jesse Vincent\",\n    \"email\": \"jesse@fsck.com\"\n  },\n  \"homepage\": \"https://github.com/obra/superpowers-chrome\",\n  \"repository\": \"https://github.com/obra/superpowers-chrome\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"chrome\", \"browser\", \"automation\", \"devtools\", \"cdp\", \"websocket\"],\n  \"agents\": [\"./agents/browser-user.md\"],\n  \"mcpServers\": {\n    \"chrome\": {\n      \"command\": \"node\",\n      \"args\": [\"${CLAUDE_PLUGIN_ROOT}/mcp/dist/index.js\"]\n    }\n  }\n}\n",
+        "README.md": "# Superpowers Chrome - Claude Code Plugin\n\nDirect browser control via Chrome DevTools Protocol. Two modes available:\n\n1. **Skill Mode** - CLI tool for Claude Code agents (`browsing` skill)\n2. **MCP Mode** - Ultra-lightweight MCP server for any MCP client\n\n## Features\n\n- **Zero dependencies** - Built-in WebSocket, no npm install needed\n- **Idiotproof API** - Tab index syntax (`0`, `1`, `2`) instead of WebSocket URLs\n- **Platform-agnostic** - `chrome-ws start` works on macOS, Linux, Windows\n- **17 commands** covering all browser automation needs\n- **Complete documentation** with real-world examples\n\n## Installation\n\n```bash\n/plugin marketplace add obra/superpowers-marketplace\n/plugin install superpowers-chrome@superpowers-marketplace\n```\n\n## Quick Start\n\n```bash\n# Find your plugin installation path (varies by marketplace and version)\n# Common locations:\n#   ~/.claude/plugins/cache/superpowers-marketplace/superpowers-chrome/<version>/skills/browsing\n#   ~/.claude/plugins/cache/superpowers-chrome/skills/browsing\n\ncd ~/.claude/plugins/cache/superpowers-marketplace/superpowers-chrome/*/skills/browsing\n./chrome-ws start                        # Launch Chrome\n./chrome-ws new \"https://example.com\"   # Create tab\n./chrome-ws navigate 0 \"https://google.com\"\n./chrome-ws fill 0 \"textarea[name=q]\" \"test\"\n./chrome-ws click 0 \"button[name=btnK]\"\n```\n\n**Windows tip:** The tooling defaults to `127.0.0.1:9222` for DevTools traffic. Override via `CHROME_WS_HOST` / `CHROME_WS_PORT` if you forward Chrome elsewhere.\n\n**Linux/WSL2 tip:** For headed mode (visible browser), the MCP server needs the `DISPLAY` environment variable. If `show_browser` doesn't work, configure `\"env\": {\"DISPLAY\": \":0\"}` in your MCP server config. See [mcp/README.md](mcp/README.md#linuxwsl2-headed-mode) for details.\n\n## Windows Verification (November 7, 2025)\n\n- `node skills/browsing/chrome-ws start` launched Chrome with remote debugging enabled on a fresh Windows 11 Pro install.\n- `node skills/browsing/chrome-ws tabs` and `node skills/browsing/chrome-ws navigate 0 https://example.com` confirmed CLI control with the IPv4 default binding.\n- `codex exec -c \"mcp_servers.superpowers-chrome.enabled=true\" \"List Chrome tabs via MCP to verify the Windows override patch.\"` listed the Example Domain tab through the MCP server, demonstrating that the overrides also work through Codex.\n\n## Commands\n\n- **Setup**: `start` (auto-detects platform)\n- **Tab management**: `tabs`, `new`, `close`\n- **Navigation**: `navigate`, `wait-for`, `wait-text`\n- **Interaction**: `click`, `fill`, `select`\n- **Extraction**: `eval`, `extract`, `attr`, `html`\n- **Export**: `screenshot`, `markdown`\n- **Raw protocol**: `raw` (full CDP access)\n\n## MCP Server Mode\n\nUltra-lightweight MCP server with a single `use_browser` tool. Perfect for minimal context usage with automatic page captures.\n\n### Installation Options\n\n**Option 1: NPX from GitHub (Recommended)**\n```json\n{\n  \"mcpServers\": {\n    \"chrome\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"github:obra/superpowers-chrome\"\n      ]\n    }\n  }\n}\n```\n\n**Option 1b: NPX with Headless Mode**\n```json\n{\n  \"mcpServers\": {\n    \"chrome\": {\n      \"command\": \"npx\",\n      \"args\": [\n        \"github:obra/superpowers-chrome\",\n        \"--headless\"\n      ]\n    }\n  }\n}\n```\n\n**Option 2: Git Clone + Local Path (Current)**\n```bash\ngit clone https://github.com/obra/superpowers-chrome.git\ncd superpowers-chrome/mcp && npm install && npm run build\n```\n```json\n{\n  \"mcpServers\": {\n    \"chrome\": {\n      \"command\": \"node\",\n      \"args\": [\n        \"/path/to/superpowers-chrome/mcp/dist/index.js\"\n      ]\n    }\n  }\n}\n```\n\n\n### Auto-Capture Features\n\nDOM-changing actions (navigate, click, type, select, eval) automatically capture:\n- **Page HTML**: Full rendered DOM state\n- **Page Markdown**: Structured content extraction\n- **Screenshot**: Visual page state\n- **DOM Summary**: Token-efficient page structure\n- **Session Organization**: Time-ordered captures in temp directory\n\nResponse format:\n```\n→ https://example.com (capture #001)\nSize: 1200×765\nSnapshot: /tmp/chrome-session-123/001-navigate-456/\nResources: page.html, page.md, screenshot.png, console-log.txt\nDOM:\n  Example Domain\n  Interactive: 0 buttons, 0 inputs, 1 links\n  Layout: body\n```\n\n### Usage\n\n```json\n{\n  \"action\": \"navigate\",\n  \"payload\": \"https://example.com\"\n}\n```\n\nGet help: `{\"action\": \"help\"}` - Returns complete documentation\n\nSee [mcp/README.md](mcp/README.md) for complete documentation.\n\n## When to Use\n\n**Use Skill Mode when:**\n- Working with Claude Code agents\n- Need full CLI control with 17 commands\n\n**Use MCP Mode when:**\n- Using Claude Desktop or other MCP clients\n- Want minimal context usage (single tool)\n\n**Use Playwright MCP when:**\n- Need fresh browser instances\n- Complex automation with screenshots/PDFs\n- Prefer higher-level abstractions\n\n## Documentation\n\n- [SKILL.md](skills/browsing/SKILL.md) - Complete skill guide\n- [EXAMPLES.md](skills/browsing/EXAMPLES.md) - Real-world examples\n- [chrome-ws README](skills/browsing/README.md) - Tool documentation\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "superpowers-chrome",
+          "description": "Direct Chrome DevTools Protocol access. Control Chrome via MCP tool or CLI skill. Auto-starts browser, zero dependencies.",
+          "version": "1.6.2",
+          "source": "./",
+          "author": {
+            "name": "Jesse Vincent",
+            "email": "jesse@fsck.com"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add obra/superpowers-chrome",
+            "/plugin install superpowers-chrome@superpowers-chrome-dev"
           ]
         }
       ]
