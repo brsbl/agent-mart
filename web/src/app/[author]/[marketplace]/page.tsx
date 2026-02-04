@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeSanitize from "rehype-sanitize";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import {
   Star,
   GitFork,
@@ -27,6 +27,15 @@ import {
 import { useFetch } from "@/hooks";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import type { AuthorDetail, Marketplace, Category } from "@/lib/types";
+
+// Custom sanitize schema that allows external images (for badges like shields.io)
+const sanitizeSchema = {
+  ...defaultSchema,
+  protocols: {
+    ...defaultSchema.protocols,
+    src: ["http", "https", "data"],
+  },
+};
 import {
   formatNumber,
   formatRelativeTime,
@@ -411,7 +420,7 @@ export default function MarketplaceDetailPage() {
                 <div className="p-6 prose prose-sm dark:prose-invert max-w-none max-h-[48rem] overflow-auto scrollbar-auto-hide">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeSanitize]}
+                    rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}
                     components={{
                       img: ({ src, alt, ...props }) => {
                         // Transform relative URLs to GitHub raw URLs
@@ -421,6 +430,22 @@ export default function MarketplaceDetailPage() {
                         }
                         // eslint-disable-next-line @next/next/no-img-element
                         return <img src={imgSrc} alt={alt || ""} {...props} />;
+                      },
+                      // Strip links from images (badges shouldn't be clickable)
+                      a: ({ href, children, node }) => {
+                        // Check if this link wraps only an image by examining the AST node
+                        const linkChildren = node?.children || [];
+                        const hasOnlyImage = linkChildren.length === 1 &&
+                          "tagName" in linkChildren[0] &&
+                          linkChildren[0].tagName === "img";
+
+                        if (hasOnlyImage) {
+                          // Return just the image without the link wrapper
+                          return <>{children}</>;
+                        }
+
+                        // Regular links - render normally
+                        return <a href={href}>{children}</a>;
                       },
                     }}
                   >
