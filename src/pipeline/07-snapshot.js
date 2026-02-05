@@ -8,7 +8,7 @@ import {
   updateMeta
 } from '../lib/signalsHistory.js';
 
-const INPUT_PATH = './data/05-enriched.json';
+const INPUT_PATH = './data/06-enriched.json';
 
 /**
  * Record a snapshot of current star/fork counts for trending calculation

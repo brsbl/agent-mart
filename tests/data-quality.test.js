@@ -2,7 +2,7 @@ import { describe, it, before } from 'node:test';
 import assert from 'node:assert';
 import fs from 'node:fs';
 
-const ENRICHED_PATH = './data/05-enriched.json';
+const ENRICHED_PATH = './data/06-enriched.json';
 
 // Deterministic seeded random for reproducibility
 function seededRandom(seed) {

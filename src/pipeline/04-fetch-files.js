@@ -1,8 +1,8 @@
 import { batchGetFiles } from '../lib/github.js';
 import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
 
-const INPUT_PATH = './data/01-discovered.json';
-const OUTPUT_PATH = './data/02-files.json';
+const REPOS_PATH = './data/02-repos.json';
+const OUTPUT_PATH = './data/04-files.json';
 
 // Base file paths to fetch from each repository
 const BASE_PATHS = [
@@ -47,7 +47,7 @@ function getPluginReadmePaths(marketplaceContent) {
 export async function fetchFiles({ onProgress } = {}) {
   log('Starting file content fetch...');
 
-  const { repos: allRepos } = loadJson(INPUT_PATH);
+  const { repos: allRepos } = loadJson(REPOS_PATH);
   const files = [];
 
   const reposToProcess = applyRepoLimit(allRepos);

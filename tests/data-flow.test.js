@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const ENRICHED_PATH = './data/05-enriched.json';
+const ENRICHED_PATH = './data/06-enriched.json';
 const MARKETPLACES_BROWSE_PATH = './web/public/data/marketplaces-browse.json';
 const AUTHORS_DIR = './web/public/data/authors';
 
