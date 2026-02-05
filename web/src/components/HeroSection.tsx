@@ -15,7 +15,7 @@ function AsciiSubtitle() {
 
 export function HeroSection() {
   return (
-    <section className="flex flex-col items-center px-4 pt-16">
+    <section className="flex flex-col items-center px-4 -mt-4 pb-2">
       <AsciiSubtitle />
     </section>
   );

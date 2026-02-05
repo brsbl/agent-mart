@@ -87,7 +87,7 @@ export function StatsRow() {
   }
 
   return (
-    <section className="flex justify-center py-1 mt-8">
+    <section className="flex justify-center -mt-2 pt-4">
       <div className="flex flex-wrap justify-center gap-4 md:gap-8 bg-card/80 backdrop-blur-md rounded-xl px-4 py-2 backdrop-blur-sm">
         <StatCard value={totalMarketplaces} label="Marketplaces" />
         <StatCard value={totalPlugins} label="Plugins" />

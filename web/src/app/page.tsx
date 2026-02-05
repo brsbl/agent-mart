@@ -22,20 +22,20 @@ export default function HomePage() {
     <>
       {/* Background image - covers full viewport including navbar/footer */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-[0.85] dark:opacity-[0.85] pointer-events-none z-0"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-80 dark:opacity-80 pointer-events-none z-0"
         style={{ backgroundImage: "url('/agent-mart.png')" }}
       />
 
       {/* Content container - no scroll */}
       <div className="h-[calc(100vh-120px)] flex flex-col relative z-10">
         {/* Content */}
-        <div className="flex flex-col flex-1 pt-8 justify-between">
-          <div>
+        <div className="flex flex-col flex-1 pt-8">
+          <div className="pb-8">
             <HeroSection />
             <StatsRow />
           </div>
           {/* Search and content below the sign */}
-          <div className="flex flex-col gap-2 -mb-4" style={{ transform: 'translateY(-4rem)' }}>
+          <div className="flex flex-col gap-2 -mb-4">
             <LandingSearch />
             <TrendingPlugins />
           </div>

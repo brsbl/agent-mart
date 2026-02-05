@@ -19,7 +19,7 @@ export function LandingSearch() {
   };
 
   return (
-    <section className="flex justify-center px-4">
+    <section className="flex justify-center px-2 pt-64">
       <form onSubmit={handleSubmit} className="w-full max-w-xl">
         <div className="relative">
           <Search
