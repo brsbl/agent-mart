@@ -48,7 +48,15 @@ export function saveSignalsHistory(history) {
 }
 
 /**
- * Get today's date in YYYY-MM-DD format
+ * Get current timestamp in ISO format
+ * @returns {string} ISO timestamp string
+ */
+export function getSnapshotTimestamp() {
+  return new Date().toISOString();
+}
+
+/**
+ * Get today's date in YYYY-MM-DD format (for backwards compat)
  * @returns {string} ISO date string
  */
 export function getTodayDate() {
@@ -84,20 +92,16 @@ export function pruneOldSnapshots(snapshots, maxAgeDays = HISTORY_RETENTION_DAYS
  * @param {number} forks - Current fork count
  * @param {string} date - Snapshot date (YYYY-MM-DD)
  */
-export function addSnapshot(history, repoFullName, stars, forks, date) {
+export function addSnapshot(history, repoFullName, stars, forks, timestamp) {
   if (!history.repositories[repoFullName]) {
     history.repositories[repoFullName] = { snapshots: [] };
   }
 
-  // Check for existing snapshot on this date to prevent duplicates on re-runs
-  const existing = history.repositories[repoFullName].snapshots.find(s => s.date === date);
-  if (!existing) {
-    history.repositories[repoFullName].snapshots.push({
-      date,
-      stars,
-      forks
-    });
-  }
+  history.repositories[repoFullName].snapshots.push({
+    date: timestamp,
+    stars,
+    forks
+  });
 }
 
 /**

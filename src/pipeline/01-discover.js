@@ -60,6 +60,14 @@ export async function discover({ onProgress } = {}) {
   // Deduplicate by full_name (in case same repo appears multiple times)
   let unique = [...new Map(results.map(r => [r.full_name, r])).values()];
 
+  // Filter to only standard marketplace paths (skip .backup, .sample, etc.)
+  const STANDARD_PATH = '.claude-plugin/marketplace.json';
+  const beforeFilter = unique.length;
+  unique = unique.filter(r => r.marketplace_path === STANDARD_PATH);
+  if (beforeFilter !== unique.length) {
+    log(`Filtered out ${beforeFilter - unique.length} non-standard paths (kept only ${STANDARD_PATH})`);
+  }
+
   // Apply REPO_LIMIT to final output
   if (REPO_LIMIT && unique.length > REPO_LIMIT) {
     unique = unique.slice(0, REPO_LIMIT);
