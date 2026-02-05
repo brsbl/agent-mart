@@ -20,15 +20,6 @@ const OUTPUT_DIR = join(__dirname, 'output');
 const REPORT_PATH = join(OUTPUT_DIR, 'pipeline-status.html');
 const LAST_RUN_PATH = './data/.last-run-metrics.json';
 
-/**
- * Format a number with K/M suffix for display
- */
-function formatNumber(n) {
-  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
-  return n.toString();
-}
-
 // Stage definitions with descriptions
 const STAGES = [
   {
@@ -116,8 +107,8 @@ const STAGES = [
         'Repos': { current: data?.total_repos || 0, previous: prev?.total_repos || 0 },
         'Unique owners': { current: data?.total_owners || 0, previous: prev?.total_owners || 0 },
         'With description': { current: withDescription, previous: prevWithDescription },
-        'Total stars': { current: formatNumber(totalStars), previous: formatNumber(prevTotalStars) },
-        'Total forks': { current: formatNumber(totalForks), previous: formatNumber(prevTotalForks) }
+        'Total stars': { current: totalStars, previous: prevTotalStars },
+        'Total forks': { current: totalForks, previous: prevTotalForks }
       };
     }
   },
@@ -146,7 +137,7 @@ const STAGES = [
   },
   {
     id: '06-snapshot',
-    name: 'Snapshot Stars/Forks',
+    name: 'Snapshot Stars And Forks',
     fn: snapshot,
     parallel: '06-07', // Run in parallel with aggregate
     description: 'Records star/fork counts for trending calculation.',
