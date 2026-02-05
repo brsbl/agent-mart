@@ -33,8 +33,18 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
       continue;
     }
 
+    // Detect repo renames/transfers: use actual owner from API response
+    const actualOwner = data.owner.login;
+    const [requestedOwner] = full_name.split('/');
+    const actualFullName = `${actualOwner}/${data.name}`;
+
+    // Log if repo was renamed/transferred
+    if (actualOwner.toLowerCase() !== requestedOwner.toLowerCase()) {
+      log(`Repo renamed/transferred: ${full_name} → ${actualFullName}`);
+    }
+
     enriched.push({
-      full_name,
+      full_name: actualFullName,
       marketplace_path,
       default_branch: data.default_branch,
       default_branch_sha: data.default_branch_sha,
@@ -50,9 +60,9 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
         }
       },
       owner: {
-        id: data.owner.login,
-        type: ownerData[data.owner.login]?.type || 'User',
-        avatar_url: ownerData[data.owner.login]?.avatar_url
+        id: actualOwner,
+        type: ownerData[actualOwner]?.type || 'User',
+        avatar_url: ownerData[actualOwner]?.avatar_url
       }
     });
   }
