@@ -1,0 +1,94 @@
+{
+  "author": {
+    "id": "EveryInc",
+    "display_name": "Every",
+    "avatar_url": "https://avatars.githubusercontent.com/u/76073155?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "every-marketplace",
+      "version": null,
+      "description": "Plugin marketplace for Claude Code extensions",
+      "repo_full_name": "EveryInc/compound-engineering-plugin",
+      "repo_url": "https://github.com/EveryInc/compound-engineering-plugin",
+      "repo_description": "Official Claude Code compound engineering plugin",
+      "signals": {
+        "stars": 7177,
+        "forks": 578,
+        "pushed_at": "2026-02-02T20:26:31Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"every-marketplace\",\n  \"owner\": {\n    \"name\": \"Kieran Klaassen\",\n    \"url\": \"https://github.com/kieranklaassen\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugin marketplace for Claude Code extensions\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"compound-engineering\",\n      \"description\": \"AI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last. Includes 28 specialized agents, 24 commands, and 15 skills.\",\n      \"version\": \"2.28.0\",\n      \"author\": {\n        \"name\": \"Kieran Klaassen\",\n        \"url\": \"https://github.com/kieranklaassen\",\n        \"email\": \"kieran@every.to\"\n      },\n      \"homepage\": \"https://github.com/EveryInc/compound-engineering-plugin\",\n      \"tags\": [\"ai-powered\", \"compound-engineering\", \"workflow-automation\", \"code-review\", \"quality\", \"knowledge-management\", \"image-generation\"],\n      \"source\": \"./plugins/compound-engineering\"\n    },\n    {\n      \"name\": \"coding-tutor\",\n      \"description\": \"Personalized coding tutorials that build on your existing knowledge and use your actual codebase for examples. Includes spaced repetition quizzes to reinforce learning. Includes 3 commands and 1 skill.\",\n      \"version\": \"1.2.1\",\n      \"author\": {\n        \"name\": \"Nityesh Agarwal\"\n      },\n      \"homepage\": \"https://github.com/EveryInc/compound-engineering-plugin\",\n      \"tags\": [\"coding\", \"programming\", \"tutorial\", \"learning\", \"spaced-repetition\", \"education\"],\n      \"source\": \"./plugins/coding-tutor\"\n    }\n  ]\n}\n",
+        "README.md": "# Compound Marketplace\n\n[![Build Status](https://github.com/EveryInc/compound-engineering-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/EveryInc/compound-engineering-plugin/actions/workflows/ci.yml)\n[![npm](https://img.shields.io/npm/v/@every-env/compound-plugin)](https://www.npmjs.com/package/@every-env/compound-plugin)\n\nA Claude Code plugin marketplace featuring the **Compound Engineering Plugin** — tools that make each unit of engineering work easier than the last.\n\n## Claude Code Install\n\n```bash\n/plugin marketplace add https://github.com/EveryInc/compound-engineering-plugin\n/plugin install compound-engineering\n```\n\n## OpenCode + Codex (experimental) Install\n\nThis repo includes a Bun/TypeScript CLI that converts Claude Code plugins to OpenCode and Codex.\n\n```bash\n# convert the compound-engineering plugin into OpenCode format\nbunx @every-env/compound-plugin install compound-engineering --to opencode\n\n# convert to Codex format\nbunx @every-env/compound-plugin install compound-engineering --to codex\n```\n\nLocal dev:\n\n```bash\nbun run src/index.ts install ./plugins/compound-engineering --to opencode\n```\n\nOpenCode output is written to `~/.opencode` by default, with `opencode.json` at the root and `agents/`, `skills/`, and `plugins/` alongside it.\nBoth provider targets are experimental and may change as the formats evolve.\nCodex output is written to `~/.codex/prompts` and `~/.codex/skills`, with each Claude command converted into both a prompt and a skill (the prompt instructs Codex to load the corresponding skill). Generated Codex skill descriptions are truncated to 1024 characters (Codex limit).\n\n## Workflow\n\n```\nPlan → Work → Review → Compound → Repeat\n```\n\n| Command | Purpose |\n|---------|---------|\n| `/workflows:plan` | Turn feature ideas into detailed implementation plans |\n| `/workflows:work` | Execute plans with worktrees and task tracking |\n| `/workflows:review` | Multi-agent code review before merging |\n| `/workflows:compound` | Document learnings to make future work easier |\n\nEach cycle compounds: plans inform future plans, reviews catch more issues, patterns get documented.\n\n## Philosophy\n\n**Each unit of engineering work should make subsequent units easier—not harder.**\n\nTraditional development accumulates technical debt. Every feature adds complexity. The codebase becomes harder to work with over time.\n\nCompound engineering inverts this. 80% is in planning and review, 20% is in execution:\n- Plan thoroughly before writing code\n- Review to catch issues and capture learnings\n- Codify knowledge so it's reusable\n- Keep quality high so future changes are easy\n\n## Learn More\n\n- [Full component reference](plugins/compound-engineering/README.md) - all agents, commands, skills\n- [Compound engineering: how Every codes with agents](https://every.to/chain-of-thought/compound-engineering-how-every-codes-with-agents)\n- [The story behind compounding engineering](https://every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it)\n",
+        "plugins/compound-engineering/README.md": "# Compounding Engineering Plugin\n\nAI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last.\n\n## Components\n\n| Component | Count |\n|-----------|-------|\n| Agents | 27 |\n| Commands | 20 |\n| Skills | 14 |\n| MCP Servers | 1 |\n\n## Agents\n\nAgents are organized into categories for easier discovery.\n\n### Review (14)\n\n| Agent | Description |\n|-------|-------------|\n| `agent-native-reviewer` | Verify features are agent-native (action + context parity) |\n| `architecture-strategist` | Analyze architectural decisions and compliance |\n| `code-simplicity-reviewer` | Final pass for simplicity and minimalism |\n| `data-integrity-guardian` | Database migrations and data integrity |\n| `data-migration-expert` | Validate ID mappings match production, check for swapped values |\n| `deployment-verification-agent` | Create Go/No-Go deployment checklists for risky data changes |\n| `dhh-rails-reviewer` | Rails review from DHH's perspective |\n| `kieran-rails-reviewer` | Rails code review with strict conventions |\n| `kieran-python-reviewer` | Python code review with strict conventions |\n| `kieran-typescript-reviewer` | TypeScript code review with strict conventions |\n| `pattern-recognition-specialist` | Analyze code for patterns and anti-patterns |\n| `performance-oracle` | Performance analysis and optimization |\n| `security-sentinel` | Security audits and vulnerability assessments |\n| `julik-frontend-races-reviewer` | Review JavaScript/Stimulus code for race conditions |\n\n### Research (4)\n\n| Agent | Description |\n|-------|-------------|\n| `best-practices-researcher` | Gather external best practices and examples |\n| `framework-docs-researcher` | Research framework documentation and best practices |\n| `git-history-analyzer` | Analyze git history and code evolution |\n| `repo-research-analyst` | Research repository structure and conventions |\n\n### Design (3)\n\n| Agent | Description |\n|-------|-------------|\n| `design-implementation-reviewer` | Verify UI implementations match Figma designs |\n| `design-iterator` | Iteratively refine UI through systematic design iterations |\n| `figma-design-sync` | Synchronize web implementations with Figma designs |\n\n### Workflow (5)\n\n| Agent | Description |\n|-------|-------------|\n| `bug-reproduction-validator` | Systematically reproduce and validate bug reports |\n| `every-style-editor` | Edit content to conform to Every's style guide |\n| `lint` | Run linting and code quality checks on Ruby and ERB files |\n| `pr-comment-resolver` | Address PR comments and implement fixes |\n| `spec-flow-analyzer` | Analyze user flows and identify gaps in specifications |\n\n### Docs (1)\n\n| Agent | Description |\n|-------|-------------|\n| `ankane-readme-writer` | Create READMEs following Ankane-style template for Ruby gems |\n\n## Commands\n\n### Workflow Commands\n\nCore workflow commands use `workflows:` prefix to avoid collisions with built-in commands:\n\n| Command | Description |\n|---------|-------------|\n| `/workflows:brainstorm` | Explore requirements and approaches before planning |\n| `/workflows:plan` | Create implementation plans |\n| `/workflows:review` | Run comprehensive code reviews |\n| `/workflows:work` | Execute work items systematically |\n| `/workflows:compound` | Document solved problems to compound team knowledge |\n\n### Utility Commands\n\n| Command | Description |\n|---------|-------------|\n| `/deepen-plan` | Enhance plans with parallel research agents for each section |\n| `/changelog` | Create engaging changelogs for recent merges |\n| `/create-agent-skill` | Create or edit Claude Code skills |\n| `/generate_command` | Generate new slash commands |\n| `/heal-skill` | Fix skill documentation issues |\n| `/plan_review` | Multi-agent plan review in parallel |\n| `/report-bug` | Report a bug in the plugin |\n| `/reproduce-bug` | Reproduce bugs using logs and console |\n| `/resolve_parallel` | Resolve TODO comments in parallel |\n| `/resolve_pr_parallel` | Resolve PR comments in parallel |\n| `/resolve_todo_parallel` | Resolve todos in parallel |\n| `/triage` | Triage and prioritize issues |\n| `/test-browser` | Run browser tests on PR-affected pages |\n| `/xcode-test` | Build and test iOS apps on simulator |\n| `/feature-video` | Record video walkthroughs and add to PR description |\n\n## Skills\n\n### Architecture & Design\n\n| Skill | Description |\n|-------|-------------|\n| `agent-native-architecture` | Build AI agents using prompt-native architecture |\n\n### Development Tools\n\n| Skill | Description |\n|-------|-------------|\n| `andrew-kane-gem-writer` | Write Ruby gems following Andrew Kane's patterns |\n| `compound-docs` | Capture solved problems as categorized documentation |\n| `create-agent-skills` | Expert guidance for creating Claude Code skills |\n| `dhh-rails-style` | Write Ruby/Rails code in DHH's 37signals style |\n| `dspy-ruby` | Build type-safe LLM applications with DSPy.rb |\n| `frontend-design` | Create production-grade frontend interfaces |\n| `skill-creator` | Guide for creating effective Claude Code skills |\n\n### Content & Workflow\n\n| Skill | Description |\n|-------|-------------|\n| `every-style-editor` | Review copy for Every's style guide compliance |\n| `file-todos` | File-based todo tracking system |\n| `git-worktree` | Manage Git worktrees for parallel development |\n\n### File Transfer\n\n| Skill | Description |\n|-------|-------------|\n| `rclone` | Upload files to S3, Cloudflare R2, Backblaze B2, and cloud storage |\n\n### Browser Automation\n\n| Skill | Description |\n|-------|-------------|\n| `agent-browser` | CLI-based browser automation using Vercel's agent-browser |\n\n### Image Generation\n\n| Skill | Description |\n|-------|-------------|\n| `gemini-imagegen` | Generate and edit images using Google's Gemini API |\n\n**gemini-imagegen features:**\n- Text-to-image generation\n- Image editing and manipulation\n- Multi-turn refinement\n- Multiple reference image composition (up to 14 images)\n\n**Requirements:**\n- `GEMINI_API_KEY` environment variable\n- Python packages: `google-genai`, `pillow`\n\n## MCP Servers\n\n| Server | Description |\n|--------|-------------|\n| `context7` | Framework documentation lookup via Context7 |\n\n### Context7\n\n**Tools provided:**\n- `resolve-library-id` - Find library ID for a framework/package\n- `get-library-docs` - Get documentation for a specific library\n\nSupports 100+ frameworks including Rails, React, Next.js, Vue, Django, Laravel, and more.\n\nMCP servers start automatically when the plugin is enabled.\n\n## Browser Automation\n\nThis plugin uses **agent-browser CLI** for browser automation tasks. Install it globally:\n\n```bash\nnpm install -g agent-browser\nagent-browser install  # Downloads Chromium\n```\n\nThe `agent-browser` skill provides comprehensive documentation on usage.\n\n## Installation\n\n```bash\nclaude /plugin install compound-engineering\n```\n\n## Known Issues\n\n### MCP Servers Not Auto-Loading\n\n**Issue:** The bundled Context7 MCP server may not load automatically when the plugin is installed.\n\n**Workaround:** Manually add it to your project's `.claude/settings.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"context7\": {\n      \"type\": \"http\",\n      \"url\": \"https://mcp.context7.com/mcp\"\n    }\n  }\n}\n```\n\nOr add it globally in `~/.claude/settings.json` for all projects.\n\n## Version History\n\nSee [CHANGELOG.md](CHANGELOG.md) for detailed version history.\n\n## License\n\nMIT\n",
+        "plugins/coding-tutor/README.md": "# Coding Tutor\n\nYour personal AI tutor that creates tutorials tailored to you - using real code from your projects, building on what you already know, and tracking your progress over time.\n\n## Why\n\nAI is already smarter than any single human being across the breadth of tasks it can perform. It beats PhDs, aces entrance exams in every field, and this gap will only widen.\n\nIn this world, humans have two paths: let their cognitive capabilities decline, or rise to match AI. The long-term future of humanity depends heavily on which path we take.\n\nMy belief is simple: today's AI is smarter than any private tutor anyone on the planet can hire. So why not use it to give every human access to the best personal tutor imaginable? One that knows your background, adapts to your pace, uses your actual work as teaching material, and helps you retain what you learn.\n\nThis project starts with programming - the domain where AI has the most immediate economic impact. Use it to learn about the programs you're vibe coding and level up your skills. Don't just vibe code, vibe learn.\n\n## Install\n\n```\n/plugin install coding-tutor@claude-code-essentials\n```\n\n## Features\n\n- Personalized onboarding to understand your learning goals\n- Tutorials that use YOUR code as examples\n- Spaced repetition quiz system to reinforce learning\n- Tracks your progress across tutorials\n- Curriculum planning based on your current knowledge\n\n## Commands\n\n- `/teach-me` - Learn something new\n- `/quiz-me` - Test your retention with spaced repetition\n- `/sync-tutorials` - Sync your tutorials to GitHub for backup\n\n## Storage\n\nTutorials are stored at `~/coding-tutor-tutorials/`. This is auto-created on first use and shared across all your projects. The `source_repo` field in each tutorial tracks which codebase the examples came from.\n"
+      },
+      "plugins": [
+        {
+          "name": "compound-engineering",
+          "description": "AI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last. Includes 28 specialized agents, 24 commands, and 15 skills.",
+          "version": "2.28.0",
+          "author": {
+            "name": "Kieran Klaassen",
+            "url": "https://github.com/kieranklaassen",
+            "email": "kieran@every.to"
+          },
+          "homepage": "https://github.com/EveryInc/compound-engineering-plugin",
+          "tags": [
+            "ai-powered",
+            "compound-engineering",
+            "workflow-automation",
+            "code-review",
+            "quality",
+            "knowledge-management",
+            "image-generation"
+          ],
+          "source": "./plugins/compound-engineering",
+          "categories": [
+            "ai-powered",
+            "code-review",
+            "compound-engineering",
+            "image-generation",
+            "knowledge-management",
+            "quality",
+            "workflow-automation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add EveryInc/compound-engineering-plugin",
+            "/plugin install compound-engineering@every-marketplace"
+          ]
+        },
+        {
+          "name": "coding-tutor",
+          "description": "Personalized coding tutorials that build on your existing knowledge and use your actual codebase for examples. Includes spaced repetition quizzes to reinforce learning. Includes 3 commands and 1 skill.",
+          "version": "1.2.1",
+          "author": {
+            "name": "Nityesh Agarwal"
+          },
+          "homepage": "https://github.com/EveryInc/compound-engineering-plugin",
+          "tags": [
+            "coding",
+            "programming",
+            "tutorial",
+            "learning",
+            "spaced-repetition",
+            "education"
+          ],
+          "source": "./plugins/coding-tutor",
+          "categories": [
+            "coding",
+            "education",
+            "learning",
+            "programming",
+            "spaced-repetition",
+            "tutorial"
+          ],
+          "install_commands": [
+            "/plugin marketplace add EveryInc/compound-engineering-plugin",
+            "/plugin install coding-tutor@every-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

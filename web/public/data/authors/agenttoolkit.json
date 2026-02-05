@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "AgentToolkit",
+    "display_name": "AgentToolkit",
+    "avatar_url": "https://avatars.githubusercontent.com/u/231742966?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kaizen-marketplace",
+      "version": null,
+      "description": "Kaizen plugins for Claude Code - continuous improvement through auto-generated guidelines",
+      "repo_full_name": "AgentToolkit/kaizen",
+      "repo_url": "https://github.com/AgentToolkit/kaizen",
+      "repo_description": "Self improving agents through iterations",
+      "signals": {
+        "stars": 6,
+        "forks": 2,
+        "pushed_at": "2026-02-04T19:03:35Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"kaizen-marketplace\",\n  \"description\": \"Kaizen plugins for Claude Code - continuous improvement through auto-generated guidelines\",\n  \"owner\": {\n    \"name\": \"Vinod Muthusamy\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"kaizen\",\n      \"description\": \"Learn from conversations with auto-generated guidelines\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Vinod Muthusamy\"\n      },\n      \"source\": \"./plugins/kaizen\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# Kaizen\n\nSelf-improving agents through iterations.\n\nKaizen is a system designed to help agents improve over time by learning from their trajectories. It uses a combination of an MCP server for tool integration, vector storage for memory, and LLM-based conflict resolution to refine its knowledge base.\n\n## Features\n\n- **MCP Server**: Exposes tools to get guidelines and save trajectories.\n- **Conflict Resolution**: Intelligently merges new insights with existing guidelines using LLMs.\n- **Trajectory Analysis**: Automatically analyzes agent trajectories to generate tips and best practices.\n- **Milvus Integration**: Uses Milvus (or Milvus Lite) for efficient vector storage and retrieval.\n\n## Architecture\n\n<img src=\"docs/assets/architecture.png\" alt=\"Architecture\" width=\"480\">\n\n## Quick Start\n\n### Installation\n\nPrerequisites:\n- Python 3.12 or higher\n- `uv` (recommended) or `pip`\n\n```bash\ngit clone <repository_url>\ncd kaizen\nuv sync && source .venv/bin/activate\n```\n\n### Configuration\n\nSet your OpenAI API key:\n```bash\nexport OPENAI_API_KEY=sk-...\n```\n\nFor detailed configuration options (custom LLM providers, backends, etc.), see [CONFIGURATION.md](CONFIGURATION.md).\n\n### Running the MCP Server\n\n```bash\nuv run fastmcp run kaizen/frontend/mcp/mcp_server.py --transport sse --port 8201\n```\n\nVerify it's running:\n```bash\nnpx @modelcontextprotocol/inspector@latest http://127.0.0.1:8201/sse --cli --method tools/list\n```\n\n**Available tools:**\n- `get_guidelines(task: str)`: Get relevant guidelines for a specific task.\n- `save_trajectory(trajectory_data: str, task_id: str | None)`: Save a conversation trajectory and generate new tips.\n- `create_entity(content: str, entity_type: str, metadata: str | None, enable_conflict_resolution: bool)`: Create a single entity in the namespace.\n- `delete_entity(entity_id: str)`: Delete a specific entity by its ID.\n\n## Documentation\n\n- [CONFIGURATION.md](CONFIGURATION.md) - Detailed configuration options\n- [CLI.md](CLI.md) - Command-line interface documentation\n- [CLAUDE_CODE_DEMO.md](CLAUDE_CODE_DEMO.md) - Claude Code demo walkthrough\n\n## Development\n\n### Running Tests\n\n```bash\nuv run pytest\n```\n\n#### Phoenix Sync Tests\n\nTests for the Phoenix trajectory sync functionality are **skipped by default** since they require familiarity with the Phoenix integration. To include them:\n\n```bash\n# Run all tests including Phoenix tests\nuv run pytest --run-phoenix\n\n# Run only Phoenix tests\nuv run pytest -m phoenix\n```\n\n#### End-to-End (E2E) Low-Code Verification\n\nTo run the full end-to-end verification pipeline (Agent -> Trace -> Tip):\n\n```bash\nKAIZEN_E2E=true uv run pytest tests/e2e/test_e2e_pipeline.py -s\n```\n\nSee [docs/LOW_CODE_TRACING.md](docs/LOW_CODE_TRACING.md#end-to-end-verification) for more details.\n",
+        "plugins/kaizen/README.md": "# Kaizen Plugin for Claude Code\n\nA plugin that helps Claude Code learn from conversations by automatically extracting and applying entities.\n\n## Features\n\n- **Automatic Retrieval**: At the start of each prompt, relevant entities are automatically injected\n- **Manual Learning**: Use the `/kaizen:learn` skill to extract and save entities from conversations\n- **Zero-config Retrieval**: Hooks are automatically installed when the plugin is enabled\n\n## Installation\n\n### From Local Directory\n\n```bash\nclaude --plugin-dir /path/to/kaizen/repo/plugins/kaizen\n```\n\n### From Marketplace\n\n1. Add the marketplace and plugin:\n   ```bash\n   claude plugin marketplace add AgentToolkit/kaizen\n   claude plugin install kaizen@kaizen-marketplace\n   ```\n\n\n## How It Works\n\n### Entity Retrieval (Automatic)\n\nWhen you submit a prompt, the plugin automatically:\n1. Loads all stored entities from `.claude/entities.json`\n2. Formats and injects them into the conversation context\n3. Claude applies relevant entities to the current task\n\n### Entity Generation (Manual by Default)\n\nBy default, you must manually invoke the `/kaizen:learn` skill to extract entities:\n1. Complete a conversation or task\n2. Invoke `/kaizen:learn`\n3. The plugin analyzes the conversation trajectory\n4. Extracts actionable entities from what worked/failed\n5. Saves new entities to `.claude/entities.json`\n\n## Skills Included\n\n### `/kaizen:learn`\n\nManually invoke to extract entities from the current conversation:\n- Analyzes task, steps taken, successes and failures\n- Generates proactive entities (what to do, not what to avoid)\n- Outputs JSON for storage\n\n### `/kaizen:recall`\n\nManually invoke to retrieve and display stored entities.\n\n### `/kaizen:save`\n\nManually invoke to capture successful workflows from your current session and save them as reusable skills:\n- Analyzes conversation history (user requests, reasoning, tool calls, responses)\n- Generates parameterized SKILL.md documentation\n- Creates Python helper scripts for programmatic operations (when applicable)\n- Saves to `~/.claude/skills/{skill-name}/` for cross-project availability\n\n**Quick Start:**\n```\nUser: [Complete a successful task]\nUser: \"save\"\nAssistant: \"What would you like to name this skill?\"\nUser: \"my-workflow-name\"\n```\n\n## Entities Storage\n\nEntities are stored in `.claude/entities.json`:\n\n```json\n{\n  \"entities\": [\n    {\n      \"content\": \"Use Python PIL/Pillow for image metadata extraction in sandboxed environments\",\n      \"rationale\": \"System tools like exiftool may not be available\",\n      \"category\": \"strategy\",\n      \"trigger\": \"When extracting image metadata in containerized environments\"\n    }\n  ]\n}\n```\n\n## Environment Variables\n\n- `KAIZEN_ENTITIES_FILE`: Override the default entities storage location\n- `CLAUDE_PROJECT_ROOT`: Set by Claude Code, used to locate project-level entities\n\n## Verification\n\nAfter installation, run `claude plugin list` to confirm the plugin is enabled.\n\n## Plugin Structure\n\n```text\nkaizen/\n├── .claude-plugin/\n│   └── plugin.json              # Plugin manifest\n├── skills/\n│   ├── learn/\n│   │   ├── SKILL.md\n│   │   └── scripts/\n│   │       └── save_entities.py\n│   ├── recall/\n│   │   ├── SKILL.md\n│   │   └── scripts/\n│   │       └── retrieve_entities.py\n│   └── save/\n│       └── SKILL.md\n├── hooks/\n│   └── hooks.json               # Auto-configured hooks\n└── README.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "kaizen",
+          "description": "Learn from conversations with auto-generated guidelines",
+          "version": "1.0.0",
+          "author": {
+            "name": "Vinod Muthusamy"
+          },
+          "source": "./plugins/kaizen",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add AgentToolkit/kaizen",
+            "/plugin install kaizen@kaizen-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

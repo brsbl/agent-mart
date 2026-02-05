@@ -1,0 +1,82 @@
+{
+  "author": {
+    "id": "DataflightSolutions",
+    "display_name": "DataflightSolutions",
+    "avatar_url": "https://avatars.githubusercontent.com/u/177332119?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "dataflight-claude-plugins",
+      "version": "1.0.0",
+      "description": "Official Claude Code plugins for DataFlight workflows",
+      "repo_full_name": "DataflightSolutions/claude-plugins",
+      "repo_url": "https://github.com/DataflightSolutions/claude-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-01T14:39:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"dataflight-claude-plugins\",\n  \"displayName\": \"DataFlight Claude Plugins\",\n  \"description\": \"Official Claude Code plugins for DataFlight workflows\",\n  \"version\": \"1.0.0\",\n  \"owner\": {\n    \"name\": \"DataflightSolutions\",\n    \"url\": \"https://github.com/DataflightSolutions\"\n  },\n  \"author\": {\n    \"name\": \"DataFlight\",\n    \"url\": \"https://github.com/DataflightSolutions\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/DataflightSolutions/claude-plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"graphite\",\n      \"source\": \"./plugins/graphite\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Automate Graphite stacked-PR workflow with commands for creating diffs and submitting PRs (includes gt-create, gt-submit, gt-create-submit aliases)\",\n      \"keywords\": [\"graphite\", \"git\", \"stacked-diffs\", \"pull-requests\", \"workflow\"]\n    },\n    {\n      \"name\": \"playwright\",\n      \"source\": \"./plugins/playwright\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Browser automation with Playwright. Auto-invoked skill for custom automation plus quick commands for screenshots, link checking, and responsive testing.\",\n      \"keywords\": [\"playwright\", \"browser\", \"testing\", \"automation\", \"e2e\", \"screenshots\", \"web-testing\"]\n    }\n  ]\n}\n",
+        "README.md": "# DataFlight Claude Code Plugins\n\nOfficial Claude Code plugins for DataFlight workflows.\n\n## Plugins\n\n### graphite\n\nAutomate Graphite stacked-PR workflow with one-shot commands for creating diffs and submitting PRs.\n\n**Commands:**\n- `/graphite:create` - Create a stacked diff from current changes\n- `/graphite:submit` - Submit current branch as PR\n- `/graphite:create-submit` - Create and submit in one step\n- Aliases: `/graphite:gt-create`, `/graphite:gt-submit`, `/graphite:gt-create-submit`\n\n**Features:**\n- AI-generated commit messages following your repo's style\n- Automatic staging with `--all` flag\n- CLI-first approach\n\n[View full documentation →](./plugins/graphite/README.md)\n\n### playwright\n\nBrowser automation with Playwright.\n\n**Commands:**\n- `/playwright:screenshot` - Take a screenshot of a webpage\n- `/playwright:check-links` - Check for broken links\n- `/playwright:test-page` - Basic page health check\n- `/playwright:test-responsive` - Test across viewports\n\n**Features:**\n- Auto-detects running dev servers\n- Scripts saved to `/tmp` for inspection\n- Visible browser for debugging\n\n[View full documentation →](./plugins/playwright/README.md)\n\n## Installation\n\n### From Marketplace (Coming Soon)\n\n```bash\nclaude plugin install graphite@dataflight-claude-plugins\nclaude plugin install playwright@dataflight-claude-plugins\n```\n\n### From GitHub\n\n```bash\n# Clone the marketplace\ncd ~/.claude/plugins/marketplaces\ngit clone https://github.com/dataflight/claude-plugins dataflight-claude-plugins\n\n# Restart Claude Code\n```\n\n### Manual Installation\n\n1. Clone this repository to `~/.claude/plugins/marketplaces/dataflight-claude-plugins`\n2. Restart Claude Code\n3. Plugins will be automatically available\n\n## Development\n\nTo add a new plugin to this marketplace:\n\n1. Create plugin directory in `plugins/`:\n   ```bash\n   mkdir -p plugins/my-plugin/.claude-plugin\n   mkdir -p plugins/my-plugin/commands\n   ```\n\n2. Create `plugins/my-plugin/.claude-plugin/plugin.json`:\n   ```json\n   {\n     \"name\": \"my-plugin\",\n     \"version\": \"0.1.0\",\n     \"description\": \"Plugin description\",\n     \"author\": {\n       \"name\": \"Your Name\"\n     }\n   }\n   ```\n\n3. Add commands as markdown files in `plugins/my-plugin/commands/`\n\n4. Test locally, then commit and push\n\n## Contributing\n\n1. Fork this repository\n2. Create a feature branch\n3. Add or update plugins\n4. Submit a pull request\n\n## License\n\nMIT\n\n## Support\n\nFor issues or questions, open an issue on GitHub or contact the DataFlight team.\n",
+        "plugins/graphite/README.md": "# graphite\n\nAutomate Graphite stacked diff workflows with slash commands for creating diffs and submitting PRs.\n\n## Overview\n\nThis plugin provides commands that wrap the Graphite CLI (`gt`) to streamline the stacked diff workflow. Instead of manually running git and gt commands, use these slash commands to create diffs and submit pull requests.\n\n## Stacked Diff Philosophy\n\nThe commands in this plugin follow stacked diff best practices:\n\n- **One logical change per diff**: Each diff should represent a single, atomic change that can be reviewed and landed independently.\n- **Clear commit messages**: Conventional commit format with descriptive messages that explain what and why.\n- **Incremental building**: Stack multiple small diffs rather than one large change.\n\n## Commands\n\n### `/graphite:create`\n\nCreate a new stacked diff from current changes without submitting a PR.\n\n**Alias**: `/graphite:gt-create`\n\n**What it does**:\n1. Validates git repository and gt CLI availability\n2. Analyzes current changes (staged and unstaged)\n3. Generates a conventional commit message\n4. Runs `gt create --all -m \"<message>\"`\n\n**Use when**: You want to create a diff but review it before opening a PR, or when building a stack of multiple diffs.\n\n### `/graphite:submit`\n\nSubmit the current branch as a pull request.\n\n**Alias**: `/graphite:gt-submit`\n\n**What it does**:\n1. Validates environment\n2. Runs `gt submit` to push and create/update the PR\n\n**Use when**: You have a diff ready and want to open or update a PR.\n\n### `/graphite:create-submit`\n\nCreate a diff and submit it as a PR in one step.\n\n**Alias**: `/graphite:gt-create-submit`\n\n**What it does**:\n1. Everything from `/graphite:create`\n2. Immediately runs `/graphite:submit`\n\n**Use when**: You have a complete, self-contained change ready for review.\n\n## Commit Message Format\n\nAll commands generate commit messages following this format:\n\n```\ntype(scope): short description\n\nOptional longer explanation of what changed and why.\n\nCo-Authored-By: Claude Code\n```\n\n**Types**: feat, fix, refactor, docs, test, chore, perf, style, build, ci\n\n**Examples**:\n```\nfeat(auth): add JWT token refresh endpoint\n\nfix(api): handle null response from external service\n\nrefactor(utils): extract date formatting into separate module\n```\n\n## Prerequisites\n\n- **Graphite CLI**: `npm install -g @withgraphite/graphite-cli@latest`\n- **Git repository**: Must be in an initialized git repo\n- **Graphite setup**: Run `gt init` in your repository if not already configured\n\n## Workflow Examples\n\n### Building a stack incrementally\n\n```\n# Make first change\n/graphite:create          # Creates diff 1\n\n# Make second change on top\n/graphite:create          # Creates diff 2, stacked on diff 1\n\n# Make third change\n/graphite:create          # Creates diff 3\n\n# Submit all when ready\ngt submit --stack         # (run manually to submit entire stack)\n```\n\n### Quick single-diff workflow\n\n```\n# Make your changes\n/graphite:create-submit   # Creates diff and opens PR immediately\n```\n\n### Review before submitting\n\n```\n# Make changes\n/graphite:create          # Creates the diff\n\n# Review in GitHub or locally\n# Make adjustments if needed\n\n/graphite:submit          # Submit when satisfied\n```\n\n## Troubleshooting\n\n**\"Graphite CLI not found\"**\n\nInstall the CLI:\n```bash\nnpm install -g @withgraphite/graphite-cli@latest\n```\n\n**\"Not in a git repository\"**\n\nNavigate to a git repository before running commands.\n\n**\"Not authenticated\"**\n\nRun `gt auth` to authenticate with GitHub.\n\n**\"Branch not tracked by Graphite\"**\n\nThe branch was created outside of gt. Use `gt create` to create Graphite-tracked branches.\n\n## Development\n\n- **Version**: 1.0.0\n- **Commands**: 3 primary + 3 aliases (gt-create, gt-submit, gt-create-submit)\n- **Dependencies**: Graphite CLI\n\n## License\n\nMIT\n",
+        "plugins/playwright/README.md": "# Playwright Browser Automation Plugin\n\nComplete browser automation for Claude Code. Auto-detects dev servers, writes test scripts to `/tmp`, and provides comprehensive testing capabilities.\n\n## Features\n\n- **Auto-invoked Skill**: Claude automatically uses this when you ask about testing websites\n- **Quick Commands**: `/screenshot`, `/check-links`, `/test-page`, `/test-responsive`\n- **42 Helper Functions**: Forms, accessibility, performance, network, visual, mobile, and more\n- **Visible Browser**: See automation happening in real-time by default\n- **Dev Server Detection**: Automatically finds your running localhost servers\n\n## Installation\n\n### Via Plugin System\n\n```bash\n/plugin marketplace add DataflightSolutions/dataflight-claude-plugins\n/plugin install playwright\n```\n\nThen setup Playwright:\n\n```bash\ncd ~/.claude/plugins/marketplaces/dataflight-claude-plugins/plugins/playwright\nnpm run setup\n```\n\n### Manual Installation\n\n```bash\ncd ~/.claude/plugins/marketplaces/dataflight-claude-plugins/plugins/playwright\nnpm run setup\n```\n\n## Quick Commands\n\n### `/screenshot`\nTake a full-page screenshot of any webpage.\n\n```\n/screenshot http://localhost:3000\n```\n\n### `/check-links`\nScan a page for broken links.\n\n```\n/check-links http://localhost:3000\n```\n\n### `/test-page`\nBasic health check - verifies page loads without errors.\n\n```\n/test-page http://localhost:3000\n```\n\n### `/test-responsive`\nTest responsive design across desktop, tablet, and mobile viewports.\n\n```\n/test-responsive http://localhost:3000\n```\n\n## Skill Usage\n\nJust ask Claude naturally:\n\n- \"Test if my homepage loads correctly\"\n- \"Check the login flow on localhost:3847\"\n- \"Take screenshots of the dashboard at different sizes\"\n- \"Find broken links on the marketing page\"\n- \"Run an accessibility audit on the signup form\"\n- \"Test the form validation on the contact page\"\n\nClaude will automatically:\n1. Detect your running dev server\n2. Write a custom Playwright script\n3. Execute it with visible browser\n4. Report results with screenshots\n\n## Helper Functions\n\nThe plugin includes 42 helper functions organized by category:\n\n### Browser & Context\n- `launchBrowser()`, `createContext()`, `createPage()`\n- `saveStorageState()`, `loadStorageState()`, `detectDevServers()`\n\n### Navigation & Waiting\n- `waitForPageReady()`, `navigateWithRetry()`\n- `waitForSPA()`, `waitForElement()`\n\n### Safe Interactions\n- `safeClick()`, `safeType()`, `safeSelect()`, `safeCheck()`\n- `scrollPage()`, `scrollToElement()`, `authenticate()`, `handleCookieBanner()`\n\n### Form Helpers\n- `getFormFields()`, `getRequiredFields()`, `getFieldErrors()`\n- `validateFieldState()`, `fillFormFromData()`, `submitAndValidate()`\n\n### Accessibility\n- `checkAccessibility()`, `getARIAInfo()`\n- `checkFocusOrder()`, `getFocusableElements()`\n\n### Performance\n- `measurePageLoad()`, `measureLCP()`, `measureFCP()`, `measureCLS()`\n\n### Network\n- `mockAPIResponse()`, `blockResources()`\n- `captureRequests()`, `captureResponses()`, `waitForAPI()`\n\n### Visual\n- `takeScreenshot()`, `compareScreenshots()`, `takeElementScreenshot()`\n\n### Mobile\n- `emulateDevice()`, `setGeolocation()`, `simulateTouchEvent()`, `swipe()`\n\n### Multi-page\n- `handlePopup()`, `handleNewTab()`, `closeAllPopups()`, `handleDialog()`\n\n### Data Extraction\n- `extractTexts()`, `extractTableData()`, `extractMetaTags()`\n- `extractOpenGraph()`, `extractJsonLD()`, `extractLinks()`\n\n### Console Monitoring\n- `captureConsoleLogs()`, `capturePageErrors()`\n- `getConsoleErrors()`, `assertNoConsoleErrors()`\n\n### Files\n- `uploadFile()`, `uploadMultipleFiles()`, `downloadFile()`, `waitForDownload()`\n\n## Requirements\n\n- Node.js 18+\n- Chromium browser (installed via `npm run setup`)\n\n## Configuration\n\n### Environment Variables\n\n- `HEADLESS=true` - Run in headless mode (default: false)\n- `SLOW_MO=100` - Slow down automation by N ms\n\n### Scripts to /tmp\n\nAll test scripts are written to `/tmp/playwright-test-*.js`:\n- Automatically cleaned by OS\n- Won't clutter your project\n- Easy to inspect/re-run\n\n## Troubleshooting\n\n### Playwright not installed\n```bash\ncd ~/.claude/plugins/marketplaces/dataflight-claude-plugins/plugins/playwright\nnpm run setup\n```\n\n### Browser doesn't open\n- Check `headless: false` in your script\n- Ensure display is available (not running over SSH without X forwarding)\n\n### Module not found\n- Always run scripts via `node run.js` from plugin directory\n- This ensures proper module resolution\n\n### Element not found\n- Add explicit waits: `await page.waitForSelector('.element')`\n- Increase timeout if page is slow\n\n## Project Structure\n\n```\nplugins/playwright/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin metadata\n├── skills/\n│   └── playwright/\n│       └── SKILL.md         # Auto-invoked skill\n├── commands/\n│   ├── screenshot.md        # /screenshot command\n│   ├── check-links.md       # /check-links command\n│   ├── test-page.md         # /test-page command\n│   └── test-responsive.md   # /test-responsive command\n├── lib/\n│   └── helpers.js           # 42 helper functions\n├── run.js                   # Universal executor\n├── package.json             # Dependencies\n├── README.md                # This file\n└── API_REFERENCE.md         # Detailed API docs\n```\n\n## Dependencies\n\n- `playwright` ^1.48.0 - Browser automation\n- `pixelmatch` ^5.3.0 - Visual diff comparison\n- `pngjs` ^7.0.0 - PNG image processing\n- `axe-core` ^4.8.0 (optional) - Accessibility testing\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "graphite",
+          "source": "./plugins/graphite",
+          "version": "1.0.0",
+          "description": "Automate Graphite stacked-PR workflow with commands for creating diffs and submitting PRs (includes gt-create, gt-submit, gt-create-submit aliases)",
+          "keywords": [
+            "graphite",
+            "git",
+            "stacked-diffs",
+            "pull-requests",
+            "workflow"
+          ],
+          "categories": [
+            "git",
+            "graphite",
+            "pull-requests",
+            "stacked-diffs",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add DataflightSolutions/claude-plugins",
+            "/plugin install graphite@dataflight-claude-plugins"
+          ]
+        },
+        {
+          "name": "playwright",
+          "source": "./plugins/playwright",
+          "version": "1.0.0",
+          "description": "Browser automation with Playwright. Auto-invoked skill for custom automation plus quick commands for screenshots, link checking, and responsive testing.",
+          "keywords": [
+            "playwright",
+            "browser",
+            "testing",
+            "automation",
+            "e2e",
+            "screenshots",
+            "web-testing"
+          ],
+          "categories": [
+            "automation",
+            "browser",
+            "e2e",
+            "playwright",
+            "screenshots",
+            "testing",
+            "web-testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add DataflightSolutions/claude-plugins",
+            "/plugin install playwright@dataflight-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

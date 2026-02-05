@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "QuivrHQ",
+    "display_name": "Quivr",
+    "avatar_url": "https://avatars.githubusercontent.com/u/159330290?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "247-plugins",
+      "version": null,
+      "description": "Official plugins for 247 - Remote Claude Code access",
+      "repo_full_name": "QuivrHQ/247-claude-code-remote",
+      "repo_url": "https://github.com/QuivrHQ/247-claude-code-remote",
+      "repo_description": "Access Claude Code from anywhere - Mobile / Desktop secure connection via Tailscale. Provision VMs with Fly.io. Compatible with Gemini / Codex / OpenCode",
+      "signals": {
+        "stars": 15,
+        "forks": 1,
+        "pushed_at": "2026-01-31T19:27:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"247-plugins\",\n  \"description\": \"Official plugins for 247 - Remote Claude Code access\",\n  \"owner\": {\n    \"name\": \"QuivrHQ\",\n    \"url\": \"https://github.com/QuivrHQ\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"247-orchestrator\",\n      \"description\": \"Multi-agent orchestration - spawn and control parallel Claude sessions\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./claude-remote-control/packages/plugin-247\",\n      \"keywords\": [\"multi-agent\", \"parallel\", \"orchestration\", \"spawn\", \"247\"]\n    }\n  ]\n}\n",
+        "README.md": "# 247 - Remote Terminal Access for Claude Code\n\n**Access Claude Code from anywhere - phone, tablet, or any browser. Run AI-assisted coding sessions 24/7 without being tied to your desk.**\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)\n[![Node.js](https://img.shields.io/badge/Node.js-22+-green.svg)](https://nodejs.org/)\n[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)\n\n<p align=\"center\">\n  <img src=\"./demo.gif\" alt=\"247 Demo\" width=\"700\" />\n</p>\n\n## Why 247?\n\nEver wanted to check on your Claude Code session from your phone? Or start a quick coding task from a tablet while away from your desk? **247** makes it possible.\n\n- **Mobile-first**: Fully responsive web terminal with touch scroll support\n- **Always accessible**: Access your dev machine from any browser, anywhere\n- **Session persistence**: Leave and come back - your sessions stay alive via tmux\n- **Secure by design**: Cloudflare Tunnel integration, no port forwarding needed\n- **PWA ready**: Install as an app on your phone for instant access\n\n## Features\n\n| Feature                     | Description                                  |\n| --------------------------- | -------------------------------------------- |\n| **Web Terminal**            | Full xterm.js terminal with WebGL rendering  |\n| **Claude Code Integration** | One-click launch of Claude Code sessions     |\n| **Multi-Project Support**   | Switch between projects from the dashboard   |\n| **Session Management**      | Persistent tmux sessions survive disconnects |\n| **Real-time Sync**          | WebSocket-based instant communication        |\n| **Mobile Optimized**        | Touch gestures, virtual keyboard support     |\n| **Dark/Light Mode**         | Automatic theme detection                    |\n| **Offline Capable**         | PWA with service worker caching              |\n\n## Quick Start\n\n### Prerequisites\n\n- **Node.js 22+**\n- **tmux** installed (`brew install tmux` on macOS)\n- **Cloudflare Tunnel** (optional, for remote access)\n\n### Installation\n\n```bash\n# Clone the repository\ngit clone https://github.com/QuivrHQ/247.git\ncd 247\n\n# Install dependencies\npnpm install\n\n# Start development servers\npnpm dev\n```\n\nThis starts:\n\n- **Web Dashboard**: http://localhost:3001\n- **Agent**: ws://localhost:4678\n\n### Using the CLI\n\n```bash\n# Install globally\nnpm install -g 247-cli\n\n# Initialize configuration\n247 init\n\n# Start the agent\n247 start\n\n# Check status\n247 status\n```\n\n## Architecture\n\n```\n                    ┌─────────────────────────────────────┐\n                    │        Your Phone / Tablet          │\n                    │         247.quivr.com               │\n                    └──────────────┬──────────────────────┘\n                                   │ HTTPS\n                    ┌──────────────▼──────────────────────┐\n                    │         Cloudflare Tunnel           │\n                    └──────────────┬──────────────────────┘\n                                   │ WebSocket\n┌──────────────────────────────────▼──────────────────────────────────────┐\n│                            Your Mac                                      │\n│  ┌────────────────────────────────────────────────────────────────────┐ │\n│  │                         247 Agent                                   │ │\n│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │ │\n│  │  │   Express   │  │  WebSocket  │  │   node-pty  │                 │ │\n│  │  │   Server    │──│   Handler   │──│   + tmux    │                 │ │\n│  │  └─────────────┘  └─────────────┘  └──────┬──────┘                 │ │\n│  │                                            │                        │ │\n│  │                                    ┌───────▼───────┐                │ │\n│  │                                    │  Claude Code  │                │ │\n│  │                                    └───────────────┘                │ │\n│  └────────────────────────────────────────────────────────────────────┘ │\n└─────────────────────────────────────────────────────────────────────────┘\n```\n\n## Project Structure\n\n```\n247/\n├── apps/\n│   ├── web/          # Next.js 15 dashboard (deployed to Vercel)\n│   └── agent/        # Node.js agent (runs on your machine)\n├── packages/\n│   ├── cli/          # CLI tool for agent management\n│   └── shared/       # Shared TypeScript types\n└── scripts/          # Build and release automation\n```\n\n## Configuration\n\nCreate `apps/agent/config.json`:\n\n```json\n{\n  \"machine\": {\n    \"id\": \"macbook-pro\",\n    \"name\": \"MacBook Pro\"\n  },\n  \"tunnel\": {\n    \"domain\": \"your-tunnel.trycloudflare.com\"\n  },\n  \"projects\": {\n    \"basePath\": \"~/Dev\",\n    \"whitelist\": [\"project1\", \"project2\"]\n  }\n}\n```\n\n## Development Commands\n\n| Command          | Description                   |\n| ---------------- | ----------------------------- |\n| `pnpm dev`       | Start all development servers |\n| `pnpm dev:web`   | Start only the web dashboard  |\n| `pnpm dev:agent` | Start only the agent          |\n| `pnpm build`     | Build all packages            |\n| `pnpm test`      | Run all tests                 |\n| `pnpm typecheck` | TypeScript type checking      |\n| `pnpm lint`      | Lint all packages             |\n| `pnpm release`   | Semantic versioning release   |\n| `./dev.sh`       | Start web & agent in tmux     |\n\n### Local Development with tmux\n\nFor a better development experience, use the included tmux script:\n\n```bash\ncd claude-remote-control\n./dev.sh\n```\n\nThis creates a tmux session with web and agent in split panes. Useful shortcuts:\n- `Ctrl+b` then `←/→` - switch between panes\n- `Ctrl+b` then `d` - detach (servers keep running)\n- `tmux attach -t 247-dev` - reattach later\n\n## Tech Stack\n\n- **Frontend**: Next.js 15, React 19, Tailwind CSS, xterm.js\n- **Backend**: Express, WebSocket (ws), node-pty\n- **Database**: SQLite (better-sqlite3) for local persistence\n- **Terminal**: tmux for session persistence\n- **Build**: pnpm workspaces, Turborepo\n- **Deployment**: Vercel (web), Cloudflare Tunnel (agent)\n\n## Roadmap\n\n- [ ] Multi-machine support\n- [ ] Session sharing\n- [ ] Terminal recording/playback\n- [ ] Custom themes\n- [ ] Keyboard shortcuts customization\n\n## Contributing\n\nContributions are welcome! Please read our contributing guidelines before submitting a PR.\n\n1. Fork the repository\n2. Create your feature branch (`git checkout -b feature/amazing-feature`)\n3. Commit your changes (`git commit -m 'feat: add amazing feature'`)\n4. Push to the branch (`git push origin feature/amazing-feature`)\n5. Open a Pull Request\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n\n## Acknowledgments\n\n- [xterm.js](https://xtermjs.org/) - Terminal rendering\n- [node-pty](https://github.com/microsoft/node-pty) - PTY handling\n- [tmux](https://github.com/tmux/tmux) - Session persistence\n- [Claude Code](https://claude.ai/code) - AI coding assistant\n\n---\n\n<p align=\"center\">\n  <b>Built by <a href=\"https://quivr.com\">Quivr</a></b> (Y Combinator W24)\n</p>\n\n<p align=\"center\">\n  <a href=\"https://247.quivr.com\">Website</a> •\n  <a href=\"https://github.com/QuivrHQ/247/issues\">Issues</a> •\n  <a href=\"https://twitter.com/quaborr\">Twitter</a>\n</p>\n"
+      },
+      "plugins": [
+        {
+          "name": "247-orchestrator",
+          "description": "Multi-agent orchestration - spawn and control parallel Claude sessions",
+          "version": "1.0.0",
+          "source": "./claude-remote-control/packages/plugin-247",
+          "keywords": [
+            "multi-agent",
+            "parallel",
+            "orchestration",
+            "spawn",
+            "247"
+          ],
+          "categories": [
+            "247",
+            "multi-agent",
+            "orchestration",
+            "parallel",
+            "spawn"
+          ],
+          "install_commands": [
+            "/plugin marketplace add QuivrHQ/247-claude-code-remote",
+            "/plugin install 247-orchestrator@247-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -2,83 +2,25 @@
   "author": {
     "id": "oneryalcin",
     "display_name": "Mehmet Öner Yalçın",
-    "type": "User",
-    "avatar_url": "https://avatars.githubusercontent.com/u/8620952?u=b5161824f9e455f43d22bbe39544904ec22be38d&v=4",
-    "url": "https://github.com/oneryalcin",
-    "bio": "Tech ❤️  at @desiaai \r\n",
-    "stats": {
-      "total_marketplaces": 1,
-      "total_plugins": 1,
-      "total_commands": 0,
-      "total_skills": 0,
-      "total_stars": 0,
-      "total_forks": 0
-    }
+    "avatar_url": "https://avatars.githubusercontent.com/u/8620952?u=b5161824f9e455f43d22bbe39544904ec22be38d&v=4"
   },
   "marketplaces": [
     {
       "name": "nexus-marketplace",
       "version": null,
       "description": "Skills nexus for research, data analysis, and business workflows",
-      "owner_info": {
-        "name": "Mehmet Oner Yalcin",
-        "email": "oneryalcin@gmail.com"
-      },
-      "keywords": [],
       "repo_full_name": "oneryalcin/nexus-plugin",
       "repo_url": "https://github.com/oneryalcin/nexus-plugin",
       "repo_description": "Skills nexus for research, data analysis, and business workflows",
-      "homepage": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2025-10-13T13:09:09Z",
-        "created_at": "2025-10-13T12:20:49Z",
-        "license": "MIT"
+        "pushed_at": "2025-10-13T13:09:09Z"
       },
-      "file_tree": [
-        {
-          "path": ".claude-plugin",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": ".claude-plugin/marketplace.json",
-          "type": "blob",
-          "size": 580
-        },
-        {
-          "path": ".claude-plugin/plugin.json",
-          "type": "blob",
-          "size": 466
-        },
-        {
-          "path": "README.md",
-          "type": "blob",
-          "size": 3313
-        },
-        {
-          "path": "hooks",
-          "type": "tree",
-          "size": null
-        },
-        {
-          "path": "hooks/hooks.json",
-          "type": "blob",
-          "size": 270
-        },
-        {
-          "path": "hooks/session-start.sh",
-          "type": "blob",
-          "size": 2407
-        }
-      ],
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"nexus-marketplace\",\n  \"owner\": {\n    \"name\": \"Mehmet Oner Yalcin\",\n    \"email\": \"oneryalcin@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Skills nexus for research, data analysis, and business workflows\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nexus\",\n      \"source\": \"./\",\n      \"description\": \"Skills nexus for research, data analysis, and business workflows\",\n      \"version\": \"0.1.0\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"skills\", \"research\", \"data-analysis\", \"nexus\", \"business\"],\n      \"strict\": true\n    }\n  ]\n}\n",
         ".claude-plugin/plugin.json": "{\n  \"name\": \"nexus\",\n  \"description\": \"Skills nexus for research, data analysis, and business workflows\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Mehmet Oner Yalcin\",\n    \"email\": \"oneryalcin@gmail.com\"\n  },\n  \"homepage\": \"https://github.com/oneryalcin/nexus-plugin\",\n  \"repository\": \"https://github.com/oneryalcin/nexus-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"skills\", \"research\", \"data-analysis\", \"nexus\", \"business\"],\n  \"category\": \"productivity\"\n}\n",
-        "README.md": "# Agent Plugin\n\nDomain-focused agent with skills pattern for research and data analysis.\n\n## Architecture\n\nThis plugin implements the Skills Pattern with JIT context injection:\n- **Minimal bootstrap** - Establishes operating procedures via session-start hook\n- **Skills discovery** - `find-skill` command for pattern matching\n- **Mandatory compliance** - Agent must use skills when they exist\n- **Self-improvement** - Meta-skill for writing new skills\n\n## Installation\n\n### Via marketplace (recommended)\n\n```bash\n# In Claude Code\n/plugin marketplace add oneryalcin/nexus-plugin\n/plugin install nexus@nexus-marketplace\n```\n\nRestart Claude Code. On next session, skills will be automatically cloned to `~/.config/nexus/skills/`.\n\n### Manual installation for development\n\n```bash\n# Clone this repo\ngit clone https://github.com/oneryalcin/nexus-plugin.git\n\n# Add as local marketplace\n/plugin marketplace add ./nexus-plugin\n\n# Install\n/plugin install nexus@nexus-marketplace\n```\n\n## What You Get\n\n### Commands\n- `find-skill [pattern]` - Discover relevant skills\n\n### Skills (via separate nexus-skills repo)\n- **Getting Started** - Bootstrap and mandatory workflows\n- **Writing Skills** - Self-improvement meta-skill\n- **Web Research** - Systematic research workflow\n- **Spreadsheet Analysis** - Data analysis with Excel/pandas\n\n### Automatic Setup\n- Session-start hook clones/updates skills repository\n- Bootstrap context injected every session\n- Skills available at `~/.config/nexus/skills/`\n\n## How It Works\n\n1. **Session starts** → `session-start.sh` clones/updates nexus-skills repo\n2. **Bootstrap injected** → Agent reads `getting-started/SKILL.md`\n3. **Agent encounters task** → Agent runs `find-skill [pattern]`\n4. **Skill found** → Agent reads SKILL.md, follows procedures\n5. **New pattern learned** → Agent uses `writing-skills` to create new skill\n\n## Updating Skills\n\nSkills update automatically via `git pull` on each session start. If your local skills have diverged from upstream, the hook will notify you.\n\n## Contributing Skills\n\n1. Fork the [nexus-skills](https://github.com/oneryalcin/nexus-skills) repository\n2. Edit skills locally at `~/.config/nexus/skills/`\n3. Commit and push to your fork\n4. Open PR to upstream\n\n## Repository Structure\n\n```\nnexus-plugin/\n├── .claude-plugin/\n│   ├── plugin.json          # Plugin manifest\n│   └── marketplace.json     # Self-referencing marketplace\n├── commands/\n│   └── find-skill           # Discovery tool\n├── hooks/\n│   ├── hooks.json           # Hook configuration\n│   └── session-start.sh     # Bootstrap script\n└── lib/                     # Support code (if needed)\n```\n\n## Related Repositories\n\n- [nexus-skills](https://github.com/oneryalcin/nexus-skills) - Skills library (separate repo)\n\n## Philosophy\n\n- **JIT context injection** - Load only what's needed, when it's needed\n- **Executable procedures** - Skills are code for LLMs, not documentation\n- **Self-improvement** - System gets smarter over time\n- **Mandatory compliance** - Skills enforcement via adversarially-tested patterns\n\n## License\n\nMIT License - see LICENSE file for details\n\n## Support\n\n- **Issues**: https://github.com/oneryalcin/nexus-plugin/issues\n- **Skills**: https://github.com/oneryalcin/nexus-skills\n",
-        "hooks/hooks.json": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"startup|resume|clear|compact\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
-        "hooks/session-start.sh": "#!/usr/bin/env bash\n# SessionStart hook for nexus plugin\n\nset -euo pipefail\n\n# Set NEXUS_SKILLS_ROOT environment variable\nexport NEXUS_SKILLS_ROOT=\"${HOME}/.config/nexus/skills\"\n\n# Run skills initialization script (handles clone/fetch/auto-update)\nSCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)\"\nPLUGIN_ROOT=\"$(cd \"${SCRIPT_DIR}/..\" && pwd)\"\ninit_output=$(\"${PLUGIN_ROOT}/lib/initialize-skills.sh\" 2>&1 || echo \"\")\n\n# Extract status flags\nskills_updated=$(echo \"$init_output\" | grep \"SKILLS_UPDATED=true\" || echo \"\")\nskills_behind=$(echo \"$init_output\" | grep \"SKILLS_BEHIND=true\" || echo \"\")\n# Remove status flags from display output\ninit_output=$(echo \"$init_output\" | grep -v \"SKILLS_UPDATED=true\" | grep -v \"SKILLS_BEHIND=true\" || true)\n\n# Run find-skill to show all available skills\nfind_skills_output=$(\"${NEXUS_SKILLS_ROOT}/getting-started/find-skill\" 2>&1 || echo \"Error running find-skill\")\n\n# Read getting-started content\ngetting_started_content=$(cat \"${NEXUS_SKILLS_ROOT}/getting-started/SKILL.md\" 2>&1 || echo \"Error reading getting-started\")\n\n# Escape outputs for JSON\ninit_escaped=$(echo \"$init_output\" | sed 's/\\\\/\\\\\\\\/g' | sed 's/\"/\\\\\"/g' | awk '{printf \"%s\\\\n\", $0}')\nfind_skills_escaped=$(echo \"$find_skills_output\" | sed 's/\\\\/\\\\\\\\/g' | sed 's/\"/\\\\\"/g' | awk '{printf \"%s\\\\n\", $0}')\ngetting_started_escaped=$(echo \"$getting_started_content\" | sed 's/\\\\/\\\\\\\\/g' | sed 's/\"/\\\\\"/g' | awk '{printf \"%s\\\\n\", $0}')\n\n# Build initialization output message if present\ninit_message=\"\"\nif [ -n \"$init_escaped\" ]; then\n    init_message=\"${init_escaped}\\n\\n\"\nfi\n\n# Build status messages that go at the end\nstatus_message=\"\"\nif [ -n \"$skills_behind\" ]; then\n    status_message=\"\\n\\n⚠️ New skills available from upstream. Manual merge needed.\"\nfi\n\n# Output context injection as JSON\ncat <<EOF\n{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"SessionStart\",\n    \"additionalContext\": \"<session-start-hook><EXTREMELY_IMPORTANT>\\nYou have specialized skills for domain work.\\n\\n${init_message}**The content below is from getting-started/SKILL.md - your operating procedures:**\\n\\n${getting_started_escaped}\\n\\n**Tool paths:**\\n- find-skill: \\${NEXUS_SKILLS_ROOT}/getting-started/find-skill\\n\\n**Skills root:** ${NEXUS_SKILLS_ROOT}\\n\\n**Available skills (output of find-skill):**\\n\\n${find_skills_escaped}${status_message}\\n</EXTREMELY_IMPORTANT></session-start-hook>\"\n  }\n}\nEOF\n\nexit 0\n"
+        "README.md": "# Agent Plugin\n\nDomain-focused agent with skills pattern for research and data analysis.\n\n## Architecture\n\nThis plugin implements the Skills Pattern with JIT context injection:\n- **Minimal bootstrap** - Establishes operating procedures via session-start hook\n- **Skills discovery** - `find-skill` command for pattern matching\n- **Mandatory compliance** - Agent must use skills when they exist\n- **Self-improvement** - Meta-skill for writing new skills\n\n## Installation\n\n### Via marketplace (recommended)\n\n```bash\n# In Claude Code\n/plugin marketplace add oneryalcin/nexus-plugin\n/plugin install nexus@nexus-marketplace\n```\n\nRestart Claude Code. On next session, skills will be automatically cloned to `~/.config/nexus/skills/`.\n\n### Manual installation for development\n\n```bash\n# Clone this repo\ngit clone https://github.com/oneryalcin/nexus-plugin.git\n\n# Add as local marketplace\n/plugin marketplace add ./nexus-plugin\n\n# Install\n/plugin install nexus@nexus-marketplace\n```\n\n## What You Get\n\n### Commands\n- `find-skill [pattern]` - Discover relevant skills\n\n### Skills (via separate nexus-skills repo)\n- **Getting Started** - Bootstrap and mandatory workflows\n- **Writing Skills** - Self-improvement meta-skill\n- **Web Research** - Systematic research workflow\n- **Spreadsheet Analysis** - Data analysis with Excel/pandas\n\n### Automatic Setup\n- Session-start hook clones/updates skills repository\n- Bootstrap context injected every session\n- Skills available at `~/.config/nexus/skills/`\n\n## How It Works\n\n1. **Session starts** → `session-start.sh` clones/updates nexus-skills repo\n2. **Bootstrap injected** → Agent reads `getting-started/SKILL.md`\n3. **Agent encounters task** → Agent runs `find-skill [pattern]`\n4. **Skill found** → Agent reads SKILL.md, follows procedures\n5. **New pattern learned** → Agent uses `writing-skills` to create new skill\n\n## Updating Skills\n\nSkills update automatically via `git pull` on each session start. If your local skills have diverged from upstream, the hook will notify you.\n\n## Contributing Skills\n\n1. Fork the [nexus-skills](https://github.com/oneryalcin/nexus-skills) repository\n2. Edit skills locally at `~/.config/nexus/skills/`\n3. Commit and push to your fork\n4. Open PR to upstream\n\n## Repository Structure\n\n```\nnexus-plugin/\n├── .claude-plugin/\n│   ├── plugin.json          # Plugin manifest\n│   └── marketplace.json     # Self-referencing marketplace\n├── commands/\n│   └── find-skill           # Discovery tool\n├── hooks/\n│   ├── hooks.json           # Hook configuration\n│   └── session-start.sh     # Bootstrap script\n└── lib/                     # Support code (if needed)\n```\n\n## Related Repositories\n\n- [nexus-skills](https://github.com/oneryalcin/nexus-skills) - Skills library (separate repo)\n\n## Philosophy\n\n- **JIT context injection** - Load only what's needed, when it's needed\n- **Executable procedures** - Skills are code for LLMs, not documentation\n- **Self-improvement** - System gets smarter over time\n- **Mandatory compliance** - Skills enforcement via adversarially-tested patterns\n\n## License\n\nMIT License - see LICENSE file for details\n\n## Support\n\n- **Issues**: https://github.com/oneryalcin/nexus-plugin/issues\n- **Skills**: https://github.com/oneryalcin/nexus-skills\n"
       },
       "plugins": [
         {

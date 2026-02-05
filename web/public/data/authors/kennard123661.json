@@ -1,0 +1,63 @@
+{
+  "author": {
+    "id": "Kennard123661",
+    "display_name": "Kennard Ng ",
+    "avatar_url": "https://avatars.githubusercontent.com/u/17818981?u=d71a46912db3f83a6ad02bf10a1a11ce93b94ab1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kenkenmain-plugins",
+      "version": null,
+      "description": "Claude Code plugins for development workflows",
+      "repo_full_name": "Kennard123661/kenkenmain-plugins",
+      "repo_url": "https://github.com/Kennard123661/kenkenmain-plugins",
+      "repo_description": "Claude Code plugin marketplace for development workflows",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-21T18:06:52Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kenkenmain-plugins\",\n  \"owner\": {\n    \"name\": \"Kennard Ng\",\n    \"email\": \"kennard.ng.pool.hua@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for development workflows\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"superpowers-iterate\",\n      \"source\": \"./plugins/superpowers-iterate\",\n      \"description\": \"Orchestrates 8-phase iteration workflow: Brainstorm, Plan, Implement, Review, Test, Simplify, Final Review, Codex\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Kennard Ng\",\n        \"email\": \"kennard.ng.pool.hua@gmail.com\"\n      },\n      \"homepage\": \"https://github.com/Kennard123661/kenkenmain-plugins\",\n      \"repository\": \"https://github.com/Kennard123661/kenkenmain-plugins\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"iteration\", \"workflow\", \"superpowers\", \"codex\", \"code-simplifier\", \"tdd\"],\n      \"category\": \"workflow\"\n    }\n  ]\n}\n",
+        "README.md": "# kenkenmain-plugins\n\nClaude Code plugin marketplace for development workflows.\n\n## Installation\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add Kennard123661/kenkenmain-plugins\n\n# Install plugins\nclaude plugin install superpowers-iterate@kenkenmain-plugins\n```\n\n## Available Plugins\n\n### superpowers-iterate\n\nOrchestrates an 8-phase iteration workflow for disciplined development:\n\n| Phase | Name         | Purpose                                    |\n| ----- | ------------ | ------------------------------------------ |\n| 1     | Brainstorm   | Explore problem space, generate ideas      |\n| 2     | Plan         | Create detailed implementation plan        |\n| 3     | Implement    | TDD-style implementation with LSP support  |\n| 4     | Review       | Code review (3 rounds)                     |\n| 5     | Test         | Run lint and tests                         |\n| 6     | Simplify     | Reduce code bloat with code-simplifier     |\n| 7     | Final Review | High-reasoning Codex review (3 rounds)     |\n| 8     | Codex        | Final validation with extra-high reasoning |\n\n**Commands:**\n\n- `/iterate <task>` - Start the 8-phase workflow\n- `/iterate-status` - Check current iteration progress\n\n**Prerequisites:**\n\n- `superpowers` plugin (from superpowers-marketplace)\n- `code-simplifier` plugin (from claude-plugins-official)\n- Codex MCP servers (`@codex`, `@codex-high`, `@codex-xhigh`)\n\n## License\n\nMIT\n",
+        "plugins/superpowers-iterate/README.md": "# superpowers-iterate\n\nOrchestrates the complete 8-phase development iteration workflow for Claude Code.\n\n## Installation\n\n### Option 1: Local Installation (from this repo)\n\n```bash\n# Add plugin from local path\nclaude plugin add /path/to/remote-server-setup/plugins/superpowers-iterate\n```\n\n### Option 2: Global Installation\n\nCopy to your Claude plugins directory:\n\n```bash\ncp -r plugins/superpowers-iterate ~/.claude/plugins/local/\nclaude plugin add ~/.claude/plugins/local/superpowers-iterate\n```\n\n## Prerequisites\n\nThe following should be configured for full functionality:\n\n- **Superpowers plugin** (required for phases 1-4)\n  - `superpowers:brainstorming` - Phase 1\n  - `superpowers:writing-plans` - Phase 2\n  - `superpowers:executing-plans` - Phase 3 plan execution\n  - `superpowers:subagent-driven-development` - Phase 3\n  - `superpowers:requesting-code-review` - Phase 4\n  - `superpowers:dispatching-parallel-agents` - Parallel subagent dispatch\n  - `superpowers:test-driven-development` - TDD for implementation\n\n- **code-simplifier plugin** @ claude-plugins-official (Phase 6)\n  - `code-simplifier:code-simplifier` - Reduces code bloat\n  - Install: `claude plugin install code-simplifier`\n\n- **Codex MCP servers** (Phase 7 and 8)\n  - `mcp__codex__codex` - Standard reasoning\n  - `mcp__codex-high__codex` - High reasoning (Phase 7)\n  - `mcp__codex-xhigh__codex` - Extra-high reasoning (Phase 8)\n\n- **LSP plugins** @ claude-plugins-official (Phase 3 - Required)\n  - Provides code intelligence: go-to-definition, find references, diagnostics\n  - Subagents use LSP tools: `mcp__lsp__get_diagnostics`, `mcp__lsp__goto_definition`, etc.\n  - Install per language used in your project:\n    - `claude plugin install typescript-lsp` (JS/TS)\n    - `claude plugin install pyright-lsp` (Python)\n    - `claude plugin install gopls-lsp` (Go)\n    - `claude plugin install rust-analyzer-lsp` (Rust)\n    - `claude plugin install clangd-lsp` (C/C++)\n    - `claude plugin install jdtls-lsp` (Java)\n    - `claude plugin install kotlin-lsp` (Kotlin)\n\n## Commands\n\n### `/iterate <task-description>`\n\nStart a new 8-phase iteration workflow:\n\n```\n/iterate Add user authentication with OAuth2\n```\n\nThis will guide you through all 8 phases, tracking progress in `.agents/iteration-state.json`.\n\n### `/iterate-status`\n\nCheck current iteration progress:\n\n```\n/iterate-status\n```\n\nShows current phase, completed phases, and next steps.\n\n## The 8 Phases\n\n| Phase | Name         | Purpose                      | Integration                                 |\n| ----- | ------------ | ---------------------------- | ------------------------------------------- |\n| 1     | Brainstorm   | Explore problem space        | `brainstorming` + N parallel subagents      |\n| 2     | Plan         | Create implementation plan   | `writing-plans` + N parallel subagents      |\n| 3     | Implement    | TDD-style implementation     | `subagent-driven-development` + N subagents |\n| 4     | Review       | Code review (3 rounds)       | `requesting-code-review`                    |\n| 5     | Test         | make lint && make test       | Bash                                        |\n| 6     | Simplify     | Reduce code bloat            | `code-simplifier:code-simplifier` plugin    |\n| 7     | Final Review | Codex-high review (3 rounds) | `mcp__codex-high__codex`                    |\n| 8     | Codex        | Final validation             | `mcp__codex-xhigh__codex`                   |\n\n## State Management\n\nProgress is tracked in `.agents/iteration-state.json`:\n\n```json\n{\n  \"version\": 1,\n  \"task\": \"Add user authentication\",\n  \"startedAt\": \"2026-01-20T12:00:00Z\",\n  \"currentPhase\": 3,\n  \"phases\": {\n    \"1\": { \"status\": \"completed\" },\n    \"2\": { \"status\": \"completed\" },\n    \"3\": { \"status\": \"in_progress\" },\n    \"4\": { \"status\": \"pending\" },\n    \"5\": { \"status\": \"pending\" },\n    \"6\": { \"status\": \"pending\" },\n    \"7\": { \"status\": \"pending\" },\n    \"8\": { \"status\": \"pending\" }\n  }\n}\n```\n\nThis allows:\n\n- Resuming interrupted iterations\n- Checking progress via `/iterate-status`\n- Audit trail of completed phases\n\n## Project Requirements\n\nYour project should have:\n\n- `make lint` target (or equivalent)\n- `make test` target (or equivalent)\n- `.agents/` directory (created automatically)\n\n## Workflow Diagram\n\n```\n┌─────────────┐\n│  /iterate   │\n│   <task>    │\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│ 1.Brainstorm│──► superpowers:brainstorming\n│             │    + N parallel sonnet subagents\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│   2. Plan   │──► superpowers:writing-plans\n│             │    + N parallel sonnet subagents\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│3. Implement │──► superpowers:subagent-driven-development\n│             │    + N subagents (TDD)\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│  4. Review  │──► superpowers:requesting-code-review\n│             │    (3 rounds)\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│   5. Test   │──► make lint && make test\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│ 6. Simplify │──► code-simplifier:code-simplifier\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│7.Final Revw │──► @codex-high MCP\n│             │    (3 review rounds)\n└──────┬──────┘\n       │\n       ▼\n┌─────────────┐\n│  8. Codex   │──► @codex-xhigh MCP\n└──────┬──────┘\n       │\n       ▼\n   ✓ Complete\n```\n\n## License\n\nMIT\n\n## Author\n\nKennard Ng <kennard.ng.pool.hua@gmail.com>\n"
+      },
+      "plugins": [
+        {
+          "name": "superpowers-iterate",
+          "source": "./plugins/superpowers-iterate",
+          "description": "Orchestrates 8-phase iteration workflow: Brainstorm, Plan, Implement, Review, Test, Simplify, Final Review, Codex",
+          "version": "1.0.0",
+          "author": {
+            "name": "Kennard Ng",
+            "email": "kennard.ng.pool.hua@gmail.com"
+          },
+          "homepage": "https://github.com/Kennard123661/kenkenmain-plugins",
+          "repository": "https://github.com/Kennard123661/kenkenmain-plugins",
+          "license": "MIT",
+          "keywords": [
+            "iteration",
+            "workflow",
+            "superpowers",
+            "codex",
+            "code-simplifier",
+            "tdd"
+          ],
+          "category": "workflow",
+          "categories": [
+            "code-simplifier",
+            "codex",
+            "iteration",
+            "superpowers",
+            "tdd",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Kennard123661/kenkenmain-plugins",
+            "/plugin install superpowers-iterate@kenkenmain-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

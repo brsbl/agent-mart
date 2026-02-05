@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "Synthesys-Lab",
+    "display_name": "SyntheSys Lab",
+    "avatar_url": "https://avatars.githubusercontent.com/u/169300691?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agentize",
+      "version": null,
+      "description": "AI-powered development workflow with planning, implementation, and review commands",
+      "repo_full_name": "Synthesys-Lab/agentize",
+      "repo_url": "https://github.com/Synthesys-Lab/agentize",
+      "repo_description": null,
+      "signals": {
+        "stars": 44,
+        "forks": 9,
+        "pushed_at": "2026-02-04T21:00:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agentize\",\n  \"owner\": {\n    \"name\": \"SyntheSys-Lab\",\n    \"email\": \"jian.weng@kaust.edu.sa\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agentize\",\n      \"source\": \"./.claude-plugin/\",\n      \"description\": \"AI-powered development workflow with planning, implementation, and review commands\",\n      \"version\": \"1.1.7\",\n      \"author\": {\n        \"name\": \"SyntheSys-Lab\",\n        \"email\": \"jian.weng@kaust.edu.sa\"\n      },\n      \"homepage\": \"https://github.com/Synthesys-Lab/agentize\",\n      \"repository\": \"https://github.com/Synthesys-Lab/agentize\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"workflow\", \"tdd\", \"sdd\", \"handsoff\"],\n      \"category\": \"development\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# AI-powered SDK for Software Development\n\n[![Tests](https://github.com/SyntheSys-Lab/agentize/actions/workflows/test.yml/badge.svg)](https://github.com/SyntheSys-Lab/agentize/actions/workflows/test.yml)\n\n## Prerequisites\n\n### Required Tools\n\n- **Git** - Version control (checked during installation)\n- **Make** - Build automation (checked during installation)\n- **Bash** - Shell interpreter, version 3.2+ (checked during installation)\n- **GitHub CLI (`gh`)** - Required for GitHub integration features\n  - Install: https://cli.github.com/\n  - Authenticate after installation: `gh auth login`\n  - Used by: `/setup-viewboard`, `/open-issue`, `/open-pr`, GitHub workflow automation\n- **Python 3.10+** - Required for permission automation module, otherwise you can have infinite `yes` to prompt!\n  - Use Python `venv` or `anaconda` to manage a good Python release!\n  - Requires **PyYAML** (`pip install pyyaml`) for YAML configuration parsing\n\n### Recommended Libraries\n\n- **Anthropic Python Library** - For custom AI integrations (optional)\n  - Install: `pip install anthropic`\n  - Note: Not required for core SDK functionality, but recommended if you plan to extend or customize AI-powered features\n\n### Verification\n\nAfter installing prerequisites, the installer will automatically verify `git`, `make`, and `bash` availability. GitHub CLI authentication can be verified with:\n\n```bash\ngh auth status\n```\n\n## Quick Start\n\nAgentize is an AI-powered SDK that helps you build your software projects\nusing Claude Code powerfully. It is splitted into two main components:\n\n1. **Claude Code Plugin**: Automatically registered during installation when `claude` CLI is available.\n   See [Tutorial 00: Initialize Your Project](./docs/tutorial/00-initialize.md) for details.\n2. **CLI Tool**: A source-first CLI tool to help you manage your projects using Agentize.\n   See the commands below to install.\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/SyntheSys-Lab/agentize/main/scripts/install | bash\n```\n\nThen add to your shell RC file (`~/.bashrc`, `~/.zshrc`, etc.):\n\n```bash\nsource $HOME/.agentize/setup.sh\n```\n\nSee [docs/feat/cli/install.md](./docs/feat/cli/install.md) for installation options and troubleshooting.\n\n**Upgrade:** Run `lol upgrade` to pull the latest changes.\n\n## Troubleshoot\n\nIf you encounter any issue during the usage. For example:\n1. It asks you for permission on a really simple operation.\n2. It fails to automatically continue on a session.\n\nEnable debug mode in your `.agentize.local.yaml`:\n\n```yaml\nhandsoff:\n  debug: true\n```\n\nThen re-run the command. This will give you a detailed log in either\n- `/path/to/your/project/.tmp/handsoff-debug.log` or\n- `$HOME/.agentize/.tmp/handsoff-debug.log`\nPaste your logs on issue for me (@were) to debug!\n\nFor further help, please visit our [troubleshooting guide](./docs/troubleshoot.md).\n\n## Core Philosophy\n\n1. Plan first, code later: Use AI to generate a detailed plan before writing any code.\n   - Plan is put on Github Issues for tracking.\n2. Build [skills](https://agentskills.io/).\n   - Skills are modular reusable, formal, and lightweighted flow definitions.\n   - This is something like C-style declaration and implementation separation.\n     - `/commands` are declarations and interfaces for users to invoke skills.\n     - `/skills` are implementations of the skills.\n3. Bootstrapping via self-improvement: We use `.claude/` as our canonical rules\n   directory. We use these rules to develop these rules further.\n   - Top-down design: Start with a high-level view of the development flow.\n   - Bottom-up implementation: Implement each aspect of the flow from bottom, and finally\n     integrate them together.\n\n### Workflow:\n\nSee our detailed workflow diagrams:\n\n- [Ultra Planner Workflow](./docs/feat/core/ultra-planner.md) - Multi-agent debate-based planning\n- [Issue to Implementation Workflow](./docs/feat/core/issue-to-impl.md) - Complete development cycle\n\n**Legend**: Red boxes represent user interventions (providing requirements, approving/rejecting results, starting sessions). Blue boxes represent automated AI steps.\n\n## Tutorials\n\nLearn Agentize in 15 minutes with our step-by-step tutorials (3-5 min each):\n\n1. **[Initialize Your Project](./docs/tutorial/00-initialize.md)** - Set up Agentize in new or existing projects\n   - You already did this if you followed the Quick Start!\n2. **[Ultra Planner](./docs/tutorial/01-ultra-planner.md)** - Primary planning tutorial (recommended)\n3. **[Issue to Implementation](./docs/tutorial/02-issue-to-impl.md)** - Complete development cycle with `/issue-to-impl` and `/code-review`\n4. **[Advanced Usage](./docs/tutorial/03-advanced-usage.md)** - Scale up with parallel development workflows\n\n## Project Organization\n\n```plaintext\nagentize/\n├── .claude-plugin/         # Plugin root (use with --plugin-dir)\n│   ├── marketplace.json    # Plugin manifest\n│   ├── commands/           # Claude Code commands\n│   ├── skills/             # Claude Code skills\n│   ├── agents/             # Claude Code agents\n│   └── hooks/              # Claude Code hooks\n├── python/                 # Python modules (agentize.*)\n├── docs/                   # Documentation\n│   └── git-msg-tags.md     # Commit message conventions\n├── src/cli/                # Source-first CLI libraries\n│   ├── wt.sh               # Worktree CLI library\n│   └── lol.sh              # SDK CLI library\n├── scripts/                # Shell scripts and wrapper entrypoints\n├── templates/              # Templates for SDK generation\n├── tests/                  # Test cases\n├── Makefile                # Build targets for testing and setup\n└── README.md               # This readme file\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "agentize",
+          "source": "./.claude-plugin/",
+          "description": "AI-powered development workflow with planning, implementation, and review commands",
+          "version": "1.1.7",
+          "author": {
+            "name": "SyntheSys-Lab",
+            "email": "jian.weng@kaust.edu.sa"
+          },
+          "homepage": "https://github.com/Synthesys-Lab/agentize",
+          "repository": "https://github.com/Synthesys-Lab/agentize",
+          "license": "MIT",
+          "keywords": [
+            "workflow",
+            "tdd",
+            "sdd",
+            "handsoff"
+          ],
+          "category": "development",
+          "strict": false,
+          "categories": [
+            "development",
+            "handsoff",
+            "sdd",
+            "tdd",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Synthesys-Lab/agentize",
+            "/plugin install agentize@agentize"
+          ]
+        }
+      ]
+    }
+  ]
+}

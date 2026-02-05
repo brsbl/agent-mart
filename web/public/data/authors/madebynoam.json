@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "madebynoam",
+    "display_name": "Noam Almosnino",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8889977?u=5912d92857bc59e2e6f758d741ec29438e8daabe&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "dcode",
+      "version": null,
+      "description": "Design skills for Claude Code — JTBD framing, UI copy, component finding, and design system workflows for designers who work in code.",
+      "repo_full_name": "madebynoam/dcode",
+      "repo_url": "https://github.com/madebynoam/dcode",
+      "repo_description": "Claude Code skills for designers navigating codebases—component discovery, safe visual changes, design system exploration, and prototyping in real code.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T12:17:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"dcode\",\n  \"owner\": {\n    \"name\": \"Noam Almosnino\",\n    \"email\": \"noam@noamalmos.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Design skills for Claude Code — JTBD framing, UI copy, component finding, and design system workflows for designers who work in code.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jtbd\",\n      \"source\": \"./plugins/jtbd\",\n      \"description\": \"Jobs to Be Done skills — frame features around user goals and rewrite UI copy through a JTBD lens\",\n      \"version\": \"1.0.0\",\n      \"category\": \"design\",\n      \"tags\": [\"jtbd\", \"copy\", \"prd\", \"framing\", \"design\"]\n    }\n  ]\n}\n",
+        "README.md": "# dcode: Claude Skills for Designers\n\n**A toolkit for designers who work in code but don't live there.**\n\n`dcode` = design + code. These skills bridge the gap between \"I have Figma\" and \"I need to ship this.\"\n\nMost Claude Code skills assume you're a developer. These are different—they're designed for the designer's journey through a codebase: finding components, understanding design systems, making safe visual changes, and prototyping without fear.\n\n## Quick Start\n\n```bash\n# Find where a component lives\n/dcode:find screenshot.png\n/dcode:find \"settings/profile\"\n/dcode:find \"UserCard\"\n\n# Frame a feature around the user's job\n/dcode:jtbd-frame \"Referrals page\"\n\n# Rewrite UI copy through a JTBD lens\n/dcode:jtbd-copy \"Submit\"\n/dcode:jtbd-copy src/components/Form.tsx\n\n# Improve UI copy with proven frameworks\n/dcode:uxcopy \"Submit\"\n/dcode:uxcopy -audit              # Interactive walkthrough\n/dcode:uxcopy -list               # Show all frameworks\n\n# Analyze session for reusable patterns\n/dcode:mine\n\n# End-of-session reflection\n/dcode:reflect\n```\n\n## Skills\n\n### dcode:find-component\n**Find UI components from screenshots, route paths, or component names.**\n\nThe core designer superpower: \"I see this button in the app... where's the code?\" Give it a screenshot, and it finds the component. Works with React, Vue, Angular, and other component-based frameworks.\n\n| Input | Output |\n|-------|--------|\n| Screenshot of a pricing card | `PricingCard` component location, styles, related files |\n| `settings/profile` | Files for the profile settings page |\n| `DatePicker` | Component definition, usage examples, styles |\n\n**Command:** `/dcode:find <target>`\n\n### dcode:jtbd-prd-frame\n**Reframe features and PRDs around the user's job.**\n\nTakes a feature idea, PRD, or spec and asks: \"What job is the user hiring this for?\" Rewrites the definition so success is measured by the job, not the feature. Born from restructuring A4A's dashboard IA around Jobs to Be Done.\n\n| Input | Output |\n|-------|--------|\n| \"Referrals page\" | Job statement + reframed scope + placement rationale |\n| PRD text | Flagged feature-centric language + job-centric rewrites |\n| \"Where should this feature live?\" | Placement recommendation based on which job it serves |\n\n**Command:** `/dcode:jtbd-frame [feature or PRD text]`\n\n### dcode:jtbd-copy\n**Rewrite UI copy through a Jobs to Be Done lens.**\n\nEvery label, placeholder, helper, and CTA rewritten to reflect the user's actual goal instead of the system's internal model. More focused than `dcode:uxcopy` -- specifically JTBD, not a multi-framework audit.\n\n| Element | System-framed | Job-framed |\n|---------|---------------|------------|\n| Header | (none) | \"Send this to your client\" |\n| Field | \"Custom message\" | \"Personal note\" |\n| Helper | (none) | \"Builds trust and shows this comes from you\" |\n| CTA | \"Submit\" | \"Send to client\" |\n\n**Command:** `/dcode:jtbd-copy [text or file]`\n\n### dcode:improve-copy\n**Improve UI microcopy using proven UX writing frameworks.**\n\nTurn \"Submit\" into \"Get started.\" Audit a component for bland buttons, vague errors, and empty states. Apply industry-standard frameworks:\n\n| Framework | Turns this... | Into this... |\n|-----------|---------------|--------------|\n| **JTBD** | \"Submit\" | \"Get my results\" |\n| **Benefit-first** | \"Enable notifications\" | \"Never miss updates\" |\n| **Error patterns** | \"Invalid input\" | \"Email looks wrong. Try name@example.com\" |\n| **Empty states** | \"No results\" | \"No projects yet. Create one to get started.\" |\n| **Loading states** | \"Loading...\" | \"Finding your files...\" |\n| **Confirmation** | \"Are you sure?\" | \"This will delete all data. Continue?\" |\n| **Voice & tone** | — | Formal ↔ casual, serious ↔ playful spectrums |\n| **4 C's checklist** | — | Clear, Concise, Conversational, Consistent |\n\n**Interactive audit mode** — Walk through each copy item with choices. Skip, apply, or hit `r` to apply your choice to all remaining items of the same type. Context-aware: auto-detects the file you're working on.\n\n| Mode | Usage |\n|------|-------|\n| Suggest | `/dcode:uxcopy \"Submit\"` — Framework-based alternatives |\n| Audit | `/dcode:uxcopy -audit` — Interactive walkthrough |\n| Batch | `/dcode:uxcopy -audit --batch` — Table view, no prompts |\n| Reference | `/dcode:uxcopy -list` — Show all frameworks |\n\n**Command:** `/dcode:uxcopy [text] [-audit] [-list] [--batch]`\n\n### dcode:mine-patterns\n**Turn productive sessions into reusable skills.**\n\nAt the end of a session, this skill analyzes what you did and suggests patterns worth automating. It's how these skills were born—and how you'll create your own.\n\n**Command:** `/dcode:mine`\n\n### dcode:reflect-session\n**Capture learnings before they fade.**\n\nA guided reflection for the end of a work session. Surfaces what you learned (technical and soft skills), how you feel, and creates a searchable record of growth over time.\n\n**Command:** `/dcode:reflect [session-name]`\n\n## Installation\n\n### Option 1: Copy to your Claude config\n\n```bash\n# Clone the repo\ngit clone https://github.com/madebynoam/dcode.git\n\n# Copy skills\ncp -r dcode/skills/* ~/.claude/skills/\n\n# Copy commands\ncp -r dcode/commands/* ~/.claude/commands/\n```\n\n### Option 2: Reference directly\n\nJust mention the skill by name in your prompt:\n```\n\"Use dcode:find-component to find where this screenshot lives\"\n```\n\n## Repository Structure\n\n```\ndcode/\n├── skills/\n│   ├── find-component/SKILL.md     # Find components from visuals\n│   ├── jtbd-prd-frame/SKILL.md     # Frame features around user jobs\n│   ├── jtbd-copy/SKILL.md          # JTBD-focused UI copy\n│   ├── improve-copy/SKILL.md       # Multi-framework UI microcopy\n│   ├── mine-patterns/SKILL.md      # Surface reusable patterns\n│   └── reflect-session/SKILL.md    # Capture learnings\n├── commands/\n│   ├── dcode:find.md               # /dcode:find shortcut\n│   ├── dcode:jtbd-frame.md         # /dcode:jtbd-frame shortcut\n│   ├── dcode:jtbd-copy.md          # /dcode:jtbd-copy shortcut\n│   ├── dcode:uxcopy.md             # /dcode:uxcopy shortcut\n│   ├── dcode:mine.md               # /dcode:mine shortcut\n│   └── dcode:reflect.md            # /dcode:reflect shortcut\n└── README.md\n```\n\n## Philosophy\n\n1. **Reduce fear, increase confidence** — Codebases shouldn't be scary for designers\n2. **Screenshot-first** — Visual input is a designer's native language\n3. **Progressive disclosure** — Start simple, reveal complexity only when needed\n4. **Learning loops** — Reflection builds lasting skills, not just task completion\n\n## About\n\nCreated by [Noam Almosnino](https://noamalmos.com), design lead at [Automattic](https://automattic.com).\n\nThese skills grew out of real daily work—navigating a large React codebase, making design changes, and reflecting on what worked. They're functional prototypes: code-based artifacts that define agentic workflows.\n\n---\n\n*\"At the intersection of code and design\"*\n"
+      },
+      "plugins": [
+        {
+          "name": "jtbd",
+          "source": "./plugins/jtbd",
+          "description": "Jobs to Be Done skills — frame features around user goals and rewrite UI copy through a JTBD lens",
+          "version": "1.0.0",
+          "category": "design",
+          "tags": [
+            "jtbd",
+            "copy",
+            "prd",
+            "framing",
+            "design"
+          ],
+          "categories": [
+            "copy",
+            "design",
+            "framing",
+            "jtbd",
+            "prd"
+          ],
+          "install_commands": [
+            "/plugin marketplace add madebynoam/dcode",
+            "/plugin install jtbd@dcode"
+          ]
+        }
+      ]
+    }
+  ]
+}
