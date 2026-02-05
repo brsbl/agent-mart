@@ -13,7 +13,7 @@
       "repo_url": "https://github.com/jarrodwatts/claude-hud",
       "repo_description": "A Claude Code plugin that shows what's happening - context usage, active tools, running agents, and todo progress",
       "signals": {
-        "stars": 2988,
+        "stars": 2992,
         "forks": 120,
         "pushed_at": "2026-02-03T01:47:15Z"
       },
@@ -49,63 +49,6 @@
           "install_commands": [
             "/plugin marketplace add jarrodwatts/claude-hud",
             "/plugin install claude-hud@claude-hud"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "jarrodwatts-claude-delegator",
-      "version": null,
-      "description": "GPT expert subagents for Claude Code via Codex CLI. Five specialized experts: Architect, Plan Reviewer, Scope Analyst, Code Reviewer, Security Analyst.",
-      "repo_full_name": "jarrodwatts/claude-delegator",
-      "repo_url": "https://github.com/jarrodwatts/claude-delegator",
-      "repo_description": "Delegate tasks to Codex GPT 5.2 directly from within Claude Code.",
-      "signals": {
-        "stars": 779,
-        "forks": 36,
-        "pushed_at": "2026-01-10T12:03:15Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jarrodwatts-claude-delegator\",\n  \"owner\": {\n    \"name\": \"Jarrod Watts\",\n    \"url\": \"https://github.com/jarrodwatts\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-delegator\",\n      \"source\": \"./\",\n      \"description\": \"GPT expert subagents for Claude Code via Codex CLI. Five specialized experts: Architect, Plan Reviewer, Scope Analyst, Code Reviewer, Security Analyst.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Jarrod Watts\",\n        \"url\": \"https://github.com/jarrodwatts\"\n      },\n      \"homepage\": \"https://github.com/jarrodwatts/claude-delegator\",\n      \"repository\": \"https://github.com/jarrodwatts/claude-delegator\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"delegation\",\n        \"mcp\",\n        \"codex\",\n        \"gpt\",\n        \"openai\",\n        \"experts\",\n        \"subagents\",\n        \"orchestration\"\n      ]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-delegator\",\n  \"description\": \"GPT expert subagents for Claude Code via Codex CLI. Five specialized experts: Architect, Plan Reviewer, Scope Analyst, Code Reviewer, Security Analyst.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Jarrod Watts\",\n    \"url\": \"https://github.com/jarrodwatts\"\n  },\n  \"homepage\": \"https://github.com/jarrodwatts/claude-delegator\",\n  \"repository\": \"https://github.com/jarrodwatts/claude-delegator\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"delegation\", \"mcp\", \"codex\", \"gpt\", \"openai\", \"experts\", \"subagents\", \"orchestration\"]\n}\n",
-        "README.md": "# Claude Delegator\n\nGPT expert subagents for Claude Code. Five specialists that can analyze AND implement—architecture, security, code review, and more.\n\n[![License](https://img.shields.io/github/license/jarrodwatts/claude-delegator?v=2)](LICENSE)\n[![Stars](https://img.shields.io/github/stars/jarrodwatts/claude-delegator?v=2)](https://github.com/jarrodwatts/claude-delegator/stargazers)\n\n![Claude Delegator in action](claude-delegator.png)\n\n## Install\n\nInside a Claude Code instance, run the following commands:\n\n**Step 1: Add the marketplace**\n```\n/plugin marketplace add jarrodwatts/claude-delegator\n```\n\n**Step 2: Install the plugin**\n```\n/plugin install claude-delegator\n```\n\n**Step 3: Run setup**\n```\n/claude-delegator:setup\n```\n\nDone! Claude now routes complex tasks to GPT experts automatically.\n\n> **Note**: Requires [Codex CLI](https://github.com/openai/codex). Setup guides you through installation.\n\n---\n\n## What is Claude Delegator?\n\nClaude gains a team of GPT specialists via native MCP. Each expert has a distinct specialty and can advise OR implement.\n\n| What You Get | Why It Matters |\n|--------------|----------------|\n| **5 domain experts** | Right specialist for each problem type |\n| **Dual mode** | Experts can analyze (read-only) or implement (write) |\n| **Auto-routing** | Claude detects when to delegate based on your request |\n| **Synthesized responses** | Claude interprets GPT output, never raw passthrough |\n\n### The Experts\n\n| Expert | What They Do | Example Triggers |\n|--------|--------------|------------------|\n| **Architect** | System design, tradeoffs, complex debugging | \"How should I structure this?\" / \"What are the tradeoffs?\" |\n| **Plan Reviewer** | Validate plans before you start | \"Review this migration plan\" / \"Is this approach sound?\" |\n| **Scope Analyst** | Catch ambiguities early | \"What am I missing?\" / \"Clarify the scope\" |\n| **Code Reviewer** | Find bugs, improve quality | \"Review this PR\" / \"What's wrong with this?\" |\n| **Security Analyst** | Vulnerabilities, threat modeling | \"Is this secure?\" / \"Harden this endpoint\" |\n\n### When Experts Help Most\n\n- **Architecture decisions** — \"Should I use Redis or in-memory caching?\"\n- **Stuck debugging** — After 2+ failed attempts, get a fresh perspective\n- **Pre-implementation** — Validate your plan before writing code\n- **Security concerns** — \"Is this auth flow safe?\"\n- **Code quality** — Get a second opinion on your implementation\n\n### When NOT to Use Experts\n\n- Simple file operations (Claude handles these directly)\n- First attempt at any fix (try yourself first)\n- Trivial questions (no need to delegate)\n\n---\n\n## How It Works\n\n```\nYou: \"Is this authentication flow secure?\"\n                    ↓\nClaude: [Detects security question → selects Security Analyst]\n                    ↓\n        ┌─────────────────────────────┐\n        │  mcp__codex__codex          │\n        │  → Security Analyst prompt  │\n        │  → GPT analyzes your code   │\n        └─────────────────────────────┘\n                    ↓\nClaude: \"Based on the analysis, I found 3 issues...\"\n        [Synthesizes response, applies judgment]\n```\n\n**Key details:**\n- Each expert has a specialized system prompt (in `prompts/`)\n- Claude reads your request → picks the right expert → delegates via MCP\n- Responses are synthesized, not passed through raw\n- Experts can retry up to 3 times before escalating\n\n---\n\n## Configuration\n\n### Operating Modes\n\nEvery expert supports two modes based on the task:\n\n| Mode | Sandbox | Use When |\n|------|---------|----------|\n| **Advisory** | `read-only` | Analysis, recommendations, reviews |\n| **Implementation** | `workspace-write` | Making changes, fixing issues |\n\nClaude automatically selects the mode based on your request.\n\n### Manual MCP Setup\n\nIf `/setup` doesn't work, manually add to `~/.claude/settings.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"codex\": {\n      \"type\": \"stdio\",\n      \"command\": \"codex\",\n      \"args\": [\"-m\", \"gpt-5.2-codex\", \"mcp-server\"]\n    }\n  }\n}\n```\n\n### Customizing Expert Prompts\n\nExpert prompts live in `prompts/`. Each follows the same structure:\n- Role definition and context\n- Advisory vs Implementation modes\n- Response format guidelines\n- When to invoke / when NOT to invoke\n\nEdit these to customize expert behavior for your workflow.\n\n---\n\n## Requirements\n\n- **Codex CLI**: `npm install -g @openai/codex`\n- **Authentication**: Run `codex login` after installation\n\n---\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/claude-delegator:setup` | Configure MCP server and install rules |\n| `/claude-delegator:uninstall` | Remove MCP config and rules |\n\n---\n\n## Troubleshooting\n\n| Issue | Solution |\n|-------|----------|\n| MCP server not found | Restart Claude Code after setup |\n| Codex not authenticated | Run `codex login` |\n| Tool not appearing | Check `~/.claude/settings.json` has codex entry |\n| Expert not triggered | Try explicit: \"Ask GPT to review this architecture\" |\n\n---\n\n## Development\n\n```bash\ngit clone https://github.com/jarrodwatts/claude-delegator\ncd claude-delegator\n\n# Test locally without reinstalling\nclaude --plugin-dir /path/to/claude-delegator\n```\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.\n\n---\n\n## Acknowledgments\n\nExpert prompts adapted from [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) by [@code-yeongyu](https://github.com/code-yeongyu).\n\n---\n\n## License\n\nMIT — see [LICENSE](LICENSE)\n\n---\n\n## Star History\n\n[![Star History Chart](https://api.star-history.com/svg?repos=jarrodwatts/claude-delegator&type=Date&v=2)](https://star-history.com/#jarrodwatts/claude-delegator&Date)\n"
-      },
-      "plugins": [
-        {
-          "name": "claude-delegator",
-          "source": "./",
-          "description": "GPT expert subagents for Claude Code via Codex CLI. Five specialized experts: Architect, Plan Reviewer, Scope Analyst, Code Reviewer, Security Analyst.",
-          "version": "1.0.0",
-          "author": {
-            "name": "Jarrod Watts",
-            "url": "https://github.com/jarrodwatts"
-          },
-          "homepage": "https://github.com/jarrodwatts/claude-delegator",
-          "repository": "https://github.com/jarrodwatts/claude-delegator",
-          "license": "MIT",
-          "keywords": [
-            "delegation",
-            "mcp",
-            "codex",
-            "gpt",
-            "openai",
-            "experts",
-            "subagents",
-            "orchestration"
-          ],
-          "categories": [
-            "codex",
-            "delegation",
-            "experts",
-            "gpt",
-            "mcp",
-            "openai",
-            "orchestration",
-            "subagents"
-          ],
-          "install_commands": [
-            "/plugin marketplace add jarrodwatts/claude-delegator",
-            "/plugin install claude-delegator@jarrodwatts-claude-delegator"
           ]
         }
       ]
