@@ -1,0 +1,79 @@
+{
+  "author": {
+    "id": "Nokodoko",
+    "display_name": "n0ko",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11211321?u=5fe45c10fb54fc0778f8768b02aef6be4cebc905&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agents",
+      "version": null,
+      "description": "Custom code review agents",
+      "repo_full_name": "Nokodoko/agents",
+      "repo_url": "https://github.com/Nokodoko/agents",
+      "repo_description": "Claude Code agents, plugins, and configuration",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-03T14:45:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agents\",\n  \"description\": \"Custom code review agents\",\n  \"owner\": {\n    \"name\": \"n0ko\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"code-review-agents\",\n      \"description\": \"Specialized sub-agents for code review: Code Reviewer, Code Simplifier, Security Reviewer, Tech Lead, and UX Reviewer\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"n0ko\"\n      },\n      \"source\": \"./plugins/code-review-agents\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"plugin-generator\",\n      \"description\": \"Scaffolds new Claude Code plugins with interactive component selection\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"n0ko\"\n      },\n      \"source\": \"./plugins/plugin_generator\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"org-generator\",\n      \"description\": \"Generates Datadog Terraform infrastructure for new client engagements. Creates S3 backends, monitors, dashboards, roles, API keys, and agent configurations based on client questionnaire responses.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"n0ko\"\n      },\n      \"source\": \"./plugins/org-generator\",\n      \"category\": \"infrastructure\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Agents & Plugins\n\nA collection of specialized agents, plugins, and tooling for [Claude Code](https://claude.ai/code).\n\n## Features\n\n### Code Review Agents\n\nFive specialized sub-agents for comprehensive code review:\n\n| Command | Agent | Model | Purpose |\n|---------|-------|-------|---------|\n| `/code-review <target>` | Code Reviewer | sonnet | Code quality, DRY, architecture |\n| `/security-review <target>` | Security Reviewer | opus | OWASP vulnerabilities, threat analysis |\n| `/tech-lead <target>` | Tech Lead | opus | Architecture, tech debt, risk assessment |\n| `/ux-review <target>` | UX Reviewer | haiku | Accessibility, error handling, responsive design |\n| `/code-simplify <target>` | Code Simplifier | haiku | Reduce complexity, remove dead code |\n| `/review-all <target>` | All agents | mixed | Run all five in parallel |\n\n### Plugin Generator\n\nScaffold new Claude Code plugins interactively:\n\n```\n/plugin-generator:generate [plugin-name]\n```\n\nCreates plugins with:\n- Commands (slash commands)\n- Skills (auto-invoked capabilities)\n- Agents (sub-agent definitions)\n- Hooks (event handlers)\n\n## Directory Structure\n\n```\nagents/\n├── agents/                 # Agent prompt definitions\n├── commands/               # Slash commands that invoke agents\n├── plugins/                # Claude Code plugins\n│   ├── code-review-agents/ # Plugin exposing review commands\n│   └── plugin_generator/   # Plugin scaffolding tool\n├── settings/               # User settings (LSP, MCP, hooks)\n├── .claude-plugin/         # Marketplace registry\n├── config.json             # Agent metadata\n└── run_agent.py            # CLI helper for agent invocation\n```\n\n## Installation\n\n### Via Claude Code Plugin Manager\n\n```bash\n# Install code review agents\nclaude plugin install code-review-agents@agents\n\n# Install plugin generator\nclaude plugin install plugin-generator@agents\n```\n\n### Manual Installation\n\nCopy to your plugins directory:\n\n```bash\ncp -r plugins/plugin_generator ~/.claude/plugins/\ncp -r plugins/code-review-agents ~/.claude/plugins/\n```\n\n## Usage\n\n### Running Review Agents\n\n```bash\n# In a Claude Code session\n/code-review ./src/\n/security-review ./api/\n/review-all ./project/\n```\n\n### Creating New Plugins\n\n```bash\n/plugin-generator:generate my-awesome-plugin\n```\n\n### CLI Helper\n\n```bash\npython run_agent.py --list                    # List available agents\npython run_agent.py code_reviewer ./src/      # Get Task config for one agent\npython run_agent.py --all ./src/              # Get Task configs for all agents\n```\n\n## Adding New Agents\n\n1. Create prompt file in `agents/<agent_name>.md`:\n   ```markdown\n   # Agent Name\n   **Model:** sonnet|opus|haiku\n   ## System Prompt\n   <prompt content>\n   ```\n\n2. Add entry to `config.json` under `agents`\n\n3. Create command in `commands/<command-name>.md`\n\n## Model Selection Guide\n\n- **opus**: Deep reasoning - security analysis, architecture decisions\n- **sonnet**: Balanced - code review, moderate complexity\n- **haiku**: Fast - simple transformations, focused tasks\n\n## Documentation\n\n- [Hook Development Guide](plugins/plugin_generator/docs/HOOKS_GUIDE.md) - Building hook-based plugins\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "code-review-agents",
+          "description": "Specialized sub-agents for code review: Code Reviewer, Code Simplifier, Security Reviewer, Tech Lead, and UX Reviewer",
+          "version": "1.0.0",
+          "author": {
+            "name": "n0ko"
+          },
+          "source": "./plugins/code-review-agents",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Nokodoko/agents",
+            "/plugin install code-review-agents@agents"
+          ]
+        },
+        {
+          "name": "plugin-generator",
+          "description": "Scaffolds new Claude Code plugins with interactive component selection",
+          "version": "1.0.0",
+          "author": {
+            "name": "n0ko"
+          },
+          "source": "./plugins/plugin_generator",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Nokodoko/agents",
+            "/plugin install plugin-generator@agents"
+          ]
+        },
+        {
+          "name": "org-generator",
+          "description": "Generates Datadog Terraform infrastructure for new client engagements. Creates S3 backends, monitors, dashboards, roles, API keys, and agent configurations based on client questionnaire responses.",
+          "version": "1.0.0",
+          "author": {
+            "name": "n0ko"
+          },
+          "source": "./plugins/org-generator",
+          "category": "infrastructure",
+          "categories": [
+            "infrastructure"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Nokodoko/agents",
+            "/plugin install org-generator@agents"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,35 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "pair-programmer-ai",
-      "version": null,
-      "description": "AI pair programming tools for Claude Code",
-      "repo_full_name": "ratacat/pair-programmer-ai",
-      "repo_url": "https://github.com/ratacat/pair-programmer-ai",
-      "repo_description": "A bridge server enabling two AI agents to pair program together",
-      "signals": {
-        "stars": 1,
-        "forks": 0,
-        "pushed_at": "2026-01-15T05:42:56Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pair-programmer-ai\",\n  \"description\": \"AI pair programming tools for Claude Code\",\n  \"owner\": {\n    \"name\": \"ratacat\",\n    \"url\": \"https://github.com/ratacat\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pair\",\n      \"source\": \"./skill\",\n      \"description\": \"Launch a pair programming agent to watch your work and catch issues\"\n    }\n  ]\n}\n",
-        "README.md": "# pair-bridge\n\nA system for AI pair programming: two AI agents work together, one coding while the other watches and provides real-time feedback on bugs, security issues, and missed edge cases.\n\n## How It Works\n\n```\n┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐\n│   Main Agent    │         │  Bridge Server  │         │   Pair Agent    │\n│   (Claude)      │────────▶│  Unix Socket    │────────▶│  (Opus/Codex)   │\n│                 │         │                 │         │                 │\n│  Does the work  │         │  Routes msgs    │         │  Watches work   │\n│  Hooks emit     │◀────────│  Queues feedback│◀────────│  Gives feedback │\n│  activity       │         │                 │         │                 │\n└─────────────────┘         └─────────────────┘         └─────────────────┘\n```\n\n- **Main Agent**: The Claude Code instance you're working with\n- **Bridge Server**: Unix socket server that routes messages\n- **Pair Agent**: Another AI (Opus or Codex) watching and providing feedback\n\n## Installation\n\n```bash\n# Clone and install\ngit clone https://github.com/ratacat/pair-programmer-ai.git\ncd pair-programmer-ai\nnpm install\nnpm run build\n\n# Install hooks and CLI\n./skill/install.sh\n```\n\n### Requirements\n\n- Node.js 18+\n- `jq` (for JSON processing in hooks)\n- `claude` CLI (for Claude Opus pair agent)\n- `codex` CLI (optional, for Codex pair agent)\n\n## Usage\n\n### Quick Start\n\n```bash\n# Start the bridge\npair-bridge start\n\n# In another terminal, start a pair agent manually\nclaude \"You are a pair programmer. Run: pair-bridge wait 0, analyze activity, emit feedback if needed.\"\n\n# Your main Claude Code session will now receive feedback\n```\n\n### Within Claude Code\n\nUse the `/pair` skill:\n\n```\nUser: /pair\nAgent: Starting pair programming session...\n       Bridge started, pair agent launched.\n       I'll work on your task while my pair watches for issues.\n\nUser: /pair stop\nAgent: Ending session. 34 tool calls observed, 2 feedback items.\n```\n\n### CLI Commands\n\n```bash\npair-bridge start              # Start bridge server\npair-bridge stop               # Stop bridge server\npair-bridge status             # Show session status\n\npair-bridge emit activity '{...}'   # Emit tool activity (used by hooks)\npair-bridge emit feedback '{...}'   # Emit pair feedback\n\npair-bridge wait [lastSeen]    # Block until activity (for pair agent)\npair-bridge poll               # Check for pending feedback (non-blocking)\npair-bridge history [n]        # Show last n activities\n```\n\n### Feedback Format\n\n```json\n{\n  \"severity\": \"high\",\n  \"message\": \"This SQL query concatenates user input - use parameterized queries\",\n  \"context\": {\n    \"file\": \"src/db/queries.ts\",\n    \"line\": 45\n  }\n}\n```\n\nSeverity levels:\n- **high**: Stop and fix before continuing\n- **medium**: Address soon but can finish current task\n- **low**: Consider for later\n\n## Configuration\n\n### Hooks\n\nThe hooks connect your Claude Code session to the bridge:\n\n- `pair-emit-activity.sh` (PostToolUse): Sends tool calls to bridge\n- `pair-check-feedback.sh` (PreToolUse): Displays pair feedback\n\nInstall to `~/.claude/hooks/` and configure in `~/.claude/settings.json`:\n\n```json\n{\n  \"hooks\": {\n    \"PostToolUse\": [\"pair-emit-activity.sh\"],\n    \"PreToolUse\": [\"pair-check-feedback.sh\"]\n  }\n}\n```\n\n### Pair Agent Backend\n\nChoose your pair agent:\n\n- **claude-opus** (default): Uses Claude Opus via `claude` CLI\n- **codex**: Uses OpenAI Codex via `codex` CLI\n\n```bash\n# Via environment variable\nPAIR_BACKEND=codex pair-bridge start\n\n# Or in the skill\n/pair --backend codex\n```\n\n## Architecture\n\n### Components\n\n| File | Purpose |\n|------|---------|\n| `src/server.ts` | Bridge server with Unix socket |\n| `src/cli.ts` | CLI tool for bridge interaction |\n| `src/session.ts` | Session lifecycle management |\n| `src/adapters/` | Pair agent adapters (Opus, Codex) |\n| `hooks/` | Claude Code hook scripts |\n| `skill/` | `/pair` skill definition |\n\n### Message Flow\n\n1. Main agent uses a tool (Edit, Bash, etc.)\n2. PostToolUse hook emits activity to bridge\n3. Pair agent receives activity via `pair-bridge wait`\n4. Pair agent analyzes and optionally emits feedback\n5. Main agent's PreToolUse hook displays feedback\n6. Main agent sees feedback before next action\n\n## Development\n\n```bash\nnpm install          # Install dependencies\nnpm run build        # Build TypeScript\nnpm run dev          # Watch mode\nnpm test             # Run tests\n```\n\n### Testing the Bridge\n\n```bash\n# Terminal 1: Start bridge\nnode dist/cli.js start\n\n# Terminal 2: Simulate pair agent\nnode dist/cli.js wait 0  # Blocks until activity\n\n# Terminal 3: Emit activity\nnode dist/cli.js emit activity '{\"tool\":\"Edit\",\"input\":{\"file\":\"test.ts\"}}'\n\n# Terminal 2 will receive the activity\n# Then emit feedback:\nnode dist/cli.js emit feedback '{\"severity\":\"high\",\"message\":\"Test feedback\"}'\n\n# Terminal 3: Check for feedback\nnode dist/cli.js poll\n```\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "pair",
-          "source": "./skill",
-          "description": "Launch a pair programming agent to watch your work and catch issues",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add ratacat/pair-programmer-ai",
-            "/plugin install pair@pair-programmer-ai"
-          ]
-        }
-      ]
-    },
-    {
       "name": "rivet-marketplace",
       "version": null,
       "description": "Marketplace for rivet plugin",

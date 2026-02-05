@@ -1,0 +1,83 @@
+{
+  "author": {
+    "id": "AndresNaza",
+    "display_name": "Andres Nazarian",
+    "avatar_url": "https://avatars.githubusercontent.com/u/68305058?u=0615c1c6bf7e01f12f672b9f251e5f8a70d8b18d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "roadmap-tools",
+      "version": null,
+      "description": "Strategic roadmap planning and ClickUp sync for Claude Code",
+      "repo_full_name": "AndresNaza/claude-plugins",
+      "repo_url": "https://github.com/AndresNaza/claude-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-05T20:22:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"roadmap-tools\",\n  \"owner\": {\n    \"name\": \"Andres Nazarian\"\n  },\n  \"metadata\": {\n    \"description\": \"Strategic roadmap planning and ClickUp sync for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"roadmap-planner\",\n      \"source\": \"./roadmap-planner\",\n      \"description\": \"Strategic roadmap planning with collaborative milestone estimation and capacity management\",\n      \"version\": \"1.0.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"roadmap\", \"planning\", \"capacity\", \"sprints\", \"epics\", \"milestones\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"clickup-sync\",\n      \"source\": \"./clickup-sync\",\n      \"description\": \"Bidirectional sync between local roadmaps and ClickUp\",\n      \"version\": \"1.0.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"clickup\", \"sync\", \"integration\", \"project-management\"],\n      \"category\": \"integration\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugins\n\nA collection of Claude Code plugins for strategic roadmap planning and project management.\n\n## Philosophy\n\nThese plugins form a **strategic planning layer** that sits above execution tools:\n\n- **In scope**: What we're building, roughly how big, when\n- **Out of scope**: Detailed specs, PR tracking, QA (use GitHub/ClickUp)\n\nThe focus is on **collaborative planning** with user input at key decisions.\n\n## Plugins\n\n### 1. Roadmap Planner (`roadmap-planner`)\n\nStrategic roadmap planning with collaborative milestone estimation.\n\n**Features:**\n- Collaborative planning (user is in the loop)\n- Epic-centric design (all milestones in one file)\n- Milestone-based tracking (2-4 per epic)\n- Capacity management with buffer\n\n**Commands:**\n- `/roadmap-planner:init` - Initialize roadmap structure\n- `/roadmap-planner:team` - Configure team\n- `/roadmap-planner:plan-quarter` - Plan quarterly epics (collaborative)\n- `/roadmap-planner:plan-epic` - Break epic into milestones (collaborative)\n- `/roadmap-planner:plan-sprint` - Allocate milestones (collaborative)\n- `/roadmap-planner:status` - View progress\n- `/roadmap-planner:update` - Mark milestones done\n- `/roadmap-planner:capacity` - Calculate capacity\n- `/roadmap-planner:schedule` - Assign dates for Gantt\n\n[Full documentation →](./roadmap-planner/README.md)\n\n---\n\n### 2. ClickUp Sync (`clickup-sync`)\n\nBidirectional synchronization between local roadmaps and ClickUp.\n\n**Features:**\n- Push epics and milestones to ClickUp\n- Pull status updates from ClickUp\n- Epic ↔ ClickUp Epic mapping\n- Milestone ↔ Subtask mapping\n- Conflict resolution\n\n**Commands:**\n- `/clickup-sync:setup` - Configure ClickUp connection\n- `/clickup-sync:push` - Push to ClickUp\n- `/clickup-sync:pull` - Pull from ClickUp\n- `/clickup-sync:sync` - Full bidirectional sync\n- `/clickup-sync:status` - View sync status\n- `/clickup-sync:link` - Link items manually\n- `/clickup-sync:unlink` - Unlink items\n\n[Full documentation →](./clickup-sync/README.md)\n\n---\n\n## Installation\n\n### From Marketplace\n\n```bash\n# Add the marketplace\n/plugin marketplace add AndresNaza/claude-plugins\n\n# Install one or both plugins\n/plugin install roadmap-planner@roadmap-tools\n/plugin install clickup-sync@roadmap-tools\n```\n\n### Local Development\n\n```bash\nclaude --plugin-dir ./roadmap-planner --plugin-dir ./clickup-sync\n```\n\n## Quick Start\n\n1. **Initialize:**\n   ```\n   /roadmap-planner:init\n   ```\n\n2. **Configure team:**\n   ```\n   /roadmap-planner:team Alice, Bob\n   ```\n\n3. **Plan quarter (collaborative):**\n   ```\n   /roadmap-planner:plan-quarter 2025-Q1\n   ```\n\n4. **Break into milestones (collaborative):**\n   ```\n   /roadmap-planner:plan-epic user-auth\n   ```\n\n5. **Set up ClickUp:**\n   ```bash\n   claude mcp add --transport http clickup https://mcp.clickup.com/mcp\n   ```\n   Then `/mcp` to authenticate, then:\n   ```\n   /clickup-sync:setup\n   /clickup-sync:push\n   ```\n\n## Sizing Guide\n\n| Size | Points | Duration |\n|------|--------|----------|\n| Small | 5-8 pts | ~1 week |\n| Medium | 10-15 pts | ~1.5-2 weeks |\n| Large | 18-25 pts | Full sprint |\n\nMilestones over 25 points should be split.\n\n## Capacity Model\n\n- Sprint: 2 weeks (10 working days)\n- Per developer: 20 points/sprint\n- Recommended buffer: 15%\n\n| Team | Sprint Capacity | Recommended |\n|------|-----------------|-------------|\n| 2 devs | 40 pts | 34 pts |\n| 3 devs | 60 pts | 51 pts |\n| 5 devs | 100 pts | 85 pts |\n\n## File Structure\n\n```\n.roadmap/\n├── config.json           # Team configuration\n├── clickup-config.json   # ClickUp sync settings\n├── quarters/\n│   └── 2025-Q1.md        # Quarter roadmap\n├── epics/\n│   ├── user-auth.md      # Epic with milestones\n│   └── dashboard.md\n├── sprints/\n│   └── 2025-W01.md       # Sprint plan\n└── templates/\n    ├── epic.md\n    ├── sprint.md\n    └── quarter.md\n```\n\n## Disclaimer\n\nThis is a community project and is not affiliated with, endorsed, or supported by Anthropic.\n\nThese plugins are provided \"as is\" without warranty of any kind. Use at your own risk. The author is not responsible for any damages or issues arising from the use of these plugins.\n\n## License\n\nMIT\n",
+        "roadmap-planner/README.md": "# Roadmap Planner Plugin\n\nA Claude Code plugin for strategic roadmap planning with collaborative milestone estimation and capacity management.\n\n## Philosophy\n\nThis plugin is a **strategic planning layer** that sits above execution tools:\n\n- **In scope**: What we're building, roughly how big, when\n- **Out of scope**: Detailed specs, PR tracking, QA (use GitHub/ClickUp)\n\nThe focus is on **planning collaboratively**, not detailed task management.\n\n## Features\n\n- **Collaborative Planning**: Every planning command involves the user in key decisions\n- **Epic-Centric**: All milestones live in their epic file (no scattered task files)\n- **Milestone-Based**: 2-4 milestones per epic, sized for sprint allocation\n- **Capacity Management**: Team-based capacity with buffer recommendations\n\n## Installation\n\n```bash\n/plugin install path/to/roadmap-planner\n```\n\nOr for local development:\n\n```bash\nclaude --plugin-dir ./roadmap-planner\n```\n\n## Quick Start\n\n1. **Initialize:**\n   ```\n   /roadmap-planner:init\n   ```\n\n2. **Configure team:**\n   ```\n   /roadmap-planner:team Alice, Bob\n   ```\n\n3. **Plan quarter (collaborative):**\n   ```\n   /roadmap-planner:plan-quarter 2025-Q1\n   ```\n\n4. **Break epic into milestones (collaborative):**\n   ```\n   /roadmap-planner:plan-epic user-auth\n   ```\n\n5. **Plan sprint (collaborative):**\n   ```\n   /roadmap-planner:plan-sprint\n   ```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/roadmap-planner:init` | Initialize `.roadmap/` structure |\n| `/roadmap-planner:team` | Configure team for capacity |\n| `/roadmap-planner:plan-quarter` | Define epics collaboratively |\n| `/roadmap-planner:plan-epic` | Break epic into milestones |\n| `/roadmap-planner:plan-sprint` | Allocate milestones to sprint |\n| `/roadmap-planner:status` | View progress (epic/sprint/quarter) |\n| `/roadmap-planner:update` | Mark milestones done |\n| `/roadmap-planner:capacity` | Show capacity calculations |\n| `/roadmap-planner:schedule` | Assign dates for Gantt visualization |\n\n## Core Concepts\n\n### Epic\nA strategic work item (feature, initiative). Lives in ONE file throughout its lifecycle.\n\n### Milestone\nA meaningful checkpoint within an epic (2-4 per epic). Sized for capacity planning:\n- **Small**: 5-8 pts (~1 week)\n- **Medium**: 10-15 pts (~1.5-2 weeks)\n- **Large**: 18-25 pts (full sprint)\n\n### Sprint\nA 2-week execution window. Milestones are allocated to sprints.\n\n## Capacity Model\n\n- **Sprint**: 2 weeks (10 working days)\n- **Per developer**: 20 points/sprint\n- **Recommended buffer**: 15%\n\n| Team | Sprint Capacity | Recommended |\n|------|-----------------|-------------|\n| 2 devs | 40 pts | 34 pts |\n| 3 devs | 60 pts | 51 pts |\n| 5 devs | 100 pts | 85 pts |\n\n## File Structure\n\n```\n.roadmap/\n├── config.json          # Team configuration\n├── quarters/\n│   └── 2025-Q1.md       # Quarter roadmap\n├── epics/\n│   ├── user-auth.md     # Epic with milestones\n│   └── dashboard.md\n├── sprints/\n│   └── 2025-W01.md      # Sprint plan\n└── templates/\n    ├── epic.md\n    ├── sprint.md\n    └── quarter.md\n```\n\n## Collaborative Workflow\n\nAll planning commands ask the user at key decision points:\n\n**plan-quarter:**\n- \"What are the main goals for this quarter?\"\n- \"Any other epics to include?\"\n- \"Does this capacity look right?\"\n\n**plan-epic:**\n- \"What are the 2-4 major milestones?\"\n- \"How would you size this milestone?\"\n- \"Which sprint should it target?\"\n\n**plan-sprint:**\n- \"Any PTO or reduced availability?\"\n- \"Which milestones to commit?\"\n- \"We're at 95% capacity - proceed?\"\n\n## ClickUp Integration\n\nAfter planning, sync to ClickUp:\n\n```\n/clickup-sync:push   # Push epics and milestones\n/clickup-sync:pull   # Pull status updates\n```\n\n## License\n\nMIT\n",
+        "clickup-sync/README.md": "# ClickUp Sync Plugin\n\nA Claude Code plugin for bidirectional synchronization between local roadmap files and ClickUp.\n\n## Features\n\n- **Bidirectional Sync**: Push local changes to ClickUp and pull remote updates\n- **Epic Mapping**: Local epics sync as ClickUp Epic-type tasks\n- **Milestone Mapping**: Milestones sync as subtasks under epics\n- **Status Sync**: Automatic status mapping between systems\n- **Conflict Resolution**: Smart handling of concurrent changes\n\n## Prerequisites\n\n- ClickUp workspace with appropriate permissions\n- The `roadmap-planner` plugin (for roadmap file structure)\n- ClickUp MCP access (authentication via OAuth)\n\n## Installation\n\n```bash\n/plugin install path/to/clickup-sync\n```\n\nOr for local development:\n\n```bash\nclaude --plugin-dir ./clickup-sync\n```\n\n## Quick Start\n\n1. **Install ClickUp MCP (one-time):**\n   ```bash\n   claude mcp add --transport http clickup https://mcp.clickup.com/mcp\n   ```\n   Then run `/mcp` in Claude Code to authenticate via OAuth.\n\n2. **Set up the connection:**\n   ```\n   /clickup-sync:setup\n   ```\n\n3. **Push your roadmap:**\n   ```\n   /clickup-sync:push\n   ```\n\n4. **Pull updates:**\n   ```\n   /clickup-sync:pull\n   ```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/clickup-sync:setup` | Configure ClickUp workspace and folder |\n| `/clickup-sync:push` | Push local changes to ClickUp |\n| `/clickup-sync:pull` | Pull updates from ClickUp |\n| `/clickup-sync:sync` | Full bidirectional sync |\n| `/clickup-sync:status` | View sync status |\n| `/clickup-sync:link` | Manually link local item to ClickUp |\n| `/clickup-sync:unlink` | Remove sync link |\n\n## Sync Mapping\n\n| Local | ClickUp |\n|-------|---------|\n| Epic | Task (type: Epic) |\n| Milestone | Subtask under Epic |\n| Status: planned | To Do |\n| Status: in-progress | In Progress |\n| Status: done | Complete |\n\n## Configuration\n\nStored in `.roadmap/clickup-config.json`:\n\n```json\n{\n  \"workspace\": { \"id\": \"...\", \"name\": \"My Company\" },\n  \"space\": { \"id\": \"...\", \"name\": \"Engineering\" },\n  \"epicFolder\": { \"id\": \"...\", \"name\": \"Epics\" },\n  \"syncMapping\": {\n    \"epics\": { \"user-auth\": \"cu_abc123\" },\n    \"milestones\": { \"user-auth:M1\": \"cu_def456\" }\n  },\n  \"lastSync\": null\n}\n```\n\n## Workflow\n\n```\n# Morning: Pull latest\n/clickup-sync:pull\n\n# During day: Plan and update\n/roadmap-planner:plan-epic dashboard\n/roadmap-planner:update auth M2 done\n\n# End of day: Push changes\n/clickup-sync:push\n\n# Or full sync\n/clickup-sync:sync\n```\n\n## Conflict Resolution\n\nWhen both local and ClickUp have changes:\n\n| Field | Winner | Reason |\n|-------|--------|--------|\n| Status | ClickUp | Current execution state |\n| Points | Local | Planning source of truth |\n| Title | Local | Planning source of truth |\n\nPreview conflicts with:\n```\n/clickup-sync:sync --dry-run\n```\n\n## Related Plugins\n\n- `roadmap-planner` - Create and manage roadmap files (required)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "roadmap-planner",
+          "source": "./roadmap-planner",
+          "description": "Strategic roadmap planning with collaborative milestone estimation and capacity management",
+          "version": "1.0.0",
+          "license": "MIT",
+          "keywords": [
+            "roadmap",
+            "planning",
+            "capacity",
+            "sprints",
+            "epics",
+            "milestones"
+          ],
+          "category": "productivity",
+          "categories": [
+            "capacity",
+            "epics",
+            "milestones",
+            "planning",
+            "productivity",
+            "roadmap",
+            "sprints"
+          ],
+          "install_commands": [
+            "/plugin marketplace add AndresNaza/claude-plugins",
+            "/plugin install roadmap-planner@roadmap-tools"
+          ]
+        },
+        {
+          "name": "clickup-sync",
+          "source": "./clickup-sync",
+          "description": "Bidirectional sync between local roadmaps and ClickUp",
+          "version": "1.0.0",
+          "license": "MIT",
+          "keywords": [
+            "clickup",
+            "sync",
+            "integration",
+            "project-management"
+          ],
+          "category": "integration",
+          "categories": [
+            "clickup",
+            "integration",
+            "project-management",
+            "sync"
+          ],
+          "install_commands": [
+            "/plugin marketplace add AndresNaza/claude-plugins",
+            "/plugin install clickup-sync@roadmap-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

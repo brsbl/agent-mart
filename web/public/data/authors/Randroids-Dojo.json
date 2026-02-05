@@ -34,6 +34,66 @@
           ]
         }
       ]
+    },
+    {
+      "name": "skills",
+      "version": null,
+      "description": "Autonomous development loop with research and implementation modes. Self-sustaining agentic workflow that uses a dots system for task tracking, supports multiple git workflows, and can run infinitely or until completion.",
+      "repo_full_name": "Randroids-Dojo/skills",
+      "repo_url": "https://github.com/Randroids-Dojo/skills",
+      "repo_description": "A collection of Claude Code skills by Randroids Dojo",
+      "signals": {
+        "stars": 4,
+        "forks": 0,
+        "pushed_at": "2026-02-03T09:34:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"skills\",\n  \"owner\": {\n    \"name\": \"Randroids Dojo\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"loop\",\n      \"source\": \"./plugins/loop\",\n      \"description\": \"Autonomous development loop with research and implementation modes. Self-sustaining agentic workflow that uses a dots system for task tracking, supports multiple git workflows, and can run infinitely or until completion.\"\n    },\n    {\n      \"name\": \"task-tracking-dots\",\n      \"source\": \"./plugins/task-tracking-dots\",\n      \"description\": \"Task management with Dots. Track work items across sessions with the dot CLI, dependencies, and completion reasons.\"\n    },\n    {\n      \"name\": \"godot\",\n      \"source\": \"./plugins/godot\",\n      \"description\": \"Develop, test, build, and deploy Godot 4.x games. Includes GdUnit4 testing, PlayGodot automation, web/desktop exports, CI/CD pipelines, and deployment to Vercel/GitHub Pages/itch.io.\"\n    },\n    {\n      \"name\": \"unreal\",\n      \"source\": \"./plugins/unreal\",\n      \"description\": \"Develop, test, and automate Unreal Engine 5.x projects (WIP). Covers PlayUnreal automation, Remote Control API, Automation Driver, and CI-friendly E2E workflows. PlayUnreal: https://github.com/Randroids-Dojo/PlayUnreal\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"skills\",\n  \"version\": \"1.0.0\",\n  \"description\": \"A collection of Claude Code skills by Randroids Dojo. Includes autonomous development loops, specialized workflows, and productivity tools.\",\n  \"author\": \"Randroids Dojo\",\n  \"homepage\": \"https://github.com/Randroids-Dojo/skills\",\n  \"repository\": \"https://github.com/Randroids-Dojo/skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"claude-code\",\n    \"skills\",\n    \"automation\",\n    \"development-loop\",\n    \"agentic\",\n    \"workflow\"\n  ],\n  \"category\": \"development\"\n}\n",
+        "README.md": "# skills\n\nA dual-format skills repository for **Claude Code**, **Codex CLI**, and **OpenCode** by Randroids Dojo.\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| **loop** | Autonomous development loop with research and implementation modes |\n| **task-tracking-dots** | Task management with Dots using the dot CLI for tracking work items |\n| **godot** | Develop, test, build, and deploy Godot 4.x games |\n| **unreal** | Develop, test, and automate Unreal Engine 5.x projects (WIP). PlayUnreal: https://github.com/Randroids-Dojo/PlayUnreal |\n\n## Installation\n\n### Recommended (all agents)\n\nInstall the loop skill via the Skills CLI:\n\n```bash\nnpx skills add https://github.com/Randroids-Dojo/skills --skill loop\n```\n\nWorks with Codex CLI, Claude Code, OpenCode, Gemini CLI, and other Agent Skills-compatible tools.\n\nTo install the task-tracking-dots skill:\n\n```bash\nnpx skills add https://github.com/Randroids-Dojo/skills --skill task-tracking-dots\n```\n\nTo install the Godot skill:\n\n```bash\nnpx skills add https://github.com/Randroids-Dojo/skills --skill godot\n```\n\nTo install the Unreal skill:\n\n```bash\nnpx skills add https://github.com/Randroids-Dojo/skills --skill unreal\n```\n\n### Manual installs\n\n#### Codex CLI\n\nInstall individual skills using the built-in skill installer:\n\n```\n$skill-installer https://github.com/Randroids-Dojo/skills/tree/main/plugins/loop\n$skill-installer https://github.com/Randroids-Dojo/skills/tree/main/plugins/task-tracking-dots\n$skill-installer https://github.com/Randroids-Dojo/skills/tree/main/plugins/godot\n$skill-installer https://github.com/Randroids-Dojo/skills/tree/main/plugins/unreal\n```\n\nOr clone for all skills at once:\n\n```bash\ngit clone https://github.com/Randroids-Dojo/skills.git ~/.codex/skills/randroids-dojo\n```\n\nThen symlink individual skills you want:\n\n```bash\nln -s ~/.codex/skills/randroids-dojo/plugins/loop ~/.codex/skills/loop\nln -s ~/.codex/skills/randroids-dojo/plugins/task-tracking-dots ~/.codex/skills/task-tracking-dots\nln -s ~/.codex/skills/randroids-dojo/plugins/godot ~/.codex/skills/godot\nln -s ~/.codex/skills/randroids-dojo/plugins/unreal ~/.codex/skills/unreal\n```\n\n#### Claude Code\n\nInstall from the marketplace:\n\n```bash\n/plugin marketplace add Randroids-Dojo/skills\n/plugin install loop\n/plugin install task-tracking-dots\n/plugin install godot\n/plugin install unreal\n```\n\n### Install locations (Skills CLI)\n\nThe `skills` CLI installs into a canonical directory and then symlinks to agent-specific paths by default. Canonical paths are `./.agents/skills/<skill>` (project) or `~/.agents/skills/<skill>` (global). Copy mode writes directly to each agent directory.\n\n| Agent | Project install | Global install | Notes |\n| --- | --- | --- | --- |\n| Claude Code | `./.claude/skills/<skill>` | `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/<skill>` | Uses `CLAUDE_CONFIG_DIR` when set. |\n| Codex CLI | `./.codex/skills/<skill>` | `${CODEX_HOME:-~/.codex}/skills/<skill>` | Uses `CODEX_HOME` when set. |\n| OpenCode | `./.opencode/skills/<skill>` | `${XDG_CONFIG_HOME:-~/.config}/opencode/skills/<skill>` | Uses XDG config home. |\n\n## Usage\n\n### Codex CLI\n\nSkills are triggered automatically based on context, or explicitly:\n\n```\n$loop               # Invoke loop skill\n$task-tracking-dots # Task management with Dots\n$godot              # Invoke godot skill\n$unreal             # Invoke unreal skill\n```\n\n### Claude Code\n\n```\n/loop               # Interactive mode selection\n/task-tracking-dots # Task management with Dots\n/godot:godot        # Godot development assistance\n/unreal:unreal      # Unreal development assistance\n```\n\n## Repository Structure\n\n```\n.\n├── .claude-plugin/\n│   ├── marketplace.json     # Claude Code marketplace manifest\n│   └── plugin.json          # Collection metadata\n├── .codex/\n│   └── skills -> ../plugins # Symlink for local Codex development\n├── plugins/\n│   ├── loop/\n│   │   ├── SKILL.md         # Skill definition (Codex + Claude)\n│   │   ├── commands/        # Claude Code slash commands\n│   │   ├── scripts/         # Automation scripts\n│   │   └── ...\n│   ├── task-tracking-dots/\n│   │   ├── SKILL.md         # Skill definition (Codex + Claude)\n│   │   └── commands/        # Claude Code slash commands\n│   ├── godot/\n│   │   ├── SKILL.md         # Skill definition (Codex + Claude)\n│   │   ├── commands/        # Claude Code slash commands\n│   │   ├── scripts/         # Helper scripts\n│   │   └── references/      # Documentation\n│   └── unreal/\n│       ├── SKILL.md         # Skill definition (Codex + Claude)\n│       ├── commands/        # Claude Code slash commands\n│       ├── scripts/         # Helper scripts\n│       └── references/      # Documentation\n└── README.md\n```\n\n## Dual-Format Compatibility\n\nThis repository is structured to work with Claude Code, Codex CLI, and OpenCode:\n\n| Feature | Codex CLI | Claude Code | OpenCode |\n|---------|-----------|-------------|----------|\n| Skill definition | `SKILL.md` | `SKILL.md` + `plugin.json` | `SKILL.md` |\n| Discovery | Skills CLI or `$skill-installer` | Marketplace or Skills CLI | Skills CLI or `.opencode/skills` |\n| Invocation | `$skill-name` | `/command-name` | Automatic via `skill` tool |\n| Global install (Skills CLI) | `~/.codex/skills/` | `~/.claude/skills/` | `~/.config/opencode/skills/` |\n\nOpenCode loads skills on demand via the native `skill` tool; users typically invoke them by describing the desired behavior rather than using a slash command.\n\nThe `SKILL.md` files use YAML frontmatter with `name` and `description` fields that all tools understand. Additional metadata is ignored by tools that don't recognize it.\n\n## Documentation Notes\n\nSee `docs/agent-skills-learnings.md` for key takeaways from agentskills.io and skills.sh docs.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "loop",
+          "source": "./plugins/loop",
+          "description": "Autonomous development loop with research and implementation modes. Self-sustaining agentic workflow that uses a dots system for task tracking, supports multiple git workflows, and can run infinitely or until completion.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Randroids-Dojo/skills",
+            "/plugin install loop@skills"
+          ]
+        },
+        {
+          "name": "task-tracking-dots",
+          "source": "./plugins/task-tracking-dots",
+          "description": "Task management with Dots. Track work items across sessions with the dot CLI, dependencies, and completion reasons.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Randroids-Dojo/skills",
+            "/plugin install task-tracking-dots@skills"
+          ]
+        },
+        {
+          "name": "godot",
+          "source": "./plugins/godot",
+          "description": "Develop, test, build, and deploy Godot 4.x games. Includes GdUnit4 testing, PlayGodot automation, web/desktop exports, CI/CD pipelines, and deployment to Vercel/GitHub Pages/itch.io.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Randroids-Dojo/skills",
+            "/plugin install godot@skills"
+          ]
+        },
+        {
+          "name": "unreal",
+          "source": "./plugins/unreal",
+          "description": "Develop, test, and automate Unreal Engine 5.x projects (WIP). Covers PlayUnreal automation, Remote Control API, Automation Driver, and CI-friendly E2E workflows. PlayUnreal: https://github.com/Randroids-Dojo/PlayUnreal",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Randroids-Dojo/skills",
+            "/plugin install unreal@skills"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -383,6 +383,32 @@ export async function getFileContent(owner, repo, path) {
 }
 
 /**
+ * Check if a file exists in a repository
+ * @param {string} owner - Repository owner
+ * @param {string} repo - Repository name
+ * @param {string} path - File path
+ * @returns {Promise<boolean>} True if file exists
+ */
+export async function checkFileExists(owner, repo, path) {
+  return restLimiter.schedule(async () => {
+    try {
+      await getOctokit().rest.repos.getContent({
+        owner,
+        repo,
+        path,
+        request: { method: 'HEAD' }
+      });
+      return true;
+    } catch (error) {
+      if (error.status === 404) {
+        return false;
+      }
+      throw error;
+    }
+  });
+}
+
+/**
  * Batch fetch file contents using GraphQL
  * @param {string} owner - Repository owner
  * @param {string} repo - Repository name

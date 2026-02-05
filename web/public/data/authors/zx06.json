@@ -1,0 +1,75 @@
+{
+  "author": {
+    "id": "zx06",
+    "display_name": "x_zhuo",
+    "avatar_url": "https://avatars.githubusercontent.com/u/12474586?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "xsql",
+      "version": null,
+      "description": "AI-first cross-database CLI tools for read-only SQL inspection",
+      "repo_full_name": "zx06/xsql",
+      "repo_url": "https://github.com/zx06/xsql",
+      "repo_description": "🤖 AI-first cross-database CLI tool. Query MySQL/PostgreSQL safely with read-only protection, SSH tunneling, and structured JSON output.",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-05T03:54:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"xsql\",\n  \"description\": \"AI-first cross-database CLI tools for read-only SQL inspection\",\n  \"owner\": {\n    \"name\": \"zx06\",\n    \"url\": \"https://github.com/zx06\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"xsql\",\n      \"description\": \"Use when you need to safely inspect MySQL/PostgreSQL data or schema via the xsql CLI.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"zx06\"\n      },\n      \"homepage\": \"https://github.com/zx06/xsql\",\n      \"repository\": \"https://github.com/zx06/xsql\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"xsql\",\n        \"sql\",\n        \"mysql\",\n        \"postgresql\",\n        \"database\",\n        \"cli\",\n        \"ssh\",\n        \"query\"\n      ],\n      \"category\": \"database\",\n      \"tags\": [\n        \"read-only\",\n        \"schema\",\n        \"mcp\"\n      ],\n      \"source\": \"./.claude-plugin\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\r\n  \"name\": \"xsql\",\r\n  \"version\": \"1.0.0\",\r\n  \"description\": \"Use when you need to safely inspect MySQL/PostgreSQL data or schema via the xsql CLI.\",\n  \"author\": {\n    \"name\": \"zx06\",\n    \"url\": \"https://github.com/zx06\"\n  },\n  \"homepage\": \"https://github.com/zx06/xsql\",\n  \"repository\": \"https://github.com/zx06/xsql\",\n  \"license\": \"MIT\",\n  \"keywords\": [\r\n    \"xsql\",\r\n    \"sql\",\r\n    \"mysql\",\r\n    \"postgresql\",\r\n    \"database\",\r\n    \"cli\",\r\n    \"ssh\",\r\n    \"query\"\r\n  ]\r\n}\r\n",
+        "README.md": "# xsql\n\n[![CI](https://github.com/zx06/xsql/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zx06/xsql/actions/workflows/ci.yml?query=branch%3Amain)\n[![codecov](https://codecov.io/github/zx06/xsql/graph/badge.svg?token=LrcR0pifCj)](https://codecov.io/github/zx06/xsql)\n\n**让 AI 安全地查询你的数据库** 🤖🔒\n\nxsql 是专为 AI Agent 设计的跨数据库 CLI 工具。默认只读、结构化输出、开箱即用。\n\n```bash\n# AI 可以这样查询你的数据库\nxsql query \"SELECT * FROM users WHERE created_at > '2024-01-01'\" -p prod -f json\n```\n\n## ✨ 为什么选择 xsql？\n\n| 特性 | 说明 |\n|------|------|\n| 🔒 **默认安全** | 双重只读保护，防止 AI 误操作 |\n| 🤖 **AI-first** | JSON 结构化输出，便于 AI 解析 |\n| 🔑 **密钥安全** | 集成 OS Keyring，密码不落盘 |\n| 🌐 **SSH 隧道** | 一行配置连接内网数据库 |\n| 📦 **零依赖** | 单二进制文件，开箱即用 |\n\n## 🚀 30 秒上手\n\n### 1. 安装\n\n```bash\n# macOS\nbrew install zx06/tap/xsql\n\n# Windows\nscoop bucket add zx06 https://github.com/zx06/scoop-bucket && scoop install xsql\n\n# 或直接下载: https://github.com/zx06/xsql/releases\n```\n\n### 2. 配置\n\n```bash\nmkdir -p ~/.config/xsql\ncat > ~/.config/xsql/xsql.yaml << 'EOF'\nprofiles:\n  dev:\n    db: mysql\n    host: 127.0.0.1\n    port: 3306\n    user: root\n    password: your_password\n    database: mydb\n    allow_plaintext: true  # 生产环境建议用 keyring\nEOF\n```\n\n### 3. 使用\n\n```bash\nxsql query \"SELECT 1\" -p dev -f json\n# {\"ok\":true,\"schema_version\":1,\"data\":{\"columns\":[\"1\"],\"rows\":[{\"1\":1}]}}\n```\n\n---\n\n## 🤖 让 AI 使用 xsql\n\n### 方式一：Claude Code Plugin（推荐）\n\n```bash\n# 1. 添加 marketplace\n/plugin marketplace add zx06/xsql\n\n# 2. 安装插件\n/plugin install xsql@xsql\n```\n\n安装后 Claude 自动获得 xsql 技能，可直接查询数据库。\n\n### 方式二：复制 Skill 给任意 AI\n\n将以下内容发送给你的 AI 助手（ChatGPT/Claude/Cursor 等）：\n\n<details>\n<summary>📋 点击展开 AI Skill Prompt（复制即用）</summary>\n\n```\n你现在可以使用 xsql 工具查询数据库。\n\n## 基本用法\nxsql query \"<SQL>\" -p <profile> -f json\n\n## 可用命令\n- xsql query \"SQL\" -p <profile> -f json  # 执行查询\n- xsql profile list -f json               # 列出所有 profile\n- xsql profile show <name> -f json        # 查看 profile 详情\n\n## 输出格式\n成功: {\"ok\":true,\"schema_version\":1,\"data\":{\"columns\":[...],\"rows\":[...]}}\n失败: {\"ok\":false,\"schema_version\":1,\"error\":{\"code\":\"XSQL_...\",\"message\":\"...\"}}\n\n## 重要规则\n1. 默认只读模式，无法执行 INSERT/UPDATE/DELETE\n2. 始终使用 -f json 获取结构化输出\n3. 先用 profile list 查看可用的数据库配置\n4. 检查 ok 字段判断执行是否成功\n\n## 退出码\n0=成功, 2=配置错误, 3=连接错误, 4=只读拦截, 5=SQL执行错误\n```\n\n</details>\n\n### 方式三：MCP Server（Claude Desktop 等）\n\n在 Claude Desktop 配置中添加 xsql MCP server：\n\n```json\n{\n  \"mcpServers\": {\n    \"xsql\": {\n      \"command\": \"xsql\",\n      \"args\": [\"mcp\", \"server\", \"--config\", \"/path/to/xsql.yaml\"]\n    }\n  }\n}\n```\n\n启动后，Claude 可以直接通过 MCP 协议查询数据库。\n\n### 方式四：AGENTS.md / Rules（Cursor/Windsurf）\n\n在项目根目录创建 `.cursor/rules` 或编辑 `AGENTS.md`：\n\n```markdown\n## 数据库查询\n\n使用 xsql 工具查询数据库：\n- 查询: `xsql query \"SELECT ...\" -p <profile> -f json`\n- 列出配置: `xsql profile list -f json`\n\n注意: 默认只读模式，写操作需要 --unsafe-allow-write 标志。\n```\n\n---\n\n## 📖 功能详情\n\n### 命令一览\n\n| 命令 | 说明 |\n|------|------|\n| `xsql query <SQL>` | 执行 SQL 查询（默认只读） |\n| `xsql profile list` | 列出所有 profile |\n| `xsql profile show <name>` | 查看 profile 详情（密码脱敏） |\n| `xsql mcp server` | 启动 MCP Server（AI 助手集成） |\n| `xsql spec` | 导出 AI Tool Spec |\n| `xsql version` | 显示版本信息 |\n\n### 输出格式\n\n```bash\n# JSON（AI/程序）\nxsql query \"SELECT id, name FROM users\" -p dev -f json\n{\"ok\":true,\"schema_version\":1,\"data\":{\"columns\":[\"id\",\"name\"],\"rows\":[{\"id\":1,\"name\":\"Alice\"}]}}\n\n# Table（终端）\nxsql query \"SELECT id, name FROM users\" -p dev -f table\nid  name\n--  -----\n1   Alice\n\n(1 rows)\n```\n\n### SSH 隧道连接\n\n```yaml\nssh_proxies:\n  bastion:\n    host: jump.example.com\n    user: admin\n    identity_file: ~/.ssh/id_ed25519\n\nprofiles:\n  prod:\n    db: pg\n    host: db.internal  # 内网地址\n    port: 5432\n    user: readonly\n    password: \"keyring:prod/password\"\n    database: mydb\n    ssh_proxy: bastion  # 引用 SSH 代理\n```\n\n### 端口转发代理（xsql proxy）\n\n当需要传统的 `ssh -L` 行为或希望暴露本地端口给 GUI 客户端时，可以使用 `xsql proxy`：\n\n```bash\n# 启动端口转发（自动分配本地端口）\nxsql -p prod proxy\n\n# 指定本地端口\nxsql -p prod proxy --local-port 13306\n```\n\n> 该命令要求 profile 配置 `ssh_proxy`，并会在本地监听端口，将流量转发到目标数据库。\n\n### 安全特性\n\n- **双重只读保护**：SQL 静态分析 + 数据库事务级只读\n- **Keyring 集成**：`password: \"keyring:prod/password\"`\n- **密码脱敏**：`profile show` 不泄露密码\n- **SSH 安全**：默认验证 known_hosts\n\n---\n\n## 📚 文档\n\n| 文档 | 说明 |\n|------|------|\n| [CLI 规范](docs/cli-spec.md) | 命令行接口详细说明 |\n| [配置指南](docs/config.md) | 配置文件格式和选项 |\n| [SSH 代理](docs/ssh-proxy.md) | SSH 隧道配置 |\n| [错误处理](docs/error-contract.md) | 错误码和退出码 |\n| [AI 集成](docs/ai.md) | MCP Server 和 AI 助手集成 |\n| [RFC 文档](docs/rfcs/) | 设计变更记录 |\n| [开发指南](docs/dev.md) | 贡献和开发说明 |\n\n---\n\n## License\n\n[MIT](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "xsql",
+          "description": "Use when you need to safely inspect MySQL/PostgreSQL data or schema via the xsql CLI.",
+          "version": "1.0.0",
+          "author": {
+            "name": "zx06"
+          },
+          "homepage": "https://github.com/zx06/xsql",
+          "repository": "https://github.com/zx06/xsql",
+          "license": "MIT",
+          "keywords": [
+            "xsql",
+            "sql",
+            "mysql",
+            "postgresql",
+            "database",
+            "cli",
+            "ssh",
+            "query"
+          ],
+          "category": "database",
+          "tags": [
+            "read-only",
+            "schema",
+            "mcp"
+          ],
+          "source": "./.claude-plugin",
+          "strict": true,
+          "categories": [
+            "cli",
+            "database",
+            "mcp",
+            "mysql",
+            "postgresql",
+            "query",
+            "read-only",
+            "schema",
+            "sql",
+            "ssh",
+            "xsql"
+          ],
+          "install_commands": [
+            "/plugin marketplace add zx06/xsql",
+            "/plugin install xsql@xsql"
+          ]
+        }
+      ]
+    }
+  ]
+}

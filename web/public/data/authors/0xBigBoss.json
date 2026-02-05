@@ -6,46 +6,105 @@
   },
   "marketplaces": [
     {
-      "name": "0xBigBoss-silo",
+      "name": "0xbigboss-plugins",
       "version": null,
-      "description": "Isolated local development environments for Tilt and k3d projects",
-      "repo_full_name": "0xBigBoss/silo",
-      "repo_url": "https://github.com/0xBigBoss/silo",
-      "repo_description": "Isolated local development environments. silo solves instance isolation and k3d bootstrap sequencing for Tilt-based projects.",
+      "description": "Personal Claude Code plugins and tools",
+      "repo_full_name": "0xBigBoss/claude-code",
+      "repo_url": "https://github.com/0xBigBoss/claude-code",
+      "repo_description": "Comprehensive configuration system for Claude Code",
       "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-01-30T21:26:42Z"
+        "stars": 35,
+        "forks": 4,
+        "pushed_at": "2026-02-04T16:50:59Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"0xBigBoss-silo\",\n  \"owner\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"github@0xbigboss.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"Isolated local development environments for Tilt and k3d projects\",\n    \"version\": \"0.5.4\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"silo\",\n      \"source\": \"./.claude-plugin/silo\",\n      \"description\": \"CLI skill for managing isolated local development environments\",\n      \"version\": \"0.5.4\",\n      \"keywords\": [\n        \"cli\",\n        \"dev-environment\",\n        \"tilt\",\n        \"k3d\",\n        \"kubernetes\",\n        \"local-development\"\n      ]\n    }\n  ]\n}\n",
-        "README.md": "# silo\n\nIsolated local development environments. silo solves instance isolation and k3d bootstrap sequencing for Tilt-based projects.\n\n![silo version](docs/screenshot.png)\n\n## Requirements\n\n- Bun (runtime)\n- Tilt\n- k3d (optional, only if `k3d.enabled = true`)\n\n## Install\n\n```bash\nnpm i -g @0xbigboss/silo\n```\n\n### Claude Code Skill\n\nInstall the silo skill in [Claude Code](https://claude.ai/code) so your AI assistant knows how to use silo:\n\n```bash\n/plugin marketplace add 0xBigBoss/silo\n/plugin install silo@0xBigBoss-silo\n```\n\n## Quick start\n\n```bash\nsilo init\n# edit silo.toml\nsilo up dev\n```\n\nPrint the bundled `silo.toml` reference:\n\n```bash\nsilo doc config\n```\n\n## Commands\n\n```bash\nsilo init            # Create silo.toml starter config\nsilo up [name]       # Start environment (creates k3d if needed, starts Tilt)\nsilo down            # Stop environment (stops Tilt, keeps k3d by default)\nsilo status          # Show current instance state\nsilo env [name]      # Generate env file only, don't start anything\nsilo ci [name]       # Run Tilt in CI mode (tilt ci) after env + k3d setup\nsilo profiles        # List available profiles\nsilo doc [topic]     # Print bundled docs (config, profiles, k3d, hooks, etc.)\nsilo version         # Print version\n```\n\n## Configuration\n\n`silo.toml` defines ports, hosts, URLs, k3d settings, and hooks. For the canonical reference, run:\n\n```bash\nsilo doc config\n```\n\nYou can also browse `SPEC.md` for a detailed specification.\n\n## Child process environment\n\nWhen silo launches child processes (Tilt, hooks, k3d, kubectl), it injects:\n\n- `SILO_ACTIVE=1`\n- `SILO_WORKSPACE=<workspace name>`\n- `SILO_ENV_FILE=<absolute path to generated env file>`\n\n## CI usage\n\n`silo env` and `silo ci` auto-export env vars to `$GITHUB_ENV` when running in\nCI (or when `--export-ci` is provided):\n\n```bash\nsilo ci e2e --timeout 300s\n```\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"0xbigboss-plugins\",\n  \"owner\": {\n    \"name\": \"Allen\",\n    \"email\": \"bigboss@metalrodeo.xyz\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code plugins and tools\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ralph-reviewed\",\n      \"source\": \"./plugins/ralph-reviewed\",\n      \"description\": \"Iterative Ralph loops with Codex CLI review gates at completion\",\n      \"version\": \"1.8.8\",\n      \"author\": {\n        \"name\": \"Allen\",\n        \"email\": \"bigboss@metalrodeo.xyz\"\n      },\n      \"keywords\": [\"ralph\", \"iteration\", \"review\", \"codex\"],\n      \"category\": \"workflow\"\n    },\n    {\n      \"name\": \"codex-reviewer\",\n      \"source\": \"./plugins/codex-reviewer\",\n      \"description\": \"Codex-powered code review gate for Claude Code\",\n      \"version\": \"1.6.9\",\n      \"author\": {\n        \"name\": \"Allen\",\n        \"email\": \"bigboss@metalrodeo.xyz\"\n      },\n      \"keywords\": [\"codex\", \"review\", \"gate\"],\n      \"category\": \"workflow\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Configuration\n\nPersonal configuration for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) providing development guidelines, slash commands, custom agents, and language-specific skills.\n\n## What's Included\n\n```\nclaude-code/\n├── CLAUDE.md                    # Core development guidelines (symlinked to ~/.claude/)\n├── commands/                    # Slash commands\n│   ├── fix-issue.md             # /fix-issue <id> - locate and fix issues\n│   ├── git-commit.md            # /git-commit - conventional commit workflow\n│   ├── handoff.md               # /handoff - generate session handoff prompts\n│   └── rewrite-history.md       # /rewrite-history - clean up branch commits\n├── agents/                      # Custom subagents\n│   ├── code-reviewer.md         # Review code for quality and security\n│   ├── debugger.md              # Root cause analysis for failures\n│   ├── refactorer.md            # Clean refactoring with complete migrations\n│   └── test-writer.md           # Write tests that verify correctness\n├── .claude/\n│   └── skills/                  # Language and tool best practices\n│       ├── python-best-practices/\n│       ├── typescript-best-practices/\n│       ├── react-best-practices/\n│       ├── go-best-practices/\n│       ├── zig-best-practices/\n│       ├── playwright-best-practices/\n│       ├── tamagui-best-practices/\n│       ├── tilt/\n│       ├── web-fetch/\n│       ├── axe-ios-simulator/\n│       └── zig-docs/\n├── scripts/                     # Utility scripts\n│   ├── install-symlinks.sh      # Installation helper\n│   └── sync-skills-to-codex.sh  # Sync skills to Codex\n├── settings/                    # Settings configurations\n├── statusline/                  # Statusline configurations\n└── analytics/                   # Usage analytics (submodule)\n```\n\n## Installation\n\n### Via Stow (Recommended)\n\nThis repo is a submodule of a dotfiles repository using GNU Stow:\n\n```bash\ncd ~/code/dotfiles\nstow -v -R -t ~ claude\n```\n\nThe `claude` stow package symlinks to this repo's contents.\n\n### Manual Symlinks\n\n```bash\nmkdir -p ~/.claude\nln -sf \"$(pwd)/CLAUDE.md\" ~/.claude/CLAUDE.md\nln -sf \"$(pwd)/commands\" ~/.claude/commands\nln -sf \"$(pwd)/agents\" ~/.claude/agents\nln -sf \"$(pwd)/.claude/skills\" ~/.claude/skills\n```\n\n## Commands\n\nInvoke with `/command-name` in Claude Code:\n\n| Command | Description |\n|---------|-------------|\n| `/fix-issue <id>` | Find and fix an issue by ID with tests and PR description |\n| `/git-commit` | Review changes and create conventional commits |\n| `/handoff` | Generate a self-contained handoff prompt for another agent |\n| `/rewrite-history` | Rewrite branch with clean, narrative commit history |\n\n## Agents\n\nCustom subagents for focused tasks. Claude Code delegates to these automatically when appropriate:\n\n| Agent | Purpose |\n|-------|---------|\n| `code-reviewer` | Reviews changes for quality, security, and project conventions |\n| `debugger` | Investigates failures through root cause analysis |\n| `refactorer` | Restructures code with clean breaks and complete migrations |\n| `test-writer` | Writes tests that verify correctness without gaming assertions |\n\n## Skills\n\nLanguage and tool-specific best practices loaded automatically based on file context:\n\n| Context | Skill |\n|---------|-------|\n| Python (`.py`, `pyproject.toml`) | python-best-practices |\n| TypeScript (`.ts`, `.tsx`) | typescript-best-practices |\n| React (`.tsx`, `.jsx`, `@react` imports) | react-best-practices |\n| Go (`.go`, `go.mod`) | go-best-practices |\n| Zig (`.zig`, `build.zig`) | zig-best-practices |\n| Playwright (`@playwright/test`) | playwright-best-practices |\n| Tamagui (`@tamagui` imports) | tamagui-best-practices |\n| Tilt (`Tiltfile`) | tilt |\n\n## Core Principles\n\nThe `CLAUDE.md` guidelines emphasize:\n\n- **Type-first development**: Define types before implementing logic; make illegal states unrepresentable\n- **Functional style**: Prefer immutability, pure functions, and explicit data flow\n- **Minimal changes**: Implement only what's requested; avoid unrequested features or refactoring\n- **Error handling**: Handle or return errors at every level; fail loudly with clear messages\n- **Test integrity**: Tests verify correctness, not just satisfy assertions\n- **Clean refactoring**: Update all callers atomically; delete superseded code completely\n\n## Author\n\nCreated by Allen Eubank (Big Boss)\n\n## License\n\nLicensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.\n",
+        "plugins/ralph-reviewed/README.md": "# Ralph Reviewed\n\nAn iterative development loop with Codex review gates. Fork of [ralph-wiggum](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/ralph-wiggum) with added code review at completion.\n\n## How It Works\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                                                             │\n│   Claude works ──► Claims done ──► Codex reviews            │\n│        ▲                               │                    │\n│        │                          ┌────┴────┐               │\n│        │                          ▼         ▼               │\n│        │                      APPROVE    REJECT             │\n│        │                          │         │               │\n│        │                        EXIT    feedback            │\n│        │                                    │               │\n│        └────────────────────────────────────┘               │\n│                                                             │\n└─────────────────────────────────────────────────────────────┘\n```\n\n1. Start a loop with a task description\n2. Claude works iteratively until it believes the task is complete\n3. When Claude outputs the completion promise, Codex reviews the work\n4. If approved: loop ends successfully\n5. If rejected: Claude receives feedback and continues working\n6. After max review cycles, loop ends with final feedback\n\n## Installation\n\n### From Marketplace (Recommended)\n\n```bash\n# 1. Add the marketplace\n/plugin marketplace add 0xbigboss/plugins\n\n# 2. Install the plugin\n/plugin install ralph-reviewed@0xbigboss-plugins\n```\n\nOr use the interactive plugin manager:\n\n```bash\n/plugin\n```\n\nNavigate to the **Discover** tab to browse and install.\n\n### From Local Development\n\nIf developing locally or using dotfiles:\n\n```bash\n# Add local path as marketplace\n/plugin marketplace add ~/code/dotfiles/claude-code/plugins\n\n# Install from local\n/plugin install ralph-reviewed@local\n```\n\n## Commands\n\n### `/ralph-reviewed:ralph-loop`\n\nStart an iterative loop with review gates.\n\n```bash\n/ralph-reviewed:ralph-loop \"Your task description\" [options]\n```\n\n**Options:**\n\n| Flag | Default | Description |\n|------|---------|-------------|\n| `--max-iterations` | 50 | Max work iterations before auto-stop |\n| `--max-reviews` | max-iterations | Max review cycles before force-complete |\n| `--completion-promise` | COMPLETE | Phrase that signals completion |\n| `--no-review` | false | Disable Codex review gate |\n| `--debug` | false | Write debug logs to `/tmp/ralph-reviewed-{session_id}.log` |\n\n**Examples:**\n\n```bash\n# Basic usage\n/ralph-reviewed:ralph-loop \"Build a REST API with CRUD for todos. Include tests. Output COMPLETE when done.\"\n\n# With options\n/ralph-reviewed:ralph-loop \"Fix the auth bug in src/auth.ts\" \\\n  --max-iterations 20 \\\n  --max-reviews 2 \\\n  --completion-promise \"FIXED\"\n\n# Without review (original ralph behavior)\n/ralph-reviewed:ralph-loop \"Refactor the utils module\" --no-review\n```\n\n### `/ralph-reviewed:cancel-ralph`\n\nCancel the active loop immediately.\n\n### `/ralph-reviewed:help`\n\nShow help and usage information.\n\n## Writing Good Prompts\n\n### Include Clear Success Criteria\n\n```\nBuild a user registration API.\n\nRequirements:\n- POST /register accepting email and password\n- Password hashing with bcrypt\n- Email validation (valid format)\n- Return 201 with user ID on success\n- Return 400 with error message on invalid input\n- Tests for all cases\n\nWhen all tests pass, output <promise>COMPLETE</promise>\n```\n\n### Include Verification Steps\n\n```\nFix the authentication middleware bug.\n\nVerification:\n1. Run `npm test src/auth.test.ts` - all tests pass\n2. Run `npm run lint` - no errors\n3. Manual check: login flow works in dev\n\nWhen verified, output <promise>FIXED</promise>\n```\n\n### Set Escape Conditions\n\nThe `<promise>BLOCKED</promise>` signal is a built-in escape hatch that terminates the loop immediately without triggering a Codex review. Use it when genuinely stuck:\n\n```\nImplement the search feature.\n\nIf blocked by external issues (missing deps, pre-existing bugs, etc.):\n- Document what's blocking and what you tried\n- Output <promise>BLOCKED</promise>\n```\n\nNote: BLOCKED terminates the loop without review since there's nothing to review when blocked.\n\n## Review Gate\n\nWhen Claude outputs the completion promise, Codex CLI is invoked to review:\n\n- **Original task** - What was requested\n- **Work summary** - Recent Claude output\n- **Git diff** - Code changes made\n\nCodex responds with:\n- `<review>APPROVE</review>` - Work meets requirements\n- `<review>REJECT</review>` with `<issues>` block - Needs changes\n\nOn rejection, Claude receives structured feedback with tagged issues (e.g., `[ISSUE-1] major: description`) and continues working. After `--max-reviews` cycles, the loop ends regardless (to prevent infinite ping-pong).\n\n## Requirements\n\n- **Git repository** - State file is stored at repo root to survive directory changes\n- **Bun** - For TypeScript hook execution\n- **codex** - Codex CLI for reviews (optional - degrades gracefully if missing)\n- **git** - For diff generation and repo root detection\n\n## Configuration\n\n### User Preferences\n\nConfigure Codex reviewer behavior via `~/.claude/ralphs/config.json`:\n\n```json\n{\n  \"codex\": {\n    \"sandbox\": \"read-only\",\n    \"approval_policy\": \"never\",\n    \"bypass_sandbox\": false,\n    \"extra_args\": [],\n    \"timeout_seconds\": 1200\n  }\n}\n```\n\n**Options:**\n\n| Key | Values | Default | Description |\n|-----|--------|---------|-------------|\n| `sandbox` | `read-only`, `workspace-write`, `danger-full-access` | `read-only` | Codex sandbox mode |\n| `approval_policy` | `untrusted`, `on-failure`, `on-request`, `never` | `never` | When Codex asks for approval |\n| `bypass_sandbox` | `true`, `false` | `false` | Bypass sandbox entirely (overrides sandbox/approval_policy) |\n| `extra_args` | string array | `[]` | Additional CLI args passed to Codex (appended last, can override earlier flags) |\n| `timeout_seconds` | number | `1200` | Timeout for Codex review call (20 minutes default) |\n\n**Example: Full permissions for tooling (tsc, linters, tests):**\n\n```json\n{\n  \"codex\": {\n    \"bypass_sandbox\": true\n  }\n}\n```\n\nThis allows Codex to run build tools, linters, and tests during review. Without this, Codex runs in read-only mode and cannot verify tooling-based success criteria.\n\n**Example: Write access without full bypass:**\n\n```json\n{\n  \"codex\": {\n    \"sandbox\": \"workspace-write\",\n    \"approval_policy\": \"never\"\n  }\n}\n```\n\n### Loop State\n\nState is stored in `.claude/ralph-loop.local.md` at the **git repository root**. This ensures the loop survives directory changes within the repo. The file tracks:\n\n- Current iteration count\n- Max iterations\n- Completion promise\n- Original prompt\n- Review count\n- Pending feedback\n\nDo not edit this file manually. Use `/ralph-reviewed:cancel-ralph` to stop.\n\n## Differences from ralph-wiggum\n\n| Feature | ralph-wiggum | ralph-reviewed |\n|---------|-------------|----------------|\n| Review gate | No | Yes (Codex CLI) |\n| Max review cycles | N/A | Configurable |\n| Feedback injection | No | Yes |\n| Graceful degradation | N/A | Yes (if Codex unavailable) |\n| Hook language | Bash | TypeScript (Bun) |\n| Directory change handling | Breaks | Survives (uses git root) |\n| Debug logging | No | Yes (`--debug` flag) |\n| BLOCKED escape | No | Yes (terminates without review) |\n\n## Troubleshooting\n\n**Loop won't stop:**\n- Use `/ralph-reviewed:cancel-ralph` to force stop\n- Verify completion promise matches exactly (case-insensitive)\n\n**State file not found after directory change:**\n- Ensure you're in a git repository (`git rev-parse --show-toplevel`)\n- State file is at repo root: `{GIT_ROOT}/.claude/ralph-loop.local.md`\n- Outside git repos, directory changes will break the loop\n\n**Reviews not happening:**\n- Check `codex` CLI is installed: `which codex`\n- Check `--no-review` is not set\n- Check `.claude/ralph-loop.local.md` has `review_enabled: true`\n\n**Codex can't run tooling (EPERM errors, tsc/lint/test fails):**\n- By default, Codex runs in read-only sandbox mode\n- Create `~/.claude/ralphs/config.json` with `\"bypass_sandbox\": true`\n- See [User Preferences](#user-preferences) for full config options\n\n**Too slow:**\n- Reduce `--max-iterations` for faster feedback\n- Reduce `--max-reviews` if reviews are redundant\n\n**Review timing out:**\n- Default timeout is 1200 seconds (20 minutes)\n- Increase via `~/.claude/ralphs/config.json`: `\"timeout_seconds\": 1800`\n- Must be less than plugin hook timeout (1800s)\n\n**Debugging:**\n- Use `--debug` flag to enable logging\n- Session logs: `~/.claude/ralphs/{session_id}/debug.log`\n- Crash logs: `~/.claude/ralphs/{session_id}/crash.log`\n- Pre-session startup log: `~/.claude/ralphs/startup.log`\n\n## Credits\n\nBased on the [Ralph Wiggum technique](https://ghuntley.com/ralph/) by Geoffrey Huntley and the [official Claude plugin](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/ralph-wiggum).\n"
       },
       "plugins": [
         {
-          "name": "silo",
-          "source": "./.claude-plugin/silo",
-          "description": "CLI skill for managing isolated local development environments",
-          "version": "0.5.4",
+          "name": "ralph-reviewed",
+          "source": "./plugins/ralph-reviewed",
+          "description": "Iterative Ralph loops with Codex CLI review gates at completion",
+          "version": "1.8.8",
+          "author": {
+            "name": "Allen",
+            "email": "bigboss@metalrodeo.xyz"
+          },
           "keywords": [
-            "cli",
-            "dev-environment",
-            "tilt",
-            "k3d",
-            "kubernetes",
-            "local-development"
+            "ralph",
+            "iteration",
+            "review",
+            "codex"
           ],
+          "category": "workflow",
           "categories": [
-            "cli",
-            "dev-environment",
-            "k3d",
-            "kubernetes",
-            "local-development",
-            "tilt"
+            "codex",
+            "iteration",
+            "ralph",
+            "review",
+            "workflow"
           ],
           "install_commands": [
-            "/plugin marketplace add 0xBigBoss/silo",
-            "/plugin install silo@0xBigBoss-silo"
+            "/plugin marketplace add 0xBigBoss/claude-code",
+            "/plugin install ralph-reviewed@0xbigboss-plugins"
+          ]
+        },
+        {
+          "name": "codex-reviewer",
+          "source": "./plugins/codex-reviewer",
+          "description": "Codex-powered code review gate for Claude Code",
+          "version": "1.6.9",
+          "author": {
+            "name": "Allen",
+            "email": "bigboss@metalrodeo.xyz"
+          },
+          "keywords": [
+            "codex",
+            "review",
+            "gate"
+          ],
+          "category": "workflow",
+          "categories": [
+            "codex",
+            "gate",
+            "review",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add 0xBigBoss/claude-code",
+            "/plugin install codex-reviewer@0xbigboss-plugins"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "0xbigboss-recall",
+      "version": null,
+      "description": "Session recall and analytics for AI agents",
+      "repo_full_name": "0xBigBoss/recall",
+      "repo_url": "https://github.com/0xBigBoss/recall",
+      "repo_description": "Session recall and analytics for AI agents (Claude Code, Codex)",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-24T02:53:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"0xbigboss-recall\",\n  \"description\": \"Session recall and analytics for AI agents\",\n  \"owner\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"bigboss@metalrodeo.xyz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"recall\",\n      \"description\": \"Search and analyze past Claude Code and Codex sessions\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"recall\",\n  \"description\": \"Session recall and analytics for AI agents\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"bigboss@metalrodeo.xyz\"\n  },\n  \"repository\": \"https://github.com/0xbigboss/recall\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# recall\n\n[![CI](https://github.com/0xBigBoss/recall/actions/workflows/ci.yml/badge.svg)](https://github.com/0xBigBoss/recall/actions/workflows/ci.yml)\n\nSession recall and analytics for AI agents (Claude Code, Codex).\n\nSearch past sessions, analyze tool usage patterns, and generate permission suggestions from your AI coding history.\n\n## Installation\n\n```bash\n# Install from GitHub\nuv tool install \"recall @ git+https://github.com/0xbigboss/recall.git#subdirectory=packages/recall\"\n\n# Or clone and run locally\ngit clone https://github.com/0xbigboss/recall.git\ncd recall\nuv sync\nuv run recall --help\n```\n\n## Quick Start\n\n```bash\n# Index your sessions (run first)\nrecall index\n\n# Search past work\nrecall search \"authentication\"\nrecall search \"git rebase\" --tool Bash\n\n# List recent sessions\nrecall list --since 7d\nrecall list --project /path/to/repo\n\n# View session details\nrecall show <session-id> --tools\n\n# Analytics\nrecall stats tools        # Tool usage counts\nrecall stats bash         # Bash command breakdown\nrecall stats bash --suggest  # Permission suggestions\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `recall index` | Index sessions from Claude Code and Codex |\n| `recall search <query>` | Full-text search across sessions |\n| `recall list` | List sessions with filters |\n| `recall show <id>` | Display session details |\n| `recall stats` | Analytics and usage patterns |\n\n## Claude Code Plugin\n\nInstall as a Claude Code plugin for automatic skill integration:\n\n```bash\nclaude plugin marketplace add 0xbigboss/recall\nclaude plugin install recall@0xbigboss-recall\n```\n\nOr test locally:\n\n```bash\nclaude --plugin-dir /path/to/recall\n```\n\nThe skill auto-triggers on prompts like \"search my past sessions\" or \"suggest permissions to auto-approve\".\n\n## Data Locations\n\n| Data | Path |\n|------|------|\n| Database | `~/.local/share/recall/recall.duckdb` |\n| Claude Code sessions | `~/.claude/projects/**/*.jsonl` |\n| Codex sessions | `~/.codex/sessions/**/rollout*.jsonl` |\n\n## Development\n\n```bash\nuv sync                    # Install dependencies\nuv run pytest              # Run tests\nuv run ruff check .        # Lint\nuvx ty check               # Type check\n```\n\nGit hooks (format, lint, typecheck, test) auto-install via [direnv](https://direnv.net/).\nWithout direnv: `uv run lefthook install`\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "recall",
+          "description": "Search and analyze past Claude Code and Codex sessions",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add 0xBigBoss/recall",
+            "/plugin install recall@0xbigboss-recall"
           ]
         }
       ]

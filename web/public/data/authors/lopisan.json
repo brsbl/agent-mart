@@ -1,0 +1,151 @@
+{
+  "author": {
+    "id": "lopisan",
+    "display_name": "Petr Hlubuček",
+    "avatar_url": "https://avatars.githubusercontent.com/u/28299762?u=39cb5ff65086298362ab4b941cfe585f22e47098&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "swarm-marketplace",
+      "version": null,
+      "description": "A collection of Claude Code plugins for our team",
+      "repo_full_name": "lopisan/claude-code-plugins",
+      "repo_url": "https://github.com/lopisan/claude-code-plugins",
+      "repo_description": "Claude code plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-23T18:37:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"swarm-marketplace\",\n  \"owner\": {\n    \"name\": \"GoodAI Swarm Robotics\",\n    \"email\": \"petr.hlubucek@goodai.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of Claude Code plugins for our team\",\n    \"version\": \"1.0.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"plugin-development\",\n      \"description\": \"Assist with Claude Code plugin development: scaffold, validate, review, and team-ready distribution\",\n      \"version\": \"1.3.0\",\n      \"author\": {\n        \"name\": \"Ivan Magda\"\n      },\n      \"source\": \"./plugins/plugin-development\",\n      \"category\": \"developer-tools\",\n      \"tags\": [\"development\", \"plugins\", \"scaffold\", \"validation\", \"tools\"],\n      \"keywords\": [\"claude-code\", \"plugins\", \"developer-tools\", \"scaffold\", \"validation\"]\n    },\n    {\n      \"name\": \"ros\",\n      \"description\": \"Project-agnostic ROS1 plugin for topics, services, parameters, TF transforms, build, launch, and diagnostics. Includes intelligent agents for system exploration, debugging, and monitoring.\",\n      \"version\": \"2.0.9\",\n      \"author\": {\n        \"name\": \"ROS Developer\"\n      },\n      \"source\": \"./plugins/ros\",\n      \"category\": \"robotics\",\n      \"tags\": [\"ros\", \"ros1\", \"noetic\", \"robotics\", \"catkin\"],\n      \"keywords\": [\"ros\", \"ros1\", \"noetic\", \"robotics\", \"catkin\", \"topics\", \"services\", \"parameters\", \"tf\", \"transforms\"]\n    },\n    {\n      \"name\": \"claude-config\",\n      \"description\": \"Export Claude Code configuration for portable setup across machines\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"GoodAI Swarm Robotics\"\n      },\n      \"source\": \"./plugins/claude-config\",\n      \"category\": \"developer-tools\",\n      \"tags\": [\"config\", \"setup\", \"backup\", \"export\"],\n      \"keywords\": [\"config\", \"setup\", \"export\", \"backup\", \"mcp\", \"plugins\", \"marketplaces\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nA collection of Claude Code plugins for GoodAI Swarm Robotics.\n\n## Installation\n\nAdd the marketplace to Claude Code:\n\n```bash\n/plugin marketplace add lopisan/claude-code-plugins\n```\n\nInstall a plugin:\n\n```bash\n/plugin install ros@swarm-marketplace\n```\n\n## Available Plugins\n\n- **ros** - ROS1 development tools (topics, services, parameters, TF, build, launch, diagnostics)\n- **plugin-development** - Plugin scaffolding and validation toolkit\n- **hello-world** - Example plugin\n\n## Documentation\n\nFor detailed documentation on creating plugins and managing marketplaces, see the [original template repository](https://github.com/ivan-magda/claude-code-plugin-template).\n",
+        "plugins/plugin-development/README.md": "# plugin-development\n\nA comprehensive Claude Code plugin that assists developers in creating, validating, and distributing Claude Code plugins—from scaffold to release.\n\n## Overview\n\nThe `plugin-development` plugin provides a complete toolkit for plugin authorship using a hybrid architecture:\n\n- **Skill (plugin-authoring)**: Ambient, auto-discovered guidance with progressive disclosure\n- **7 Slash Commands**: Explicit actions for scaffolding, validation, and testing\n- **Reviewer Agent**: Deep, multi-file audits and readiness checks\n- **Hooks**: Automated validation and formatting guardrails\n\n## Installation\n\nThis plugin is part of the **Claude Code Plugin Marketplace Template**. To use it:\n\n### Quick Start (Recommended for First-Time Users)\n\n```bash\n# From the template root directory\n/plugin marketplace add .\n\n# Install the plugin\n/plugin install plugin-development@claude-code-plugin-template\n```\n\n### For Team Marketplaces\n\nIf you're using this template to create your own marketplace:\n\n1. **Set up your marketplace** (see the [main README](../../README.md) for instructions)\n2. **Add your marketplace to Claude Code**:\n   ```bash\n   /plugin marketplace add your-org/your-marketplace-repo\n   ```\n3. **Install the plugin**:\n   ```bash\n   /plugin install plugin-development@your-marketplace-name\n   ```\n\n### Local Development Setup\n\nIf you want to use this for developing new plugins:\n\n```bash\n# From the template root directory\ncd /path/to/claude-code-plugin-template\n\n# Add the marketplace\n/plugin marketplace add .\n\n# Install this plugin\n/plugin install plugin-development@claude-code-plugin-template\n```\n\nThen use it to scaffold new plugins:\n\n```bash\n/plugin-development:init my-new-plugin\n```\n\n## Quick Start\n\n> **Before you begin**: Make sure you've installed this plugin following the [Installation](#installation) instructions above.\n\n### Create a New Plugin\n\nOnce installed, you can scaffold a new plugin:\n\n```bash\n/plugin-development:init my-awesome-plugin\n```\n\nThis scaffolds:\n- `.claude-plugin/plugin.json` - Plugin manifest\n- `commands/` - Slash commands directory\n- `agents/` - Sub-agents directory\n- `skills/` - Skills directory\n- `hooks/hooks.json` - Hook configuration\n- `scripts/` - Validation scripts\n- `README.md` - Documentation template\n\n### Add Components\n\n```bash\n# Add a command\n/plugin-development:add-command format-code \"Format code according to project standards\"\n\n# Add a skill\n/plugin-development:add-skill code-review \"Use when reviewing code or PRs\"\n\n# Add an agent\n/plugin-development:add-agent security-auditor \"Analyzes code for security vulnerabilities\"\n\n# Add a hook\n/plugin-development:add-hook PreToolUse \"Write|Edit\"\n```\n\n### Validate Your Plugin\n\n```bash\n/plugin-development:validate\n```\n\nChecks:\n- Plugin structure and organization\n- Manifest validity (plugin.json)\n- Component configuration\n- Naming conventions\n- Hook safety\n\n### Test Locally\n\nAfter creating your plugin and making it available in a marketplace:\n\n```bash\n# From your plugin directory\n/plugin-development:test-local\n```\n\nThis creates a dev marketplace and provides installation instructions for iterative testing. See the [Testing Your Plugin](#testing-your-plugin) section below for complete workflow details.\n\n## Commands Reference\n\n| Command | Description |\n|---------|-------------|\n| `/plugin-development:init [name]` | Scaffold a new plugin with standard structure |\n| `/plugin-development:add-command [name] [desc]` | Add a new slash command |\n| `/plugin-development:add-skill [name] [desc]` | Add a new Skill with SKILL.md |\n| `/plugin-development:add-agent [name] [desc]` | Add a new sub-agent |\n| `/plugin-development:add-hook [event] [matcher]` | Add a hook configuration |\n| `/plugin-development:validate` | Validate plugin structure and configuration |\n| `/plugin-development:test-local` | Create dev marketplace for local testing |\n\n## Skill: plugin-authoring\n\nThe plugin-authoring Skill provides ambient guidance throughout your development session.\n\n**Triggers**: Automatically activates when working with:\n- `.claude-plugin/plugin.json`\n- `marketplace.json`\n- `commands/`, `agents/`, `skills/`, or `hooks/` directories\n\n**Capabilities**:\n- Read-only analysis and guidance\n- Progressive disclosure (links to detailed docs)\n- Proposes safe actions via commands\n- Escalates to plugin-reviewer agent for deep audits\n\n**Access**: Automatic (no explicit invocation needed)\n\n## Agent: plugin-reviewer\n\nDeep, comprehensive audits of plugins for release readiness.\n\n**Invoke**: `/agents plugin-reviewer`\n\n**Provides**:\n- Structure audit\n- Manifest validation\n- Component analysis\n- Hook safety checks\n- Marketplace readiness assessment\n- Prioritized issue list (Critical → Low)\n- Specific fix recommendations\n\n**Runtime**: 5-15 minutes (separate context window)\n\n## Hooks\n\nAutomated validation and formatting hooks are included:\n\n### PreToolUse\n- Validates plugin structure before Write/Edit operations\n- Exit code 2 blocks unsafe operations\n- Provides actionable error messages\n\n### PostToolUse\n- Runs formatting/linting after Write/Edit (stub, extend as needed)\n\n### SessionStart\n- Displays plugin load confirmation\n\n## Development Workflow\n\n### Prerequisites\n\nBefore starting plugin development:\n\n1. **Clone or download this template**:\n   ```bash\n   git clone https://github.com/your-org/claude-code-plugin-template.git\n   cd claude-code-plugin-template\n   ```\n\n2. **Install this plugin** (see [Installation](#installation) above)\n\n3. **Create a new plugin**:\n   ```bash\n   /plugin-development:init my-plugin\n   cd my-plugin/\n   ```\n\n### 1. Initialize\n\nOnce installed, create your plugin:\n\n```bash\ncd my-projects/\n/plugin-development:init my-plugin\ncd my-plugin/\n```\n\n### 2. Add Components\n\n```bash\n/plugin-development:add-command hello \"Greet the user\"\n# Edit commands/hello.md with your instructions\n\n/plugin-development:add-skill my-expertise \"Use when working with X\"\n# Edit skills/my-expertise/SKILL.md\n```\n\n### 3. Validate\n\n```bash\n/plugin-development:validate\n```\n\nFix any errors or warnings.\n\n### 4. Test Locally\n\n```bash\n/plugin-development:test-local\n/plugin marketplace add ../dev-marketplace\n/plugin install my-plugin@dev-marketplace\n```\n\nTest your commands:\n```bash\n/my-plugin:hello\n```\n\n### 5. Iterate\n\nAfter making changes:\n```bash\n/plugin-development:validate\n/plugin uninstall my-plugin@dev-marketplace\n/plugin install my-plugin@dev-marketplace\n# Test again\n```\n\n### 6. Review Before Release\n\n```bash\n/agents plugin-reviewer\n```\n\nFix any critical or high-priority issues identified.\n\n### 7. Distribute\n\nAdd to your team marketplace repository and push to GitHub.\n\n## Documentation\n\nThe plugin includes comprehensive reference material:\n\n### Schemas\n- `schemas/plugin-manifest.md` - plugin.json structure\n- `schemas/hooks-schema.md` - Hooks configuration\n- `schemas/marketplace-schema.md` - Marketplace structure\n\n### Templates\n- `templates/plugin-manifest.json` - Starter plugin.json\n- `templates/marketplace-manifest.json` - Marketplace template\n- `templates/command-template.md` - Command structure\n- `templates/skill-template.md` - Skill structure\n- `templates/agent-template.md` - Agent structure\n\n### Examples\n- `examples/simple-plugin.md` - Complete minimal plugin example\n- `examples/testing-workflow.md` - Step-by-step testing guide\n\n### Best Practices\n- `best-practices/organization.md` - Plugin structure guidelines\n- `best-practices/naming-conventions.md` - Naming standards\n\n## Architecture\n\n### Hybrid Design\n\n**Skill (Read-First)**:\n- Ambient, automatic activation\n- Read-only by default (Read, Grep, Glob)\n- Proposes commands for execution\n- Progressive disclosure keeps it concise\n\n**Commands (Explicit)**:\n- User-triggered actions\n- Deterministic operations\n- Template-based generation\n- Clear consent for modifications\n\n**Agent (Deep Analysis)**:\n- Separate context window\n- Multi-file analysis\n- Comprehensive reporting\n- Use for release readiness\n\n**Hooks (Automation)**:\n- Validation before writes\n- Formatting after writes\n- Automated guardrails\n- Safety first\n\n## Safety & Permissions\n\n### Default Safety\n\n- Skill is **read-only** by default\n- All writes go through **explicit commands**\n- Hooks **block** unsafe operations (exit code 2)\n- Agent **proposes** changes, doesn't execute\n\n### Recommended Permissions\n\nFor enhanced security, configure in `.claude/settings.json`:\n\n```json\n{\n  \"permissions\": {\n    \"deny\": [\n      \"Read(./.env)\",\n      \"Read(./.env.*)\",\n      \"Read(./secrets/**)\"\n    ],\n    \"ask\": [\n      \"SlashCommand:/plugin-development:*\"\n    ]\n  }\n}\n```\n\n## Troubleshooting\n\n### Plugin not loading?\n- Check `/plugin list` to verify installation\n- Verify `plugin.json` doesn't include component fields for standard paths\n- If using custom paths, ensure they're relative (e.g., `[\"./custom/cmd.md\"]`)\n- Run `/plugin-development:validate`\n\n### Commands not showing?\n- Check `/help` for command list\n- Ensure `commands/` has `.md` files with frontmatter\n- Verify `description` field in frontmatter\n- Reinstall the plugin\n\n### Skills not triggering?\n- Check `SKILL.md` frontmatter `name` matches directory (kebab-case)\n- Verify `description` includes both what the Skill does AND when to use it\n- Include specific trigger keywords users would naturally mention\n- Description must be max 1024 characters\n- Skills are model-invoked (automatically activate based on context)\n\n### Hooks not running?\n- Make scripts executable: `chmod +x scripts/*.sh`\n- Use `${CLAUDE_PLUGIN_ROOT}` in hook commands\n- Test script directly: `./scripts/validate-plugin.sh`\n- Use `claude --debug` to see hook execution\n\n## Contributing\n\nThis plugin follows its own best practices:\n- kebab-case naming throughout\n- Progressive disclosure in skills\n- Template-based generation\n- Comprehensive validation\n\nTo extend:\n1. Add new commands in `commands/`\n2. Enhance the skill with new reference docs\n3. Update the reviewer agent with new checks\n4. Add hooks for new automation\n\n## Resources\n\n### Official Documentation\n- [Claude Code Plugins](https://docs.claude.com/en/docs/claude-code/plugins)\n- [Plugin Marketplaces](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)\n- [Plugins Reference](https://docs.claude.com/en/docs/claude-code/plugins-reference)\n- [Slash Commands](https://docs.claude.com/en/docs/claude-code/slash-commands)\n\n### Local Documentation\nSee `skills/plugin-authoring/` for:\n- Schemas (plugin manifest, hooks, marketplace)\n- Templates (reusable starter files)\n- Examples (complete working plugins)\n- Best practices (organization, naming)\n\n## License\n\nMIT License - See LICENSE file for details\n\n## Version\n\n**1.0.0** - Initial release\n\n### Features\n- ✅ Plugin scaffolding (init command)\n- ✅ Component generation (add-command, add-skill, add-agent, add-hook)\n- ✅ Validation (validate command)\n- ✅ Local testing (test-local command)\n- ✅ Ambient guidance (plugin-authoring skill)\n- ✅ Deep review (plugin-reviewer agent)\n- ✅ Automated safety (validation hooks)\n- ✅ Comprehensive documentation (schemas, templates, examples, best practices)\n\n## Support\n\nFor issues or questions:\n- **Using the template**: See the [main README](../../README.md) for template setup instructions\n- **Plugin issues**: Check validation output: `/plugin-development:validate`\n- **Best practices**: Review `skills/plugin-authoring/best-practices/`\n- **Deep audit**: Request deep audit: `/agents plugin-reviewer`\n- **Debug mode**: Test with debug mode: `claude --debug`\n",
+        "plugins/ros/README.md": "# ROS Plugin for Claude Code\n\nA project-agnostic Claude Code plugin for ROS1 (Noetic) development with commands, agents, and skills for robotics workflows.\n\n## Installation\n\n### Option 1: Development Testing\n\nUse the `--plugin-dir` flag to load the plugin during development:\n\n```bash\nclaude --plugin-dir ./ros\n```\n\nThis loads the plugin directly without installation. Useful for testing changes.\n\n### Option 2: Project Installation (Shared with Team)\n\nAdd to your project's `.claude/settings.json`:\n\n```json\n{\n  \"plugins\": {\n    \"ros\": {\n      \"source\": \"./ros\"\n    }\n  }\n}\n```\n\nThis shares the plugin with all collaborators via version control.\n\n### Option 3: User-Global Installation\n\nInstall for personal use across all projects:\n\n```bash\ncp -r ros ~/.claude/plugins/\n```\n\n### Verify Installation\n\nAfter loading or installing the plugin:\n```\n/status\n```\n\n---\n\n## Commands\n\n### /status\n\nQuick ROS system health check.\n\n```\n/status\n```\n\n**Output:**\n- roscore status (running/stopped)\n- Active nodes count and list\n- Active topics count\n- Available services\n\n### /topics [topic-name]\n\nInspect ROS topics.\n\n```\n# List all topics with publishers/subscribers\n/topics\n\n# Inspect specific topic\n/topics /sensor/data\n```\n\n**Output for specific topic:**\n- Topic type and message structure\n- Publishers and subscribers\n- Publishing rate (Hz)\n- Sample message content\n\n### /services [service-name]\n\nManage ROS services.\n\n```\n# List all services\n/services\n\n# Inspect specific service\n/services /node/get_loggers\n\n# Call a service\n/services call /set_bool \"data: true\"\n```\n\n### /params [param-name]\n\nManage ROS parameters.\n\n```\n# List all parameters\n/params\n\n# Get parameter value\n/params /use_sim_time\n\n# Set parameter\n/params set /rate 100\n\n# Delete parameter\n/params delete /old_param\n```\n\n### /tf [source target]\n\nInspect TF transforms.\n\n```\n# List all frames\n/tf\n\n# Show frame tree\n/tf tree\n\n# Lookup transform\n/tf base_link odom\n```\n\n### /build [package] [--clean]\n\nBuild catkin workspace.\n\n```\n# Build entire workspace\n/build\n\n# Build specific package\n/build your_package\n\n# Clean and rebuild\n/build --clean\n```\n\n### /launch [package-or-file]\n\nFind and inspect launch files.\n\n```\n# List all launch files in workspace\n/launch\n\n# Inspect package launch files\n/launch your_package\n```\n\n**Output:**\n- Launch file contents\n- Nodes being launched\n- Arguments and parameters\n- Example launch command\n\n### /record [start|stop|status|info]\n\nManage rosbag recording.\n\n```\n# Check status and list topics\n/record\n\n# Start recording (shows command)\n/record start\n\n# Stop active recording\n/record stop\n\n# Show bag file info\n/record info my_recording.bag\n```\n\n### /diag\n\nRun roswtf diagnostics.\n\n```\n/diag\n```\n\n**Output:**\n- roswtf warnings and errors\n- Environment configuration\n- Node health checks\n- Topic connection analysis\n\n---\n\n## Agents\n\nAgents are triggered automatically based on conversation context.\n\n### explorer (Blue)\n\n**Trigger phrases:**\n- \"Explain how this ROS system works\"\n- \"What nodes are running?\"\n- \"How does data flow from sensor to output?\"\n\n**Capabilities:**\n- Maps complete ROS graph\n- Traces data flow paths\n- Identifies node responsibilities\n\n### debugger (Yellow)\n\n**Trigger phrases:**\n- \"My node isn't receiving messages\"\n- \"Topic not connecting\"\n- \"Service call timing out\"\n\n**Capabilities:**\n- Traces publisher-subscriber connections\n- Verifies message type matching\n- Checks namespace/remapping issues\n\n### monitor (Cyan)\n\n**Trigger phrases:**\n- \"Monitor the sensor topic rate\"\n- \"Watch for dropped messages\"\n- \"Keep an eye on node health\"\n\n**Capabilities:**\n- Continuous rate monitoring\n- Node health pinging\n- Anomaly detection\n\n---\n\n## Skills\n\nSkills provide contextual guidance when relevant topics are discussed.\n\n### message-types\n\nActivated when discussing sensor_msgs, geometry_msgs, std_msgs, message fields and structures.\n\n### launch-files\n\nActivated when discussing launch file syntax, XML tags, conditionals, namespaces, remapping.\n\n### troubleshooting\n\nActivated when encountering errors: \"Unable to communicate with master\", \"Topic not found\", \"Transform errors\", build failures.\n\n---\n\n## Usage Examples\n\n### Check System Status\n\n```\nUser: /status\n\nClaude: Checking ROS system status...\n\n=== ROS System Status ===\nroscore: RUNNING\nNodes: 5\nTopics: 12\nServices: 8\n```\n\n### Inspect a Topic\n\n```\nUser: /topics /sensor/data\n\nClaude: Inspecting topic /sensor/data...\n\nType: sensor_msgs/Type\nRate: 98.5 Hz\nPublishers: /sensor_driver\nSubscribers: /processor_node\n```\n\n### Debug Missing Data\n\n```\nUser: My subscriber isn't receiving sensor data\n\nClaude: [debugger agent activates]\n\nLet me trace the connection...\n\nPublisher: /sensor_driver publishes to /sensor/data\nYour subscriber expects: /robot/sensor/data\n\nISSUE: Topic name mismatch!\n\nFix: Remap in launch file or change subscriber topic name\n```\n\n---\n\n## File Structure\n\n```\nros/\n├── .claude-plugin/\n│   └── plugin.json           # Plugin manifest\n├── commands/\n│   ├── status.md             # /status\n│   ├── topics.md             # /topics\n│   ├── services.md           # /services\n│   ├── params.md             # /params\n│   ├── tf.md                 # /tf\n│   ├── build.md              # /build\n│   ├── launch.md             # /launch\n│   ├── record.md             # /record\n│   └── diag.md               # /diag\n├── agents/\n│   ├── explorer.md           # System exploration\n│   ├── debugger.md           # Communication debugging\n│   └── monitor.md            # Background monitoring\n├── skills/\n│   ├── message-types/\n│   ├── launch-files/\n│   └── troubleshooting/\n├── hooks/\n│   └── hooks.json            # Session hooks\n├── CLAUDE.md                 # Development notes\n└── README.md                 # This file\n```\n\n---\n\n## Environment\n\n**Prerequisite:** ROS must be sourced before using plugin commands.\n\n```bash\n# Source your ROS workspace before starting Claude\nsource /opt/ros/noetic/setup.bash\nsource ~/catkin_ws/devel/setup.bash\n```\n\nThe `/status` command will check if ROS is properly sourced and prompt you if not.\n\n---\n\n## Docker Wrapper Support\n\nIf your ROS environment runs inside a Docker container, the plugin can automatically wrap ROS commands to execute inside the container.\n\n### Marking a Wrapper Script\n\nAdd a `# ros-wrapper` comment in the first 5 lines of your wrapper script:\n\n```bash\n#!/bin/bash\n# ros-wrapper\n# This script runs commands inside the ROS container\n\ndocker exec -it ros_container \"$@\"\n```\n\n### Detection Order\n\nThe plugin checks for wrappers in this order:\n\n1. `./run.sh` - if exists AND contains `# ros-wrapper` in first 5 lines\n2. `./deploy/run.sh` - same check\n3. `CLAUDE.md` directive - `ros-wrapper: <path>`\n4. No wrapper found - commands execute directly\n\n### Alternative: CLAUDE.md Directive\n\nAdd a line to your project's `CLAUDE.md`:\n\n```markdown\nros-wrapper: ./scripts/docker_ros.sh\n```\n\n### How It Works\n\nWhen a wrapper is detected, ROS commands are automatically transformed:\n\n```bash\n# Original command:\nrostopic list; rosnode info /foo\n\n# Transformed to:\n./run.sh bash -c \"rostopic list; rosnode info /foo\"\n```\n\nNon-ROS commands (`ls`, `git`, etc.) pass through unchanged.\n\n### Environment Variables\n\nWhen using `/master` to select a ROS master, the URI is saved to `.claude/ros_master_uri` and automatically forwarded to the wrapper via `-e ROS_MASTER_URI=...`.\n\n---\n\n## Requirements\n\n- ROS1 installed (Noetic, Melodic, etc.) at `/opt/ros/<distro>/`\n- Catkin workspace (configurable via `CATKIN_WS`)\n- Claude Code CLI\n"
+      },
+      "plugins": [
+        {
+          "name": "plugin-development",
+          "description": "Assist with Claude Code plugin development: scaffold, validate, review, and team-ready distribution",
+          "version": "1.3.0",
+          "author": {
+            "name": "Ivan Magda"
+          },
+          "source": "./plugins/plugin-development",
+          "category": "developer-tools",
+          "tags": [
+            "development",
+            "plugins",
+            "scaffold",
+            "validation",
+            "tools"
+          ],
+          "keywords": [
+            "claude-code",
+            "plugins",
+            "developer-tools",
+            "scaffold",
+            "validation"
+          ],
+          "categories": [
+            "claude-code",
+            "developer-tools",
+            "development",
+            "plugins",
+            "scaffold",
+            "tools",
+            "validation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add lopisan/claude-code-plugins",
+            "/plugin install plugin-development@swarm-marketplace"
+          ]
+        },
+        {
+          "name": "ros",
+          "description": "Project-agnostic ROS1 plugin for topics, services, parameters, TF transforms, build, launch, and diagnostics. Includes intelligent agents for system exploration, debugging, and monitoring.",
+          "version": "2.0.9",
+          "author": {
+            "name": "ROS Developer"
+          },
+          "source": "./plugins/ros",
+          "category": "robotics",
+          "tags": [
+            "ros",
+            "ros1",
+            "noetic",
+            "robotics",
+            "catkin"
+          ],
+          "keywords": [
+            "ros",
+            "ros1",
+            "noetic",
+            "robotics",
+            "catkin",
+            "topics",
+            "services",
+            "parameters",
+            "tf",
+            "transforms"
+          ],
+          "categories": [
+            "catkin",
+            "noetic",
+            "parameters",
+            "robotics",
+            "ros",
+            "ros1",
+            "services",
+            "tf",
+            "topics",
+            "transforms"
+          ],
+          "install_commands": [
+            "/plugin marketplace add lopisan/claude-code-plugins",
+            "/plugin install ros@swarm-marketplace"
+          ]
+        },
+        {
+          "name": "claude-config",
+          "description": "Export Claude Code configuration for portable setup across machines",
+          "version": "1.0.0",
+          "author": {
+            "name": "GoodAI Swarm Robotics"
+          },
+          "source": "./plugins/claude-config",
+          "category": "developer-tools",
+          "tags": [
+            "config",
+            "setup",
+            "backup",
+            "export"
+          ],
+          "keywords": [
+            "config",
+            "setup",
+            "export",
+            "backup",
+            "mcp",
+            "plugins",
+            "marketplaces"
+          ],
+          "categories": [
+            "backup",
+            "config",
+            "developer-tools",
+            "export",
+            "marketplaces",
+            "mcp",
+            "plugins",
+            "setup"
+          ],
+          "install_commands": [
+            "/plugin marketplace add lopisan/claude-code-plugins",
+            "/plugin install claude-config@swarm-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

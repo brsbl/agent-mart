@@ -2,8 +2,7 @@ import { loadJson, log, logError } from '../lib/utils.js';
 import {
   loadSignalsHistory,
   saveSignalsHistory,
-  getTodayDate,
-  hasSnapshotForToday,
+  getSnapshotTimestamp,
   pruneOldSnapshots,
   addSnapshot,
   updateMeta
@@ -17,10 +16,9 @@ const INPUT_PATH = './data/06-enriched.json';
  * This step:
  * 1. Loads current enriched data with star/fork counts
  * 2. Loads or initializes signals history
- * 3. Skips if already recorded today
- * 4. Records snapshot for each marketplace
- * 5. Prunes old snapshots (>90 days)
- * 6. Saves updated history
+ * 3. Records snapshot for each marketplace (multiple per day supported)
+ * 4. Prunes old snapshots (>90 days)
+ * 5. Saves updated history
  */
 export function snapshot({ onProgress: _onProgress } = {}) {
   log('Recording signals snapshot...');
@@ -28,20 +26,11 @@ export function snapshot({ onProgress: _onProgress } = {}) {
   // Load enriched data
   const enriched = loadJson(INPUT_PATH);
   const history = loadSignalsHistory();
-  const today = getTodayDate();
-
-  // Skip if already recorded today
-  if (hasSnapshotForToday(history)) {
-    log('Snapshot already recorded for today, skipping');
-    return {
-      skipped: true,
-      date: today,
-      repo_count: Object.keys(history.repositories).length,
-      snapshot_count: history.meta.snapshot_count
-    };
-  }
+  const timestamp = getSnapshotTimestamp();
 
   let repoCount = 0;
+  let withStars = 0;
+  let withForks = 0;
 
   // Iterate through all marketplaces and record snapshots
   for (const author of Object.values(enriched.authors || {})) {
@@ -52,8 +41,11 @@ export function snapshot({ onProgress: _onProgress } = {}) {
       const stars = marketplace.signals?.stars ?? 0;
       const forks = marketplace.signals?.forks ?? 0;
 
+      if (stars > 0) withStars++;
+      if (forks > 0) withForks++;
+
       // Add the snapshot
-      addSnapshot(history, repoFullName, stars, forks, today);
+      addSnapshot(history, repoFullName, stars, forks, timestamp);
 
       // Prune old snapshots for this repo
       history.repositories[repoFullName].snapshots = pruneOldSnapshots(
@@ -85,7 +77,7 @@ export function snapshot({ onProgress: _onProgress } = {}) {
   }
 
   // Update metadata
-  updateMeta(history, today);
+  updateMeta(history, timestamp);
 
   // Save the updated history
   saveSignalsHistory(history);
@@ -94,10 +86,10 @@ export function snapshot({ onProgress: _onProgress } = {}) {
   log(`History now contains ${history.meta.snapshot_count} snapshots`);
 
   return {
-    skipped: false,
-    date: today,
+    timestamp,
     repo_count: repoCount,
-    snapshot_count: history.meta.snapshot_count
+    with_stars: withStars,
+    with_forks: withForks
   };
 }
 

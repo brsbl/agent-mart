@@ -1,0 +1,49 @@
+{
+  "author": {
+    "id": "GondaDaikon",
+    "display_name": "Gonda",
+    "avatar_url": "https://avatars.githubusercontent.com/u/53056963?u=7eec447f252cb957ad07776f4c8694a21d668145&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "tri-ssd-marketplace",
+      "version": null,
+      "description": "Tri-SSD (Tri-Layer Slice Spec Driven) plugin marketplace",
+      "repo_full_name": "GondaDaikon/tri-ssd",
+      "repo_url": "https://github.com/GondaDaikon/tri-ssd",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T16:53:06Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"tri-ssd-marketplace\",\n  \"description\": \"Tri-SSD (Tri-Layer Slice Spec Driven) plugin marketplace\",\n  \"owner\": {\n    \"name\": \"GondaDaikon\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tri-ssd\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"GondaDaikon/tri-ssd\",\n        \"path\": \".\"\n      },\n      \"description\": \"Tri-SSD (Tri-Layer Slice Spec Driven) - 要件→設計→フェーズの三層で仕様を管理する仕様駆動フレームワーク\",\n      \"version\": \"3.2.0\",\n      \"author\": {\n        \"name\": \"GondaDaikon\"\n      },\n      \"repository\": \"https://github.com/GondaDaikon/tri-ssd\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"tri-ssd\",\n  \"version\": \"3.2.0\",\n  \"description\": \"Tri-SSD (Tri-Layer Slice Spec Driven) - 要件→設計→フェーズの三層で仕様を管理する仕様駆動フレームワーク\",\n  \"author\": {\n    \"name\": \"GondaDaikon\"\n  },\n  \"homepage\": \"https://github.com/GondaDaikon/tri-ssd\",\n  \"repository\": \"https://github.com/GondaDaikon/tri-ssd\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"tri-ssd\", \"specification-driven\", \"development\", \"framework\", \"ai\", \"llm\"],\n  \"commands\": [\n    \"./commands/init-tri-ssd.md\",\n    \"./commands/gen-l1.md\",\n    \"./commands/gen-l2.md\",\n    \"./commands/gen-l3.md\",\n    \"./commands/split-l3.md\",\n    \"./commands/merge-l3.md\",\n    \"./commands/gen-code.md\",\n    \"./commands/status.md\",\n    \"./commands/done.md\"\n  ],\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# Tri-SSD Plugin for Claude Code\n\n**Tri-SSD (Tri-Layer Slice Spec Driven)** - AI/LLMコードエージェントを前提とした仕様駆動開発フレームワーク\n\n## インストール\n\n```bash\n# マーケットプレイスを追加\n/plugin marketplace add GondaDaikon/tri-ssd\n\n# プラグインをインストール\n/plugin install tri-ssd@gondadaikon-tri-ssd\n```\n\n## クイックスタート\n\n```bash\n# 1. ディレクトリ構造を初期化\n/init-tri-ssd\n\n# 2. L1（ビジョン・要求）を対話形式で作成\n/draft-l1\n\n# 3. L2 技術基盤（foundation.md）を生成\n/draft-l2\n\n# 4. L2 フェーズ定義・機能一覧（phases.md）を生成\n/gen-phases\n\n# 5. 実装ルールのたたき台を生成\n/draft-rules\n\n# 6. L3（機能ドキュメント）を生成\n/gen-l3\n\n# 7. L3をレビュー → reviewed に昇格\n/review F-20250125-001\n\n# 8. L3からコード生成\n/gen-code F-20250125-001\n\n# 9. 最終レビュー → implemented に昇格\n/review F-20250125-001\n```\n\n## コマンド一覧\n\n| コマンド | 説明 |\n|----------|------|\n| `/init-tri-ssd` | ディレクトリ構造を初期化 |\n| `/draft-l1 [ファイルパス]` | L1ドキュメントを作成（引数なし: 対話モード、引数あり: 変換モード） |\n| `/draft-l2 [REQ-xxxx ...]` | L1からL2技術基盤（foundation.md）を生成 |\n| `/gen-phases` | 技術基盤からフェーズ定義・機能一覧を生成 |\n| `/draft-rules [--minimal]` | 実装ルールのたたき台を生成 |\n| `/gen-l3 [F-xxxx ...]` | L2からL3を生成（複数ID指定可） |\n| `/gen-code <F-ID>` | L3からコード・テストを生成 |\n| `/check [--list-ids]` | 整合性チェック（--list-ids: ID一覧出力） |\n| `/review <ファイル>` | AIレビュー + ステータス昇格 |\n\n### 引数記法の凡例\n\n| 記法 | 意味 | 例 |\n|------|------|-----|\n| `<引数>` | 必須引数 | `/gen-code <F-ID>` |\n| `[引数]` | 省略可能な引数 | `/gen-l3 [F-ID]` |\n| `--オプション` | オプションフラグ | `/draft-rules --minimal` |\n| `...` | 複数指定可能 | `/gen-l3 F-001 F-002 ...` |\n\n## 三層モデル\n\n| 層 | 名称 | 内容 |\n|----|------|------|\n| L1 | ビジョン・要求 | ビジネス要求・背景・制約 |\n| L2 | 機能設計・技術方針 | 技術基盤・フェーズ・機能一覧・実装ルール |\n| L3 | 機能ドキュメント | ミニ仕様＋タスク＋テスト |\n\n## ディレクトリ構成（生成後）\n\n```\ndocs/\n  l1_vision.md              # L1: ビジョン・要求\n  l2_system/\n    foundation.md           # 技術基盤（用語集・技術方針・アーキテクチャ・NFR）\n    phases.md               # フェーズ定義・機能一覧\n    rules.md                # 実装ルール（コード生成制約）\n  l3_features/\n    F-YYYYMMDD-nnn_xxx.md   # 機能ドキュメント\n```\n\n## ID形式\n\nタイムスタンプベースで衝突を防止:\n\n- `VISION-YYYYMMDD-nnn` - L1ビジョンドキュメント\n- `REQ-YYYYMMDD-nnn` - 要件\n- `F-YYYYMMDD-nnn` - 機能\n- `PH-YYYYMMDD-nnn` - フェーズ\n- `NF-YYYYMMDD-nnn` - 非機能要求\n- `RULES-YYYYMMDD-nnn` - 実装ルール\n- `SP-YYYYMMDD-nnn` - スパイク/PoC\n\n## ドキュメント\n\n詳細なガイドは [docs/](docs/) を参照してください。\n\n## 変更履歴\n\n[CHANGELOG.md](CHANGELOG.md) を参照してください。\n\n## ライセンス\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "tri-ssd",
+          "source": {
+            "source": "github",
+            "repo": "GondaDaikon/tri-ssd",
+            "path": "."
+          },
+          "description": "Tri-SSD (Tri-Layer Slice Spec Driven) - 要件→設計→フェーズの三層で仕様を管理する仕様駆動フレームワーク",
+          "version": "3.2.0",
+          "author": {
+            "name": "GondaDaikon"
+          },
+          "repository": "https://github.com/GondaDaikon/tri-ssd",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add GondaDaikon/tri-ssd",
+            "/plugin install tri-ssd@tri-ssd-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

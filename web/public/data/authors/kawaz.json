@@ -1,0 +1,87 @@
+{
+  "author": {
+    "id": "kawaz",
+    "display_name": "Yoshiaki Kawazu",
+    "avatar_url": "https://avatars.githubusercontent.com/u/156236?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kawaz-claude-plugins",
+      "version": null,
+      "description": "A collection of useful Claude Code plugins by kawaz",
+      "repo_full_name": "kawaz/claude-plugins",
+      "repo_url": "https://github.com/kawaz/claude-plugins",
+      "repo_description": "A collection of useful Claude Code plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-18T20:51:12Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kawaz-claude-plugins\",\n  \"owner\": {\n    \"name\": \"kawaz\",\n    \"email\": \"kawaz@github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of useful Claude Code plugins by kawaz\",\n    \"version\": \"0.3.3\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"force-bun\",\n      \"source\": \"./plugins/force-bun\",\n      \"description\": \"Suggests using Bun instead of npm/npx commands in Bash tool calls\"\n    },\n    {\n      \"name\": \"force-uv\",\n      \"source\": \"./plugins/force-uv\",\n      \"description\": \"Suggests using UV instead of pip/pipx/venv commands in Bash tool calls\"\n    },\n    {\n      \"name\": \"hooks-debugger\",\n      \"source\": \"./plugins/hooks-debugger\",\n      \"description\": \"Logs all hook events to JSONL files for debugging purposes\"\n    },\n    {\n      \"name\": \"claude-session-analysis\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"kawaz/claude-session-analysis\"\n      },\n      \"description\": \"Analyze Claude Code session files (.jsonl) to view timeline, file operations, and version diffs\"\n    },\n    {\n      \"name\": \"idea-storage\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"kawaz/idea-storage\"\n      },\n      \"description\": \"AI-assisted external memory for ideas, plans, and daily reflections\"\n    }\n  ]\n}\n",
+        "README.md": "# Kawaz's Claude Plugins\n\nA collection of useful Claude Code plugins.\n\n## Installation\n\n```bash\n# Add marketplace\n/plugin marketplace add kawaz/claude-plugins\n\n# Install plugins (see each plugin's README for details)\n/plugin install <plugin-name>@kawaz-claude-plugins\n```\n\n## Available Plugins\n\n- **[force-japanese](./plugins/force-japanese)** - Forces Japanese language even after SessionStart:compact resets\n- **[force-bun](./plugins/force-bun)** - Suggests Bun instead of npm/npx commands\n- **[force-uv](./plugins/force-uv)** - Suggests UV instead of pip/pipx/venv commands\n- **[hooks-debugger](./plugins/hooks-debugger)** - Logs all hook events to JSONL files for debugging\n- **[claude-session-analysis](https://github.com/kawaz/claude-session-analysis)** - Analyze session files to view timeline, file operations, and version diffs\n\n## Development\n\nSee [CLAUDE.md](./CLAUDE.md) for plugin development guidelines.\n\n### Repository Structure\n\n```\nkawaz/claude-plugins/\n├── .claude-plugin/\n│   └── marketplace.json\n├── plugins/\n│   ├── force-japanese/\n│   ├── force-bun/\n│   ├── force-uv/\n│   └── hooks-debugger/\n├── CLAUDE.md\n└── README.md\n```\n\n## License\n\nMIT\n\n## Author\n\nkawaz - https://github.com/kawaz\n",
+        "plugins/force-bun/README.md": "# force-bun\n\nSuggests using Bun instead of npm/npx commands when Claude tries to use them in Bash tool calls.\n\n## Problem it solves\n\nClaude Code often defaults to using npm/npx commands. If you prefer using Bun for its speed and modern features, this plugin will intercept those commands and suggest Bun alternatives.\n\n## How it works\n\nThe plugin hooks into the `PreToolUse` event for Bash tool calls and checks if the command contains npm/npx. If found, it denies the action and suggests the Bun equivalent:\n\n- `npx` → `bunx`\n- `npm install` → `bun install`\n- `npm run` → `bun run`\n- etc.\n\nNote: `npm version` is allowed since it has no Bun equivalent.\n\n## Installation\n\n```bash\n/plugin marketplace add kawaz/claude-plugins\n/plugin install force-bun@kawaz-claude-plugins\n```\n\n## Configuration\n\nNo configuration required. The plugin automatically intercepts npm/npx commands in Bash tool calls.\n",
+        "plugins/force-uv/README.md": "# force-uv\n\nSuggests using UV instead of pip/pipx/venv commands when Claude tries to use them in Bash tool calls.\n\n## Problem it solves\n\nClaude Code often defaults to using pip, virtualenv, or pipx for Python package management. If you prefer using UV for its speed and modern workflow, this plugin will intercept those commands and suggest UV alternatives.\n\n## How it works\n\nThe plugin hooks into the `PreToolUse` event for Bash tool calls and checks if the command contains pip/pipx/venv-related commands. If found, it denies the action and suggests the UV equivalent:\n\n- `pip install` / `pip3 install` → `uv add`\n- `python -m venv` → `uv init`\n- `virtualenv` → `uv venv`\n- `pipx` → `uvx`\n\n## Installation\n\n```bash\n/plugin marketplace add kawaz/claude-plugins\n/plugin install force-uv@kawaz-claude-plugins\n```\n\n## Configuration\n\nNo configuration required. The plugin automatically intercepts pip/pipx/venv commands in Bash tool calls.\n",
+        "plugins/hooks-debugger/README.md": "# hooks-debugger\n\nLogs all hook events to JSONL files for debugging and development purposes.\n\n## Problem it solves\n\nWhen developing plugins or debugging hook behavior, it's useful to see exactly what data is being passed to hooks. This plugin captures all hook events and saves them to files for inspection.\n\n## How it works\n\nThe plugin hooks into all 9 available hook events and logs the complete input JSON to daily JSONL files. Each log entry includes a timestamp. The plugin always exits successfully (exit 0) so it never interferes with Claude's normal operation. Log files older than 3 days are automatically cleaned up.\n\n## Supported hook events\n\n- `SessionStart` - Session initialization/resumption\n- `SessionEnd` - Session termination\n- `PreToolUse` - Before tool execution\n- `PostToolUse` - After tool execution\n- `PreCompact` - Before conversation compaction\n- `UserPromptSubmit` - When user submits prompts\n- `Notification` - Claude Code notifications\n- `Stop` - Main agent response completion\n- `SubagentStop` - Subagent (Task tool) completion\n\n## Installation\n\n```bash\n/plugin marketplace add kawaz/claude-plugins\n/plugin install hooks-debugger@kawaz-claude-plugins\n```\n\n## Usage\n\nView today's logs:\n\n```bash\ncat \"${TMPDIR:-/tmp}/claude-hooks-debugger/$(date +%Y-%m-%d).jsonl\" | jq\n```\n\nView specific hook events:\n\n```bash\n# Filter by hook event name\ncat \"${TMPDIR:-/tmp}/claude-hooks-debugger/$(date +%Y-%m-%d).jsonl\" | jq 'select(.hook_event_name == \"PreToolUse\")'\n\n# View user prompts\ncat \"${TMPDIR:-/tmp}/claude-hooks-debugger/$(date +%Y-%m-%d).jsonl\" | jq 'select(.hook_event_name == \"UserPromptSubmit\") | .prompt'\n\n# View tool usage\ncat \"${TMPDIR:-/tmp}/claude-hooks-debugger/$(date +%Y-%m-%d).jsonl\" | jq 'select(.hook_event_name == \"PreToolUse\") | {tool_name, tool_input}'\n```\n\n## Log file location\n\n- `${TMPDIR:-/tmp}/claude-hooks-debugger/YYYY-MM-DD.jsonl`\n\nLog files are automatically cleaned up after 3 days.\n"
+      },
+      "plugins": [
+        {
+          "name": "force-bun",
+          "source": "./plugins/force-bun",
+          "description": "Suggests using Bun instead of npm/npx commands in Bash tool calls",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kawaz/claude-plugins",
+            "/plugin install force-bun@kawaz-claude-plugins"
+          ]
+        },
+        {
+          "name": "force-uv",
+          "source": "./plugins/force-uv",
+          "description": "Suggests using UV instead of pip/pipx/venv commands in Bash tool calls",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kawaz/claude-plugins",
+            "/plugin install force-uv@kawaz-claude-plugins"
+          ]
+        },
+        {
+          "name": "hooks-debugger",
+          "source": "./plugins/hooks-debugger",
+          "description": "Logs all hook events to JSONL files for debugging purposes",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kawaz/claude-plugins",
+            "/plugin install hooks-debugger@kawaz-claude-plugins"
+          ]
+        },
+        {
+          "name": "claude-session-analysis",
+          "source": {
+            "source": "github",
+            "repo": "kawaz/claude-session-analysis"
+          },
+          "description": "Analyze Claude Code session files (.jsonl) to view timeline, file operations, and version diffs",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kawaz/claude-plugins",
+            "/plugin install claude-session-analysis@kawaz-claude-plugins"
+          ]
+        },
+        {
+          "name": "idea-storage",
+          "source": {
+            "source": "github",
+            "repo": "kawaz/idea-storage"
+          },
+          "description": "AI-assisted external memory for ideas, plans, and daily reflections",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kawaz/claude-plugins",
+            "/plugin install idea-storage@kawaz-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -35,7 +35,9 @@ export function MarketplaceCard({
 }: MarketplaceCardProps) {
   const [hasOverflow, setHasOverflow] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
-  const marketplaceUrl = `/${author_id}/${marketplace.name}`;
+  // Extract repo name from repo_full_name (e.g., "browserbase/skills" → "skills")
+  const repoName = marketplace.repo_full_name?.split('/')[1] || marketplace.name;
+  const marketplaceUrl = `/${author_id}/${repoName}`;
 
   useEffect(() => {
     const checkOverflow = () => {

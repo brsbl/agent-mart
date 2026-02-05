@@ -16,6 +16,37 @@ function generateInstallCommands(ownerRepo, marketplaceName, pluginName) {
 }
 
 /**
+ * Deduplicate plugins by name within a marketplace.
+ * Keeps the first occurrence of each plugin name.
+ * @param {Array} plugins - Array of plugin definitions
+ * @param {string} context - Context for logging (e.g., repo full_name)
+ * @returns {Array} Deduplicated plugins array
+ */
+function deduplicatePlugins(plugins, context = '') {
+  if (!Array.isArray(plugins)) return [];
+
+  const seen = new Map();
+  const deduplicated = [];
+
+  for (const plugin of plugins) {
+    const name = plugin?.name;
+    if (!name) {
+      deduplicated.push(plugin);
+      continue;
+    }
+
+    if (seen.has(name)) {
+      log(`[${context}] Duplicate plugin "${name}" found, keeping first occurrence`);
+    } else {
+      seen.set(name, plugin);
+      deduplicated.push(plugin);
+    }
+  }
+
+  return deduplicated;
+}
+
+/**
  * Build enriched data model
  */
 export function enrich({ onProgress: _onProgress } = {}) {
@@ -79,7 +110,11 @@ export function enrich({ onProgress: _onProgress } = {}) {
 
     const marketplaceName = marketplaceData.name || full_name.split('/')[1];
 
-    const plugins = (marketplaceData.plugins || []).map(pluginDef => {
+    // Deduplicate plugins by name (handles duplicate entries in source marketplace.json)
+    const rawPlugins = marketplaceData.plugins || [];
+    const uniquePlugins = deduplicatePlugins(rawPlugins, full_name);
+
+    const plugins = uniquePlugins.map(pluginDef => {
       // Collect categories from all source fields with basic normalization
       const categories = collectPluginCategories(pluginDef);
 
@@ -138,7 +173,8 @@ export function enrich({ onProgress: _onProgress } = {}) {
 
 // Export helper functions for testing
 export {
-  generateInstallCommands
+  generateInstallCommands,
+  deduplicatePlugins
 };
 
 // Run if executed directly
