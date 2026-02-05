@@ -2,7 +2,7 @@ import { saveJson, loadJson, ensureDir, log, logError, sanitizeFilename } from '
 import { loadSignalsHistory } from '../lib/signalsHistory.js';
 import { calculateTrendingScore } from '../lib/trending.js';
 
-const INPUT_PATH = './data/06-enriched.json';
+const INPUT_PATH = './data/05-enriched.json';
 const CATEGORIZED_PATH = './data/marketplaces-categorized.json';
 const AUTHORS_DIR = './web/public/data/authors';
 const MARKETPLACES_BROWSE_PATH = './web/public/data/marketplaces-browse.json';
@@ -25,7 +25,7 @@ export function output({ onProgress: _onProgress } = {}) {
     }
     log(`Loaded ${categorized.length} categorized marketplaces`);
   } catch {
-    log('Warning: Categorized data not found. Run 08-aggregate.js first.');
+    log('Warning: Categorized data not found. Run 07-aggregate.js first.');
   }
 
   // Load signals history for trending calculation

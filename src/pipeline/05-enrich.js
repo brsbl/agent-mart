@@ -1,9 +1,9 @@
 import { saveJson, loadJson, log, logError } from '../lib/utils.js';
 import { collectPluginCategories } from '../lib/categorizer.js';
 
-const REPOS_PATH = './data/02-repos.json';
-const PARSED_PATH = './data/05-parsed.json';
-const OUTPUT_PATH = './data/06-enriched.json';
+const REPOS_PATH = './data/04-repos.json';
+const PARSED_PATH = './data/03-parsed.json';
+const OUTPUT_PATH = './data/05-enriched.json';
 
 /**
  * Generate install commands for a plugin

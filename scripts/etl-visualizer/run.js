@@ -4,13 +4,13 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 import { discover } from '../../src/pipeline/01-discover.js';
-import { fetchRepos } from '../../src/pipeline/02-fetch-repos.js';
-import { fetchFiles } from '../../src/pipeline/04-fetch-files.js';
-import { parse } from '../../src/pipeline/05-parse.js';
-import { enrich } from '../../src/pipeline/06-enrich.js';
-import { snapshot } from '../../src/pipeline/07-snapshot.js';
-import { aggregate } from '../../src/pipeline/08-aggregate.js';
-import { output } from '../../src/pipeline/09-output.js';
+import { fetchFiles } from '../../src/pipeline/02-fetch-files.js';
+import { parse } from '../../src/pipeline/03-parse.js';
+import { fetchRepos } from '../../src/pipeline/04-fetch-repos.js';
+import { enrich } from '../../src/pipeline/05-enrich.js';
+import { snapshot } from '../../src/pipeline/06-snapshot.js';
+import { aggregate } from '../../src/pipeline/07-aggregate.js';
+import { output } from '../../src/pipeline/08-output.js';
 import { ensureDir, loadJson, saveJson } from '../../src/lib/utils.js';
 import { generatePipelineHtml } from './md-to-html.js';
 
@@ -42,11 +42,60 @@ const STAGES = [
     })
   },
   {
-    id: '02-fetch-repos',
+    id: '02-fetch-files',
+    name: 'Fetch Files',
+    fn: fetchFiles,
+    description: 'Fetches .claude-plugin/ manifests and README files for parsing.',
+    outputFile: './data/02-files.json',
+    getMetrics: (data, prev) => {
+      const files = data?.files || [];
+      const prevFiles = prev?.files || [];
+
+      // Count key file types we use
+      const countByType = (fileList) => {
+        const counts = { marketplace: 0, readme: 0 };
+        for (const f of fileList) {
+          if (f.path?.includes('marketplace.json')) counts.marketplace++;
+          else if (f.path?.toLowerCase().includes('readme')) counts.readme++;
+        }
+        return counts;
+      };
+
+      const curr = countByType(files);
+      const pre = countByType(prevFiles);
+
+      return {
+        'Total files': { current: data?.total || 0, previous: prev?.total || 0 },
+        'Marketplace files': { current: curr.marketplace, previous: pre.marketplace },
+        'README files': { current: curr.readme, previous: pre.readme }
+      };
+    }
+  },
+  {
+    id: '03-parse',
+    name: 'Validate Marketplace.json',
+    fn: parse,
+    description: 'Validates marketplace.json files and extracts plugins.',
+    outputFile: './data/03-parsed.json',
+    getMetrics: (data, prev) => {
+      const marketplaces = data?.marketplaces || [];
+      const prevMarketplaces = prev?.marketplaces || [];
+      const totalPlugins = marketplaces.reduce((sum, m) => sum + (m.data?.plugins?.length || 0), 0);
+      const prevTotalPlugins = prevMarketplaces.reduce((sum, m) => sum + (m.data?.plugins?.length || 0), 0);
+
+      return {
+        'Valid marketplaces': { current: data?.validation?.marketplaces?.valid || 0, previous: prev?.validation?.marketplaces?.valid || 0 },
+        'Invalid': { current: data?.validation?.marketplaces?.invalid || 0, previous: prev?.validation?.marketplaces?.invalid || 0 },
+        'Plugins extracted': { current: totalPlugins, previous: prevTotalPlugins }
+      };
+    }
+  },
+  {
+    id: '04-fetch-repos',
     name: 'Fetch Repo Metadata',
     fn: fetchRepos,
     description: 'Fetches repository metadata (stars, forks, description) and owner information using GraphQL batch queries.',
-    outputFile: './data/02-repos.json',
+    outputFile: './data/04-repos.json',
     getMetrics: (data, prev) => {
       const repos = data?.repos || [];
       const prevRepos = prev?.repos || [];
@@ -73,60 +122,11 @@ const STAGES = [
     }
   },
   {
-    id: '04-fetch-files',
-    name: 'Fetch Files',
-    fn: fetchFiles,
-    description: 'Fetches .claude-plugin/ manifests and README files for parsing.',
-    outputFile: './data/04-files.json',
-    getMetrics: (data, prev) => {
-      const files = data?.files || [];
-      const prevFiles = prev?.files || [];
-
-      // Count key file types we use
-      const countByType = (fileList) => {
-        const counts = { marketplace: 0, readme: 0 };
-        for (const f of fileList) {
-          if (f.path?.includes('marketplace.json')) counts.marketplace++;
-          else if (f.path?.toLowerCase().includes('readme')) counts.readme++;
-        }
-        return counts;
-      };
-
-      const curr = countByType(files);
-      const pre = countByType(prevFiles);
-
-      return {
-        'Total files': { current: data?.total || 0, previous: prev?.total || 0 },
-        'Marketplace files': { current: curr.marketplace, previous: pre.marketplace },
-        'README files': { current: curr.readme, previous: pre.readme }
-      };
-    }
-  },
-  {
-    id: '05-parse',
-    name: 'Validate Marketplace.json',
-    fn: parse,
-    description: 'Validates marketplace.json files and extracts plugins.',
-    outputFile: './data/05-parsed.json',
-    getMetrics: (data, prev) => {
-      const marketplaces = data?.marketplaces || [];
-      const prevMarketplaces = prev?.marketplaces || [];
-      const totalPlugins = marketplaces.reduce((sum, m) => sum + (m.data?.plugins?.length || 0), 0);
-      const prevTotalPlugins = prevMarketplaces.reduce((sum, m) => sum + (m.data?.plugins?.length || 0), 0);
-
-      return {
-        'Valid marketplaces': { current: data?.validation?.marketplaces?.valid || 0, previous: prev?.validation?.marketplaces?.valid || 0 },
-        'Invalid': { current: data?.validation?.marketplaces?.invalid || 0, previous: prev?.validation?.marketplaces?.invalid || 0 },
-        'Plugins extracted': { current: totalPlugins, previous: prevTotalPlugins }
-      };
-    }
-  },
-  {
-    id: '06-enrich',
+    id: '05-enrich',
     name: 'Merge Repo And Marketplace Data',
     fn: enrich,
     description: 'Merges repo metadata with marketplace data, groups by author.',
-    outputFile: './data/06-enriched.json',
+    outputFile: './data/05-enriched.json',
     getMetrics: (data, prev) => {
       const authors = Object.values(data?.authors || {});
       const prevAuthors = Object.values(prev?.authors || {});
@@ -145,10 +145,10 @@ const STAGES = [
     }
   },
   {
-    id: '07-snapshot',
+    id: '06-snapshot',
     name: 'Snapshot Stars/Forks',
     fn: snapshot,
-    parallel: '07-08', // Run in parallel with aggregate
+    parallel: '06-07', // Run in parallel with aggregate
     description: 'Records star/fork counts for trending calculation.',
     outputFile: './data/signals-history.json',
     getMetrics: (data, prev) => {
@@ -160,10 +160,10 @@ const STAGES = [
     }
   },
   {
-    id: '08-aggregate',
+    id: '07-aggregate',
     name: 'Aggregate Categories',
     fn: aggregate,
-    parallel: '07-08', // Run in parallel with snapshot
+    parallel: '06-07', // Run in parallel with snapshot
     description: 'Aggregates plugin categories to marketplace level.',
     outputFile: './data/marketplaces-categorized.json',
     getMetrics: (data, prev) => {
@@ -179,7 +179,7 @@ const STAGES = [
     }
   },
   {
-    id: '09-output',
+    id: '08-output',
     name: 'Output',
     fn: output,
     description: 'Generates web-ready JSON files for the frontend.',
@@ -305,28 +305,28 @@ function getDataPreview(stageId, data) {
         marketplace_path: r.marketplace_path
       }));
 
-    case '02-fetch-repos':
-      return data.repos?.slice(0, PREVIEW_LIMIT).map(r => ({
-        full_name: r.full_name,
-        stars: r.repo?.signals?.stars,
-        forks: r.repo?.signals?.forks
-      }));
-
-    case '04-fetch-files':
+    case '02-fetch-files':
       return data.files?.slice(0, PREVIEW_LIMIT).map(f => ({
         full_name: f.full_name,
         path: f.path,
         size: f.size
       }));
 
-    case '05-parse':
+    case '03-parse':
       return data.marketplaces?.slice(0, PREVIEW_LIMIT).map(m => ({
         full_name: m.full_name,
         name: m.data?.name,
         plugins: m.data?.plugins?.length || 0
       }));
 
-    case '06-enrich': {
+    case '04-fetch-repos':
+      return data.repos?.slice(0, PREVIEW_LIMIT).map(r => ({
+        full_name: r.full_name,
+        stars: r.repo?.signals?.stars,
+        forks: r.repo?.signals?.forks
+      }));
+
+    case '05-enrich': {
       const authors = Object.values(data.authors || {});
       return authors.slice(0, PREVIEW_LIMIT).map(a => ({
         id: a.id,
@@ -335,7 +335,7 @@ function getDataPreview(stageId, data) {
       }));
     }
 
-    case '07-snapshot':
+    case '06-snapshot':
       return {
         timestamp: data?.timestamp,
         marketplaces: data?.repo_count,
@@ -343,7 +343,7 @@ function getDataPreview(stageId, data) {
         with_forks: data?.with_forks
       };
 
-    case '08-aggregate':
+    case '07-aggregate':
       if (Array.isArray(data)) {
         return data.slice(0, PREVIEW_LIMIT).map(m => ({
           name: m.name,
@@ -352,7 +352,7 @@ function getDataPreview(stageId, data) {
       }
       return null;
 
-    case '09-output':
+    case '08-output':
       return data.marketplaces?.slice(0, PREVIEW_LIMIT).map(m => ({
         name: m.name,
         author_id: m.author_id,
@@ -456,7 +456,7 @@ async function runStage(stage, stageState, stageNum, totalStages) {
   }
 
   // Capture validation errors for parse stage
-  if (stage.id === '05-parse' && currentData?.validation?.errors) {
+  if (stage.id === '03-parse' && currentData?.validation?.errors) {
     stageState.validationErrors = currentData.validation.errors.slice(0, 20);
   }
 

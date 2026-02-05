@@ -2,8 +2,8 @@ import { parseJson, parseFrontmatter } from '../lib/parser.js';
 import { saveJson, loadJson, log, logError } from '../lib/utils.js';
 import { validateMarketplace, validateSkill, logValidationResult } from '../lib/validator.js';
 
-const INPUT_PATH = './data/04-files.json';
-const OUTPUT_PATH = './data/05-parsed.json';
+const INPUT_PATH = './data/02-files.json';
+const OUTPUT_PATH = './data/03-parsed.json';
 
 /**
  * Check if a path is a SKILL.md file

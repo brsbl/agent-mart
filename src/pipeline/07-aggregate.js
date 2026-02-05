@@ -6,7 +6,7 @@ const DATA_DIR = join(process.cwd(), 'data');
 export function aggregate({ onProgress: _onProgress } = {}) {
   log('Loading enriched marketplace data...');
 
-  const enrichedRaw = loadJson(join(DATA_DIR, '06-enriched.json'));
+  const enrichedRaw = loadJson(join(DATA_DIR, '05-enriched.json'));
 
   // Extract all marketplaces from the enriched data (organized by author)
   const allMarketplaces = [];

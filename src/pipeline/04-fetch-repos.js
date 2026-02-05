@@ -2,7 +2,7 @@ import { batchGetRepos } from '../lib/github.js';
 import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
 
 const INPUT_PATH = './data/01-discovered.json';
-const OUTPUT_PATH = './data/02-repos.json';
+const OUTPUT_PATH = './data/04-repos.json';
 
 /**
  * Fetch repository and owner metadata for all discovered repos
