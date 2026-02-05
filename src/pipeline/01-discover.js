@@ -48,7 +48,10 @@ export async function discover({ onProgress } = {}) {
       break;
     }
 
-    if (!response.items || response.items.length < 100) break;
+    // Continue if we haven't fetched all results yet
+    // GitHub sometimes returns partial pages, so don't rely on items.length < 100
+    if (!response.items || response.items.length === 0) break;
+    if (results.length >= totalCount) break;
     if (results.length >= 1000) {
       log('Reached max 1000 results limit');
       break;
