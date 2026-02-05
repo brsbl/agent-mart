@@ -47,6 +47,36 @@
           ]
         }
       ]
+    },
+    {
+      "name": "xiaolai-init-workspace",
+      "version": null,
+      "description": "Multi-agent workspace initialization plugin",
+      "repo_full_name": "xiaolai/init-workspace",
+      "repo_url": "https://github.com/xiaolai/init-workspace",
+      "repo_description": "Initialize any project for AI-assisted development with Claude Code, Codex CLI, and Gemini CLI",
+      "signals": {
+        "stars": 4,
+        "forks": 1,
+        "pushed_at": "2026-01-25T09:20:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"xiaolai-init-workspace\",\n  \"description\": \"Multi-agent workspace initialization plugin\",\n  \"plugins\": [\n    {\n      \"name\": \"init-workspace\",\n      \"description\": \"Initialize a multi-agent workspace with shared configuration for Claude Code, Codex CLI, and Gemini CLI. Creates AGENTS.md (shared instructions), CLAUDE.md, GEMINI.md, .claude/ directory structure, dev-docs/, and comprehensive .gitignore.\",\n      \"source\": \".\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"init-workspace\",\n  \"description\": \"Initialize a multi-agent workspace with shared configuration for Claude Code, Codex CLI, and Gemini CLI\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"xiaolai\"\n  },\n  \"homepage\": \"https://github.com/xiaolai/init-workspace\",\n  \"repository\": \"https://github.com/xiaolai/init-workspace\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# init-workspace\n\nInitialize any project for AI-assisted development with a single command.\n\n## The Problem\n\nYou're using multiple AI coding tools — Claude Code, OpenAI Codex CLI, Google Gemini CLI. Each has its own config file. You end up with:\n\n- Instructions scattered across `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`\n- Each tool learning things the others don't know\n- Inconsistent behavior when switching between tools\n- Missing `.gitignore` entries that leak secrets or bloat repos\n- No structure for custom skills, agents, or rules\n\n## The Solution\n\nRun `/init-workspace` once. Get a project structure where:\n\n- **One file to rule them all**: Write instructions in `AGENTS.md` only. Claude Code, Codex CLI, and Gemini CLI all read from it automatically.\n- **Shared memory**: When any tool learns something new, it updates `AGENTS.md`. All tools stay in sync.\n- **Ready for customization**: Directories for skills, agents, and rules are already in place.\n- **Safe defaults**: Comprehensive `.gitignore` protects secrets and keeps repos clean.\n\n## Installation\n\n### Option 1: Plugin Marketplace (Recommended)\n\nIn Claude Code, run:\n\n```\n/plugin marketplace add xiaolai/init-workspace\n/plugin install init-workspace@xiaolai-init-workspace\n```\n\nThen use `/init-workspace:init-workspace` to run.\n\n### Option 2: Personal Skill (Simpler)\n\n```bash\nmkdir -p ~/.claude/skills/init-workspace\ncurl -o ~/.claude/skills/init-workspace/SKILL.md \\\n  https://raw.githubusercontent.com/xiaolai/init-workspace/main/skills/init-workspace/SKILL.md\n```\n\nOr clone the entire repo:\n\n```bash\ngit clone https://github.com/xiaolai/init-workspace /tmp/iw && \\\n  mkdir -p ~/.claude/skills/init-workspace && \\\n  cp /tmp/iw/skills/init-workspace/SKILL.md ~/.claude/skills/init-workspace/ && \\\n  rm -rf /tmp/iw\n```\n\nThen use `/init-workspace` to run.\n\n## Usage\n\nIn any project directory, run:\n\n```\n/init-workspace                         # if installed as personal skill\n/init-workspace:init-workspace          # if installed as plugin\n```\n\nClaude will ask two questions:\n\n1. **Project description** — A single line describing your project\n2. **Public or Private** — Whether to share AI config files via git:\n   - **Public** (recommended): Team shares the same AI context\n   - **Private**: AI files are gitignored, each dev has their own\n\nThen it creates:\n\n```\nproject/\n├── .claude/\n│   ├── settings.json        # Team-shared settings\n│   ├── agents/              # Custom subagents\n│   ├── skills/doc/          # /doc command included\n│   └── rules/               # Modular rules\n├── dev-docs/                # Generated documentation\n├── .mcp.json                # MCP server configuration\n├── .gitignore               # Comprehensive gitignore\n├── AGENTS.md                # Shared instructions (all tools read this)\n├── CLAUDE.md                # Claude Code (imports AGENTS.md)\n└── GEMINI.md                # Gemini CLI (imports AGENTS.md)\n```\n\n## What Gets Created\n\n| File/Directory | Purpose |\n|----------------|---------|\n| `AGENTS.md` | Your single source of truth for all AI tools |\n| `CLAUDE.md` | Imports `@AGENTS.md` (Claude Code reads this) |\n| `GEMINI.md` | Imports `@AGENTS.md` (Gemini CLI reads this) |\n| `.claude/settings.json` | Team-shared permissions |\n| `.claude/agents/` | Custom subagents |\n| `.claude/skills/` | Custom slash commands |\n| `.claude/rules/` | Modular rules auto-loaded into context |\n| `.mcp.json` | MCP server configuration |\n| `dev-docs/` | AI-generated documentation |\n| `.gitignore` | Comprehensive ignore rules |\n\n### Included Skills\n\n- `/doc <topic>` — Create a timestamped markdown document in `dev-docs/`\n\n## Customization\n\nAfter initialization:\n\n1. Edit `AGENTS.md` to add project-specific instructions\n2. Add custom subagents to `.claude/agents/`\n3. Add custom skills to `.claude/skills/`\n4. Add modular rules to `.claude/rules/`\n5. Configure MCP servers in `.mcp.json`\n\n## License\n\nMIT\n\n## Sources\n\n- [Claude Code Skills Documentation](https://code.claude.com/docs/en/skills)\n- [Claude Code Plugins Documentation](https://code.claude.com/docs/en/plugins)\n- [Discover and Install Plugins](https://code.claude.com/docs/en/discover-plugins)\n"
+      },
+      "plugins": [
+        {
+          "name": "init-workspace",
+          "description": "Initialize a multi-agent workspace with shared configuration for Claude Code, Codex CLI, and Gemini CLI. Creates AGENTS.md (shared instructions), CLAUDE.md, GEMINI.md, .claude/ directory structure, dev-docs/, and comprehensive .gitignore.",
+          "source": ".",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add xiaolai/init-workspace",
+            "/plugin install init-workspace@xiaolai-init-workspace"
+          ]
+        }
+      ]
     }
   ]
 }
