@@ -6,57 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "claude-cloud-diagrams",
-      "version": null,
-      "description": "AI-powered AWS infrastructure discovery and architecture diagram generation",
-      "repo_full_name": "mpuig/claude-cloud-diagrams",
-      "repo_url": "https://github.com/mpuig/claude-cloud-diagrams",
-      "repo_description": "An AI agent that explores your AWS account and draws what it finds. Not a perfect map. A useful one.",
-      "signals": {
-        "stars": 4,
-        "forks": 1,
-        "pushed_at": "2025-12-21T15:18:52Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-cloud-diagrams\",\n  \"owner\": {\n    \"name\": \"mpuig\"\n  },\n  \"metadata\": {\n    \"description\": \"AI-powered AWS infrastructure discovery and architecture diagram generation\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aws-diagrams\",\n      \"source\": \"./\",\n      \"description\": \"Discover AWS infrastructure and generate architecture diagrams using AI\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"mpuig\"\n      },\n      \"repository\": \"https://github.com/mpuig/claude-cloud-diagrams\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"aws\", \"infrastructure\", \"diagrams\", \"architecture\"],\n      \"skills\": [\"./skills/aws-discover\", \"./skills/aws-diagram\"],\n      \"strict\": false\n    }\n  ]\n}\n",
-        "README.md": "# Claude Cloud Diagrams\n\nArchitecture diagrams aren't hard to make. They're impossible to maintain.\n\nYou spend hours lining up boxes in Miro. It looks great. Then someone merges a \"quick fix,\" adds three SQS queues and a Lambda, and your diagram quietly becomes a historical document.\n\nThis project pays an AI to explore your AWS account and draw what it finds. Not a perfect map. A useful one.\n\n![Example AWS Architecture Diagram](example/aws_architecture.png)\n\n## How it works\n\nInstead of a rigid parser that maps resource A to icon B, this uses an AI agent with two simple skills:\n\n### 1. Discovery by exploration\n\nThe agent doesn't rely on a predefined list of what to look for. It runs AWS CLI describe commands, follows references, and looks for patterns.\n\nIf it finds an ALB, it looks for target groups. If it sees a queue named `order-processor`, it reasonably assumes it belongs to the order service.\n\nIt isn't checking a configuration file. It's reading the room.\n\n### 2. Reasoning instead of rigid mapping\n\nOnce the agent has a snapshot of the environment, it writes Python code to generate the diagram.\n\nTraditional tools mechanically map resources to shapes. Claude looks at the whole mess and asks: what's actually central here? Which services define the architecture, and which ones are supporting actors?\n\nTwo runs might produce slightly different layouts. That's not a bug. You're getting a perspective on the system, not a mathematical proof.\n\n## Installation\n\n### Option 1: Claude Code Plugin (Recommended)\n\nInstall directly from GitHub as a Claude Code plugin:\n\n```bash\n# Add the marketplace\n/plugin marketplace add mpuig/claude-cloud-diagrams\n\n# Install the plugin\n/plugin install aws-diagrams@mpuig/claude-cloud-diagrams\n```\n\nThen use in any project (see Usage section below for tips).\n\n### Option 2: Clone and use locally\n\nClone this repository and run Claude Code from within:\n\n```bash\ngit clone https://github.com/mpuig/claude-cloud-diagrams.git\ncd claude-cloud-diagrams\nclaude\n```\n\n## Usage\n\n**Tip:** If using AWS SSO, log in before starting Claude Code for a smoother experience:\n\n```bash\naws sso login --profile myprofile\n```\n\nThen from within Claude Code:\n\n```\nYou: discover my AWS infrastructure using profile myprofile and region eu-west-1\nClaude: [explores your account, creates aws_infrastructure.json]\n\nYou: generate AWS architecture diagram\nClaude: [creates diagram files]\n```\n\nSpecifying the profile and region upfront works best—it avoids extra back-and-forth.\n\n## The trade-offs (and why I'm okay with them)\n\n**\"It's not 100% accurate.\"**\n\nCorrect. It's about 90% accurate and takes thirty seconds. A hand-drawn diagram is 100% accurate for a version of the system that existed three weeks ago.\n\n**\"Isn't this expensive?\"**\n\nIt costs API credits to have an LLM explore your account. A local script is free. But the script requires constant maintenance as AWS adds services. You're paying to avoid the ongoing labor of keeping the tool up to date.\n\n**\"What about hallucinations?\"**\n\nAn AI can misinterpret a relationship. So can a human. The difference is the AI logs its reasoning, explaining why it thinks a Lambda connects to a specific database. The uncertainty is visible.\n\n## Output\n\nThe generator creates four views of your infrastructure:\n\n| Diagram | Purpose |\n|---------|---------|\n| `aws_architecture.png` | The big picture: compute, databases, storage, connections |\n| `aws_security.png` | WAF, Cognito, KMS, traffic through security layers |\n| `aws_network.png` | VPC topology: subnets, NAT gateways, VPC endpoints |\n| `aws_data_flow.png` | How data moves through the system |\n\n## Example\n\nThe `example/` directory contains sample output from a fictional e-commerce platform, so you can see what the diagrams look like without connecting your own AWS account.\n\n## Prerequisites\n\n1. **Graphviz** (for PNG/SVG output):\n   ```bash\n   # macOS\n   brew install graphviz\n\n   # Ubuntu/Debian\n   sudo apt-get install graphviz\n   ```\n\n2. **Python dependencies**:\n   ```bash\n   uv sync\n   ```\n\n3. **AWS CLI** configured and authenticated:\n   ```bash\n   # For SSO (recommended)\n   aws sso login --profile <profile>\n\n   # Or traditional credentials\n   aws configure\n   ```\n\n## Alternative: Python scripts\n\nFor automation or CI/CD, standalone scripts are available:\n\n```bash\n# Discover infrastructure\nuv run discover.py --profile myprofile --region eu-west-1\n\n# Generate diagrams\nuv run generate_diagram.py all --format png\n```\n\n## API configuration\n\nClaude Code supports two backends:\n\n**Anthropic API:**\n```bash\nexport ANTHROPIC_API_KEY=sk-ant-...\n```\n\n**AWS Bedrock:**\n```bash\nexport CLAUDE_CODE_USE_BEDROCK=1\nexport AWS_REGION=eu-west-1\n```\n\n---\n\nThese diagrams aren't audit records or sources of truth. They're for onboarding, sanity checks, and rediscovering parts of the system everyone forgot existed.\n\nCloud infrastructure isn't static. It's a living, expensive mess. Trying to freeze it into a perfect diagram is a comforting illusion.\n\nThis doesn't give you perfection. It gives you an adaptable observer that can keep up with a system that changes every day.\n"
-      },
-      "plugins": [
-        {
-          "name": "aws-diagrams",
-          "source": "./",
-          "description": "Discover AWS infrastructure and generate architecture diagrams using AI",
-          "version": "1.0.0",
-          "author": {
-            "name": "mpuig"
-          },
-          "repository": "https://github.com/mpuig/claude-cloud-diagrams",
-          "license": "MIT",
-          "keywords": [
-            "aws",
-            "infrastructure",
-            "diagrams",
-            "architecture"
-          ],
-          "skills": [
-            "./skills/aws-discover",
-            "./skills/aws-diagram"
-          ],
-          "strict": false,
-          "categories": [
-            "architecture",
-            "aws",
-            "diagrams",
-            "infrastructure"
-          ],
-          "install_commands": [
-            "/plugin marketplace add mpuig/claude-cloud-diagrams",
-            "/plugin install aws-diagrams@claude-cloud-diagrams"
-          ]
-        }
-      ]
-    },
-    {
       "name": "mpuig-skills",
       "version": null,
       "description": "Python-focused agent skills for Claude Code",
