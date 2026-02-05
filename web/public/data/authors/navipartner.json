@@ -1,0 +1,86 @@
+{
+  "author": {
+    "id": "navipartner",
+    "display_name": "NaviPartner",
+    "avatar_url": "https://avatars.githubusercontent.com/u/106738636?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "navipartner-bc-tools",
+      "version": null,
+      "description": "Claude Code plugins for Business Central AL development at NaviPartner",
+      "repo_full_name": "navipartner/claude_plugin_marketplace",
+      "repo_url": "https://github.com/navipartner/claude_plugin_marketplace",
+      "repo_description": "Internal marketplace for NP specific claude code plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T18:17:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"navipartner-bc-tools\",\n  \"description\": \"Claude Code plugins for Business Central AL development at NaviPartner\",\n  \"owner\": {\n    \"name\": \"NaviPartner\",\n    \"email\": \"dev@navipartner.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"al-id-manager\",\n      \"description\": \"Get next available AL object IDs, table/tableextension field IDs, and enum/enumextension value IDs\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"NaviPartner\",\n        \"email\": \"dev@navipartner.com\"\n      },\n      \"source\": \"./al-id-manager\",\n      \"category\": \"development\",\n      \"tags\": [\"business-central\", \"al\", \"id-management\"]\n    },\n    {\n      \"name\": \"bcdev-cli\",\n      \"description\": \"BC Dev CLI - download symbols, compile, publish, and test AL apps (auto-downloads for your platform)\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"NaviPartner\",\n        \"email\": \"dev@navipartner.com\"\n      },\n      \"source\": \"./bcdev-cli\",\n      \"category\": \"development\",\n      \"tags\": [\"business-central\", \"al\", \"cli\", \"compile\", \"publish\", \"test\"]\n    }\n  ]\n}\n",
+        "README.md": "# NaviPartner BC Tools - Claude Code Plugin Marketplace\n\nA Claude Code plugin marketplace for Business Central AL development at NaviPartner.\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```bash\nclaude /plugin add-marketplace https://github.com/navipartner/claude_plugin_marketplace\n```\n\nThen install the plugins you need:\n\n```bash\n# AL ID Manager\nclaude plugin install al-id-manager@navipartner-bc-tools\n\n# BC Dev CLI (universal - works on all platforms)\nclaude plugin install bcdev-cli@navipartner-bc-tools\n```\n\n## Plugins\n\n### AL ID Manager\n\nAllows the LLM to grab next AL object ID or next AL table/tableextension/enum/enumextension field/value ID from the NaviPartner AL ID Manager service.\n\n**Use when:** Creating new AL objects, adding fields to tables/tableextensions, or adding values to enums/enumextensions.\n\n**Skill:** `al-id-manager:get-next-id`\n\n#### Configuration\n\nCreate a config file at:\n- macOS/Linux: `~/.al-id-manager/config.json`\n- Windows: `%USERPROFILE%\\.al-id-manager\\config.json`\n\n```json\n{\n  \"apiKey\": \"your-api-key-here\",\n  \"baseUrl\": \"https://al-id-manager.npretail.io\"\n}\n```\n\n### BC Dev CLI\n\nAllows the LLM to download symbols, compile, publish apps and run tests against Business Central environments.\n\n**Use when:** Working with BC development workflows - downloading dependencies, compiling, deploying, or testing.\n\n**Supported platforms:** macOS (arm64, x64), Linux (x64, arm64), Windows (x64)\n\nThe CLI binary is automatically downloaded and cached on first use. No manual setup required.\n\n**Skill:** `bcdev-cli:bcdev`\n\n#### Version Override\n\nTo use a specific CLI version:\n\n```bash\n# macOS/Linux\nexport BCDEV_CLI_VERSION=0.8\n\n# Windows\nset BCDEV_CLI_VERSION=0.8\n```\n\n## Development\n\n### Validating plugins\n\n```bash\n# Validate a single plugin\nclaude plugin validate --plugin-dir ./al-id-manager\nclaude plugin validate --plugin-dir ./bcdev-cli\n\n# Validate all plugins\nfor plugin in al-id-manager bcdev-cli; do\n  claude plugin validate --plugin-dir ./$plugin\ndone\n```\n\n### Testing locally\n\n```bash\nclaude --plugin-dir ./al-id-manager\nclaude --plugin-dir ./bcdev-cli\n```\n\n### Updating BC Dev CLI version\n\nWhen a new BC Dev CLI version is released:\n\n1. Download all platform binaries and compute SHA256 checksums\n2. Add entries to `bcdev-cli/checksums.txt`\n3. Update `DEFAULT_VERSION` in both wrapper scripts (`bin/bcdev-ensure` and `bin/bcdev-ensure.cmd`)\n4. Bump version in `bcdev-cli/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`\n5. Commit and push\n"
+      },
+      "plugins": [
+        {
+          "name": "al-id-manager",
+          "description": "Get next available AL object IDs, table/tableextension field IDs, and enum/enumextension value IDs",
+          "version": "1.0.0",
+          "author": {
+            "name": "NaviPartner",
+            "email": "dev@navipartner.com"
+          },
+          "source": "./al-id-manager",
+          "category": "development",
+          "tags": [
+            "business-central",
+            "al",
+            "id-management"
+          ],
+          "categories": [
+            "al",
+            "business-central",
+            "development",
+            "id-management"
+          ],
+          "install_commands": [
+            "/plugin marketplace add navipartner/claude_plugin_marketplace",
+            "/plugin install al-id-manager@navipartner-bc-tools"
+          ]
+        },
+        {
+          "name": "bcdev-cli",
+          "description": "BC Dev CLI - download symbols, compile, publish, and test AL apps (auto-downloads for your platform)",
+          "version": "2.0.0",
+          "author": {
+            "name": "NaviPartner",
+            "email": "dev@navipartner.com"
+          },
+          "source": "./bcdev-cli",
+          "category": "development",
+          "tags": [
+            "business-central",
+            "al",
+            "cli",
+            "compile",
+            "publish",
+            "test"
+          ],
+          "categories": [
+            "al",
+            "business-central",
+            "cli",
+            "compile",
+            "development",
+            "publish",
+            "test"
+          ],
+          "install_commands": [
+            "/plugin marketplace add navipartner/claude_plugin_marketplace",
+            "/plugin install bcdev-cli@navipartner-bc-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

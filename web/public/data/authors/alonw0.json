@@ -79,6 +79,35 @@
           ]
         }
       ]
+    },
+    {
+      "name": "python-debugger-marketplace",
+      "version": null,
+      "description": "PyCharm-like Python debugging with breakpoints, stepping, variable inspection, and stack navigation",
+      "repo_full_name": "alonw0/python-debugger-skill",
+      "repo_url": "https://github.com/alonw0/python-debugger-skill",
+      "repo_description": "A skill for Python debugging methods and best practices",
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-01-19T14:16:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"python-debugger-marketplace\",\n  \"owner\": {\n    \"name\": \"Alon Wolenitz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"python-debugger\",\n      \"source\": \"./plugins/python-debugger\",\n      \"description\": \"PyCharm-like Python debugging with breakpoints, stepping, variable inspection, and stack navigation\"\n    }\n  ]\n}\n",
+        "README.md": "# Python Debugger Plugin Marketplace\n\nA Claude Code plugin marketplace containing the Python Debugger plugin - PyCharm-like debugging for Python scripts.\n\n## Why Use This Skill?\n\n### The Problem\n\nWhen Claude Code encounters a bug in Python code, it typically resorts to:\n- Adding print statements and re-running\n- Reading code and guessing what's wrong\n- Making changes based on assumptions without verifying them\n\nThis is inefficient. Real developers don't debug this way—they use debuggers.\n\n### The Solution\n\nThis skill gives Claude Code the same debugging capabilities that developers use in PyCharm or VS Code:\n\n- **Set breakpoints** at specific lines or on exceptions\n- **Step through code** line by line to see exactly what happens\n- **Inspect variables** at any point during execution\n- **Navigate the call stack** to understand how execution reached a certain point\n- **Evaluate expressions** in the current context to test hypotheses\n\n### Why This Matters\n\n1. **Faster bug resolution** - Instead of guessing and re-running, Claude can pause execution exactly where needed and inspect state directly.\n\n2. **Systematic debugging** - The skill includes debugging methodology that teaches Claude to debug like an experienced developer: form hypotheses, verify assumptions, binary search for bugs.\n\n3. **Better accuracy** - By actually observing runtime values rather than inferring them from code, Claude makes fewer mistakes when diagnosing issues.\n\n4. **Complex bug handling** - Some bugs only manifest at runtime with specific data. Print debugging can't easily catch issues like race conditions, state mutations, or deep call stack problems. A real debugger can.\n\n### Example Scenario\n\n**Without this skill:**\n```\nUser: \"This function returns wrong values sometimes\"\nClaude: *reads code* \"I think the issue might be X. Let me add some prints...\"\n*adds prints, runs, reads output, guesses again*\n```\n\n**With this skill:**\n```\nUser: \"This function returns wrong values sometimes\"\nClaude: *sets conditional breakpoint* \"Let me pause when the output looks wrong\"\n*inspects actual variable values at that moment*\n\"Found it - the input was None here because...\"\n```\n\n## Installation\n\n### 1. Add the marketplace\n\n```bash\n/plugin marketplace add alonw0/python-debugger-skill\n```\n\n### 2. Install the plugin\n\n```bash\n/plugin install python-debugger@python-debugger-marketplace\n```\n\n## Available Plugins\n\n### python-debugger\n\nPyCharm-like Python debugging with breakpoints, stepping, variable inspection, and stack navigation.\n\n**Features:**\n- Line, conditional, and exception breakpoints\n- Step into, step over, continue, finish\n- Variable inspection (locals, globals, eval, deep inspect)\n- Call stack navigation\n- Built-in debugging methodology and best practices\n\n**Usage:** Just ask Claude Code to debug your Python scripts:\n```\n\"Debug my_script.py - it's returning wrong values\"\n\"Set a breakpoint at line 25 and inspect the variables\"\n\"Why is this function crashing?\"\n\"Step through the loop and show me what's happening\"\n```\n\n## Repository Structure\n\n```\npython-debugger-skill/\n├── .claude-plugin/\n│   └── marketplace.json\n├── plugins/\n│   └── python-debugger/\n│       ├── .claude-plugin/\n│       │   └── plugin.json\n│       └── skills/\n│           └── python-debugging/\n│               ├── SKILL.md\n│               ├── scripts/\n│               │   ├── debugger.py\n│               │   └── inspector.py\n│               └── references/\n│                   ├── methodology.md\n│                   ├── commands.md\n│                   ├── examples.md\n│                   └── troubleshooting.md\n├── examples/\n│   └── buggy_calculator.py      # Try debugging this!\n└── README.md\n```\n\n## Try It Out\n\nThe repo includes an example buggy script with 3 intentional bugs. After installing the plugin, ask Claude Code to debug it.\n\n### 1. First, see the bugs in action\n\n```bash\npython examples/buggy_calculator.py\n```\n\nYou'll see incorrect outputs and errors.\n\n### 2. Ask Claude Code to debug\n\nOnce the plugin is installed, just ask Claude Code naturally:\n\n```\n\"Debug examples/buggy_calculator.py - it's crashing on empty lists\"\n```\n\n```\n\"Help me find why calculate_total_price returns wrong values on the second call\"\n```\n\n```\n\"Step through process_user_data and figure out why it's missing users\"\n```\n\nClaude Code will automatically use the python-debugging skill to:\n- Start a debug session\n- Set appropriate breakpoints\n- Step through the code\n- Inspect variables\n- Identify the root cause\n- Explain what's wrong and how to fix it\n\n### Example Debugging Session\n\n**You:** \"Debug examples/buggy_calculator.py - the calculate_total_price function returns wrong values\"\n\n**Claude Code:** *Uses the debugging skill to:*\n1. Start the debugger on the script\n2. Set a breakpoint inside `apply_discount`\n3. Continue and inspect the `discounts` list\n4. Notice it accumulates across calls (mutable default argument bug)\n5. Explain the issue and suggest the fix\n\n### What Claude Code Can Debug\n\nJust describe the problem naturally:\n- \"This script crashes sometimes, help me find why\"\n- \"Why does this function return None?\"\n- \"Debug this - the loop skips some items\"\n- \"Set a breakpoint at line 45 and show me what's in the data variable\"\n- \"Step through the calculate function and explain what's happening\"\n\n## Requirements\n\n- Python 3.7+\n- macOS or Linux\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "python-debugger",
+          "source": "./plugins/python-debugger",
+          "description": "PyCharm-like Python debugging with breakpoints, stepping, variable inspection, and stack navigation",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alonw0/python-debugger-skill",
+            "/plugin install python-debugger@python-debugger-marketplace"
+          ]
+        }
+      ]
     }
   ]
 }

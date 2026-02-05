@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "anomalyarmor",
+    "display_name": "anomalyarmor",
+    "avatar_url": "https://avatars.githubusercontent.com/u/158524500?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "anomalyarmor",
+      "version": "0.2.1",
+      "description": "AI skills and MCP server for AnomalyArmor data observability",
+      "repo_full_name": "anomalyarmor/agents",
+      "repo_url": "https://github.com/anomalyarmor/agents",
+      "repo_description": "AI skills and MCP server for AnomalyArmor data observability",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-02T21:07:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"anomalyarmor\",\n  \"version\": \"0.2.1\",\n  \"description\": \"AI skills and MCP server for AnomalyArmor data observability\",\n  \"owner\": {\n    \"name\": \"AnomalyArmor\",\n    \"email\": \"support@anomalyarmor.ai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"armor\",\n      \"description\": \"Data observability plugin - health monitoring, alerts, schema drift, freshness tracking\",\n      \"version\": \"0.2.1\",\n      \"author\": {\n        \"name\": \"AnomalyArmor\",\n        \"email\": \"support@anomalyarmor.ai\"\n      },\n      \"source\": \"./\",\n      \"category\": \"development\",\n      \"keywords\": [\"data-observability\", \"data-quality\", \"schema-drift\", \"freshness\", \"alerts\"]\n    }\n  ],\n  \"homepage\": \"https://github.com/anomalyarmor/agents\",\n  \"repository\": \"https://github.com/anomalyarmor/agents\"\n}\n",
+        "README.md": "# AnomalyArmor Agents\n\nAI skills and MCP server for AnomalyArmor data observability. Interact with your data health, alerts, and monitoring directly from Claude Code, Cursor, or any MCP-compatible AI tool.\n\n## Quick Start\n\n### Option 1: Claude Code Plugin (Recommended)\n\n```bash\n# Install the plugin\nclaude plugin marketplace add anomalyarmor/agents\nclaude plugin install armor@anomalyarmor\n\n# Or via skills.sh\nnpx skills add anomalyarmor/agents\n```\n\nThen use skills like:\n- `/armor:status` - Check data health\n- `/armor:alerts` - View and manage alerts\n- `/armor:ask` - Ask questions about your data\n\n### Option 2: MCP Server\n\nAdd to your MCP configuration (Claude Code, Cursor, etc.):\n\n```json\n{\n  \"mcpServers\": {\n    \"armor\": {\n      \"command\": \"uvx\",\n      \"args\": [\"armor-mcp\"]\n    }\n  }\n}\n```\n\n## Prerequisites\n\n1. **AnomalyArmor Account**: Sign up at [anomalyarmor.ai](https://anomalyarmor.ai)\n2. **API Key**: Generate at Settings > API Keys\n3. **Configure**: Set `ARMOR_API_KEY` env var or create `~/.armor/config.yaml`:\n\n```yaml\napi_key: aa_live_your_key_here\n```\n\n## Available Skills\n\n| Skill | Description | Example |\n|-------|-------------|---------|\n| `/armor:status` | Health summary across all assets | \"Is my data healthy?\" |\n| `/armor:alerts` | Query and manage alerts | \"What alerts fired yesterday?\" |\n| `/armor:connect` | Connect a new data source | \"Connect my Snowflake warehouse\" |\n| `/armor:monitor` | Set up monitoring | \"Monitor freshness for orders table\" |\n| `/armor:ask` | Natural language Q&A | \"What tables contain customer data?\" |\n| `/armor:analyze` | Trigger AI analysis | \"Analyze the finance schema\" |\n| `/armor:quality` | Data quality checks | \"Add null check for customer_id column\" |\n| `/armor:tags` | Asset tagging and classification | \"Tag this table as PII\" |\n| `/armor:investigate` | Root cause analysis | \"Why is this table stale?\" |\n| `/armor:lineage` | Data lineage exploration | \"What depends on this table?\" |\n| `/armor:profile` | Table profiling and stats | \"Profile the orders table\" |\n| `/armor:coverage` | Monitoring coverage analysis | \"What tables have no alerts?\" |\n| `/armor:test` | Dry-run configurations before enabling | \"Test this freshness threshold\" |\n| `/armor:recommend` | AI-driven monitoring recommendations | \"What should I monitor?\" |\n\n## MCP Tools\n\nThe MCP server exposes these tools:\n\n### Health\n- `health_summary()` - Overall health status\n\n### Alerts\n- `list_alerts(status, severity, asset_id, from_date, to_date)` - Query alerts\n- `get_alert_summary()` - Alert counts\n\n### Assets\n- `list_assets(source, asset_type, search)` - List monitored assets\n- `get_asset(asset_id)` - Get asset details\n- `create_asset(name, source_type, connection_config)` - Create data source\n- `test_asset_connection(asset_id)` - Test connection\n- `trigger_asset_discovery(asset_id)` - Start schema discovery\n\n### Freshness\n- `get_freshness_summary()` - Freshness overview\n- `check_freshness(asset_id)` - Check specific asset\n- `list_stale_assets()` - List stale assets\n- `list_freshness_schedules(asset_id)` - List schedules\n- `create_freshness_schedule(asset_id, table_path, check_interval)` - Create schedule\n- `delete_freshness_schedule(schedule_id)` - Delete schedule\n\n### Schema\n- `get_schema_summary()` - Schema drift overview\n- `list_schema_changes(asset_id, severity)` - List changes\n- `create_schema_baseline(asset_id)` - Create baseline\n- `enable_schema_monitoring(asset_id, schedule_type)` - Enable monitoring\n- `disable_schema_monitoring(asset_id)` - Disable monitoring\n\n### Intelligence\n- `ask_question(asset, question)` - Natural language Q&A\n- `generate_intelligence(asset)` - Trigger AI analysis\n\n### Lineage\n- `get_lineage(asset_id, depth, direction)` - Get lineage graph\n\n### Metrics\n- `list_metrics(asset_id, metric_type, limit)` - List metrics for an asset\n- `get_metrics_summary(asset_id)` - Get metrics summary\n- `create_metric(asset_id, metric_type, table_path, column_name, capture_interval)` - Create metric\n- `delete_metric(asset_id, metric_id)` - Delete metric\n- `capture_metric(asset_id, metric_id)` - Trigger immediate capture\n\n### Validity\n- `list_validity_rules(asset_id, rule_type, limit)` - List validity rules\n- `get_validity_summary(asset_id)` - Get validity summary\n- `create_validity_rule(asset_id, rule_type, table_path, column_name, severity)` - Create rule\n- `delete_validity_rule(asset_id, rule_id)` - Delete rule\n- `check_validity_rule(asset_id, rule_id)` - Run check immediately\n\n### Tags\n- `list_tags(asset, category, limit)` - List tags for an asset\n- `create_tag(asset, name, object_path, object_type, category, description)` - Create tag\n- `apply_tags(asset, tag_names, object_paths, category)` - Apply tags to objects\n- `bulk_apply_tag(tag_name, asset_ids, category)` - Apply tag to multiple assets\n\n### Coverage\n- `get_coverage_summary()` - Get monitoring coverage across all assets\n\n### Dry-Run / Preview (TECH-771)\n- `dry_run_freshness(asset_id, table_path, expected_interval_hours, lookback_days)` - Test freshness threshold\n- `dry_run_schema(asset_id, table_path, lookback_days)` - Preview schema drift detection\n- `preview_alerts(rule_id, event_types, severities, lookback_days)` - Preview alert rule matches\n- `dry_run_metric(asset_id, table_path, metric_type, column_name, sensitivity, lookback_days)` - Test metric threshold\n\n### Recommendations (TECH-772)\n- `recommend_freshness(asset_id, min_confidence, limit, include_monitored)` - Suggest freshness schedules\n- `recommend_metrics(asset_id, table_path, min_confidence, limit)` - Suggest quality metrics\n- `get_coverage_recommendations(asset_id, limit)` - Identify monitoring gaps\n- `recommend_thresholds(asset_id, days, limit)` - Suggest threshold adjustments\n\n### Jobs\n- `job_status(job_id)` - Check async job status\n\n## Examples\n\n### Check Data Health\n\n```\nUser: Is my data healthy?\nClaude: [Runs /armor:status]\n\nYour data health status:\n- Overall: WARNING\n- 3 unresolved alerts\n- 2 stale tables (orders, customers)\n- 1 unacknowledged schema change\n```\n\n### Query Alerts\n\n```\nUser: What alerts fired yesterday?\nClaude: [Runs /armor:alerts]\n\nYesterday's alerts:\n1. [CRITICAL] orders table stale for 6 hours\n2. [WARNING] schema change detected in users table\n3. [INFO] new column added to products\n```\n\n### Ask About Data\n\n```\nUser: What tables contain customer PII?\nClaude: [Runs /armor:ask]\n\nBased on AnomalyArmor Intelligence:\n- customers.email (PII: email)\n- customers.phone (PII: phone)\n- orders.shipping_address (PII: address)\n```\n\n## Troubleshooting\n\n### Authentication Failed\n\n```\nError: No API key configured\n```\n\n**Solution**: Set `ARMOR_API_KEY` environment variable or create `~/.armor/config.yaml`\n\n### MCP Server Not Found\n\n```\nError: MCP server 'armor' not found\n```\n\n**Solution**:\n1. Restart your AI tool after config changes\n2. Verify uvx is installed: `uvx --version`\n3. Check MCP config syntax\n\n### Skills Not Loading\n\n**Solution**:\n1. Verify plugin installed: `claude plugin list`\n2. Check skills directory exists\n3. Restart Claude Code\n\n## Development\n\nSee [AGENTS.md](AGENTS.md) for development guidelines.\n\n## Support\n\n- **Issues**: [GitHub Issues](https://github.com/anomalyarmor/agents/issues)\n- **Docs**: [docs.anomalyarmor.ai](https://docs.anomalyarmor.ai)\n- **Email**: support@anomalyarmor.ai\n\n## License\n\nMIT License - see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "armor",
+          "description": "Data observability plugin - health monitoring, alerts, schema drift, freshness tracking",
+          "version": "0.2.1",
+          "author": {
+            "name": "AnomalyArmor",
+            "email": "support@anomalyarmor.ai"
+          },
+          "source": "./",
+          "category": "development",
+          "keywords": [
+            "data-observability",
+            "data-quality",
+            "schema-drift",
+            "freshness",
+            "alerts"
+          ],
+          "categories": [
+            "alerts",
+            "data-observability",
+            "data-quality",
+            "development",
+            "freshness",
+            "schema-drift"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anomalyarmor/agents",
+            "/plugin install armor@anomalyarmor"
+          ]
+        }
+      ]
+    }
+  ]
+}
