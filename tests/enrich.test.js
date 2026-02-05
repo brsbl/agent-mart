@@ -2,7 +2,8 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 
 import {
-  generateInstallCommands
+  generateInstallCommands,
+  deduplicatePlugins
 } from '../src/pipeline/06-enrich.js';
 
 describe('Enrichment: generateInstallCommands', () => {
@@ -90,5 +91,75 @@ describe('Enrichment: Plugin Field Preservation', () => {
     };
 
     assert.strictEqual(enrichedPlugin.source, 'https://github.com/external/plugin');
+  });
+});
+
+describe('Enrichment: deduplicatePlugins', () => {
+  it('should remove exact duplicate plugins by name', () => {
+    const plugins = [
+      { name: 'plugin-a', version: '1.0.0', source: './a' },
+      { name: 'plugin-b', version: '1.0.0', source: './b' },
+      { name: 'plugin-a', version: '1.0.0', source: './a' }
+    ];
+
+    const result = deduplicatePlugins(plugins, 'test/repo');
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0].name, 'plugin-a');
+    assert.strictEqual(result[1].name, 'plugin-b');
+  });
+
+  it('should keep first occurrence when duplicates exist', () => {
+    const plugins = [
+      { name: 'my-plugin', version: '1.0.0', description: 'First' },
+      { name: 'my-plugin', version: '2.0.0', description: 'Second' }
+    ];
+
+    const result = deduplicatePlugins(plugins, 'test/repo');
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].version, '1.0.0');
+    assert.strictEqual(result[0].description, 'First');
+  });
+
+  it('should handle empty array', () => {
+    const result = deduplicatePlugins([], 'test/repo');
+    assert.deepStrictEqual(result, []);
+  });
+
+  it('should handle null/undefined input', () => {
+    assert.deepStrictEqual(deduplicatePlugins(null, 'test/repo'), []);
+    assert.deepStrictEqual(deduplicatePlugins(undefined, 'test/repo'), []);
+  });
+
+  it('should preserve plugins without names', () => {
+    const plugins = [
+      { name: 'valid-plugin', source: './valid' },
+      { source: './no-name' },
+      { name: 'another-plugin', source: './another' }
+    ];
+
+    const result = deduplicatePlugins(plugins, 'test/repo');
+    assert.strictEqual(result.length, 3);
+  });
+
+  it('should handle single plugin array', () => {
+    const plugins = [{ name: 'only-plugin', source: './' }];
+    const result = deduplicatePlugins(plugins, 'test/repo');
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].name, 'only-plugin');
+  });
+
+  it('should handle multiple duplicates of same name', () => {
+    const plugins = [
+      { name: 'dupe', version: '1' },
+      { name: 'dupe', version: '2' },
+      { name: 'dupe', version: '3' },
+      { name: 'unique', version: '1' }
+    ];
+
+    const result = deduplicatePlugins(plugins, 'test/repo');
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0].name, 'dupe');
+    assert.strictEqual(result[0].version, '1');
+    assert.strictEqual(result[1].name, 'unique');
   });
 });

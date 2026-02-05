@@ -40,6 +40,24 @@ export function validateMarketplace(data, context = '') {
     warnings.push(`${prefix}marketplace.json has empty plugins array`);
   }
 
+  // Check for duplicate plugin names
+  const pluginNames = new Set();
+  const duplicateNames = new Set();
+
+  for (const plugin of data.plugins) {
+    if (plugin?.name && typeof plugin.name === 'string') {
+      const name = plugin.name.trim();
+      if (pluginNames.has(name)) {
+        duplicateNames.add(name);
+      }
+      pluginNames.add(name);
+    }
+  }
+
+  if (duplicateNames.size > 0) {
+    warnings.push(`${prefix}marketplace.json has duplicate plugin names: ${[...duplicateNames].join(', ')}`);
+  }
+
   // Validate each plugin entry
   data.plugins.forEach((plugin, index) => {
     const pluginContext = `${prefix}plugins[${index}]`;

@@ -151,6 +151,35 @@ describe('Validator: marketplace.json edge cases', () => {
     const result = validateMarketplace(data, 'owner/repo');
     assert.ok(result.errors.some(e => e.includes('owner/repo')));
   });
+
+  it('should warn on duplicate plugin names', () => {
+    const data = {
+      name: 'test-marketplace',
+      plugins: [
+        { name: 'my-plugin', source: './p1' },
+        { name: 'other-plugin', source: './p2' },
+        { name: 'my-plugin', source: './p3' }
+      ]
+    };
+    const result = validateMarketplace(data);
+    assert.strictEqual(result.valid, true);
+    assert.ok(result.warnings.some(w => w.includes('duplicate plugin names')));
+    assert.ok(result.warnings.some(w => w.includes('my-plugin')));
+  });
+
+  it('should not warn when all plugin names are unique', () => {
+    const data = {
+      name: 'test-marketplace',
+      plugins: [
+        { name: 'plugin-a', source: './a' },
+        { name: 'plugin-b', source: './b' },
+        { name: 'plugin-c', source: './c' }
+      ]
+    };
+    const result = validateMarketplace(data);
+    assert.strictEqual(result.valid, true);
+    assert.ok(!result.warnings.some(w => w.includes('duplicate')));
+  });
 });
 
 describe('Validator: plugin.json edge cases', () => {

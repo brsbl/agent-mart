@@ -170,14 +170,17 @@ export default function MarketplaceDetailPage() {
     error,
   } = useFetch<AuthorDetail>(url, "Failed to load marketplace data");
 
-  // Find the marketplace by name from author data
+  // Find the marketplace by repo name (last segment of repo_full_name)
   const marketplace: Marketplace | null = useMemo(() => {
     if (!authorData || !marketplaceName) {
       return null;
     }
 
     return (
-      authorData.marketplaces.find((m) => m.name === marketplaceName) ?? null
+      authorData.marketplaces.find((m) => {
+        const repoName = m.repo_full_name.split('/')[1];
+        return repoName === marketplaceName;
+      }) ?? null
     );
   }, [authorData, marketplaceName]);
 
@@ -197,7 +200,10 @@ export default function MarketplaceDetailPage() {
       return [];
     }
     return authorData.marketplaces
-      .filter((m) => m.name !== marketplaceName)
+      .filter((m) => {
+        const repoName = m.repo_full_name.split('/')[1];
+        return repoName !== marketplaceName;
+      })
       .slice(0, 3);
   }, [authorData, marketplaceName]);
 
