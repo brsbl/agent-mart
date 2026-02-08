@@ -15,11 +15,11 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-16T02:58:15Z"
+        "pushed_at": "2026-02-06T07:53:07Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"zkl2333-skills\",\n  \"owner\": {\n    \"name\": \"zkl2333\",\n    \"email\": \"zkl2333@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal collection of Claude Code skills\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"commit\",\n      \"description\": \"Generate conventional commit messages following git-cz standards\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/commit\"\n      ]\n    }\n  ]\n}\n",
-        "README.md": "# Skills\n\n个人 Claude Code skills 集合\n\n## 包含的 Skills\n\n- [commit](skills/commit/SKILL.md) - 生成符合 Conventional Commits 规范的 git commit message\n\n## 安装\n\n### 方式 1: 使用 npx add-skill（推荐）\n\n```bash\nnpx add-skill zkl2333/skills\n```\n\n### 方式 2: 手动安装\n\n将 skills 目录添加到 Claude Code 配置中。\n\n## 开发\n\n基于 [skill-creator](https://github.com/anthropics/skills) 指南创建。\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"zkl2333-skills\",\n  \"owner\": {\n    \"name\": \"zkl2333\",\n    \"email\": \"zkl2333@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal collection of Claude Code skills\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"commit\",\n      \"description\": \"Generate conventional commit messages following git-cz standards\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/commit\"\n      ]\n    },\n    {\n      \"name\": \"codex-cli\",\n      \"description\": \"Operate OpenAI Codex CLI terminal coding agent for software engineering tasks\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/codex-cli\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Skills\n\n个人 Claude Code skills 集合\n\n## About\n\n这是一个用于 Claude Code 的个人技能集合，包含了常用的开发工作流增强工具。每个技能都是自包含的文件夹，包含指令、脚本和资源，Claude 会根据需要动态加载。\n\n## Skills\n\n### [commit](skills/commit/)\n\n生成符合 Conventional Commits 规范的 git 提交信息，支持自动配置检测。\n\n**特性：**\n- 自动检测项目配置（cz-git、git-cz）\n- 支持 emoji 和纯文本格式\n- 自动执行 `git commit` 完成提交\n- 10 种标准 commit types\n\n**使用示例：**\n```bash\n# Claude Code 会自动分析变更并生成规范的提交信息\n# 例如：feat: 🎸 add user authentication\n```\n\n### [codex-cli](skills/codex-cli/)\n\n封装 OpenAI Codex CLI 终端编码代理能力，支持交互式和非交互式模式。\n\n**特性：**\n- 交互式编程、代码审查、自动化 exec\n- 审批模式和沙箱策略配置\n- MCP 服务器管理\n- CI/CD 集成支持\n\n**使用示例：**\n```bash\ncodex \"refactor this function\"              # 交互模式\ncodex exec \"fix all tests\"                  # 非交互模式\ncodex review --base main                    # 代码审查\n```\n\n## Installation\n\n### Claude Code Plugin Marketplace (推荐)\n\n将此仓库注册为 Claude Code 插件市场：\n\n```bash\n# 在 Claude Code 中运行\n/plugin marketplace add zkl2333/skills\n\n# 安装特定插件\n/plugin install commit@zkl2333-skills\n/plugin install codex-cli@zkl2333-skills\n```\n\n安装后，直接在对话中提及技能即可使用：\n\n```\n\"Use the commit skill to commit these changes\"\n\"Use codex-cli to review this PR\"\n```\n\n### 手动安装\n\n克隆仓库并将 `skills/` 目录添加到 Claude Code 配置：\n\n```bash\ngit clone https://github.com/zkl2333/skills.git\ncd skills\n```\n\n然后在 Claude Code 设置中添加 `skills/` 路径到 skills 配置。\n\n### 使用 npx add-skill\n\n```bash\nnpx add-skill zkl2333/skills\n```\n\n## Usage\n\n技能在使用时会自动加载。只需在对话中提及相关功能：\n\n```\n\"帮我提交这些更改\"                    # 自动触发 commit skill\n\"用 codex 审查这个分支\"                # 自动触发 codex-cli skill\n\"生成符合规范的 commit message\"        # 自动触发 commit skill\n```\n\n## Development\n\n基于 [Anthropic skill-creator](https://github.com/anthropics/skills) 指南创建。\n\n### 创建新 Skill\n\n```bash\n# 使用 skill-creator 初始化\npython ~/.claude/skills/skill-creator/scripts/init_skill.py my-skill --path ./skills\n\n# 编辑 SKILL.md\n# 添加 scripts/、references/、assets/（按需）\n\n# 打包（用于分发）\npython ~/.claude/skills/skill-creator/scripts/package_skill.py ./skills/my-skill\n```\n\n### Skill 结构\n\n```\nmy-skill/\n├── SKILL.md          # 必需：包含元数据和指令\n├── scripts/          # 可选：可执行脚本\n├── references/       # 可选：参考文档\n└── assets/           # 可选：模板、资源文件\n```\n\n### 更新 marketplace.json\n\n添加新技能到 `.claude-plugin/marketplace.json`：\n\n```json\n{\n  \"name\": \"my-skill\",\n  \"description\": \"Brief description\",\n  \"source\": \"./\",\n  \"skills\": [\"./skills/my-skill\"]\n}\n```\n\n## License\n\nMIT License - 详见 [LICENSE.txt](LICENSE.txt)\n\n## Credits\n\n基于 [Anthropic Agent Skills](https://github.com/anthropics/skills) 标准构建。\n"
       },
       "plugins": [
         {
@@ -34,6 +34,20 @@
           "install_commands": [
             "/plugin marketplace add zkl2333/skills",
             "/plugin install commit@zkl2333-skills"
+          ]
+        },
+        {
+          "name": "codex-cli",
+          "description": "Operate OpenAI Codex CLI terminal coding agent for software engineering tasks",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/codex-cli"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add zkl2333/skills",
+            "/plugin install codex-cli@zkl2333-skills"
           ]
         }
       ]

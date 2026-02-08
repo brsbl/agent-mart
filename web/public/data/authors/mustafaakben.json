@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "mustafaakben",
+    "display_name": "Mustafa Akben",
+    "avatar_url": "https://avatars.githubusercontent.com/u/77081789?u=789c0664351cb91609eba97034983f7156091e72&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "outlook-suite-marketplace",
+      "version": "1.0.0",
+      "description": "Plugin marketplace for Outlook Suite skills (mail, calendar, contacts, tasks, notes).",
+      "repo_full_name": "mustafaakben/outlook-suite-plugin",
+      "repo_url": "https://github.com/mustafaakben/outlook-suite-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-06T23:48:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"outlook-suite-marketplace\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Plugin marketplace for Outlook Suite skills (mail, calendar, contacts, tasks, notes).\",\n  \"metadata\": {\n    \"description\": \"Plugin marketplace for Outlook Suite skills (mail, calendar, contacts, tasks, notes).\"\n  },\n  \"owner\": {\n    \"name\": \"Mustafa Akben\",\n    \"email\": \"mustafaakben@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"outlook-suite\",\n      \"description\": \"Local Microsoft Outlook automation skills via PowerShell COM on Windows.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Mustafa Akben\",\n        \"email\": \"mustafaakben@gmail.com\"\n      },\n      \"source\": \"./plugins/outlook-suite\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# Outlook Suite (Outlook-Suit)\n\nLocal Microsoft Outlook automation suite (Mail, Calendar, Contacts, Tasks, Notes), packaged for Claude Code plugin distribution.\n\nThis repository is now a plugin marketplace repo that publishes one plugin: `outlook-suite`.\n\n## Purpose\n\nThe `outlook-suite` plugin provides modular Outlook automation skills built on PowerShell + Outlook COM:\n- Read/search/manage email and drafts\n- Create/update/delete calendar events and respond to meetings\n- Create/search/update contacts and export vCards\n- Create/update/complete/assign tasks\n- Create/read/delete Outlook sticky notes\n\n## Repository Structure\n\n- `.claude-plugin/marketplace.json` - Marketplace manifest (install source)\n- `plugins/outlook-suite/.claude-plugin/plugin.json` - Plugin manifest\n- `plugins/outlook-suite/skills/outlook-suite/` - Orchestration skill\n- `plugins/outlook-suite/skills/outlook-mail/` - Mail skill + scripts\n- `plugins/outlook-suite/skills/outlook-calendar/` - Calendar skill + scripts\n- `plugins/outlook-suite/skills/outlook-contacts/` - Contacts skill + scripts\n- `plugins/outlook-suite/skills/outlook-tasks/` - Tasks skill + scripts\n- `plugins/outlook-suite/skills/outlook-notes/` - Notes skill + scripts\n\n## Install as Plugin\n\n```bash\n/plugin marketplace add <github-owner>/<github-repo>\n/plugin install outlook-suite@outlook-suite-marketplace\n```\n\n## Plugin Lifecycle Commands\n\n```bash\n# Refresh marketplace index after pushing updates\n/plugin marketplace update outlook-suite-marketplace\n\n# Update installed plugin to latest marketplace version\n/plugin update outlook-suite\n\n# Remove plugin\n/plugin uninstall outlook-suite\n\n# Validate manifests locally before publishing\nclaude plugin validate .\nclaude plugin validate plugins/outlook-suite\n```\n\n## Requirements\n\n- Windows 10/11\n- Microsoft Outlook desktop installed\n- PowerShell 5.1+\n- Outlook profile configured with mailbox access\n- Claude Code with plugin support (`/plugin ...` commands)\n\nOptional (feature-dependent):\n- Exchange Online / Microsoft 365 for features like free/busy, room lookup, out-of-office, recall constraints, and some assignment operations\n\n## Safety Model\n\nThe suite follows strict operational safety patterns:\n- Prefer stable `EntryID` targeting over volatile indexes\n- Require explicit confirmation flags for send/delete/print-sensitive operations\n- Favor draft-first workflows for outgoing email\n- Align docs with actual script behavior and safety gates\n\n## Local Script Usage (Optional)\n\nYou can also run scripts directly from the packaged plugin paths:\n\n```powershell\ncd plugins/outlook-suite/skills/outlook-mail\n\n# Find candidate emails and capture EntryID\n& \".\\scripts\\outlook-find.ps1\" -Days 2 -From \"john@example.com\"\n\n# Reply by EntryID\n& \".\\scripts\\outlook-reply.ps1\" -EntryID \"00000000...\" -Body \"Thanks, received.\"\n```\n\n## Module Documentation\n\n- `plugins/outlook-suite/skills/outlook-suite/SKILL.md`\n- `plugins/outlook-suite/skills/outlook-mail/SKILL.md`\n- `plugins/outlook-suite/skills/outlook-calendar/SKILL.md`\n- `plugins/outlook-suite/skills/outlook-contacts/SKILL.md`\n- `plugins/outlook-suite/skills/outlook-tasks/SKILL.md`\n- `plugins/outlook-suite/skills/outlook-notes/SKILL.md`\n\n## Limitations and Known Constraints\n\n- Windows-only (Outlook COM automation)\n- Requires Outlook desktop app and configured local profile\n- Not intended for Outlook Web App (OWA)-only environments\n- Behavior can vary by account type, mailbox policy, and Exchange tenant config\n- Message recall is limited by Outlook/Exchange behavior and not guaranteed\n- `EntryID` is safest for targeting, but can change across certain mailbox move/import scenarios\n\n## Review Status\n\nA full module-by-module review was completed before packaging:\n- Parser/syntax validation across all `.ps1` files\n- Safety hardening for destructive operations\n- Parameter validation and conflict handling improvements\n- Documentation corrections and behavior alignment\n\n## License\n\nNo license file is currently included. Add a `LICENSE` before public release if needed.\n\n## Author\n\nDr. Mustafa Akben\n",
+        "plugins/outlook-suite/README.md": "# Outlook Suite Plugin\n\nClaude Code plugin package for Outlook automation on Windows.\n\n## Included Skills\n\n- `outlook-suite`\n- `outlook-mail`\n- `outlook-calendar`\n- `outlook-contacts`\n- `outlook-tasks`\n- `outlook-notes`\n\nEach skill is under `skills/<skill-name>/` and includes `SKILL.md` plus scripts where applicable.\n\n## Structure\n\n```\nplugins/outlook-suite/\n├── .claude-plugin/\n│   └── plugin.json\n└── skills/\n    ├── outlook-suite/\n    ├── outlook-mail/\n    ├── outlook-calendar/\n    ├── outlook-contacts/\n    ├── outlook-tasks/\n    └── outlook-notes/\n```\n\n## Install via Marketplace\n\nFrom a repo that contains `.claude-plugin/marketplace.json` at the root:\n\n```bash\n/plugin marketplace add <owner>/<repo>\n/plugin install outlook-suite@outlook-suite-marketplace\n```\n\n## Manage Installed Plugin\n\n```bash\n/plugin marketplace update outlook-suite-marketplace\n/plugin update outlook-suite\n/plugin uninstall outlook-suite\n```\n\n## Requirements\n\n- Windows\n- Microsoft Outlook desktop installed\n- PowerShell 5.1+\n- Claude Code with plugin support\n"
+      },
+      "plugins": [
+        {
+          "name": "outlook-suite",
+          "description": "Local Microsoft Outlook automation skills via PowerShell COM on Windows.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Mustafa Akben",
+            "email": "mustafaakben@gmail.com"
+          },
+          "source": "./plugins/outlook-suite",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mustafaakben/outlook-suite-plugin",
+            "/plugin install outlook-suite@outlook-suite-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

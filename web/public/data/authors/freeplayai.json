@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "freeplayai",
+    "display_name": "Freeplay",
+    "avatar_url": "https://avatars.githubusercontent.com/u/122390314?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "freeplay-plugins",
+      "version": "0.0.3",
+      "description": "Analyze logs, iterate on prompts and agents, and run experiments with Freeplay",
+      "repo_full_name": "freeplayai/freeplay-plugin",
+      "repo_url": "https://github.com/freeplayai/freeplay-plugin",
+      "repo_description": "Claude Code plugin with MCP server and agent skills",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-06T19:54:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"freeplay-plugins\",\n  \"version\": \"0.0.3\",\n  \"description\": \"Analyze logs, iterate on prompts and agents, and run experiments with Freeplay\",\n  \"owner\": {\n    \"name\": \"Freeplay\",\n    \"email\": \"support@freeplay.ai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"freeplay\",\n      \"description\": \"Analyze logs, iterate on prompts and agents, and run experiments with Freeplay\",\n      \"version\": \"0.0.3\",\n      \"author\": {\n        \"name\": \"Freeplay\",\n        \"email\": \"support@freeplay.ai\"\n      },\n      \"source\": \"./\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"freeplay\",\n  \"description\": \"Analyze logs, iterate on prompts and agents, and run experiments with Freeplay\",\n  \"version\": \"0.0.3\",\n  \"author\": {\n    \"name\": \"Freeplay\"\n  },\n  \"keywords\": [\"freeplay\", \"mcp\"]\n}\n",
+        "README.md": "# Freeplay Plugin for Claude Code\n\nGive Claude Code the ability to interact with [Freeplay](https://freeplay.ai), the ops platform for AI engineering teams.\n\nAnalyze production logs, diagnose quality issues, iterate on prompts and agents using real data, and run experiments to validate changes — all through natural language conversation.\n\n## ⚠️ EXPERIMENTAL\n\n**This plugin is an *experimental release* and will change.** Use at your own risk.\n\nCurrent limitations:\n- Does not support destructive deletion actions\n- Does not support deployment operations\n- Uses your regular Freeplay API key (not specially scoped to limit access for agents)\n\n**Security warning:** Because this uses your full API key, a malicious or compromised agent could extract the key and write its own code outside the plugin to perform destructive actions against your Freeplay account.\n\nAdditionally, all MCP servers share a security context within the host, enabling data exfiltration, prompt injection across tools, and cross-server data access.\n\nOnly use this with agents and MCP servers you fully trust.\n\n---\n\n## Installation\n\n### From the Plugin Marketplace\n\n```bash\nclaude plugin marketplace add freeplayai/freeplay-plugin\nclaude plugin install freeplay\n```\n\nSet your environment variables:\n\n```bash\nexport FREEPLAY_API_KEY=\"your-api-key\"\nexport FREEPLAY_BASE_URL=\"https://app.freeplay.ai\"  # optional, this is the default\n```\n\n## Running Locally\n\n### Prerequisites\n\n- Claude Code v1.0.33 or later (`claude --version`)\n- [uv](https://docs.astral.sh/uv/) installed\n- Freeplay API key\n\n### Clone with submodules\n\n```bash\ngit clone --recurse-submodules https://github.com/freeplayai/freeplay-plugin.git\ncd freeplay-plugin\n```\n\nOr if already cloned:\n\n```bash\ngit submodule update --init --recursive\n```\n\n### Install MCP server dependencies\n\n```bash\ncd freeplay-mcp\nuv sync\ncd ..\n```\n\n### Configure environment\n\n```bash\nexport FREEPLAY_API_KEY=\"your-api-key\"\nexport FREEPLAY_BASE_URL=\"https://app.freeplay.ai\"  # optional, this is the default\n```\n\n### Run the plugin\n\n```bash\nclaude --plugin-dir ./\n```\n\nRun with debug output:\n\n```bash\nclaude --debug --plugin-dir ./\n```\n\n### Verify MCP connection\n\nOnce Claude starts, run `/mcp` to check the Freeplay server is connected.\n\n### Updating submodules\n\nPull latest changes including all submodules:\n\n```bash\ngit pull --recurse-submodules\n```\n\nOr set this as the default behavior:\n\n```bash\ngit config submodule.recurse true\n```\n\nAfter updating, reinstall dependencies:\n\n```bash\ncd freeplay-mcp && uv sync && cd ..\n```\n\n## MCP Server\n\nThis plugin bundles the [Freeplay MCP server](./freeplay-mcp/README.md). See the MCP server README for standalone installation, available tools, and configuration options.\n\n## Troubleshooting\n\n**Plugin not loading:**\n- Verify directory structure (components at root, not inside `.claude-plugin/`)\n- Run with `--debug` flag to see loading errors\n\n**MCP server not connecting:**\n- Ensure submodule is initialized: `git submodule update --init`\n- Run `uv sync` in the `freeplay-mcp/` directory\n- Check `FREEPLAY_API_KEY` is set\n- Verify the script is executable: `chmod +x scripts/run-mcp.sh`\n\n## Support\n\n- **Docs**: https://docs.freeplay.ai\n- **Issues**: https://github.com/freeplayai/freeplay-plugin/issues\n- **Security**: security@freeplay.ai\n"
+      },
+      "plugins": [
+        {
+          "name": "freeplay",
+          "description": "Analyze logs, iterate on prompts and agents, and run experiments with Freeplay",
+          "version": "0.0.3",
+          "author": {
+            "name": "Freeplay",
+            "email": "support@freeplay.ai"
+          },
+          "source": "./",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add freeplayai/freeplay-plugin",
+            "/plugin install freeplay@freeplay-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

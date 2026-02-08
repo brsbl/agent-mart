@@ -1,0 +1,63 @@
+{
+  "author": {
+    "id": "BryceEWatson",
+    "display_name": "Bryce",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1322843?u=71938807912d544abc7a9a2cef35c1704ae1bcef&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bryce-labs",
+      "version": null,
+      "description": "Bryce Labs Toolkit - Claude Code plugins for AI-assisted development",
+      "repo_full_name": "BryceEWatson/bryce-labs-toolkit",
+      "repo_url": "https://github.com/BryceEWatson/bryce-labs-toolkit",
+      "repo_description": "public knowledge base of my ideas, tools, principles, etc.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-08T03:02:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"bryce-labs\",\n  \"owner\": {\n    \"name\": \"Bryce Watson\",\n    \"url\": \"https://github.com/BryceEWatson\"\n  },\n  \"metadata\": {\n    \"description\": \"Bryce Labs Toolkit - Claude Code plugins for AI-assisted development\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"spec-workflow\",\n      \"source\": \"./plugins/spec-workflow\",\n      \"description\": \"Spec-driven development with automated review loops\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"workflow\", \"spec-driven\", \"review\", \"planning\"],\n      \"category\": \"workflow\"\n    },\n    {\n      \"name\": \"lessons-extractor\",\n      \"source\": \"./skills/lessons-extractor\",\n      \"description\": \"Extract lessons from Claude Code sessions\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# bryce-labs-toolkit\n\nA collection of reusable Claude Code skills, tools, and templates for AI-assisted development workflows.\n\n## What's Included\n\n### Plugins\n\n- **[spec-workflow](plugins/spec-workflow/)** - Spec-driven development with automated review loops (Specification → Planning → Implementation → Review)\n\n### Skills\n\n- **[cleanup](skills/cleanup/)** - Post-merge git branch cleanup with safety checks, auto-detected base branch, and squash-merge support\n- **[lessons-extractor](skills/lessons-extractor/)** - Extract lessons learned from Claude Code session logs into organized markdown and JSONL files\n\n### Tools\n\n- **[skills-sync](tools/)** - Install and update skills to target projects (cross-platform wrappers included)\n- **[lint-skills](tools/lint-skills.sh)** - Lint skills for Windows-unsafe patterns\n\n## Install Plugins\n\nPlugins are installed via the Claude Code marketplace:\n\n```bash\n# Add the marketplace source (one-time)\n/plugin marketplace add BryceEWatson/bryce-labs-toolkit\n\n# Install a plugin\n/plugin install spec-workflow@bryce-labs\n```\n\nFor development or testing a PR branch, install from a local path:\n\n```bash\ngit clone https://github.com/BryceEWatson/bryce-labs-toolkit.git\n/plugin install /path/to/bryce-labs-toolkit/plugins/spec-workflow\n```\n\n## Install Skills\n\n### Using skills-sync (Recommended)\n\nThe `skills-sync` tool handles installation, updates, and verification:\n\n```bash\n# Clone this repo\ngit clone https://github.com/BryceEWatson/bryce-labs-toolkit.git\ncd bryce-labs-toolkit\n\n# List available skills\n./tools/skills-sync --list\n\n# Install a skill to your project\n./tools/skills-sync --project /path/to/your-project --skill lessons-extractor\n\n# Install all skills\n./tools/skills-sync --project /path/to/your-project --all\n\n# Check if installed skills are up to date\n./tools/skills-sync --project /path/to/your-project --all --check\n\n# Force update (clean install)\n./tools/skills-sync --project /path/to/your-project --skill lessons-extractor --force\n```\n\nOn Windows (CMD/PowerShell):\n\n```bat\ntools\\skills-sync.cmd --list\ntools\\skills-sync.cmd --project C:\\path\\to\\your-project --skill lessons-extractor\n```\n\nSkills are installed to `<project>/.claude/skills/<skill-name>/` and become available as `/<skill-name>` in Claude Code.\n\n### Symlink (Development)\n\nFor active development on the toolkit itself, symlink into your target project:\n\n```bash\n# macOS/Linux\nln -s /path/to/bryce-labs-toolkit/skills/lessons-extractor /path/to/your-project/.claude/skills/lessons-extractor\n\n# Windows (PowerShell - requires admin)\nNew-Item -ItemType SymbolicLink -Path \"C:\\path\\to\\your-project\\.claude\\skills\\lessons-extractor\" -Target \"C:\\path\\to\\bryce-labs-toolkit\\skills\\lessons-extractor\"\n```\n\n## Repository Structure\n\n```\nbryce-labs-toolkit/\n  plugins/                # Claude Code plugins\n    spec-workflow/        # Spec-driven development workflow\n  skills/                 # Claude Code skills\n    cleanup/              # Post-merge branch cleanup\n    lessons-extractor/    # Log reflection skill\n  tools/                  # CLI tools\n    skills-sync           # POSIX wrapper\n    skills-sync.cmd       # Windows wrapper\n    skills-sync.js        # Main script\n    lint-skills.sh        # Windows-safety linter\n  docs/                   # Documentation\n```\n\nSee [docs/reference/repo-layout.md](docs/reference/repo-layout.md) for details.\n\n## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.\n\n## License\n\nThis project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.\n\nCode, skills, and documentation are all covered under Apache-2.0.\n",
+        "plugins/spec-workflow/README.md": "# Spec-Workflow Plugin\n\nSpec-driven development with automated review loops.\n\n## Installation\n\n### From Marketplace\n\n```bash\n/plugin marketplace add BryceEWatson/bryce-labs-toolkit\n/plugin install spec-workflow@bryce-labs\n```\n\n### From Local Path (Development/PR Testing)\n\nFor testing unreleased changes or validating a PR before merge:\n\n```bash\n# Clone the toolkit repository\ngit clone https://github.com/BryceEWatson/bryce-labs-toolkit.git\ncd bryce-labs-toolkit\n\n# Checkout the PR branch (if testing a PR)\ngit checkout feature/branch-name\n\n# Install from local path (use absolute path)\n/plugin install /absolute/path/to/bryce-labs-toolkit/plugins/spec-workflow\n```\n\nThe marketplace follows the default branch. Use local path installation to test\nfeature branches or PR changes before they're merged.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/spec-workflow:spec <description>` | Generate SPEC.md |\n| `/spec-workflow:plan <spec-path>` | Generate PLAN.md with review loop |\n| `/spec-workflow:implement <plan-path>` | Execute with PR review loop |\n| `/spec-workflow:review [spec-path]` | Manual PR review |\n\n## Workflow\n\n```bash\n# 1. Create specification\n/spec-workflow:spec \"Add user authentication\"\n# Review and approve\n\n# 2. Create plan (internal review loop)\n/spec-workflow:plan docs/specs/SPEC-user-auth.md\n# Review and approve\n\n# 3. Implement (internal PR review loop)\n/spec-workflow:implement docs/plans/PLAN-user-auth.md\n# Test locally, then merge\n```\n\n## Architecture\n\n### Information Asymmetry\n\n- PRReviewer checks SPEC, not PLAN (catches plan drift)\n- Implementer cannot see SPEC (forces plan adherence)\n- Reviewers cannot see producer reasoning (prevents bias)\n\n### Internal Review Loops\n\n- `context: fork` isolates reviewer context\n- Prompt-based Stop hooks evaluate completion\n- Max 5 iterations before escalating to user\n\n### Review Loop Behavior\n\nThe automated review loops use Claude Code's prompt-based Stop hooks defined in\nagent frontmatter. Loop behavior depends on Claude Code's hook support:\n\n- **If hooks work**: Reviewer agents automatically re-invoke after finding gaps\n- **If hooks don't trigger**: Manually re-run the command after making edits\n\nAn alternative command-based hook approach using Python is available in\n`hooks/hooks.json` (disabled by default). To enable, rename `_SubagentStop`\nto `SubagentStop`.\n\n### File Naming\n\nCommands generate files with kebab-case feature names derived from your input:\n- `/spec-workflow:spec \"Add user authentication\"` → `SPEC-user-auth.md`\n- `/spec-workflow:plan docs/specs/SPEC-user-auth.md` → `PLAN-user-auth.md`\n\n## Compatibility\n\nRequires Claude Code 2.1.0+ with support for:\n- `context: fork` in agent frontmatter\n- Prompt-based Stop hooks (`type: prompt`)\n- Plugin path variables (`${CLAUDE_PLUGIN_ROOT}`)\n\n## Known Issue (Upstream: Claude Code)\n\nClaude Code's slash-command picker may auto-submit a selected command immediately,\nwhich prevents typing arguments first (e.g., `/spec-workflow:spec <feature-description>`).\n\n**Workaround:** Type the command manually and then add arguments, e.g.:\n`/spec-workflow:spec ` + your feature description (or use tab completion).\n\n**Upstream:** https://github.com/anthropics/claude-code/issues/23781\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "spec-workflow",
+          "source": "./plugins/spec-workflow",
+          "description": "Spec-driven development with automated review loops",
+          "version": "1.0.0",
+          "keywords": [
+            "workflow",
+            "spec-driven",
+            "review",
+            "planning"
+          ],
+          "category": "workflow",
+          "categories": [
+            "planning",
+            "review",
+            "spec-driven",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add BryceEWatson/bryce-labs-toolkit",
+            "/plugin install spec-workflow@bryce-labs"
+          ]
+        },
+        {
+          "name": "lessons-extractor",
+          "source": "./skills/lessons-extractor",
+          "description": "Extract lessons from Claude Code sessions",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add BryceEWatson/bryce-labs-toolkit",
+            "/plugin install lessons-extractor@bryce-labs"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "Synaps-Squad",
+    "display_name": "Synaps Squad",
+    "avatar_url": "https://avatars.githubusercontent.com/u/242754108?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "gitlab-mr-review-marketplace",
+      "version": null,
+      "description": "GitLab merge request review tools and automation",
+      "repo_full_name": "Synaps-Squad/gitlab-mr-mcp",
+      "repo_url": "https://github.com/Synaps-Squad/gitlab-mr-mcp",
+      "repo_description": null,
+      "signals": {
+        "stars": 8,
+        "forks": 2,
+        "pushed_at": "2025-11-26T13:29:23Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"gitlab-mr-review-marketplace\",\n  \"owner\": {\n    \"name\": \"Amir Masoud Ahmadi, Hossein Safari\"\n  },\n  \"metadata\": {\n    \"description\": \"GitLab merge request review tools and automation\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"gitlab-mr-review\",\n      \"source\": \"./plugins/gitlab-mr-review\"\n    }\n  ]\n}\n",
+        "README.md": "# GitLab MR Review MCP Server\n\nA Model Context Protocol (MCP) server for reviewing GitLab merge requests using Claude Code and other MCP clients.\n\n## Overview\n\nThis MCP server provides tools to interact with GitLab's API, enabling AI assistants to analyze merge requests, retrieve changed files, and inspect code diffs. It's designed to integrate seamlessly with Claude Code and other MCP-compatible clients for efficient code review workflows.\n\n## Setup\n\n### 1. Export Environment Variables\n```bash\nexport GITLAB_API_URL=\"http[s]://your_gitlab_uri/api/v4\"\nexport GITLAB_PERSONAL_ACCESS_TOKEN=\"your-token-here\"\n```\n\n**Get your GitLab token**: Settings → Access Tokens → Create token with `read_api` scope\n\n### 2. Install in Claude\n\n1. Type `/plugin` in Claude\n2. Select **Add marketplace**\n3. Paste `https://github.com/Synaps-Squad/gitlab-mr-mcp`\n4. Follow the prompts to complete the plugin installation\n\n### 3. Run Setup (Required - One Time Only)\n\nBefore using the plugin, run the setup command in your terminal:\n```bash\ncd ~/.claude/plugins/marketplaces/gitlab-mr-review-marketplace/plugins/gitlab-mr-review  # or wherever the plugin was installed\n./start.sh --setup\n```\n\nThis will install `uv` (if not present) and set up the Python environment with all dependencies.\n\n### 4. Verify Installation\n\n- Exit Claude completely and restart it\n- Run `/mcp` to verify the plugin is loaded\n\n## Usage\n\n### Quick Command\n\nUse the command directly:\n```\n/gitlab-mr-review:review-gitlab-mr MR_number Project_name\n```\n\n### Or Ask Claude\n\n- \"List my GitLab projects\"\n- \"Review merge request !42 in project your_project_name\"\n- \"Show me the diff for the first file in MR !42\"\n\n## Available Tools\n\n- **`get_projects()`** - List all accessible GitLab projects\n- **`merge_request_changes(project_id, merge_request_id)`** - List changed files in an MR\n- **`merge_request_file_diff(project_id, merge_request_id, file_index or file_path)`** - View file diff\n\n## Requirements\n\n- **uv** (will be auto-installed during setup, or install manually: https://github.com/astral-sh/uv)\n- Python 3.10+\n- Dependencies: `httpx`, `mcp`\n\n## Troubleshooting\n\nIf you see an error like \"Virtual environment not found\", run the setup command:\n```bash\n./start.sh --setup\n```\n\n## License\n\nMIT License - see [LICENSE](LICENSE) file for details."
+      },
+      "plugins": [
+        {
+          "name": "gitlab-mr-review",
+          "source": "./plugins/gitlab-mr-review",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Synaps-Squad/gitlab-mr-mcp",
+            "/plugin install gitlab-mr-review@gitlab-mr-review-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

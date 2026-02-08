@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "HubbleNetwork",
+    "display_name": "Hubble Network",
+    "avatar_url": "https://avatars.githubusercontent.com/u/92760739?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "pyhubblenetwork",
+      "version": null,
+      "description": "Hubble Network IoT device tools and testing frameworks",
+      "repo_full_name": "HubbleNetwork/pyhubblenetwork",
+      "repo_url": "https://github.com/HubbleNetwork/pyhubblenetwork",
+      "repo_description": "Python library for developing, debugging, and testing Hubble network devices.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-03T01:11:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pyhubblenetwork\",\n  \"owner\": {\n    \"name\": \"HubbleNetwork\",\n    \"email\": \"support@hubble.network\"\n  },\n  \"metadata\": {\n    \"description\": \"Hubble Network IoT device tools and testing frameworks\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pyhubblenetwork\",\n      \"source\": \"./plugins/pyhubblenetwork\",\n      \"description\": \"Python SDK and CLI for communicating with Hubble Network IoT devices over Bluetooth Low Energy (BLE)\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"HubbleNetwork\",\n        \"email\": \"support@hubble.network\"\n      },\n      \"homepage\": \"https://github.com/HubbleNetwork/pyhubblenetwork\",\n      \"repository\": \"https://github.com/HubbleNetwork/pyhubblenetwork\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"iot\", \"bluetooth\", \"ble\", \"hubble\", \"testing\", \"provisioning\"]\n    }\n  ]\n}\n",
+        "README.md": "# pyhubblenetwork\n\n[![PyPI](https://img.shields.io/pypi/v/pyhubblenetwork.svg)](https://pypi.org/project/pyhubblenetwork)\n[![Python](https://img.shields.io/pypi/pyversions/pyhubblenetwork.svg)](https://pypi.org/project/pyhubblenetwork)\n[![License](https://img.shields.io/github/license/HubbleNetwork/pyhubblenetwork)](LICENSE)\n\n**pyhubblenetwork** is a Python SDK for communicating with Hubble Network devices over Bluetooth Low Energy (BLE) and securely relaying data to the Hubble Cloud. It provides a simple API for scanning, sending, and managing devices—no embedded firmware knowledge required.\n\n\n## Table of contents\n\n- [Quick links](#quick-links)\n- [Requirements & supported platforms](#requirements--supported-platforms)\n- [Installation](#installation)\n- [Quick start](#quick-start)\n- [CLI usage](#cli-usage)\n- [Configuration](#configuration)\n- [Public API (summary)](#public-api-summary)\n- [Development & tests](#development--tests)\n- [Troubleshooting](#troubleshooting)\n- [Releases & versioning](#releases--versioning)\n\n\n## Quick links\n\n- [PyPI](https://pypi.org/project/pyhubblenetwork/): `pip install pyhubblenetwork`\n- [Hubble official doc site](https://docs.hubble.com/docs/intro)\n- [Hubble embedded SDK](https://github.com/HubbleNetwork/sdk)\n\n\n## Requirements & supported platforms\n\n- Python **3.9+** (3.11/3.12 recommended)\n- BLE platform prerequisites (only needed if you use `ble.scan()`):\n  - **macOS**: CoreBluetooth; run in a regular user session (GUI).\n  - **Linux**: BlueZ required; user must have permission to access the BLE adapter (often `bluetooth` group).\n  - **Windows**: Requires a compatible BLE stack/adapter.\n\n## Installation\n\n### Users (stable release)\n\n```bash\npip install pyhubblenetwork\n# or install CLI into an isolated environment:\npipx install pyhubblenetwork\n```\n\n### Developers (editable install)\n\nFrom the repo root (recommended):\n\n```bash\ncd python\npython3 -m venv .venv && source .venv/bin/activate\npip install -e '.[dev]'\n```\n\n## Quick start\n\n### Scan locally, then ingest to backend\n\n```python\nfrom hubblenetwork import ble, Organization\n\norg = Organization(org_id=\"org_123\", api_token=\"sk_XXX\")\npkts = ble.scan(timeout=5.0)\nif len(pkts) > 0:\n    org.ingest_packet(pkts[0])\nelse:\n    print(\"No packet seen within timeout\")\n```\n\n### Manage devices and query packets\n\n```python\nfrom hubblenetwork import Organization\n\norg = Organization(org_id=\"org_123\", api_token=\"sk_XXX\")\n\n# Create a new device\nnew_dev = org.register_device()\nprint(\"new device id:\", new_dev.id)\n\n# List devices\nfor d in org.list_devices():\n    print(d.id, d.name)\n\n# Get packets from a device (returns a list of DecryptedPacket)\npackets = org.retrieve_packets(new_dev)\nif len(packets) > 0:\n    print(\"latest RSSI:\", packets[0].rssi, \"payload bytes:\", len(packets[0].payload))\n```\n\n### Local decryption (when you have the key)\n\n```python\nfrom hubblenetwork import Device, ble, decrypt\nfrom typing import Optional\n\ndev = Device(id=\"dev_abc\", key=b\"<secret-key>\")\n\npkts = ble.scan(timeout=5.0)  # might return a list or a single packet depending on API\nfor pkt in pkts:\n    maybe_dec = decrypt(dev.key, pkt)\n    if maybe_dec:\n        print(\"payload:\", maybe_dec.payload)\n    else:\n        print(\"failed to decrypt packet\")\n```\n\n## CLI usage (optional)\n\nIf installed, the `hubblenetwork` command is available:\n\n```bash\nhubblenetwork --help\nhubblenetwork ble scan\n```\n\n## Configuration\n\nSome functions read defaults from environment variables if not provided explicitly. Suggested variables:\n\n* `HUBBLE_ORG_ID` — default organization id\n* `HUBBLE_API_TOKEN` — API token (base64 encoded)\n\nExample:\n\n```bash\nexport HUBBLE_ORG_ID=org_123\nexport HUBBLE_API_TOKEN=sk_XXXX\n```\n\nYou can also pass org ID and API token into API calls.\n\n## Public API (summary)\n\nImport from the package top-level for a stable surface:\n\n```python\nfrom hubblenetwork import (\n    ble, cloud,\n    Organization, Device, Credentials, Environment,\n    EncryptedPacket, DecryptedPacket, Location,\n    decrypt, InvalidCredentialsError,\n)\n```\n\nKey objects & functions:\n\n* `Organization` provides credentials for performing cloud actions (e.g. registering devices, retrieving decrypted packets, retrieving devices, etc.)\n* `EncryptedPacket` a packet that has not been decrypted (can be decrypted locally given a key or ingested to the backend)\n* `DecryptedPacket` a packet that has been successfully decrypted either locally or by the backend.\n* `Location` data about where a packet was seen.\n* `ble.scan` function for locally scanning for devices with BLE.\n\nSee code for full details.\n\n## Development & tests\n\nSet up a virtualenv and install dev deps:\n\n```bash\ncd python\npython3 -m venv .venv\nsource .venv/bin/activate\npip install -e '.[dev]'\n```\n\nRun linters:\n\n```bash\nruff check src\n```\n\n## Troubleshooting\n\n* **`ble.scan()` finds nothing**: verify BLE permissions and adapter state; try increasing `timeout`.\n* **Auth errors**: confirm `Organization(org_id, api_token)` or env vars are set; check token scope/expiry.\n* **Import errors**: ensure you installed into the Python you’re running (`python -m pip …`). Prefer `pipx` for CLI-only usage.\n\n\n## Releases & versioning\n\n* Follows **SemVer** (MAJOR.MINOR.PATCH).\n* Tagged releases (e.g., `v0.2.0`) publish wheels/sdists to PyPI.\n* Release process: (add short steps for how to cut a release—tagging, CI release job, PyPI publish credentials).\n"
+      },
+      "plugins": [
+        {
+          "name": "pyhubblenetwork",
+          "source": "./plugins/pyhubblenetwork",
+          "description": "Python SDK and CLI for communicating with Hubble Network IoT devices over Bluetooth Low Energy (BLE)",
+          "version": "1.0.0",
+          "author": {
+            "name": "HubbleNetwork",
+            "email": "support@hubble.network"
+          },
+          "homepage": "https://github.com/HubbleNetwork/pyhubblenetwork",
+          "repository": "https://github.com/HubbleNetwork/pyhubblenetwork",
+          "license": "MIT",
+          "keywords": [
+            "iot",
+            "bluetooth",
+            "ble",
+            "hubble",
+            "testing",
+            "provisioning"
+          ],
+          "categories": [
+            "ble",
+            "bluetooth",
+            "hubble",
+            "iot",
+            "provisioning",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add HubbleNetwork/pyhubblenetwork",
+            "/plugin install pyhubblenetwork@pyhubblenetwork"
+          ]
+        }
+      ]
+    }
+  ]
+}

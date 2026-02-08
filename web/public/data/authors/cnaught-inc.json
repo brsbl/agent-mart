@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "CNaught-Inc",
+    "display_name": "CNaught",
+    "avatar_url": "https://avatars.githubusercontent.com/u/108447270?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cnaught-plugins",
+      "version": null,
+      "description": "Claude Code plugins by CNaught",
+      "repo_full_name": "CNaught-Inc/claude-code-plugins",
+      "repo_url": "https://github.com/CNaught-Inc/claude-code-plugins",
+      "repo_description": "Plugins for claude code",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-06T17:10:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"cnaught-plugins\",\n  \"description\": \"Claude Code plugins by CNaught\",\n  \"owner\": { \"name\": \"CNaught\" },\n  \"plugins\": [\n    {\n      \"name\": \"carbon\",\n      \"description\": \"Track and offset carbon emissions from your Claude Code usage\",\n      \"source\": \"./plugins/carbon\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        "README.md": "# CNaught Claude Code Plugins\n\nA monorepo of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugins by [CNaught](https://www.cnaught.com).\n\n## Plugins\n\n### Carbon Tracker (`plugins/carbon`)\n\nTrack and offset carbon emissions from your Claude Code usage. This plugin estimates the carbon footprint of your AI sessions and enables automatic carbon offset purchasing through CNaught.\n\n**Features:**\n\n- Estimates carbon emissions per Claude Code session based on token usage\n- Stores session data locally via SQLite\n- Syncs emission data to CNaught for offset purchasing (via OAuth)\n- Provides status line integration showing session carbon impact\n- Includes CLI scripts for setup, reporting, and syncing\n\n## Development\n\n### Prerequisites\n\n- [Bun](https://bun.sh/) v1.3.6+\n- Node.js 20+\n\n### Setup\n\n```bash\nbun install\n```\n\n### Commands\n\n```bash\nbun run build       # Build all plugins\nbun run test        # Run tests\nbun run typecheck   # Type-check all plugins\nbun run lint        # Lint all plugins\nbun run clean       # Clean build artifacts\n```\n\n### Project Structure\n\n```\n.claude-plugin/     # Plugin marketplace metadata\nplugins/\n  carbon/           # Carbon tracker plugin\n    src/            # Source code\n    dist/           # Built output (committed via CI)\n```\n\n### CI\n\nOn push to `main`, GitHub Actions will build, test, and auto-commit the `dist/` directories so plugins can be installed directly from the repo without a build step.\n",
+        "plugins/carbon/README.md": "# CNaught Carbon Tracker for Claude Code\n\nA Claude Code plugin that tracks carbon emissions from your AI usage and enables automatic carbon offset purchasing through CNaught.\n\n## Features\n\n- **Real-time tracking**: See your CO2 emissions in the status bar as you code\n- **Local storage**: All session data stored locally in SQLite\n- **Backend sync**: Optional integration with CNaught for automatic carbon offsetting\n- **Crash recovery**: Orphaned sessions are automatically recovered\n- **Detailed reports**: View your emissions by day, project, and model\n\n## Installation\n\n1. Clone or download this plugin to your Claude Code plugins directory\n2. Build the plugin: `bun run build`\n3. Run the setup command: `/carbon:setup`\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/carbon:setup` | Configure the plugin and install statusline |\n| `/carbon:status` | View current tracking statistics |\n| `/carbon:report` | Generate a 7-day emissions report |\n\n## How It Works\n\n### Carbon Calculation\n\nThe plugin uses the [ecologits.ai methodology](https://ecologits.ai/latest/methodology/llm_inference) to estimate carbon emissions:\n\n1. **Token counting**: Tracks input, output, and cache tokens from Claude Code transcripts\n2. **Energy calculation**: Converts tokens to Watt-hours using model-specific factors\n3. **CO2 estimation**: Applies carbon intensity (gCO2/kWh) and PUE factors\n\nModel energy factors (Wh per 1000 tokens):\n- Opus: 0.028-0.030 Wh\n- Sonnet: 0.012-0.015 Wh\n- Haiku: 0.005-0.006 Wh\n\n### Data Storage\n\nSession data is stored in SQLite at `~/.claude/carbon-tracker.db`:\n- Session ID and project path\n- Token counts (input, output, cache)\n- Energy consumption (Wh)\n- CO2 emissions (grams)\n- Sync status with backend\n\n### Hooks\n\nThe plugin uses three hooks:\n\n1. **session-start**: Initializes the database\n2. **stop**: Saves session data after each Claude response\n3. **session-end**: Recovers orphaned sessions and syncs to backend\n\n## Backend Integration\n\nTo enable automatic carbon offsetting:\n\n1. Get your API key from https://app.cnaught.com/settings/api\n2. Set the `CNAUGHT_API_KEY` environment variable\n3. Sessions will automatically sync to CNaught\n4. Configure auto-offset threshold in your CNaught dashboard\n\n## Environment Variables\n\n| Variable | Description | Required |\n|----------|-------------|----------|\n| `CNAUGHT_API_KEY` | Your CNaught API key for backend sync | Optional |\n| `CNAUGHT_API_ENDPOINT` | Custom API endpoint | Optional |\n\n## Development\n\n```bash\n# Install dependencies\nbun install\n\n# Build\nbun run build\n\n# Watch mode\nbun run watch\n\n# Type check\nbun run typecheck\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "carbon",
+          "description": "Track and offset carbon emissions from your Claude Code usage",
+          "source": "./plugins/carbon",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add CNaught-Inc/claude-code-plugins",
+            "/plugin install carbon@cnaught-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

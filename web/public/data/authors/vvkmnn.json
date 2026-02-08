@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "Vvkmnn",
+    "display_name": "V",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1954615?u=046faccebc39eaeecfb786054379b599a68c546d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-agora",
+      "version": null,
+      "description": "@vvkmnn's marketplace for Claude Code plugins - Roma Victrix",
+      "repo_full_name": "Vvkmnn/claude-agora",
+      "repo_url": "https://github.com/Vvkmnn/claude-agora",
+      "repo_description": "TBD",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T04:05:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-agora\",\n  \"description\": \"@vvkmnn's marketplace for Claude Code plugins - Roma Victrix\",\n  \"owner\": { \"name\": \"vvkmnn\" },\n  \"plugins\": [\n    {\n      \"name\": \"claude-praetorian\",\n      \"description\": \"Automatic context preservation hooks for praetorian MCP (saves 50-60% tokens)\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugins/claude-praetorian\",\n      \"author\": { \"name\": \"vvkmnn\" },\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/vvkmnn/claude-agora/tree/main/plugins/claude-praetorian\",\n      \"requires\": {\n        \"mcp\": \"claude-praetorian-mcp\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-agora\",\n  \"version\": \"0.1.0\",\n  \"description\": \"@vvkmnn's marketplace for Claude Code plugins - Roma Victrix\",\n  \"author\": { \"name\": \"vvkmnn\" },\n  \"repository\": \"https://github.com/vvkmnn/claude-agora\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# Claude Agora\n\nPlugin marketplace that wraps existing MCPs with advanced automation:\n- **Hooks** for automatic triggers\n- **Commands** for user convenience\n- **Skills** for Claude guidance\n\nNo code duplication - plugins prompt Claude to use existing MCP tools.\n\n## Available Plugins\n\n| Plugin | MCP Required | Description |\n|--------|--------------|-------------|\n| `claude-praetorian` | `claude-praetorian-mcp` | Automatic context preservation |\n| `historian-auto` | `claude-historian-mcp` | Session search automation (coming soon) |\n\n## Installation\n\n```bash\n# Install the marketplace plugin\nclaude install claude-agora v/claude-agora\n\n# Also add the required MCP to ~/.claude.json:\n\"mcpServers\": {\n  \"praetorian\": { \"command\": \"npx\", \"args\": [\"claude-praetorian-mcp\"] }\n}\n```\n\n## claude-praetorian\n\nWraps `claude-praetorian-mcp` with:\n\n**Hooks:**\n- **SessionStart**: Prompts to restore previous context\n- **PreCompact**: Forces save before context compaction\n- **PostToolUse**: Reminds to compact after WebFetch/Task\n\n**Commands:**\n- `/compact` - Save current context\n- `/restore` - Load previous context\n\n## Architecture\n\n```\n┌─────────────────────────────────────────────────┐\n│               claude-agora                       │\n│  ┌──────────────┐  ┌──────────────┐            │\n│  │praetorian-   │  │ historian-   │  ...       │\n│  │auto          │  │ auto         │            │\n│  │ - hooks      │  │ - hooks      │            │\n│  │ - commands   │  │ - commands   │            │\n│  └──────┬───────┘  └──────┬───────┘            │\n│         │ prompts          │ prompts            │\n│         ▼                  ▼                    │\n└─────────────────────────────────────────────────┘\n          │                  │\n          ▼                  ▼\n┌─────────────────┐  ┌─────────────────┐\n│praetorian-mcp   │  │ historian-mcp   │\n│(npm standalone) │  │ (npm standalone)│\n└─────────────────┘  └─────────────────┘\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-praetorian",
+          "description": "Automatic context preservation hooks for praetorian MCP (saves 50-60% tokens)",
+          "version": "1.0.0",
+          "source": "./plugins/claude-praetorian",
+          "author": {
+            "name": "vvkmnn"
+          },
+          "category": "productivity",
+          "homepage": "https://github.com/vvkmnn/claude-agora/tree/main/plugins/claude-praetorian",
+          "requires": {
+            "mcp": "claude-praetorian-mcp"
+          },
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Vvkmnn/claude-agora",
+            "/plugin install claude-praetorian@claude-agora"
+          ]
+        }
+      ]
+    }
+  ]
+}

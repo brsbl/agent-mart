@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "gestrich",
+    "display_name": "Bill",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3207996?u=8294b2f9e661fc3fe07d50bd5e98a9903dd44b2a&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bill-prradar",
+      "version": "1.0.0",
+      "description": "Claude Code plugin for AI-powered pull request reviews with rule-based analysis",
+      "repo_full_name": "gestrich/PRRadar",
+      "repo_url": "https://github.com/gestrich/PRRadar",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-05T11:42:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"bill-prradar\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude Code plugin for AI-powered pull request reviews with rule-based analysis\",\n  \"owner\": {\n    \"name\": \"Bill Gestrich\",\n    \"url\": \"https://github.com/gestrich\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"prradar\",\n      \"source\": \"./plugin\",\n      \"description\": \"AI-powered pull request review tool with chunked analysis and customizable rules\",\n      \"version\": \"1.0.0\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# PRRadar\n\nAn AI-powered pull request review tool that provides thorough, focused code reviews by breaking down changes and applying specialized review rules.\n\n## Overview\n\nPRRadar addresses a fundamental limitation of existing AI code review tools: they miss issues because they lack focus and specificity. This tool solves that by:\n\n1. **Chunking PRs into smaller pieces** - Breaking down changes into focused, reviewable segments\n2. **Rule-based reviews** - Each rule checks one specific thing with dedicated focus\n3. **Intelligent rule application** - Determines which rules apply to which code changes\n4. **Dedicated AI subagents** - Each rule gets its own sonnet-model subagent for focused analysis (mandatory, even for small diffs)\n5. **Scored reporting** - Violations are prioritized by severity\n\n## Architecture\n\nBuilt as a **Claude Code plugin** that can be used with any repository by providing rule files in the expected format. This makes it reusable and open-source-friendly.\n\nThe tool will operate in a pipeline:\n1. Fetch PR changes\n2. Break into reviewable chunks\n3. Filter applicable rules\n4. Execute focused reviews\n5. Generate prioritized report\n6. Allow manual filtering\n7. Post feedback to GitHub\n\n## Value Proposition\n\n- **Cost model**: Spending $1-5 per thorough PR review is acceptable for high-quality feedback\n- **Depth over speed**: More thorough than existing tools, catches issues they miss\n- **Customizable rules**: Define exactly what matters for your codebase\n- **Transparent and debuggable**: Each phase produces artifacts for inspection\n- **Scales expertise**: Codify senior engineer knowledge into reusable rules\n\n## Dependencies\n\n### Python Requirements\n- **Python 3.11 or higher**\n- No external Python packages required - uses only standard library modules\n\n### System Requirements\n- **git**: For repository operations\n- **gh** (GitHub CLI): For GitHub API interactions\n  - Install on macOS: `brew install gh`\n  - Other platforms: https://cli.github.com/\n\n### Installation\n\n#### As a Claude Code Plugin (Recommended)\n\nInstall PRRadar as a Claude Code plugin for easy access in any project:\n\n```bash\n# From Claude Code marketplace (when published)\n/plugin marketplace add gestrich/PRRadar\n/plugin install prradar@bill-prradar --scope project\n\n# Or for local development\nclaude --plugin-dir ~/path/to/PRRadar/plugin\n```\n\nOnce installed, use PRRadar with:\n\n```\n/pr-review [pr-number-or-commit] [rules-directory]\n```\n\nThe rules directory is **optional** - if not specified, PRRadar will look for a `code-review-rules` directory at the repository root.\n\nFor example:\n```\n/pr-review 123                              # Uses default code-review-rules/\n/pr-review 123 ./my-rules                   # Uses custom rules directory\n/pr-review https://github.com/owner/repo/pull/456\n```\n\n#### Direct Installation\n\nFor standalone use or development:\n\n```bash\n# Clone the repository\ngit clone https://github.com/gestrich/PRRadar.git\ncd PRRadar\n\n# Verify Python version\npython3 --version  # Should be 3.11+\n\n# Verify system dependencies\ngit --version\ngh --version\n\n# Test the CLI\npython3 -m scripts --help\n```\n\n## Rules\n\nRules are the core product of PRRadar. Each rule checks one specific thing with dedicated focus, making reviews more accurate and actionable.\n\n**How rules work:**\n- Each rule has a single responsibility - checking one specific pattern or practice\n- Rules include severity levels to prioritize feedback\n- Rules can link to documentation explaining the \"why\"\n- Rules are version controlled alongside your team's code standards\n- The system filters which rules apply to which code changes\n- Each applicable rule gets its own dedicated AI agent for focused review\n\nThe rule library becomes a living document of your team's code standards and best practices.\n"
+      },
+      "plugins": [
+        {
+          "name": "prradar",
+          "source": "./plugin",
+          "description": "AI-powered pull request review tool with chunked analysis and customizable rules",
+          "version": "1.0.0",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add gestrich/PRRadar",
+            "/plugin install prradar@bill-prradar"
+          ]
+        }
+      ]
+    }
+  ]
+}

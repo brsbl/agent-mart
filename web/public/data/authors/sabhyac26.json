@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "SabhyaC26",
+    "display_name": "Sabhya Chhabria",
+    "avatar_url": "https://avatars.githubusercontent.com/u/10785836?u=77d515627263e43a1d351129d13968f04053d6df&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-wrapped",
+      "version": null,
+      "description": "Claude Code Wrapped - Spotify Wrapped-style year-in-review for Claude Code",
+      "repo_full_name": "SabhyaC26/cc-wrapped",
+      "repo_url": "https://github.com/SabhyaC26/cc-wrapped",
+      "repo_description": "Claude Code Wrapped",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-15T17:17:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"owner\": {\n    \"name\": \"sabhyachhabria\"\n  },\n  \"name\": \"cc-wrapped\",\n  \"description\": \"Claude Code Wrapped - Spotify Wrapped-style year-in-review for Claude Code\",\n  \"plugins\": [\n    {\n      \"name\": \"cc-wrapped\",\n      \"source\": \"./plugin\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Spotify Wrapped-style year-in-review for Claude Code - visualize your coding activity, patterns, and insights\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Wrapped\n\nYou already know what it is :p\n\n## Installation\n\n```bash\nclaude plugin marketplace add SabhyaC26/cc-wrapped\nclaude plugin install cc-wrapped\n```\n\n### Troubleshooting Installation\n\nIf you encounter an `EXDEV: cross-device link not permitted` error during installation, this is a known issue when `/tmp` and your home directory are on different filesystems. Use this manual installation workaround:\n\n```bash\n# Clone the repository directly to the plugins directory\ngit clone https://github.com/SabhyaC26/cc-wrapped.git ~/.claude/plugins/installed/cc-wrapped\n\n# Install dependencies\ncd ~/.claude/plugins/installed/cc-wrapped/plugin\nnpm install\n\n# Install web UI dependencies\ncd web\nbun install  # or npm install\n```\n\nAfter manual installation, restart Claude Code and the `/cc-wrapped:wrapped` command should be available.\n\n## Usage\n\nRun the `/cc-wrapped:wrapped` command with optional time period:\n\n```bash\n# Current year (default)\n/cc-wrapped:wrapped\n\n# Last 30 days\n/cc-wrapped:wrapped month\n\n# Last 7 days\n/cc-wrapped:wrapped week\n\n# All-time stats\n/cc-wrapped:wrapped all\n\n# Specific year\n/cc-wrapped:wrapped 2025\n```\n\n## Data Sources\n\nClaude Code Wrapped analyzes data from:\n\n- `~/.claude/stats-cache.json` - Activity metrics, model usage, hour distribution\n- `~/.claude/history.jsonl` - Command history and project activity\n\nNo background tracking required - all analysis is done on-demand!\n\n## Requirements\n\n- Node.js 14+\n- Claude Code CLI\n- Active Claude Code usage (to have data to analyze)\n\n## Development\n\n### Project Structure\n\n```\ncc-wrapped/\n├── plugin/\n│   ├── .claude-plugin/\n│   │   └── plugin.json           # Plugin metadata\n│   ├── commands/\n│   │   └── wrapped.md            # /wrapped command definition\n│   ├── scripts/\n│   │   ├── wrapped-analyzer.js   # Main entry point\n│   │   ├── data-parser.js        # Parse stats and history\n│   │   ├── metrics-calculator.js # Calculate all metrics\n│   │   └── ui-renderer.js        # Terminal UI rendering\n│   └── lib/\n│       ├── chart-generator.js    # ASCII chart utilities\n│       └── date-utils.js         # Time range filtering\n├── package.json\n└── README.md\n```\n\n### Running Locally\n\n```bash\n# Install dependencies\nnpm install\n\n# Run directly\nnode plugin/scripts/wrapped-analyzer.js --period all\n\n# Make executable\nchmod +x plugin/scripts/wrapped-analyzer.js\n./plugin/scripts/wrapped-analyzer.js --period week\n```\n\n### Testing Different Time Periods\n\n```bash\n# Test all-time stats\nnode plugin/scripts/wrapped-analyzer.js --period all\n\n# Test current year\nnode plugin/scripts/wrapped-analyzer.js --period year\n\n# Test last 30 days\nnode plugin/scripts/wrapped-analyzer.js --period month\n\n# Test last week\nnode plugin/scripts/wrapped-analyzer.js --period week\n\n# Test specific year\nnode plugin/scripts/wrapped-analyzer.js --period 2025\n```\n\n## Contributing\n\nContributions welcome! Please feel free to submit issues and pull requests.\n\n## License\n\nMIT\n",
+        "plugin/README.md": "# Claude Code Wrapped Plugin\n\nSpotify Wrapped-style year-in-review for Claude Code! Visualize your coding activity, patterns, and insights with beautiful terminal UI.\n\n## Features\n\n- **Activity Metrics**: Messages, sessions, tool calls, and activity timeline\n- **Time Analytics**: Peak coding hours, coding persona (Night Owl, Morning Architect, etc.), busiest day\n- **Model Usage**: Preferred model (Opus vs Sonnet), token usage, cache efficiency\n- **Command Analytics**: Top slash commands, command diversity, most active project\n- **Special Achievements**: Unlock achievements like Marathon Coder, Consistency Champion, and more\n- **Interactive Terminal UI**: Beautiful boxed cards with colors and ASCII charts\n\n## Installation\n\n```bash\nclaude plugin marketplace add SabhyaC26/cc-wrapped\nclaude plugin install cc-wrapped\n```\n\n## Usage\n\nRun the `/cc-wrapped:wrapped` command with optional time period:\n\n```bash\n# Current year (default)\n/cc-wrapped:wrapped\n\n# Last 30 days\n/cc-wrapped:wrapped month\n\n# Last 7 days\n/cc-wrapped:wrapped week\n\n# All-time stats\n/cc-wrapped:wrapped all\n\n# Specific year\n/cc-wrapped:wrapped 2024\n```\n\n## Data Sources\n\nClaude Code Wrapped analyzes data from:\n\n- `~/.claude/stats-cache.json` - Activity metrics, model usage, hour distribution\n- `~/.claude/history.jsonl` - Command history and project activity\n\nNo background tracking required - all analysis is done on-demand!\n\n## File Structure\n\n```\nplugin/\n├── commands/\n│   └── wrapped.md          # Slash command definition\n├── scripts/\n│   ├── wrapped-analyzer.js # Main entry point\n│   ├── data-parser.js      # Stats data loading\n│   ├── metrics-calculator.js # Metrics computation\n│   └── ui-renderer.js      # Terminal UI rendering\n└── lib/\n    ├── chart-generator.js  # ASCII chart utilities\n    └── date-utils.js       # Date parsing helpers\n```\n\n## Development\n\nSee the main repository README for development instructions.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cc-wrapped",
+          "source": "./plugin",
+          "version": "1.0.0",
+          "description": "Spotify Wrapped-style year-in-review for Claude Code - visualize your coding activity, patterns, and insights",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add SabhyaC26/cc-wrapped",
+            "/plugin install cc-wrapped@cc-wrapped"
+          ]
+        }
+      ]
+    }
+  ]
+}
