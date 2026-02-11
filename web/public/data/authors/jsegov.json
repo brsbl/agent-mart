@@ -1,0 +1,72 @@
+{
+  "author": {
+    "id": "jsegov",
+    "display_name": "segov",
+    "avatar_url": "https://avatars.githubusercontent.com/u/94094853?u=258915ecf82018545ece32be6918c7f1577881c2&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "shipspec-marketplace",
+      "version": "1.0.0",
+      "description": "ShipSpec: Spec-driven development for Claude Code. Ship bigger features with confidence.",
+      "repo_full_name": "jsegov/shipspec-claude-code-plugin",
+      "repo_url": "https://github.com/jsegov/shipspec-claude-code-plugin",
+      "repo_description": "Spec Driven Development Plugin for Claude Code",
+      "signals": {
+        "stars": 8,
+        "forks": 0,
+        "pushed_at": "2026-01-14T01:50:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"shipspec-marketplace\",\n  \"version\": \"1.0.0\",\n  \"description\": \"ShipSpec: Spec-driven development for Claude Code. Ship bigger features with confidence.\",\n  \"owner\": {\n    \"name\": \"jsegov\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"shipspec\",\n      \"description\": \"Spec-driven development for Claude Code. Plan bigger features with persistent PRDs, technical designs, and implementation tasks that keep your AI coding agent on track across sessions.\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"ShipSpec\"\n      },\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/jsegov/shipspec-claude-code-plugin.git\"\n      },\n      \"category\": \"development\",\n      \"homepage\": \"https://github.com/jsegov/shipspec-claude-code-plugin\",\n      \"keywords\": [\n        \"planning\",\n        \"prd\",\n        \"design\",\n        \"tasks\",\n        \"agents\",\n        \"production\",\n        \"security\",\n        \"compliance\",\n        \"soc2\",\n        \"code-analysis\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"shipspec\",\n  \"description\": \"Spec-driven development for big features. When features get too big, plan mode gets too vague—leading to hallucinations during implementation. ShipSpec replaces vague plans with structured PRDs, technical designs, and ordered tasks that keep Claude grounded.\",\n  \"version\": \"1.1.0\",\n  \"author\": {\n    \"name\": \"ShipSpec\"\n  },\n  \"repository\": \"https://github.com/jsegov/shipspec-claude-code-plugin\",\n  \"keywords\": [\n    \"planning\",\n    \"prd\",\n    \"design\",\n    \"tasks\",\n    \"agents\",\n    \"production\",\n    \"security\",\n    \"compliance\",\n    \"soc2\",\n    \"code-analysis\"\n  ]\n}\n",
+        "README.md": "# ShipSpec Claude Code Plugin\n\n**Spec-driven development meets the Ralph Wiggum loop.**\n\nTwo problems plague AI-assisted coding:\n\n1. **Vibe coding** — Throwing prompts at Claude without structure. It makes plausible-sounding but wrong assumptions. The bigger the feature, the more it drifts.\n\n2. **Giving up too early** — Claude does its best attempt, exits, and you're left debugging half-finished work.\n\nShipSpec solves both. Specs keep Claude grounded. Ralph loops keep Claude iterating until it's actually done.\n\n## How It Works\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                     THE SPEC SIDE                           │\n│                                                             │\n│   Feature Idea                                              │\n│        ↓                                                    │\n│   PRD (what to build + numbered requirements)               │\n│        ↓                                                    │\n│   SDD (how to build it + architecture decisions)            │\n│        ↓                                                    │\n│   TASKS.json (ordered work + acceptance criteria)           │\n└─────────────────────────────────────────────────────────────┘\n\n┌─────────────────────────────────────────────────────────────┐\n│                    THE RALPH SIDE                           │\n│                                                             │\n│   while task_not_verified:                                  │\n│       implement(task)                                       │\n│       verify(acceptance_criteria)                           │\n│       if failed: retry with feedback                        │\n└─────────────────────────────────────────────────────────────┘\n```\n\n**Together:** Each task carries its requirements, design context, and verification criteria. The Ralph loop keeps running until those criteria pass. Claude can't drift because the spec is always there. It can't give up because the loop keeps it going.\n\n## Why ShipSpec?\n\n| Problem | Solution |\n|---------|----------|\n| Vibe coding makes Claude drift | Structured PRD with numbered requirements |\n| Claude forgets original intent | Requirements linked to every task |\n| Architecture decisions get contradicted | SDD documents design choices upfront |\n| Claude gives up on first attempt | Ralph loops retry until verified |\n\n## Features\n\n- **Conversational PRD Gathering**: Structured interview to extract clear requirements\n- **Codebase-Aware Design**: Technical designs grounded in your existing architecture\n- **Agent-Ready Tasks**: Implementation tasks with detailed prompts for coding agents\n- **Built-in Verification**: Each task is verified against acceptance criteria before moving on\n\n## Installation\n\n```bash\n/plugin marketplace add jsegov/shipspec-claude-code-plugin\n/plugin install shipspec@shipspec-marketplace\n```\n\n## Usage\n\n### Quick Start\n\n```bash\n# Start planning a new feature with a description (or run interactively)\n/feature-planning \"Add user authentication with OAuth2 and session management\"\n/feature-planning                  # prompts for description interactively\n\n# Implement tasks one by one (or specify a task ID)\n/implement-task user-auth-oauth2\n/implement-task user-auth-oauth2 3  # implement specific task\n```\n\n### Full Feature Planning Workflow\n\nRun `/feature-planning` with a description to go through the complete planning workflow:\n\n```\n/feature-planning \"Add user authentication with OAuth2 and session management\"\n```\n\nThe command auto-generates a directory name (e.g., `user-auth-oauth2`) and guides you through 7 phases:\n\n1. **Feature Description** - Gather or confirm the feature description, auto-generate directory name\n\n2. **Setup** - Creates `.shipspec/planning/<generated-name>/` and extracts codebase context\n\n3. **Requirements Gathering** - Interactive Q&A with the PRD Gatherer agent about:\n   - The problem you're solving\n   - Target users\n   - Must-have vs nice-to-have features\n   - Technical constraints\n\n4. **PRD Generation** - Creates structured PRD with numbered requirements\n   - *Pauses for your review and approval*\n\n5. **Technical Decisions** - Interactive Q&A about:\n   - Infrastructure preferences (databases, caching, queues)\n   - Framework and library choices\n   - Deployment and scaling considerations\n\n6. **SDD Generation** - Creates technical design document with:\n   - Architecture decisions\n   - API specifications\n   - Data models\n   - Component designs\n   - *Pauses for your review and approval*\n\n7. **Task Generation** - Automatically creates implementation tasks with:\n   - Story point estimates\n   - Dependencies\n   - Detailed agent prompts\n   - Acceptance criteria\n\n## Output Structure\n\nAfter completing the feature planning workflow:\n\n```\n.shipspec/planning/your-feature/\n├── PRD.md       # Product Requirements Document\n├── SDD.md       # Software Design Document\n└── TASKS.md     # Implementation tasks with agent prompts\n```\n\nNote: A temporary `context.md` file is created during planning but automatically cleaned up after task generation.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/feature-planning [description]` | Run complete planning workflow - provide description inline or interactively |\n| `/implement-task <feature-dir> [task-id]` | Implement a specific task or the next available task from TASKS.md |\n| `/implement-feature <feature-dir>` | Automatically implement all tasks end-to-end with final review |\n\n## Agents\n\n| Agent | Purpose | Auto-Invoked When |\n|-------|---------|-------------------|\n| `prd-gatherer` | Requirements elicitation | Planning features, writing specs |\n| `design-architect` | Technical design | Architecture decisions, API design |\n| `task-planner` | Task decomposition | Breaking down features |\n| `task-verifier` | Verify task completion | Running /implement-task or /implement-feature |\n\n## Skills\n\n| Skill | Purpose |\n|-------|---------|\n| `codebase-context` | Extract tech stack and patterns |\n| `prd-template` | PRD structure and best practices |\n| `sdd-template` | Atlassian 8-section design template |\n| `agent-prompts` | Task prompt generation patterns |\n\n## Requirement Numbering\n\nRequirements follow a consistent numbering scheme:\n\n| Range | Category |\n|-------|----------|\n| REQ-001 to REQ-009 | Core Features |\n| REQ-010 to REQ-019 | User Interface |\n| REQ-020 to REQ-029 | Data & Storage |\n| REQ-030 to REQ-039 | Integration |\n| REQ-040 to REQ-049 | Performance |\n| REQ-050 to REQ-059 | Security |\n\n## Task Sizing\n\nTasks use Fibonacci story points:\n\n| Points | Description | Duration |\n|--------|-------------|----------|\n| 1 | Trivial | < 2 hours |\n| 2 | Small | 2-4 hours |\n| 3 | Medium | 4-8 hours |\n| 5 | Large | 1-2 days |\n| 8 | Complex | 2-3 days |\n\nTasks larger than 8 points are automatically broken down.\n\n## Implementation Workflow\n\nAfter planning is complete, use this workflow to implement tasks:\n\n### Manual Task-by-Task\n```\n/implement-task my-feature         # Start next available task (marks it [~])\n        ↓\n   Implement the task              # Write the code\n        ↓\n/implement-task my-feature         # Verify and move to next task\n        ↓\n   ┌────┴────┐\n   │ Passed? │\n   └────┬────┘\n   Yes: Task marked [x], shows next task\n   No:  Shows issues to fix, re-run after fixing\n```\n\n### Automatic Full Feature\n```\n/implement-feature my-feature      # Implement ALL tasks automatically\n```\n\nThe `/implement-feature` command implements all tasks and runs a comprehensive final review that validates:\n1. **Acceptance Criteria** - All criteria from every task are met\n2. **Design Alignment** - Implementation follows SDD sections\n3. **Requirements Coverage** - All PRD requirements are satisfied\n\n## Tips\n\n- **Use `/feature-planning` for full workflow**: Single command runs requirements → PRD → SDD → tasks\n- **Review at each gate**: The workflow pauses after PRD and SDD for your review\n- **Use `/implement-task` to work through tasks manually**: Tracks progress and verifies completion\n- **Use `/implement-feature` for automation**: Implements all tasks and runs comprehensive final review\n\n## Inspiration\n\nShipSpec combines two ideas:\n- [Spec-driven development](https://www.atlassian.com/blog/developer/spec-driven-development-with-rovo-dev) — Planning with PRDs and SDDs before execution\n- [The Ralph Wiggum loop](https://ghuntley.com/ralph/) — Iterative loops that keep going until the work is done\n\n## Issues & Feedback\n\nFound a bug or have a suggestion? [Submit an issue](https://github.com/jsegov/shipspec-claude-code-plugin/issues)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "shipspec",
+          "description": "Spec-driven development for Claude Code. Plan bigger features with persistent PRDs, technical designs, and implementation tasks that keep your AI coding agent on track across sessions.",
+          "version": "1.1.0",
+          "author": {
+            "name": "ShipSpec"
+          },
+          "source": {
+            "source": "url",
+            "url": "https://github.com/jsegov/shipspec-claude-code-plugin.git"
+          },
+          "category": "development",
+          "homepage": "https://github.com/jsegov/shipspec-claude-code-plugin",
+          "keywords": [
+            "planning",
+            "prd",
+            "design",
+            "tasks",
+            "agents",
+            "production",
+            "security",
+            "compliance",
+            "soc2",
+            "code-analysis"
+          ],
+          "categories": [
+            "agents",
+            "code-analysis",
+            "compliance",
+            "design",
+            "development",
+            "planning",
+            "prd",
+            "production",
+            "security",
+            "soc2",
+            "tasks"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jsegov/shipspec-claude-code-plugin",
+            "/plugin install shipspec@shipspec-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

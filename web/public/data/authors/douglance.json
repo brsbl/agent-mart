@@ -6,35 +6,51 @@
   },
   "marketplaces": [
     {
-      "name": "devsql",
+      "name": "nib-plugins",
       "version": null,
-      "description": "Query your Claude Code history with SQL. Analyze conversations, commits, and productivity patterns.",
-      "repo_full_name": "douglance/devsql",
-      "repo_url": "https://github.com/douglance/devsql",
-      "repo_description": null,
+      "description": "Screenshot annotation tool that bridges human visual thinking with AI comprehension",
+      "repo_full_name": "douglance/nib",
+      "repo_url": "https://github.com/douglance/nib",
+      "repo_description": "Native screenshot annotation tool with QML semantic protocol",
       "signals": {
-        "stars": 33,
-        "forks": 1,
-        "pushed_at": "2025-12-26T17:21:02Z"
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-06T19:36:09Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"devsql\",\n  \"owner\": {\n    \"name\": \"Doug Lance\",\n    \"url\": \"https://github.com/douglance\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"devsql\",\n      \"source\": \"./plugin\",\n      \"description\": \"Query your Claude Code history with SQL. Analyze conversations, commits, and productivity patterns.\",\n      \"version\": \"0.1.2\",\n      \"author\": {\n        \"name\": \"Doug Lance\"\n      }\n    }\n  ]\n}\n",
-        "README.md": "# DevSQL\n\n**Query your AI coding history to become a better prompter.**\n\nDevSQL lets you analyze your Claude Code conversations alongside your Git commits. Find your most productive prompts, identify patterns in successful coding sessions, and learn what actually works for you.\n\n## Why?\n\nYour `~/.claude/` folder contains a goldmine of data: every prompt you've written, every tool Claude used, every conversation that led to shipped code. DevSQL turns that into queryable insights.\n\n**Ask questions like:**\n- \"Which of my prompts led to the most commits?\"\n- \"What patterns do my successful coding sessions have?\"\n- \"When do I struggle most—and what prompts help me recover?\"\n- \"Which tools does Claude use most when I'm productive?\"\n\n## What You Can Do\n\n### Find Your Most Productive Prompts\n```bash\n# See which prompts preceded commits\ndevsql \"SELECT h.display as prompt, COUNT(c.id) as commits_after\nFROM history h\nLEFT JOIN commits c ON DATE(datetime(h.timestamp/1000, 'unixepoch')) = DATE(c.authored_at)\nGROUP BY h.display\nHAVING commits_after > 0\nORDER BY commits_after DESC\nLIMIT 20\"\n```\n\n### Identify Struggle Sessions\n```bash\n# High prompt count + few commits = struggling\ndevsql \"SELECT\n  DATE(datetime(h.timestamp/1000, 'unixepoch')) as day,\n  COUNT(*) as prompts,\n  COUNT(DISTINCT c.id) as commits,\n  CAST(COUNT(*) AS FLOAT) / MAX(1, COUNT(DISTINCT c.id)) as struggle_ratio\nFROM history h\nLEFT JOIN commits c ON DATE(datetime(h.timestamp/1000, 'unixepoch')) = DATE(c.authored_at)\nGROUP BY day\nORDER BY struggle_ratio DESC\nLIMIT 10\"\n```\n\n### Analyze Your Prompting Patterns\n```bash\n# What tools correlate with productivity?\nccql \"SELECT tool_name, COUNT(*) as uses\nFROM transcripts\nWHERE type = 'tool_use'\nGROUP BY tool_name\nORDER BY uses DESC\"\n```\n\n### Train Your AI Agent\nTell Claude Code to query your history:\n\n> \"Use devsql to find my 10 most effective prompts from the past month—the ones that led to commits the same day. Then analyze what they have in common.\"\n\n> \"Query my Claude history to find sessions where I used many prompts but made few commits. What was I struggling with?\"\n\n> \"Find patterns in my successful refactoring sessions using devsql.\"\n\n## Installation\n\n### Claude Code Plugin (Recommended)\n\nInstall the plugin to use devsql directly within Claude Code:\n\n```\n/plugin marketplace add douglance/devsql\n/plugin install devsql@devsql\n```\n\nRestart Claude Code to load the plugin. The plugin auto-installs the devsql binary on first use.\n\n**Usage:**\n- `/devsql:query SELECT * FROM history LIMIT 10` - Direct SQL queries\n- Or just ask Claude: \"Show my most productive prompts from last week\"\n\n### Homebrew (macOS/Linux)\n```bash\nbrew install douglance/tap/devsql\n```\n\n### Direct Download\nDownload from [GitHub Releases](https://github.com/douglance/devsql/releases) for macOS or Linux.\n\n### Build from Source\n```bash\ngit clone https://github.com/douglance/devsql.git\ncd devsql && cargo install --path crates/devsql\n```\n\n## The Three Tools\n\n| Tool | What It Queries |\n|------|-----------------|\n| `ccql` | Your Claude Code data (~/.claude/) |\n| `vcsql` | Your Git repositories |\n| `devsql` | Both together—join conversations with commits |\n\n## Available Tables\n\n**Claude Code**: `history` (your prompts), `transcripts` (full conversations), `todos` (tasks)\n\n**Git**: `commits`, `branches`, `tags`, `diffs`, `diff_files`, `blame`\n\n## License\n\nMIT\n",
-        "plugin/README.md": "# DevSQL Claude Code Plugin\n\nQuery your Claude Code history with SQL, right from Claude Code.\n\n## Installation\n\n```\n/plugin marketplace add douglance/devsql\n/plugin install devsql@devsql\n```\n\nRestart Claude Code to load the plugin.\n\nThe plugin auto-installs the `devsql` binary via Homebrew on first session start.\n\n## Usage\n\n### Slash Command\n\n```\n/devsql:query SELECT * FROM history LIMIT 10\n```\n\n### Natural Language\n\nJust ask Claude about your history:\n- \"How many Claude sessions did I have this week?\"\n- \"Which prompts led to the most commits?\"\n- \"Show my productivity patterns\"\n\nClaude will automatically use devsql to answer.\n\n## Available Tables\n\n### Claude Code\n- `history` - Your prompts\n- `transcripts` - Full conversations\n- `todos` - Todo items\n- `projects` - Project contexts\n\n### Git\n- `commits` - Commit history\n- `branches` - Branch info\n- `diffs` - File changes\n- `blame` - Line attribution\n\n## Examples\n\n```sql\n-- Recent prompts\nSELECT display as prompt, project\nFROM history ORDER BY timestamp DESC LIMIT 10\n\n-- Commits correlated with Claude sessions\nSELECT date(c.authored_at) as day, COUNT(*) as commits\nFROM commits c\nJOIN history h ON date(c.authored_at) = date(datetime(h.timestamp/1000, 'unixepoch'))\nGROUP BY day\n\n-- Most active days\nSELECT date(datetime(timestamp/1000, 'unixepoch')) as day, COUNT(*) as prompts\nFROM history\nGROUP BY day ORDER BY prompts DESC LIMIT 7\n\n-- Which prompts led to commits?\nSELECT h.display as prompt, COUNT(c.id) as commits_after\nFROM history h\nJOIN commits c ON date(datetime(h.timestamp/1000, 'unixepoch')) = date(c.authored_at)\nGROUP BY h.display\nORDER BY commits_after DESC LIMIT 10\n```\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nib-plugins\",\n  \"owner\": {\n    \"name\": \"Doug Lance\",\n    \"url\": \"https://github.com/douglance\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nib\",\n      \"source\": \"./\",\n      \"description\": \"Screenshot annotation tool that bridges human visual thinking with AI comprehension\",\n      \"version\": \"0.1.2\",\n      \"author\": {\n        \"name\": \"Doug Lance\"\n      },\n      \"homepage\": \"https://github.com/douglance/nib\",\n      \"repository\": \"https://github.com/douglance/nib\",\n      \"license\": \"Commercial\",\n      \"keywords\": [\"screenshot\", \"annotation\", \"image\", \"ocr\", \"visual\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"nib\",\n  \"version\": \"0.1.2\",\n  \"description\": \"Screenshot annotation tool that bridges human visual thinking with AI comprehension\",\n  \"author\": {\n    \"name\": \"Doug Lance\",\n    \"url\": \"https://github.com/douglance\"\n  },\n  \"homepage\": \"https://github.com/douglance/nib\",\n  \"repository\": \"https://github.com/douglance/nib\",\n  \"license\": \"Commercial\",\n  \"keywords\": [\"screenshot\", \"annotation\", \"image\", \"ocr\", \"visual\"],\n  \"mcpServers\": \"./mcp.json\"\n}\n",
+        "README.md": "# Nib\n\nFast, native screenshot annotation tool with semantic visual communication.\n\nNib bridges human visual thinking with AI comprehension using QML (Quick Markup Language) - a semantic annotation protocol where every annotation type has defined meaning.\n\n## Installation\n\n### macOS (Homebrew)\n\n```bash\nbrew install douglance/tap/nib\n```\n\n### Download Binary\n\nDownload the latest release for your platform from the [Releases](https://github.com/douglance/nib/releases) page.\n\n### Build from Source\n\nRequires Rust 1.75+\n\n```bash\ngit clone https://github.com/douglance/nib.git\ncd nib\ncargo build --release\n```\n\nBinary will be at `target/release/nib`.\n\n## Quick Start\n\n```bash\n# Capture a screen region\nnib capture\n\n# Open GUI editor\nnib gui image.png\n\n# Add annotation via CLI\nnib add-annotation image.png -t rectangle -x 100 -y 100 -w 200 -H 50 -c \"#ff0000\"\n\n# Render annotations onto image\nnib render image.png\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `capture` | Capture screen region interactively |\n| `gui <image>` | Open GUI annotation editor |\n| `add-annotation` | Add annotation headlessly |\n| `remove-annotation` | Remove annotation by ID |\n| `clear-annotations` | Remove all annotations |\n| `render` | Bake annotations into image |\n| `read` | Extract QML from annotated image |\n| `validate` | Check QML syntax validity |\n| `find-text` | OCR text search in image |\n| `grid` | Add coordinate grid overlay |\n| `feedback` | Wait for human annotation feedback (opens GUI, returns JSON) |\n| `watch` | Watch a .nib file for annotation changes |\n| `list` | List recent captures |\n| `info` | Show image and annotation details |\n\n## CLI Annotation Workflow\n\n```bash\n# 1. Capture screenshot\nnib capture -o shot.png\n\n# 2. Add annotation\nnib add-annotation shot.png -t rectangle -x 100 -y 100 -w 50 -H 30 -c \"#ff0000\"\n# Output: Added annotation [a1] rectangle at (100, 100)\n\n# 3. Render to see result\nnib render shot.png\n# Output: shot.rendered.png\n\n# 4. If wrong, remove and retry\nnib remove-annotation shot.png a1\n\n# 5. When done, clear all if needed\nnib clear-annotations shot.png\n```\n\n## Image-First Feedback Loop (Fast)\n\nNib is designed for image-based communication. After each annotation event, the agent must inspect the image (zoom first, then full if unclear).\n\n```bash\n# Wait for human feedback (opens GUI, exits on first annotation)\nnib feedback shot.png -t 120\n\n# Zoom in around the annotation (x1,y1,x2,y2)\nnib grid shot.rendered.png --region \"1900,650,2300,850\" -o shot.zoom.png\n```\n\n## Annotation Types\n\n| Category | Types |\n|----------|-------|\n| **Attention** | Arrow, Star, Circle, Box, Question |\n| **Spatial** | Squeeze, Expand, Align, Width, Height |\n| **Judgment** | Good, Bad, Warning, Priority |\n| **Action** | Remove, Add, Swap, Move, Duplicate |\n| **Content** | Text, Color, Typography |\n| **Flow** | Sequence, Connects |\n\n## OCR Text Search\n\n```bash\n# Find text in image\nnib find-text image.png -s \"search term\"\n\n# Highlight all detected text\nnib find-text image.png --highlight --color \"#ffff0080\"\nnib render image.png -o highlighted.png\n```\n\n## Grid Overlay\n\n```bash\n# Visual grid for coordinate reference\nnib grid image.png --spacing 100 -o grid.png\n\n# JSON metadata output\nnib grid image.png --spacing 100 --json\n```\n\n## File Format\n\nNib uses `.nib` files - SQLite databases containing:\n- Original image data\n- Annotations in QML format\n- Metadata and history\n\nAnnotations can also be stored as sidecar `.annotations.json` files for PNG/JPEG images.\n\n## Platform Support\n\n- **macOS** - Full support (primary target)\n- **Linux** - Supported\n- **Windows** - Supported\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
-          "name": "devsql",
-          "source": "./plugin",
-          "description": "Query your Claude Code history with SQL. Analyze conversations, commits, and productivity patterns.",
+          "name": "nib",
+          "source": "./",
+          "description": "Screenshot annotation tool that bridges human visual thinking with AI comprehension",
           "version": "0.1.2",
           "author": {
             "name": "Doug Lance"
           },
-          "categories": [],
+          "homepage": "https://github.com/douglance/nib",
+          "repository": "https://github.com/douglance/nib",
+          "license": "Commercial",
+          "keywords": [
+            "screenshot",
+            "annotation",
+            "image",
+            "ocr",
+            "visual"
+          ],
+          "categories": [
+            "annotation",
+            "image",
+            "ocr",
+            "screenshot",
+            "visual"
+          ],
           "install_commands": [
-            "/plugin marketplace add douglance/devsql",
-            "/plugin install devsql@devsql"
+            "/plugin marketplace add douglance/nib",
+            "/plugin install nib@nib-plugins"
           ]
         }
       ]

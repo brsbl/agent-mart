@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "kettleofketchup",
+    "display_name": "KettleOfKetchup",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9112707?u=2c5d3e95f9075a4cdd929928b8e372f56100f73d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-just-interceptor",
+      "version": null,
+      "description": "Intercepts raw CLI commands and redirects to project-standard just recipes",
+      "repo_full_name": "kettleofketchup/claude-just-interceptor",
+      "repo_url": "https://github.com/kettleofketchup/claude-just-interceptor",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-08T15:51:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-just-interceptor\",\n  \"description\": \"Intercepts raw CLI commands and redirects to project-standard just recipes\",\n  \"owner\": {\n    \"name\": \"kettleofketchup\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"just-interceptor\",\n      \"description\": \"Intercepts raw CLI commands and redirects to project-standard just recipes\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"kettleofketchup\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"just-interceptor\",\n  \"description\": \"Intercepts raw CLI commands and redirects to project-standard just recipes\",\n  \"author\": {\n    \"name\": \"kettleofketchup\"\n  },\n  \"homepage\": \"https://github.com/kettleofketchup/claude-just-interceptor\",\n  \"version\": \"1.0.0\"\n}\n",
+        "README.md": "# just-interceptor\n\nClaude Code plugin that intercepts raw CLI commands and redirects to project-standard [just](https://github.com/casey/just) recipes.\n\nWhen Claude tries to run `npm install`, `docker compose up`, or any command you've mapped, the hook denies it and tells Claude to use the corresponding `just` recipe instead.\n\n## Install\n\nAdd the marketplace and install:\n\n```\n/plugin marketplace add kettleofketchup/claude-just-interceptor\n/plugin install just-interceptor@claude-just-interceptor\n```\n\n## Project Setup\n\nCreate `.claude/just-interceptor.json` in your project root with command mappings:\n\n```json\n{\n  \"redirects\": [\n    {\n      \"category\": \"npm\",\n      \"enabled\": true,\n      \"pattern\": \"^npm install\",\n      \"just_command\": \"just npm::install\",\n      \"reason\": \"Project-standard npm install with correct working directory\"\n    },\n    {\n      \"category\": \"docker\",\n      \"enabled\": true,\n      \"pattern\": \"^docker compose up\",\n      \"just_command\": \"just docker::up\",\n      \"reason\": \"Uses project-specific compose configuration\"\n    }\n  ]\n}\n```\n\n## Config Fields\n\n| Field | Type | Description |\n|-------|------|-------------|\n| `category` | string | Grouping label shown in the redirect message |\n| `enabled` | boolean | Set `false` to disable without removing |\n| `pattern` | string | Regex matched against the full command string |\n| `just_command` | string | The just recipe to suggest |\n| `reason` | string | Explanation shown to Claude |\n\n## How It Works\n\n1. Claude Code fires a `PreToolUse` event before every Bash tool call\n2. The hook reads the command from stdin JSON\n3. Checks patterns in the project's `.claude/just-interceptor.json`\n4. **Match**: Returns deny with redirect message pointing to the just recipe\n5. **No match**: Exits silently, command proceeds normally\n\n## Requirements\n\n- [just](https://github.com/casey/just) must be available on PATH\n- [jq](https://jqlang.github.io/jq/) must be available on PATH\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "just-interceptor",
+          "description": "Intercepts raw CLI commands and redirects to project-standard just recipes",
+          "version": "1.0.0",
+          "source": "./",
+          "author": {
+            "name": "kettleofketchup"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kettleofketchup/claude-just-interceptor",
+            "/plugin install just-interceptor@claude-just-interceptor"
+          ]
+        }
+      ]
+    }
+  ]
+}

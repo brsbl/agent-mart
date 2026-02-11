@@ -1,0 +1,83 @@
+{
+  "author": {
+    "id": "hudrazine",
+    "display_name": "hudrazine",
+    "avatar_url": "https://avatars.githubusercontent.com/u/39614590?u=a8b44f82e88d496bea50b0e5dc0d8079f4fa62be&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "hudrazine-cctoolkit",
+      "version": null,
+      "description": "A collection of Claude plugins for code-related tasks.",
+      "repo_full_name": "hudrazine/claude-code-toolkit",
+      "repo_url": "https://github.com/hudrazine/claude-code-toolkit",
+      "repo_description": "Plugin Collection for Claude Code.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-26T07:32:45Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"hudrazine-cctoolkit\",\n  \"metadata\": {\n    \"description\": \"A collection of Claude plugins for code-related tasks.\"\n  },\n  \"owner\": {\n    \"name\": \"Hudrazine\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"git-workflow\",\n      \"description\": \"Git commit and Pull Request workflow commands with semantic message guidance.\",\n      \"source\": \"./plugins/git-workflow\",\n      \"author\": {\n        \"name\": \"Hudrazine\"\n      }\n    },\n    {\n      \"name\": \"web-research\",\n      \"description\": \"Web research analyst agent that searches, verifies, and synthesizes information from multiple sources into structured reports with citations.\",\n      \"source\": \"./plugins/web-research\",\n      \"author\": {\n        \"name\": \"Hudrazine\"\n      }\n    },\n    {\n      \"name\": \"claude-md-authoring\",\n      \"description\": \"Guide for writing and optimizing CLAUDE.md files following context engineering best practices.\",\n      \"source\": \"./plugins/claude-md-authoring\",\n      \"author\": {\n        \"name\": \"Hudrazine\"\n      }\n    },\n    {\n      \"name\": \"doc-coauthoring\",\n      \"description\": \"Guides users through a three-stage documentation workflow: Context Gathering, Refinement & Structure, and Reader Testing. Helps create high-quality documentation, proposals, technical specs, and decision docs collaboratively.\",\n      \"source\": \"./plugins/doc-coauthoring\",\n      \"author\": {\n        \"name\": \"Hudrazine\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Toolkit\n\n[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)\n\nPlugin Collection for Claude Code.\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [git-workflow](./plugins/git-workflow/) | Git commit and PR workflow commands |\n| [web-research](./plugins/web-research/) | Web research analyst agent |\n| [claude-md-authoring](./plugins/claude-md-authoring/) | CLAUDE.md authoring guide |\n| [doc-coauthoring](./plugins/doc-coauthoring/) | Documentation co-authoring workflow |\n\n## Installation\n\nAdd the marketplace to Claude Code:\n\n```\n/plugin marketplace add hudrazine/claude-code-toolkit\n```\nor\n```\n/plugin marketplace add https://github.com/hudrazine/claude-code-toolkit.git\n```\n\n## License\n\n[Unlicense](http://unlicense.org/) (public domain)\n",
+        "plugins/git-workflow/README.md": "# git-workflow\n\nGit commit and Pull Request workflow commands with semantic message guidance.\n\n## Features\n\nThis plugin provides:\n\n- **`/commit`** - Create well-structured Git commits with Conventional Commits format\n- **`/draft-pr`** - Create Draft Pull Requests using GitHub CLI (backed by Skill for natural language triggers)\n\n## Commands\n\n### /commit\n\nCreates a single Git commit from staged/unstaged changes.\n\n- Analyzes changes and drafts semantic commit messages\n- Follows Conventional Commits format (`feat`, `fix`, `docs`, etc.)\n- Validates for secrets and sensitive data before committing\n\n### /draft-pr\n\nCreates a Draft Pull Request from the current branch.\n\n- Runs quality gates (lint, test, build) before PR creation\n- Drafts title and body following semantic conventions\n- Requires user approval before creating the PR\n\n## Skills\n\n| Skill | Triggers |\n|-------|----------|\n| Draft Pull Request Workflow | \"create PR\", \"draft PR\", \"open PR\" |\n\nThe Draft PR skill is automatically activated when you mention relevant keywords, even without using the slash command.\n\n## Safety\n\nBoth workflows enforce safety constraints:\n\n- Never push to remote without explicit request\n- Never skip pre-commit hooks\n- Never include secrets in commits or PR descriptions\n- Never force-push or rebase without explicit request\n",
+        "plugins/claude-md-authoring/README.md": "# claude-md-authoring\n\nGuide for writing and optimizing CLAUDE.md files following context engineering best practices.\n\n## Features\n\nThis plugin provides guidance for:\n\n- Creating new CLAUDE.md files with proper structure\n- Optimizing existing CLAUDE.md files for better instruction compliance\n- Reviewing CLAUDE.md for common anti-patterns\n- Troubleshooting why Claude ignores instructions\n\nAlso applicable to AGENTS.md for other AI coding agents.\n\n## Skills\n\n| Skill | Triggers |\n|-------|----------|\n| CLAUDE.md Authoring | \"create CLAUDE.md\", \"improve CLAUDE.md\", \"review CLAUDE.md\", \"Claude ignores instructions\" |\n\n## Key Concepts\n\nThe skill teaches three core principles:\n\n1. **Less is more** - Frontier models follow ~150-200 instructions; keep CLAUDE.md under 300 lines\n2. **Universal applicability** - Include only content that applies to most tasks\n3. **Progressive disclosure** - Store task-specific content in separate `agent_docs/` files\n\n## References\n\nDetailed guidance is organized into separate documents:\n\n- `references/best-practices.md` - File length guidelines, content quality checklist\n- `references/anti-patterns.md` - Common mistakes and how to fix them\n- `references/progressive-disclosure.md` - Directory structure and file organization\n\n## Credits\n\nThis skill is inspired by [Writing a good CLAUDE.md](https://www.humanlayer.dev/blog/writing-a-good-claude-md) by HumanLayer.\n",
+        "plugins/doc-coauthoring/README.md": "# Doc Co-Authoring Plugin\n\nA structured workflow for collaboratively creating documentation with Claude.\n\n## Overview\n\nThis plugin guides users through a three-stage process for creating high-quality documentation, proposals, technical specs, and decision docs.\n\n## Workflow Stages\n\n1. **Context Gathering** - Transfer relevant context through info dumping and clarifying questions\n2. **Refinement & Structure** - Build each section iteratively through brainstorming, curation, and editing\n3. **Reader Testing** - Test the document with a fresh Claude instance to catch blind spots\n\n## When to Use\n\n- Writing documentation, proposals, or technical specs\n- Creating PRDs, design docs, RFCs, or decision docs\n- Any substantial structured writing task\n\n## Attribution\n\nThis skill is derived from [anthropics/skills](https://github.com/anthropics/skills) repository.\n"
+      },
+      "plugins": [
+        {
+          "name": "git-workflow",
+          "description": "Git commit and Pull Request workflow commands with semantic message guidance.",
+          "source": "./plugins/git-workflow",
+          "author": {
+            "name": "Hudrazine"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hudrazine/claude-code-toolkit",
+            "/plugin install git-workflow@hudrazine-cctoolkit"
+          ]
+        },
+        {
+          "name": "web-research",
+          "description": "Web research analyst agent that searches, verifies, and synthesizes information from multiple sources into structured reports with citations.",
+          "source": "./plugins/web-research",
+          "author": {
+            "name": "Hudrazine"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hudrazine/claude-code-toolkit",
+            "/plugin install web-research@hudrazine-cctoolkit"
+          ]
+        },
+        {
+          "name": "claude-md-authoring",
+          "description": "Guide for writing and optimizing CLAUDE.md files following context engineering best practices.",
+          "source": "./plugins/claude-md-authoring",
+          "author": {
+            "name": "Hudrazine"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hudrazine/claude-code-toolkit",
+            "/plugin install claude-md-authoring@hudrazine-cctoolkit"
+          ]
+        },
+        {
+          "name": "doc-coauthoring",
+          "description": "Guides users through a three-stage documentation workflow: Context Gathering, Refinement & Structure, and Reader Testing. Helps create high-quality documentation, proposals, technical specs, and decision docs collaboratively.",
+          "source": "./plugins/doc-coauthoring",
+          "author": {
+            "name": "Hudrazine"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hudrazine/claude-code-toolkit",
+            "/plugin install doc-coauthoring@hudrazine-cctoolkit"
+          ]
+        }
+      ]
+    }
+  ]
+}

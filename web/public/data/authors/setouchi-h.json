@@ -1,0 +1,155 @@
+{
+  "author": {
+    "id": "setouchi-h",
+    "display_name": "Kazuki Hashimoto",
+    "avatar_url": "https://avatars.githubusercontent.com/u/113189196?u=b3ee3bd93140ec970e6619a15d819717aa4a3b28&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-marketplace",
+      "version": null,
+      "description": "A marketplace bundle for PR creation and management tools.",
+      "repo_full_name": "setouchi-h/cc-marketplace",
+      "repo_url": "https://github.com/setouchi-h/cc-marketplace",
+      "repo_description": "CC Plugin for Some Use Case",
+      "signals": {
+        "stars": 15,
+        "forks": 0,
+        "pushed_at": "2026-02-06T13:31:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-marketplace\",\n  \"owner\": {\n    \"name\": \"Kazuki Hashimoto\",\n    \"email\": \"setouchi.develop@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A marketplace bundle for PR creation and management tools.\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"gh\",\n      \"source\": \"./packages/gh\",\n      \"description\": \"Intelligent PR creation tool that analyzes your changes and creates well-structured pull requests.\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"Kazuki Hashimoto\"\n      },\n      \"homepage\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"repository\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"pr\", \"pull-request\", \"github\", \"git\", \"automation\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"statusline\",\n      \"source\": \"./packages/statusline\",\n      \"description\": \"Installs a shell status line for Claude Code showing branch, model, cost, duration, diff lines, and an optional quote.\",\n      \"version\": \"1.1.1\",\n      \"author\": {\n        \"name\": \"Kazuki Hashimoto\"\n      },\n      \"homepage\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"repository\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"claude\", \"statusline\", \"shell\", \"productivity\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"git\",\n      \"source\": \"./packages/git\",\n      \"description\": \"Git workflow automation tool with git-flow style commit messages and automatic push.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Kazuki Hashimoto\"\n      },\n      \"homepage\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"repository\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"git\",\n        \"commit\",\n        \"git-flow\",\n        \"conventional-commits\",\n        \"automation\"\n      ],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"xcode\",\n      \"source\": \"./packages/xcode\",\n      \"description\": \"Build and run Xcode projects on simulators or physical devices from the command line.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Kazuki Hashimoto\"\n      },\n      \"homepage\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"repository\": \"https://github.com/setouchi-h/cc-marketplace\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"xcode\",\n        \"ios\",\n        \"simulator\",\n        \"build\",\n        \"run\",\n        \"xcodebuild\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# CC Marketplace for Claude Code\n\n[日本語版はこちら](README.ja.md)\n\nClaude Code marketplace bundle with essential development plugins.\n\n## Plugins\n\n- **statusline**: Rich status line showing branch, model, cost, duration, and changes\n- **gh**: Automated PR creation with intelligent analysis\n- **git**: Git-flow workflow automation (branch creation, conventional commits)\n- **xcode**: Build and run Xcode projects on simulators or physical devices\n\n## Installation\n\n```bash\n/plugin marketplace add setouchi-h/cc-marketplace\n/plugin install statusline@cc-marketplace\n/plugin install gh@cc-marketplace\n/plugin install git@cc-marketplace\n/plugin install xcode@cc-marketplace\n```\n\n## Usage\n\n### statusline\n\nThe statusline plugin displays rich session information in your Claude Code prompt.\n\n![Statusline Example](assets/statusline.png)\n\n**What it shows:**\n- 🌿 Current git branch\n- 🤖 AI model (e.g., Sonnet 4.5)\n- 💰 Session cost in USD\n- ⏱️ Duration (e.g., 1m49s)\n- 📝 Lines changed (+10/-2)\n- 💬 Optional quote (refreshed every 5 minutes)\n\n**Requirements:**\n- `jq` must be installed (for JSON parsing)\n- `curl` optional (for quotes feature)\n\n**Installation:**\n```bash\n# Step 1: Install the plugin\n/plugin install statusline@cc-marketplace\n\n# Step 2: Run the installer\n/statusline:install-statusline\n\n# Optional: Install without quotes\n/statusline:install-statusline --no-quotes\n\n# Preview before full session\n/statusline:preview-statusline\n```\n\nThe installer creates `~/.claude/scripts/statusline.sh` and automatically configures your `~/.claude/settings.json`.\n\n### gh\n\nCreate pull requests with intelligent analysis.\n\n```bash\n/gh:create-pr                         # Create PR from current branch\n/gh:create-pr -d -b develop          # Draft PR against develop\n/gh:create-pr -r alice -r bob        # Add reviewers\n```\n\n**Flags:**\n- `-d, --draft`: Create as draft PR\n- `-b, --base <branch>`: Specify base branch (default: repo default)\n- `-r, --reviewer <user>`: Add reviewer (repeat for multiple)\n- `--no-push`: Skip pushing branch\n- `--no-assign`: Skip self-assignment\n\n### git\n\nGit-flow workflow automation with branch creation and conventional commits.\n\n```bash\n/git:create-branch \"task description\" # Create git-flow branch\n/git:create-branch \"fix bug\" --type bugfix --base main\n/git:commit                           # Conventional commit with auto-detection\n/git:commit --type feat --scope auth --no-push\n```\n\n**create-branch flags:**\n- `--base <branch>`: Specify base branch (default: auto-detect)\n- `--type <type>`: Force branch type (feature/bugfix/hotfix/release)\n- `--no-push`: Don't push to remote\n\n**commit flags:**\n- `--type <type>`: Force commit type (feat/fix/docs/etc.)\n- `--scope <scope>`: Specify commit scope\n- `--no-push`: Don't push to remote\n\n### xcode\n\nBuild and run Xcode projects on iOS simulators or physical devices.\n\n```bash\n/xcode:run                                           # Auto-detect and run\n/xcode:run --simulator \"iPhone 15 Pro\"               # Specific simulator\n/xcode:run --scheme MyApp --simulator \"iPad Pro\"     # Scheme + simulator\n/xcode:run --device \"My iPhone\"                      # Physical device\n/xcode:run --clean --configuration Release           # Clean Release build\n```\n\n**Flags:**\n- `--scheme <name>`: Specify build scheme (required if multiple exist)\n- `--simulator <name>`: Run on simulator (e.g., \"iPhone 15 Pro\")\n- `--device <name>`: Run on connected physical device\n- `--clean`: Perform clean build\n- `--configuration <config>`: Build configuration (Debug/Release, default: Debug)\n\n**Requirements:**\n- Xcode and command line tools must be installed\n- For physical devices, proper code signing configuration required\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "gh",
+          "source": "./packages/gh",
+          "description": "Intelligent PR creation tool that analyzes your changes and creates well-structured pull requests.",
+          "version": "2.0.0",
+          "author": {
+            "name": "Kazuki Hashimoto"
+          },
+          "homepage": "https://github.com/setouchi-h/cc-marketplace",
+          "repository": "https://github.com/setouchi-h/cc-marketplace",
+          "license": "MIT",
+          "keywords": [
+            "pr",
+            "pull-request",
+            "github",
+            "git",
+            "automation"
+          ],
+          "category": "productivity",
+          "categories": [
+            "automation",
+            "git",
+            "github",
+            "pr",
+            "productivity",
+            "pull-request"
+          ],
+          "install_commands": [
+            "/plugin marketplace add setouchi-h/cc-marketplace",
+            "/plugin install gh@cc-marketplace"
+          ]
+        },
+        {
+          "name": "statusline",
+          "source": "./packages/statusline",
+          "description": "Installs a shell status line for Claude Code showing branch, model, cost, duration, diff lines, and an optional quote.",
+          "version": "1.1.1",
+          "author": {
+            "name": "Kazuki Hashimoto"
+          },
+          "homepage": "https://github.com/setouchi-h/cc-marketplace",
+          "repository": "https://github.com/setouchi-h/cc-marketplace",
+          "license": "MIT",
+          "keywords": [
+            "claude",
+            "statusline",
+            "shell",
+            "productivity"
+          ],
+          "category": "productivity",
+          "categories": [
+            "claude",
+            "productivity",
+            "shell",
+            "statusline"
+          ],
+          "install_commands": [
+            "/plugin marketplace add setouchi-h/cc-marketplace",
+            "/plugin install statusline@cc-marketplace"
+          ]
+        },
+        {
+          "name": "git",
+          "source": "./packages/git",
+          "description": "Git workflow automation tool with git-flow style commit messages and automatic push.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Kazuki Hashimoto"
+          },
+          "homepage": "https://github.com/setouchi-h/cc-marketplace",
+          "repository": "https://github.com/setouchi-h/cc-marketplace",
+          "license": "MIT",
+          "keywords": [
+            "git",
+            "commit",
+            "git-flow",
+            "conventional-commits",
+            "automation"
+          ],
+          "category": "productivity",
+          "categories": [
+            "automation",
+            "commit",
+            "conventional-commits",
+            "git",
+            "git-flow",
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add setouchi-h/cc-marketplace",
+            "/plugin install git@cc-marketplace"
+          ]
+        },
+        {
+          "name": "xcode",
+          "source": "./packages/xcode",
+          "description": "Build and run Xcode projects on simulators or physical devices from the command line.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Kazuki Hashimoto"
+          },
+          "homepage": "https://github.com/setouchi-h/cc-marketplace",
+          "repository": "https://github.com/setouchi-h/cc-marketplace",
+          "license": "MIT",
+          "keywords": [
+            "xcode",
+            "ios",
+            "simulator",
+            "build",
+            "run",
+            "xcodebuild"
+          ],
+          "category": "productivity",
+          "categories": [
+            "build",
+            "ios",
+            "productivity",
+            "run",
+            "simulator",
+            "xcode",
+            "xcodebuild"
+          ],
+          "install_commands": [
+            "/plugin marketplace add setouchi-h/cc-marketplace",
+            "/plugin install xcode@cc-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

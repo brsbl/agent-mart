@@ -1,0 +1,54 @@
+{
+  "author": {
+    "id": "708u",
+    "display_name": "Naoya Uda",
+    "avatar_url": "https://avatars.githubusercontent.com/u/43739514?u=22fc324c7225f6f66f84226b2b103fe5c2e5e93c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "twig-plugins",
+      "version": null,
+      "description": "twig CLI plugins",
+      "repo_full_name": "708u/twig",
+      "repo_url": "https://github.com/708u/twig",
+      "repo_description": "Simplify git worktree and branch management with configurable symlinks, change carrying, and cleanup.",
+      "signals": {
+        "stars": 18,
+        "forks": 0,
+        "pushed_at": "2026-02-11T07:58:16Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"twig-plugins\",\n  \"owner\": {\n    \"name\": \"708u\"\n  },\n  \"metadata\": {\n    \"description\": \"twig CLI plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"twig\",\n      \"description\": \"Claude Code plugin for twig - simplifies git worktree workflows\",\n      \"version\": \"0.2.0\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"git\", \"worktree\", \"branch\", \"cli\", \"twig\"],\n      \"source\": \"./external/claude-code/plugins/twig\"\n    }\n  ]\n}\n",
+        "README.md": "# twig\n\nA CLI tool that creates, deletes, and manages git worktrees and branches in a single command.\nFocused on simplifying git operations, keeping features minimal.\n\n## Motivation\n\ntwig is designed to be friendly for both humans and agentic coding tools,\nand to integrate easily with other CLI tools:\n\n- `--quiet` minimizes output to paths only, making it easy to pass to other tools\n- For human use, `--verbose` and interactive confirmations ensure safety\n\nExamples:\n\n```bash\ncd $(twig add feat/x -q)            # cd into the created worktree\ntwig list -q | fzf                  # select a worktree with fzf\ntwig list -q | xargs -I {} code {}  # open all worktrees in VSCode\ntwig clean -v                       # confirm before deletion, show all skipped items\n```\n\n## Design Philosophy\n\ntwig treats branches and worktrees as a single unified concept.\nUsers don't need to think about whether they're managing a \"branch\" or a \"worktree\" -\nthey simply work with named development contexts.\n\n- `twig add feat/x` creates both the branch and worktree together\n- `twig remove feat/x` deletes both together\n- Even if a worktree directory is deleted externally, `twig remove` still works\n\nThis 1:1 mapping simplifies the mental model: one name, one workspace, one command.\n\n## Features\n\n### Create worktree and branch in one command\n\n`twig add feat/xxx` executes worktree creation, branch creation, and symlink setup all at once.\nUse `--source` to create from any branch regardless of current worktree.\nSet `default_source` in config to always branch from a fixed base (e.g., main).\n\n### Automatic symlink management via config\n\nCreate new worktrees with personal settings like .envrc and Claude configs carried over.\nGit worktree operations don't copy gitignored files, so twig uses symlinks to share these files across worktrees.\nStart working immediately in new worktrees without manual setup.\n\n### Move uncommitted changes to a new branch\n\nUse `--carry` to move changes to a new worktree, or `--sync` to copy them to both.\nUse `--file` with `--carry` to move only specific files matching a glob pattern.\n\nExamples:\n\n- Move refactoring ideas to a separate worktree and continue main work\n- Extract WIP changes to a new branch before switching tasks\n\n### Clean up worktrees no longer needed\n\n`twig clean` removes worktrees that are merged, have upstream gone, or are prunable.\n\n## Installation\n\nRequires Git 2.15+.\n\n### Homebrew\n\n```bash\nbrew install 708u/tap/twig\n```\n\n### Go\n\n```bash\ngo install github.com/708u/twig/cmd/twig@latest\n```\n\n## Quick Start\n\n```bash\n# Initialize settings\ntwig init\n\n# Create a new worktree and branch\ntwig add feat/new-feature\n\n# Copy uncommitted changes to a new worktree\ntwig add feat/wip --sync\n\n# Move uncommitted changes to a new worktree\ntwig add feat/wip --carry\n\n# List worktrees\ntwig list\n\n# Clean up worktrees no longer needed\ntwig clean\n\n# Delete a specific worktree\ntwig remove feat/done\n```\n\n## Configuration\n\nConfigure in `.twig/settings.toml`:\n\n- `worktree_destination_base_dir`: Destination directory for worktrees\n- `default_source`: Source branch for symlinks (creates symlinks from main even when adding from a derived worktree)\n- `symlinks`: Glob patterns for symlink targets\n- `init_submodules`: Initialize submodules when creating worktrees\n\nPersonal settings can be overridden in `.twig/settings.local.toml` (.gitignore recommended).\n\n- `extra_symlinks`: Add personal patterns while preserving team settings\n\nDetails: [docs/reference/configuration.md](docs/reference/configuration.md)\n\n## Shell Completion\n\nShell completion is available for all commands and flags.\nFor example, `twig remove <TAB>` completes existing branch names.\n\nAdd the following to your shell configuration:\n\n### Bash\n\nAdd to `~/.bashrc`:\n\n```bash\neval \"$(twig completion bash)\"\n```\n\n### Zsh\n\nAdd to `~/.zshrc`:\n\n```bash\neval \"$(twig completion zsh)\"\n```\n\n### Fish\n\nAdd to `~/.config/fish/config.fish`:\n\n```sh\ntwig completion fish | source\n```\n\n## Command Specs\n\n| Command                                            | Description                                      |\n| -------------------------------------------------- | ------------------------------------------------ |\n| [init](docs/reference/commands/init.md)            | Initialize settings                              |\n| [add](docs/reference/commands/add.md)              | Create worktree and branch                       |\n| [list](docs/reference/commands/list.md)            | List worktrees                                   |\n| [remove](docs/reference/commands/remove.md)        | Delete worktree and branch (multiple supported)  |\n| [clean](docs/reference/commands/clean.md)          | Bulk delete merged worktrees                     |\n| [sync](docs/reference/commands/sync.md)            | Sync symlinks and submodules to worktrees        |\n\nSee the documentation above for detailed flags and specifications.\n\n## Claude Code Plugin\n\nA [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin is\navailable for AI-assisted worktree management. The plugin provides an agent\nand skill that help Claude understand twig commands and execute worktree\noperations.\n\n### Plugin Installation\n\nRun the following slash commands in a Claude Code session:\n\n```txt\n# Add the marketplace\n/plugin marketplace add 708u/twig\n\n# Install the plugin\n/plugin install twig@708u-twig\n```\n\n### What the Plugin Provides\n\n| Component           | Description                                 |\n| ------------------- | ------------------------------------------- |\n| twig-operator agent | Executes twig commands based on user intent |\n| twig-guide skill    | Provides command syntax and usage details   |\n\n### Usage Examples\n\nOnce installed, Claude can help with worktree operations:\n\n- \"Create a new worktree for feat/user-auth\"\n- \"Move my current changes to a new branch\"\n- \"Clean up merged worktrees\"\n- \"I want to work on the API and frontend in parallel\"\n\n## License\n\n[MIT](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "twig",
+          "description": "Claude Code plugin for twig - simplifies git worktree workflows",
+          "version": "0.2.0",
+          "category": "productivity",
+          "keywords": [
+            "git",
+            "worktree",
+            "branch",
+            "cli",
+            "twig"
+          ],
+          "source": "./external/claude-code/plugins/twig",
+          "categories": [
+            "branch",
+            "cli",
+            "git",
+            "productivity",
+            "twig",
+            "worktree"
+          ],
+          "install_commands": [
+            "/plugin marketplace add 708u/twig",
+            "/plugin install twig@twig-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

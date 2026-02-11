@@ -6,35 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "claude-code-zellij-status",
-      "version": null,
-      "description": "Monitor Claude Code activity across multiple Zellij panes in real-time.",
-      "repo_full_name": "thoo/claude-code-zellij-status",
-      "repo_url": "https://github.com/thoo/claude-code-zellij-status",
-      "repo_description": "Monitor Claude Code activity across multiple Zellij panes in real-time via zjstatus.",
-      "signals": {
-        "stars": 13,
-        "forks": 2,
-        "pushed_at": "2026-01-13T00:04:50Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-zellij-status\",\n  \"owner\": {\n    \"name\": \"thein\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-zjstatus\",\n      \"source\": \"./cc-zjstatus\",\n      \"description\": \"Monitor Claude Code activity across multiple Zellij panes in real-time.\"\n    }\n  ]\n}\n",
-        "README.md": "# Claude Code Zellij Status\n\nMonitor Claude Code activity across multiple Zellij panes in real-time via zjstatus.\n\n## Preview\n\n![Claude Code Zellij Status Demo](claude_status.gif)\n\n## Installation\n\n### Requirements\n\n- [Zellij](https://zellij.dev/documentation/installation.html) terminal multiplexer\n- [zjstatus](https://github.com/dj95/zjstatus/wiki/1-%E2%80%90-Installation) plugin\n- [Claude Code](https://claude.ai/code) CLI\n\n### Step 1: Install the Plugin\n\n```bash\nclaude plugin marketplace add https://github.com/thoo/claude-code-zellij-status.git\nclaude plugin install cc-zjstatus\n```\n\n### Step 2: Configure Zellij Layout\n\nCopy the `default.kdl` file to your Zellij layouts directory:\n\n```bash\ncp default.kdl $HOME/.config/zellij/layouts/default.kdl\n```\n\nFor more information on zjstatus configuration, see the [zjstatus Installation Guide](https://github.com/dj95/zjstatus/wiki/1-%E2%80%90-Installation).\n\n### Step 3: Restart Zellij\n\nRestart your Zellij session or open a new tab to apply the layout changes.\n\n## Features\n\n- Real-time activity monitoring across all Claude Code sessions in a Zellij session\n- Color-coded symbols for instant recognition\n- Automatic cleanup when sessions end\n- zjstatus notifications for important events (done, asking, permission needed)\n\n## Symbol Reference\n\n| Symbol | Color | Hex | Meaning |\n|--------|-------|-----|---------|\n| `●` | Yellow | `#ffdc00` | Working/Active |\n| `◐` | Gray | `#666666` | Thinking |\n| `◍` | Blue | `#0074d9` | Web searching |\n| `↓` | Blue | `#0074d9` | Web fetching |\n| `◔` | Blue | `#0074d9` | Reading file |\n| `◎` | Blue | `#0074d9` | Finding (glob/grep) |\n| `✎` | Aqua | `#4166F5` | Writing/Editing |\n| `⚡` | Orange | `#ff851b` | Running bash |\n| `▶` | Purple | `#b10dc9` | Agent running |\n| `▷` | Green | `#2ecc40` | Agent done |\n| `★` | Purple | `#b10dc9` | Skill |\n| `◈` | Purple | `#b10dc9` | MCP tool |\n| `◫` | Yellow | `#ffdc00` | Planning (todo) |\n| `?` | Red | `#ff4136` | Asking user |\n| `⚠` | Red | `#ff4136` | Permission needed |\n| `!` | Red | `#ff4136` | Notification |\n| `✓` | Green | `#2ecc40` | Done |\n| `◆` | Blue | `#0074d9` | Session started |\n| `○` | Gray | `#666666` | Idle |\n\n## Color Scheme (clrs.cc)\n\n| Color | Hex | Usage |\n|-------|-----|-------|\n| Green | `#2ecc40` | Complete/Done |\n| Yellow | `#ffdc00` | Active/Working |\n| Blue | `#0074d9` | Reading/Searching |\n| Aqua | `#4166F5` | Project name text, Writing |\n| Red | `#ff4136` | Needs attention |\n| Orange | `#ff851b` | Bash commands |\n| Purple | `#b10dc9` | Agent/Skill/MCP |\n| Gray | `#666666` | Thinking/Idle |\n\n\n\n## How It Works\n\n```mermaid\nflowchart TB\n    subgraph \"Claude Code\"\n        CC[Claude Code CLI]\n        HookEvents[Hook Events<br/>PreToolUse, PostToolUse,<br/>Stop, Notification, etc.]\n    end\n\n    subgraph \"Hook Script\"\n        ActivityHook[claude-activity-hook.sh<br/>Maps events → activity/color/symbol]\n    end\n\n    subgraph \"Shared State\"\n        StateFile[\"/tmp/claude-zellij-status/<br/>{session}.json\"]\n    end\n\n    subgraph \"Zellij + zjstatus\"\n        ZellijPipe[zellij pipe]\n        StatusBar[Status Bar Display<br/>symbol project]\n    end\n\n    CC -->|\"stdin JSON\"| HookEvents\n    HookEvents -->|\"hook_event_name<br/>tool_name\"| ActivityHook\n    ActivityHook -->|\"Write state\"| StateFile\n    ActivityHook -->|\"pipe command\"| ZellijPipe\n    ZellijPipe --> StatusBar\n```\n\n### Data Flow\n\n1. **Claude Code** emits hook events (PreToolUse, PostToolUse, Stop, etc.) as JSON via stdin\n2. **Hook script** parses the event and maps it to an activity, color, and symbol\n3. **State file** stores status for all Claude Code panes in the Zellij session\n4. **zjstatus** receives pipe message and displays combined status in the status bar\n\n## Files\n\n- `claude-activity-hook.sh` - Hook script that captures Claude Code events and updates zjstatus\n- State files stored in `/tmp/claude-zellij-status/`\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "cc-zjstatus",
-          "source": "./cc-zjstatus",
-          "description": "Monitor Claude Code activity across multiple Zellij panes in real-time.",
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add thoo/claude-code-zellij-status",
-            "/plugin install cc-zjstatus@claude-code-zellij-status"
-          ]
-        }
-      ]
-    },
-    {
       "name": "my-agent-skills",
       "version": null,
       "description": "Custom Claude Code skills and plugins",

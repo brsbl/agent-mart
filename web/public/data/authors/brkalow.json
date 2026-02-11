@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "brkalow",
+    "display_name": "Bryce Kalow",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1289701?u=1360822dff75b837e22476a09438fbc4ec000dfa&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "openctl-claude-code-plugins",
+      "version": null,
+      "description": "Enables remote feedback during Claude Code sessions",
+      "repo_full_name": "brkalow/openctl",
+      "repo_url": "https://github.com/brkalow/openctl",
+      "repo_description": null,
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-09T15:35:48Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"openctl-claude-code-plugins\",\n  \"owner\": {\n    \"name\": \"openctl\",\n    \"email\": \"support@openctl.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"openctl\",\n      \"source\": \"./plugins/claude-code/openctl\",\n      \"description\": \"Enables remote feedback during Claude Code sessions\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        "README.md": "# openctl\n\nA platform for storing, viewing, and sharing Claude Code sessions. Includes a web viewer with live streaming support and a CLI for uploading sessions.\n\n## CLI Installation\n\nInstall the `openctl` CLI with the install script:\n\n```bash\ncurl -fsSL https://openctl.dev/setup/install.sh | bash\n```\n\nThis downloads the latest release for your platform and installs it to `/usr/local/bin`.\n\n### Options\n\n```bash\n# Install to a custom directory\ncurl -fsSL https://openctl.dev/setup/install.sh | INSTALL_DIR=~/.local/bin bash\n```\n\n### From Source\n\nIf you prefer to build from source:\n\n```bash\n# Clone and install dependencies\ngit clone https://github.com/brkalow/openctl.git\ncd openctl\nbun install\n\n# Build the CLI\nbun run build:cli\n\n# Install from local build\nLOCAL_DIST=./dist ./install.sh\n```\n\n## Quick Start\n\n```bash\n# Start the server\nbun run start\n\n# Or with hot reload for development\nbun run dev\n```\n\nThe web UI is available at `http://localhost:3000`.\n\n## CLI\n\nThe `openctl` CLI provides commands for managing sessions and configuring the server.\n\n```\nopenctl <command> [options]\n\nCommands:\n  upload    Upload a completed session to the server\n  share     Share a live session for real-time viewing\n  daemon    Manage the background daemon (start/stop/status)\n  config    Manage CLI configuration\n  repo      Manage repository access control\n  session   Manage sessions (list/delete/unshare)\n  list      Alias for 'session list'\n```\n\n### Upload a Completed Session\n\n```bash\n# Upload the current session (auto-detects from working directory)\nopenctl upload\n\n# Pick from recent sessions interactively\nopenctl upload --list\n\n# Upload a specific session by UUID\nopenctl upload --session c28995d0-7cba-4974-8268-32b94ac183a4\n\n# Upload with a custom title\nopenctl upload --title \"Fixed authentication bug\"\n\n# Generate a code review alongside the upload\nopenctl upload --review\n```\n\n### Share a Live Session\n\n```bash\n# Share the current session for real-time viewing\nopenctl share\n\n# Pick from recent sessions interactively\nopenctl share --list\n\n# Share a specific session by UUID\nopenctl share abc-123-def\n```\n\n### Background Daemon\n\nThe daemon watches for shared sessions and streams them to the server in real-time.\n\n```bash\n# Start the daemon\nopenctl daemon start\n\n# Check status\nopenctl daemon status\n\n# Stop the daemon\nopenctl daemon stop\n```\n\n### Repository Access Control\n\nControl which repositories are allowed for automatic uploads.\n\n```bash\n# Allow the current repository\nopenctl repo allow\n\n# List allowed repositories\nopenctl repo list\n\n# Remove a repository from the allowlist\nopenctl repo deny\n```\n\n### Configuration\n\n```bash\n# Set the server URL\nopenctl config set server https://openctl.example.com\n\n# View all configuration\nopenctl config list\n```\n\n## API\n\n### Sessions\n\n| Method | Endpoint | Description |\n|--------|----------|-------------|\n| `POST` | `/api/sessions` | Create a session (multipart/form-data) |\n| `GET` | `/api/sessions/:id/export` | Export session as JSON |\n| `POST` | `/api/sessions/:id/share` | Generate a share link |\n| `DELETE` | `/api/sessions/:id` | Delete a session |\n\n### Creating a Session\n\n```\nPOST /api/sessions (multipart/form-data)\n\nFields:\n  title (required)     Session title\n  description          Optional description\n  claude_session_id    Original session ID\n  project_path         Path to the project\n  repo_url             GitHub repository URL\n  harness              Client used (e.g., \"Claude Code\")\n  model                Model used (e.g., \"claude-sonnet-4-20250514\")\n  session_file         JSONL file containing session messages\n  diff_file            Git diff content\n  review_summary       AI-generated review summary\n  annotations          JSON array of review annotations\n```\n\n## Tech Stack\n\n- **Runtime**: Bun\n- **Server**: `Bun.serve()` with WebSocket support\n- **Database**: SQLite via `bun:sqlite`\n- **Styling**: Tailwind CSS v4\n- **Testing**: `bun test`\n\n## Development\n\n```bash\n# Install dependencies\nbun install\n\n# Run tests\nbun test\n\n# Start dev server (uses $PORT env var to avoid conflicts)\nPORT=3001 bun run dev\n\n# Link CLI for local development\nbun link\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "openctl",
+          "source": "./plugins/claude-code/openctl",
+          "description": "Enables remote feedback during Claude Code sessions",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add brkalow/openctl",
+            "/plugin install openctl@openctl-claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

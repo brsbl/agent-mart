@@ -1,0 +1,141 @@
+{
+  "author": {
+    "id": "betamatt",
+    "display_name": "Matt Griffin",
+    "avatar_url": "https://avatars.githubusercontent.com/u/23032?u=f020d0f45605add2849f9e9323d565d363d86af0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "betamatt-claude-plugins",
+      "version": null,
+      "description": "Professional Ruby on Rails development toolkit for production systems. Provides proactive expert agents, smart generators, and Rails 7+ best practices.",
+      "repo_full_name": "betamatt/claude-plugins",
+      "repo_url": "https://github.com/betamatt/claude-plugins",
+      "repo_description": "Plugins encapsulating some of my personal methods",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-07T02:19:12Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"betamatt-claude-plugins\",\n  \"owner\": {\n    \"name\": \"Matt Griffin\",\n    \"email\": \"matt@griffinonline.org\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ruby-on-rails\",\n      \"source\": \"./ruby-on-rails\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Professional Ruby on Rails development toolkit for production systems. Provides proactive expert agents, smart generators, and Rails 7+ best practices.\",\n      \"keywords\": [\"rails\", \"ruby\", \"activerecord\", \"rspec\", \"hotwire\", \"turbo\", \"stimulus\"]\n    },\n    {\n      \"name\": \"claude-debugger\",\n      \"source\": \"./claude-debugger\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Flexible logging and debugging system for Claude Code plugins. Track skills, subagents, hooks, tools, commands, and MCP calls with configurable verbosity.\",\n      \"keywords\": [\"debugging\", \"logging\", \"observability\", \"development\", \"plugins\"]\n    },\n    {\n      \"name\": \"code-review\",\n      \"source\": \"./code-review\",\n      \"version\": \"0.2.0\",\n      \"description\": \"Comprehensive code review toolkit with parallel specialist agents covering architecture, quality, security, performance, testing, and documentation.\",\n      \"keywords\": [\"code-review\", \"analysis\", \"architecture\", \"security\", \"performance\", \"testing\"]\n    },\n    {\n      \"name\": \"spec\",\n      \"source\": \"./spec\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Specification-driven development workflow with creation, validation, decomposition, execution, and automated review-fix loops.\",\n      \"keywords\": [\"specs\", \"specifications\", \"workflow\", \"planning\", \"implementation\", \"task-management\", \"stm\", \"code-review\", \"automation\"]\n    }\n  ]\n}\n",
+        "ruby-on-rails/README.md": "# Ruby on Rails Plugin for Claude Code\n\nA professional Ruby on Rails development toolkit designed for senior engineers building production systems. This plugin provides proactive expert assistance, smart generators, and Rails 7+ best practices.\n\n## Features\n\n### Proactive Agents\n\n- **rails-expert** - General Rails development assistance, automatically activates in Rails projects\n- **migration-expert** - Safe database migration strategies and schema design\n- **performance-expert** - Detects N+1 queries, suggests eager loading and query optimization\n- **security-expert** - Identifies real security vulnerabilities (pragmatic, not noisy)\n\n### Skills (Auto-activating)\n\n- **rails-conventions** - Rails 7+ naming, structure, Hotwire patterns\n- **activerecord-patterns** - Query optimization, associations, modern ActiveRecord\n- **rails-testing** - RSpec and Minitest patterns, factories, request specs\n\n### Commands\n\n- `/rails:generate` - Smart generators with production-ready defaults\n- `/rails:migrate` - Safe migration workflow with rollback strategies\n- `/rails:db` - Database operations (seed, reset, prepare)\n\n## Requirements\n\n- Ruby 3.1+\n- Rails 7.0+\n- Claude Code CLI\n\n## Installation\n\n```bash\n# From marketplace\nclaude plugins install ruby-on-rails\n\n# Or local development\nclaude --plugin-dir /path/to/ruby-on-rails\n```\n\n## Usage\n\nThe plugin automatically detects Rails projects and activates relevant context. Agents will proactively suggest improvements when they detect issues.\n\n### Examples\n\n```bash\n# In a Rails project, Claude will automatically use Rails conventions\nclaude \"add a User model with email and name\"\n\n# Use commands for specific operations\n/rails:generate model Post title:string body:text published:boolean\n\n# Agents activate when relevant\nclaude \"optimize this controller action\"  # performance-expert activates\nclaude \"review this authentication code\"  # security-expert activates\n```\n\n## Testing Support\n\nThe plugin detects your testing framework automatically:\n\n- **RSpec**: Supports request specs, system specs, FactoryBot\n- **Minitest**: Supports fixtures, integration tests\n\n## Plugin Structure\n\n```\nruby-on-rails/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin manifest\n├── agents/\n│   ├── rails-expert.md      # General Rails development\n│   ├── migration-expert.md  # Database migrations\n│   ├── performance-expert.md # Query optimization\n│   └── security-expert.md   # Security review\n├── commands/\n│   ├── generate.md          # /rails:generate\n│   ├── migrate.md           # /rails:migrate\n│   └── db.md                # /rails:db\n├── hooks/\n│   └── hooks.json           # SessionStart hook for Rails detection\n├── skills/\n│   ├── rails-conventions/   # Naming, structure, Hotwire\n│   ├── activerecord-patterns/ # Queries, associations\n│   └── rails-testing/       # RSpec, Minitest patterns\n└── README.md\n```\n\n## How It Works\n\n### Automatic Rails Detection\n\nWhen you start Claude Code in a directory containing a Gemfile with Rails, the SessionStart hook automatically detects the Rails version and key gems, activating Rails-specific context.\n\n### Proactive Agents\n\nAgents don't just respond to requests—they proactively detect when they can help:\n\n- **performance-expert**: Notices N+1 query patterns in your code\n- **security-expert**: Flags potential vulnerabilities in authentication code\n- **migration-expert**: Suggests safe migration patterns for schema changes\n\n### Skills Auto-Loading\n\nSkills load based on context:\n\n- Ask about \"naming conventions\" → rails-conventions skill activates\n- Work with \"database queries\" → activerecord-patterns skill activates\n- Mention \"testing\" or \"specs\" → rails-testing skill activates\n\n## License\n\nMIT\n",
+        "claude-debugger/README.md": "# Claude Debugger\n\nA flexible logging and debugging system for Claude Code plugins. Track skills, subagents, hooks, tools, commands, and MCP calls with configurable verbosity.\n\n## Features\n\n- **Event Logging**: Capture all Claude Code internal events to a JSON log file\n- **Configurable Verbosity**: Control what gets logged with 4 verbosity levels\n- **No Conversation Interruption**: All logging goes to a file, keeping your conversation clean\n- **Project-Level Logs**: Each project has its own debug log in `.claude/debug.log`\n\n## Installation\n\n```bash\nclaude plugins install claude-debugger\n```\n\nOr for local development:\n\n```bash\nclaude --plugin-dir /path/to/claude-debugger\n```\n\n## Commands\n\n### `/debugger:set <level>`\n\nSet the verbosity level for logging.\n\n```bash\n/debugger:set verbose    # Log everything\n/debugger:set normal     # Log skills, agents, commands, hooks\n/debugger:set minimal    # Log only skills and agents\n/debugger:set off        # Disable logging\n```\n\n### `/debugger:status`\n\nShow current configuration and log statistics.\n\n```bash\n/debugger:status\n```\n\n### `/debugger:view [lines] [--type=TYPE]`\n\nView recent log entries.\n\n```bash\n/debugger:view              # Last 20 entries\n/debugger:view 50           # Last 50 entries\n/debugger:view --type=AGENT # Filter by type\n```\n\n## Verbosity Levels\n\n| Level | Events Logged |\n|-------|---------------|\n| off | Nothing |\n| minimal | Skills, Subagents |\n| normal | Skills, Subagents, Commands, Hooks |\n| verbose | Everything (including all tool calls, MCP) |\n\n## Log Format\n\nLogs are stored as JSON lines in `.claude/debug.log`:\n\n```json\n{\"time\":\"2024-01-15T14:32:05Z\",\"type\":\"TOOL\",\"name\":\"Read\",\"detail\":\"/src/app.ts\"}\n{\"time\":\"2024-01-15T14:32:06Z\",\"type\":\"AGENT\",\"name\":\"code-search\",\"detail\":\"completed\"}\n{\"time\":\"2024-01-15T14:32:07Z\",\"type\":\"SKILL\",\"name\":\"rails-conventions\"}\n```\n\n## Configuration\n\nSettings are stored in `.claude/debugger.yaml`:\n\n```yaml\nverbosity: normal\n```\n\n## Event Types\n\n- **SKILL** - Skill activation\n- **AGENT** - Subagent invocation\n- **HOOK** - Hook execution\n- **TOOL** - Tool invocation (Read, Write, Bash, etc.)\n- **CMD** - Command execution\n- **MCP** - MCP server calls\n\n## Use Cases\n\n- **Plugin Development**: See which skills and agents trigger during development\n- **Debugging**: Track tool usage to understand Claude's behavior\n- **Performance**: Identify which operations are being called frequently\n- **Learning**: Understand how Claude Code works internally\n\n## License\n\nMIT\n",
+        "code-review/README.md": "# Code Review Plugin\n\nComprehensive code review toolkit with a language-agnostic review methodology. Provides deep, actionable feedback with root cause analysis and working solutions.\n\n## Installation\n\n### From Claude Code Marketplace\n\n```bash\nclaude plugin add code-review\n```\n\n### From Source\n\n```bash\n# Clone the plugins repository\ngit clone https://github.com/anthropics/claude-plugins.git\n\n# Install the code-review plugin\nclaude plugin add ./claude-plugins/code-review\n```\n\n### Manual Installation\n\nAdd to your Claude Code settings (`~/.claude/settings.json`):\n\n```json\n{\n  \"plugins\": [\"code-review\"]\n}\n```\n\n## Quick Start\n\n### Using the Command\n\n```bash\n# Review specific files\n/code-review src/auth/\n\n# Review recent changes\n/code-review --changed\n\n# Focus on a specific aspect\n/code-review --focus=security src/api/\n```\n\n### Natural Language\n\nThe code-reviewer agent activates automatically when you:\n\n```\n\"Review this code for security issues\"\n\"Check the performance of this module\"\n\"Analyze the architecture of src/services/\"\n\"Do a code review on my recent changes\"\n```\n\n## Architecture\n\n**Single Agent, Multiple Instances**: One `code-reviewer` agent contains all review expertise. For comprehensive reviews, 6 instances run in parallel, each assigned a different focus area.\n\n## Review Focus Areas\n\n| Focus Area | What It Checks |\n|------------|----------------|\n| Architecture & Design | Module organization, separation of concerns, design patterns |\n| Code Quality | Readability, naming, complexity, DRY principles |\n| Security & Dependencies | Vulnerabilities, auth, secrets, supply chain |\n| Performance & Scalability | Algorithm complexity, N+1, async patterns |\n| Testing Quality | Assertions, isolation, edge cases |\n| Documentation & API | README, JSDoc, breaking changes |\n\n## Components\n\n| Type | Name | Purpose |\n|------|------|---------|\n| Agent | `code-reviewer` | Core review agent (runs multiple instances) |\n| Command | `/code-review` | Explicit review invocation |\n| Skill | `code-review-patterns` | Methodology and reference patterns |\n| Hook | `Stop` | Suggests review after significant changes |\n\n## How It Works\n\n### 1. Context Gathering\n\nWhen activated, the reviewer first establishes project context:\n\n- **Project Documentation**: Reads CLAUDE.md, README.md, ARCHITECTURE.md\n- **Project Structure**: Detects frameworks and architectural patterns\n- **Configuration**: Checks for linters, test frameworks, type systems\n- **Git Context**: Analyzes changed files and current branch\n\n### 2. Focus Determination\n\nThe agent assigns focus based on your request:\n\n| You Say | Focus Selected |\n|---------|----------------|\n| \"security issues\" | Security & Dependencies |\n| \"performance\" | Performance & Scalability |\n| \"code quality\" | Code Quality |\n| \"architecture\" | Architecture & Design |\n| \"test quality\" | Testing Quality |\n| \"documentation\" | Documentation & API |\n\nIf no specific focus is mentioned, runs all 6 aspects in parallel.\n\n### 3. Root Cause Analysis\n\nFor every issue found, provides three levels:\n\n1. **What**: The immediate problem observed\n2. **Why**: Root cause analysis explaining why it happens\n3. **How**: Working code solution you can apply immediately\n\n### 4. Prioritized Output\n\nIssues are categorized by impact:\n\n| Priority | Criteria | Timeline |\n|----------|----------|----------|\n| CRITICAL | Security vulnerabilities, data loss, crashes | Immediate |\n| HIGH | Performance in hot paths, memory leaks | Before merge |\n| MEDIUM | Maintainability, inconsistent patterns | Next sprint |\n| LOW | Style, minor optimizations | Backlog |\n\n## Example Output\n\n```markdown\n## Security Review: src/auth/\n\n### Health Assessment\n- Input Validation: Needs Attention\n- Authentication: Good\n- Authorization: Critical\n\n### Issues Found\n\n#### [CRITICAL] SQL Injection in User Search\n**File:** `src/auth/userSearch.ts:45`\n**What:** User input directly concatenated into SQL query\n**Why:** The search term flows from request.query to database without sanitization\n\n**Current Code:**\n```typescript\nconst users = await db.query(`SELECT * FROM users WHERE name LIKE '%${term}%'`);\n```\n\n**Solution:**\n```typescript\nconst users = await db.query('SELECT * FROM users WHERE name LIKE $1', [`%${term}%`]);\n```\n\n### Strengths\n- Good session management with secure cookies\n- Proper password hashing with bcrypt\n\n### Recommendations\n- Add rate limiting to login endpoint\n- Consider implementing CSRF protection\n```\n\n## FAQ\n\n### Can I review code in any programming language?\n\nYes. The plugin is language-agnostic and adapts to TypeScript, JavaScript, Python, Ruby, Go, Java, Rust, and more.\n\n### How do I review only specific files?\n\nSpecify file paths in your request:\n\n```\n/code-review src/auth/login.ts src/auth/session.ts\n```\n\nOr use natural language:\n\n```\nReview the authentication files in src/auth/\n```\n\n### Can I get reviews focused on just one area?\n\nYes. Use the `--focus` flag or mention the focus area:\n\n```\n/code-review --focus=security src/api/\n```\n\nOr:\n\n```\nReview only the performance aspects of the data processing module\n```\n\n### Does it integrate with my existing linters?\n\nThe reviewer reads your configuration files (`.eslintrc`, `tsconfig.json`, etc.) to understand project standards. It complements linters by focusing on deeper architectural and logic issues that automated tools miss.\n\n### How do I get more detailed analysis?\n\nAsk for deeper dives:\n\n```\nProvide a detailed security audit of the authentication system\nGive me an in-depth architectural review with refactoring recommendations\n```\n\n### Can it review pull requests automatically?\n\nAfter completing changes, the plugin suggests running a review via a Stop hook. For CI/CD integration, use the `/code-review --changed` command.\n\n## Priority Levels\n\n| Priority | Criteria | Action |\n|----------|----------|--------|\n| CRITICAL | Security vulnerabilities, data loss | Fix immediately |\n| HIGH | Performance issues, memory leaks | Fix before merge |\n| MEDIUM | Maintainability, missing tests | Fix soon |\n| LOW | Style, minor improvements | Fix when convenient |\n\n## Why Single Agent?\n\n- **Less duplication**: One file instead of 6\n- **Easier maintenance**: Update once, applies everywhere\n- **Same parallelism**: Still runs 6 instances concurrently\n- **Shared knowledge**: All instances access the same skill\n\n## License\n\nMIT\n",
+        "spec/README.md": "# Spec Plugin\n\nSpecification-driven development workflow for Claude Code with creation, validation, decomposition, and execution phases.\n\n## Features\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/spec:create <description>` | Generate comprehensive specification from feature/bugfix description |\n| `/spec:validate <spec-file>` | Analyze spec for completeness and detect overengineering |\n| `/spec:decompose <spec-file>` | Break spec into actionable tasks with STM/TodoWrite |\n| `/spec:execute <spec-file>` | Implement spec with review-fix loops |\n| `/spec:implement <spec-file> [--pr]` | End-to-end: validate, decompose, execute with review loops |\n\n### Agents\n\n| Agent | Description |\n|-------|-------------|\n| `task-executor` | Executes single task with full lifecycle: implement, test, review, fix |\n| `issue-fixer` | Fixes code review issues by severity (CRITICAL, IMPORTANT) |\n\n### Skills\n\n- **Specification-Driven Development** - Methodology guidance, best practices, and workflow overview\n\n### Hooks\n\n- **SessionStart** - Detects `specs/` directory and mentions available commands\n\n## Workflow\n\n```\n┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐\n│   CREATE    │────▶│  VALIDATE   │────▶│  DECOMPOSE  │────▶│   EXECUTE   │\n│             │     │             │     │             │     │             │\n│ First       │     │ WHY/WHAT/   │     │ Task        │     │ Implement   │\n│ principles  │     │ HOW check   │     │ breakdown   │     │ Test/Review │\n│ analysis    │     │ YAGNI       │     │ STM/Todo    │     │ Fix Loop    │\n└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘\n                                                                   │\n                              Or use /spec:implement for all-in-one ◀┘\n```\n\n## Installation\n\n### From Marketplace\n\n```bash\nclaude plugin install spec@betamatt-claude-plugins\n```\n\n### Local Development\n\n```bash\nclaude plugin install ./spec\n```\n\n## Usage\n\n### 1. Create a Specification\n\n```bash\n/spec:create user authentication with OAuth2\n```\n\nThis generates a comprehensive spec in `specs/feat-user-authentication.md` with:\n\n- First-principles problem analysis\n- 17-section template covering all aspects\n- Technical dependencies and design details\n- Testing strategy and implementation phases\n\n### 2. Validate the Specification\n\n```bash\n/spec:validate specs/feat-user-authentication.md\n```\n\nAnalyzes for:\n\n- **Completeness**: WHY (intent), WHAT (scope), HOW (implementation)\n- **Overengineering**: Applies YAGNI principle aggressively\n- **Quality**: Ready/Not Ready assessment with specific gaps\n\n### 3. Decompose into Tasks\n\n```bash\n/spec:decompose specs/feat-user-authentication.md\n```\n\nCreates:\n\n- Task breakdown document (`specs/feat-user-authentication-tasks.md`)\n- Tasks in STM or TodoWrite with full implementation details\n- Dependency mapping and parallel execution opportunities\n\n### 4. Execute Implementation\n\n```bash\n/spec:execute specs/feat-user-authentication.md\n```\n\nOrchestrates:\n\n- Implementation with domain-specific best practices\n- Testing and code review cycles\n- Atomic commits per completed task\n\n### Alternative: End-to-End Implementation\n\n```bash\n/spec:implement specs/feat-user-authentication.md --pr\n```\n\nRuns the complete workflow in one command:\n\n1. Validates the spec (stops if not ready)\n2. Decomposes into tasks\n3. Executes each task with review-fix loops (max 3 iterations)\n4. Creates a PR (with `--pr` flag)\n\nThe review-fix loop automatically:\n\n- Runs code review after implementation\n- Fixes CRITICAL and IMPORTANT issues\n- Re-reviews until passing or escalates after 3 attempts\n\n## Key Principles\n\n### First Principles Problem Analysis\n\nBefore any solution, validate the problem itself:\n\n- What is the core problem separate from solutions?\n- Could we solve this without building anything?\n- What would success look like with unlimited resources?\n\n### YAGNI (You Aren't Gonna Need It)\n\nAggressively cut unnecessary complexity:\n\n- Unsure if needed? **Cut it**\n- For \"future flexibility\"? **Cut it**\n- Only 20% of users need it? **Cut it**\n\n### Content Preservation\n\nWhen creating tasks from specs:\n\n- Copy implementation details verbatim\n- Include complete code examples\n- Each task must be self-contained\n\n## Task Management Integration\n\n### STM (Session Task Manager)\n\nIf installed, provides persistent task tracking across sessions:\n\n```bash\nstm list --pretty           # View all tasks\nstm show <id>               # View task details\nstm update <id> --status done  # Complete task\n```\n\n### TodoWrite (Fallback)\n\nBuilt-in session task tracking when STM is unavailable.\n\n## Requirements\n\n- Claude Code CLI\n- Optional: STM (Session Task Manager) for persistent task tracking\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "ruby-on-rails",
+          "source": "./ruby-on-rails",
+          "version": "1.0.0",
+          "description": "Professional Ruby on Rails development toolkit for production systems. Provides proactive expert agents, smart generators, and Rails 7+ best practices.",
+          "keywords": [
+            "rails",
+            "ruby",
+            "activerecord",
+            "rspec",
+            "hotwire",
+            "turbo",
+            "stimulus"
+          ],
+          "categories": [
+            "activerecord",
+            "hotwire",
+            "rails",
+            "rspec",
+            "ruby",
+            "stimulus",
+            "turbo"
+          ],
+          "install_commands": [
+            "/plugin marketplace add betamatt/claude-plugins",
+            "/plugin install ruby-on-rails@betamatt-claude-plugins"
+          ]
+        },
+        {
+          "name": "claude-debugger",
+          "source": "./claude-debugger",
+          "version": "1.0.0",
+          "description": "Flexible logging and debugging system for Claude Code plugins. Track skills, subagents, hooks, tools, commands, and MCP calls with configurable verbosity.",
+          "keywords": [
+            "debugging",
+            "logging",
+            "observability",
+            "development",
+            "plugins"
+          ],
+          "categories": [
+            "debugging",
+            "development",
+            "logging",
+            "observability",
+            "plugins"
+          ],
+          "install_commands": [
+            "/plugin marketplace add betamatt/claude-plugins",
+            "/plugin install claude-debugger@betamatt-claude-plugins"
+          ]
+        },
+        {
+          "name": "code-review",
+          "source": "./code-review",
+          "version": "0.2.0",
+          "description": "Comprehensive code review toolkit with parallel specialist agents covering architecture, quality, security, performance, testing, and documentation.",
+          "keywords": [
+            "code-review",
+            "analysis",
+            "architecture",
+            "security",
+            "performance",
+            "testing"
+          ],
+          "categories": [
+            "analysis",
+            "architecture",
+            "code-review",
+            "performance",
+            "security",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add betamatt/claude-plugins",
+            "/plugin install code-review@betamatt-claude-plugins"
+          ]
+        },
+        {
+          "name": "spec",
+          "source": "./spec",
+          "version": "1.0.0",
+          "description": "Specification-driven development workflow with creation, validation, decomposition, execution, and automated review-fix loops.",
+          "keywords": [
+            "specs",
+            "specifications",
+            "workflow",
+            "planning",
+            "implementation",
+            "task-management",
+            "stm",
+            "code-review",
+            "automation"
+          ],
+          "categories": [
+            "automation",
+            "code-review",
+            "implementation",
+            "planning",
+            "specifications",
+            "specs",
+            "stm",
+            "task-management",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add betamatt/claude-plugins",
+            "/plugin install spec@betamatt-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

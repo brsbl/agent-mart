@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "nurikk",
+    "display_name": "Ainur T",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1525421?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nurikk-plugins",
+      "version": null,
+      "description": "Collection of Claude Code plugins",
+      "repo_full_name": "nurikk/claude-plugins",
+      "repo_url": "https://github.com/nurikk/claude-plugins",
+      "repo_description": "Claude Code plugin that auto-formats, lints, and type-checks Python files using ruff and ty (Astral tools)",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-22T14:05:38Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nurikk-plugins\",\n  \"owner\": {\n    \"name\": \"nur\"\n  },\n  \"metadata\": {\n    \"description\": \"Collection of Claude Code plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"python-quality\",\n      \"source\": \"./plugins/python-quality\",\n      \"description\": \"Automatic Python formatting, linting, and type checking with ruff and ty\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"nur\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"python\", \"ruff\", \"ty\", \"formatter\", \"linter\", \"typecheck\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugins\n\nA collection of Claude Code plugins.\n\n## Quick Start\n\n```\n/plugin marketplace add nurikk/claude-plugins\n```\n\n> **Note:** The GitHub repo is `nurikk/claude-plugins`, but the marketplace identifier is `nurikk-plugins` (used when installing plugins).\n\n## Available Plugins\n\n| Plugin | Description | Install |\n|--------|-------------|---------|\n| [python-quality](#python-quality) | Python formatting, linting & type checking with ruff and ty | `/plugin install python-quality@nurikk-plugins` |\n\n---\n\n## python-quality\n\nAutomatically runs Python quality checks after file changes.\n\n### What It Does\n\nWhen Claude writes or edits a `.py` file, this plugin automatically runs:\n\n| Tool | Command | Purpose |\n|------|---------|---------|\n| **ruff format** | `uvx ruff format` | Auto-formats code (PEP 8 style) |\n| **ruff check** | `uvx ruff check --fix` | Lints and auto-fixes safe issues |\n| **ty** | `uvx ty check` | Type checks using Astral's fast type checker |\n\n### Requirements\n\n- [uv](https://github.com/astral-sh/uv) - Fast Python package installer\n- `jq` - JSON processor (pre-installed on most systems)\n\nInstall uv:\n```bash\n# macOS\nbrew install uv\n\n# Linux/macOS (curl)\ncurl -LsSf https://astral.sh/uv/install.sh | sh\n\n# Windows\npowershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\"\n```\n\n### Installation\n\n```\n/plugin marketplace add nurikk/claude-plugins\n/plugin install python-quality@nurikk-plugins\n```\n\nOr add directly to your `~/.claude/settings.json`:\n\n```json\n{\n  \"enabledPlugins\": {\n    \"python-quality@nurikk-plugins\": true\n  }\n}\n```\n\n### Behavior\n\n#### Auto-formatting\n\nThe plugin auto-formats Python files using ruff, which handles:\n- Import sorting\n- Line length enforcement\n- Consistent spacing\n- Quote style normalization\n\n#### Auto-fixing\n\nSafe lint fixes are applied automatically:\n- Removing unused imports\n- Fixing simple style issues\n- Correcting obvious errors\n\n#### Type Checking\n\nType errors are reported but don't block the operation. You'll see output like:\n\n```\nerror[invalid-return-type]: Return type does not match returned value\n --> example.py:3:25\n  |\n3 | def greet(name: str) -> int:\n  |                         --- Expected `int` because of return type\n4 |     return \"hello\"\n  |            ^^^^^^^ expected `int`, found `str`\n```\n\n### Troubleshooting\n\n#### Hook not running\n\n1. Restart Claude Code after installing the plugin\n2. Check hooks are registered: `/hooks`\n3. Verify plugin is enabled in settings\n\n#### Tools not found\n\nEnsure `uvx` is in your PATH:\n```bash\nwhich uvx\n```\n\n### Tools Used\n\n- **[ruff](https://github.com/astral-sh/ruff)** - Extremely fast Python linter and formatter\n- **[ty](https://github.com/astral-sh/ty)** - Fast Python type checker from Astral\n\nBoth tools are run via `uvx` (uv's tool runner), so they don't need to be pre-installed.\n\n---\n\n## Repository Structure\n\n```\nclaude-plugins/\n├── .claude-plugin/\n│   └── marketplace.json      # Marketplace catalog\n├── plugins/\n│   └── python-quality/       # Python quality plugin\n│       ├── .claude-plugin/\n│       │   └── plugin.json\n│       ├── hooks/\n│       │   └── hooks.json\n│       └── scripts/\n│           └── python-quality.sh\n├── README.md\n└── LICENSE\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "python-quality",
+          "source": "./plugins/python-quality",
+          "description": "Automatic Python formatting, linting, and type checking with ruff and ty",
+          "version": "1.0.0",
+          "author": {
+            "name": "nur"
+          },
+          "license": "MIT",
+          "keywords": [
+            "python",
+            "ruff",
+            "ty",
+            "formatter",
+            "linter",
+            "typecheck"
+          ],
+          "categories": [
+            "formatter",
+            "linter",
+            "python",
+            "ruff",
+            "ty",
+            "typecheck"
+          ],
+          "install_commands": [
+            "/plugin marketplace add nurikk/claude-plugins",
+            "/plugin install python-quality@nurikk-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,41 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "criterium",
-      "version": null,
-      "description": "Claude Code plugin for Clojure benchmarking with criterium",
-      "repo_full_name": "hugoduncan/criterium",
-      "repo_url": "https://github.com/hugoduncan/criterium",
-      "repo_description": "Benchmarking library for clojure",
-      "signals": {
-        "stars": 1221,
-        "forks": 52,
-        "pushed_at": "2026-02-03T21:31:00Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"criterium\",\n  \"metadata\": {\n    \"description\": \"Claude Code plugin for Clojure benchmarking with criterium\"\n  },\n  \"owner\": {\n    \"name\": \"Criterium Team\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"criterium\",\n      \"source\": \"./\",\n      \"description\": \"Benchmarking library for Clojure\",\n      \"version\": \"0.5.0\",\n      \"license\": \"EPL-1.0\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"criterium\",\n  \"description\": \"Skill for using criterium benchmarking library\",\n  \"version\": \"0.5.0\",\n  \"skills\": [\"./skills/criterium\"]\n}\n",
-        "README.md": "# Criterium\n\n\n## Alpha version\n\nMaster is now on 0.5.x, which should be considered ALPHA, subject to\nbreaking changes on new features.\n\nSee [ALPHA Readme](README.ALPHA.md)\n\nIf you try it, please give feedback on any breaking changes with 0.4.6.\n\n\n## Stable version 0.4.6\n\nCriterium measures the computation time of an expression.  It is\ndesigned to address some of the pitfalls of benchmarking, and benchmarking on\nthe JVM in particular.\n\nThis includes:\n\n  * statistical processing of multiple evaluations\n  * inclusion of a warm-up period, designed to allow the JIT compiler to\n    optimise its code\n  * purging of gc before testing, to isolate timings from GC state prior\n    to testing\n  * a final forced GC after testing to estimate impact of cleanup on the\n    timing results\n\n## Installation\n\n### Leiningen\n\nAdd the following to your `:dependencies`:\n\n```clj\n[criterium \"0.4.6\"]\n```\n\n### Maven\n\n```xml\n<dependency>\n  <groupId>criterium</groupId>\n  <artifactId>criterium</artifactId>\n  <version>0.4.6</version>\n</dependency>\n```\n\n## Usage\n\nThe top level interface is in `criterium.core`.\n\n    (use 'criterium.core)\n\nUse `bench` to run a benchmark in a simple manner.\n\n```\n(bench (Thread/sleep 1000))\n =>\n                   Execution time mean : 1.000803 sec\n          Execution time std-deviation : 328.501853 us\n         Execution time lower quantile : 1.000068 sec ( 2.5%)\n         Execution time upper quantile : 1.001186 sec (97.5%)\n```\n\nBy default bench is quiet about its progress.  Run `with-progress-reporting` to\nget progress information on `*out*`.\n\n```clj\n(with-progress-reporting (bench (Thread/sleep 1000) :verbose))\n(with-progress-reporting (quick-bench (Thread/sleep 1000) :verbose))\n```\n\nLower level functions are available, that separate benchmark statistic\ngeneration and reporting.\n\n```clj\n(report-result (benchmark (Thread/sleep 1000) {:verbose true}))\n(report-result (quick-benchmark (Thread/sleep 1000)))\n```\n\nNote that results are returned to the user to prevent JIT from recognising that\nthe results are not used.\n\n## Measurement Overhead Estimation\n\nCriterium will automatically estimate a time for its measurement\noverhead.  The estimate is normally made once per session, and is\navailable in the `criterium.core/estimated-overhead-cache` var.\n\nIf the estimation is made while there is a lot of other processing\ngoing on, then benchmarking quick functions may report small negative\ntimes.  You can force a recalculation of the overhead by calling\n`criterium.core/estimated-overhead!`.\n\nIf you want consistency across JVM processes, it might be prudent to\nexplicitly set `criterium.core/estimated-overhead!` to a constant\nvalue.\n\n## References\n\n[API Documentation](http://hugoduncan.github.io/criterium/0.4/api/)\n[Annotated Source](http://hugoduncan.github.io/criterium/0.4/uberdoc.html)\n\nSee [Elliptic Group](http://www.ellipticgroup.com/html/benchmarkingArticle.html)\nfor a Java benchmarking library.  The accompanying article describes many of the\nJVM benchmarking pitfalls.\n\nSee [Criterion](http://hackage.haskell.org/package/criterion) for a Haskell\nbenchmarking library that applies many of the same statistical techniques.\n\n## Todo\n\nSerial correlation detection.\nMultimodal distribution detection.\nUse kernel density estimators?\n\n## Non-Goals\n\nExpressions are evaluated inside a function call.  We deliberately do\nnot seek ultimate accuracy for very quick expressions where the\nfunction overhead may be significant.\n\n## Releasing\n\nTo release, run the `release.sh` script.  This requires that you have\ngit-flow enabled your git repository with `git flow init`, and that\nyou have configured your\n[credentials for clojars](https://github.com/technomancy/leiningen/blob/stable/doc/DEPLOY.md).\n\n## YourKit\n\nYourKit is kindly supporting open source projects with its full-featured Java\nProfiler.\n\nYourKit, LLC is the creator of innovative and intelligent tools for profiling\nJava and .NET applications. Take a look at YourKit's leading software products:\n\n* <a href=\"http://www.yourkit.com/java/profiler/index.jsp\">YourKit Java Profiler</a> and\n* <a href=\"http://www.yourkit.com/.net/profiler/index.jsp\">YourKit .NET Profiler</a>.\n\n## License\n\nLicensed under [EPL](http://www.eclipse.org/legal/epl-v10.html)\n"
-      },
-      "plugins": [
-        {
-          "name": "criterium",
-          "source": "./",
-          "description": "Benchmarking library for Clojure",
-          "version": "0.5.0",
-          "license": "EPL-1.0",
-          "category": "development",
-          "categories": [
-            "development"
-          ],
-          "install_commands": [
-            "/plugin marketplace add hugoduncan/criterium",
-            "/plugin install criterium@criterium"
-          ]
-        }
-      ]
-    },
-    {
       "name": "mcp-vector-search-plugins",
       "version": null,
       "description": "Claude Code plugins for mcp-vector-search configuration and library integration",

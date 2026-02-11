@@ -8,6 +8,46 @@
     {
       "name": "conduit-ui-marketplace",
       "version": null,
+      "description": "Official Conduit UI plugins marketplace",
+      "repo_full_name": "conduit-ui/review",
+      "repo_url": "https://github.com/conduit-ui/review",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-11T15:08:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"conduit-ui-marketplace\",\n  \"description\": \"Official Conduit UI plugins marketplace\",\n  \"owner\": {\n    \"name\": \"Jordan Partridge\",\n    \"email\": \"jordan@conduit-ui.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"review\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/conduit-ui/review.git\"\n      },\n      \"description\": \"Comprehensive parallel PR review system with architecture and implementation analysis\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Jordan Partridge\",\n        \"email\": \"jordan@conduit-ui.com\"\n      },\n      \"homepage\": \"https://github.com/conduit-ui/review\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"review\",\n  \"description\": \"Expert Laravel PR review system with specialized agents for architecture assessment, test coverage analysis, and production-readiness validation. Emphasizes expressive, maintainable code and deep pattern recognition.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Jordan Partridge\",\n    \"email\": \"jordan@conduit-ui.com\"\n  },\n  \"homepage\": \"https://github.com/conduit-ui/review\",\n  \"repository\": \"https://github.com/conduit-ui/review\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"laravel\",\n    \"code-review\",\n    \"architecture\",\n    \"design-patterns\",\n    \"testing\",\n    \"pest\",\n    \"phpunit\",\n    \"production-readiness\"\n  ]\n}\n",
+        "README.md": "# Laravel Code Review Agents\n\nExpert Laravel PR review system with specialized agents for architecture assessment, test coverage analysis, and production-readiness validation. Emphasizes expressive, maintainable code and deep pattern recognition.\n\n## Features\n\n🏗️ **Architecture Review** - Design patterns, SOLID principles, Laravel conventions\n🧪 **Test-Driven Assessment** - Test quality, coverage analysis, edge cases\n🎯 **Production Readiness** - Error handling, logging, performance implications\n📊 **Readiness Scoring** - Quantified PR readiness (0-10 scale)\n🔍 **Pattern Recognition** - Identifies anti-patterns and architectural concerns\n\n## Quick Start\n\n### 1. Add Marketplace\n```bash\n/plugin marketplace add conduit-ui/review\n```\n\n### 2. Install Plugin\n```bash\n/plugin install review@conduit-ui-marketplace\n```\n\n### 3. Run Review\n```bash\n# In your Laravel project\n/review\n\n# Results in .claude/reviews/[timestamp]/synthesis-report.md\n```\n\n## How It Works\n\n```\nYour Laravel PR\n   ↓\nArchitecture Review:\n├─ Design patterns & SOLID compliance\n├─ Laravel convention adherence\n├─ Test quality and coverage\n├─ Production readiness\n└─ Performance implications\n   ↓\nSynthesis:\n├─ Categorize findings\n├─ Calculate readiness score\n└─ Generate actionable brief\n```\n\n## Agents\n\n### pr-review-coordinator\nOrchestrates reviews and synthesizes findings into actionable briefs with readiness scoring.\n\n### architecture-reviewer (OttBot)\nDeep Laravel architecture expert who analyzes:\n- Design patterns (Repository, Service, Action, Factory patterns)\n- SOLID principle compliance\n- Test quality and test-driven design\n- Production readiness (error handling, logging, monitoring)\n- Performance implications (N+1 queries, eager loading, query optimization)\n- Database migrations and rollback safety\n- Code expressiveness and maintainability\n\nFocuses on:\n- **Clarity over cleverness** - code that's easy to understand\n- **Early returns** - reducing nesting for readability\n- **Expressive names** - descriptive variables and methods\n- **Test quality** - comprehensive edge case coverage\n- **Pattern correctness** - following established Laravel patterns\n\n### implementation-reviewer (Optional)\nRuns CodeRabbit analysis if installed. Focuses on:\n- Code quality and consistency\n- Security vulnerabilities\n- Implementation details\n\n### commit-reviewer\nValidates commits meet Laravel standards:\n- Test validation before commit\n- Message formatting\n- Conventional commit style\n\n### checkpoint-analyzer\nVerifies staged changes form working checkpoint before commit.\n\n## Scoring\n\n| Score | Verdict | Meaning |\n|-------|---------|---------|\n| 9.0-10.0 | ✅ Ready with confidence | Minimal review needed |\n| 8.0-8.9 | ⚠️ Ready for review | Author should be present for Q&A |\n| 7.0-7.9 | ⚠️ Ready but expect questions | May need iteration |\n| <7.0 | 🔴 Hold | Needs more work before merge |\n\n## Requirements\n\n- **Git** (required)\n- **CodeRabbit CLI** (optional) - for implementation review\n  - Install: `brew install coderabbit`\n  - Or skip for architecture-only review\n\n## Laravel-Specific Features\n\n### Understands Laravel Patterns\n- Service-Action-Data architecture\n- Query Builder and Eloquent patterns\n- Test conventions and assertions\n- Module-based organization\n- Permission and authorization patterns\n- Form Request validation\n- Pipeline and middleware patterns\n\n### Detects Common Issues\n- N+1 query problems\n- Missing eager loading\n- Untested edge cases\n- Database migration safety\n- Test fixture misuse\n- Silent failure patterns\n- Type safety gaps\n\n### Values Expressive Code\n- Clean, readable code over clever code\n- Early returns for readability\n- Descriptive variable/method names\n- Test-driven development\n- Explicit over implicit\n- Small, focused functions\n\n## Configuration\n\nCreate `.claude/review-config.json`:\n\n```json\n{\n  \"scoring\": {\n    \"architecture_weight\": 0.8,\n    \"implementation_weight\": 0.2\n  },\n  \"review\": {\n    \"enableLearning\": true,\n    \"reportDirectory\": \".claude/reviews\",\n    \"coderabbitEnabled\": false\n  }\n}\n```\n\n## Workflow Integration\n\n### Pre-commit Hook\n```bash\n#!/bin/bash\n/review\nif grep -q \"RED LIGHTS\" .claude/reviews/*/synthesis-report.md; then\n  exit 1\nfi\n```\n\n### GitHub Actions\n```yaml\nname: Architecture Review\non: [pull_request]\njobs:\n  review:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: anthropics/claude-code@v1\n        with:\n          command: /review\n```\n\n## What You Get\n\nWhen you run `/review`, you receive:\n\n**synthesis-report.md** with:\n- Readiness score (0-10)\n- ✅ GREEN LIGHTS (trust these)\n- ⚠️ YELLOW LIGHTS (verify with author)\n- 🔴 RED LIGHTS (must fix)\n- Questions for author\n- Detailed findings by category\n\n## Support & Contributing\n\n- 📖 Source: https://github.com/conduit-ui/review\n- 🐛 Issues: https://github.com/conduit-ui/review/issues\n- 💬 Discussions: https://github.com/conduit-ui/review/discussions\n\n## License\n\nMIT - See LICENSE file\n\nBuilt with ❤️ for Laravel developers using Claude Code\n"
+      },
+      "plugins": [
+        {
+          "name": "review",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/conduit-ui/review.git"
+          },
+          "description": "Comprehensive parallel PR review system with architecture and implementation analysis",
+          "version": "1.0.0",
+          "author": {
+            "name": "Jordan Partridge",
+            "email": "jordan@conduit-ui.com"
+          },
+          "homepage": "https://github.com/conduit-ui/review",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add conduit-ui/review",
+            "/plugin install review@conduit-ui-marketplace"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "conduit-ui-marketplace",
+      "version": null,
       "description": "Claude Code plugins marketplace for Conduit UI ecosystem",
       "repo_full_name": "conduit-ui/marketplace",
       "repo_url": "https://github.com/conduit-ui/marketplace",
