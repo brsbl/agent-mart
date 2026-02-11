@@ -26,11 +26,18 @@ const STAGES = [
     id: '01-discover',
     name: 'Discover Repos',
     fn: discover,
-    description: 'Searches GitHub Code Search API for repositories containing `.claude-plugin/marketplace.json` files.',
+    description: 'Verifies known repos via GraphQL, then searches for new repos via Code Search.',
     outputFile: './data/01-discovered.json',
-    getMetrics: (data, prev) => ({
-      'Repos discovered': { current: data?.total || 0, previous: prev?.total || 0 }
-    })
+    getMetrics: (data, prev) => {
+      const stats = data?.discovery_stats || {};
+      const prevStats = prev?.discovery_stats || {};
+      return {
+        'Repos discovered': { current: data?.total || 0, previous: prev?.total || 0 },
+        'Verified': { current: stats.phase_a_verified || 0, previous: prevStats.phase_a_verified || 0 },
+        'Dropped': { current: stats.phase_a_dropped || 0, previous: prevStats.phase_a_dropped || 0 },
+        'New from search': { current: stats.phase_b_new_from_search || 0, previous: prevStats.phase_b_new_from_search || 0 }
+      };
+    }
   },
   {
     id: '02-fetch-repos',
