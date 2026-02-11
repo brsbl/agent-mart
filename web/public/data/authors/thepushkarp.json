@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "thepushkarp",
+    "display_name": "pushkar",
+    "avatar_url": "https://avatars.githubusercontent.com/u/42088801?u=dd3b0c75fe43f4c346fcd95a140048d6a939ddc3&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "handoff",
+      "version": null,
+      "description": "Plugin marketplace for preserving and restoring context between Claude Code sessions",
+      "repo_full_name": "thepushkarp/handoff",
+      "repo_url": "https://github.com/thepushkarp/handoff",
+      "repo_description": "Claude Code plugin to preserve and restore context between sessions",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-21T03:47:53Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"handoff\",\n  \"description\": \"Plugin marketplace for preserving and restoring context between Claude Code sessions\",\n  \"owner\": {\n    \"name\": \"thepushkarp\",\n    \"email\": \"thepushkarp@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"handoff\",\n      \"description\": \"Preserve and restore context between Claude Code sessions with structured handoff files\",\n      \"version\": \"0.1.1\",\n      \"author\": {\n        \"name\": \"thepushkarp\"\n      },\n      \"source\": \"./plugins/handoff\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"handoff\", \"context\", \"session\", \"continuity\", \"workflow\"],\n      \"homepage\": \"https://github.com/thepushkarp/handoff\",\n      \"repository\": \"https://github.com/thepushkarp/handoff\"\n    }\n  ]\n}\n",
+        "README.md": "# Handoff\n\nPreserve and restore context between Claude Code sessions.\n\n## The Problem\n\nWhen working with Claude Code across multiple sessions, switching agents, or hitting context limits (auto-compaction), valuable context is lost:\n- What task was being worked on\n- Key decisions and their rationale\n- Blockers and open questions\n- Next steps to continue\n\n## The Solution\n\nHandoff captures \"necessary and sufficient\" context to a `docs/handoff/HANDOFF.md` file, enabling seamless continuation across sessions.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add thepushkarp/handoff\n\n# Install the plugin\n/plugin install handoff@handoff\n```\n\n## Commands\n\n### `/handoff:create`\n\nCapture current session context to `docs/handoff/HANDOFF.md`.\n\n**What it captures:**\n- Current task state (what's in progress)\n- Key decisions and rationale\n- Modified files\n- Blockers and open questions\n- Next steps\n- Critical context (gotchas, patterns, etc.)\n\n**Usage:**\n```\n/handoff:create\n```\n\nThe handoff is **appended with a timestamp**, creating a history log.\n\n### `/handoff:resume`\n\nLoad existing handoff context to continue work.\n\n**Default mode:** Displays handoff summary and asks how to proceed.\n```\n/handoff:resume\n```\n\n**Auto mode:** Automatically loads context and starts working on next steps.\n```\n/handoff:resume --auto\n```\n\n## Automatic Handoff Prompt\n\nThe plugin includes a `PreCompact` hook that **prompts you before context compaction**:\n\n> \"Context is about to be compacted. Would you like me to create a handoff first to preserve important context? (yes/no)\"\n\nThis ensures you never lose important context to auto-compaction.\n\n## Handoff File Format\n\nHandoffs are stored in `docs/handoff/HANDOFF.md` with timestamped entries:\n\n```markdown\n---\n\n## Handoff: 2025-01-05 14:32:00\n\n### Current Task State\nImplementing user authentication feature. Login flow is complete, working on password reset.\n\n### Key Decisions\n- Using JWT for session tokens: Better for stateless scaling\n- Email verification required: Security requirement from product\n\n### Modified Files\n- `src/auth/login.ts` - Added JWT generation\n- `src/auth/middleware.ts` - Token validation middleware\n- `tests/auth.test.ts` - Login flow tests\n\n### Blockers / Open Questions\n- Need to decide on password reset token expiry (1hr vs 24hr?)\n\n### Next Steps\n1. Implement password reset endpoint\n2. Add email sending for reset tokens\n3. Write tests for reset flow\n\n### Critical Context\n- The `AUTH_SECRET` env var must be set or tests fail silently\n- Rate limiting is handled in nginx, not in code\n\n---\n```\n\n## Use Cases\n\n1. **Ending a session**: Run `/handoff:create` before closing Claude Code\n2. **Switching contexts**: Create a handoff before switching to a different task\n3. **Context limits**: The PreCompact hook reminds you before auto-compaction\n4. **Team handoffs**: Share `docs/handoff/HANDOFF.md` for async collaboration\n5. **Resuming work**: Run `/handoff:resume` when starting a new session\n\n## Tips\n\n- **Be explicit about blockers**: Include specific questions or decisions needed\n- **Include file paths**: Helps the next session navigate quickly\n- **Note gotchas**: Things that weren't obvious save time later\n- **Use auto mode carefully**: Good for continuing known tasks, but review mode helps verify context is correct\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "handoff",
+          "description": "Preserve and restore context between Claude Code sessions with structured handoff files",
+          "version": "0.1.1",
+          "author": {
+            "name": "thepushkarp"
+          },
+          "source": "./plugins/handoff",
+          "category": "productivity",
+          "keywords": [
+            "handoff",
+            "context",
+            "session",
+            "continuity",
+            "workflow"
+          ],
+          "homepage": "https://github.com/thepushkarp/handoff",
+          "repository": "https://github.com/thepushkarp/handoff",
+          "categories": [
+            "context",
+            "continuity",
+            "handoff",
+            "productivity",
+            "session",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add thepushkarp/handoff",
+            "/plugin install handoff@handoff"
+          ]
+        }
+      ]
+    }
+  ]
+}

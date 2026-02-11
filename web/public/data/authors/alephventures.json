@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "alephventures",
+    "display_name": "Aleph",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7923342?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "alephventures-plugins",
+      "version": null,
+      "description": "Shared Claude Code plugins for the Aleph Ventures team",
+      "repo_full_name": "alephventures/alephventures-claude-skills",
+      "repo_url": "https://github.com/alephventures/alephventures-claude-skills",
+      "repo_description": "Shared Claude Code skills for the Aleph Ventures team",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-11T11:39:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"alephventures-plugins\",\n  \"description\": \"Shared Claude Code plugins for the Aleph Ventures team\",\n  \"owner\": {\n    \"name\": \"Aleph Ventures\",\n    \"email\": \"gilad@aleph.vc\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"salesforce-skill\",\n      \"source\": \"./plugins/salesforce-skill\",\n      \"description\": \"Salesforce integration, shared knowledge base, and team skills\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"author\": {\n        \"name\": \"Aleph Ventures\",\n        \"email\": \"gilad@aleph.vc\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"alephventures-plugins\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Aleph Ventures shared Claude Code plugins\",\n  \"author\": {\n    \"name\": \"Aleph Ventures\",\n    \"email\": \"gilad@aleph.vc\"\n  }\n}\n",
+        "README.md": "# Aleph Ventures — Claude Code Skills\n\nShared Claude Code skills for the Aleph Ventures team. Currently includes Salesforce integration with a shared knowledge base that gets smarter over time.\n\n## What You Get\n\n- **`/salesforce`** — Query data, explore objects, inspect metadata, and manage your org using natural language\n- **`/sf-teach`** — Add org-specific knowledge (custom objects, field names, gotchas) to a shared knowledge base\n- **Shared knowledge base** — Team-maintained markdown docs that give Claude org-specific context\n- **Salesforce MCP integration** — 60+ tools for SOQL, metadata, data operations, and more\n\n## Prerequisites\n\n| Requirement | Version | Install |\n|---|---|---|\n| Node.js | v18+ | [nodejs.org](https://nodejs.org/) |\n| Salesforce CLI | latest | `npm install -g @salesforce/cli` |\n| Claude Code | v1.0+ | [claude.ai/claude-code](https://claude.ai/claude-code) |\n\nRun the setup check to verify:\n\n```bash\n./scripts/setup.sh\n```\n\n## Installation\n\n### From Plugin Marketplace\n\n```\n/plugin marketplace add alephventures/alephventures-claude-skills\n/plugin install alephventures-claude-skills\n```\n\n### Manual (Local Development)\n\n```bash\ngit clone https://github.com/alephventures/alephventures-claude-skills.git\nclaude --plugin-dir ./alephventures-claude-skills\n```\n\n## Authentication\n\nEach team member authenticates with their own Salesforce credentials. No shared service accounts.\n\n### First-Time Setup\n\n1. **Authenticate with your Salesforce org:**\n\n   ```bash\n   sf org login web --alias my-org --set-default\n   ```\n\n2. A browser window opens — log in with your Salesforce credentials and approve access.\n\n3. Done. SF CLI stores tokens securely in your local keychain. Token refresh is automatic.\n\n### Multiple Orgs\n\n```bash\n# Authenticate additional orgs\nsf org login web --alias prod\nsf org login web --alias staging\n\n# Switch default org\nsf config set target-org prod\n\n# Check which orgs are authenticated\nsf org list\n```\n\n### Sandbox Authentication\n\n```bash\nsf org login web --alias my-sandbox --instance-url https://test.salesforce.com --set-default\n```\n\n## Usage\n\n### Querying Data\n\n```\n/salesforce show me all open opportunities over $100k\n/salesforce find contacts at Acme Corporation\n/salesforce how many leads were created this month?\n```\n\n### Exploring Your Org\n\n```\n/salesforce describe the Account object\n/salesforce what custom fields are on Contact?\n/salesforce show me the relationship between Project__c and Account\n```\n\n### Building Queries\n\n```\n/salesforce help me write a SOQL query to find duplicate leads by email\n/salesforce query for accounts with no open opportunities\n```\n\n### Adding Knowledge\n\n```\n/sf-teach the Project__c object has a master-detail to Account via Account__c\n/sf-teach our naming convention for custom objects is [Team]_[Entity]__c\n/sf-teach Lead conversion fails if Custom_Status__c is blank — set it to \"Qualified\" first\n```\n\n## Knowledge Base\n\nThe `knowledge/` directory is a shared, git-tracked knowledge base. As your team uses `/sf-teach`, it grows with org-specific context:\n\n```\nknowledge/\n├── org-structure/        # Custom objects, fields, record types\n├── best-practices/       # SOQL patterns, data model, naming\n├── integrations/         # External system notes\n└── troubleshooting/      # Known issues and workarounds\n```\n\nSee [knowledge/README.md](knowledge/README.md) for contribution guidelines.\n\n## How It Works\n\n```\n┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐\n│  Claude Code │────▶│ Salesforce Skill  │────▶│ Knowledge Base   │\n│  (you type)  │     │ (SKILL.md)       │     │ (markdown files) │\n└─────────────┘     └──────────────────┘     └─────────────────┘\n                           │\n                           ▼\n                    ┌──────────────────┐     ┌─────────────────┐\n                    │ Salesforce MCP   │────▶│ Your SF Org      │\n                    │ (@salesforce/mcp)│     │ (via SF CLI auth) │\n                    └──────────────────┘     └─────────────────┘\n```\n\n1. You invoke `/salesforce` with a natural language request\n2. The skill consults the knowledge base for org-specific context\n3. It uses Salesforce MCP tools to query/describe/modify your org\n4. Results are presented with context from the knowledge base\n5. If new patterns are discovered, you're prompted to save them with `/sf-teach`\n\n## Updating\n\n### From Marketplace\n\n```\n/plugin marketplace update\n```\n\n### Manual\n\n```bash\ncd alephventures-claude-skills\ngit pull\n```\n\nKnowledge base updates are included automatically when you pull.\n\n## Troubleshooting\n\n### \"No default org\" Error\n\n```bash\nsf config set target-org my-org\n```\n\n### \"INVALID_SESSION_ID\" Error\n\nYour token may have expired. Re-authenticate:\n\n```bash\nsf org login web --alias my-org --set-default\n```\n\n### MCP Server Not Connecting\n\n1. Verify Node.js is installed: `node --version`\n2. Verify the MCP server can be downloaded: `npx @anthropic-ai/salesforce-mcp --help`\n3. Check `.mcp.json` is in the plugin root directory\n\n### \"Insufficient Access\" Errors\n\nYour Salesforce user may not have permission to access certain objects or fields. Check with your Salesforce admin about your profile and permission sets.\n"
+      },
+      "plugins": [
+        {
+          "name": "salesforce-skill",
+          "source": "./plugins/salesforce-skill",
+          "description": "Salesforce integration, shared knowledge base, and team skills",
+          "version": "1.0.0",
+          "category": "productivity",
+          "author": {
+            "name": "Aleph Ventures",
+            "email": "gilad@aleph.vc"
+          },
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add alephventures/alephventures-claude-skills",
+            "/plugin install salesforce-skill@alephventures-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

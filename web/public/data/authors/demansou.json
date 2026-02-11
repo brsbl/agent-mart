@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "demansou",
+    "display_name": "Daniel Mansour",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1874095?u=e5c7f6767e3b5d91d21a2f0eb6686d7feccd8bb6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "demansou-tools",
+      "version": null,
+      "description": "Personal productivity tools for Claude Code",
+      "repo_full_name": "demansou/resume-builder",
+      "repo_url": "https://github.com/demansou/resume-builder",
+      "repo_description": "Master resume and career documents",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-30T20:47:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"demansou-tools\",\n  \"owner\": {\n    \"name\": \"Daniel Mansour\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal productivity tools for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"resume-builder\",\n      \"source\": \"./\",\n      \"description\": \"Build evidence-based resumes by mining your actual work history\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Daniel Mansour\"\n      },\n      \"homepage\": \"https://github.com/demansou/resume-builder\",\n      \"repository\": \"https://github.com/demansou/resume-builder\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"resume\", \"cv\", \"career\", \"job-search\"],\n      \"category\": \"productivity\",\n      \"tags\": [\"resume\", \"career\", \"job-search\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"resume-builder\",\n  \"version\": \"1.0.1\",\n  \"description\": \"Build evidence-based resumes by mining your actual work history\",\n  \"author\": {\n    \"name\": \"Daniel Mansour\",\n    \"url\": \"https://github.com/demansou\"\n  },\n  \"homepage\": \"https://github.com/demansou/resume-builder\",\n  \"repository\": \"https://github.com/demansou/resume-builder\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"resume\", \"cv\", \"career\", \"job-search\", \"evidence-based\"],\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# Resume Builder\n\nA Claude Code skill for building evidence-based resumes by mining your actual work history—not just memory.\n\n## Why This Exists\n\nMost resumes are written from memory, leading to vague bullet points like \"worked on projects\" or \"improved outcomes.\" This skill helps you build a resume grounded in evidence from your documented work: code you committed, documents you wrote, projects you shipped, articles you published.\n\n## Master vs. Tailored Resume\n\nThis system uses a **two-tier approach**:\n\n### Master Resume\nYour comprehensive, unabridged work history. Include everything:\n- All roles, projects, and accomplishments\n- Full technical detail and context\n- Complete metrics and outcomes\n- No length limit\n\nThe master is your **source of truth**—you maintain it over time and never send it to employers directly. See [examples/master-resume.md](examples/master-resume.md).\n\n### Tailored Resume\nA focused 1-2 page version derived from your master, customized for a specific job:\n- Cherry-pick relevant experience\n- Reorder sections to lead with what matters\n- Emphasize keywords from the job posting\n- Remove or condense less relevant content\n\nYou generate a new tailored version for each application. See [examples/tailored-resume.md](examples/tailored-resume.md) for a version targeting a backend infrastructure role.\n\n## Who This Is For\n\nAnyone with a body of work they can point to:\n- **Engineers** — Git repos, architecture docs, technical specs\n- **Product Managers** — PRDs, roadmaps, launch announcements\n- **Marketers** — Campaigns, reports, published content\n- **Designers** — Portfolios, case studies, shipped products\n- **Salespeople** — Closed deals, presentations, pipeline reports\n- **Researchers** — Papers, patents, conference talks\n- **Anyone** — Performance reviews, project docs, LinkedIn history\n\n## Installation\n\n### Option 1: Plugin Marketplace (Recommended)\n\nAdd the marketplace and install the plugin:\n\n```bash\n/plugin marketplace add demansou/resume-builder\n/plugin install resume-builder\n```\n\n### Option 2: Clone and Run\n\n```bash\ngit clone https://github.com/demansou/resume-builder.git\ncd resume-builder\nclaude\n```\n\n### Option 3: Manual Copy\n\nCopy `skills/build-resume/SKILL.md` to your project's `.claude/commands/build-resume.md`\n\n---\n\nThen invoke with:\n```\n/build-resume\n```\n\n## Evidence Sources\n\nThe skill can gather resume content from:\n\n| Source | What to Look For |\n|--------|------------------|\n| Git Repositories | Commits, tech stack, architecture patterns |\n| Documents | Reports, proposals, presentations you authored |\n| Calendars | Projects led, meetings run, initiatives driven |\n| Webpages | Published articles, portfolio pieces, press mentions |\n| LinkedIn | Role history, recommendations, posts |\n| Project Tools | Jira/Asana tickets, completed initiatives |\n| Published Work | Papers, articles, designs, patents |\n\n## Modes\n\n### 1. Update Resume\nAdd new roles or refine existing content. The skill interviews you:\n- What was the situation or challenge?\n- What actions did you take?\n- What were the results?\n- Can you quantify the outcome?\n\n### 2. Gather Evidence\nScan your available sources for resume-worthy accomplishments:\n- Git commit history and tech stacks\n- Documents and reports you've written\n- Published work and portfolio pieces\n- Calendar patterns showing leadership\n\n### 3. Generate Tailored Version\nCreate a targeted version for a specific job posting:\n- **Accepts job description via URL, pasted text, or file**\n- Fetches and analyzes job postings from LinkedIn, Greenhouse, Lever, etc.\n- Maps your experience to job requirements\n- Reorders and emphasizes relevant accomplishments\n- Incorporates keywords naturally (no keyword stuffing)\n- Identifies gaps to address in cover letter\n- Outputs clean 1-2 page markdown\n\n### 4. Export to PDF/Word\nConvert your markdown resume to a polished document:\n- Exports to PDF (recommended) or Word/DOCX\n- Uses pandoc with sensible defaults\n- Includes [styles/resume.css](styles/resume.css) for clean PDF output\n- Checks for required tools and guides installation\n\n**Quick export:**\n```bash\n# PDF\npandoc resume.md -o resume.pdf --pdf-engine=wkhtmltopdf --css=styles/resume.css\n\n# Word\npandoc resume.md -o resume.docx\n```\n\n### 5. Full Workflow\nWalk through the complete process from gathering evidence to polished resume.\n\n## Confidentiality by Design\n\nThe skill describes **what you did**, not what you built for your employer:\n\n- Extracts patterns, skills, and accomplishments\n- Never copies proprietary content verbatim\n- Abstracts internal project names and client names\n- Focuses on transferable skills and impact\n\nYour resume demonstrates your capabilities without revealing your employer's intellectual property.\n\n## The Process\n\nSee [PROCESS.md](PROCESS.md) for the methodology behind evidence-based resume building.\n\n## Examples\n\n- [examples/master-resume.md](examples/master-resume.md) — Full master resume with complete detail\n- [examples/tailored-resume.md](examples/tailored-resume.md) — Condensed version for a backend infrastructure role\n\n## Writing Style\n\nThe skill follows these principles:\n- **SAR format** — Situation, Action, Result\n- **Active voice** — Led, Built, Grew, Delivered\n- **Concrete metrics** — Percentages, dollar amounts, scale\n- **Scope clarity** — Solo ownership vs. team collaboration\n- **Progression** — Show growth over time\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "resume-builder",
+          "source": "./",
+          "description": "Build evidence-based resumes by mining your actual work history",
+          "version": "1.0.0",
+          "author": {
+            "name": "Daniel Mansour"
+          },
+          "homepage": "https://github.com/demansou/resume-builder",
+          "repository": "https://github.com/demansou/resume-builder",
+          "license": "MIT",
+          "keywords": [
+            "resume",
+            "cv",
+            "career",
+            "job-search"
+          ],
+          "category": "productivity",
+          "tags": [
+            "resume",
+            "career",
+            "job-search"
+          ],
+          "categories": [
+            "career",
+            "cv",
+            "job-search",
+            "productivity",
+            "resume"
+          ],
+          "install_commands": [
+            "/plugin marketplace add demansou/resume-builder",
+            "/plugin install resume-builder@demansou-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

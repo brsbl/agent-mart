@@ -6,50 +6,6 @@
   },
   "marketplaces": [
     {
-      "name": "claude-pr-logger",
-      "version": null,
-      "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
-      "repo_full_name": "MMMIIIN/claude-pr-logger",
-      "repo_url": "https://github.com/MMMIIIN/claude-pr-logger",
-      "repo_description": null,
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2025-12-22T08:52:36Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-pr-logger\",\n  \"owner\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pr-logger\",\n      \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./\",\n      \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"pr-logger\",\n  \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n  \"version\": \"1.0.2\",\n  \"author\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"],\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
-        "README.md": "# Claude PR Logger\n\nClaude Code에서 개발 과정을 자동으로 기록하여 PR 작성 시 활용할 수 있는 플러그인입니다.\n\n## 왜 만들었나요?\n\n### AI 시대의 코드 리뷰 패러다임 변화\n\nAI를 활용한 개발이 보편화되면서 개발 속도와 생성되는 코드의 양이 급격히 증가했습니다.\n하지만 기존의 코드 리뷰 방식은 이러한 변화를 따라가지 못하고 있습니다.\n\n**기존 방식의 한계:**\n- 한 PR에 수백, 수천 줄의 변경사항\n- 모든 코드를 라인 바이 라인으로 검토하기 어려움\n- AI가 생성한 코드의 의도를 파악하기 힘듦\n\n### 새로운 코드 리뷰: 컨텍스트 리뷰\n\n이제는 `\"어떤 코드가 생성되었는가\"`보다 `\"어떤 맥락에서, 어떤 명령으로 코드가 생성되었는가\"`를 리뷰해야 합니다.\n\n**컨텍스트 리뷰의 장점:**\n- 개발자가 AI에게 내린 명령과 의도를 확인\n- 문제 해결 과정과 의사결정 흐름을 추적\n- 코드 변경의 \"왜\"를 이해하고 리뷰\n\n### PR Logger의 역할\n\n이 플러그인은 개발자와 AI 간의 대화를 자동으로 기록하여:\n\n1. **개발 컨텍스트 보존** - 어떤 요청으로 코드가 생성되었는지 기록\n2. **의사결정 추적** - 왜 이런 방식으로 구현했는지 확인 가능\n3. **효율적인 리뷰** - 코드보다 맥락을 중심으로 빠른 리뷰\n4. **지식 공유** - 팀원들이 개발 과정을 이해하고 학습\n\n## 기능\n\n- **브랜치별 로그 분리**: Git 브랜치마다 별도의 로그 파일 자동 생성\n- **자동 질문 기록**: 사용자의 모든 질문을 타임스탬프와 함께 기록\n- **답변 요약 트리거**: 이전 답변을 요약하도록 Claude에게 자동 알림\n- **에러 메시지 요약**: 긴 에러 메시지를 자동으로 요약 (30줄 이상)\n- **PR용 로그**: 개발 과정을 PR에 그대로 활용 가능\n\n### 브랜치별 로그 파일\n\n```\n.claude/pr-logger/\n├── session-log-feature-10-geofence-management.md\n├── session-log-feature-11-worker-api.md\n├── session-log-develop.md\n└── session-log-main.md\n```\n\n브랜치를 전환하면 자동으로 해당 브랜치의 로그 파일을 사용합니다.\n\n## 설치 방법\n\n### 방법 1: GitHub에서 설치 (권장)\n\n```bash\n# Claude Code에서 실행\n/plugin install pr-logger@MMMIIIN/claude-pr-logger\n```\n\n설치 후 Claude Code를 재시작하세요.\n\n### 방법 2: 마켓플레이스 등록 후 설치\n\n```bash\n# 1. 마켓플레이스 추가\n/plugin marketplace add MMMIIIN/claude-pr-logger\n\n# 2. 플러그인 설치\n/plugin install pr-logger\n```\n\n## 삭제 방법\n\n### 방법 1: 명령어로 삭제 (권장)\n\n```bash\n# Claude Code에서 실행\n/pr-logger:uninstall\n```\n\nClaude가 캐시, 마켓플레이스, 설정 파일을 모두 정리합니다.\n\n### 방법 2: 기본 삭제\n\n```bash\n/plugin uninstall pr-logger\n```\n\n> **주의**: 기본 삭제 후 Hook 에러가 발생하면 `/pr-logger:uninstall` 명령어를 사용하세요.\n\n삭제 후 Claude Code를 재시작하세요.\n\n## 동작 원리\n\n플러그인은 다음과 같은 흐름으로 동작합니다:\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                        첫 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 질문 입력                                           │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Claude가 답변                                                │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n┌─────────────────────────────────────────────────────────────────┐\n│                        두 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 다음 질문 입력                                       │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Hook이 <pr-log-reminder> 메시지를 Claude에게 전달            │\n│  4. Claude가 이전 답변을 요약하여 session-log.md에 추가           │\n│  5. Claude가 현재 질문에 답변                                    │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n                        (반복...)\n```\n\n**핵심 포인트:**\n- 질문은 **입력 즉시** 자동 기록됩니다\n- 답변 요약은 **다음 질문 시** Claude가 작성합니다\n- 이를 통해 질문-답변 쌍이 순차적으로 기록됩니다\n\n## 사용법\n\n### 자동 기록\n\n플러그인 설치 후 자동으로 동작합니다:\n\n1. 질문을 입력하면 `.claude/pr-logger/session-log.md`에 기록됨\n2. 다음 질문 시 이전 답변 요약을 자동으로 추가\n\n### 슬래시 명령어\n\n| 명령어 | 설명 |\n|--------|------|\n| `/pr-logger:pr-log` | 현재 PR용 개발 로그 확인 |\n| `/pr-logger:pr-log-clear` | PR 작성 완료 마커 추가 |\n| `/pr-logger:pr-log-all` | 전체 개발 로그 확인 |\n| `/pr-logger:uninstall` | 플러그인 완전 삭제 (캐시, 설정 파일 모두 정리) |\n\n## 로그 형식\n\n```markdown\n# PR 개발 로그\n\n브랜치: `feature-10-geofence-management`\n세션 ID: `abc123`\n시작 시간: 2025-12-22 10:00:00\n\n---\n\n## [2025-12-22 10:00:00] 질문\n\n사용자 질문 내용\n\n### 답변 요약\n- 수행한 작업 1\n- 수행한 작업 2\n- 커밋: `abc1234`\n```\n\n## CLAUDE.md 설정 (권장)\n\n프로젝트의 `CLAUDE.md`에 다음 내용을 추가하면 더 정확하게 동작합니다:\n\n```markdown\n## PR 개발 로그 자동화\n\n`<pr-log-reminder>` 메시지가 표시되면:\n\n1. `.claude/pr-logger/session-log.md`를 읽어서 마지막 질문 확인\n2. 해당 질문에 대한 이전 답변을 간결하게 요약 (2-5줄)\n3. 요약 내용을 `### 답변 요약` 형식으로 추가\n4. 그 후 현재 질문에 대한 답변 진행\n```\n\n## 파일 구조\n\n```\nclaude-pr-logger/\n├── .claude-plugin/\n│   ├── plugin.json          # 플러그인 매니페스트\n│   └── marketplace.json     # 마켓플레이스 등록 정보\n├── hooks/\n│   └── hooks.json           # Hook 설정\n├── scripts/\n│   └── log-prompt.py        # 로깅 스크립트\n├── commands/\n│   ├── pr-log.md            # 로그 확인 명령어\n│   ├── pr-log-clear.md      # 완료 마커 명령어\n│   └── pr-log-all.md        # 전체 로그 명령어\n└── README.md\n```\n\n## 라이선스\n\nMIT License\n"
-      },
-      "plugins": [
-        {
-          "name": "pr-logger",
-          "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
-          "version": "1.0.2",
-          "source": "./",
-          "repository": "https://github.com/MMMIIIN/claude-pr-logger",
-          "license": "MIT",
-          "keywords": [
-            "pr",
-            "logging",
-            "documentation",
-            "development-log"
-          ],
-          "categories": [
-            "development-log",
-            "documentation",
-            "logging",
-            "pr"
-          ],
-          "install_commands": [
-            "/plugin marketplace add MMMIIIN/claude-pr-logger",
-            "/plugin install pr-logger@claude-pr-logger"
-          ]
-        }
-      ]
-    },
-    {
       "name": "daily-work-tracker",
       "version": null,
       "description": "여러 프로젝트의 일일 작업을 날짜별로 추적하고 요약합니다",
@@ -91,6 +47,50 @@
           "install_commands": [
             "/plugin marketplace add MMMIIIN/daily-work-tracker",
             "/plugin install daily-work-tracker@daily-work-tracker"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "claude-pr-logger",
+      "version": null,
+      "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
+      "repo_full_name": "MMMIIIN/claude-pr-logger",
+      "repo_url": "https://github.com/MMMIIIN/claude-pr-logger",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-22T08:52:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-pr-logger\",\n  \"owner\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pr-logger\",\n      \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./\",\n      \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"pr-logger\",\n  \"description\": \"PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용\",\n  \"version\": \"1.0.2\",\n  \"author\": {\n    \"name\": \"MMMIIIN\",\n    \"url\": \"https://github.com/MMMIIIN\"\n  },\n  \"repository\": \"https://github.com/MMMIIIN/claude-pr-logger\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"pr\", \"logging\", \"documentation\", \"development-log\"],\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "README.md": "# Claude PR Logger\n\nClaude Code에서 개발 과정을 자동으로 기록하여 PR 작성 시 활용할 수 있는 플러그인입니다.\n\n## 왜 만들었나요?\n\n### AI 시대의 코드 리뷰 패러다임 변화\n\nAI를 활용한 개발이 보편화되면서 개발 속도와 생성되는 코드의 양이 급격히 증가했습니다.\n하지만 기존의 코드 리뷰 방식은 이러한 변화를 따라가지 못하고 있습니다.\n\n**기존 방식의 한계:**\n- 한 PR에 수백, 수천 줄의 변경사항\n- 모든 코드를 라인 바이 라인으로 검토하기 어려움\n- AI가 생성한 코드의 의도를 파악하기 힘듦\n\n### 새로운 코드 리뷰: 컨텍스트 리뷰\n\n이제는 `\"어떤 코드가 생성되었는가\"`보다 `\"어떤 맥락에서, 어떤 명령으로 코드가 생성되었는가\"`를 리뷰해야 합니다.\n\n**컨텍스트 리뷰의 장점:**\n- 개발자가 AI에게 내린 명령과 의도를 확인\n- 문제 해결 과정과 의사결정 흐름을 추적\n- 코드 변경의 \"왜\"를 이해하고 리뷰\n\n### PR Logger의 역할\n\n이 플러그인은 개발자와 AI 간의 대화를 자동으로 기록하여:\n\n1. **개발 컨텍스트 보존** - 어떤 요청으로 코드가 생성되었는지 기록\n2. **의사결정 추적** - 왜 이런 방식으로 구현했는지 확인 가능\n3. **효율적인 리뷰** - 코드보다 맥락을 중심으로 빠른 리뷰\n4. **지식 공유** - 팀원들이 개발 과정을 이해하고 학습\n\n## 기능\n\n- **브랜치별 로그 분리**: Git 브랜치마다 별도의 로그 파일 자동 생성\n- **자동 질문 기록**: 사용자의 모든 질문을 타임스탬프와 함께 기록\n- **답변 요약 트리거**: 이전 답변을 요약하도록 Claude에게 자동 알림\n- **에러 메시지 요약**: 긴 에러 메시지를 자동으로 요약 (30줄 이상)\n- **PR용 로그**: 개발 과정을 PR에 그대로 활용 가능\n\n### 브랜치별 로그 파일\n\n```\n.claude/pr-logger/\n├── session-log-feature-10-geofence-management.md\n├── session-log-feature-11-worker-api.md\n├── session-log-develop.md\n└── session-log-main.md\n```\n\n브랜치를 전환하면 자동으로 해당 브랜치의 로그 파일을 사용합니다.\n\n## 설치 방법\n\n### 방법 1: GitHub에서 설치 (권장)\n\n```bash\n# Claude Code에서 실행\n/plugin install pr-logger@MMMIIIN/claude-pr-logger\n```\n\n설치 후 Claude Code를 재시작하세요.\n\n### 방법 2: 마켓플레이스 등록 후 설치\n\n```bash\n# 1. 마켓플레이스 추가\n/plugin marketplace add MMMIIIN/claude-pr-logger\n\n# 2. 플러그인 설치\n/plugin install pr-logger\n```\n\n## 삭제 방법\n\n### 방법 1: 명령어로 삭제 (권장)\n\n```bash\n# Claude Code에서 실행\n/pr-logger:uninstall\n```\n\nClaude가 캐시, 마켓플레이스, 설정 파일을 모두 정리합니다.\n\n### 방법 2: 기본 삭제\n\n```bash\n/plugin uninstall pr-logger\n```\n\n> **주의**: 기본 삭제 후 Hook 에러가 발생하면 `/pr-logger:uninstall` 명령어를 사용하세요.\n\n삭제 후 Claude Code를 재시작하세요.\n\n## 동작 원리\n\n플러그인은 다음과 같은 흐름으로 동작합니다:\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                        첫 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 질문 입력                                           │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Claude가 답변                                                │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n┌─────────────────────────────────────────────────────────────────┐\n│                        두 번째 질문                              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. 사용자가 다음 질문 입력                                       │\n│  2. Hook이 질문을 session-log.md에 기록                          │\n│  3. Hook이 <pr-log-reminder> 메시지를 Claude에게 전달            │\n│  4. Claude가 이전 답변을 요약하여 session-log.md에 추가           │\n│  5. Claude가 현재 질문에 답변                                    │\n└─────────────────────────────────────────────────────────────────┘\n                              ↓\n                        (반복...)\n```\n\n**핵심 포인트:**\n- 질문은 **입력 즉시** 자동 기록됩니다\n- 답변 요약은 **다음 질문 시** Claude가 작성합니다\n- 이를 통해 질문-답변 쌍이 순차적으로 기록됩니다\n\n## 사용법\n\n### 자동 기록\n\n플러그인 설치 후 자동으로 동작합니다:\n\n1. 질문을 입력하면 `.claude/pr-logger/session-log.md`에 기록됨\n2. 다음 질문 시 이전 답변 요약을 자동으로 추가\n\n### 슬래시 명령어\n\n| 명령어 | 설명 |\n|--------|------|\n| `/pr-logger:pr-log` | 현재 PR용 개발 로그 확인 |\n| `/pr-logger:pr-log-clear` | PR 작성 완료 마커 추가 |\n| `/pr-logger:pr-log-all` | 전체 개발 로그 확인 |\n| `/pr-logger:uninstall` | 플러그인 완전 삭제 (캐시, 설정 파일 모두 정리) |\n\n## 로그 형식\n\n```markdown\n# PR 개발 로그\n\n브랜치: `feature-10-geofence-management`\n세션 ID: `abc123`\n시작 시간: 2025-12-22 10:00:00\n\n---\n\n## [2025-12-22 10:00:00] 질문\n\n사용자 질문 내용\n\n### 답변 요약\n- 수행한 작업 1\n- 수행한 작업 2\n- 커밋: `abc1234`\n```\n\n## CLAUDE.md 설정 (권장)\n\n프로젝트의 `CLAUDE.md`에 다음 내용을 추가하면 더 정확하게 동작합니다:\n\n```markdown\n## PR 개발 로그 자동화\n\n`<pr-log-reminder>` 메시지가 표시되면:\n\n1. `.claude/pr-logger/session-log.md`를 읽어서 마지막 질문 확인\n2. 해당 질문에 대한 이전 답변을 간결하게 요약 (2-5줄)\n3. 요약 내용을 `### 답변 요약` 형식으로 추가\n4. 그 후 현재 질문에 대한 답변 진행\n```\n\n## 파일 구조\n\n```\nclaude-pr-logger/\n├── .claude-plugin/\n│   ├── plugin.json          # 플러그인 매니페스트\n│   └── marketplace.json     # 마켓플레이스 등록 정보\n├── hooks/\n│   └── hooks.json           # Hook 설정\n├── scripts/\n│   └── log-prompt.py        # 로깅 스크립트\n├── commands/\n│   ├── pr-log.md            # 로그 확인 명령어\n│   ├── pr-log-clear.md      # 완료 마커 명령어\n│   └── pr-log-all.md        # 전체 로그 명령어\n└── README.md\n```\n\n## 라이선스\n\nMIT License\n"
+      },
+      "plugins": [
+        {
+          "name": "pr-logger",
+          "description": "PR 개발 로그 자동 기록 플러그인 - 질문과 답변을 session-log.md에 자동 기록하여 PR 작성 시 활용",
+          "version": "1.0.2",
+          "source": "./",
+          "repository": "https://github.com/MMMIIIN/claude-pr-logger",
+          "license": "MIT",
+          "keywords": [
+            "pr",
+            "logging",
+            "documentation",
+            "development-log"
+          ],
+          "categories": [
+            "development-log",
+            "documentation",
+            "logging",
+            "pr"
+          ],
+          "install_commands": [
+            "/plugin marketplace add MMMIIIN/claude-pr-logger",
+            "/plugin install pr-logger@claude-pr-logger"
           ]
         }
       ]

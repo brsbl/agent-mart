@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "douinc",
+    "display_name": "Dou",
+    "avatar_url": "https://avatars.githubusercontent.com/u/104253814?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "douinc-claude-code-plugins",
+      "version": null,
+      "description": "Integrate Joan, a workspace-based knowledge and task management service, into a Claude Code project",
+      "repo_full_name": "douinc/douinc-claude-code-marketplace",
+      "repo_url": "https://github.com/douinc/douinc-claude-code-marketplace",
+      "repo_description": "douinc claude code plugin marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-07T11:55:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"douinc-claude-code-plugins\",\n  \"owner\": {\n    \"name\": \"douinc\",\n    \"email\": \"team@dou.inc\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"joan-plugin\",\n      \"source\": \"./plugins/joan-plugin\",\n      \"description\": \"Integrate Joan, a workspace-based knowledge and task management service, into a Claude Code project\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"douinc\"\n      }\n    }\n  ]\n}\n",
+        "plugins/joan-plugin/README.md": "# Joan Plugin for Claude Code\n\nIntegrate [Joan](https://joan.land) workspace-based knowledge and task management into Claude Code projects.\n\n## Features\n\n- **Domain Knowledge Access**: Read pods (versioned knowledge documents) to understand project context\n- **Task Management**: Create, list, and update todos scoped to the project's workspace\n- **Plan Management**: Create and track implementation plans for todos\n- **Context Generation**: Auto-inject Joan context into CLAUDE.md files\n- **Smart Pod Loading**: Intelligently load only relevant pods based on current task\n\n## Prerequisites\n\n- [Joan CLI](https://github.com/douinc/joan) installed and authenticated\n- A Joan workspace with your project\n\n## Installation\n\nAdd this plugin to your Claude Code configuration:\n\n```bash\n# Option 1: Clone to local plugins directory\ngit clone <repo-url> ~/.claude/plugins/joan\n\n# Option 2: Use --plugin-dir flag\nclaude --plugin-dir /path/to/joan-plugin\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/joan:init` | Initialize Joan and configure work preferences |\n| `/joan:sync` | Sync pods and todos with server |\n| `/joan:todo` | Create or list Joan todos |\n| `/joan:plan` | Create implementation plan for a todo |\n| `/joan:work` | Implement a todo following its plan |\n| `/joan:context` | Regenerate CLAUDE.md with Joan context |\n\n### Usage Examples\n\n```bash\n# Initialize a new project (will ask for work strategy preference)\n/joan:init\n\n# Sync with specific workspace\n/joan:init abc123-workspace-id\n\n# Sync all data\n/joan:sync\n\n# Create an implementation plan for a todo\n/joan:plan todo-uuid-here\n\n# Implement a todo (follows configured work strategy)\n/joan:work todo-uuid-here\n\n# Update CLAUDE.md context\n/joan:context\n```\n\n## Work Strategies\n\nDuring `/joan:init`, you choose how Claude executes work on todos:\n\n| Strategy | Best For | Behavior |\n|----------|----------|----------|\n| **Strict** | Critical features, learning codebases | Pauses between steps, asks for confirmation |\n| **Adaptive** | Most development (default) | Follows plan but adapts, minimal interruptions |\n| **Incremental** | Pair programming, complex refactors | Checks in after each meaningful change |\n| **Autonomous** | Well-defined tasks | Works until blocked, reports at end |\n\nSettings are stored in `.claude/joan.local.md` (gitignored for personal preferences).\n\n## Agents\n\nThe plugin includes four specialized agents:\n\n### pod-context-loader (Proactive)\nAutomatically loads relevant domain knowledge before you start working. Analyzes your task and reads only the pods that are relevant.\n\n### todo-tracker (Proactive)\nSuggests creating or updating todos after you complete significant work, keeping your team informed of progress.\n\n### plan-creator (On-demand)\nCreates structured implementation plans in Joan format when you're planning a feature or complex task.\n\n### pod-author (On-demand)\nHelps document learnings, decisions, and domain knowledge as well-structured Joan pods.\n\n## MCP Integration\n\nThe plugin configures the Joan MCP server automatically, providing direct API access to:\n- List workspaces\n- List pods in a workspace\n- Get pod content\n\nThe MCP server uses OAuth 2.1 authentication. Authenticate via CLI first: `joan auth login`\n\n## Hooks\n\n### SessionStart\nWhen you start a Claude Code session in a Joan-configured project, the plugin reminds Claude about available domain knowledge pods.\n\n## Project Structure\n\nAfter running `/joan:init`, your project will have:\n\n```\nyour-project/\n├── .claude/\n│   └── joan.local.md    # Plugin settings (gitignored)\n├── .joan/\n│   ├── config.yaml      # Joan configuration\n│   └── pods/            # Local pod copies\n│       ├── Pod-Name.md\n│       └── ...\n└── CLAUDE.md            # Updated with Joan context\n```\n\n## Skill\n\nThe `joan-workflow` skill provides Claude with knowledge about:\n- When to use pods vs todos vs plans\n- How Joan's workspace model works\n- Best practices for domain knowledge management\n\nThis skill activates automatically when you discuss Joan-related topics.\n\n## Authentication\n\nThe plugin uses the Joan CLI for authentication. To authenticate:\n\n```bash\njoan auth login\n```\n\nThis opens a browser for OAuth 2.1 authentication with Joan.\n\n## Support\n\n- [Joan Documentation](https://joan.land/docs)\n- [Joan CLI Repository](https://github.com/douinc/joan)\n- [Report Issues](https://github.com/douinc/joan/issues)\n"
+      },
+      "plugins": [
+        {
+          "name": "joan-plugin",
+          "source": "./plugins/joan-plugin",
+          "description": "Integrate Joan, a workspace-based knowledge and task management service, into a Claude Code project",
+          "version": "0.1.0",
+          "author": {
+            "name": "douinc"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add douinc/douinc-claude-code-marketplace",
+            "/plugin install joan-plugin@douinc-claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

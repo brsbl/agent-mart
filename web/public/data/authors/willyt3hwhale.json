@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "willyt3hwhale",
+    "display_name": "Wilhelm Åkermark",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1234672?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-limit-guard",
+      "version": null,
+      "description": "Claude Code plugins for rate limit management",
+      "repo_full_name": "willyt3hwhale/cc-limit-guard",
+      "repo_url": "https://github.com/willyt3hwhale/cc-limit-guard",
+      "repo_description": null,
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-02-05T12:21:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"cc-limit-guard\",\n  \"description\": \"Claude Code plugins for rate limit management\",\n  \"owner\": {\n    \"name\": \"willyt3hwhale\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"rate-limit-guard\",\n      \"source\": \"./\",\n      \"description\": \"Automatically pauses Claude Code when usage exceeds 90% to avoid hitting rate limits\",\n      \"version\": \"1.5.1\",\n      \"author\": {\n        \"name\": \"willyt3hwhale\"\n      },\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"rate-limit-guard\",\n  \"version\": \"1.7.1\",\n  \"description\": \"Automatically pauses Claude Code when usage exceeds 90% to avoid hitting rate limits\",\n  \"author\": {\n    \"name\": \"willyt3hwhale\"\n  },\n  \"repository\": \"https://github.com/willyt3hwhale/cc-limit-guard\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"rate-limit\", \"usage\", \"monitor\", \"pause\"]\n}\n",
+        "README.md": "# Rate Limit Guard\n\nA Claude Code plugin that monitors your usage and automatically pauses when approaching rate limits.\n\n## Features\n\n- Monitors both session (5-hour) and weekly (7-day) usage limits\n- Checks usage before each tool call\n- Automatically sleeps when usage exceeds thresholds\n- Resumes automatically when the billing window resets\n- Cross-platform (macOS, Linux, Windows)\n- Bypass option for when you need to use all your tokens\n\n## Thresholds\n\n| Limit | Threshold | Reset Period |\n|-------|-----------|--------------|\n| Session | 90% | Every 5 hours |\n| Weekly | 95% | Every 7 days |\n\n## Installation\n\n### Via marketplace\n\nIn Claude Code, run:\n```\n/plugin marketplace add willyt3hwhale/cc-limit-guard\n/plugin add rate-limit-guard@cc-limit-guard\n```\n\n### Via --plugin-dir (alternative)\n\n```bash\ngit clone https://github.com/willyt3hwhale/cc-limit-guard ~/.claude/plugins/local/cc-limit-guard\n```\n\nThen add an alias to your shell config:\n```bash\nalias claude='claude --plugin-dir ~/.claude/plugins/local/cc-limit-guard'\n```\n\n## Configuration\n\nNo manual configuration needed. The plugin automatically finds your credentials in this order:\n\n1. `ANTHROPIC_API_KEY` environment variable\n2. `~/.claude/.credentials.json` (written by Claude Code on login)\n3. macOS keychain (`Claude Code-credentials`)\n\nJust install the plugin and it works.\n\n## Usage\n\nThe plugin runs automatically. You'll see usage info as a system message:\n\n```\nSession: 29% | Weekly: 12%\n```\n\nWhen either threshold is exceeded, the plugin will:\n1. Display a warning message\n2. Sleep until the billing window resets\n3. Resume automatically\n\n### Bypass\n\nTo temporarily bypass the rate limit guard:\n\n```bash\nCLAUDE_NO_LIMIT=1 claude\n```\n\n## Requirements\n\n- Node.js 18+ (uses built-in fetch)\n- Claude Pro/Max subscription\n- `jq` installed (`brew install jq` / `apt install jq`)\n\n## How it works\n\nThe plugin uses a PreToolUse hook that runs before each tool call. It:\n\n1. Sends a minimal API request to `api.anthropic.com` and reads rate limit headers back\n2. Compares session and weekly utilization against thresholds\n3. If above threshold, calculates time until reset and sleeps\n4. Outputs status via JSON systemMessage for display\n5. Uses stale-while-revalidate caching (30s) to keep hook response fast\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "rate-limit-guard",
+          "source": "./",
+          "description": "Automatically pauses Claude Code when usage exceeds 90% to avoid hitting rate limits",
+          "version": "1.5.1",
+          "author": {
+            "name": "willyt3hwhale"
+          },
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add willyt3hwhale/cc-limit-guard",
+            "/plugin install rate-limit-guard@cc-limit-guard"
+          ]
+        }
+      ]
+    }
+  ]
+}

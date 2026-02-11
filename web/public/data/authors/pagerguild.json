@@ -1,0 +1,66 @@
+{
+  "author": {
+    "id": "pagerguild",
+    "display_name": "pagerguild",
+    "avatar_url": "https://avatars.githubusercontent.com/u/160559591?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "guilde-plugins",
+      "version": null,
+      "description": "Workflow automation, TDD, code review, and development tools for Claude Code",
+      "repo_full_name": "pagerguild/guilde-plugins",
+      "repo_url": "https://github.com/pagerguild/guilde-plugins",
+      "repo_description": "Claude Code plugin marketplace - Modular plugins for workflow automation, TDD, code review, and development tools",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-15T20:24:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"guilde-plugins\",\n  \"description\": \"Workflow automation, TDD, code review, and development tools for Claude Code\",\n  \"owner\": {\n    \"name\": \"pagerguild\",\n    \"email\": \"team@pagerguild.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"conductor-workflows\",\n      \"description\": \"Slash commands for orchestrating multi-phase implementation workflows using the conductor pattern\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"pagerguild\",\n        \"email\": \"team@pagerguild.dev\"\n      },\n      \"source\": \"./plugins/conductor-workflows\",\n      \"category\": \"workflow\"\n    },\n    {\n      \"name\": \"tdd-automation\",\n      \"description\": \"Test-driven development workflow with red/green/refactor phases and coverage monitoring\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"pagerguild\",\n        \"email\": \"team@pagerguild.dev\"\n      },\n      \"source\": \"./plugins/tdd-automation\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# guilde-plugins\n\nA Claude Code plugin marketplace for workflow automation, TDD, code review, and development tools.\n\n## Overview\n\nThis marketplace provides modular, single-purpose plugins that can be installed independently or combined as needed. Each plugin follows Claude Code plugin best practices with progressive disclosure and strong trigger phrases.\n\n## Available Plugins\n\n| Plugin | Description | Components |\n|--------|-------------|------------|\n| conductor-workflows | Track and phase management for development workflows | 6 commands |\n\n## Installation\n\n### Add Marketplace\n\n```bash\nclaude plugin marketplace add github:pagerguild/guilde-plugins\n```\n\n### List Available Plugins\n\n```bash\nclaude plugin marketplace list\n```\n\n### Install Individual Plugins\n\n```bash\n# Install a specific plugin\nclaude plugin install conductor-workflows@guilde-plugins\n\n# Enable/disable plugins\nclaude plugin enable conductor-workflows@guilde-plugins\nclaude plugin disable conductor-workflows@guilde-plugins\n```\n\n### Validate Plugins\n\n```bash\n# Validate a local plugin or marketplace\nclaude plugin validate ./plugins/conductor-workflows\n```\n\n### Local Development\n\nFor plugin development or testing:\n\n```bash\n# Clone the repository\ngit clone https://github.com/pagerguild/guilde-plugins.git\n\n# Use plugins locally (session only)\nclaude --plugin-dir ./guilde-plugins/plugins/conductor-workflows\n```\n\n## Plugin Categories\n\n### Workflow\n- **conductor-workflows** - Track and phase management for development workflows\n- **tdd-automation** *(coming soon)* - Test-driven development with red/green/refactor phases\n\n### Code Quality\n- **multi-agent-review** *(coming soon)* - Parallel code review with specialized agents\n- **code-review-pipeline** *(coming soon)* - Multi-stage review workflow\n\n### Development Agents\n- **exploration-agents** *(coming soon)* - Codebase exploration and analysis\n- **implementation-agents** *(coming soon)* - Backend, frontend, database development\n- **spec-agents** *(coming soon)* - Specification building\n\n### Tools\n- **mise-tools** *(coming soon)* - Mise-first development environment management\n- **context-preservation** *(coming soon)* - Session state and error recovery\n- **diagram-generation** *(coming soon)* - Mermaid and C4 diagrams\n- **release-research** *(coming soon)* - Changelog and release tracking\n- **docs-sync** *(coming soon)* - Documentation synchronization\n\n## Plugin Structure\n\nEach plugin follows this structure:\n\n```\nplugins/<plugin-name>/\n├── README.md           # Plugin documentation\n├── agents/             # Agent definitions (if any)\n│   └── *.md\n├── commands/           # Slash commands (if any)\n│   └── *.md\n└── skills/             # Skills with progressive disclosure (if any)\n    └── <skill-name>/\n        ├── SKILL.md\n        ├── examples/\n        └── references/\n```\n\n## CLI Reference\n\n| Command | Description |\n|---------|-------------|\n| `claude plugin marketplace add <source>` | Add a marketplace |\n| `claude plugin marketplace list` | List configured marketplaces |\n| `claude plugin marketplace remove <name>` | Remove a marketplace |\n| `claude plugin marketplace update [name]` | Update marketplace(s) |\n| `claude plugin install <plugin>` | Install a plugin |\n| `claude plugin uninstall <plugin>` | Uninstall a plugin |\n| `claude plugin enable <plugin>` | Enable a plugin |\n| `claude plugin disable <plugin>` | Disable a plugin |\n| `claude plugin validate <path>` | Validate a plugin manifest |\n\n## Contributing\n\n1. Fork this repository\n2. Create a new plugin in `plugins/<your-plugin-name>/`\n3. Follow the [plugin structure](#plugin-structure) guidelines\n4. Add your plugin to `.claude-plugin/marketplace.json`\n5. Submit a pull request\n\n## Related Projects\n\n- [guilde-lite](https://github.com/pagerguild/guilde-lite) - The source project for these plugins\n- [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) - Anthropic's official plugin marketplace\n\n## License\n\nMIT License - See [LICENSE](LICENSE) for details.\n",
+        "plugins/conductor-workflows/README.md": "# conductor-workflows\n\nSlash commands for orchestrating multi-phase implementation workflows using the conductor pattern.\n\n## Overview\n\nThe conductor pattern provides structured project management with:\n- **Tracks** - Top-level work items (features, bugs, infrastructure)\n- **Phases** - Stages of implementation within a track\n- **Checkpoints** - Git commits marking phase completions\n- **Progress tracking** - Visual progress with metrics\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/conductor-setup` | Initialize conductor infrastructure |\n| `/conductor-new-track` | Create a new implementation track |\n| `/conductor-implement` | Work on track's current phase |\n| `/conductor-checkpoint` | Create checkpoint commit |\n| `/conductor-status` | View track progress |\n| `/conductor-sync-docs` | Synchronize documentation |\n\n## Installation\n\n```bash\n/plugin install conductor-workflows@pagerguild/guilde-plugins\n```\n\n## Quick Start\n\n```bash\n# Initialize conductor in your project\n/conductor-setup\n\n# Create a new track\n/conductor-new-track FEAT-001 \"User Authentication\" P0\n\n# Start implementation\n/conductor-implement FEAT-001\n\n# Check progress\n/conductor-status FEAT-001\n\n# Create checkpoint after phase completion\n/conductor-checkpoint FEAT-001\n```\n\n## Directory Structure Created\n\n```\nconductor/\n├── tracks.md            # Master track registry\n├── product.md           # Product definition\n├── tech-stack.md        # Technology decisions\n├── workflow.md          # Workflow conventions\n└── tracks/\n    └── TRACK-XXX/\n        ├── spec.md      # What to build\n        └── plan.md      # How to build it\n```\n\n## Track Workflow\n\n```\n/conductor-setup\n      ↓\n/conductor-new-track\n      ↓\n/conductor-implement  ←─┐\n      ↓                  │\n/conductor-checkpoint ──┘ (repeat per phase)\n      ↓\n/conductor-status (anytime)\n```\n\n## License\n\nMIT\n",
+        "plugins/tdd-automation/README.md": "# tdd-automation\n\nTest-driven development workflow with red/green/refactor phase enforcement.\n\n## Components\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/tdd` | TDD workflow management - phase tracking, test validation, coverage |\n\n### Skills\n\n| Skill | Trigger | Description |\n|-------|---------|-------------|\n| `tdd-red-phase` | \"write failing test\", \"TDD red phase\" | Guide writing failing tests first |\n| `tdd-green-phase` | \"make test pass\", \"TDD green phase\" | Guide minimal implementation |\n| `tdd-refactor-phase` | \"refactor code\", \"TDD refactor phase\" | Guide code improvement |\n\n## Usage\n\n```bash\n# Check TDD status\n/tdd status\n\n# Start RED phase (write failing tests)\n/tdd red\n\n# Move to GREEN phase (implement)\n/tdd green\n\n# Move to REFACTOR phase (improve)\n/tdd refactor\n\n# Check coverage\n/tdd coverage\n```\n\n## TDD Workflow\n\n```\n┌─────────────────────────────────────────────────────┐\n│                                                     │\n│    RED → GREEN → REFACTOR → (repeat)               │\n│                                                     │\n│    1. Write failing test (RED)                     │\n│    2. Write minimal code to pass (GREEN)           │\n│    3. Improve code quality (REFACTOR)              │\n│                                                     │\n└─────────────────────────────────────────────────────┘\n```\n\n## Installation\n\n```bash\n# Add the marketplace (if not already added)\nclaude plugin marketplace add ./marketplace\n\n# Install this plugin\nclaude plugin install tdd-automation@guilde-plugins\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "conductor-workflows",
+          "description": "Slash commands for orchestrating multi-phase implementation workflows using the conductor pattern",
+          "version": "1.0.0",
+          "author": {
+            "name": "pagerguild",
+            "email": "team@pagerguild.dev"
+          },
+          "source": "./plugins/conductor-workflows",
+          "category": "workflow",
+          "categories": [
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add pagerguild/guilde-plugins",
+            "/plugin install conductor-workflows@guilde-plugins"
+          ]
+        },
+        {
+          "name": "tdd-automation",
+          "description": "Test-driven development workflow with red/green/refactor phases and coverage monitoring",
+          "version": "1.0.0",
+          "author": {
+            "name": "pagerguild",
+            "email": "team@pagerguild.dev"
+          },
+          "source": "./plugins/tdd-automation",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add pagerguild/guilde-plugins",
+            "/plugin install tdd-automation@guilde-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "isizono",
+    "display_name": "isizono",
+    "avatar_url": "https://avatars.githubusercontent.com/u/198435662?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-memory-marketplace",
+      "version": null,
+      "description": "Claude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・タスクを永続化する",
+      "repo_full_name": "isizono/claude-code-exterminal-memory",
+      "repo_url": "https://github.com/isizono/claude-code-exterminal-memory",
+      "repo_description": "claude codeさんが作業内容を記録するためのメモリ",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-08T17:20:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-memory-marketplace\",\n  \"owner\": {\n    \"name\": \"isizono\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-code-memory\",\n      \"source\": \"./\",\n      \"description\": \"Claude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・タスクを永続化する\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-code-memory\",\n  \"description\": \"Claude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・タスクを永続化する\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"isizono\"\n  }\n}\n",
+        "README.md": "# claude-code-memory\n\nClaude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・タスクを永続化するプラグイン。\n\n## 機能\n\n- **トピック管理**: 議論トピックを階層構造で管理\n- **決定事項記録**: 合意形成した内容を記録・検索\n- **タスク管理**: 実装タスクのステータス管理\n- **ナレッジ保存**: 調査結果をマークダウンファイルとして保存\n- **自動ログ記録**: 会話を自動でトピックに紐づけて記録\n\n## インストール\n\n### 前提条件\n\n- [uv](https://docs.astral.sh/uv/) がインストールされていること\n- Claude Code v2.0.12以上\n\n### インストール手順\n\n```bash\n# 1. マーケットプレイスを追加\nclaude plugin marketplace add isizono/claude-code-memory\n\n# 2. プラグインをインストール\nclaude plugin install claude-code-memory\n```\n\n### 開発版を試す場合\n\n```bash\n# リポジトリをクローン\ngit clone https://github.com/isizono/claude-code-memory.git\n\n# プラグインディレクトリを指定して起動\nclaude --plugin-dir /path/to/claude-code-memory\n```\n\n## 提供されるMCPツール\n\n| カテゴリ | ツール | 説明 |\n|---------|--------|------|\n| プロジェクト | `add_project`, `get_projects` | プロジェクト管理 |\n| トピック | `add_topic`, `get_topics`, `get_decided_topics`, `get_undecided_topics`, `get_topic_tree`, `search_topics` | 議論トピック管理 |\n| ログ | `add_log`, `get_logs` | 議論ログ記録 |\n| 決定 | `add_decision`, `get_decisions`, `search_decisions` | 決定事項管理 |\n| タスク | `add_task`, `get_tasks`, `update_task_status` | タスク管理 |\n| ナレッジ | `add_knowledge` | ナレッジファイル保存 |\n\n## 提供されるスキル\n\n| スキル | 説明 |\n|--------|------|\n| `/research` | 調査タスクをサブエージェントに委譲 |\n| `/task-delegate` | 複数タスクをまとめて実装→レビュー |\n| `/task-iterate` | 探索的タスクを試行錯誤で実行 |\n\n## ディレクトリ構成\n\n```\nclaude-code-memory/\n├── .claude-plugin/\n│   └── plugin.json          # プラグインマニフェスト\n├── .mcp.json                 # MCPサーバー設定\n├── hooks/\n│   └── hooks.json            # フック設定\n├── scripts/                  # フックスクリプト\n├── commands/                 # スラッシュコマンド\n├── skills/                   # スキル定義\n├── rules/                    # ルール定義\n├── src/                      # MCPサーバー本体\n└── schema.sql                # DBスキーマ\n```\n\n## 設定\n\n### 環境変数\n\n| 変数 | 説明 | デフォルト |\n|------|------|-----------|\n| `DISCUSSION_DB_PATH` | SQLiteデータベースのパス | `~/.claude/.claude-code-memory/discussion.db` |\n| `KNOWLEDGE_ROOT` | ナレッジファイルの保存先 | `~/.claude/knowledge/` |\n\n## ライセンス\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-code-memory",
+          "source": "./",
+          "description": "Claude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・タスクを永続化する",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add isizono/claude-code-exterminal-memory",
+            "/plugin install claude-code-memory@claude-code-memory-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

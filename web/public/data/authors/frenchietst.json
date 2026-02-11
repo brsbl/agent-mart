@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "frenchieTST",
+    "display_name": "frenchieTST",
+    "avatar_url": "https://avatars.githubusercontent.com/u/260847771?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "frenchieTST-prompt-shield",
+      "version": null,
+      "description": "Security audit skill for Claude Code — detects prompt injection, data exfiltration, supply chain attacks, and hidden malicious content",
+      "repo_full_name": "frenchieTST/prompt-shield",
+      "repo_url": "https://github.com/frenchieTST/prompt-shield",
+      "repo_description": "Security audit skill for Claude Code — 18 automated checks for prompt injection, data exfiltration, supply chain attacks, and persistence mechanisms in skills, MCP servers, and npm packages.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-11T15:37:25Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"frenchieTST-prompt-shield\",\n  \"owner\": {\n    \"name\": \"frenchieTST\",\n    \"url\": \"https://github.com/frenchieTST\"\n  },\n  \"metadata\": {\n    \"description\": \"Security audit skill for Claude Code — detects prompt injection, data exfiltration, supply chain attacks, and hidden malicious content\",\n    \"version\": \"1.0.0\",\n    \"repository\": \"https://github.com/frenchieTST/prompt-shield\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"prompt-shield\",\n      \"description\": \"Security audit for Claude Code skills, MCP servers, and npm packages. Detects prompt injection, data exfiltration, supply chain attacks, persistence mechanisms, and hidden malicious content. Use when installing a new skill or plugin, adding an MCP server, evaluating npm packages, or when user asks to audit, check security, scan for threats, or check for prompt injection.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/prompt-shield\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Prompt Shield\n\nSecurity auditing skill for Claude Code. Detects prompt injection, data exfiltration, supply chain attacks, persistence mechanisms, and hidden malicious content in skills, MCP servers, and npm packages.\n\n## Why\n\nEvery skill, MCP server, or npm package you install in Claude Code has access to your working environment: SSH keys, `.env` files, crypto wallets, credentials. A malicious skill hidden behind a clean README can exfiltrate your data using zero-width Unicode, base64-encoded payloads, or invisible tag characters — and you'd never see it.\n\nPrompt Shield automates the security checks that should happen before every install.\n\n## What It Checks\n\n**18 automated checks across 5 categories:**\n\n| Category | Checks |\n|----------|--------|\n| **A. Hidden Text & Encoding** | Zero-width chars, directional overrides, tag characters, homoglyphs, base64, non-ASCII ratio |\n| **B. Prompt Injection** | Direct injection patterns (16 variants), hidden comments, CSS-invisible elements |\n| **C. Data Access & Exfiltration** | Credential targeting, crypto wallet paths, network vectors (fetch, curl, nc, socat), IP addresses, data URIs |\n| **D. Code Execution & Filesystem** | eval/exec/spawn, inline interpreters (python -c, bash -c), pipe-to-interpreter, path traversal, obfuscation, env access |\n| **E. Persistence & Background** | crontab, launchd, systemd, nohup, daemon/fork, pm2, screen/tmux |\n\n**Plus:**\n- Full file inventory with size flagging (>100KB)\n- URL inventory with suspicious domain detection (pastebin, ngrok, webhook.site, etc.)\n- Long URL detection (>200 chars, potential encoded payloads)\n- Cross-correlation: files with BOTH sensitive data AND network access = CRITICAL\n\n## Full Audit Workflow (8 Steps)\n\n1. **Identify target type** (Skill / MCP Server / npm Package)\n2. **Author verification** (GitHub profile, account age, commit history, contributor count, repo issues)\n3. **Enumerate and read ALL files** (every file, no exceptions)\n4. **Analyze plugin.json / package.json** (lifecycle scripts, non-standard fields)\n5. **Run automated scan** (18 checks via `scan_files.sh`)\n6. **Verify ALL URLs** (domain legitimacy, encoded parameters)\n7. **Manual deep review** (verify alerts in context, cross-correlation, YAML frontmatter)\n8. **Generate structured report** (author trust score, risk level, verdict)\n\n## Install\n\n```bash\nclaude plugin marketplace add frenchieTST/prompt-shield\nclaude plugin install prompt-shield\n```\n\n## Usage\n\nOnce installed, Prompt Shield activates automatically when you:\n- Ask Claude to audit a skill, MCP server, or npm package\n- Say \"is this safe\", \"check security\", \"scan for threats\", or \"prompt injection check\"\n- Install any new skill or plugin\n\nYou can also invoke it directly:\n```\nAudit the skill at https://github.com/user/repo\n```\n\n## File Structure\n\n```\nprompt-shield/\n├── .claude-plugin/\n│   └── plugin.json                   # Plugin manifest\n├── README.md\n└── skills/\n    └── prompt-shield/\n        ├── SKILL.md                  # Main audit workflow (8 steps)\n        ├── scripts/\n        │   └── scan_files.sh         # Automated scanner (18 checks)\n        └── references/\n            ├── audit-checklist.md    # Detailed checklists per audit type\n            ├── threat-patterns.md    # Threat pattern reference (7 categories)\n            └── npm-supply-chain.md   # npm-specific supply chain checks\n```\n\n## Scanner Output Example\n\n```\n================================================\n  PROMPT SHIELD - Automated Security Scanner v3\n================================================\n\n--- A. Hidden Text & Encoding ---\n[ 1/18] Zero-width characters........ CLEAN\n[ 2/18] Directional overrides........ CLEAN\n[ 3/18] Tag characters (invisible)... CLEAN\n[ 4/18] Homoglyph characters......... CLEAN\n[ 5/18] Base64 encoded content....... CLEAN\n[ 6/18] Non-ASCII byte analysis...... CLEAN\n\n--- B. Prompt Injection ---\n[ 7/18] Prompt injection patterns..... CLEAN\n[ 8/18] Hidden comments/elements...... CLEAN\n\n--- C. Data Access & Exfiltration ---\n[ 9/18] Sensitive data access......... CLEAN\n[10/18] Crypto wallet targeting....... CLEAN\n[11/18] Network/exfiltration vectors.. REVIEW\n[12/18] Hardcoded IP addresses........ CLEAN\n[13/18] Data URI schemes.............. CLEAN\n\n--- D. Code Execution & Filesystem ---\n[14/18] Dynamic code execution........ CLEAN\n[15/18] Filesystem path traversal..... CLEAN\n[16/18] Obfuscation & env access...... CLEAN\n\n--- E. Persistence & Background Processes ---\n[17/18] Persistence mechanisms........ CLEAN\n[18/18] Background process spawning... CLEAN\n\n================================================\n  Result: 1 ISSUE(S) FOUND across 18 checks\n================================================\n```\n\n## Severity Levels\n\n| Level | Meaning | Action |\n|-------|---------|--------|\n| CLEAN | No issues | Proceed |\n| REVIEW | Needs manual check | Verify in context, likely benign |\n| ALERT | Probable threat | Investigate thoroughly |\n| CRITICAL | Confirmed threat | Do not install |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "prompt-shield",
+          "description": "Security audit for Claude Code skills, MCP servers, and npm packages. Detects prompt injection, data exfiltration, supply chain attacks, persistence mechanisms, and hidden malicious content. Use when installing a new skill or plugin, adding an MCP server, evaluating npm packages, or when user asks to audit, check security, scan for threats, or check for prompt injection.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/prompt-shield"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add frenchieTST/prompt-shield",
+            "/plugin install prompt-shield@frenchieTST-prompt-shield"
+          ]
+        }
+      ]
+    }
+  ]
+}

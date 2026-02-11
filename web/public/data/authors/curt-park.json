@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "Curt-Park",
+    "display_name": "Jinwoo Park (Curt)",
+    "avatar_url": "https://avatars.githubusercontent.com/u/14961526?u=780dd6ba8330f692650e6ca2c04b78c2a8af3d29&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "autology",
+      "version": null,
+      "description": "Living Ontology for Claude Code - Prevents erosion of human understanding by capturing and reusing knowledge",
+      "repo_full_name": "Curt-Park/autology",
+      "repo_url": "https://github.com/Curt-Park/autology",
+      "repo_description": "Preserve human understanding in AI-driven development. A living ontology that captures decisions, tracks reasoning, and compounds knowledge across Claude Code sessions.",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-11T11:14:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"autology\",\n  \"owner\": {\n    \"name\": \"Autology Contributors\"\n  },\n  \"metadata\": {\n    \"description\": \"Living Ontology for Claude Code - Prevents erosion of human understanding by capturing and reusing knowledge\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"autology\",\n      \"source\": \"./\",\n      \"version\": \"0.4.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"autology\",\n  \"version\": \"0.4.0\",\n  \"description\": \"Living Ontology for Claude Code - Prevents erosion of human understanding by capturing and reusing knowledge\",\n  \"author\": {\n    \"name\": \"Autology Contributors\"\n  },\n  \"homepage\": \"https://github.com/Curt-Park/autology\",\n  \"repository\": \"https://github.com/Curt-Park/autology\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"knowledge-management\",\n    \"ontology\",\n    \"adr\",\n    \"documentation\",\n    \"learning\",\n    \"transparency\"\n  ],\n  \"skills\": [\n    \"./skills/\"\n  ],\n  \"agents\": [\n    \"./agents/autology-advisor.md\"\n  ],\n  \"mcpServers\": {\n    \"autology\": {\n      \"command\": \"${CLAUDE_PLUGIN_ROOT}/bin/autology\",\n      \"env\": {\n        \"AUTOLOGY_ROOT\": \"docs\"\n      }\n    }\n  }\n}\n",
+        "README.md": "# Autology\n\n**Living Ontology for Claude Code**\n\n## The Crisis\n\nAI agents boost productivity but create a paradox:\n\n```\nProductivity ↑ + Transparency ↓ + Knowledge Accumulation ↓ = Crisis of Understanding\n```\n\nDevelopers don't fully understand AI-generated code. Teams can't track what's actually happening. Organizations repeat mistakes. Skills atrophy.\n\n## The Goal\n\n**Maintain AI productivity while expanding, not contracting, human understanding.**\n\nNot \"code faster\"—but \"understand deeper while coding faster.\"\n\n## How It Works\n\nAutology captures the \"why\" behind decisions and feeds it back into future sessions:\n\n```\nYour Work → Capture (Hooks) → Knowledge Graph → Inject (SessionStart) → Future Sessions\n                                     ↑                                           ↓\n                                     └────────────── Learning Loop ───────-──────┘\n```\n\n**Three interaction modes**:\n1. **Automatic**: Hooks capture as you work (file changes, commits, sessions)\n2. **Interactive**: Skills for knowledge management (`/autology:capture`, `/autology:explore`, `/autology:analyze`, `/autology:tutorial`)\n3. **Programmatic**: MCP tools for automation (`autology_capture`, `autology_query`, `autology_relate`, etc.)\n\n**7 Knowledge types**: `decisions` (ADR format), `components`, `conventions`, `concepts`, `patterns`, `issues`, `sessions`\n\n**7 Relationships**: `affects`, `uses`, `supersedes`, `relates_to`, `implements`, `depends_on`, `derived_from`\n\n**Storage**: Obsidian-compatible markdown in `docs/{type}s/` (e.g., `docs/decisions/`, `docs/components/`)\n\n## Example\n\n**Without Autology**:\n```\nDev: \"Claude, add authentication\"\n→ Code appears\n→ Dev: \"Looks good\" (doesn't understand JWT)\n→ Next dev: \"Why JWT?\" (no answer)\n```\n\n**With Autology**:\n```\nDev: \"Claude, add authentication\"\n→ Code appears\n→ Hook: \"Capture decision?\"\n→ ADR: Context (stateless for microservices), Decision (JWT RS256),\n       Alternatives (sessions, OAuth), Consequences (complexity vs scaling)\n→ Next dev: /autology:explore authentication\n→ Sees reasoning, builds on knowledge\n```\n\n## Installation\n\n```bash\n# Step 1: Add the marketplace\n/plugin marketplace add Curt-Park/autology\n\n# Step 2: Install the plugin\n/plugin install autology@autology\n```\n\nThe plugin will automatically download the correct binary for your platform (macOS, Linux, or Windows).\n\n## Quick Start\n\n```bash\n# Learn the model\n/autology:tutorial\n\n# Capture knowledge from conversation context\n/autology:capture\n# → Summarizes recent conversation\n# → Identifies decisions, patterns, conventions\n# → Captures as structured knowledge nodes\n\n# Explore knowledge\n/autology:explore decisions\n\n# Verify doc-code sync\n/autology:analyze\n# → Reports: broken wikilinks, stale paths, missing documentation\n# → Fix all issues, commit changes\n# → Ensures documentation accurately describes codebase\n```\n\n## Development Setup\n\n### Option 1: Using mise (Recommended)\n\n[mise](https://mise.jdx.dev/) automatically installs all required tools:\n\n```bash\n# Install mise (if not already installed)\ncurl https://mise.run | sh\n# or: brew install mise (macOS)\necho 'eval \"$(mise activate bash)\"' >> ~/.bashrc  # or ~/.zshrc\nsource ~/.bashrc  # or source ~/.zshrc\n\n# Clone and setup\ngit clone https://github.com/Curt-Park/autology.git\ncd autology\n\n# Install all tools (Go 1.23 + golangci-lint 1.64)\nmise trust\nmise install\n\n# Install dependencies, build, and test\nmake install\nmake build\nmake check\n```\n\n### Option 2: Manual Setup\n\n```bash\ngit clone https://github.com/Curt-Park/autology.git\ncd autology\n\n# Install Go 1.23+ (see https://go.dev/doc/install)\n# Install golangci-lint (https://golangci-lint.run/welcome/install/)\n\n# Install dependencies, build, and test\nmake install\nmake build\nmake check\n```\n\n## Running Locally\n\n```bash\nclaude --plugin-dir .\n```\n\n## Philosophy\n\nWhen AI writes code, humans should **understand more, not less**.\n\nWhen productivity increases, knowledge should **compound, not evaporate**.\n\nWhen decisions are made, reasoning should be **transparent, not opaque**.\n\nAutology ensures AI serves human intelligence, not replaces it.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "autology",
+          "source": "./",
+          "version": "0.4.0",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Curt-Park/autology",
+            "/plugin install autology@autology"
+          ]
+        }
+      ]
+    }
+  ]
+}
