@@ -137,7 +137,7 @@ function SearchFilterContent() {
         params.delete("dir");
       }
 
-      const newURL = params.toString() ? `/?${params.toString()}` : "/";
+      const newURL = params.toString() ? `/browse?${params.toString()}` : "/browse";
       router.replace(newURL, { scroll: false });
     }, 50);
   }, [searchParams, router]);

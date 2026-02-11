@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { getCacheEntry, hasCacheEntry, setCacheEntry } from "@/lib/fetchCache";
 
 /**
  * State returned by the useFetch hook
@@ -13,7 +14,7 @@ interface UseFetchState<T> {
 }
 
 /**
- * A generic hook for fetching data with proper AbortController handling.
+ * A generic hook for fetching data with cache-first behavior and proper AbortController handling.
  *
  * @param url - The URL to fetch from. Pass null to skip fetching (conditional fetch).
  * @param errorMessage - Custom error message to display on fetch failure.
@@ -32,9 +33,23 @@ export function useFetch<T>(
   url: string | null,
   errorMessage = "Failed to fetch data"
 ): UseFetchState<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<T | null>(() => {
+    if (url === null) return null;
+    return getCacheEntry<T>(url) ?? null;
+  });
+  const [loading, setLoading] = useState(() => {
+    if (url === null) return false;
+    return !hasCacheEntry(url);
+  });
   const [error, setError] = useState<string | null>(null);
+
+  // Store errorMessage in a ref to keep it out of the dependency array
+  const errorMessageRef = useRef(errorMessage);
+  errorMessageRef.current = errorMessage;
+
+  // Track current URL to prevent stale state updates
+  const currentUrlRef = useRef(url);
+  currentUrlRef.current = url;
 
   useEffect(() => {
     // Skip fetch if URL is null (conditional fetching)
@@ -45,8 +60,16 @@ export function useFetch<T>(
       return;
     }
 
-    // Reset loading/error state when URL changes, but keep stale data visible
-    // to prevent flash of empty content (stale-while-revalidate pattern)
+    // Cache hit — return early, no fetch needed
+    const cached = getCacheEntry<T>(url);
+    if (cached !== undefined) {
+      setData(cached);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    // Cache miss — fetch from network
     setError(null);
     setLoading(true);
 
@@ -60,7 +83,11 @@ export function useFetch<T>(
           throw new Error(`HTTP ${res.status}`);
         }
         const json: T = await res.json();
-        setData(json);
+        setCacheEntry(fetchUrl, json);
+        // Only update state if this is still the current URL
+        if (currentUrlRef.current === fetchUrl) {
+          setData(json);
+        }
       } catch (err) {
         // Ignore abort errors - component unmounted or URL changed
         if (err instanceof DOMException && err.name === "AbortError") {
@@ -69,10 +96,12 @@ export function useFetch<T>(
         if (process.env.NODE_ENV === "development") {
           console.error("Fetch error:", err);
         }
-        setError(errorMessage);
+        if (currentUrlRef.current === fetchUrl) {
+          setError(errorMessageRef.current);
+        }
       } finally {
         // Only update loading state if the request wasn't aborted
-        if (!controller.signal.aborted) {
+        if (!controller.signal.aborted && currentUrlRef.current === fetchUrl) {
           setLoading(false);
         }
       }
@@ -81,7 +110,7 @@ export function useFetch<T>(
     fetchData();
 
     return () => controller.abort();
-  }, [url, errorMessage]);
+  }, [url]);
 
   return { data, loading, error };
 }

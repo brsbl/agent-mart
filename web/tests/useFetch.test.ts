@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useFetch } from '@/hooks/useFetch';
+import { clearCache, setCacheEntry, hasCacheEntry } from '@/lib/fetchCache';
 
 describe('useFetch', () => {
   const originalFetch = globalThis.fetch;
   const mockFetch = vi.fn();
 
   beforeEach(() => {
+    clearCache();
     globalThis.fetch = mockFetch;
     mockFetch.mockReset();
   });
@@ -286,17 +288,12 @@ describe('useFetch', () => {
     });
   });
 
-  describe('error message dependency', () => {
-    it('should refetch when error message changes', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({ value: 1 })
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({ value: 2 })
-        });
+  describe('error message as ref (no refetch)', () => {
+    it('should NOT refetch when only error message changes', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ value: 1 })
+      });
 
       const { result, rerender } = renderHook(
         ({ errorMsg }) => useFetch('/api/test', errorMsg),
@@ -309,20 +306,114 @@ describe('useFetch', () => {
 
       rerender({ errorMsg: 'Error 2' });
 
-      await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalledTimes(2);
+      // Should NOT trigger a second fetch — errorMessage is stored in a ref
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should use latest error message on failure even though it is a ref', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
       });
+
+      const { result } = renderHook(() =>
+        useFetch('/api/test', 'Custom error')
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(result.current.error).toBe('Custom error');
     });
   });
 
   describe('initial state', () => {
-    it('should initialize with loading true and null data/error', () => {
+    it('should initialize with loading true and null data/error for uncached URL', () => {
       mockFetch.mockImplementation(() => new Promise(() => {}));
 
       const { result } = renderHook(() => useFetch('/api/test'));
 
       expect(result.current.loading).toBe(true);
       expect(result.current.data).toBeNull();
+      expect(result.current.error).toBeNull();
+    });
+  });
+
+  describe('cache integration', () => {
+    it('should return cached data instantly with loading=false', () => {
+      const cachedData = { id: 42, name: 'Cached' };
+      setCacheEntry('/api/cached', cachedData);
+
+      const { result } = renderHook(() => useFetch<typeof cachedData>('/api/cached'));
+
+      // Immediate — no fetch, no loading
+      expect(result.current.data).toEqual(cachedData);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeNull();
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
+    it('should populate cache after a successful fetch', async () => {
+      const mockData = { id: 1 };
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockData),
+      });
+
+      expect(hasCacheEntry('/api/new')).toBe(false);
+
+      const { result } = renderHook(() => useFetch<typeof mockData>('/api/new'));
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(hasCacheEntry('/api/new')).toBe(true);
+    });
+
+    it('should not fetch when cache is hit on URL change', async () => {
+      const data1 = { id: 1 };
+      const data2 = { id: 2 };
+      setCacheEntry('/api/a', data1);
+      setCacheEntry('/api/b', data2);
+
+      const { result, rerender } = renderHook(
+        ({ url }) => useFetch<typeof data1>(url),
+        { initialProps: { url: '/api/a' } }
+      );
+
+      expect(result.current.data).toEqual(data1);
+      expect(mockFetch).not.toHaveBeenCalled();
+
+      rerender({ url: '/api/b' });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual(data2);
+      });
+
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
+    it('should recover from failed prefetch by fetching on its own', async () => {
+      // Simulate a failed prefetch (URL not in cache)
+      expect(hasCacheEntry('/api/recover')).toBe(false);
+
+      const mockData = { recovered: true };
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockData),
+      });
+
+      const { result } = renderHook(() =>
+        useFetch<typeof mockData>('/api/recover')
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(result.current.data).toEqual(mockData);
       expect(result.current.error).toBeNull();
     });
   });

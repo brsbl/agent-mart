@@ -58,7 +58,7 @@ export function MultiSelectDropdown({
       if (!newOpen) setSearch("");
     }}>
       <Popover.Trigger asChild>
-        <div className={`relative transition-all duration-150 ${isOpen ? "w-[260px]" : "w-auto"}`}>
+        <div className={`relative transition-all duration-150 ${isOpen ? "w-[260px]" : "w-auto min-w-[120px]"}`}>
           {/* When closed: show pill button */}
           {!isOpen && (
             <button

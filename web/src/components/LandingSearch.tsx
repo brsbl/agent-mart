@@ -35,8 +35,8 @@ export function LandingSearch({ data: marketplacesData }: LandingSearchProps) {
       .map(([category, count]) => ({ category, count }));
   }, [marketplacesData?.marketplaces]);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: FormEvent) => {
+    e?.preventDefault();
     const params = new URLSearchParams();
     const trimmed = query.trim();
     if (trimmed) {
@@ -77,6 +77,7 @@ export function LandingSearch({ data: marketplacesData }: LandingSearchProps) {
           />
           <button
             type="submit"
+            onMouseDown={() => handleSubmit()}
             className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-background-secondary hover:bg-background-tertiary rounded-lg transition-colors"
             aria-label="Search"
           >

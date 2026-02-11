@@ -47,9 +47,9 @@ export function NavBar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/30 backdrop-blur-md">
-      <div className="relative px-4 sm:px-6 py-3">
+      <div className="relative py-3">
         {/* Mobile layout (< lg): stacked rows */}
-        <div className="lg:hidden">
+        <div className="lg:hidden px-4 sm:px-6">
           {/* Top row: Logo and GitHub */}
           <div className="flex items-center justify-between">
             <Link href="/browse" className="hover:opacity-80 transition-opacity">
@@ -66,26 +66,32 @@ export function NavBar() {
           )}
         </div>
 
-        {/* Desktop layout (lg+): single flex row */}
-        <div className="hidden lg:flex items-center gap-4">
-          {/* Logo - shrinks at smaller widths */}
-          <Link href="/browse" className="shrink-0 hover:opacity-80 transition-opacity">
-            <AsciiLogo />
-          </Link>
+        {/* Desktop layout (lg+): logo/GitHub at edges, controls at grid width */}
+        <div className="hidden lg:block">
+          {/* Logo and GitHub at viewport edges */}
+          <div className="absolute inset-0 flex items-center justify-between px-6 pointer-events-none">
+            <Link href="/browse" className="pointer-events-auto shrink-0 hover:opacity-80 transition-opacity">
+              <AsciiLogo />
+            </Link>
+            <div className="pointer-events-auto shrink-0">
+              <GitHubLink />
+            </div>
+          </div>
 
-          {/* Search/Filter/Sort - fills remaining space */}
+          {/* Search/Filter/Sort - centered container matching card grid width */}
           {showSearch ? (
-            <div className="flex-1 min-w-0">
+            <div
+              className="max-w-6xl mx-auto"
+              style={{
+                paddingLeft: 'max(1.5rem, 285px - max(0px, (100vw - 72rem) / 2))',
+                paddingRight: 'max(1.5rem, 163px - max(0px, (100vw - 72rem) / 2))',
+              }}
+            >
               <SearchFilterControls />
             </div>
           ) : (
-            <div className="flex-1" />
+            <div className="h-[30px]" />
           )}
-
-          {/* GitHub - fixed size on right */}
-          <div className="shrink-0">
-            <GitHubLink />
-          </div>
         </div>
       </div>
     </header>
