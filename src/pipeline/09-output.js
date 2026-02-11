@@ -66,7 +66,15 @@ export function output({ onProgress: _onProgress } = {}) {
   // Write per-author files
   for (const author of Object.values(authors)) {
     // Transform marketplaces to remove unused fields
-    const marketplaces = [...author.marketplaces]
+    // Deduplicate by repo_full_name within each author
+    const seenAuthorRepos = new Set();
+    const uniqueMarketplaces = author.marketplaces.filter(m => {
+      if (seenAuthorRepos.has(m.repo_full_name)) return false;
+      seenAuthorRepos.add(m.repo_full_name);
+      return true;
+    });
+
+    const marketplaces = [...uniqueMarketplaces]
       .sort((a, b) => (b.signals?.stars || 0) - (a.signals?.stars || 0))
       .map(m => ({
         name: m.name,
@@ -144,7 +152,15 @@ export function output({ onProgress: _onProgress } = {}) {
       });
     }
   }
-  marketplacesBrowse.sort((a, b) => {
+  // Deduplicate by repo_full_name (keep first occurrence, which has highest stars from sort)
+  const seenRepos = new Set();
+  const dedupedBrowse = marketplacesBrowse.filter(m => {
+    if (seenRepos.has(m.repo_full_name)) return false;
+    seenRepos.add(m.repo_full_name);
+    return true;
+  });
+
+  dedupedBrowse.sort((a, b) => {
     const timeA = a.signals.pushed_at ? new Date(a.signals.pushed_at).getTime() : 0;
     const timeB = b.signals.pushed_at ? new Date(b.signals.pushed_at).getTime() : 0;
     // Handle invalid dates (NaN) by treating them as 0
@@ -152,8 +168,8 @@ export function output({ onProgress: _onProgress } = {}) {
     const dateB = Number.isNaN(timeB) ? 0 : timeB;
     return dateB - dateA;
   });
-  saveJson(MARKETPLACES_BROWSE_PATH, { meta, marketplaces: marketplacesBrowse });
-  log(`Generated ${MARKETPLACES_BROWSE_PATH} (${marketplacesBrowse.length} marketplaces)`);
+  saveJson(MARKETPLACES_BROWSE_PATH, { meta, marketplaces: dedupedBrowse });
+  log(`Generated ${MARKETPLACES_BROWSE_PATH} (${dedupedBrowse.length} marketplaces)`);
 
   // Summary
   log('');
