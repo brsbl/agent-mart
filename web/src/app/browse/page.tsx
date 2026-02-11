@@ -38,9 +38,19 @@ function BrowsePageContent() {
   const rawDir = searchParams.get("dir");
   const sortDirection = validDirs.includes(rawDir as typeof validDirs[number]) ? (rawDir as "asc" | "desc") : "desc";
 
-  // State for pagination
-  const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
+  // State for pagination — restore from sessionStorage so back-navigation preserves scroll position
+  const DISPLAY_COUNT_KEY = "browse_displayCount";
+  const [displayCount, setDisplayCount] = useState(() => {
+    if (typeof window === "undefined") return INITIAL_DISPLAY_COUNT;
+    const stored = sessionStorage.getItem(DISPLAY_COUNT_KEY);
+    return stored ? Number(stored) : INITIAL_DISPLAY_COUNT;
+  });
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Persist displayCount to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem(DISPLAY_COUNT_KEY, String(displayCount));
+  }, [displayCount]);
 
   // Reset pagination when search query or filters change
   const sortParam = searchParams.get("sort") || "";
@@ -49,6 +59,7 @@ function BrowsePageContent() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- resetting pagination when URL params change is valid
     setDisplayCount(INITIAL_DISPLAY_COUNT);
+    sessionStorage.removeItem(DISPLAY_COUNT_KEY);
   }, [searchQuery, catParam, sortParam, dirParam]);
 
   // Fetch only marketplaces data

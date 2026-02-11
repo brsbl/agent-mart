@@ -141,7 +141,7 @@ function SearchFilterControlsContent() {
         params.delete("dir");
       }
 
-      const newURL = params.toString() ? `/?${params.toString()}` : "/";
+      const newURL = params.toString() ? `/browse?${params.toString()}` : "/browse";
       router.replace(newURL, { scroll: false });
     }, 50);
   }, [router]);
@@ -208,7 +208,7 @@ function SearchFilterControlsContent() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Search Bar - expands to fill available space */}
+      {/* Search Bar - grows but capped to keep controls within grid width */}
       <div className="flex-1 min-w-0">
         <form onSubmit={handleSearch}>
           <div className="relative">

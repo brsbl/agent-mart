@@ -60,7 +60,7 @@ export function PluginCardInline({ plugin }: PluginCardInlineProps) {
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="inline-flex items-center text-[0.8rem] font-medium text-foreground-muted hover:text-foreground-secondary self-center cursor-pointer transition-colors px-1.5 py-0.5 border border-border rounded-full hover:border-border-hover"
+              className="inline-flex items-center text-[0.8rem] font-medium text-foreground-muted hover:text-foreground-secondary self-center cursor-pointer transition-colors px-1.5 py-0.5 rounded-full"
             >
               +{remainingCount}
             </button>
@@ -69,7 +69,7 @@ export function PluginCardInline({ plugin }: PluginCardInlineProps) {
             <button
               type="button"
               onClick={() => setExpanded(false)}
-              className="inline-flex items-center text-[0.8rem] font-medium text-foreground-muted hover:text-foreground-secondary self-center cursor-pointer transition-colors px-1.5 py-0.5 border border-border rounded-full hover:border-border-hover"
+              className="inline-flex items-center text-[0.8rem] font-medium text-foreground-muted hover:text-foreground-secondary self-center cursor-pointer transition-colors px-1.5 py-0.5 rounded-full"
             >
               Show less
             </button>

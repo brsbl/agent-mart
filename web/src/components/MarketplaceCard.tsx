@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, GitFork, Clock, ChevronRight, TrendingUp } from "lucide-react";
 import { formatNumber, formatRelativeTime } from "@/lib/data";
+import { DATA_URLS } from "@/lib/constants";
+import { prefetchUrl } from "@/lib/prefetch";
 import type { Category } from "@/lib/types";
 
 export interface MarketplaceCardProps {
@@ -39,6 +41,10 @@ export function MarketplaceCard({
   const repoName = marketplace.repo_full_name?.split('/')[1] || marketplace.name;
   const marketplaceUrl = `/${author_id}/${repoName}`;
 
+  const handleMouseEnter = useCallback(() => {
+    prefetchUrl(DATA_URLS.AUTHOR(author_id));
+  }, [author_id]);
+
   useEffect(() => {
     const checkOverflow = () => {
       if (descriptionRef.current) {
@@ -55,6 +61,7 @@ export function MarketplaceCard({
   return (
     <Link
       href={marketplaceUrl}
+      onMouseEnter={handleMouseEnter}
       className="relative border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card flex flex-col h-full card-hover-scroll cursor-pointer group overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[4px] before:bg-transparent before:rounded-l-xl before:transition-colors hover:before:bg-accent"
     >
       <div className="p-4 flex flex-col flex-1">
