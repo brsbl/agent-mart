@@ -71,11 +71,16 @@ export function StatsRow({ data, loading }: StatsRowProps) {
 
   if (loading) {
     return (
-      <section className="flex justify-center py-2">
+      <section className="flex justify-center">
         <div className="flex flex-wrap justify-center gap-4 md:gap-8 px-4 py-2">
-          <StatCard value={0} label="Authors" animate={false} />
-          <StatCard value={0} label="Marketplaces" animate={false} />
-          <StatCard value={0} label="Plugins" animate={false} />
+          {["Authors", "Marketplaces", "Plugins"].map((label) => (
+            <div key={label} className="flex flex-col items-center px-3 py-1.5">
+              <div className="h-6 md:h-8 w-12 md:w-16 bg-foreground/10 rounded animate-pulse" />
+              <span className="text-[10px] md:text-[14px] font-mono font-bold tracking-tight text-foreground-secondary uppercase mt-1">
+                {label}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
     );

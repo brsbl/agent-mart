@@ -11,10 +11,10 @@ const LIGHT_COLORS = [
 ];
 
 const DARK_COLORS = [
-  "#4A4A4A", // border-hover
-  "#333333", // background-hover
-  "#737370", // foreground-muted
-  "#3F3F3F", // mid grey
+  "#2A2A2A", // deep grey
+  "#1F1F1F", // near-black
+  "#333333", // dark grey
+  "#252525", // charcoal
 ];
 
 // Linear gradient config

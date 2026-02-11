@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { HeroSection } from "@/components/HeroSection";
 import { LandingSearch } from "@/components/LandingSearch";
 import { MouseGlow } from "@/components/MouseGlow";
@@ -10,13 +11,18 @@ import { DATA_URLS } from "@/lib/constants";
 import type { MarketplacesData } from "@/lib/types";
 
 export default function HomePage() {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
   const { data, loading } = useFetch<MarketplacesData>(
     DATA_URLS.MARKETPLACES_BROWSE,
     "Failed to load marketplace data."
   );
 
   return (
-    <div className="isolate relative flex flex-col items-center gap-3 md:gap-4 -mt-[60px] pt-[calc(60px+1.5rem)] md:pt-[calc(60px+3rem)] min-h-screen overflow-y-auto">
+    <div className="isolate relative flex flex-col items-center gap-3 md:gap-4 -mt-[60px] pt-[calc(60px+1.5rem)] md:pt-[calc(60px+3rem)] h-screen overflow-hidden">
       <MouseGlow />
       {/* Grid overlay */}
       <div

@@ -72,7 +72,7 @@ export function LandingSearch({ data: marketplacesData }: LandingSearchProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search plugins..."
-            className="w-full pl-9 pr-11 py-2 sm:py-2.5 text-xs sm:text-sm bg-card border border-border rounded-lg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent text-foreground placeholder:text-foreground-muted transition-colors"
+            className="w-full pl-9 pr-11 py-2 sm:py-2.5 text-xs sm:text-sm bg-card border border-border rounded-lg text-foreground placeholder:text-foreground-muted"
             aria-label="Search plugins"
           />
           <button

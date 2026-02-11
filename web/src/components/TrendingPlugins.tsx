@@ -124,21 +124,39 @@ export function TrendingPlugins({ data, loading }: TrendingPluginsProps) {
 
   if (loading) {
     return (
-      <section className="py-4 flex-1 w-full overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center gap-2 mb-4 px-4">
-            <div className="flex items-center gap-2.5 px-4 py-2">
-              <TrendingUp size={22} className="text-accent" />
-              <h2 className="text-base font-semibold text-foreground">Trending This Week</h2>
+      <section className="pt-4 md:pt-2 py-2 flex-1 w-full overflow-hidden">
+        <div className="mx-auto w-fit">
+          <div className="flex items-center justify-center gap-2 mb-4 mt-4 px-4">
+            <div className="flex items-center gap-2.5 px-4 py-2 pb-3">
+              <TrendingUp size={22} className="text-emerald-600 dark:text-emerald-400" />
+              <h2 className="text-base md:text-[20px] font-semibold text-foreground">Trending This Week</h2>
             </div>
           </div>
-          <div className="flex gap-4 overflow-x-auto md:justify-center pb-2 px-4 scrollbar-hide">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="flex-shrink-0 w-[220px] h-[120px] border border-border rounded-xl bg-card animate-pulse"
-              />
-            ))}
+          <div className="flex items-center justify-center gap-2 md:gap-4">
+            <div className="shrink-0 p-1.5 md:p-2 rounded-full bg-background/30 border border-border">
+              <ChevronLeft size={18} className="text-foreground-muted md:w-5 md:h-5" />
+            </div>
+            <div className="px-3 md:px-4 py-3 md:py-4 bg-card/30 backdrop-blur-md border border-border rounded-2xl">
+              <div className="flex gap-4">
+                {/* 1 card on mobile, 3 on md+ */}
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`flex-shrink-0 w-[220px] border border-border rounded-xl bg-card p-4${i > 0 ? " hidden md:block" : ""}`}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 rounded-full bg-foreground/10 animate-pulse" />
+                      <div className="h-3 w-16 bg-foreground/10 rounded animate-pulse" />
+                    </div>
+                    <div className="h-4 w-28 bg-foreground/10 rounded animate-pulse mb-2" />
+                    <div className="h-3 w-16 bg-foreground/10 rounded animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="shrink-0 p-1.5 md:p-2 rounded-full bg-background/30 border border-border">
+              <ChevronRight size={18} className="text-foreground-muted md:w-5 md:h-5" />
+            </div>
           </div>
         </div>
       </section>
