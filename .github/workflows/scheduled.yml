@@ -35,6 +35,31 @@ jobs:
         env:
           HUSKY: 0
 
+      - name: Restore discovery cache
+        id: discovery-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            data/01-discovered.json
+            data/02-repos.json
+          key: discovery-${{ github.run_id }}
+          restore-keys: |
+            discovery-
+
+      - name: Seed discovery from browse data
+        if: steps.discovery-cache.outputs.cache-hit != 'true'
+        run: node -e "
+          const fs = require('fs');
+          const browse = JSON.parse(fs.readFileSync('web/public/data/marketplaces-browse.json', 'utf8'));
+          const repos = browse.marketplaces.map(m => {
+            const [owner, repo] = m.repo_full_name.split('/');
+            return { owner, repo, full_name: m.repo_full_name, marketplace_path: '.claude-plugin/marketplace.json' };
+          });
+          fs.mkdirSync('data', { recursive: true });
+          fs.writeFileSync('data/01-discovered.json', JSON.stringify({ discovered_at: new Date().toISOString(), total: repos.length, repos }, null, 2));
+          console.log('Seeded discovery with ' + repos.length + ' repos from browse data');
+          "
+
       - name: Restore signals history
         uses: actions/cache/restore@v5
         with:
@@ -54,6 +79,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_GITHUB_TOKEN }}
           NODE_OPTIONS: '--max-old-space-size=4096'
         run: npm run pipeline:dev
+
+      - name: Save discovery cache
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            data/01-discovered.json
+            data/02-repos.json
+          key: discovery-${{ github.run_id }}
 
       - name: Save signals history
         uses: actions/cache/save@v5
