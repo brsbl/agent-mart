@@ -66,7 +66,7 @@ export async function fetchFiles({ onProgress } = {}) {
     onProgress?.(i + 1, reposToProcess.length);
 
     // Pass 1: Fetch base files
-    let baseResults = {};
+    let baseResults;
     try {
       baseResults = await batchGetFiles(owner, repo, branch, BASE_PATHS);
     } catch (error) {

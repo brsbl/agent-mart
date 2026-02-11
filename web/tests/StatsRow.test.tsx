@@ -3,11 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { StatsRow } from '@/components/StatsRow';
 
 describe('StatsRow', () => {
-  it('renders loading state with 0 values when loading is true', () => {
-    render(<StatsRow data={null} loading={true} />);
+  it('renders loading skeleton when loading is true', () => {
+    const { container } = render(<StatsRow data={null} loading={true} />);
 
-    const zeros = screen.getAllByText('0');
-    expect(zeros).toHaveLength(3);
+    const pulseElements = container.querySelectorAll('.animate-pulse');
+    expect(pulseElements).toHaveLength(3);
   });
 
   it('renders stat values when data is loaded', () => {

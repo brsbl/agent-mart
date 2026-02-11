@@ -41,7 +41,7 @@ export function loadJson(filePath) {
   try {
     return JSON.parse(content);
   } catch (error) {
-    throw new Error(`Invalid JSON in file: ${filePath} - ${error.message}`);
+    throw new Error(`Invalid JSON in file: ${filePath} - ${error.message}`, { cause: error });
   }
 }
 
