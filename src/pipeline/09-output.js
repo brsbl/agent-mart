@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { saveJson, loadJson, ensureDir, log, logError, sanitizeFilename } from '../lib/utils.js';
 import { loadSignalsHistory } from '../lib/signalsHistory.js';
 import { calculateTrendingScore } from '../lib/trending.js';
@@ -15,6 +17,13 @@ export function output({ onProgress: _onProgress } = {}) {
 
   const { authors } = loadJson(INPUT_PATH);
   ensureDir(AUTHORS_DIR);
+
+  // Clean stale author files from previous runs to prevent data inconsistencies
+  for (const file of fs.readdirSync(AUTHORS_DIR)) {
+    if (file.endsWith('.json')) {
+      fs.unlinkSync(path.join(AUTHORS_DIR, file));
+    }
+  }
 
   // Load categorized data if available
   const categorizedMap = new Map();
