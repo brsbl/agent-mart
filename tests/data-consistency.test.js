@@ -587,9 +587,11 @@ describe('Data Consistency: README Broken Images (Sampled)', () => {
           const imageUrls = [];
           let match;
 
+          mdImagePattern.lastIndex = 0;
           while ((match = mdImagePattern.exec(content)) !== null) {
             imageUrls.push(match[1]);
           }
+          htmlImagePattern.lastIndex = 0;
           while ((match = htmlImagePattern.exec(content)) !== null) {
             imageUrls.push(match[1]);
           }
@@ -656,6 +658,7 @@ describe('Data Consistency: README Broken Links (Sampled)', () => {
           if (!content) continue;
 
           let match;
+          mdLinkPattern.lastIndex = 0;
           while ((match = mdLinkPattern.exec(content)) !== null) {
             const url = match[1];
 

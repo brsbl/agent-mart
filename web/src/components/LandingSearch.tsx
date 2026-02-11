@@ -4,26 +4,18 @@ import { useState, useMemo, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Search, ArrowRight } from "lucide-react";
 import { MultiSelectDropdown } from "./MultiSelectDropdown";
-import { useFetch } from "@/hooks";
-import { DATA_URLS } from "@/lib/constants";
-import type { BrowseMarketplace, Meta, Category } from "@/lib/types";
+import type { MarketplacesData, Category } from "@/lib/types";
 
-interface MarketplacesData {
-  meta: Meta;
-  marketplaces: BrowseMarketplace[];
+interface LandingSearchProps {
+  data: MarketplacesData | null;
 }
 
 const MINIMUM_CATEGORY_COUNT = 2;
 
-export function LandingSearch() {
+export function LandingSearch({ data: marketplacesData }: LandingSearchProps) {
   const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const router = useRouter();
-
-  const { data: marketplacesData } = useFetch<MarketplacesData>(
-    DATA_URLS.MARKETPLACES_BROWSE,
-    "Failed to load categories."
-  );
 
   const categoriesWithCounts = useMemo(() => {
     const marketplaces = marketplacesData?.marketplaces ?? [];

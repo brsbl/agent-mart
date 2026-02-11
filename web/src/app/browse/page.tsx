@@ -4,14 +4,9 @@ import { Suspense, useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { MarketplaceCard, LoadingState, ErrorState, ErrorBoundary } from "@/components";
 import { useFetch } from "@/hooks";
-import type { BrowseMarketplace, Meta, MarketplaceSortOption, Category } from "@/lib/types";
+import type { BrowseMarketplace, MarketplacesData, MarketplaceSortOption, Category } from "@/lib/types";
 import { sortMarketplaces, getCategoryDisplay } from "@/lib/data";
 import { DATA_URLS, INITIAL_DISPLAY_COUNT, LOAD_MORE_COUNT } from "@/lib/constants";
-
-interface MarketplacesData {
-  meta: Meta;
-  marketplaces: BrowseMarketplace[];
-}
 
 export default function BrowsePage() {
   return (
@@ -28,22 +23,26 @@ function BrowsePageContent() {
   const searchQuery = searchParams.get("q") || "";
 
   // Read filter state from URL (single dimension: ?cat=testing,devops)
-  const categoriesParam = searchParams.get("cat")?.split(",").filter(Boolean) ?? [];
+  const catParam = searchParams.get("cat") || "";
   // Categories are now dynamic strings from data
-  const selectedCategories = categoriesParam as Category[];
+  const selectedCategories = useMemo(
+    () => (catParam ? catParam.split(",").filter(Boolean) : []) as Category[],
+    [catParam]
+  );
   const validSorts: MarketplaceSortOption[] = ["popular", "trending", "recent"];
   const rawSort = searchParams.get("sort");
   const sortBy: MarketplaceSortOption = validSorts.includes(rawSort as MarketplaceSortOption)
     ? (rawSort as MarketplaceSortOption)
     : "trending";
-  const sortDirection = (searchParams.get("dir") as "asc" | "desc") || "desc";
+  const validDirs = ["asc", "desc"] as const;
+  const rawDir = searchParams.get("dir");
+  const sortDirection = validDirs.includes(rawDir as typeof validDirs[number]) ? (rawDir as "asc" | "desc") : "desc";
 
   // State for pagination
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Reset pagination when search query or filters change
-  const catParam = searchParams.get("cat") || "";
   const sortParam = searchParams.get("sort") || "";
   const dirParam = searchParams.get("dir") || "";
 

@@ -25,6 +25,7 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
 
   // Transform results to match expected output format
   const enriched = [];
+  const renames = {};
 
   for (const { full_name, marketplace_path } of repos) {
     const data = repoData[full_name];
@@ -35,12 +36,12 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
 
     // Detect repo renames/transfers: use actual owner from API response
     const actualOwner = data.owner.login;
-    const [requestedOwner] = full_name.split('/');
     const actualFullName = `${actualOwner}/${data.name}`;
 
-    // Log if repo was renamed/transferred
-    if (actualOwner.toLowerCase() !== requestedOwner.toLowerCase()) {
+    // Log and record if repo was renamed/transferred
+    if (actualFullName.toLowerCase() !== full_name.toLowerCase()) {
       log(`Repo renamed/transferred: ${full_name} → ${actualFullName}`);
+      renames[full_name] = actualFullName;
     }
 
     enriched.push({
@@ -87,7 +88,8 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
     total_repos: enriched.length,
     total_owners: Object.keys(ownersOutput).length,
     repos: enriched,
-    owners: ownersOutput
+    owners: ownersOutput,
+    renames
   };
 
   saveJson(OUTPUT_PATH, output);

@@ -69,7 +69,7 @@ export function NavBar() {
         {/* Desktop layout (lg+): single flex row */}
         <div className="hidden lg:flex items-center gap-4">
           {/* Logo - shrinks at smaller widths */}
-          <Link href="/browse" className="shrink-0 hover:opacity-80 transition-opacity">
+          <Link href="/" className="shrink-0 hover:opacity-80 transition-opacity">
             <AsciiLogo />
           </Link>
 

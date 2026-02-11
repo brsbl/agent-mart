@@ -56,24 +56,6 @@ export function getSnapshotTimestamp() {
 }
 
 /**
- * Get today's date in YYYY-MM-DD format (for backwards compat)
- * @returns {string} ISO date string
- */
-export function getTodayDate() {
-  return new Date().toISOString().split('T')[0];
-}
-
-/**
- * Check if a snapshot was already recorded today
- * @param {Object} history - The signals history object
- * @returns {boolean} True if already recorded today
- */
-export function hasSnapshotForToday(history) {
-  const today = getTodayDate();
-  return history.meta.last_snapshot === today;
-}
-
-/**
  * Prune snapshots older than the specified number of days
  * @param {Array} snapshots - Array of snapshot objects with date field
  * @param {number} maxAgeDays - Maximum age in days (default 90)
@@ -90,14 +72,28 @@ export function pruneOldSnapshots(snapshots, maxAgeDays = HISTORY_RETENTION_DAYS
  * @param {string} repoFullName - Repository full name (owner/repo)
  * @param {number} stars - Current star count
  * @param {number} forks - Current fork count
- * @param {string} date - Snapshot date (YYYY-MM-DD)
+ * @param {string} timestamp - ISO timestamp string
  */
+// Minimum interval between snapshots for the same repo (4 hours in ms)
+const MIN_SNAPSHOT_INTERVAL_MS = 4 * 60 * 60 * 1000;
+
 export function addSnapshot(history, repoFullName, stars, forks, timestamp) {
   if (!history.repositories[repoFullName]) {
     history.repositories[repoFullName] = { snapshots: [] };
   }
 
-  history.repositories[repoFullName].snapshots.push({
+  const snapshots = history.repositories[repoFullName].snapshots;
+
+  // Skip if the most recent snapshot for this repo is less than 4 hours old
+  if (snapshots.length > 0) {
+    const lastSnapshot = snapshots[snapshots.length - 1];
+    const elapsed = new Date(timestamp).getTime() - new Date(lastSnapshot.date).getTime();
+    if (elapsed < MIN_SNAPSHOT_INTERVAL_MS) {
+      return;
+    }
+  }
+
+  snapshots.push({
     date: timestamp,
     stars,
     forks

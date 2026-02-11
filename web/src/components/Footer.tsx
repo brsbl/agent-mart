@@ -18,7 +18,7 @@ function ThemeToggle() {
     return (
       <button
         type="button"
-        className="p-1.5 text-foreground-muted hover:text-foreground-secondary transition-colors rounded hover:bg-background-secondary"
+        className="p-1.5 text-foreground-muted hover:text-foreground transition-colors rounded hover:bg-background-secondary"
         aria-label="Toggle theme"
       >
         <Monitor size={16} />
@@ -52,7 +52,7 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={cycleTheme}
-      className="p-1.5 text-foreground-muted hover:text-foreground-secondary transition-colors rounded hover:bg-background-secondary"
+      className="p-1.5 text-foreground-muted hover:text-foreground transition-colors rounded hover:bg-background-secondary"
       aria-label={getLabel()}
       title={getLabel()}
     >
@@ -69,13 +69,13 @@ export function Footer() {
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="hover:text-foreground-secondary transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               Home
             </Link>
             <Link
               href="/browse"
-              className="hover:text-foreground-secondary transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               Browse
             </Link>
@@ -83,7 +83,7 @@ export function Footer() {
               href="https://github.com/brsbl/agent-mart"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-foreground-secondary transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               GitHub
             </a>
@@ -91,7 +91,7 @@ export function Footer() {
               href="https://x.com/brsabel"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-foreground-secondary transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               Twitter
             </a>

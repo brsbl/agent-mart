@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFetch } from "@/hooks";
-import { DATA_URLS } from "@/lib/constants";
-import type { Meta, BrowseMarketplace } from "@/lib/types";
+import type { MarketplacesData } from "@/lib/types";
 
-interface MarketplacesData {
-  meta: Meta;
-  marketplaces: BrowseMarketplace[];
+interface StatsRowProps {
+  data: MarketplacesData | null;
+  loading: boolean;
 }
 
 interface StatCardProps {
@@ -24,6 +22,7 @@ function useAnimatedNumber(target: number, duration: number = 1500) {
 
     const startTime = Date.now();
     const startValue = Math.max(0, target - Math.floor(target * 0.1)); // Start at 90% of target
+    let frameId: number;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
@@ -36,11 +35,12 @@ function useAnimatedNumber(target: number, duration: number = 1500) {
       setCurrent(currentValue);
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        frameId = requestAnimationFrame(animate);
       }
     };
 
-    requestAnimationFrame(animate);
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
   }, [target, duration]);
 
   return current;
@@ -62,12 +62,7 @@ function StatCard({ value, label, animate = true }: StatCardProps) {
   );
 }
 
-export function StatsRow() {
-  const { data, loading } = useFetch<MarketplacesData>(
-    DATA_URLS.MARKETPLACES_BROWSE,
-    "Failed to load stats."
-  );
-
+export function StatsRow({ data, loading }: StatsRowProps) {
   const meta = data?.meta;
 
   const totalMarketplaces = meta?.total_marketplaces ?? 0;

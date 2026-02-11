@@ -395,19 +395,19 @@ function openInBrowser() {
 /**
  * Run a single stage and update its state
  */
-async function runStage(stage, stageState, stageNum, totalStages) {
+async function runStage(stage, stageState, stageNum, totalStages, { parallel = false } = {}) {
   console.log(`\n>>> Stage ${stageNum}/${totalStages}: ${stage.name}`);
   console.log('-'.repeat(40));
 
   stageState.status = 'running';
   stageState.startTime = new Date();
   state.currentStage = stage.id;
-  writeReport();
+  if (!parallel) writeReport();
 
   // Create progress callback
   const onProgress = (current, total) => {
     stageState.progress = { current, total };
-    writeReport();
+    if (!parallel) writeReport();
   };
 
   // Run the stage
@@ -447,7 +447,7 @@ async function runStage(stage, stageState, stageNum, totalStages) {
   }
 
   // Capture validation errors for parse stage
-  if (stage.id === '03-parse' && currentData?.validation?.errors) {
+  if (stage.id === '05-parse' && currentData?.validation?.errors) {
     stageState.validationErrors = currentData.validation.errors.slice(0, 20);
   }
 
@@ -455,7 +455,7 @@ async function runStage(stage, stageState, stageNum, totalStages) {
   stageState.dataPreview = getDataPreview(stage.id, currentData);
 
   console.log(`Completed in ${formatDuration(stageState.duration)}`);
-  writeReport();
+  if (!parallel) writeReport();
 }
 
 /**
@@ -503,16 +503,31 @@ async function runPipeline() {
         console.log('-'.repeat(40));
 
         // Run all parallel stages concurrently
-        await Promise.all(parallelStages.map((s, idx) =>
-          runStage(s, parallelStates[idx], i + idx + 1, STAGES.length)
-            .catch(error => {
-              parallelStates[idx].status = 'error';
-              parallelStates[idx].endTime = new Date();
-              parallelStates[idx].duration = parallelStates[idx].endTime - parallelStates[idx].startTime;
-              parallelStates[idx].error = error.message;
-              throw error;
-            })
+        const results = await Promise.allSettled(parallelStages.map((s, idx) =>
+          runStage(s, parallelStates[idx], i + idx + 1, STAGES.length, { parallel: true })
         ));
+
+        // Check for failures across all parallel stages
+        const failures = results
+          .map((result, idx) => ({ result, idx }))
+          .filter(({ result }) => result.status === 'rejected');
+
+        for (const { result, idx } of failures) {
+          parallelStates[idx].status = 'error';
+          parallelStates[idx].endTime = parallelStates[idx].endTime || new Date();
+          parallelStates[idx].duration = parallelStates[idx].endTime - parallelStates[idx].startTime;
+          parallelStates[idx].error = result.reason?.message || String(result.reason);
+        }
+
+        // Write report once after all parallel stages complete
+        writeReport();
+
+        if (failures.length > 0) {
+          const errorMessages = failures.map(({ result, idx }) =>
+            `${parallelStages[idx].name}: ${result.reason?.message || String(result.reason)}`
+          );
+          throw new Error(`Parallel stage failures:\n  ${errorMessages.join('\n  ')}`);
+        }
 
         i = j; // Skip to after the parallel group
       } else {

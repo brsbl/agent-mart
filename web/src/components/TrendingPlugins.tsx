@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo, KeyboardEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useFetch } from "@/hooks";
-import { DATA_URLS } from "@/lib/constants";
 import { formatNumber } from "@/lib/data";
-import type { Meta, BrowseMarketplace } from "@/lib/types";
+import type { MarketplacesData, BrowseMarketplace } from "@/lib/types";
 import { Star, TrendingUp, ChevronRight, ChevronLeft } from "lucide-react";
 
-interface MarketplacesData {
-  meta: Meta;
-  marketplaces: BrowseMarketplace[];
+interface TrendingPluginsProps {
+  data: MarketplacesData | null;
+  loading: boolean;
 }
 
 interface TrendingCardProps {
@@ -73,22 +71,19 @@ const CARD_WIDTH = 220;
 const GAP = 16;
 const CARD_STEP = CARD_WIDTH + GAP;
 
-export function TrendingPlugins() {
+export function TrendingPlugins({ data, loading }: TrendingPluginsProps) {
   const [scrollIndex, setScrollIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(
-    typeof window !== "undefined" && window.innerWidth >= 768 ? 3 : 1
-  );
-
-  const { data, loading } = useFetch<MarketplacesData>(
-    DATA_URLS.MARKETPLACES_BROWSE,
-    "Failed to load trending plugins."
-  );
+  const [visibleCount, setVisibleCount] = useState(3);
 
   // Sort by trending_score and take top 10
-  const trendingMarketplaces = data?.marketplaces
-    ?.slice()
-    .sort((a, b) => (b.signals?.trending_score ?? 0) - (a.signals?.trending_score ?? 0))
-    .slice(0, 10) ?? [];
+  const trendingMarketplaces = useMemo(() => {
+    const marketplaces = data?.marketplaces;
+    if (!marketplaces) return [];
+    return marketplaces
+      .slice()
+      .sort((a, b) => (b.signals?.trending_score ?? 0) - (a.signals?.trending_score ?? 0))
+      .slice(0, 10);
+  }, [data?.marketplaces]);
 
   // 1 card on mobile, 3 on md+
   useEffect(() => {
@@ -105,14 +100,24 @@ export function TrendingPlugins() {
 
   const maxIndex = Math.max(0, trendingMarketplaces.length - visibleCount);
 
-  const scroll = useCallback((direction: "left" | "right") => {
+  const scroll = (direction: "prev" | "next") => {
     setScrollIndex(prev => {
-      if (direction === "right") {
+      if (direction === "next") {
         return prev >= maxIndex ? 0 : prev + 1;
       }
       return prev <= 0 ? maxIndex : prev - 1;
     });
-  }, [maxIndex]);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      scroll("prev");
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      scroll("next");
+    }
+  };
 
   // Exact pixel width that fits only complete cards
   const windowWidth = visibleCount * CARD_WIDTH + Math.max(0, visibleCount - 1) * GAP;
@@ -156,10 +161,17 @@ export function TrendingPlugins() {
         </div>
 
         {/* Carousel with arrows (all breakpoints) */}
-        <div className="flex items-center justify-center gap-2 md:gap-4">
+        <div
+          className="flex items-center justify-center gap-2 md:gap-4"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Trending plugins"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+        >
           {/* Left arrow */}
           <button
-            onClick={() => scroll("left")}
+            onClick={() => scroll("prev")}
             className="shrink-0 p-1.5 md:p-2 rounded-full bg-background/30 backdrop-blur-md hover:bg-background/50 shadow-md transition-all border border-border"
             aria-label="Scroll left"
           >
@@ -188,7 +200,7 @@ export function TrendingPlugins() {
 
           {/* Right arrow */}
           <button
-            onClick={() => scroll("right")}
+            onClick={() => scroll("next")}
             className="shrink-0 p-1.5 md:p-2 rounded-full bg-background/30 backdrop-blur-md hover:bg-background/50 shadow-md transition-all border border-border"
             aria-label="Scroll right"
           >

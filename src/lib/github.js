@@ -392,11 +392,10 @@ export async function getFileContent(owner, repo, path) {
 export async function checkFileExists(owner, repo, path) {
   return restLimiter.schedule(async () => {
     try {
-      await getOctokit().rest.repos.getContent({
+      await getOctokit().request('HEAD /repos/{owner}/{repo}/contents/{path}', {
         owner,
         repo,
-        path,
-        request: { method: 'HEAD' }
+        path
       });
       return true;
     } catch (error) {

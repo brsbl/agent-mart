@@ -70,6 +70,7 @@ function buildGradient(px: number, py: number, colors: string[]) {
 
 export function MouseGlow() {
   const ref = useRef<HTMLDivElement>(null);
+  const rafPending = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -86,10 +87,15 @@ export function MouseGlow() {
     el.style.background = buildGradient(0.5, 0.5, getColors());
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = parent.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
-      el.style.background = buildGradient(px, py, getColors());
+      if (rafPending.current) return;
+      rafPending.current = true;
+      requestAnimationFrame(() => {
+        const rect = parent.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+        el.style.background = buildGradient(px, py, getColors());
+        rafPending.current = false;
+      });
     };
 
     const observer = new MutationObserver(() => {

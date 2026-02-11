@@ -2,18 +2,50 @@ import { searchCode, safeApiCall, checkFileExists } from '../lib/github.js';
 import { saveJson, loadJson, log, logError, getRepoLimit } from '../lib/utils.js';
 
 const OUTPUT_PATH = './data/01-discovered.json';
+const FETCHED_PATH = './data/02-repos.json';
 const REPO_LIMIT = getRepoLimit();
 const STANDARD_PATH = '.claude-plugin/marketplace.json';
+const MAX_VERIFY = 50;
+
+/**
+ * Load renames map from the most recent fetch step output
+ * @returns {Object} Map of old_full_name -> new_full_name
+ */
+function loadRenames() {
+  try {
+    const fetched = loadJson(FETCHED_PATH);
+    if (fetched?.renames && Object.keys(fetched.renames).length > 0) {
+      log(`Loaded ${Object.keys(fetched.renames).length} renames from fetch step`);
+      return fetched.renames;
+    }
+  } catch {
+    // No fetched data or no renames
+  }
+  return {};
+}
 
 /**
  * Load previously discovered repos to avoid dropping due to search variance
+ * Applies any known renames so stale full_name entries are updated.
  */
 function loadPreviousRepos() {
   try {
     const previous = loadJson(OUTPUT_PATH);
     if (previous?.repos?.length) {
       log(`Loaded ${previous.repos.length} previously discovered repos`);
-      return new Map(previous.repos.map(r => [r.full_name, r]));
+      const renames = loadRenames();
+      const repoMap = new Map();
+      for (const r of previous.repos) {
+        const newName = renames[r.full_name];
+        if (newName) {
+          log(`Applying rename: ${r.full_name} → ${newName}`);
+          const [owner, repo] = newName.split('/');
+          repoMap.set(newName, { ...r, full_name: newName, owner, repo });
+        } else {
+          repoMap.set(r.full_name, r);
+        }
+      }
+      return repoMap;
     }
   } catch {
     // No previous data
@@ -155,6 +187,10 @@ export async function discover({ onProgress } = {}) {
 
   // Verify missing repos still have marketplace.json before dropping them
   if (missingRepos.length > 0) {
+    if (missingRepos.length > MAX_VERIFY) {
+      log(`WARNING: ${missingRepos.length} missing repos exceeds MAX_VERIFY (${MAX_VERIFY}), only verifying first ${MAX_VERIFY}`);
+      missingRepos.length = MAX_VERIFY;
+    }
     log(`Verifying ${missingRepos.length} repos missing from all search passes...`);
     for (const repo of missingRepos) {
       const stillExists = await safeApiCall(
