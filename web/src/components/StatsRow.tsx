@@ -52,10 +52,10 @@ function StatCard({ value, label, animate = true }: StatCardProps) {
 
   return (
     <div className="flex flex-col items-center px-3 py-1.5">
-      <span className="text-xl md:text-2xl font-mono font-bold tracking-tight tabular-nums text-foreground">
+      <span className="text-xl md:text-[30px] font-mono font-bold tracking-tight tabular-nums text-foreground">
         {finalValue.toLocaleString()}
       </span>
-      <span className="text-xs font-mono font-bold tracking-tight text-foreground-secondary uppercase">
+      <span className="text-[10px] md:text-[14px] font-mono font-bold tracking-tight text-foreground-secondary uppercase">
         {label}
       </span>
     </div>
@@ -72,26 +72,26 @@ export function StatsRow() {
 
   const totalMarketplaces = meta?.total_marketplaces ?? 0;
   const totalPlugins = meta?.total_plugins ?? 0;
-  const totalSkills = totalPlugins;
+  const totalAuthors = meta?.total_authors ?? 0;
 
   if (loading) {
     return (
       <section className="flex justify-center py-2">
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8 bg-card/80 backdrop-blur-md rounded-xl px-4 py-2 backdrop-blur-sm">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8 px-4 py-2">
+          <StatCard value={0} label="Authors" animate={false} />
           <StatCard value={0} label="Marketplaces" animate={false} />
           <StatCard value={0} label="Plugins" animate={false} />
-          <StatCard value={0} label="Skills" animate={false} />
         </div>
       </section>
     );
   }
 
   return (
-    <section className="flex justify-center -mt-2 pt-4">
-      <div className="flex flex-wrap justify-center gap-4 md:gap-8 bg-card/80 backdrop-blur-md rounded-xl px-4 py-2 backdrop-blur-sm">
+    <section className="flex justify-center">
+      <div className="flex flex-wrap justify-center gap-4 md:gap-8 px-4 py-2">
+        <StatCard value={totalAuthors} label="Authors" />
         <StatCard value={totalMarketplaces} label="Marketplaces" />
         <StatCard value={totalPlugins} label="Plugins" />
-        <StatCard value={totalSkills} label="Skills" />
       </div>
     </section>
   );

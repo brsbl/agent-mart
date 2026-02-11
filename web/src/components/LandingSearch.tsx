@@ -1,47 +1,103 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useMemo, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Search, ArrowRight } from "lucide-react";
+import { MultiSelectDropdown } from "./MultiSelectDropdown";
+import { useFetch } from "@/hooks";
+import { DATA_URLS } from "@/lib/constants";
+import type { BrowseMarketplace, Meta, Category } from "@/lib/types";
+
+interface MarketplacesData {
+  meta: Meta;
+  marketplaces: BrowseMarketplace[];
+}
+
+const MINIMUM_CATEGORY_COUNT = 2;
 
 export function LandingSearch() {
   const [query, setQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const router = useRouter();
+
+  const { data: marketplacesData } = useFetch<MarketplacesData>(
+    DATA_URLS.MARKETPLACES_BROWSE,
+    "Failed to load categories."
+  );
+
+  const categoriesWithCounts = useMemo(() => {
+    const marketplaces = marketplacesData?.marketplaces ?? [];
+    const counts = new Map<Category, number>();
+
+    marketplaces.forEach(m => {
+      if (Array.isArray(m.categories)) {
+        m.categories.forEach(c => {
+          counts.set(c, (counts.get(c) || 0) + 1);
+        });
+      }
+    });
+
+    return Array.from(counts.entries())
+      .filter(([, count]) => count >= MINIMUM_CATEGORY_COUNT)
+      .sort((a, b) => b[1] - a[1])
+      .map(([category, count]) => ({ category, count }));
+  }, [marketplacesData?.marketplaces]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    const params = new URLSearchParams();
     const trimmed = query.trim();
     if (trimmed) {
-      router.push(`/browse?q=${encodeURIComponent(trimmed)}`);
-    } else {
-      router.push("/browse");
+      params.set("q", trimmed);
     }
+    if (selectedCategories.length > 0) {
+      params.set("cat", selectedCategories.join(","));
+    }
+    const qs = params.toString();
+    router.push(qs ? `/browse?${qs}` : "/browse");
+  };
+
+  const handleCategoryToggle = (cat: Category) => {
+    setSelectedCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
+
+  const handleClearCategories = () => {
+    setSelectedCategories([]);
   };
 
   return (
-    <section className="flex justify-center px-2 pt-64">
-      <form onSubmit={handleSubmit} className="w-full max-w-xl">
-        <div className="relative">
+    <section className="flex justify-center px-4 w-full mt-2 md:mt-4">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2 w-full max-w-xs sm:max-w-lg md:max-w-xl bg-card/50 backdrop-blur-md border border-border rounded-xl p-1.5 md:p-2">
+        <div className="relative flex-1 min-w-0">
           <Search
-            size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground-muted"
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted"
           />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search plugins, skills, commands..."
-            className="w-full pl-10 pr-12 py-3 text-base bg-card border border-border rounded-xl focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent text-foreground placeholder:text-foreground-muted transition-colors"
+            placeholder="Search plugins..."
+            className="w-full pl-9 pr-11 py-2 sm:py-2.5 text-xs sm:text-sm bg-card border border-border rounded-lg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent text-foreground placeholder:text-foreground-muted transition-colors"
             aria-label="Search plugins"
           />
           <button
             type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-background-secondary hover:bg-background-tertiary rounded-lg transition-colors"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-background-secondary hover:bg-background-tertiary rounded-lg transition-colors"
             aria-label="Search"
           >
-            <ArrowRight size={18} className="text-foreground-muted" />
+            <ArrowRight size={16} className="text-foreground-muted" />
           </button>
         </div>
+        <MultiSelectDropdown
+          options={categoriesWithCounts}
+          selectedOptions={selectedCategories}
+          onToggle={handleCategoryToggle}
+          onClear={handleClearCategories}
+          placeholder="Categories"
+        />
       </form>
     </section>
   );

@@ -65,13 +65,19 @@ export function Footer() {
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/30 backdrop-blur-md py-4">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-foreground-muted">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-foreground-secondary">
           <div className="flex items-center gap-4">
             <Link
               href="/"
               className="hover:text-foreground-secondary transition-colors"
             >
               Home
+            </Link>
+            <Link
+              href="/browse"
+              className="hover:text-foreground-secondary transition-colors"
+            >
+              Browse
             </Link>
             <a
               href="https://github.com/brsbl/agent-mart"
@@ -91,7 +97,7 @@ export function Footer() {
             </a>
             <ThemeToggle />
           </div>
-          <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-foreground-muted">
+          <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-foreground-secondary">
             <span>&copy; Agent Mart 2026. All rights reserved.</span>
             <span className="hidden sm:inline">&middot;</span>
             <span>Not affiliated with Anthropic.</span>

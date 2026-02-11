@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useFetch } from "@/hooks";
@@ -26,7 +26,7 @@ function TrendingCard({ marketplace }: TrendingCardProps) {
   return (
     <Link
       href={marketplaceUrl}
-      className="flex-shrink-0 w-[200px] md:w-[220px] border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card p-4 group"
+      className="flex-shrink-0 w-[220px] border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card p-4 group"
     >
       {/* Author info */}
       <div className="flex items-center gap-2 mb-3">
@@ -69,8 +69,15 @@ function TrendingCard({ marketplace }: TrendingCardProps) {
   );
 }
 
+const CARD_WIDTH = 220;
+const GAP = 16;
+const CARD_STEP = CARD_WIDTH + GAP;
+
 export function TrendingPlugins() {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollIndex, setScrollIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(
+    typeof window !== "undefined" && window.innerWidth >= 768 ? 3 : 1
+  );
 
   const { data, loading } = useFetch<MarketplacesData>(
     DATA_URLS.MARKETPLACES_BROWSE,
@@ -83,45 +90,48 @@ export function TrendingPlugins() {
     .sort((a, b) => (b.signals?.trending_score ?? 0) - (a.signals?.trending_score ?? 0))
     .slice(0, 10) ?? [];
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      const scrollAmount = 240; // card width + gap
-      const maxScroll = scrollWidth - clientWidth;
+  // 1 card on mobile, 3 on md+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = (matches: boolean) => {
+      setVisibleCount(matches ? 3 : 1);
+      setScrollIndex(0);
+    };
+    update(mq.matches);
+    const handler = (e: MediaQueryListEvent) => update(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
+  const maxIndex = Math.max(0, trendingMarketplaces.length - visibleCount);
+
+  const scroll = useCallback((direction: "left" | "right") => {
+    setScrollIndex(prev => {
       if (direction === "right") {
-        // If near the end, loop to beginning
-        if (scrollLeft >= maxScroll - 10) {
-          scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-        }
-      } else {
-        // If at the beginning, loop to end
-        if (scrollLeft <= 10) {
-          scrollRef.current.scrollTo({ left: maxScroll, behavior: "smooth" });
-        } else {
-          scrollRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-        }
+        return prev >= maxIndex ? 0 : prev + 1;
       }
-    }
-  };
+      return prev <= 0 ? maxIndex : prev - 1;
+    });
+  }, [maxIndex]);
+
+  // Exact pixel width that fits only complete cards
+  const windowWidth = visibleCount * CARD_WIDTH + Math.max(0, visibleCount - 1) * GAP;
 
   if (loading) {
     return (
-      <section className="py-4 flex-1">
+      <section className="py-4 flex-1 w-full overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-4 px-4">
-            <div className="flex items-center gap-2 bg-card/80 backdrop-blur-md rounded-lg px-4 py-2 backdrop-blur-sm">
-              <TrendingUp size={20} className="text-emerald-500" />
-              <h2 className="text-lg font-semibold text-foreground">Trending This Week</h2>
+            <div className="flex items-center gap-2.5 px-4 py-2">
+              <TrendingUp size={22} className="text-accent" />
+              <h2 className="text-base font-semibold text-foreground">Trending This Week</h2>
             </div>
           </div>
-          <div className="flex justify-start md:justify-center gap-4 overflow-x-auto pb-2 px-4 scrollbar-hide">
-            {[...Array(5)].map((_, i) => (
+          <div className="flex gap-4 overflow-x-auto md:justify-center pb-2 px-4 scrollbar-hide">
+            {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 w-[200px] md:w-[220px] h-[120px] border border-border rounded-xl bg-card animate-pulse"
+                className="flex-shrink-0 w-[220px] h-[120px] border border-border rounded-xl bg-card animate-pulse"
               />
             ))}
           </div>
@@ -135,49 +145,54 @@ export function TrendingPlugins() {
   }
 
   return (
-    <section className="py-2 flex-1">
-      <div className="max-w-7xl mx-auto">
+    <section className="pt-4 md:pt-2 py-2 flex-1 w-full overflow-hidden">
+      <div className="mx-auto w-fit">
         {/* Header */}
-        <div className="flex items-center justify-center gap-2 mb-4 px-4">
-          <div className="flex items-center gap-2 bg-card/80 backdrop-blur-md rounded-lg px-4 py-2 backdrop-blur-sm">
-            <TrendingUp size={20} className="text-emerald-500" />
-            <h2 className="text-lg font-semibold text-foreground">Trending This Week</h2>
+        <div className="flex items-center justify-center gap-2 mb-4 mt-4 px-4">
+          <div className="flex items-center gap-2.5 px-4 py-2 pb-3">
+            <TrendingUp size={22} className="text-emerald-600 dark:text-emerald-400" />
+            <h2 className="text-base md:text-[20px] font-semibold text-foreground">Trending This Week</h2>
           </div>
         </div>
 
-        {/* Trending cards carousel */}
-        <div className="relative mx-12">
+        {/* Carousel with arrows (all breakpoints) */}
+        <div className="flex items-center justify-center gap-2 md:gap-4">
           {/* Left arrow */}
           <button
             onClick={() => scroll("left")}
-            className="absolute -left-10 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-card/80 hover:bg-card-hover/90 shadow-md transition-all"
+            className="shrink-0 p-1.5 md:p-2 rounded-full bg-background/30 backdrop-blur-md hover:bg-background/50 shadow-md transition-all border border-border"
             aria-label="Scroll left"
           >
-            <ChevronLeft size={20} className="text-foreground" />
+            <ChevronLeft size={18} className="text-foreground md:w-5 md:h-5" />
           </button>
 
-          {/* Cards container */}
-          <div className="py-2">
+          {/* Cards window with frosted container */}
+          <div className="px-3 md:px-4 py-3 md:py-4 bg-card/30 backdrop-blur-md border border-border rounded-2xl">
             <div
-              ref={scrollRef}
-              className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide px-2"
+              className="overflow-hidden"
+              style={{ width: windowWidth }}
             >
-              {trendingMarketplaces.map((marketplace) => (
-                <TrendingCard
-                  key={marketplace.repo_full_name || `${marketplace.author_id}-${marketplace.name}`}
-                  marketplace={marketplace}
-                />
-              ))}
+              <div
+                className="flex gap-4 transition-transform duration-300 ease-in-out"
+                style={{ transform: `translateX(-${scrollIndex * CARD_STEP}px)` }}
+              >
+                {trendingMarketplaces.map((marketplace) => (
+                  <TrendingCard
+                    key={marketplace.repo_full_name || `${marketplace.author_id}-${marketplace.name}`}
+                    marketplace={marketplace}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Right arrow */}
           <button
             onClick={() => scroll("right")}
-            className="absolute -right-10 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-card/80 hover:bg-card-hover/90 shadow-md transition-all"
+            className="shrink-0 p-1.5 md:p-2 rounded-full bg-background/30 backdrop-blur-md hover:bg-background/50 shadow-md transition-all border border-border"
             aria-label="Scroll right"
           >
-            <ChevronRight size={20} className="text-foreground" />
+            <ChevronRight size={18} className="text-foreground md:w-5 md:h-5" />
           </button>
         </div>
 
@@ -185,7 +200,7 @@ export function TrendingPlugins() {
         <div className="flex justify-center mt-4">
           <Link
             href="/browse"
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm text-foreground-secondary hover:text-foreground transition-colors group bg-card/80 backdrop-blur-md rounded-lg backdrop-blur-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-[14px] text-foreground-secondary hover:text-foreground transition-colors group"
           >
             Browse All Plugins
             <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />

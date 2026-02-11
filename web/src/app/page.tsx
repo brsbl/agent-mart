@@ -2,12 +2,12 @@
 
 import { useEffect } from "react";
 import { HeroSection } from "@/components/HeroSection";
-import { StatsRow } from "@/components/StatsRow";
 import { LandingSearch } from "@/components/LandingSearch";
+import { MouseGlow } from "@/components/MouseGlow";
+import { StatsRow } from "@/components/StatsRow";
 import { TrendingPlugins } from "@/components/TrendingPlugins";
 
 export default function HomePage() {
-  // Prevent scroll on landing page
   useEffect(() => {
     document.body.style.overflow = "hidden";
     document.body.style.marginBottom = "0";
@@ -19,28 +19,22 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
-      {/* Background image - covers full viewport including navbar/footer */}
+    <div className="isolate relative flex flex-col items-center gap-3 md:gap-4 -mt-[60px] pt-[calc(60px+1.5rem)] md:pt-[calc(60px+3rem)] h-screen overflow-hidden">
+      <MouseGlow />
+      {/* Grid overlay */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-80 dark:opacity-80 pointer-events-none z-0"
-        style={{ backgroundImage: "url('/agent-mart.png')" }}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.035] dark:opacity-[0.04]"
+        style={{
+          backgroundImage: "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
       />
 
-      {/* Content container - no scroll */}
-      <div className="h-[calc(100vh-120px)] flex flex-col relative z-10">
-        {/* Content */}
-        <div className="flex flex-col flex-1 pt-8">
-          <div className="pb-8">
-            <HeroSection />
-            <StatsRow />
-          </div>
-          {/* Search and content below the sign */}
-          <div className="flex flex-col gap-2 -mb-4">
-            <LandingSearch />
-            <TrendingPlugins />
-          </div>
-        </div>
-      </div>
-    </>
+      <HeroSection />
+      <LandingSearch />
+      <StatsRow />
+      <TrendingPlugins />
+    </div>
   );
 }

@@ -43,7 +43,7 @@ function TextLogo() {
 
 export function NavBar() {
   const pathname = usePathname();
-  const isHomePage = pathname === "/";
+  const showSearch = pathname === "/browse";
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/30 backdrop-blur-md">
@@ -58,8 +58,8 @@ export function NavBar() {
             <GitHubLink />
           </div>
 
-          {/* Search row (home page only) */}
-          {isHomePage && (
+          {/* Search row (browse page only) */}
+          {showSearch && (
             <div className="mt-3">
               <SearchFilterControls />
             </div>
@@ -69,12 +69,12 @@ export function NavBar() {
         {/* Desktop layout (lg+): single flex row */}
         <div className="hidden lg:flex items-center gap-4">
           {/* Logo - shrinks at smaller widths */}
-          <Link href="/" className="shrink-0 hover:opacity-80 transition-opacity">
+          <Link href="/browse" className="shrink-0 hover:opacity-80 transition-opacity">
             <AsciiLogo />
           </Link>
 
           {/* Search/Filter/Sort - fills remaining space */}
-          {isHomePage ? (
+          {showSearch ? (
             <div className="flex-1 min-w-0">
               <SearchFilterControls />
             </div>
