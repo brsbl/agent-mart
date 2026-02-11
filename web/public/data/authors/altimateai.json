@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "AltimateAI",
+    "display_name": "AltimateAI",
+    "avatar_url": "https://avatars.githubusercontent.com/u/94671887?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "data-engineering-skills",
+      "version": null,
+      "description": "Skills for data engineering workflows",
+      "repo_full_name": "AltimateAI/data-engineering-skills",
+      "repo_url": "https://github.com/AltimateAI/data-engineering-skills",
+      "repo_description": "Skills related to Data Engineering Work for Claude Code",
+      "signals": {
+        "stars": 52,
+        "forks": 2,
+        "pushed_at": "2026-02-06T14:51:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"data-engineering-skills\",\n  \"owner\": {\n    \"name\": \"Altimate AI\",\n    \"email\": \"support@altimate.ai\"\n  },\n  \"metadata\": {\n    \"description\": \"Skills for data engineering workflows\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dbt-skills\",\n      \"description\": \"Skills for dbt development, testing, debugging, and refactoring\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/dbt/creating-dbt-models\",\n        \"./skills/dbt/debugging-dbt-errors\",\n        \"./skills/dbt/testing-dbt-models\",\n        \"./skills/dbt/documenting-dbt-models\",\n        \"./skills/dbt/migrating-sql-to-dbt\",\n        \"./skills/dbt/refactoring-dbt-models\",\n        \"./skills/dbt/developing-incremental-models\"\n      ]\n    },\n    {\n      \"name\": \"snowflake-skills\",\n      \"description\": \"Skills for Snowflake query optimization\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/snowflake/optimizing-query-by-id\",\n        \"./skills/snowflake/optimizing-query-text\",\n        \"./skills/snowflake/finding-expensive-queries\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Data Engineering Skills\n\n**Claude Code skills for Analytics & Data engineers working with dbt and Snowflake**\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skills-blueviolet)](https://claude.ai/claude-code)\n\nAltimate Data Skills is a collection of Claude Code skills that encode the workflows and best practices of experienced analytics engineers. These skills transform Claude from a code generator into a capable data engineering assistant.\n\n## Key Results\n\n- **53% accuracy** on [ADE-bench](https://github.com/dbt-labs/ade-bench) (43 real-world dbt tasks)\n- **3x improvement** on model creation tasks vs baseline\n- **84% pass rate** on Snowflake query optimization (62 TPC-H queries, 1TB dataset)\n- **3.6x better performance** gains vs baseline (16.8% avg improvement vs 4.7%)\n- Skills that teach Claude *how* to work, not just *what* to write\n\n## Quick Start\n\n```bash\n/plugin marketplace add AltimateAI/data-engineering-skills\n```\n\nInstall individual skill packs:\n```bash\n# Install dbt skills\n/plugin install dbt-skills@data-engineering-skills\n\n# Install Snowflake skills\n/plugin install snowflake-skills@data-engineering-skills\n```\n\n## Available Skills\n\n### dbt Skills\n\n| Skill | Purpose | Key Behaviors |\n|-------|---------|---------------|\n| **creating-dbt-models** | Model creation | Convention discovery → Write → Build → Verify output |\n| **debugging-dbt-errors** | Error troubleshooting | Read full error → Check upstream → Apply fix → Rebuild |\n| **testing-dbt-models** | Schema tests | Study existing test patterns → Match project style |\n| **documenting-dbt-models** | Documentation | Analyze model → Generate descriptions |\n| **migrating-sql-to-dbt** | Legacy SQL conversion | Parse SQL → Create proper dbt model |\n| **refactoring-dbt-models** | Safe restructuring | Track dependencies → Apply changes → Verify downstream |\n| **developing-incremental-models** | Incremental models | Strategy selection → unique_key design → Handle edge cases |\n\n### Snowflake Skills\n\n| Skill | Purpose | Key Behaviors |\n|-------|---------|---------------|\n| **finding-expensive-queries** | Cost analysis | Find and rank queries by cost/time/data scanned |\n| **optimizing-query-by-id** | Performance tuning | Optimize using query ID from history |\n| **optimizing-query-text** | Performance tuning | Profile query → Identify bottlenecks → Apply patterns |\n\n## How Skills Work\n\nSkills are markdown files that teach Claude **how to approach tasks**, not just what syntax to use. Each skill has two parts:\n\n### 1. Trigger Conditions\nWhen should this skill activate?\n\n```yaml\n---\nname: creating-dbt-models\ndescription: |\n  Guide for creating dbt models. ALWAYS use this skill when:\n  (1) Creating ANY new model (staging, intermediate, mart)\n  (2) Task mentions \"create\", \"build\", \"add\" with model/table\n  (3) Modifying model logic or columns\n---\n```\n\n### 2. Workflow Instructions\nWhat steps should Claude follow?\n\n```markdown\n# dbt Model Development\n\n**Read before you write. Build after you write. Verify your output.**\n\n## Critical Rules\n1. ALWAYS run `dbt build` after creating models - compile is NOT enough\n2. ALWAYS verify output after build using `dbt show`\n3. If build fails 3+ times, stop and reassess your approach\n...\n```\n\n## Usage Examples\n\nSkills activate automatically based on your request:\n\n| Your Request | Skill Activated |\n|--------------|-----------------|\n| \"Create a new orders model\" | `creating-dbt-models` |\n| \"Fix this compilation error\" | `debugging-dbt-errors` |\n| \"Add tests to the customers model\" | `testing-dbt-models` |\n| \"Document the revenue metrics\" | `documenting-dbt-models` |\n| \"Create an incremental model for events\" | `developing-incremental-models` |\n| \"This query is slow, optimize it\" | `optimizing-query-text` |\n\n## Combining with Altimate MCP Tools\n\nSkills become even more powerful when combined with [Altimate's MCP server](https://docs.myaltimate.com/). The MCP server provides real-time access to your dbt project and data warehouse:\n\n| MCP Tool | What It Provides |\n|----------|------------------|\n| `dbt_project_info` | Project structure, model list, sources |\n| `dbt_model_details` | Column types, dependencies, compiled SQL |\n| `dbt_compile` | Compile models without CLI |\n| `snowflake_query_history` | Recent query executions and stats |\n| `snowflake_table_stats` | Row counts, clustering info |\n\n## Benchmark Results\n\nEvaluated using [ADE-bench](https://github.com/dbt-labs/ade-bench), a framework for evaluating AI agents on analytics engineering tasks. All tests were run using Claude Sonnet 4.5.\n\n### Overall Results\n\n| Configuration | Accuracy | Tasks Resolved |\n|---------------|----------|----------------|\n| Baseline Claude (no skills) | 46.5% | 20/43 |\n| Claude + Skills | **53.5%** | 23/43 |\n\n### Results by Task Category\n\n| Category | Baseline | With Skills | Improvement |\n|----------|----------|-------------|-------------|\n| Model Creation | 40% | 65% | **+25 pts** |\n| Bug Fixing | 60% | 70% | +10 pts |\n| Debugging | 35% | 50% | +15 pts |\n| Refactoring | 30% | 35% | +5 pts |\n| Analysis | 25% | 30% | +5 pts |\n\n### Snowflake Query Optimization (TPC-H SF1000)\n\nBenchmark on TPC-H 1TB dataset (62 queries) testing `optimizing-query-text` skill. All tests were run using Claude Sonnet 4.5.\n\n| Configuration | Pass Rate | Avg Performance Improvement |\n|---------------|-----------|----------------------------|\n| Baseline Claude (no skills) | 77.4% (48/62) | 4.7% |\n| Claude + Skills | **83.9% (52/62)** | **16.8%** (3.6x better) |\n\nSkills provide structured optimization with query profiling, anti-pattern detection, and semantic preservation validation.\n\n> **Note:** This benchmark uses our internal evaluation framework. We plan to open-source it soon with additional evals.\n\n## Contributing\n\nWe welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.\n\nIdeas for contributions:\n- New skills for workflows we haven't covered\n- Improvements to existing skills based on your team's patterns\n- Benchmark results on different datasets\n- Bug reports and feature requests\n\n## Roadmap\n\nWe're actively developing:\n- **Airflow skills** — DAG development, debugging, testing\n- **Cross-platform migration** — dbt to/from SQL Server, Oracle\n- **Snowflake cost optimization** — Warehouse sizing, query patterns\n- **Data quality workflows** — Anomaly detection, freshness checks\n\n## Resources\n\n- [Altimate MCP Server Docs](https://docs.myaltimate.com/)\n- [ADE-bench Framework](https://github.com/dbt-labs/ade-bench)\n- [dbt Slack Channel](https://getdbt.slack.com/archives/C05KPDGRMDW)\n- [Contact Us](https://app.myaltimate.com/contactus)\n## License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n\n---\n\n*Built by the team at [Altimate AI](https://altimate.ai/) — Making data engineering delightful.*\n"
+      },
+      "plugins": [
+        {
+          "name": "dbt-skills",
+          "description": "Skills for dbt development, testing, debugging, and refactoring",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/dbt/creating-dbt-models",
+            "./skills/dbt/debugging-dbt-errors",
+            "./skills/dbt/testing-dbt-models",
+            "./skills/dbt/documenting-dbt-models",
+            "./skills/dbt/migrating-sql-to-dbt",
+            "./skills/dbt/refactoring-dbt-models",
+            "./skills/dbt/developing-incremental-models"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add AltimateAI/data-engineering-skills",
+            "/plugin install dbt-skills@data-engineering-skills"
+          ]
+        },
+        {
+          "name": "snowflake-skills",
+          "description": "Skills for Snowflake query optimization",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/snowflake/optimizing-query-by-id",
+            "./skills/snowflake/optimizing-query-text",
+            "./skills/snowflake/finding-expensive-queries"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add AltimateAI/data-engineering-skills",
+            "/plugin install snowflake-skills@data-engineering-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

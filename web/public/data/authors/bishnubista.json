@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "bishnubista",
+    "display_name": "Bishnu Bista",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9377828?u=5fa9f948e99483cdbcb317c209eea16459ad4a00&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "stacklane",
+      "version": null,
+      "description": "Script-backed operations workflows with adapter profiles for Bun projects (default: Next.js + Supabase + Railway; optional TanStack + Fly.io).",
+      "repo_full_name": "bishnubista/stacklane",
+      "repo_url": "https://github.com/bishnubista/stacklane",
+      "repo_description": "Script-backed operations plugin for Claude Code — adapter profiles for Bun + Next.js/TanStack + Supabase + Railway/Fly.io",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-09T00:15:34Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"stacklane\",\n  \"metadata\": {\n    \"description\": \"Script-backed operations workflows with adapter profiles for Bun projects (default: Next.js + Supabase + Railway; optional TanStack + Fly.io).\"\n  },\n  \"owner\": {\n    \"name\": \"Bishnu Bista\",\n    \"email\": \"collab@bishnu.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"stacklane\",\n      \"description\": \"Script-backed operations plugin for Bun projects with adapter profiles (Next.js or TanStack, Railway or Fly.io). It enforces deterministic init, migration, deploy, and incident workflows with production confirmation gates, artifacts, and rollback verification.\",\n      \"version\": \"0.3.1\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Bishnu Bista\",\n        \"email\": \"collab@bishnu.dev\"\n      },\n      \"homepage\": \"https://github.com/bishnubista/stacklane\",\n      \"repository\": \"https://github.com/bishnubista/stacklane\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"bun\", \"nextjs\", \"tanstack\", \"supabase\", \"railway\", \"flyio\", \"deployment\", \"migrations\", \"incident-response\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"stacklane\",\n  \"description\": \"Script-backed operations plugin for Bun projects with adapter profiles (Next.js or TanStack, Railway or Fly.io). It enforces deterministic init, migration, deploy, and incident workflows with production confirmation gates, artifacts, and rollback verification.\",\n  \"version\": \"0.3.1\",\n  \"author\": {\n    \"name\": \"Bishnu Bista\",\n    \"email\": \"collab@bishnu.dev\"\n  },\n  \"license\": \"MIT\",\n  \"repository\": \"https://github.com/bishnubista/stacklane\",\n  \"homepage\": \"https://github.com/bishnubista/stacklane#readme\",\n  \"keywords\": [\n    \"bun\",\n    \"nextjs\",\n    \"tanstack\",\n    \"supabase\",\n    \"railway\",\n    \"flyio\",\n    \"deployment\",\n    \"migrations\",\n    \"incident-response\"\n  ]\n}\n",
+        "README.md": "# stacklane\n\nOperational plugin for script-backed execution workflows.\n\nDefault profile:\n- runtime: `bun`\n- frontend: `nextjs`\n- database: `supabase`\n- deploy: `railway`\n\nYou can override adapters (for example `frontend=tanstack`, `deploy=flyio`) via `.stacklane.json` or `/stacklane:init` flags.\n\n`stacklane` is execution-focused.\nUse `plangate` for process/governance (`plan -> implement -> gate -> review`).\n\n## Installation\n\n```bash\n/plugin marketplace add bishnubista/stacklane\n/plugin install stacklane@stacklane\n```\n\n## What Makes This Useful\n\nEvery `/stacklane:*` command delegates to deterministic scripts in `scripts/`:\n\n- strict argument parsing\n- production confirmation token enforcement\n- release/migration/incident artifact writing\n- profile + command templates from `.stacklane.json`\n- rollback checkpoints and verification\n\nThis avoids ad-hoc prompt behavior for critical production actions.\n\nNiche focus:\n- Bun app operations with Supabase migrations and Railway/Fly deployment control\n- explicit safety over broad platform coverage\n\n## Supported Adapters\n\n| Dimension | Supported values |\n|---|---|\n| runtime | `bun` |\n| frontend | `nextjs`, `tanstack`, `none` |\n| database | `supabase`, `none` |\n| deploy | `railway`, `flyio`, `none` |\n\nNotes:\n- `migrate-safe` currently requires `database=supabase`.\n- `deploy-verify` and `incident` require `deploy != none`.\n- Railway rollback is intentionally not auto-defined; configure `commands.rollback` for your service.\n\n## Prerequisites\n\n- Claude Code\n- Git repository\n- Bun CLI\n- Supabase CLI (if `database=supabase`)\n- Railway CLI (if `deploy=railway`)\n- Fly CLI (if `deploy=flyio`)\n\n## Commands\n\n| Command | Script entrypoint | Purpose |\n|---|---|---|\n| `/stacklane:init` | `scripts/stacklane-init.sh` | Baseline setup, profile/config scaffolding, runbook, validation |\n| `/stacklane:migrate-safe` | `scripts/stacklane-migrate-safe.sh` | Migration safety checks, rollback notes, apply report |\n| `/stacklane:deploy-verify` | `scripts/stacklane-deploy-verify.sh` | Preflight, deploy, verify, and optional rollback |\n| `/stacklane:incident` | `scripts/stacklane-incident.sh` | Incident logging, evidence capture, rollback mitigation |\n\n## Production Safety Gate\n\nFor production migration/deploy/rollback, scripts require:\n\n```bash\n--confirm-production I_UNDERSTAND_PRODUCTION\n```\n\nIf omitted, execution is blocked.\n\n## Stack Detection\n\nSession-start hook emits `<stacklane-manifest>` with:\n\n- active profile\n- adapter readiness (runtime/frontend/database/deploy)\n- raw markers (Next.js/TanStack/Supabase/Railway/Fly)\n- resolved command templates\n\n## `.stacklane.json` Configuration\n\nCreated by `scripts/stacklane-init.sh` if missing.\n\n```json\n{\n  \"profile\": {\n    \"runtime\": \"bun\",\n    \"frontend\": \"nextjs\",\n    \"database\": \"supabase\",\n    \"deploy\": \"railway\"\n  },\n  \"defaults\": {\n    \"environment\": \"staging\",\n    \"service\": \"web\"\n  },\n  \"healthcheck\": {\n    \"url\": \"\",\n    \"timeoutSeconds\": \"60\",\n    \"intervalSeconds\": \"5\"\n  },\n  \"adapters\": {\n    \"database\": {\n      \"migrationsDir\": \"supabase/migrations\"\n    }\n  },\n  \"commands\": {\n    \"install\": \"bun install\",\n    \"typecheck\": \"bunx tsc --noEmit\",\n    \"lint\": \"bunx next lint\",\n    \"test\": \"bun test\",\n    \"build\": \"bun run build\",\n    \"migrateLint\": \"supabase db lint\",\n    \"migrateApply\": \"supabase db push\",\n    \"deploy\": \"railway up --detach --service {service} --environment {environment} --message stacklane:{release_id}\",\n    \"currentRelease\": \"railway deployment list --service {service} --environment {environment} --limit 10 --json\",\n    \"rollback\": \"\",\n    \"logs\": \"railway logs --service {service} --environment {environment} --lines 200\",\n    \"smoke\": \"\"\n  }\n}\n```\n\nTemplate variables available inside command strings:\n\n- `{service}`\n- `{environment}`\n- `{release_id}`\n- `{rollback_target}`\n- `{deployment_id}`\n\nNotes:\n- `healthcheck.url` must be an absolute `http://` or `https://` URL.\n- For Fly.io, default rollback template is `fly releases rollback {rollback_target} --app {service} --yes`.\n\n## `/stacklane:init` Profile Flags\n\n```bash\nscripts/stacklane-init.sh \\\n  --frontend tanstack \\\n  --deploy flyio \\\n  --service my-fly-app \\\n  --healthcheck-url https://example.com/healthz\n```\n\n## Artifacts\n\nExecution writes operational records to `.stacklane/`:\n\n- `.stacklane/init-report.md`\n- `.stacklane/migration-reports/*`\n- `.stacklane/releases/*`\n- `.stacklane/incidents/*`\n- `.stacklane/state/*`\n\n## Verification\n\n```bash\n./try-stacklane.sh\n./try-stacklane.sh --scaffold\nclaude plugin validate .\n```\n\n## Boundaries\n\n`stacklane` intentionally does **not** provide:\n\n- planning/governance orchestration (use `plangate`)\n- broad generic helper commands duplicated by official plugins\n\n## Support\n\n- Issues: `https://github.com/bishnubista/stacklane/issues`\n- Contact: `collab@bishnu.dev`\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "stacklane",
+          "description": "Script-backed operations plugin for Bun projects with adapter profiles (Next.js or TanStack, Railway or Fly.io). It enforces deterministic init, migration, deploy, and incident workflows with production confirmation gates, artifacts, and rollback verification.",
+          "version": "0.3.1",
+          "source": "./",
+          "author": {
+            "name": "Bishnu Bista",
+            "email": "collab@bishnu.dev"
+          },
+          "homepage": "https://github.com/bishnubista/stacklane",
+          "repository": "https://github.com/bishnubista/stacklane",
+          "license": "MIT",
+          "keywords": [
+            "bun",
+            "nextjs",
+            "tanstack",
+            "supabase",
+            "railway",
+            "flyio",
+            "deployment",
+            "migrations",
+            "incident-response"
+          ],
+          "category": "productivity",
+          "categories": [
+            "bun",
+            "deployment",
+            "flyio",
+            "incident-response",
+            "migrations",
+            "nextjs",
+            "productivity",
+            "railway",
+            "supabase",
+            "tanstack"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bishnubista/stacklane",
+            "/plugin install stacklane@stacklane"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "michaeldboyd",
+    "display_name": "Michael Boyd",
+    "avatar_url": "https://avatars.githubusercontent.com/u/22651660?u=c9a256288b078c8045d634a4a1083ba12d080aab&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "media-ingest",
+      "version": null,
+      "description": "AI-powered media cataloging with semantic tags, descriptions, and searchable SQLite database",
+      "repo_full_name": "michaeldboyd/media-ingest",
+      "repo_url": "https://github.com/michaeldboyd/media-ingest",
+      "repo_description": "Claude Code plugin for AI-powered media cataloging with semantic tags, descriptions, and searchable SQLite database",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T02:54:16Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"media-ingest\",\n  \"owner\": {\n    \"name\": \"Davis Boyd\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"media-ingest\",\n      \"source\": \"./\",\n      \"description\": \"AI-powered media cataloging with semantic tags, descriptions, and searchable SQLite database\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"media-ingest\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Catalog photos and video with AI-powered semantic tags, descriptions, and searchable database\",\n  \"author\": {\n    \"name\": \"Davis Boyd\"\n  }\n}\n",
+        "README.md": "# media-ingest\n\n> **Note:** This plugin was mostly vibed up by Claude. YMMV.\n\nPoint it at a folder of media files and it will scan, extract keyframes, analyze visuals using Claude's vision, generate rich tags, and store everything in a searchable catalog.\n\n## What it does\n\n1. **Scans** a folder for supported photo and video formats\n2. **Extracts keyframes** from video using ffmpeg (adaptive strategy based on clip length)\n3. **Analyzes visuals** via Claude's vision — generates descriptions, semantic tags, mood, shot type, and more\n4. **Writes `.meta.json` sidecars** alongside each original file\n5. **Stores results** in a central SQLite catalog for fast searching\n\n## Supported formats\n\n**Photos:** `.jpg` `.jpeg` `.png` `.tiff` `.heic` `.heif` `.webp` `.cr2` `.cr3` `.nef` `.arw` `.dng` `.raf`\n\n**Video:** `.mp4` `.mov` `.avi` `.mkv` `.mts` `.m2ts` `.mxf` `.r3d` `.braw`\n\n## Prerequisites\n\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI\n- Python 3.10+\n- ffmpeg and ffprobe\n- Pillow (`pip install Pillow`)\n\n## Installation\n\nClone the repo into your project and run the setup script:\n\n```bash\ngit clone https://github.com/michaeldboyd/media-ingest.git\ncd media-ingest\n./scripts/setup.sh\n```\n\nOr manually: ensure `ffmpeg` and `Pillow` are installed, then open Claude Code in any parent directory containing this plugin folder.\n\n## Usage\n\n### Ingest media\n\n```\n/ingest /path/to/media/folder\n```\n\nScans the folder, extracts keyframes from video, analyzes everything visually, and builds the catalog. Each file gets a `.meta.json` sidecar with tags, description, and technical metadata. A `media_catalog.db` SQLite database is created at the root of the media folder.\n\n### Search the catalog\n\n```\n/search-media sunset ocean\n```\n\nSearches tags and descriptions across your catalog and returns matching assets.\n\n### Natural language\n\nThe plugin also activates automatically when you say things like:\n\n- \"Tag these photos\"\n- \"Process my footage\"\n- \"Catalog this SD card dump\"\n- \"What clips do I have of the city?\"\n\n## How tagging works\n\nEach asset gets 10-30 semantic tags across categories like subject matter, environment, lighting, weather, camera/shot type, action, mood, color palette, and production context. Tags are lowercase and hyphenated (`golden-hour`, `slow-motion`, `establishing-shot`).\n\nSee `skills/media-ingest/references/tag_taxonomy.md` for the full taxonomy.\n\n## Project structure\n\n```\nmedia-ingest/\n├── .claude-plugin/\n│   └── plugin.json              # Plugin manifest\n├── commands/\n│   ├── ingest.md                # /ingest slash command\n│   └── search-media.md          # /search-media slash command\n├── skills/\n│   └── media-ingest/\n│       ├── SKILL.md             # Core skill (pipeline, tagging guidelines, schema)\n│       └── references/\n│           └── tag_taxonomy.md  # Tag vocabulary and conventions\n└── scripts/\n    ├── setup.sh                 # Dependency checker and installer\n    ├── scan_media.py            # Media file discovery\n    ├── extract_keyframes.py     # FFmpeg keyframe extraction\n    └── catalog_db.py            # SQLite catalog management\n```\n\n## License\n\nApache 2.0 — see [LICENSE](LICENSE).\n"
+      },
+      "plugins": [
+        {
+          "name": "media-ingest",
+          "source": "./",
+          "description": "AI-powered media cataloging with semantic tags, descriptions, and searchable SQLite database",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add michaeldboyd/media-ingest",
+            "/plugin install media-ingest@media-ingest"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "huacheng",
+    "display_name": "Hua Cheng",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1244563?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "moonview",
+      "version": null,
+      "description": "Task complexity analysis and token-efficient execution routing for Claude Code",
+      "repo_full_name": "huacheng/moonview",
+      "repo_url": "https://github.com/huacheng/moonview",
+      "repo_description": "Claude Code plugin: Pre-execution task complexity analysis (L0-L4) with token-efficient routing",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-10T11:14:46Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"moonview\",\n  \"description\": \"Task complexity analysis and token-efficient execution routing for Claude Code\",\n  \"owner\": {\n    \"name\": \"huacheng\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"plan-analyzer\",\n      \"description\": \"Task complexity grading (L0-L4) with automatic token-efficient execution path selection — classify first, then route to the minimum-cost tool/agent.\",\n      \"version\": \"1.0.1\",\n      \"author\": {\n        \"name\": \"huacheng\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/huacheng/moonview\",\n      \"tags\": [\"token-efficiency\", \"task-analysis\", \"cost-optimization\", \"agent-routing\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"plan-analyzer\",\n  \"version\": \"1.0.1\",\n  \"description\": \"Task complexity grading (L0-L4) with automatic token-efficient execution path selection\",\n  \"author\": {\n    \"name\": \"huacheng\"\n  },\n  \"license\": \"MIT\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# Plan Analyzer\n\n[中文文档](README_CN.md)\n\nA Claude Code plugin that performs pre-execution task complexity analysis and routes to the most token-efficient execution path.\n\n> *\"Standing on the moon, looking at Earth\"* — [老王来了@dlw2023](https://www.youtube.com/@dlw2023)\n\nThis quote captures the philosophy behind Plan Analyzer: step back, see the full picture before acting. Instead of diving into execution immediately, Plan Analyzer takes a bird's-eye view of your task — its complexity, the tools available, and the cost of each path — then routes to the most efficient one. Just as standing on the moon reveals Earth's true scale, analyzing a task from above reveals the simplest path through it.\n\n**Classify first, then route** — unlike blind model downgrades, Plan Analyzer matches resources to task characteristics with precision.\n\n## Installation\n\n### From Marketplace\n\n```bash\n# Add marketplace source\n/plugin marketplace add https://github.com/huacheng/moonview\n\n# Install the plugin\n/plugin install plan-analyzer\n```\n\n### Manual Installation\n\nClone the repository into your Claude Code plugins directory:\n\n```bash\ngit clone https://github.com/huacheng/moonview.git ~/.claude/plugins/local/plan-analyzer\n```\n\nThen register it in `~/.claude/plugins/installed_plugins.json`:\n\n```json\n{\n  \"plan-analyzer@local\": [\n    {\n      \"scope\": \"user\",\n      \"installPath\": \"~/.claude/plugins/local/plan-analyzer\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n```\n\n## Usage\n\nInvoke the skill with any of these triggers:\n\n```\n/plan-analyzer refactor auth to use JWT\npa: add validation to the login form\nplan-analyze: refactor the database module\n```\n\n**Aliases:** `pa`, `plan-analyze`, `analyze-plan`, `plan-budget`, `budget-plan`\n\n## How It Works\n\nPlan Analyzer is a universal pre-execution complexity analyzer for the **entire Claude Code toolchain**:\n\n- Native tools (Read / Edit / Write / Grep / Glob / Bash)\n- Built-in agents (Explore / Plan / general-purpose / Bash agent)\n- oh-my-claudecode (OMC) plugin agents\n- MCP tools and other loaded plugin capabilities\n\n### Step 1: Classify Complexity (L0–L4)\n\n| Level | Name | Criteria | Examples |\n|-------|------|----------|---------|\n| **L0** | Trivial | Single file, <10 lines, obvious change | Fix typo, update config value, add import |\n| **L1** | Simple | Single file, clear logic, <50 lines | Add a function, fix a clear bug, add validation |\n| **L2** | Moderate | 2-3 files, straightforward pattern | Add API endpoint + handler, refactor one module |\n| **L3** | Complex | 4+ files, cross-cutting concerns | New feature with DB + API + tests, major refactor |\n| **L4** | Massive | System-wide, architectural, 10+ files | New subsystem, full stack feature, migration |\n\n### Step 2: Route to Minimum-Cost Strategy\n\n| Level | Strategy | Agents | Verification |\n|-------|----------|--------|-------------|\n| **L0** | Native tools directly | 0 | None |\n| **L1** | Native tools or 1 lightweight agent | 0-1 | `lsp_diagnostics` |\n| **L2** | 1-2 agents sequential | 1-2 | Build / test run |\n| **L3** | 2-4 agents, may parallel | 2-4 | Full test suite + review |\n| **L4** | Orchestration mode | 3-6 | Full verification protocol |\n\n### Step 3: Output & Execute\n\n```\n[TASK ANALYSIS] L2: Add health endpoint with DB check\nStrategy: single-agent\nToolchain: native+omc\nSteps:\n  1. Read existing route patterns -> Read tool\n  2. Implement endpoint + handler -> executor-low:haiku\n  3. Verify -> lsp_diagnostics + test run\nVerification: build check\nEst. overhead: low\n```\n\n## Tool Selection Layers\n\nFrom cheapest to most expensive:\n\n```\nLayer 0: Native tools (Read/Edit/Write/Grep/Glob/Bash)\nLayer 1: Built-in lightweight agents (Explore:haiku)\nLayer 2: OMC low-tier agents (executor-low:haiku)\nLayer 3: Built-in general agents (general-purpose:sonnet)\nLayer 4: OMC mid-tier agents (executor:sonnet)\nLayer 5: OMC high-tier agents (executor-high:opus)\nLayer 6: Orchestration modes (ultrawork / autopilot / ralph)\n```\n\n## Quick Rules\n\n| Rule | Description |\n|------|-------------|\n| **File Count** | Files to modify ≤ 1 → direct edit, no agent |\n| **Known Path** | File path already known → `Read` directly, never Explore agent |\n| **Keyword Search** | Use `Grep`/`Glob` directly, never Bash grep/find |\n| **Batching** | Group related changes into ONE agent prompt (max 5 files) |\n| **Verification** | Match to complexity (L0=none, L1=lsp_diagnostics, L2+=tests) |\n| **Model Tier** | Try cheapest first (haiku → sonnet → opus), escalate on failure |\n| **MCP Tools** | Call `lsp_diagnostics`, `ast_grep_search` directly, no agent needed |\n\n## Anti-Waste Patterns\n\n| Waste Pattern | Fix | Savings |\n|---------------|-----|---------|\n| Agent for single-file edit | Direct Edit tool | ~2.5K tokens |\n| Opus for known-pattern task | Haiku/Sonnet | ~5K tokens |\n| Explore agent for known path | Read tool directly | ~1.8K tokens |\n| Architect verify for L0-L1 | Skip or lsp_diagnostics | ~4.5K tokens |\n| Per-file agent spawning | Batch into one agent | ~2.5K × (N-1) tokens |\n\n## Integration with OMC Modes\n\nPlan Analyzer works as a **pre-processor** for OMC orchestration modes:\n\n| Mode | Plan Analyzer Role |\n|------|-------------------|\n| **ecomode** | Classifies first, ecomode further downgrades tiers |\n| **ultrawork** | Decides IF parallelism is worth it |\n| **ralph** | Optimizes agent selection per iteration |\n| **autopilot** | Pre-screens before autopilot planning |\n\nWithout OMC installed, Plan Analyzer is equally effective via native tools and built-in agents.\n\n## Compared to Ecomode\n\n| Aspect | Plan Analyzer | Ecomode |\n|--------|--------------|---------|\n| Scope | All tools | OMC agents only |\n| Approach | Classify first, then route | Blindly downgrade tiers |\n| Direct edits | Yes, skips agents for L0-L1 | Still delegates |\n| Batching | Groups related files | No batching |\n| Without OMC | Fully functional | Not applicable |\n\n**Best together:** Plan Analyzer + Ecomode provides maximum token efficiency.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "plan-analyzer",
+          "description": "Task complexity grading (L0-L4) with automatic token-efficient execution path selection — classify first, then route to the minimum-cost tool/agent.",
+          "version": "1.0.1",
+          "author": {
+            "name": "huacheng"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/huacheng/moonview",
+          "tags": [
+            "token-efficiency",
+            "task-analysis",
+            "cost-optimization",
+            "agent-routing"
+          ],
+          "categories": [
+            "agent-routing",
+            "cost-optimization",
+            "productivity",
+            "task-analysis",
+            "token-efficiency"
+          ],
+          "install_commands": [
+            "/plugin marketplace add huacheng/moonview",
+            "/plugin install plan-analyzer@moonview"
+          ]
+        }
+      ]
+    }
+  ]
+}

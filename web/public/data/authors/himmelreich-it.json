@@ -1,0 +1,45 @@
+{
+  "author": {
+    "id": "himmelreich-it",
+    "display_name": "himmelreich-it",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5830411?u=0f02c21212e33a4b2812436e0f7ddeb14f6934f5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-skill-converter-copilot",
+      "version": null,
+      "description": "GitHub Copilot-compatible skills and agents converted from Claude Code plugins",
+      "repo_full_name": "himmelreich-it/agent-skill-converter",
+      "repo_url": "https://github.com/himmelreich-it/agent-skill-converter",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-08T16:29:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agent-skill-converter-copilot\",\n  \"owner\": {\n    \"name\": \"agent-skill-converter\"\n  },\n  \"metadata\": {\n    \"description\": \"GitHub Copilot-compatible skills and agents converted from Claude Code plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"copilot-skills\",\n      \"source\": \"./out/copilot\",\n      \"description\": \"Comprehensive feature development workflow with specialized agents for codebase exploration, architecture design, and quality review\",\n      \"commands\": [\"./skills/\"],\n      \"agents\": [\"./agents/\"],\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# Agent Skill Converter\n\nConvert AI coding assistant plugins between different platforms to prevent vendor lock-in and promote ecosystem interoperability.\n\n## Why this exists\n\n[Claude Code](https://github.com/anthropics/claude-code) has excellent plugins, but we don't want any single platform to become a monopoly. This tool ensures that great agent workflows can work across multiple AI coding assistants—**Mistral Vibe**, **GitHub Copilot**, and others.\n\n## What this does\n\nConvert skills (slash commands) and agents (subagents) between platforms:\n\n- **From Claude Code** → Mistral Vibe, GitHub Copilot\n- **From Mistral Vibe** → GitHub Copilot, Claude Code  \n- **From GitHub Copilot** → Mistral Vibe, Claude Code\n\n### Supported conversions\n\n| Component | Claude Code | Mistral Vibe | GitHub Copilot |\n|-----------|-------------|--------------|----------------|\n| **Skills** | `.md` (table frontmatter) | `SKILL.md` (YAML frontmatter) | `SKILL.md` (YAML frontmatter) |\n| **Agents** | `.md` in `agents/` | `.toml` config files | `.md` in `.github/agents/` |\n| **Tool names** | `Bash`, `Read`, `Write`, `Grep`, `Glob` | Same | `execute`, `read`, `edit`, `search` |\n| **Model field** | `model: sonnet` | `active_model = \"devstral-2\"` | Omitted (auto-selected) |\n\n## Example: Converting feature-dev plugin\n\n### Source (Claude Code)\n```\nclaude/plugins/feature-dev/\n├── .claude-plugin/plugin.json       # Plugin manifest\n├── commands/feature-dev.md          # 7-phase orchestration command\n└── agents/\n    ├── code-explorer.md             # Codebase analysis subagent\n    ├── code-architect.md            # Architecture design subagent\n    └── code-reviewer.md             # Code review subagent\n```\n\n### Target: Mistral Vibe\n```\nout/vibe/\n├── skills/feature-dev/\n│   ├── SKILL.md                     # Converted skill with YAML frontmatter\n│   └── references/workflow.md       # Supporting documentation\n└── agents/\n    ├── code-explorer.toml           # Converted agent config\n    ├── code-architect.toml\n    └── code-reviewer.toml\n```\n\n### Target: GitHub Copilot\n```\nout/copilot/\n├── skills/feature-dev/\n│   ├── SKILL.md                     # Converted skill (Agent Skills spec)\n│   └── references/README.md         # Supporting documentation\n└── agents/\n    ├── code-explorer.md             # Converted agent with YAML frontmatter\n    ├── code-architect.md\n    └── code-reviewer.md\n```\n\n## Usage\n\n### Validate converted skills\n\n```bash\n# Works with both Vibe and Copilot formats\nuv run skills-ref validate ./out/copilot/skills/feature-dev\nuv run skills-ref validate ./out/vibe/skills/feature-dev\n```\n\n### Install to platform\n\n```bash\n# Install Vibe skills and agents\n./install-skills.sh\n\n# Copilot skills are automatically discovered in workspace\n# (no installation needed if in .github/ or copilot-skills.json)\n```\n\n## Project structure\n\n- `claude/plugins/` - Source plugins from Claude Code\n- `out/vibe/` - Converted Mistral Vibe format\n- `out/copilot/` - Converted GitHub Copilot format\n- `src/skills_ref/` - Python library for parsing and validating Agent Skills\n- `docs/` - Platform-specific documentation\n\n## Development\n\n```bash\n# Run tests\nuv run pytest\n\n# Lint code\nuv run ruff check .\n\n# Format code\nuv run ruff format .\n```\n\n## Key conversion mappings\n\nSee [`CLAUDE.md`](CLAUDE.md) for complete conversion reference tables and platform-specific notes.\n\n| Concept | Claude Code | Vibe | Copilot |\n|---------|-------------|------|---------|\n| Frontmatter | Table syntax | YAML | YAML |\n| Subagent tool | `Task` | `task` with `agent` | `agent` alias |\n| File operations | `Read`, `Write` | Same | `read`, `edit` |\n| Shell execution | `Bash` | `bash` | `execute` |\n| Code search | `Grep`, `Glob` | Same | `search` |\n\n## References\n\n- [Agent Skills Specification](https://agentskills.io/specification) - Open standard used by Vibe and Copilot\n- [Claude Code plugins](https://github.com/anthropics/claude-code/tree/main/plugins) - Original plugin source\n- [Mistral Vibe](https://mistral.ai/products/vibe) - Mistral's coding assistant\n- [GitHub Copilot Custom Agents](https://docs.github.com/en/copilot/customizing-copilot/creating-custom-agents) - Copilot agent documentation\n"
+      },
+      "plugins": [
+        {
+          "name": "copilot-skills",
+          "source": "./out/copilot",
+          "description": "Comprehensive feature development workflow with specialized agents for codebase exploration, architecture design, and quality review",
+          "commands": [
+            "./skills/"
+          ],
+          "agents": [
+            "./agents/"
+          ],
+          "strict": false,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add himmelreich-it/agent-skill-converter",
+            "/plugin install copilot-skills@agent-skill-converter-copilot"
+          ]
+        }
+      ]
+    }
+  ]
+}

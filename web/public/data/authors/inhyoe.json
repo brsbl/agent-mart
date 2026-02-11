@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "inhyoe",
+    "display_name": "RYUCHANGHOON",
+    "avatar_url": "https://avatars.githubusercontent.com/u/95662378?u=c6fe8197293a92b824c813b79ee778ba751de341&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ai-team-marketplace",
+      "version": null,
+      "description": "AI Team Plugin Marketplace",
+      "repo_full_name": "inhyoe/Claude-orchestration",
+      "repo_url": "https://github.com/inhyoe/Claude-orchestration",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T05:36:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ai-team-marketplace\",\n  \"owner\": {\n    \"name\": \"ryu\"\n  },\n  \"metadata\": {\n    \"description\": \"AI Team Plugin Marketplace\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ai-team\",\n      \"description\": \"멀티 에이전트 협업 플러그인 - Claude, Codex, Gemini가 실제 개발팀처럼 협업\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ai-team\",\n  \"description\": \"AI 개발팀 협업 플러그인 - Claude(리드), Codex(개발), Gemini(분석) 역할 기반 워크플로우\",\n  \"version\": \"2.0.2\",\n  \"author\": {\n    \"name\": \"AI Team Plugin\"\n  },\n  \"keywords\": [\"ai-team\", \"collaboration\", \"code-review\", \"workflow\", \"codex\", \"gemini\", \"multi-agent\"],\n  \"repository\": \"https://github.com/ryu/Claude-orchestration\"\n}\n",
+        "README.md": "# AI Team Plugin (v2.1.0)\n\nAI 개발팀 협업 플러그인 - **Super PM Mode** & **Flexible Delegation**\n\n## 🚀 특징\n\n- **Super PM Mode**: 리드(Claude)는 설계와 의사결정에 집중하고, 구현은 철저히 위임합니다.\n- **Inquiry First**: 작업 전 `AskUserQuestion`과 `Gemini 분석`을 병렬로 실행하여 요구사항을 확정합니다.\n- **3-Layer Review**: Gemini(품질) → Codex(구현) → Claude(아키텍처)로 이어지는 교차 리뷰 시스템.\n- **Flexible Delegation**: Claude가 10줄 이내의 사소한 수정은 직접 처리하여 효율성을 높입니다.\n\n## 👥 팀 구성\n\n| 역할 | 에이전트 | 컨텍스트 | 담당 업무 |\n|------|----------|----------|----------|\n| **PM & Architect** | **Claude** | 200K | 요구사항 인터뷰, 설계, 의사결정, 최종 승인, 소규모 수정(10줄↓) |\n| **Lead Developer** | **Codex** | 128K | 기능 구현, TDD(테스트 작성), 리팩토링, 로직 리뷰 |\n| **QA & Analyst** | **Gemini** | **1M** | 코드 분석, 테스트 실행/로그 분석, 문서화, 초기 품질 리뷰 |\n\n## 🔄 워크플로우 (7 Phases)\n\n`/team` 명령어로 시작하면 다음 프로세스를 따릅니다.\n\n| Phase | 단계 | 주요 활동 |\n|-------|------|-----------|\n| **Phase 0** | **Inquiry** | **(필수)** 사용자 인터뷰(Claude) + 배경 분석(Gemini) **[병렬 실행]** |\n| **Phase 1** | **Plan** | 아키텍처 설계, TodoWrite 태스크 분배, 계획 승인 |\n| **Phase 2** | **Dev** | Codex에게 구현/테스트 위임 (Claude는 대기하거나 사소한 수정만 수행) |\n| **Phase 3** | **Test** | Gemini가 테스트 실행 및 실패 로그 분석 → Codex에게 수정 지시 |\n| **Phase 4** | **Review** | **교차 리뷰**: Gemini(보안) → Codex(로직) → Claude(최종) |\n| **Phase 5** | **Discuss** | 기술적 이견 발생 시 토론 및 Claude의 최종 의사결정 |\n| **Phase 6** | **Finalize** | API 문서화, 변경사항 요약, 완료 보고 |\n\n## 🛠 설치 방법\n\n```bash\n# 저장소 클론\ngit clone https://github.com/<username>/Claude-orchestration ~/Claude-orchestration\n\n# 설치 스크립트 실행\ncd ~/Claude-orchestration\n./install.sh\n```\n\n## 💻 사용법\n\n### 자동 시작\n```\n\"로그인 API를 개발해줘\"\n→ 자동으로 Phase 0 (Inquiry) 진입하여 인터뷰 시작\n```\n\n### 수동 명령어\n```bash\n/team [요청사항]       # 전체 워크플로우 시작\n/team-plan            # 계획 수립만\n/team-dev             # 개발 위임만\n/team-review          # 리뷰 프로세스만\n/team-analyze         # Gemini 분석 요청\n```\n\n## 🔍 검증 시스템\n\n각 Phase가 끝날 때마다 스크립트로 완료 여부를 검증합니다.\n\n```bash\n./scripts/validate-phase.sh [0-6]\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "ai-team",
+          "description": "멀티 에이전트 협업 플러그인 - Claude, Codex, Gemini가 실제 개발팀처럼 협업",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add inhyoe/Claude-orchestration",
+            "/plugin install ai-team@ai-team-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

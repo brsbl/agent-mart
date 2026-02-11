@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "xxdesmus",
+    "display_name": "Justin",
+    "avatar_url": "https://avatars.githubusercontent.com/u/186536?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "xxdesmus-claude-alertr",
+      "version": null,
+      "description": "Alerts you when Claude Code is waiting for your input via webhook or email",
+      "repo_full_name": "xxdesmus/claude-alertr",
+      "repo_url": "https://github.com/xxdesmus/claude-alertr",
+      "repo_description": "A Claude Code plugin that alerts the user when action is required. ",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-10T23:39:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"xxdesmus-claude-alertr\",\n  \"description\": \"Alerts you when Claude Code is waiting for your input via webhook or email\",\n  \"owner\": {\n    \"name\": \"xxdesmus\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-alertr\",\n      \"source\": \"./plugins/claude-alertr\",\n      \"description\": \"Monitors Claude Code for idle states and sends alerts after a configurable delay\",\n      \"category\": \"productivity\",\n      \"tags\": [\"notifications\", \"alerts\", \"slack\", \"discord\", \"email\", \"hooks\"]\n    }\n  ]\n}\n",
+        "README.md": "# claude-alertr\n\nGet notified when [Claude Code](https://docs.anthropic.com/en/docs/claude-code) is waiting for your input.\n\nWhen Claude hits a permission prompt or asks a question, claude-alertr waits a configurable delay (default: 60s) and then sends you an alert via Slack, Discord, or email — including what Claude is waiting on and which machine it's running on.\n\n> **Disclaimer:** This is an independent, community-built tool. It is not affiliated with, endorsed by, or supported by Anthropic. Use of Claude Code is subject to Anthropic's [Terms of Service](https://www.anthropic.com/terms).\n\n## How It Works\n\nTwo local shell hooks monitor Claude Code. When Claude is blocked waiting for you, a background timer starts. If you don't respond in time, the hook POSTs to a Cloudflare Worker you deploy, which relays the alert to your notification channels. When you respond, the timer is automatically cancelled.\n\n```\nClaude Code (local)                      Cloudflare Worker (relay)\n┌──────────────┐                        ┌──────────────┐\n│ Hook fires   │── delay ── curl POST ──│ /alert       │──▶ Slack / Discord webhook\n│ on prompt    │                        │              │──▶ Email via Resend\n│ Hook cancels │                        └──────────────┘\n│ on response  │\n└──────────────┘\n```\n\n## Quick Start\n\n### 1. Deploy the Worker\n\n```bash\ngit clone https://github.com/xxdesmus/claude-alertr.git\ncd claude-alertr\nnpm install\nnpx wrangler login   # if not already authenticated\nnpm run deploy\n```\n\nNote the Worker URL printed (e.g., `https://claude-alertr.<you>.workers.dev`).\n\n### 2. Set Worker secrets\n\n```bash\n# Required — protects your Worker from unauthorized use\nwrangler secret put AUTH_TOKEN\n\n# At least one notification channel:\nwrangler secret put WEBHOOK_URL          # Slack or Discord webhook URL\n# — or —\nwrangler secret put RESEND_API_KEY       # Email via Resend\nwrangler secret put ALERT_EMAIL_TO       # Recipient email address\n# — or —\nwrangler secret put SHOUTRRR_URLS        # Shoutrrr URL(s) — see Notification Channels\n```\n\n### 3. Install the plugin\n\nIn Claude Code:\n\n```\n/plugin marketplace add xxdesmus/claude-alertr\n/plugin install claude-alertr@xxdesmus-claude-alertr\n/claude-alertr:setup\n```\n\nThe setup wizard walks you through entering your Worker URL, auth token, and alert delay — then tests the connection. Hooks are auto-registered.\n\n> **Tip:** Visit `https://<your-worker>.workers.dev/setup` for a browser-based setup wizard as an alternative.\n\n### 4. Test it\n\n```bash\ncurl -X POST \\\n  -H \"Authorization: Bearer <your-token>\" \\\n  https://<your-worker>.workers.dev/test\n```\n\nYou should receive a notification within seconds.\n\n## Configuration\n\nConfig lives at `~/.claude-alertr/config`:\n\n| Setting | Description | Default |\n|---------|-------------|---------|\n| `CLAUDE_ALERTR_URL` | Your deployed Worker URL | *(required)* |\n| `CLAUDE_ALERTR_TOKEN` | Auth token (must match Worker's `AUTH_TOKEN` secret) | *(required)* |\n| `CLAUDE_ALERTR_DELAY` | Seconds to wait before alerting (15–300) | `60` |\n\n## Notification Channels\n\nAll channels can be active simultaneously.\n\n### Webhook\n\nSet `WEBHOOK_URL` on the Worker. Alerts are sent as JSON with a `text` field compatible with Slack and Discord incoming webhooks. Example message:\n\n```\n[macbook-pro] Claude Code is waiting for your input (permission_prompt)\nPull latest changes from GitHub: git pull\n```\n\n### Email (via Resend)\n\nSet `RESEND_API_KEY` and `ALERT_EMAIL_TO` on the Worker. Optionally set `ALERT_EMAIL_FROM` (defaults to `alerts@resend.dev`). Sends a styled HTML email with type, details, project, host, and session info.\n\n### Shoutrrr (multi-service)\n\nSet `SHOUTRRR_URLS` on the Worker with one or more [Shoutrrr](https://github.com/containrrr/shoutrrr)-compatible URLs (space or newline separated). This enables 7 additional notification services with a single secret:\n\n| Service | URL format |\n|---------|-----------|\n| Slack | `slack://token-a/token-b/token-c` |\n| Discord | `discord://webhook-token@webhook-id` |\n| Telegram | `telegram://bot-id:bot-token@telegram?chats=@channel,chat-id` |\n| Ntfy | `ntfy://[user:pass@]ntfy.sh/topic` |\n| Pushover | `pushover://shoutrrr:api-token@user-key` |\n| Gotify | `gotify://host[:port]/app-token` |\n| Generic webhook | `generic://host[:port]/path` |\n\nExample with multiple services:\n\n```bash\nwrangler secret put SHOUTRRR_URLS\n# Enter: slack://T00/B00/XXX ntfy://ntfy.sh/my-alerts\n```\n\nShoutrrr URLs work alongside `WEBHOOK_URL` and email — you can mix and match.\n\n> **Note:** Cloudflare Workers cannot reliably reach services that are also behind Cloudflare (proxied DNS or Cloudflare Tunnel). If a Shoutrrr target (e.g., a self-hosted Gotify or Ntfy instance) is proxied through Cloudflare, the Worker's `fetch()` may fail with Cloudflare error 1003. Use an unproxied DNS record for the target or route through a non-Cloudflare endpoint instead.\n\n## Alert Payload\n\nThe hook sends a JSON payload to the Worker's `/alert` endpoint:\n\n```json\n{\n  \"session_id\": \"abc123\",\n  \"notification_type\": \"permission_prompt\",\n  \"message\": \"Claude needs your permission to use Bash\",\n  \"details\": \"Pull latest changes from GitHub: git pull\",\n  \"cwd\": \"/path/to/project\",\n  \"hostname\": \"macbook-pro\",\n  \"timestamp\": \"2025-01-15T10:30:00Z\"\n}\n```\n\nThe `details` field is automatically extracted from the session transcript — it contains the specific tool call or question Claude is waiting on. The `hostname` identifies which machine triggered the alert.\n\n## Notification Types\n\n| Type | When it fires |\n|------|---------------|\n| `permission_prompt` | Claude needs permission to run a tool |\n| `elicitation_dialog` | Claude is asking you a question |\n\n`idle_prompt` (Claude finished and is waiting for your next prompt) is intentionally excluded — it fires after every completed response.\n\n## API Endpoints\n\n| Method | Path | Auth | Description |\n|--------|------|------|-------------|\n| `GET` | `/` | No | Health check |\n| `GET` | `/setup` | No | Interactive setup wizard |\n| `POST` | `/alert` | Yes | Forward alert to configured channels |\n| `POST` | `/test` | Yes | Send a test notification |\n\n## Alternative Install\n\nIf you prefer not to use the plugin marketplace:\n\n```bash\n./install.sh\n```\n\nThis copies hook scripts, creates a config file, and registers hooks in Claude Code's settings.\n\n## Uninstalling\n\nPlugin installs: remove the plugin from Claude Code.\n\nManual installs:\n```bash\n./uninstall.sh\n```\n\nTo also remove the Worker: `wrangler delete claude-alertr`\n\n## Development\n\n```bash\nnpm run dev          # Local dev server\nnpx vitest run       # Run tests\nnpx tsc --noEmit     # Type check\nnpm run deploy       # Deploy to Cloudflare\n```\n\n## Prerequisites\n\n- [Node.js](https://nodejs.org/) 18+\n- [Cloudflare account](https://dash.cloudflare.com/) (free tier works)\n- [`jq`](https://jqlang.github.io/jq/) and [`curl`](https://curl.se/) installed locally\n\n## License\n\n[MIT](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-alertr",
+          "source": "./plugins/claude-alertr",
+          "description": "Monitors Claude Code for idle states and sends alerts after a configurable delay",
+          "category": "productivity",
+          "tags": [
+            "notifications",
+            "alerts",
+            "slack",
+            "discord",
+            "email",
+            "hooks"
+          ],
+          "categories": [
+            "alerts",
+            "discord",
+            "email",
+            "hooks",
+            "notifications",
+            "productivity",
+            "slack"
+          ],
+          "install_commands": [
+            "/plugin marketplace add xxdesmus/claude-alertr",
+            "/plugin install claude-alertr@xxdesmus-claude-alertr"
+          ]
+        }
+      ]
+    }
+  ]
+}

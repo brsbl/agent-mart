@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "benyaminsalimi",
+    "display_name": "Benyamin Salimi",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7989511?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "review-now-marketplace",
+      "version": null,
+      "description": "Interactive code review plugin with multi-agent analysis and conversational walkthrough",
+      "repo_full_name": "benyaminsalimi/review-now",
+      "repo_url": "https://github.com/benyaminsalimi/review-now",
+      "repo_description": "A POC of interactive ai code review with multi sub agents ",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-07T09:53:53Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"review-now-marketplace\",\n  \"description\": \"Interactive code review plugin with multi-agent analysis and conversational walkthrough\",\n  \"owner\": {\n    \"name\": \"Benyamin Salimi\",\n    \"email\": \"benyamin.salimi@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"review-now\",\n      \"description\": \"Interactive code review with multi-agent analysis. Walk through findings one at a time, apply fixes inline, ask questions about each issue. Supports both PR reviews and uncommitted changes with automatic commits in PR mode.\",\n      \"version\": \"2.0.1\",\n      \"author\": {\n        \"name\": \"Benyamin Salimi\",\n        \"email\": \"benyamin.salimi@gmail.com\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/benyaminsalimi/review-now\",\n      \"tags\": [\"code-review\", \"security\", \"quality\", \"interactive\", \"multi-agent\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"review-now\",\n  \"description\": \"Interactive code review with multi-agent analysis. Two commands: /review-now:pr for pull requests, /review-now:uncommitted for local changes\",\n  \"version\": \"2.0.1\"\n}\n",
+        "README.md": "# review-now\n\nInteractive code review plugin for Claude Code with multi-agent analysis and conversational walkthrough.\n\n## What is review-now?\n\nA Claude Code plugin that transforms code review from reading static reports into having interactive conversations. Walk through findings one at a time, apply fixes inline, ask questions, and move fast through your review queue.\n\nBuilt for two scenarios:\n1. **Reviewing team PRs** - Fast, interactive walkthrough of all changes\n2. **Reviewing AI-generated code** - Catch issues in code you prompted AI to write\n\n## Installation\n\n### From GitHub (Recommended)\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add benyaminsalimi/review-now\n\n# Install the plugin\nclaude plugin install review-now@review-now-marketplace\n```\n\n### Local Development\n\n```bash\ngit clone https://github.com/benyaminsalimi/review-now.git\ncd review-now\nclaude plugin marketplace add ./\nclaude plugin install review-now@review-now-marketplace\n```\n\n## Commands\n\n### `/review-now:pr <source-branch> <target-branch>`\n\nInteractive PR review with automatic commits for each fix.\n\n```bash\n/review-now:pr feature/user-auth main\n```\n\n**Features:**\n- Fetches both branches and compares changes\n- Multi-agent analysis (security + general + frontend)\n- Interactive walkthrough with options for each finding\n- Automatic git commits when fixes are applied\n\n**Interactive Options:**\n- **Apply fix** — applies recommended fix and commits automatically\n- **Show solution** — preview the proposed change before deciding\n- **Custom fix** — type or paste your own fix\n- **Ask question** — ask deeper questions about the finding\n- **Skip** — move to next finding\n- **Skip all** — stop walkthrough, show summary\n\n### `/review-now:uncommitted`\n\nInteractive review of all uncommitted changes (no arguments needed).\n\n```bash\n/review-now:uncommitted\n```\n\n**Features:**\n- Reviews staged + unstaged + untracked changes\n- Multi-agent analysis (security + general + frontend)\n- Interactive walkthrough with options for each finding\n- Fixes applied to working directory (no auto-commit)\n\n**Interactive Options:**\n- **Apply fix** — applies recommended fix to working directory\n- **Show solution** — preview the proposed change before deciding\n- **Custom fix** — type or paste your own fix\n- **Ask question** — ask deeper questions about the finding\n- **Skip** — move to next finding\n- **Skip all** — stop walkthrough, show summary\n\n## How It Works\n\n### Multi-Agent Review Pipeline\n\n```\nPre-flight checks\n       |\nDiscover custom guidelines (REVIEW_GUIDELINES.md, AGENTS.md)\n       |\nGather changes (diff, files, commits)\n       |\nLaunch 3 agents in parallel\n  |- Security review agent (Anthropic guidelines)\n  |- General review agent (Codex patterns)\n  |- Frontend/Angular review agent (Angular official docs)\n       |\nDeduplicate findings\n       |\nValidate with lightweight agents (filter false positives)\n       |\nInteractive walkthrough\n  |- Apply fix / Show solution / Custom fix / Ask question / Skip\n  |- (PR mode: auto-commits after each fix)\n       |\nFinal summary with verdict\n```\n\n### Review Strategy\n\nThe plugin automatically picks its strategy:\n\n| `REVIEW_GUIDELINES.md` in repo root? | Strategy |\n|---------------------------------------|----------|\n| Yes | Reviews using your custom guidelines. No agents. |\n| No | Dispatches 3 specialized agents in parallel. |\n\n## Agents\n\n### Security Review Agent\nBased on [Anthropic's security review guidelines](https://github.com/anthropics/claude-code-security-review). Focuses on high-confidence vulnerabilities: SQL injection, authentication bypasses, hardcoded secrets, crypto issues, XSS, and data exposure.\n\n### General Review Agent\nAdapted from [OpenAI Codex review patterns](https://github.com/openai/codex). Focuses on correctness, maintainability, logic errors, error handling, and code quality.\n\n### Frontend/Angular Review Agent\nBuilt from [Angular's official LLM context](https://angular.dev/assets/context/llms-full.txt). Focuses on signal-based architecture, change detection, modern template syntax, component patterns, and performance.\n\n## Priority System\n\nAll agents use P0-P3 scale:\n\n| Priority | Meaning |\n|----------|---------|\n| **P0** | Drop everything. Blocking release/operations. |\n| **P1** | Urgent. Fix in the next cycle. |\n| **P2** | Normal. Fix eventually. |\n| **P3** | Low. Nice to have. |\n\n## Verdict\n\n| Verdict | Condition |\n|---------|-----------|\n| **REQUEST CHANGES** | Any P0 or P1 findings |\n| **NEEDS DISCUSSION** | Any P2 findings with confidence > 0.85 |\n| **APPROVE** | Everything else |\n\n## Custom Guidelines\n\n### REVIEW_GUIDELINES.md\n\nPlace a `REVIEW_GUIDELINES.md` file in your repo root to define custom review rules. The plugin will use your guidelines instead of running agents.\n\n### AGENTS.md\n\nPlace `AGENTS.md` files in any directory to define scoped rules. The plugin discovers all `AGENTS.md` files and checks changed files against rules in their scope (directory and subdirectories).\n\n## Building Custom Agents\n\nSee the `agents/` directory for examples. Each agent is a markdown file with:\n- Frontmatter (name, description, model, tools)\n- System prompt with review guidelines\n- JSON output schema\n\nCreate domain-specific agents for your tech stack:\n- Backend frameworks (Django, Rails, Spring)\n- Mobile (iOS, Android, React Native)\n- Infrastructure (Terraform, Kubernetes)\n- Database patterns\n- Security models specific to your org\n\n## File Structure\n\n```\nreview-now/\n├── .claude-plugin/\n│   ├── plugin.json                      # Plugin manifest\n│   └── marketplace.json                 # Marketplace configuration\n├── commands/\n│   ├── review_now_pr.md                 # PR review orchestrator\n│   └── review_now_uncommitted.md        # Uncommitted changes orchestrator\n├── agents/\n│   ├── security-review.md               # Security agent\n│   ├── general-review.md                # General review agent\n│   └── frontend-review.md               # Frontend/Angular agent\n├── LICENSE\n└── README.md\n```\n\n## Contributing\n\nContributions welcome! We're open to:\n\n**Code Contributions:**\n- Additional language/framework agents (Python, Go, Rust, etc.)\n- Better false positive filtering\n- Custom validation rules\n- Web UI for review management\n- Performance improvements\n\n**Hooks:**\n- Pre-commit hooks for code review\n- Post-review automation hooks\n- Custom workflow integrations\n- Share your hooks in discussions!\n\n**Issues & Discussions:**\n- Bug reports\n- Feature requests\n- Agent improvement suggestions\n- Share your use cases and custom agents\n\nOpen an issue or PR on [GitHub](https://github.com/benyaminsalimi/review-now)!\n\n## License\n\nMIT License - see [LICENSE](LICENSE) file for details.\n\n## Acknowledgements\n\nThis plugin was inspired by and built upon:\n- **Security Agent**: [claude-code-security-review](https://github.com/anthropics/claude-code-security-review) by Anthropic\n- **General Review Agent**: [OpenAI Codex](https://github.com/openai/codex) review patterns\n- **Frontend Agent**: [Angular LLM Context](https://angular.dev/assets/context/llms-full.txt)\n"
+      },
+      "plugins": [
+        {
+          "name": "review-now",
+          "description": "Interactive code review with multi-agent analysis. Walk through findings one at a time, apply fixes inline, ask questions about each issue. Supports both PR reviews and uncommitted changes with automatic commits in PR mode.",
+          "version": "2.0.1",
+          "author": {
+            "name": "Benyamin Salimi",
+            "email": "benyamin.salimi@gmail.com"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/benyaminsalimi/review-now",
+          "tags": [
+            "code-review",
+            "security",
+            "quality",
+            "interactive",
+            "multi-agent"
+          ],
+          "categories": [
+            "code-review",
+            "interactive",
+            "multi-agent",
+            "productivity",
+            "quality",
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add benyaminsalimi/review-now",
+            "/plugin install review-now@review-now-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

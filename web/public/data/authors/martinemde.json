@@ -228,6 +228,197 @@
           ]
         }
       ]
+    },
+    {
+      "name": "dotfiles-claude-features",
+      "version": null,
+      "description": "Chezmoi dotfiles with Claude Code extensions including agents, skills, and commands",
+      "repo_full_name": "martinemde/dotfiles",
+      "repo_url": "https://github.com/martinemde/dotfiles",
+      "repo_description": "✨ AI-first dotfiles with chezmoi",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-09T17:54:00Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"dotfiles-claude-features\",\n  \"metadata\": {\n    \"description\": \"Chezmoi dotfiles with Claude Code extensions including agents, skills, and commands\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"../home/dot_claude\"\n  },\n  \"owner\": {\n    \"name\": \"Martin Emde\",\n    \"email\": \"[email protected]\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pr-feedback-reviewer\",\n      \"source\": \"./agents/pr-feedback-reviewer\",\n      \"strict\": false,\n      \"description\": \"Analyzes pull request feedback and comments, validates their validity, and provides prioritized recommendations for addressing concerns\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"agent\", \"pr\", \"review\", \"feedback\", \"github\"],\n      \"components\": {\n        \"agents\": [\"pr-feedback-reviewer.md\"]\n      }\n    },\n    {\n      \"name\": \"code-reviewer\",\n      \"source\": \"./agents/reviewer\",\n      \"strict\": false,\n      \"description\": \"Senior-engineer level code and document reviewer that enforces modern patterns, scope boundaries, and code quality standards\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"agent\", \"review\", \"code-quality\", \"documentation\"],\n      \"components\": {\n        \"agents\": [\"reviewer.md\"]\n      }\n    },\n    {\n      \"name\": \"shell-wizard\",\n      \"source\": \"./agents/shell-wizard\",\n      \"strict\": false,\n      \"description\": \"Writes production-quality shell scripts following best practices with safety headers, error handling, and modern patterns\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"agent\", \"shell\", \"bash\", \"scripting\"],\n      \"components\": {\n        \"agents\": [\"shell-wizard.md\"]\n      }\n    },\n    {\n      \"name\": \"jujutsu-skill\",\n      \"source\": \"./skills/use-jj-not-git\",\n      \"strict\": false,\n      \"description\": \"Comprehensive guidance for using Jujutsu (jj) version control system instead of Git, including concepts, commands, and GitHub integration\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"skill\", \"jujutsu\", \"jj\", \"vcs\", \"version-control\"],\n      \"components\": {\n        \"skills\": [\"SKILL.md\"]\n      }\n    },\n    {\n      \"name\": \"chezmoi-package-manager\",\n      \"source\": \"../../.claude/skills/chezmoi\",\n      \"strict\": false,\n      \"description\": \"Manages packages and external dependencies in chezmoi dotfiles across Homebrew, mise, Python, Docker, and chezmoi externals with version pinning and Renovate integration\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"skill\", \"chezmoi\", \"package-management\", \"renovate\"],\n      \"components\": {\n        \"skills\": [\"SKILL.md\"]\n      }\n    },\n    {\n      \"name\": \"gitingest\",\n      \"source\": \"./commands/gitingest\",\n      \"strict\": false,\n      \"description\": \"Fetch and contextualize GitHub repositories for future reference, generating structured documentation\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"command\", \"github\", \"repository\", \"documentation\"],\n      \"components\": {\n        \"commands\": [\"gitingest.md\"]\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Dotfiles Redux\n\nThis repository contains my personal dotfiles for setting up a productive developer environment on macOS, Linux, and containerized setups using [Devcontainers](https://containers.dev/). The goal is to provide a stable and maintainable environment that prioritizes pragmatic defaults over heavy customization.\n\n## Philosophy\n\n- **Pragmatic Minimalism**: I prefer focused, single-purpose tools over complex frameworks. Instead of importing bulky plugins or features I don't use, I choose excellent, well-maintained tools that do one thing well with minimal configuration. Examples include znap for fast plugin loading, starship for cross-shell prompts, and mise for reproducible tool management.\n- **Portability**: These dotfiles should work across macOS and Linux machines, as well as within containers. They are designed to be reliable whether installed system-wide or through a Devcontainer configuration.\n- **Consistency**: The configuration aims to make pairing with others easy by sticking to intuitive shortcuts and well-known conventions. While these dotfiles improve my workflow, I can still work effectively without them if necessary.\n- **Performance with Reliability**: Fast startup matters—this setup achieves 50-80% faster shell startup through caching and lazy-loading—but not at the cost of stability. I avoid risky optimizations and instead gain speed through minimalism and focused tooling. Runtime performance should not be significantly degraded by these configurations.\n\n## Goals\n\n1. **Stable setup** that rarely fails and is simple to maintain.\n2. **Easy installation** on a fresh Mac or Linux system, with support for Devcontainers for containerized development.\n3. **Shared tools** that follow common standards, enabling me to collaborate with others without friction.\n4. **Documentation** that clearly explains the rationale behind each configuration choice.\n\n## Installation\n\n### Quick Start\n\n```bash\nchezmoi init --apply $GITHUB_USERNAME\n```\n\n### Advanced Usage\n\nThe installer supports various options and can pass arguments directly to `chezmoi init`:\n\n```bash\n# Force reinstall tools (if already installed)\nREINSTALL_TOOLS=true ./install.sh\n\n# Pass arguments to chezmoi init\n./install.sh -- --force          # Force chezmoi to overwrite existing files\n./install.sh -- --one-shot       # Use chezmoi's one-shot mode\n\n# Combine options\nREINSTALL_TOOLS=true ./install.sh -- --force\n```\n\n### Environment Variables\n\nYou can customize the installation behavior with these environment variables:\n\n- `REINSTALL_TOOLS=true` - Force reinstallation of tools even if already present\n- `BIN_DIR=/custom/path` - Install binaries to a custom directory (default: `~/.local/bin`)\n- `DEBUG=1` - Enable debug output during installation\n- `VERIFY_SIGNATURES=false` - Disable signature verification (not recommended)\n\n#### Non-Interactive Installation\n\nFor CI/CD or automated environments where no TTY is available, set these variables to bypass interactive prompts:\n\n- `GIT_USER_NAME=\"Your Name\"` - Git user name for commits\n- `GIT_USER_EMAIL=\"your.email@example.com\"` - Git user email for commits\n\nExample for CI environments:\n\n```bash\nGIT_USER_NAME=\"CI User\" GIT_USER_EMAIL=\"ci@example.com\" ./install.sh\n```\n\nFor a complete list of options, run `./install.sh --help`.\n\n## License\n\nThis project is open source under the [ISC License](LICENSE.md), credited to Ivy Evans, Martin Emde.\n"
+      },
+      "plugins": [
+        {
+          "name": "pr-feedback-reviewer",
+          "source": "./agents/pr-feedback-reviewer",
+          "strict": false,
+          "description": "Analyzes pull request feedback and comments, validates their validity, and provides prioritized recommendations for addressing concerns",
+          "version": "1.0.0",
+          "keywords": [
+            "agent",
+            "pr",
+            "review",
+            "feedback",
+            "github"
+          ],
+          "components": {
+            "agents": [
+              "pr-feedback-reviewer.md"
+            ]
+          },
+          "categories": [
+            "agent",
+            "feedback",
+            "github",
+            "pr",
+            "review"
+          ],
+          "install_commands": [
+            "/plugin marketplace add martinemde/dotfiles",
+            "/plugin install pr-feedback-reviewer@dotfiles-claude-features"
+          ]
+        },
+        {
+          "name": "code-reviewer",
+          "source": "./agents/reviewer",
+          "strict": false,
+          "description": "Senior-engineer level code and document reviewer that enforces modern patterns, scope boundaries, and code quality standards",
+          "version": "1.0.0",
+          "keywords": [
+            "agent",
+            "review",
+            "code-quality",
+            "documentation"
+          ],
+          "components": {
+            "agents": [
+              "reviewer.md"
+            ]
+          },
+          "categories": [
+            "agent",
+            "code-quality",
+            "documentation",
+            "review"
+          ],
+          "install_commands": [
+            "/plugin marketplace add martinemde/dotfiles",
+            "/plugin install code-reviewer@dotfiles-claude-features"
+          ]
+        },
+        {
+          "name": "shell-wizard",
+          "source": "./agents/shell-wizard",
+          "strict": false,
+          "description": "Writes production-quality shell scripts following best practices with safety headers, error handling, and modern patterns",
+          "version": "1.0.0",
+          "keywords": [
+            "agent",
+            "shell",
+            "bash",
+            "scripting"
+          ],
+          "components": {
+            "agents": [
+              "shell-wizard.md"
+            ]
+          },
+          "categories": [
+            "agent",
+            "bash",
+            "scripting",
+            "shell"
+          ],
+          "install_commands": [
+            "/plugin marketplace add martinemde/dotfiles",
+            "/plugin install shell-wizard@dotfiles-claude-features"
+          ]
+        },
+        {
+          "name": "jujutsu-skill",
+          "source": "./skills/use-jj-not-git",
+          "strict": false,
+          "description": "Comprehensive guidance for using Jujutsu (jj) version control system instead of Git, including concepts, commands, and GitHub integration",
+          "version": "1.0.0",
+          "keywords": [
+            "skill",
+            "jujutsu",
+            "jj",
+            "vcs",
+            "version-control"
+          ],
+          "components": {
+            "skills": [
+              "SKILL.md"
+            ]
+          },
+          "categories": [
+            "jj",
+            "jujutsu",
+            "skill",
+            "vcs",
+            "version-control"
+          ],
+          "install_commands": [
+            "/plugin marketplace add martinemde/dotfiles",
+            "/plugin install jujutsu-skill@dotfiles-claude-features"
+          ]
+        },
+        {
+          "name": "chezmoi-package-manager",
+          "source": "../../.claude/skills/chezmoi",
+          "strict": false,
+          "description": "Manages packages and external dependencies in chezmoi dotfiles across Homebrew, mise, Python, Docker, and chezmoi externals with version pinning and Renovate integration",
+          "version": "1.0.0",
+          "keywords": [
+            "skill",
+            "chezmoi",
+            "package-management",
+            "renovate"
+          ],
+          "components": {
+            "skills": [
+              "SKILL.md"
+            ]
+          },
+          "categories": [
+            "chezmoi",
+            "package-management",
+            "renovate",
+            "skill"
+          ],
+          "install_commands": [
+            "/plugin marketplace add martinemde/dotfiles",
+            "/plugin install chezmoi-package-manager@dotfiles-claude-features"
+          ]
+        },
+        {
+          "name": "gitingest",
+          "source": "./commands/gitingest",
+          "strict": false,
+          "description": "Fetch and contextualize GitHub repositories for future reference, generating structured documentation",
+          "version": "1.0.0",
+          "keywords": [
+            "command",
+            "github",
+            "repository",
+            "documentation"
+          ],
+          "components": {
+            "commands": [
+              "gitingest.md"
+            ]
+          },
+          "categories": [
+            "command",
+            "documentation",
+            "github",
+            "repository"
+          ],
+          "install_commands": [
+            "/plugin marketplace add martinemde/dotfiles",
+            "/plugin install gitingest@dotfiles-claude-features"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -6,6 +6,153 @@
   },
   "marketplaces": [
     {
+      "name": "claude-code-elixir",
+      "version": null,
+      "description": "Claude Code plugins for Elixir development",
+      "repo_full_name": "georgeguimaraes/claude-code-elixir",
+      "repo_url": "https://github.com/georgeguimaraes/claude-code-elixir",
+      "repo_description": "Claude Code plugin marketplace for Elixir development",
+      "signals": {
+        "stars": 88,
+        "forks": 6,
+        "pushed_at": "2026-01-27T17:10:49Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-elixir\",\n  \"owner\": {\n    \"name\": \"George Guimaraes\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for Elixir development\",\n    \"homepage\": \"https://github.com/georgeguimaraes/claude-code-elixir\",\n    \"pluginRoot\": \"./plugins\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"elixir-lsp\",\n      \"source\": \"./plugins/elixir-lsp\",\n      \"description\": \"Elixir Language Server integration for go-to-definition, references, and hover docs\",\n      \"category\": \"lsp\",\n      \"keywords\": [\"elixir\", \"lsp\", \"language-server\", \"intellisense\", \"autocomplete\"]\n    },\n    {\n      \"name\": \"elixir\",\n      \"source\": \"./plugins/elixir\",\n      \"description\": \"Thinking skills for Elixir, Phoenix, Ecto, OTP, and Oban patterns\",\n      \"category\": \"skills\",\n      \"keywords\": [\"elixir\", \"phoenix\", \"ecto\", \"otp\", \"oban\", \"liveview\", \"genserver\"]\n    },\n    {\n      \"name\": \"mix-compile\",\n      \"source\": \"./plugins/mix-compile\",\n      \"description\": \"Auto-compile Elixir files with warnings-as-errors after edits\",\n      \"category\": \"hooks\",\n      \"keywords\": [\"elixir\", \"mix\", \"compile\", \"warnings\", \"errors\"]\n    },\n    {\n      \"name\": \"mix-format\",\n      \"source\": \"./plugins/mix-format\",\n      \"description\": \"Auto-format Elixir files with mix format after edits\",\n      \"category\": \"hooks\",\n      \"keywords\": [\"elixir\", \"mix\", \"format\", \"formatting\", \"code-style\"]\n    },\n    {\n      \"name\": \"mix-credo\",\n      \"source\": \"./plugins/mix-credo\",\n      \"description\": \"Run Credo static analysis after editing Elixir files\",\n      \"category\": \"hooks\",\n      \"keywords\": [\"elixir\", \"mix\", \"credo\", \"linting\", \"code-quality\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Elixir\n\nClaude Code plugins for Elixir development.\n\n## Installation\n\n```bash\nclaude plugin marketplace add georgeguimaraes/claude-code-elixir\n```\n\nInstall all plugins:\n\n```bash\nclaude plugin install elixir-lsp@claude-code-elixir && \\\nclaude plugin install mix-format@claude-code-elixir && \\\nclaude plugin install mix-compile@claude-code-elixir && \\\nclaude plugin install mix-credo@claude-code-elixir && \\\nclaude plugin install elixir@claude-code-elixir\n```\n\n## Prerequisites\n\n| Platform | Command |\n|----------|---------|\n| macOS | `brew install elixir elixir-ls` |\n| Windows | `choco install elixir elixir-ls` |\n| Any (mise) | `mise use -g elixir-ls` |\n\n> **Note:** `mix-format`, `mix-compile`, and `mix-credo` require bash (Git Bash or WSL on Windows).\n\n---\n\n## Plugins\n\n### Overview\n\n| Plugin | Type | Description |\n|--------|------|-------------|\n| [elixir-lsp](#elixir-lsp) | LSP | Language Server with completions, go-to-definition, Dialyzer |\n| [mix-format](#mix-format) | Hook | Auto-format `.ex`/`.exs` files on save |\n| [mix-compile](#mix-compile) | Hook | Compile with `--warnings-as-errors` on save |\n| [mix-credo](#mix-credo) | Hook | Run Credo code quality checks on save |\n| [elixir](#elixir) | Skills | BEAM architecture, Phoenix, Ecto, OTP patterns |\n\n---\n\n### Tools\n\n#### elixir-lsp\n\nElixir Language Server integration powered by [elixir-ls](https://github.com/elixir-lsp/elixir-ls).\n\n| Feature | Description |\n|---------|-------------|\n| Navigation | Go to definition, find references |\n| Completions | With signature help and docs |\n| Diagnostics | Dialyzer type checking |\n| File types | `.ex`, `.exs`, `.heex`, `.leex` |\n\n<details>\n<summary>Default settings</summary>\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `dialyzerEnabled` | `true` | Enable Dialyzer diagnostics |\n| `fetchDeps` | `false` | Auto-fetch deps on compile |\n| `suggestSpecs` | `true` | Suggest @spec annotations |\n\nOverride per-project: `.elixir_ls/settings.json`\n\n</details>\n\n#### mix-format\n\nAuto-runs `mix format` after editing `.ex` and `.exs` files.\n\n#### mix-compile\n\nAuto-runs `mix compile --warnings-as-errors` after editing `.ex` files.\n\n- Only `.ex` files (not `.exs` scripts/tests)\n- Finds `mix.exs` by walking up directories\n- Fails on warnings or errors\n\n#### mix-credo\n\nAuto-runs `mix credo` after editing `.ex` and `.exs` files to check code quality.\n\n- Runs on both `.ex` and `.exs` files\n- Uses project's default Credo configuration\n- Gracefully skips if Credo is not installed\n- Fails on code quality issues\n\n---\n\n### Skills\n\n#### elixir\n\nParadigm-shifting skills for Elixir, Phoenix, and OTP development. Includes a SessionStart hook that auto-suggests skills when working on Elixir code.\n\n**Included skills:**\n\n| Skill | Use When |\n|-------|----------|\n| `elixir-thinking` | Designing modules, processes, data structures |\n| `phoenix-thinking` | Working with Phoenix, LiveView, PubSub |\n| `ecto-thinking` | Working with Ecto, contexts, schemas |\n| `otp-thinking` | Implementing GenServers, supervisors, Tasks |\n\n##### elixir-thinking\n\nMental models for writing Elixir — how it differs from OOP.\n\n| Concept | Insight |\n|---------|---------|\n| **Iron Law** | NO PROCESS WITHOUT A RUNTIME REASON |\n| Three dimensions | Behavior, state, mutability are **decoupled** |\n| Processes | For runtime (state/concurrency/faults), **not** code organization |\n| \"Let it crash\" | Means \"let it **heal**\" — supervisors restart |\n| Polymorphism | Behaviors → Protocols → Message passing (least to most dynamic) |\n\n<details>\n<summary>Sources</summary>\n\n- [José Valim - Gang of None](https://www.youtube.com/watch?v=4yAaHV9wQE4)\n- [Saša Jurić - The Soul of Erlang and Elixir](https://www.youtube.com/watch?v=JvBT4XBdoUE)\n- [Saša Jurić - Clarity](https://www.youtube.com/watch?v=6sNmJtoKDCo)\n- [Designing Elixir Systems with OTP](https://pragprog.com/titles/jgotp/designing-elixir-systems-with-otp/)\n- [Official Elixir Guides](https://elixir-lang.org/getting-started/)\n\n</details>\n\n##### phoenix-thinking\n\nArchitectural patterns for Phoenix and LiveView.\n\n| Concept | Insight |\n|---------|---------|\n| **Iron Law** | NO DATABASE QUERIES IN MOUNT |\n| Scopes (1.8+) | Security-first authorization threading |\n| mount vs handle_params | mount = setup, handle_params = data |\n| PubSub | Scoped topics, `broadcast_from` to avoid self-broadcast |\n| Channel fastlane | Socket state can be stale — re-fetch or include in broadcast |\n\n<details>\n<summary>Sources</summary>\n\n- [Phoenix 1.8 Scopes](https://hexdocs.pm/phoenix/scopes.html)\n- [Phoenix LiveView Docs](https://hexdocs.pm/phoenix_live_view)\n- [Stephen Bussey - Real-Time Phoenix](https://pragprog.com/titles/sbsockets/real-time-phoenix/)\n\n</details>\n\n##### ecto-thinking\n\nArchitectural patterns for Ecto and contexts.\n\n| Concept | Insight |\n|---------|---------|\n| Contexts | Bounded domains with their own \"dialect\" |\n| Cross-context refs | Use IDs, not `belongs_to` associations |\n| Schemas | Multiple changesets per schema, `embedded_schema` for forms |\n| Preloads | Separate vs join — pick based on data shape |\n| pool_count vs pool_size | pool_count = DBConnection pools, pool_size = connections per pool |\n\n<details>\n<summary>Sources</summary>\n\n- [Phoenix Contexts Guide](https://hexdocs.pm/phoenix/contexts.html)\n- [German Velasco - DDD for Phoenix Contexts](https://www.youtube.com/watch?v=mSgZ2LJXfew) (ElixirConf 2024)\n- [Ecto Multi-Tenancy Guide](https://hexdocs.pm/ecto/multi-tenancy-with-query-prefixes.html)\n\n</details>\n\n##### otp-thinking\n\nOTP design patterns and when to use each abstraction.\n\n| Concept | Insight |\n|---------|---------|\n| **Iron Law** | GENSERVER IS A BOTTLENECK BY DESIGN |\n| ETS | Bypasses bottleneck — concurrent reads with `:read_concurrency` |\n| Task.Supervisor | THE pattern for async work (not raw `Task.async`) |\n| Registry + DynamicSupervisor | Named dynamic processes without atom leaks |\n| Broadway vs Oban | External queues vs background jobs — different problems |\n\n<details>\n<summary>Sources</summary>\n\n- [Erlang OTP Design Principles](https://www.erlang.org/doc/system/design_principles.html)\n- [Elixir GenServer Docs](https://hexdocs.pm/elixir/GenServer.html)\n- [Elixir School - OTP Concurrency](https://elixirschool.com/en/lessons/advanced/otp_concurrency)\n- [Saša Jurić - Elixir in Action](https://www.manning.com/books/elixir-in-action-third-edition)\n- [Stephen Bussey - Real-Time Phoenix](https://pragprog.com/titles/sbsockets/real-time-phoenix/)\n\n</details>\n\n---\n\n## Troubleshooting\n\n**elixir-ls not found:** Ensure Homebrew bin is in PATH:\n\n```bash\nexport PATH=\"/opt/homebrew/bin:$PATH\"\n```\n\n---\n\n## License\n\nCopyright (c) 2025 George Guimarães\n\nLicensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "elixir-lsp",
+          "source": "./plugins/elixir-lsp",
+          "description": "Elixir Language Server integration for go-to-definition, references, and hover docs",
+          "category": "lsp",
+          "keywords": [
+            "elixir",
+            "lsp",
+            "language-server",
+            "intellisense",
+            "autocomplete"
+          ],
+          "categories": [
+            "autocomplete",
+            "elixir",
+            "intellisense",
+            "language-server",
+            "lsp"
+          ],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-elixir",
+            "/plugin install elixir-lsp@claude-code-elixir"
+          ]
+        },
+        {
+          "name": "elixir",
+          "source": "./plugins/elixir",
+          "description": "Thinking skills for Elixir, Phoenix, Ecto, OTP, and Oban patterns",
+          "category": "skills",
+          "keywords": [
+            "elixir",
+            "phoenix",
+            "ecto",
+            "otp",
+            "oban",
+            "liveview",
+            "genserver"
+          ],
+          "categories": [
+            "ecto",
+            "elixir",
+            "genserver",
+            "liveview",
+            "oban",
+            "otp",
+            "phoenix",
+            "skills"
+          ],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-elixir",
+            "/plugin install elixir@claude-code-elixir"
+          ]
+        },
+        {
+          "name": "mix-compile",
+          "source": "./plugins/mix-compile",
+          "description": "Auto-compile Elixir files with warnings-as-errors after edits",
+          "category": "hooks",
+          "keywords": [
+            "elixir",
+            "mix",
+            "compile",
+            "warnings",
+            "errors"
+          ],
+          "categories": [
+            "compile",
+            "elixir",
+            "errors",
+            "hooks",
+            "mix",
+            "warnings"
+          ],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-elixir",
+            "/plugin install mix-compile@claude-code-elixir"
+          ]
+        },
+        {
+          "name": "mix-format",
+          "source": "./plugins/mix-format",
+          "description": "Auto-format Elixir files with mix format after edits",
+          "category": "hooks",
+          "keywords": [
+            "elixir",
+            "mix",
+            "format",
+            "formatting",
+            "code-style"
+          ],
+          "categories": [
+            "code-style",
+            "elixir",
+            "format",
+            "formatting",
+            "hooks",
+            "mix"
+          ],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-elixir",
+            "/plugin install mix-format@claude-code-elixir"
+          ]
+        },
+        {
+          "name": "mix-credo",
+          "source": "./plugins/mix-credo",
+          "description": "Run Credo static analysis after editing Elixir files",
+          "category": "hooks",
+          "keywords": [
+            "elixir",
+            "mix",
+            "credo",
+            "linting",
+            "code-quality"
+          ],
+          "categories": [
+            "code-quality",
+            "credo",
+            "elixir",
+            "hooks",
+            "linting",
+            "mix"
+          ],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-elixir",
+            "/plugin install mix-credo@claude-code-elixir"
+          ]
+        }
+      ]
+    },
+    {
       "name": "claude-code-graphite",
       "version": null,
       "description": "Claude Code plugins for Graphite stacked PRs workflow",
@@ -13,7 +160,7 @@
       "repo_url": "https://github.com/georgeguimaraes/claude-code-graphite",
       "repo_description": "Claude Code plugins for Graphite stacked PRs",
       "signals": {
-        "stars": 1,
+        "stars": 3,
         "forks": 0,
         "pushed_at": "2026-01-13T21:19:01Z"
       },
@@ -40,6 +187,54 @@
           "install_commands": [
             "/plugin marketplace add georgeguimaraes/claude-code-graphite",
             "/plugin install graphite-mcp@claude-code-graphite"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "claude-code-ghost",
+      "version": null,
+      "description": "Claude Code plugins for Ghost CMS blog management",
+      "repo_full_name": "georgeguimaraes/claude-code-ghost",
+      "repo_url": "https://github.com/georgeguimaraes/claude-code-ghost",
+      "repo_description": "Claude Code plugin for managing Ghost blogs",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-10T20:34:47Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-ghost\",\n  \"owner\": {\n    \"name\": \"George Guimaraes\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for Ghost CMS blog management\",\n    \"homepage\": \"https://github.com/georgeguimaraes/claude-code-ghost\",\n    \"pluginRoot\": \"./plugins\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ghost-blog\",\n      \"source\": \"./plugins/ghost-blog\",\n      \"description\": \"Manage your Ghost blog: create, update, publish, schedule posts, upload images, manage tags, members, and newsletters via the Ghost API\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"ghost\", \"blog\", \"cms\", \"posts\", \"publishing\", \"newsletter\", \"api\"]\n    }\n  ]\n}\n",
+        "README.md": "# 👻 claude-code-ghost ⭐\n\nA [Claude Code](https://code.claude.com) plugin marketplace for managing [Ghost](https://ghost.org) blogs.\n\n## Plugins\n\n### ghost-blog\n\nManage your Ghost blog directly from Claude Code: create, update, publish, schedule posts, upload images, manage tags, members, and newsletters.\n\nUses Ghost's Content API (read-only) and Admin API (read/write) with a zero-dependency Python client (stdlib only).\n\n## Setup\n\n### 1. Install the marketplace\n\n```\n/plugin marketplace add georgeguimaraes/claude-code-ghost\n```\n\n### 2. Install the plugin\n\n```\n/plugin install ghost-blog@claude-code-ghost\n```\n\n### 3. Set environment variables\n\nCreate a Custom Integration in your Ghost Admin (Settings > Integrations) and export the keys:\n\n```bash\nexport GHOST_API_URL=\"https://yourblog.ghost.io\"\nexport GHOST_CONTENT_API_KEY=\"your-content-api-key\"\nexport GHOST_ADMIN_API_KEY=\"your-admin-api-key-id:secret\"\n```\n\n### 4. Use it\n\nJust ask Claude Code to interact with your blog:\n\n- \"list my recent blog posts\"\n- \"create a draft about topic X\"\n- \"publish my draft\"\n- \"schedule a post for tomorrow at 9am\"\n- \"upload this image to my blog\"\n- \"show me my blog tags\"\n- \"filter posts by tag\"\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "ghost-blog",
+          "source": "./plugins/ghost-blog",
+          "description": "Manage your Ghost blog: create, update, publish, schedule posts, upload images, manage tags, members, and newsletters via the Ghost API",
+          "category": "productivity",
+          "keywords": [
+            "ghost",
+            "blog",
+            "cms",
+            "posts",
+            "publishing",
+            "newsletter",
+            "api"
+          ],
+          "categories": [
+            "api",
+            "blog",
+            "cms",
+            "ghost",
+            "newsletter",
+            "posts",
+            "productivity",
+            "publishing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add georgeguimaraes/claude-code-ghost",
+            "/plugin install ghost-blog@claude-code-ghost"
           ]
         }
       ]
