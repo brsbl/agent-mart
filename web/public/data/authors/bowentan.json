@@ -13,13 +13,13 @@
       "repo_url": "https://github.com/bowentan/super-agent",
       "repo_description": "My collection of agents, skills and tools",
       "signals": {
-        "stars": 0,
+        "stars": 1,
         "forks": 0,
-        "pushed_at": "2026-02-04T11:10:03Z"
+        "pushed_at": "2026-02-05T13:56:02Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"super-agent\",\n  \"description\": \"Collections of Claude Code plugins, skills and tools\",\n  \"owner\": {\n    \"name\": \"Bowen Tan\",\n    \"email\": \"bowentan78@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"prd\",\n      \"description\": \"Generate Product Requirements Documents for new features\",\n      \"author\": {\n        \"name\": \"Bowen Tan\",\n        \"email\": \"bowentan78@gmail.com\"\n      },\n      \"source\": \"./plugins/skills/prd\",\n      \"category\": \"productivity\",\n      \"tags\": [\"planning\", \"documentation\", \"prd\", \"requirements\"]\n    },\n    {\n      \"name\": \"update-mr-desc\",\n      \"description\": \"Update merge request descriptions by summarizing MR changes into a bulleted list (excluding /docs)\",\n      \"author\": {\n        \"name\": \"Bowen Tan\",\n        \"email\": \"bowentan78@gmail.com\"\n      },\n      \"source\": \"./plugins/skills/update-mr-desc\",\n      \"category\": \"productivity\",\n      \"tags\": [\"gitlab\", \"merge-request\", \"glab\", \"mr\", \"description\"]\n    },\n    {\n      \"name\": \"git-commit-bullets\",\n      \"description\": \"Perform git commit with message body written as a bullet list\",\n      \"author\": {\n        \"name\": \"Bowen Tan\",\n        \"email\": \"bowentan78@gmail.com\"\n      },\n      \"source\": \"./plugins/skills/git-commit-bullets\",\n      \"category\": \"productivity\",\n      \"tags\": [\"git\", \"commit\", \"bullet-list\", \"changelog\", \"conventional-commits\"]\n    }\n  ]\n}\n",
-        "README.md": "# Super Agent Marketplace\n\nCollections of Claude Code plugins, skills and tools.\n\n## Installation\n\n### Claude Code plugin marketplace\n\nAdd the marketplace:\n```bash\n/plugin marketplace add https://github.com/bowentan/super-agent\n```\n\nInstall plugins:\n```bash\n/plugin install prd@super-agent\n/plugin install prd@1.0.0@super-agent\n```\n\n### npx skills add (open agent skills CLI)\n\nUsing the [skills](https://www.npmjs.com/package/skills) CLI you can install these skills into Claude Code (and other agents like Cursor, Codex, OpenCode):\n\n```bash\n# Install all skills from this repo (interactive: choose skills and agents)\nnpx skills add bowentan/super-agent\n\n# Install only for Cursor\nnpx skills add bowentan/super-agent -a cursor\n\n# Install specific skills\nnpx skills add bowentan/super-agent --skill prd --skill update-mr-desc --skill git-commit-bullets\n\n# List available skills without installing\nnpx skills add bowentan/super-agent --list\n```\n\n>[!CAUTION]\n> For Cursor, copy skills instead of symlinks.\n\n## Marketplace Structure\n\nPlugins are registered in `.claude-plugin/marketplace.json` following Claude Code's marketplace standard.\n\n## Available Plugins\n\n| Plugin | Description | Prerequisites |\n|--------|-------------|---------------|\n| [prd](./plugins/skills/prd/) | Generate Product Requirements Documents for new features. Asks clarifying questions and writes structured PRDs to `docs/prds/`. | None. Provide a feature description or use triggers: *create a prd*, *write prd for*, *plan this feature*, *requirements for*, *spec out*. |\n| [update-mr-desc](./plugins/skills/update-mr-desc/) | Update merge request descriptions by summarizing MR changes into a bulleted list (excluding `docs/`). | GitLab MR in context. **glab** MCP or the CLI tool. |\n| [git-commit-bullets](./plugins/skills/git-commit-bullets/) | Perform git commits with the message body written as a bullet list; uses Conventional Commits and encourages split, well-scoped commits. | Git repository. Optional: project format/lint commands (e.g. `npm run format`, `ruff format`). |\n\n## Contributing\n\nSee [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for plugin submission guidelines.\n\n## Plugin Categories\n\n- **skills/** - Claude Code skills for specific tasks\n- **agents/** - Specialized agent configurations\n- **tools/** - MCP tools and utilities\n- **hooks/** - Event hooks and automation\n- **templates/** - Project scaffolding templates\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"super-agent\",\n  \"description\": \"Collections of Claude Code plugins, skills and tools\",\n  \"owner\": {\n    \"name\": \"Bowen Tan\",\n    \"email\": \"bowentan78@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"prd\",\n      \"description\": \"Generate Product Requirements Documents for new features\",\n      \"author\": {\n        \"name\": \"Bowen Tan\",\n        \"email\": \"bowentan78@gmail.com\"\n      },\n      \"source\": \"./plugins/prd\",\n      \"skills\": [\"./skills/prd\"],\n      \"category\": \"productivity\",\n      \"keywords\": [\"planning\", \"documentation\", \"prd\", \"requirements\"]\n    },\n    {\n      \"name\": \"gitlab-workflow\",\n      \"description\": \"GitLab team workflow commands for commits, MR descriptions, and code reviews\",\n      \"author\": {\n        \"name\": \"Bowen Tan\",\n        \"email\": \"bowentan78@gmail.com\"\n      },\n      \"source\": \"./plugins/gitlab-workflow\",\n      \"commands\": [\n        \"./commands/git-commit-bullets.md\",\n        \"./commands/update-mr-desc.md\",\n        \"./commands/gitlab-mr-review.md\"\n      ],\n      \"skills\": [\n        \"./skills/git-commit-bullets\",\n        \"./skills/update-mr-desc\",\n        \"./skills/gitlab-mr-review\"\n      ],\n      \"category\": \"productivity\",\n      \"keywords\": [\"gitlab\", \"git\", \"commit\", \"merge-request\", \"code-review\", \"glab\"]\n    }\n  ]\n}\n",
+        "README.md": "# Super Agent Marketplace\n\nCollections of Claude Code plugins, skills and tools.\n\n## Installation\n\n### Claude Code plugin marketplace\n\nAdd the marketplace:\n```bash\n/plugin marketplace add https://github.com/bowentan/super-agent\n```\n\nInstall plugins:\n```bash\n/plugin install prd@super-agent\n/plugin install gitlab-workflow@super-agent\n```\n\n### npx skills add (open agent skills CLI)\n\nUsing the [skills](https://www.npmjs.com/package/skills) CLI you can install these skills into Claude Code (and other agents like Cursor, Codex, OpenCode):\n\n```bash\n# Install all skills from this repo (interactive: choose skills and agents)\nnpx skills add bowentan/super-agent\n\n# Install only for Cursor\nnpx skills add bowentan/super-agent -a cursor\n\n# Install specific skills\nnpx skills add bowentan/super-agent --skill prd --skill git-commit-bullets --skill update-mr-desc --skill gitlab-mr-review\n\n# List available skills without installing\nnpx skills add bowentan/super-agent --list\n```\n\n>[!CAUTION]\n> For Cursor, copy skills instead of symlinks.\n\n## Marketplace Structure\n\nPlugins are registered in `.claude-plugin/marketplace.json` following Claude Code's marketplace standard.\n\n## Available Plugins\n\n| Plugin | Description | Prerequisites |\n|--------|-------------|---------------|\n| [prd](./plugins/prd/) | Generate Product Requirements Documents for new features. Asks clarifying questions and writes structured PRDs to `docs/prds/`. | None. Provide a feature description or use triggers: *create a prd*, *write prd for*, *plan this feature*, *requirements for*, *spec out*. |\n| [gitlab-workflow](./plugins/gitlab-workflow/) | GitLab team workflow commands: **git-commit-bullets** (bullet-list commit messages with Conventional Commits), **update-mr-desc** (summarize MR changes into a bulleted description), **gitlab-mr-review** (review MR diffs and optionally post comments). | Git repo. **glab** MCP or CLI; GitLab auth for MR commands. |\n\n## Contributing\n\nSee [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for plugin submission guidelines.\n\n## Plugin Categories\n\n- **skills/** - Claude Code skills for specific tasks\n- **agents/** - Specialized agent configurations\n- **tools/** - MCP tools and utilities\n- **hooks/** - Event hooks and automation\n- **templates/** - Project scaffolding templates\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
@@ -29,9 +29,12 @@
             "name": "Bowen Tan",
             "email": "bowentan78@gmail.com"
           },
-          "source": "./plugins/skills/prd",
+          "source": "./plugins/prd",
+          "skills": [
+            "./skills/prd"
+          ],
           "category": "productivity",
-          "tags": [
+          "keywords": [
             "planning",
             "documentation",
             "prd",
@@ -50,61 +53,44 @@
           ]
         },
         {
-          "name": "update-mr-desc",
-          "description": "Update merge request descriptions by summarizing MR changes into a bulleted list (excluding /docs)",
+          "name": "gitlab-workflow",
+          "description": "GitLab team workflow commands for commits, MR descriptions, and code reviews",
           "author": {
             "name": "Bowen Tan",
             "email": "bowentan78@gmail.com"
           },
-          "source": "./plugins/skills/update-mr-desc",
+          "source": "./plugins/gitlab-workflow",
+          "commands": [
+            "./commands/git-commit-bullets.md",
+            "./commands/update-mr-desc.md",
+            "./commands/gitlab-mr-review.md"
+          ],
+          "skills": [
+            "./skills/git-commit-bullets",
+            "./skills/update-mr-desc",
+            "./skills/gitlab-mr-review"
+          ],
           "category": "productivity",
-          "tags": [
+          "keywords": [
             "gitlab",
+            "git",
+            "commit",
             "merge-request",
-            "glab",
-            "mr",
-            "description"
+            "code-review",
+            "glab"
           ],
           "categories": [
-            "description",
+            "code-review",
+            "commit",
+            "git",
             "gitlab",
             "glab",
             "merge-request",
-            "mr",
             "productivity"
           ],
           "install_commands": [
             "/plugin marketplace add bowentan/super-agent",
-            "/plugin install update-mr-desc@super-agent"
-          ]
-        },
-        {
-          "name": "git-commit-bullets",
-          "description": "Perform git commit with message body written as a bullet list",
-          "author": {
-            "name": "Bowen Tan",
-            "email": "bowentan78@gmail.com"
-          },
-          "source": "./plugins/skills/git-commit-bullets",
-          "category": "productivity",
-          "tags": [
-            "git",
-            "commit",
-            "bullet-list",
-            "changelog",
-            "conventional-commits"
-          ],
-          "categories": [
-            "bullet-list",
-            "changelog",
-            "commit",
-            "conventional-commits",
-            "git",
-            "productivity"
-          ],
-          "install_commands": [
-            "/plugin marketplace add bowentan/super-agent",
-            "/plugin install git-commit-bullets@super-agent"
+            "/plugin install gitlab-workflow@super-agent"
           ]
         }
       ]

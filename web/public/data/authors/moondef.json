@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "moondef",
+    "display_name": "Stepan Samko",
+    "avatar_url": "https://avatars.githubusercontent.com/u/25538179?u=417199ffe4fd88a1a6de254415250626177f6455&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "llm-trace",
+      "version": null,
+      "description": "Runtime debugging with structured traces — instrument code, read execution data, fix root cause",
+      "repo_full_name": "moondef/llm-trace",
+      "repo_url": "https://github.com/moondef/llm-trace",
+      "repo_description": "Structured execution traces for LLM debugging – lets AI coding tools see runtime behavior instead of guessing",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-08T14:07:47Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"llm-trace\",\n  \"owner\": {\n    \"name\": \"moondef\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"debugging-with-llm-trace\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/moondef/llm-trace.git\"\n      },\n      \"description\": \"Runtime debugging with structured traces — instrument code, read execution data, fix root cause\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        "README.md": "# llm-trace\n\n[![npm version](https://img.shields.io/npm/v/llm-trace.svg)](https://www.npmjs.com/package/llm-trace)\n[![CI](https://github.com/moondef/llm-trace/actions/workflows/ci.yml/badge.svg)](https://github.com/moondef/llm-trace/actions/workflows/ci.yml)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\nLLMs can read your code but they can't run it in their head. When something breaks, they end up asking you to paste errors and add `console.log` statements one at a time while they guess at what's going on.\n\nllm-trace fixes this. It gives LLMs a way to instrument your code with structured traces, see actual runtime values, and figure out what went wrong without the back-and-forth.\n\n## Install\n\nInstall the [debugging skill](skills/debugging-with-llm-trace/SKILL.md) so your LLM tool knows how to use llm-trace. The skill will ask to `npm install llm-trace` into your project — it's the SDK that provides the `trace()`, `span()`, and `checkpoint()` calls for code instrumentation.\n\n**Claude Code:**\n```bash\n/plugin marketplace add moondef/llm-trace\n/plugin install debugging-with-llm-trace@llm-trace\n```\n\n**Codex:**\n```\n$skill-installer install https://github.com/moondef/llm-trace/tree/main/skills/debugging-with-llm-trace\n```\n\n**Any tool** (via npx):\n```bash\nnpx skills add moondef/llm-trace\n```\n\n**Or clone and copy manually:**\n```bash\ngit clone https://github.com/moondef/llm-trace.git\ncp -r llm-trace/skills/debugging-with-llm-trace ~/.claude/skills/\n```\n\n## Usage\n\nJust ask your LLM to debug something. The skill handles the rest.\n\nYou say \"this endpoint returns 500 sometimes\" and it:\n\n1. Starts a tracing session (`llm-trace start`)\n2. Instruments the suspect code with `trace()`, `span()`, and `checkpoint()`\n3. Runs the code to trigger the bug\n4. Reads the trace — actual values at each step, which span failed, the error\n5. Fixes the root cause based on what it saw\n6. Cleans up instrumentation and stops the session\n\n## What It Captures\n\nThree primitives, all the LLM needs:\n\n```typescript\nimport { trace } from \"llm-trace\";\n\nawait trace(\"checkout\", async (handle) => {\n\n  // span — time a step, nest arbitrarily\n  await handle.span(\"load-cart\", async (h) => {\n    const cart = await db.getCart(userId);\n\n    // checkpoint — snapshot runtime values\n    h.checkpoint(\"cart\", cart);\n\n    return cart;\n  });\n});\n```\n\n**`trace(name, fn)`** — wraps a complete operation. Captures start, end, duration, errors.\n\n**`handle.span(name, fn)`** — a timed step within a trace. Nests to any depth.\n\n**`handle.checkpoint(name, data?)`** — snapshots a value at a point in time (truncated at 64KB).\n\nErrors are captured automatically — if anything throws, the trace records the error and stack.\n\n## CLI\n\n```bash\nllm-trace start             # begin session\nllm-trace list              # all traces (JSON by default)\nllm-trace list --errors     # just failures\nllm-trace show <id>         # full trace tree\nllm-trace tail              # watch live\nllm-trace stop              # end session, delete traces\n```\n\nOutput is JSON by default (for LLM consumption). Add `--human` for readable output.\n\n## How It Works\n\nThe LLM writes `trace()` / `span()` / `checkpoint()` calls into your code. When the code runs, events stream over HTTP to a local server that writes `.ndjson` files. The LLM reads those files via the CLI. After debugging, everything gets cleaned up — traces are ephemeral.\n\nNo dependencies. No config. Nothing persisted after `stop`.\n\n## Configuration\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `LLM_TRACE_PORT` | `13579` | HTTP server port |\n\n## Contributing\n\nIssues and PRs welcome at [github.com/moondef/llm-trace](https://github.com/moondef/llm-trace).\n"
+      },
+      "plugins": [
+        {
+          "name": "debugging-with-llm-trace",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/moondef/llm-trace.git"
+          },
+          "description": "Runtime debugging with structured traces — instrument code, read execution data, fix root cause",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add moondef/llm-trace",
+            "/plugin install debugging-with-llm-trace@llm-trace"
+          ]
+        }
+      ]
+    }
+  ]
+}

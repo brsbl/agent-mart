@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "ngerakines",
+    "display_name": "Nick Gerakines",
+    "avatar_url": "https://avatars.githubusercontent.com/u/12125?u=4a21a80c8521ab4e4ceea7b67c09eb67ae7addef&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jd-plugins",
+      "version": null,
+      "description": "Manage Johnny.Decimal systems with AI-assisted inbox processing, classification, JDex maintenance, and system setup. Supports single and multi-system (SYS.AC.ID) configurations.",
+      "repo_full_name": "ngerakines/jd",
+      "repo_url": "https://github.com/ngerakines/jd",
+      "repo_description": "Claude Cowork Plugins for the Johnny.Decimal system",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T16:28:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jd-plugins\",\n  \"owner\": {\n    \"name\": \"Nick Gerakines\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jd\",\n      \"source\": \"./jd\",\n      \"description\": \"Manage Johnny.Decimal systems with AI-assisted inbox processing, classification, JDex maintenance, and system setup. Supports single and multi-system (SYS.AC.ID) configurations.\"\n    }\n  ]\n}\n",
+        "README.md": "# Johnny.Decimal Plugins\n\nClaude Cowork plugins for the [Johnny.Decimal](https://johnnydecimal.com/) organizational system.\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [jd](jd/) | Manage Johnny.Decimal systems with inbox processing, JDex maintenance, system setup, and +SUB index management |\n\n## Installation\n\nInstall a plugin by name:\n\n```\nclaude plugins add jd-plugins/jd\n```\n\n## What is Johnny.Decimal?\n\nJohnny.Decimal is a constraint-based organizational system that assigns every file a unique numeric address using exactly three levels: Areas, Categories, and IDs. The `AC.ID` notation (e.g., `43.02`) is both human-memorable and machine-parseable, making it well-suited for AI-assisted workflows.\n\nLearn more at [johnnydecimal.com](https://johnnydecimal.com/).\n\n## Contributing\n\nEach plugin is a self-contained directory with:\n\n```\nplugin-name/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin manifest\n├── commands/                 # Slash commands\n│   └── command-name.md\n├── skills/                   # Domain knowledge (auto-triggered)\n│   └── skill-name/\n│       └── SKILL.md\n├── README.md\n└── LICENSE\n```\n\nTo add a new plugin, create a directory following this structure and add an entry to `.claude-plugin/marketplace.json`.\n\n## License\n\nApache License 2.0. See [LICENSE](LICENSE).\n",
+        "jd/README.md": "# Johnny.Decimal Plugin\n\nManage [Johnny.Decimal](https://johnnydecimal.com/) systems with AI-assisted inbox processing, classification, JDex maintenance, and system setup. Supports single and multi-system (`SYS.AC.ID`) configurations.\n\n## Installation\n\n```\nclaude plugins add jd-plugins/jd\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/jd:process-inbox [system-code]` | Process items in a JD inbox — classify, file, extract tasks, log actions |\n| `/jd:jdex-audit [system-code]` | Compare JDex against folder structure, flag mismatches |\n| `/jd:setup-system` | Initialize a new JD system with folders, standard zeros, and JDex |\n| `/jd:sub-index [system-code] [category]` | Manage +SUB index files, assign next numbers, create entries |\n| `/jd:manage-tasks [system-code] [action] [filter]` | Manage tasks — view, add, complete, cancel, modify using jdtodo.txt format |\n\n## Skills\n\nSkills activate automatically based on what you're doing:\n\n| Skill | Triggers on |\n|-------|------------|\n| **jd-inbox-processor** | \"process my inbox,\" \"file my stuff,\" \"sort my inbox,\" \"triage my captures\" |\n| **jd-system-setup** | \"set up my JD system,\" \"create a new system,\" \"initialize JD\" |\n| **jd-jdex-audit** | \"audit my JDex,\" \"check my system,\" \"sync JDex,\" \"verify my JD system\" |\n| **jd-sub-index** | \"update sub index,\" \"add a new project,\" \"what's the next sub number\" |\n| **jd-task-manager** | \"show my tasks,\" \"what's due today,\" \"add a task,\" \"mark that done,\" \"review my someday list\" |\n\n## Example Workflows\n\n### Process your inbox after a busy week\n\n```\n> process my inbox\n\nDiscovered 2 systems with non-empty inboxes:\n  P10 Personal: 8 items\n  W20 Work: 3 items\n\nProcessing P10...\n  ✓ 2026-02-05 W-2 Form.pdf → P10.33.02 (2025 tax return)\n  ✓ 2026-02-06 Dentist receipt.pdf → P10.41.02 (Dental)\n  ? Meeting notes.md — medium confidence: P10.24.04 (Alex notes) or W20.14.01 (1:1 with Morgan)?\n  ...\n```\n\n### Set up a new system for a child\n\n```\n> /jd:setup-system\n\nWhat kind of system? Child/dependent\nSystem code: K30\nSystem name: Jamie\nRoot: ~/Library/Mobile Documents/com~apple~CloudDocs/JD/\n\nCreating K30 Jamie...\n  00-09 System ✓\n  10-19 Identity & documents ✓\n  20-29 School ✓\n  ...\n```\n\n### Audit after manual reorganization\n\n```\n> /jd:jdex-audit P10\n\nJDex Audit: P10 Personal\n  JDex entries: 87\n  Filesystem folders: 89\n  ✗ 2 undocumented folders found\n  ✗ 1 name mismatch\n\nAdd 11.08 Garage storage to JDex? [y/n]\n```\n\n### Manage your tasks\n\n```\n> show my tasks\n\nP10 Personal: 12 active tasks (3 overdue)\n  (A) Submit quarterly tax estimate +N42.13.02 due:2026-04-15\n  (A) Respond to P0 follow-up +G24.21.05 due:2026-02-10 [OVERDUE]\n  ...\n\n> /jd:manage-tasks P10 add\n\nWhat's the task? Call insurance about claim deductible\nPriority? (A)\nJD location? N42.11.03\nContext? @phone\nDue date? next Friday\n\nAdded: (A) 2026-02-09 Call insurance about claim deductible +N42.11.03 @phone due:2026-02-14\n\n> mark the tax estimate done\n\nCompleted: x 2026-02-09 Submit quarterly tax estimate +N42.13.02 @laptop pri:A\nMoved to done.txt.\n```\n\n## Configuration\n\nThe plugin discovers your JD root automatically by checking:\n\n1. `~/Library/Mobile Documents/com~apple~CloudDocs/JD/` (iCloud Drive)\n2. `~/Documents/JD/`\n3. `~/JD/`\n\nIf your JD root is elsewhere, the plugin will ask when you first use it.\n\n### Multi-system support\n\nThe plugin handles both single-system and multi-system setups. Systems are identified by their `[A-Z][0-9][0-9]` prefix (e.g., `P10 Personal`, `W20 Work`).\n\n## What is Johnny.Decimal?\n\nJohnny.Decimal is a constraint-based organizational system with exactly three levels:\n\n```\nArea (10-19, 20-29, ..., 90-99)\n  └── Category (11, 12, ..., 19)\n        └── ID (11.01, 11.02, ..., 11.99)\n```\n\nEvery file gets a unique numeric address. The system caps each level at ~10 items, making classification a bounded decision at every step. The **JDex** is the master index — the single source of truth for every ID in a system.\n\nLearn more at [johnnydecimal.com](https://johnnydecimal.com/).\n\n## License\n\nApache License 2.0. See [LICENSE](LICENSE).\n"
+      },
+      "plugins": [
+        {
+          "name": "jd",
+          "source": "./jd",
+          "description": "Manage Johnny.Decimal systems with AI-assisted inbox processing, classification, JDex maintenance, and system setup. Supports single and multi-system (SYS.AC.ID) configurations.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ngerakines/jd",
+            "/plugin install jd@jd-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

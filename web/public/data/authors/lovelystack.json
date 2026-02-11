@@ -1,0 +1,54 @@
+{
+  "author": {
+    "id": "LovelyStack",
+    "display_name": "LovelyStack",
+    "avatar_url": "https://avatars.githubusercontent.com/u/236080338?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lovely-dev",
+      "version": null,
+      "description": "LovelyStack development tools and automation",
+      "repo_full_name": "LovelyStack/lovely-dev",
+      "repo_url": "https://github.com/LovelyStack/lovely-dev",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-10T23:43:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lovely-dev\",\n  \"owner\": {\n    \"name\": \"LovelyStack\"\n  },\n  \"metadata\": {\n    \"description\": \"LovelyStack development tools and automation\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lovely-tasks\",\n      \"source\": \"./plugins/lovely-tasks\",\n      \"description\": \"Task validation and tracking for Claude Code workflows\",\n      \"version\": \"1.3.0\",\n      \"author\": {\n        \"name\": \"LovelyStack\"\n      },\n      \"keywords\": [\"tasks\", \"validation\", \"workflow\", \"stop-hook\"]\n    }\n  ]\n}\n",
+        "README.md": "# lovely-dev\n\nLovelyStack development tools marketplace for Claude Code.\n\n## Plugins\n\n### lovely-tasks\n\nTask validation and tracking for Claude Code workflows. Automatically validates task completion when Claude stops responding.\n\n**Features:**\n\n- Stop hook validation\n- Two task formats: detailed (docs/tasks.md) and spec-kit (.specify/tasks.md)\n- Auto-configuration and cleanup\n- Opt-in via package.json flags\n\n**Installation:**\n\n1. Add marketplace:\n\n```bash\n/plugin marketplace add LovelyStack/lovely-dev\n```\n\n2. Install plugin:\n\n```bash\n/plugin install lovely-tasks@lovely-dev --scope project\n```\n\nOr enable automatically via config-tauri.\n\n## Contributing\n\nInterested in contributing? Check out our [Contributing Guide](CONTRIBUTING.md) to learn how to develop and test plugins locally.\n\n## License\n\nMIT\n",
+        "plugins/lovely-tasks/README.md": "# lovely-tasks\n\nTask validation and tracking for Claude Code workflows.\n\n## Features\n\n- **Stop Hook Validation**: Automatically validates task completion when Claude stops\n- **Four Task Formats**:\n  - Lovely format (docs/tasks.md) with status tracking and acceptance criteria\n  - Spec-kit format (.specify/tasks.md) with simple checklists\n  - OpenSpec format (.openspec/tasks.md) with hierarchical task structure\n  - Generic checklist format (any markdown file with checkboxes)\n- **Slash Commands**: Built-in commands for easy task management\n- **Auto-Configuration**: CLI tool to enable/disable validation automatically\n- **Auto-Cleanup**: Removes validation flags when all tasks complete\n\n## Installation\n\n### Via Marketplace\n\n```bash\n/plugin marketplace add LovelyStack/lovely-dev\n/plugin install lovely-tasks@lovely-dev --scope project\n```\n\n### Via config-tauri\n\nAutomatically enabled when using config-tauri:\n\n```bash\nbun add -D github:LovelyStack/config-tauri\nbunx config-tauri sync\n```\n\n## Configuration\n\nTask validation is configured in `.lovelystack/lovely-tasks.json`.\n\nFor lovely task format:\n\n```json\n{\n  \"validation\": {\n    \"enabled\": true,\n    \"format\": \"lovely\",\n    \"file\": \"docs/tasks.md\"\n  }\n}\n```\n\nFor spec-kit format:\n\n```json\n{\n  \"validation\": {\n    \"enabled\": true,\n    \"format\": \"speckit\",\n    \"file\": \".specify/tasks.md\"\n  }\n}\n```\n\nFor OpenSpec format:\n\n```json\n{\n  \"validation\": {\n    \"enabled\": true,\n    \"format\": \"openspec\",\n    \"file\": \".openspec/tasks.md\"\n  }\n}\n```\n\nFor generic checklist format:\n\n```json\n{\n  \"validation\": {\n    \"enabled\": true,\n    \"format\": \"generic\",\n    \"file\": \"checklist.md\"\n  }\n}\n```\n\n## Slash Commands\n\nUse these built-in commands in Claude Code:\n\n```bash\n# Enable task validation for a file\n/lovely-tasks:enable <path/to/tasks.md>\n\n# Disable task validation\n/lovely-tasks:disable\n\n# Check current validation status\n/lovely-tasks:status\n```\n\n## CLI Commands\n\nFor direct script usage:\n\n```bash\n# Enable validation (auto-detects format)\nbun run node_modules/@lovelystack/lovely-tasks/scripts/tasks-config.ts enable <path>\n\n# Disable validation\nbun run node_modules/@lovelystack/lovely-tasks/scripts/tasks-config.ts disable\n\n# Check status\nbun run node_modules/@lovelystack/lovely-tasks/scripts/tasks-config.ts status\n\n# Auto-cleanup if complete\nbun run node_modules/@lovelystack/lovely-tasks/scripts/tasks-config.ts cleanup\n\n# Migrate from package.json (automatic on first hook execution)\nbun run node_modules/@lovelystack/lovely-tasks/scripts/tasks-config.ts migrate\n```\n\n## Documentation\n\n- [Hooks Documentation](docs/hooks.md) - Stop hook configuration and behavior\n- [Task Structure Skill](skills/task-structure/SKILL.md) - Task format guidelines\n- [Test Fixtures](__fixtures__/README.md) - Standardized test fixtures for development\n\n## Testing\n\nThe plugin includes standardized test fixtures that replicate real framework directory structures:\n\n- **speckit-project/**: Spec-Kit conventions with `/specs/` and `.specify/` directories\n- **openspec-project/**: OpenSpec conventions with `openspec/changes/` and `.openspec/` directories\n- **lovely-project/**: Lovely task format with documentation structure\n- **generic-project/**: Generic checklist format\n\nFixtures support both automated testing and manual testing with coding agents. See [**fixtures**/README.md](__fixtures__/README.md) for details.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "lovely-tasks",
+          "source": "./plugins/lovely-tasks",
+          "description": "Task validation and tracking for Claude Code workflows",
+          "version": "1.3.0",
+          "author": {
+            "name": "LovelyStack"
+          },
+          "keywords": [
+            "tasks",
+            "validation",
+            "workflow",
+            "stop-hook"
+          ],
+          "categories": [
+            "stop-hook",
+            "tasks",
+            "validation",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add LovelyStack/lovely-dev",
+            "/plugin install lovely-tasks@lovely-dev"
+          ]
+        }
+      ]
+    }
+  ]
+}
