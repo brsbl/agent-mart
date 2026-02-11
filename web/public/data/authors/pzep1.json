@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "pzep1",
+    "display_name": "pzep1",
+    "avatar_url": "https://avatars.githubusercontent.com/u/205442808?u=80844ec3e242b74a7a274072c3d15eef5cef44cb&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "xcode-build-marketplace",
+      "version": null,
+      "description": "Claude Code plugins for iOS/macOS development",
+      "repo_full_name": "pzep1/xcode-build-skill",
+      "repo_url": "https://github.com/pzep1/xcode-build-skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 115,
+        "forks": 7,
+        "pushed_at": "2026-02-04T18:45:16Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"xcode-build-marketplace\",\n  \"owner\": {\n    \"name\": \"pz\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for iOS/macOS development\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"xcode-build-skill\",\n      \"source\": \"./\",\n      \"description\": \"Build and manage iOS/macOS apps using native xcodebuild and xcrun simctl CLI tools. Replaces XcodeBuildMCP with direct CLI commands and XCUITest for UI automation.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"pz\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"xcode\",\n        \"ios\",\n        \"macos\",\n        \"swift\",\n        \"simulator\",\n        \"xcuitest\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"xcode-build-skill\",\n  \"description\": \"Build and manage iOS/macOS apps using native xcodebuild and xcrun simctl CLI tools. Replaces XcodeBuildMCP with direct CLI commands and XCUITest for UI automation.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"pz\"\n  },\n  \"repository\": \"https://github.com/pzep1/xcode-build-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"xcode\",\n    \"ios\",\n    \"macos\",\n    \"swift\",\n    \"xcodebuild\",\n    \"simctl\",\n    \"simulator\",\n    \"xcuitest\",\n    \"ui-testing\"\n  ]\n}\n",
+        "README.md": "# xcode-build-skill\n\nAn agent plugin that teaches your agent to build and manage iOS/macOS projects using native Xcode CLI tools (`xcodebuild`, `xcrun simctl`) instead of MCP servers.\n\n## Installation\n\n### Option 1: Install from skills.sh (Recommended)\n\nnpx skills add pzep1/xcode-build-skill\n\n## What It Does\n\nThis plugin provides agents with comprehensive guidance for:\n\n- **Building iOS/macOS apps** with `xcodebuild`\n- **Managing simulators** with `xcrun simctl` (boot, install, launch, logs)\n- **Taking screenshots** and recording video\n- **UI automation** via XCUITest framework (tap, type, gestures, element queries)\n\n## Why Use This?\n\nInstead of relying on external MCP servers like XcodeBuildMCP, this plugin teaches Claude to use Apple's native CLI tools directly.\n\n| Aspect | MCP Approach | This Plugin |\n|--------|--------------|-------------|\n| Dependencies | External MCP server | None (native tools) |\n| Flexibility | Limited to MCP tools | Full CLI capabilities |\n| UI Automation | Coordinate-based | Semantic element targeting |\n| Learning | Abstracts away details | Teaches actual commands |\n\n## Usage\n\nOnce installed, the skill auto-activates when you ask Claude about:\n\n- Building iOS/macOS apps\n- Running simulators\n- Managing Xcode projects\n- UI testing and automation\n\n**Example prompts:**\n- \"Build the app for iPhone simulator\"\n- \"List available simulators\"\n- \"Take a screenshot of the running app\"\n- \"How do I tap a button in a UI test?\"\n\n## Plugin Structure\n\n```\nxcode-build-skill/\n├── .claude-plugin/\n│   ├── plugin.json           # Plugin manifest\n│   └── marketplace.json      # Marketplace manifest\n├── skills/\n│   └── xcode-build/\n│       ├── SKILL.md          # Main skill definition\n│       ├── CLI_REFERENCE.md  # xcodebuild + simctl reference\n│       └── XCUITEST_GUIDE.md # UI automation guide\n├── README.md\n└── LICENSE\n```\n\n## Quick Reference\n\n### Build for Simulator\n\n```bash\n# Get simulator UUID\nUDID=$(xcrun simctl list devices --json | jq -r '.devices | .[].[] | select(.name==\"iPhone 16 Pro\") | .udid' | head -1)\n\n# Build\nxcodebuild -workspace App.xcworkspace -scheme App \\\n  -destination \"platform=iOS Simulator,id=$UDID\" build\n```\n\n### Simulator Management\n\n```bash\nxcrun simctl list devices          # List simulators\nxcrun simctl boot $UDID            # Boot simulator\nxcrun simctl install $UDID App.app # Install app\nxcrun simctl launch $UDID com.id   # Launch app\n```\n\n### Screenshots\n\n```bash\nxcrun simctl io $UDID screenshot /tmp/screenshot.png\n```\n\n### UI Automation (XCUITest)\n\n```swift\nlet app = XCUIApplication()\napp.launch()\n\napp.textFields[\"email\"].tap()\napp.textFields[\"email\"].typeText(\"user@example.com\")\napp.buttons[\"Login\"].tap()\n\nXCTAssertTrue(app.staticTexts[\"Welcome\"].exists)\n```\n\n## Requirements\n\n- macOS with Xcode installed\n- agentic harness\n- `jq` (optional, for parsing JSON output)\n\n## License\n\nMIT License - see [LICENSE](LICENSE)\n\n## Contributing\n\nContributions welcome! Please feel free to submit issues and pull requests.\n\n---\n"
+      },
+      "plugins": [
+        {
+          "name": "xcode-build-skill",
+          "source": "./",
+          "description": "Build and manage iOS/macOS apps using native xcodebuild and xcrun simctl CLI tools. Replaces XcodeBuildMCP with direct CLI commands and XCUITest for UI automation.",
+          "version": "1.0.0",
+          "author": {
+            "name": "pz"
+          },
+          "license": "MIT",
+          "keywords": [
+            "xcode",
+            "ios",
+            "macos",
+            "swift",
+            "simulator",
+            "xcuitest"
+          ],
+          "categories": [
+            "ios",
+            "macos",
+            "simulator",
+            "swift",
+            "xcode",
+            "xcuitest"
+          ],
+          "install_commands": [
+            "/plugin marketplace add pzep1/xcode-build-skill",
+            "/plugin install xcode-build-skill@xcode-build-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

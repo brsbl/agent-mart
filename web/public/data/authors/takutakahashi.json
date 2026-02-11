@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "takutakahashi",
+    "display_name": "Takuya TAKAHASHI",
+    "avatar_url": "https://avatars.githubusercontent.com/u/38676393?u=02a184f0bbfea58a35544b008e90ec1f7633ed05&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-plugins",
+      "version": null,
+      "description": "Claude Code plugins marketplace - A collection of useful skills and agents for Claude Code",
+      "repo_full_name": "takutakahashi/claude-code-plugins",
+      "repo_url": "https://github.com/takutakahashi/claude-code-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-03T10:46:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-plugins\",\n  \"owner\": {\n    \"name\": \"takutakahashi\",\n    \"email\": \"and3k0208@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins marketplace - A collection of useful skills and agents for Claude Code\",\n    \"repository\": \"https://github.com/takutakahashi/claude-code-plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"build-test-tools\",\n      \"source\": \"./plugins/build-test-tools\",\n      \"description\": \"Automated build and test execution tools. Supports Node.js, Python, Rust, Go, Java, Ruby and more.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"takutakahashi\"\n      },\n      \"keywords\": [\"build\", \"test\", \"automation\", \"ci\", \"testing\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins Marketplace\n\nA collection of useful skills and agents for Claude Code.\n\n## Installation\n\nAdd this marketplace to your Claude Code:\n\n```bash\n/plugin marketplace add takutakahashi/claude-code-plugins\n```\n\nThen enable the plugins you want:\n\n```bash\n/plugin enable build-test-tools@claude-code-plugins\n```\n\n## Available Plugins\n\n### build-test-tools\n\nAutomated build and test execution tools for Claude Code.\n\n**Features:**\n- Automatic project type detection (Node.js, Python, Rust, Go, Java, Ruby, etc.)\n- Build execution with error analysis\n- Test execution with failure diagnostics\n- Automatic fix suggestions\n- Linting integration\n\n**Included Components:**\n\n| Type | Name | Description |\n|------|------|-------------|\n| Agent | `build-test-runner` | Builds projects and runs tests with automatic failure analysis |\n| Skill | `build-test-auto` | Automatically triggered when code changes are made or tests need verification |\n\n**Usage:**\n\n```\n# Explicit invocation via Task tool\nUse the build-test-runner subagent to build and test the project\n\n# Natural language\nBuild and run tests for this project\nFix the failing tests\n```\n\n**Supported Project Types:**\n\n| Project Type | Build File | Build Command | Test Command |\n|-------------|-----------|---------------|--------------|\n| Node.js | `package.json` | `npm run build` | `npm test` |\n| Python | `pyproject.toml` / `setup.py` | `pip install -e .` | `pytest` |\n| Rust | `Cargo.toml` | `cargo build` | `cargo test` |\n| Go | `go.mod` | `go build ./...` | `go test ./...` |\n| Java (Maven) | `pom.xml` | `mvn compile` | `mvn test` |\n| Java (Gradle) | `build.gradle` | `./gradlew build` | `./gradlew test` |\n| Ruby | `Gemfile` | `bundle install` | `bundle exec rspec` |\n| Make | `Makefile` | `make` | `make test` |\n\n## Directory Structure\n\n```\nclaude-code-plugins/\n├── .claude-plugin/\n│   └── marketplace.json       # Marketplace manifest\n├── plugins/\n│   └── build-test-tools/      # Build & Test plugin\n│       ├── .claude-plugin/\n│       │   └── plugin.json    # Plugin manifest\n│       ├── agents/\n│       │   └── build-test-runner.md\n│       └── skills/\n│           └── build-test-auto/\n│               └── SKILL.md\n├── README.md\n└── LICENSE\n```\n\n## Contributing\n\n1. Fork this repository\n2. Create a new plugin in `plugins/your-plugin-name/`\n3. Add plugin manifest at `plugins/your-plugin-name/.claude-plugin/plugin.json`\n4. Update `.claude-plugin/marketplace.json` to include your plugin\n5. Submit a pull request\n\n### Plugin Structure\n\nEach plugin should have:\n\n```\nplugins/your-plugin/\n├── .claude-plugin/\n│   └── plugin.json     # Required: Plugin manifest\n├── agents/             # Optional: Custom subagents\n│   └── your-agent.md\n├── skills/             # Optional: Skills\n│   └── your-skill/\n│       └── SKILL.md\n├── commands/           # Optional: Slash commands\n│   └── your-command.md\n└── README.md           # Recommended: Plugin documentation\n```\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n",
+        "plugins/build-test-tools/README.md": "# build-test-tools\n\nAutomated build and test execution tools for Claude Code.\n\n## Features\n\n- **Automatic Project Detection**: Identifies project type from build files\n- **Build Execution**: Runs appropriate build commands with error analysis\n- **Test Execution**: Runs test suites with verbose output\n- **Failure Analysis**: Provides root cause analysis for failing tests\n- **Auto-Fix Suggestions**: Suggests and applies fixes for common issues\n- **Lint Integration**: Runs linting after tests pass\n\n## Components\n\n### Agent: build-test-runner\n\nA subagent that can be invoked to build and test projects.\n\n**Usage:**\n```\nUse the build-test-runner subagent to build and test the project\n```\n\n### Skill: build-test-auto\n\nA skill that is automatically triggered when:\n- Code changes are made\n- Tests fail\n- Before creating pull requests\n- When verifying code quality\n\n## Supported Projects\n\n| Type | Detection | Build | Test |\n|------|-----------|-------|------|\n| Node.js | `package.json` | `npm run build` | `npm test` |\n| Python | `pyproject.toml`, `setup.py` | `pip install -e .` | `pytest` |\n| Rust | `Cargo.toml` | `cargo build` | `cargo test` |\n| Go | `go.mod` | `go build ./...` | `go test ./...` |\n| Java (Maven) | `pom.xml` | `mvn compile` | `mvn test` |\n| Java (Gradle) | `build.gradle` | `./gradlew build` | `./gradlew test` |\n| Ruby | `Gemfile` | `bundle install` | `bundle exec rspec` |\n| Make | `Makefile` | `make` | `make test` |\n\n## Installation\n\n```bash\n/plugin marketplace add takutakahashi/claude-code-plugins\n/plugin enable build-test-tools@claude-code-plugins\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "build-test-tools",
+          "source": "./plugins/build-test-tools",
+          "description": "Automated build and test execution tools. Supports Node.js, Python, Rust, Go, Java, Ruby and more.",
+          "version": "1.0.0",
+          "author": {
+            "name": "takutakahashi"
+          },
+          "keywords": [
+            "build",
+            "test",
+            "automation",
+            "ci",
+            "testing"
+          ],
+          "categories": [
+            "automation",
+            "build",
+            "ci",
+            "test",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add takutakahashi/claude-code-plugins",
+            "/plugin install build-test-tools@claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

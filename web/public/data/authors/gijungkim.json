@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "GijungKim",
+    "display_name": "Tony(Gijung) Kim",
+    "avatar_url": "https://avatars.githubusercontent.com/u/44659712?u=25437e9e3539add3a39be8115c9216eb576ee3eb&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "resolve-prs",
+      "version": null,
+      "description": "Automatically resolve Dependabot PRs - assesses risk, tests locally, merges safe ones, fixes breaking changes, and closes incompatible ones.",
+      "repo_full_name": "GijungKim/resolve-prs",
+      "repo_url": "https://github.com/GijungKim/resolve-prs",
+      "repo_description": "Claude Code skill that automatically resolves Dependabot PRs - assesses risk, tests locally, merges safe ones, fixes breaking changes, closes incompatible ones.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-11T13:05:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"resolve-prs\",\n  \"owner\": {\n    \"name\": \"GijungKim\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"resolve-prs\",\n      \"source\": \"./\",\n      \"description\": \"Automatically resolve Dependabot PRs - assesses risk, tests locally, merges safe ones, fixes breaking changes, and closes incompatible ones.\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"resolve-prs\",\n  \"description\": \"Automatically resolve Dependabot PRs - assesses risk, tests locally, merges safe ones, fixes breaking changes, and closes incompatible ones with clear explanations.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"GijungKim\"\n  }\n}\n",
+        "README.md": "# resolve-prs\n\nA [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that automatically resolves Dependabot PRs on your GitHub repos.\n\nInstead of manually reviewing each Dependabot PR, this skill:\n\n1. **Assesses risk** - categorizes each PR as low/medium/high risk based on semver, peer deps, and framework constraints\n2. **Fetches changelogs** - pulls release notes and migration guides to anticipate breaking changes before testing\n3. **Tests locally** - checks out risky PRs and runs your project's compile, lint, and test commands\n4. **Merges safe ones** - auto-merges patch bumps and verified-safe updates\n5. **Fixes breaking ones** - migrates code for known breaking changes (API renames, config format changes, mock updates) and merges\n6. **Closes incompatible ones** - with a clear comment explaining why\n7. **Learns from fixes** - when it fixes a novel breaking change, it records the pattern so it handles it automatically next time\n\n## Install\n\n```bash\n/plugin marketplace add GijungKim/resolve-prs\n/plugin install resolve-prs@resolve-prs\n```\n\nOr manually copy `skills/resolve-prs/SKILL.md` to `~/.claude/skills/resolve-prs/SKILL.md`.\n\n## Usage\n\n```bash\n# Resolve PRs on the current repo\n/resolve-prs\n\n# Target a specific repo\n/resolve-prs owner/repo\n\n# Process all git repos in the current directory (parallel, one agent per repo)\n/resolve-prs --all\n\n# Assess PRs without taking action (just report)\n/resolve-prs --dry-run\n\n# Combine flags\n/resolve-prs --all --dry-run\n```\n\n## Prerequisites\n\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed\n- [`gh` CLI](https://cli.github.com/) authenticated with repo access\n- Your project's package manager (bun, npm, yarn, or pnpm)\n\n## What it knows about\n\nThe skill includes a growing knowledge base of common breaking changes it can detect and handle:\n\n| Pattern | What it does |\n|---------|-------------|\n| ESLint 8 -> 9+ | Detects flat config requirement, closes if not migrated |\n| Jest major bumps | Checks framework preset compatibility (jest-expo, etc.) |\n| react / react-dom mismatch | Closes if versions would diverge |\n| react-native-mmkv 3 -> 4 | Migrates `new MMKV()` to `createMMKV()`, fixes `.delete()` -> `.remove()`, adds jest mock |\n| Expo SDK pins | Respects Expo version constraints |\n| Peer dependency conflicts | Detects and closes incompatible bumps |\n\n### Auto-learn\n\nWhen the skill fixes a novel breaking change not in its knowledge base, it automatically records the pattern. This means it gets smarter the more you use it. Patterns are kept generalizable (not project-specific), capped at 30 per category, and consolidated when they get stale.\n\n## How `--all` works\n\nWhen you pass `--all`, the skill:\n\n1. Finds all git repos within the current directory (up to 2 levels deep)\n2. Spins up a Claude team with one agent per repo\n3. Each agent independently runs the full PR resolution workflow\n4. Results are collected into a unified summary table\n\nThis is useful when you have a directory of projects (e.g., `~/projects/`) and want to batch-resolve Dependabot PRs across all of them.\n\n## How `--dry-run` works\n\nDry-run mode goes through the full assessment workflow (listing PRs, fetching changelogs, categorizing risk, testing locally) but skips all merge/close/fix actions. The report uses \"Would merge\", \"Would close\", \"Would fix & merge\" so you can review what it plans to do before running it for real.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "resolve-prs",
+          "source": "./",
+          "description": "Automatically resolve Dependabot PRs - assesses risk, tests locally, merges safe ones, fixes breaking changes, and closes incompatible ones.",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add GijungKim/resolve-prs",
+            "/plugin install resolve-prs@resolve-prs"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "fraim-ai",
+    "display_name": "Fraim Pty. Ltd.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/118649995?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "fraim-plugins",
+      "version": null,
+      "description": "Invisible decision capture — decisions are captured as you talk",
+      "repo_full_name": "fraim-ai/fraim-toolkit",
+      "repo_url": "https://github.com/fraim-ai/fraim-toolkit",
+      "repo_description": "Decision DNA toolkit — graph validation, governance hooks, MCP server, and skills for fraim decision systems",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-11T03:46:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"fraim-plugins\",\n  \"owner\": { \"name\": \"Kyle Slater\" },\n  \"plugins\": [\n    {\n      \"name\": \"dna\",\n      \"version\": \"3.0.0\",\n      \"source\": \"./\",\n      \"description\": \"Invisible decision capture — decisions are captured as you talk\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"dna\",\n  \"description\": \"Invisible decision capture — decisions are captured as you talk\",\n  \"version\": \"3.0.0\",\n  \"author\": { \"name\": \"Kyle Slater\" },\n  \"hooks\": \"./hooks/hooks.json\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# fraim-toolkit (dna plugin v2.0)\n\nInvisible decision capture for fraim projects. Decisions are captured as you talk — the person never needs to know the system exists.\n\n## How It Works\n\nThe person talks naturally. The plugin runs two loops:\n\n**Main Loop (every turn):** The main agent checks for conflicts with existing decisions, processes inbox messages from background agents, and spawns background work when the person says something substantive.\n\n**Background Agent (on demand, haiku):** A lightweight agent that either maintains the decision graph (capturing new decisions, detecting contradictions) or synthesizes information across the graph. Communicates findings back through an inbox.\n\nThe person never sees decision IDs, levels, states, or any internal machinery. They just have a design conversation.\n\n## What's Included\n\n```\n.claude-plugin/\n  plugin.json               Plugin metadata (v2.0.0)\n  marketplace.json          Marketplace definition (fraim-plugins)\nagents/\n  dna-agent.md              Background agent: maintain + analyze modes\nhooks/\n  hooks.json                Hook configuration (SessionStart, PreToolUse, PostToolUse)\nscripts/\n  session-start.sh          SessionStart: auto-bootstrap, behavior rules, briefing\n  protect-contracts.sh      PreToolUse: block contract edits, warn on governance files\n  validate-frontmatter.sh   PreToolUse: validate decision frontmatter\n  post-edit-validate.sh     PostToolUse: advisory validation after edits\nskills/\n  compile/SKILL.md          Compile decisions to contracts (explicit only)\ntools/\n  dna-graph.py              CLI: 15 commands for graph operations\nformat.md                   Decision format specification\n```\n\n## Install\n\n### Local development\n\n```sh\nclaude --plugin-dir ~/Desktop/fraim-toolkit\n```\n\n### From marketplace (when published)\n\n```\n/plugin marketplace add <marketplace-url>\n/plugin install dna@fraim-plugins\n```\n\n## dna-graph Commands\n\n### Read\n\n| Command | Purpose |\n|---------|---------|\n| `validate` | Check frontmatter, graph topology, and body content |\n| `cascade NODE [--reverse]` | Propagation preview (downstream or upstream) |\n| `index` | Regenerate INDEX.md per directory |\n| `health` | Regenerate HEALTH.md + summary |\n| `search TERM [...]` | Search decisions by title and body content |\n| `frontier` | Compute the decision frontier |\n| `check \"keywords\"` | Fast scope/conflict check (committed only) |\n| `progress` | Mechanical counts for progress reporting |\n\n### Write\n\n| Command | Purpose |\n|---------|---------|\n| `create DEC-NNN` | Create a new decision |\n| `set DEC-NNN field value` | Update frontmatter field |\n| `edit DEC-NNN \"old\" \"new\"` | Replace body text with delta reporting |\n| `compile-manifest` | Deterministic skeleton for contracts |\n| `bootstrap` | Auto-scaffold project structure |\n\n### Inbox\n\n| Command | Purpose |\n|---------|---------|\n| `inbox add` | Add a message (background → main agent) |\n| `inbox list [--undelivered]` | List messages |\n| `inbox deliver MSG-NNN` | Mark messages as delivered |\n| `inbox clear [--delivered\\|--all]` | Clear messages |\n\n### Scratchpad\n\n| Command | Purpose |\n|---------|---------|\n| `scratchpad add` | Add pre-decision entry |\n| `scratchpad list` | List entries |\n| `scratchpad mature SP-NNN DEC-NNN` | Graduate entry to decision |\n| `scratchpad-summary` | One-line summary of active entries |\n\n## Background Agent Modes\n\n| Mode | Triggered By | Actions |\n|------|-------------|---------|\n| **Maintain** | Opinions, decisions, preferences | Create decisions (always `suggested`), enrich existing, scratchpad, detect conflicts |\n| **Analyze** | Questions needing synthesis, gap detection | Search across graph, synthesize relationships, identify gaps |\n\nBoth modes report findings via the inbox. The main agent weaves them into subsequent responses.\n\n## Project Requirements\n\n- `.dna/config.json` at project root (auto-created by `bootstrap`)\n- `dna/` and/or `constitution/` directories\n- `contracts/` directory for compiled output\n\nFresh projects are auto-bootstrapped on first session start.\n\n## Configuration\n\n`.dna/config.json` controls project-specific linting:\n\n```json\n{\n  \"project\": {\n    \"name\": \"MyProject\"\n  },\n  \"terminology\": {\n    \"flagged_term\": \"user\",\n    \"replacement\": \"person\",\n    \"exemptions\": [\"\\\"user\\\"\", \"`user`\"],\n    \"exempt_ids\": [\"DEC-005\"]\n  },\n  \"deleted_artifacts\": [\n    {\"pattern\": \"\\\\bOLD_FILE\\\\.md\\\\b\", \"label\": \"OLD_FILE.md (archived)\"}\n  ]\n}\n```\n\nAll config sections are optional. Core graph operations always work without configuration.\n"
+      },
+      "plugins": [
+        {
+          "name": "dna",
+          "version": "3.0.0",
+          "source": "./",
+          "description": "Invisible decision capture — decisions are captured as you talk",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fraim-ai/fraim-toolkit",
+            "/plugin install dna@fraim-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

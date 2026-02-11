@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "cmungall",
+    "display_name": "Chris Mungall",
+    "avatar_url": "https://avatars.githubusercontent.com/u/50745?u=889e19a8e39e32e804b080f1a7fb086a13bac131&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lakehouse-skills",
+      "version": null,
+      "description": "Skills for querying genomics data lakehouses (JGI, KBase/BERDL)",
+      "repo_full_name": "cmungall/lakehouse-skills",
+      "repo_url": "https://github.com/cmungall/lakehouse-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T20:24:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lakehouse-skills\",\n  \"owner\": {\n    \"name\": \"Chris Mungall\",\n    \"email\": \"cjmungall@lbl.gov\"\n  },\n  \"metadata\": {\n    \"description\": \"Skills for querying genomics data lakehouses (JGI, KBase/BERDL)\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"kbase-query\",\n      \"description\": \"Skills for querying the KBase/BERDL Datalake via the MCP REST API\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./kbase-query\"\n      ]\n    },\n    {\n      \"name\": \"jgi-lakehouse\",\n      \"description\": \"Skills for querying the JGI Dremio Lakehouse (GOLD, IMG databases)\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./jgi-lakehouse\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Lakehouse Skills\n\n![Lakehouse](.assets/lakehouse.png)\n\nSkills for querying genomics data lakehouses including JGI (GOLD, IMG) and KBase/BERDL.\n\nSkills are folders of instructions, scripts, and resources that Claude loads dynamically to improve performance on specialized tasks.\n\nFor more information, check out:\n- [What are skills?](https://support.claude.com/en/articles/12512176-what-are-skills)\n- [Using skills in Claude](https://support.claude.com/en/articles/12512180-using-skills-in-claude)\n- [How to create custom skills](https://support.claude.com/en/articles/12512198-creating-custom-skills)\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| [kbase-query](./kbase-query/) | Query KBase/BERDL Datalake via REST API (pangenomics, NMDC, UniProt) |\n| [jgi-lakehouse](./jgi-lakehouse/) | Query JGI Dremio Lakehouse (GOLD, IMG databases) |\n\n## Databases Covered\n\n### KBase/BERDL (via REST API)\n- `kbase_ke_pangenome` - Pangenomic data with GTDB taxonomy\n- `nmdc_core` - NMDC microbiome data\n- `kbase_genomes` - KBase genome collection\n- `kbase_uniprot_*` - UniProt reference data\n\n### JGI Lakehouse (via Dremio SQL)\n- GOLD - Genomes OnLine Database (genome project metadata)\n- IMG Core - Integrated Microbial Genomes (genes, taxa, annotations)\n- IMG Extended - Pathway and secondary metabolite data\n\n## Use in Claude Code\n\n### Option 1: Copy and paste (simplest)\n\nFind the skill you need and copy the folder structure into the `.claude/skills/` folder of your repo.\n\n- PROs: simplest, adaptable; if checked in to your repo, everyone (+actions) can use it\n- CONs: harder to keep in sync with upstream changes\n\n### Option 2: Via marketplace\n\nRegister this repository as a Claude Code Plugin marketplace:\n\n```\n/plugin marketplace add cmungall/lakehouse-skills\n```\n\nThen browse and install via `/plugin`:\n\n```\n> /plugin\n  1. Browse and install plugins  <- select this\n  2. Manage and uninstall plugins\n  3. Add marketplace\n  4. Manage marketplaces\n```\n\nSelect `lakehouse-skills` and choose the skills you need.\n\n### Dev use\n\nClone this repo and:\n\n```\n/plugin marketplace add /path/to/lakehouse-skills/.claude-plugin/marketplace.json\n```\n\n## Prerequisites\n\n### KBase/BERDL\n- `KBASE_TOKEN` environment variable (get from KBase JupyterHub: `BERDLSettings().KBASE_AUTH_TOKEN`)\n- `jq` for JSON processing\n- Tokens expire weekly\n\n### JGI Lakehouse\n- `pip install linkml-store[dremio]`\n- `DREMIO_USER` and `DREMIO_PASSWORD` environment variables\n- Access to JGI lakehouse (requires authorization)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "kbase-query",
+          "description": "Skills for querying the KBase/BERDL Datalake via the MCP REST API",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./kbase-query"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cmungall/lakehouse-skills",
+            "/plugin install kbase-query@lakehouse-skills"
+          ]
+        },
+        {
+          "name": "jgi-lakehouse",
+          "description": "Skills for querying the JGI Dremio Lakehouse (GOLD, IMG databases)",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./jgi-lakehouse"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cmungall/lakehouse-skills",
+            "/plugin install jgi-lakehouse@lakehouse-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

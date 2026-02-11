@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "omgpointless",
+    "display_name": "Pointless",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2750716?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aspy",
+      "version": null,
+      "description": "Plugin marketplace for Aspy - a TUI observability proxy for Claude Code",
+      "repo_full_name": "omgpointless/aspy",
+      "repo_url": "https://github.com/omgpointless/aspy",
+      "repo_description": "Real-time TUI proxy to visualize Claude Code tool calls, thinking blocks, and token usage",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2025-12-11T20:19:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aspy\",\n  \"owner\": {\n    \"name\": \"aspy contributors\",\n    \"url\": \"https://github.com/omgpointless/aspy\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugin marketplace for Aspy - a TUI observability proxy for Claude Code\",\n    \"version\": \"0.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aspy\",\n      \"source\": \"./\",\n      \"description\": \"Observability and development tools for Claude Code sessions\",\n      \"version\": \"0.2.0\",\n      \"author\": {\n        \"name\": \"aspy contributors\",\n        \"url\": \"https://github.com/omgpointless/aspy\"\n      },\n      \"homepage\": \"https://github.com/omgpointless/aspy\",\n      \"repository\": \"https://github.com/omgpointless/aspy\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"observability\", \"proxy\", \"tui\", \"statistics\", \"cost-tracking\"],\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"aspy\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Observability and development tools for Claude Code sessions\",\n  \"author\": {\n    \"name\": \"aspy contributors\",\n    \"url\": \"https://github.com/omgpointless/aspy\"\n  },\n  \"homepage\": \"https://github.com/omgpointless/aspy\",\n  \"repository\": \"https://github.com/omgpointless/aspy\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"observability\", \"proxy\", \"tui\", \"statistics\", \"cost-tracking\"],\n  \"commands\": \"./commands/\",\n  \"mcpServers\": {\n    \"aspy\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"aspy-mcp\"],\n      \"env\": {\n        \"ASPY_CLIENT_ID\": \"${ASPY_CLIENT_ID}\"\n      }\n    }\n  }\n}\n",
+        "README.md": "![Aspy (Anthropic Spy)](docs/images/aspy-logo-v4.png)\n\n[![CI](https://github.com/omgpointless/aspy/actions/workflows/ci.yml/badge.svg)](https://github.com/omgpointless/aspy/actions/workflows/ci.yml)\n[![Release](https://img.shields.io/github/v/release/omgpointless/aspy?include_prereleases)](https://github.com/omgpointless/aspy/releases)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n[![npm](https://img.shields.io/npm/v/aspy-mcp)](https://www.npmjs.com/package/aspy-mcp)\n\n**Observability proxy for Claude Code** — see what's happening between Claude and the Anthropic API.\n\n![Demo](demo.gif)\n\n## What is Aspy?\n\nAspy sits between Claude Code and the Anthropic API, intercepting all traffic and giving you visibility into tool calls, thinking blocks, token usage, and costs. Run it as a TUI proxy, integrate via MCP, or install the Claude Code plugin.\n\n## What It Does\n\n- **Real-time TUI** — Watch tool calls, thinking blocks, and API responses as they stream\n- **Token & cost tracking** — Cumulative session statistics with per-model pricing\n- **Thinking capture** — Dedicated panel showing Claude's reasoning in real-time\n- **Structured logs** — JSON Lines format for analysis with `jq`\n- **Multi-client routing** — Track multiple Claude Code instances through one proxy\n- **REST API & MCP** — Programmatic access to session data\n\n## Get Started\n\n### Option 1: TUI Proxy (Binary)\n\nDownload from [GitHub Releases](https://github.com/omgpointless/aspy/releases) or build from source:\n\n```bash\ncargo install --git https://github.com/omgpointless/aspy\n```\n\nRun the proxy:\n```bash\n# Windows\n.\\aspy.exe\n\n# macOS/Linux\n./aspy\n```\n\nPoint Claude Code at it:\n```bash\n# In a new terminal\nexport ANTHROPIC_BASE_URL=http://127.0.0.1:8080\nclaude\n```\n\n### Optionally: MCP Server\n\nAdd aspy to Claude Code's MCP servers:\n\n```bash\nclaude mcp add aspy -- npx -y aspy-mcp\n```\n\nThis gives Claude Code access to:\n- **Current session**: `aspy_stats`, `aspy_events`, `aspy_context`\n- **Lifetime history**: `aspy_recall`, `aspy_lifetime` (semantic + keyword search)\n- **Context recovery**: Search past thinking blocks, prompts, and responses across all sessions\n\n> **Note**: Requires the TUI proxy running to collect data.\n\n### Optionally: Claude Code Plugin\n\nInstall the plugin for slash commands:\n\n```bash\n/plugin marketplace add omgpointless/aspy\n```\n\nAfter restarting Claude Code, use `/aspy:stats` to query session metrics. The plugin also includes automatic `cargo fmt` hooks for Rust projects.\n\n## Demo Mode\n\nTry the TUI without Claude Code:\n\n```bash\nASPY_DEMO=1 ./aspy\n```\n\nGenerates mock events to showcase the interface.\n\n## Documentation\n\n| Topic | Description |\n|-------|-------------|\n| [Features](docs/features.md) | Deep dive into all capabilities |\n| [Quick Start](QUICKSTART.md) | Step-by-step setup walkthrough |\n| [CLI Reference](docs/cli-reference.md) | Commands, config options, env vars |\n| [Log Analysis](docs/log-analysis.md) | jq queries for session profiling |\n| [Themes](docs/themes.md) | 32 bundled themes + custom TOML |\n| [Multi-Client Routing](docs/sessions.md) | Track multiple Claude instances |\n| [REST API](docs/api-reference.md) | Programmatic endpoints |\n| [Semantic Search](docs/semantic-search-guide.md) | Configure embeddings for hybrid search |\n| [Request Transformers](docs/transformers.md) | Edit XML tags, inject context conditionally |\n| [API Translation](docs/api-translation-guide.md) | Use Claude Code with any OpenAI-compatible backend |\n| [Architecture](docs/architecture.md) | For contributors |\n\n## Package Managers\n\nHomebrew, Scoop, and Chocolatey packages will be available when the project stabilizes.\n\n## About\n\nMaintainer's first Rust project. Learning journey together with Claude Code which is the whole reason I built this tool to start with.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "aspy",
+          "source": "./",
+          "description": "Observability and development tools for Claude Code sessions",
+          "version": "0.2.0",
+          "author": {
+            "name": "aspy contributors",
+            "url": "https://github.com/omgpointless/aspy"
+          },
+          "homepage": "https://github.com/omgpointless/aspy",
+          "repository": "https://github.com/omgpointless/aspy",
+          "license": "MIT",
+          "keywords": [
+            "observability",
+            "proxy",
+            "tui",
+            "statistics",
+            "cost-tracking"
+          ],
+          "category": "development",
+          "categories": [
+            "cost-tracking",
+            "development",
+            "observability",
+            "proxy",
+            "statistics",
+            "tui"
+          ],
+          "install_commands": [
+            "/plugin marketplace add omgpointless/aspy",
+            "/plugin install aspy@aspy"
+          ]
+        }
+      ]
+    }
+  ]
+}

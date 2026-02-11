@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "AsharibAli",
+    "display_name": "Asharib Ali",
+    "avatar_url": "https://avatars.githubusercontent.com/u/102221198?u=005dd19f8d3bc1e7594e6558678cab961bc13ee6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "whatsappme",
+      "version": null,
+      "description": "Bringing Claude Code to your phone with real-time WhatsApp notifications and two-way messaging.",
+      "repo_full_name": "AsharibAli/whatsapp-me",
+      "repo_url": "https://github.com/AsharibAli/whatsapp-me",
+      "repo_description": "Minimal plugin that lets Claude Code message you on the Whatsapp.",
+      "signals": {
+        "stars": 13,
+        "forks": 2,
+        "pushed_at": "2026-01-26T19:51:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"whatsappme\",\n  \"description\": \"Bringing Claude Code to your phone with real-time WhatsApp notifications and two-way messaging.\",\n  \"homepage\": \"https://github.com/AsharibAli/whatsapp-me\",\n  \"repository\": \"https://github.com/AsharibAli/whatsapp-me\",\n  \"owner\": {\n    \"name\": \"Asharib Ali\",\n    \"email\": \"contact@asharib.com\",\n    \"url\": \"https://asharib.xyz/\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"whatsappme\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Get notified on WhatsApp when Claude completes tasks, encounters errors, or needs your input.\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Asharib Ali\",\n        \"email\": \"contact@asharib.com\"\n      },\n      \"category\": \"productivity\",\n      \"keywords\": [\"whatsapp\", \"messaging\", \"notifications\", \"input\", \"automation\", \"mcp\"]\n    }\n  ]\n}",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"whatsappme\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Get notified on WhatsApp when Claude completes tasks, encounters errors, or needs your input\",\n  \"author\": {\n    \"name\": \"Asharib Ali\",\n    \"email\": \"contact@asharib.com\",\n    \"url\": \"https://github.com/AsharibAli\"\n  },\n  \"homepage\": \"https://github.com/AsharibAli/whatsapp-me\",\n  \"repository\": \"https://github.com/AsharibAli/whatsapp-me\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"whatsapp\", \"messaging\", \"notifications\", \"input\", \"automation\", \"mcp\"],\n  \"hooks\": \"./hooks/hooks.json\",\n  \"skills\": \"./skills\",\n  \"mcpServers\": {\n    \"whatsappme\": {\n      \"command\": \"bun\",\n      \"args\": [\"run\", \"--cwd\", \"${CLAUDE_PLUGIN_ROOT}/server\", \"start\"],\n      \"env\": {\n        \"WHATSAPPME_PHONE_NUMBER_ID\": \"${WHATSAPPME_PHONE_NUMBER_ID}\",\n        \"WHATSAPPME_ACCESS_TOKEN\": \"${WHATSAPPME_ACCESS_TOKEN}\",\n        \"WHATSAPPME_APP_SECRET\": \"${WHATSAPPME_APP_SECRET}\",\n        \"WHATSAPPME_VERIFY_TOKEN\": \"${WHATSAPPME_VERIFY_TOKEN}\",\n        \"WHATSAPPME_USER_PHONE_NUMBER\": \"${WHATSAPPME_USER_PHONE_NUMBER}\",\n        \"WHATSAPPME_NGROK_AUTHTOKEN\": \"${WHATSAPPME_NGROK_AUTHTOKEN}\",\n        \"WHATSAPPME_PORT\": \"${WHATSAPPME_PORT:-3333}\"\n      }\n    }\n  }\n}\n",
+        "README.md": "# WhatsApp-Me\n\nA Claude Code plugin that lets Claude message you on WhatsApp. Get notified on your phone when Claude finishes tasks, runs into errors, or needs your input.\n\n![WhatsApp-Me](whatsapp-me.png)\n\n## Features\n\n- 📱 **Two-way messaging** - Claude can send messages AND wait for your replies\n- ✅ **Task completion alerts** - Know when work is done\n- ❌ **Error notifications** - Get alerted when something goes wrong\n- 🤔 **Questions via WhatsApp** - Answer Claude's questions from your phone\n\n## How It Works\n\n```\nClaude Code                    WhatsApp-Me MCP Server (local)\n    │                                    │\n    │  \"I finished the task...\"          │\n    ▼                                    ▼\nPlugin ────stdio──────────────────► MCP Server\n                                         │\n                                         ├─► ngrok tunnel\n                                         │\n                                         ▼\n                                   WhatsApp Cloud API (Meta)\n                                         │\n                                         ▼\n                                   📱 Your Phone buzzes\n                                   You reply via WhatsApp\n                                   Text returns to Claude\n```\n\n---\n\n## Quick Start\n\n### Step 1: Create Required Accounts\n\nYou need two free accounts:\n\n| Account | Sign up |\n|---------|---------|\n| Meta Developer | [developers.facebook.com](https://developers.facebook.com/) |\n| ngrok | [ngrok.com](https://ngrok.com/) |\n\n### Step 2: Set Up WhatsApp API\n\n<details>\n<summary><strong>📋 Click to expand WhatsApp setup</strong></summary>\n\n#### 2.1 Create Meta App\n1. Go to [Meta Developer Console](https://developers.facebook.com/apps/)\n2. Click **Create App** → Select **Other** (This is important to see the Business option)\n3. Select **Business** as the app type → Click **Next**\n4. Name your app (e.g., \"Message-Me\") → Click **Create App**\n\n#### 2.2 Add WhatsApp Product\n1. In your app dashboard, scroll down to **WhatsApp** → Click **Set up**\n2. You will be redirected to the **API Setup** page in the sidebar\n\n#### 2.3 Get Your Credentials\nFrom the **API Setup** page:\n- Note your **Phone Number ID** (under \"From\" field)\n- **Important**: The token on this page is **Temporary** (expires in 24 hours). For a permanent setup, follow the steps below.\n\n#### 2.4 Generate Permanent Access Token\nTo avoid updating your token every 24 hours, create a System User:\n1. Go to [Meta Business Settings](https://business.facebook.com/settings/)\n2. Select **Users > System Users** → Click **Add** → Name it \"Claude-Bot\" → Role: **Admin**\n3. Click **Assign Assets** → Select **Apps** → Select your App → Enable **Full Control** → Save\n4. Select the user again → Click **Generate New Token**\n5. Select your App → Check `whatsapp_business_messaging` and `whatsapp_business_management`\n6. Set Expiration to **Never** (or the longest available) → Click **Generate**\n7. **Copy this token immediately** (it will only be shown once)\n\n#### 2.4 Get App Secret\n1. Go to **Settings → Basic**\n2. Find **App Secret** → Click **Show** → Copy it\n\n#### 2.5 Add Your Phone Number\n1. In **API Setup**, enter your WhatsApp number in the \"To\" field\n2. Format: `+15551234567` (country code, no spaces)\n3. Click **Send Code** → Enter the code you receive on WhatsApp\n\n</details>\n\n### Step 3: Get ngrok Token\n\n<details>\n<summary><strong>📋 Click to expand ngrok setup</strong></summary>\n\n1. Sign up at [ngrok.com](https://ngrok.com)\n2. Go to [Your Authtoken](https://dashboard.ngrok.com/get-started/your-authtoken)\n3. Copy your **authtoken**\n\n</details>\n\n### Step 4: Set Environment Variables\n\nOpen `~/.claude/settings.json` and add your credentials.\n\n**Windows (PowerShell):**\n```powershell\nnotepad \"$env:USERPROFILE\\.claude\\settings.json\"\n```\n\n**macOS/Linux:**\n```bash\nnano ~/.claude/settings.json\n```\n\nAdd the following to the `env` object:\n\n```json\n{\n  \"env\": {\n    \"WHATSAPPME_PHONE_NUMBER_ID\": \"your_phone_number_id\",\n    \"WHATSAPPME_ACCESS_TOKEN\": \"your_access_token\",\n    \"WHATSAPPME_APP_SECRET\": \"your_app_secret\",\n    \"WHATSAPPME_VERIFY_TOKEN\": \"any_random_string_you_make_up\",\n    \"WHATSAPPME_USER_PHONE_NUMBER\": \"+15551234567\",\n    \"WHATSAPPME_NGROK_AUTHTOKEN\": \"your_ngrok_authtoken\",\n    \"WHATSAPPME_PORT\": \"3333\"\n  }\n}\n```\n\n<details>\n<summary><strong>ℹ️ What each variable does</strong></summary>\n\n| Variable | Description |\n|----------|-------------|\n| `WHATSAPPME_PHONE_NUMBER_ID` | Your Meta WhatsApp sender ID |\n| `WHATSAPPME_ACCESS_TOKEN` | API token to send messages (expires in 24h) |\n| `WHATSAPPME_APP_SECRET` | Used to verify webhook signatures |\n| `WHATSAPPME_VERIFY_TOKEN` | Your custom string to verify webhook setup |\n| `WHATSAPPME_USER_PHONE_NUMBER` | Your phone number to receive messages |\n| `WHATSAPPME_NGROK_AUTHTOKEN` | Authenticates your ngrok tunnel |\n| `WHATSAPPME_PORT` | The local port the server runs on (default: 3333) |\n\n</details>\n\n### Step 5: Install Plugin\n\nIn Claude Code terminal, run:\n\n```\n/plugin marketplace add AsharibAli/whatsapp-me\n/plugin install whatsappme@whatsappme\n```\n\n### Step 6: Get Your Webhook URL & Verify Token\n\nStart Claude Code, and Ask Claude:\n\n```\nWhat's my webhook URL and verify token?\n```\n**Copy this webhook url and verify token**\n\n### Step 7: Configure Webhook\n\nRegister your tunnel URL in Meta to receive messages:\n\n1. In your Meta App sidebar, go to **WhatsApp → Configuration**\n2. Under **Webhook**, click **Edit**\n3. Enter your details from the `get_setup_info` tool:\n   - **Callback URL**: `https://your-ngrok-url/webhook`\n   - **Verify Token**: Same as your `WHATSAPPME_VERIFY_TOKEN`\n4. Click **Verify and Save**\n5. **Crucial**: Under **Webhook fields**, find **messages** → Click **Subscribe**\n\n## Usage\n\nOnce configured, Claude will communicate via WhatsApp:\n\n```\nYou (terminal): \"Create a REST API with authentication\"\n\nClaude: [creates files]\n📱 WhatsApp: \"✅ Created REST API. What would you like next?\"\n📱 You: \"Add tests\"\n\nClaude: [adds tests]\n📱 WhatsApp: \"✅ Added tests. What's next?\"\n📱 You: \"That's all!\"\n\nClaude: [stops]\n```\n\n---\n\n## Troubleshooting\n\n<details>\n<summary><strong>Webhook verification fails</strong></summary>\n\n- Check ngrok is running (look for the URL in terminal)\n- Verify token must match **exactly** (case-sensitive)\n- URL must end with `/webhook`\n- Test: `curl https://your-ngrok-url/health`\n\n</details>\n\n<details>\n<summary><strong>Messages not sending</strong></summary>\n\n- Access token expires after 24 hours - generate a new one\n- Phone number must be verified in Meta console\n- Check API quota in Meta dashboard\n\n</details>\n\n<details>\n<summary><strong>Messages not receiving</strong></summary>\n\n- Check \"messages\" is subscribed in Webhook fields\n- Verify `WHATSAPPME_APP_SECRET` matches Meta app secret\n- Check server logs for signature mismatch errors\n\n</details>\n\n<details>\n<summary><strong>ngrok disconnects</strong></summary>\n\n- Free tier has 2-hour session limit\n- Restart the plugin to get new tunnel\n- Consider ngrok paid plan for stable URLs\n\n</details>\n\n## Development\n\n```bash  \ngit clone https://github.com/AsharibAli/whatsapp-me.git\ncd whatsapp-me && cd server\n\nbun install\nbun run dev\n```\n\n### Inspiration\nThis plugin was inspired by [Call Me](https://github.com/ZeframLou/call-me)\n\n### Support\n\nIf you find this plugin useful, please consider star this repository.\n\n### Build with ❤️ by [Asharib Ali](https://asharib.xyz/)"
+      },
+      "plugins": [
+        {
+          "name": "whatsappme",
+          "version": "1.0.0",
+          "description": "Get notified on WhatsApp when Claude completes tasks, encounters errors, or needs your input.",
+          "source": "./",
+          "author": {
+            "name": "Asharib Ali",
+            "email": "contact@asharib.com"
+          },
+          "category": "productivity",
+          "keywords": [
+            "whatsapp",
+            "messaging",
+            "notifications",
+            "input",
+            "automation",
+            "mcp"
+          ],
+          "categories": [
+            "automation",
+            "input",
+            "mcp",
+            "messaging",
+            "notifications",
+            "productivity",
+            "whatsapp"
+          ],
+          "install_commands": [
+            "/plugin marketplace add AsharibAli/whatsapp-me",
+            "/plugin install whatsappme@whatsappme"
+          ]
+        }
+      ]
+    }
+  ]
+}

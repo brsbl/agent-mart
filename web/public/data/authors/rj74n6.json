@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "rj74n6",
+    "display_name": "Jerry Tang",
+    "avatar_url": "https://avatars.githubusercontent.com/u/476458?u=45597398a2e451ed3953a90b0459558e6ef2fd81&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kie-integrations",
+      "version": null,
+      "description": "Extract structured data from documents (images/PDFs) using a JSON schema via the KIE extraction API",
+      "repo_full_name": "rj74n6/kie-integrations",
+      "repo_url": "https://github.com/rj74n6/kie-integrations",
+      "repo_description": "Agent integrations for doc-extractor. Claude Skill, Claude Code Plugin, MCP server, OpenAI function, and LangChain tool — all wrappers around the KIE API.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-09T07:05:34Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kie-integrations\",\n  \"owner\": {\n    \"name\": \"kie\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"doc-extractor\",\n      \"source\": \"./claude-plugins/doc-extractor\",\n      \"description\": \"Extract structured data from documents (images/PDFs) using a JSON schema via the KIE extraction API\"\n    }\n  ]\n}\n",
+        "README.md": "# KIE Integrations\n\nAgent integrations for the KIE document extraction API. Each package wraps the same underlying API — extract structured data from documents (images/PDFs) using a JSON schema — and exposes it in a format native to a particular agent framework or tool ecosystem.\n\n## Integrations\n\n| Package | Framework | Status |\n|---------|-----------|--------|\n| [`kie-core/`](kie-core/) | Shared Python client (sync + async) | Available |\n| [`claude-skill/`](claude-skill/) | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Skill | Available |\n| [`claude-plugin/`](claude-plugin/) | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plugin | Available |\n| [`mcp-server/`](mcp-server/) | [Model Context Protocol](https://modelcontextprotocol.io/) Server | Available |\n| [`openai-function/`](openai-function/) | [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling) | Available |\n| [`langchain-tool/`](langchain-tool/) | [LangChain Tool](https://python.langchain.com/docs/concepts/tools/) | Available |\n| [`custom-gpt/`](custom-gpt/) | [OpenAI Custom GPT](https://chatgpt.com/gpts) (GPT Store) | Available |\n\n## Architecture\n\n```\n┌─────────────────────────────────────────────────────┐\n│  Agent frameworks                                   │\n│  ┌──────────┐ ┌────────────┐ ┌──────────────┐        │\n│  │MCP Server│ │OpenAI Func │ │LangChain Tool│        │\n│  └────┬─────┘ └─────┬──────┘ └──────┬───────┘        │\n│       └──────────────┼───────────────┘                │\n│                      ▼                               │\n│              ┌──────────────┐                        │\n│              │   kie-core   │  httpx (sync + async)  │\n│              └──────┬───────┘                        │\n└─────────────────────┼───────────────────────────────┘\n                      ▼\n              KIE Extraction API\n              POST /v1/extract\n```\n\nThe `claude-skill/` and `claude-plugin/` are self-contained (no dependency on `kie-core`) and use only the Python standard library.\n\n## Quick start\n\n### Install the workspace\n\n```bash\nuv sync --all-packages --all-extras\n```\n\n### Run all tests\n\n```bash\nuv run pytest kie-core/tests/ mcp-server/tests/ openai-function/tests/ langchain-tool/tests/ -v\n```\n\n### Use an integration\n\n**MCP Server:**\n\n```bash\nuv run kie-mcp-server\n```\n\n**OpenAI Function:**\n\n```python\nfrom kie_openai import TOOLS, handle_tool_call\n```\n\n**LangChain Tool:**\n\n```python\nfrom kie_langchain import KIEExtractDocumentTool\ntool = KIEExtractDocumentTool()\n```\n\n**Claude Code Skill:** Copy or symlink `claude-skill/` into your skills directory.\n\n**Claude Code Plugin:** `claude --plugin-dir ./claude-plugin/doc-extractor`\n\n**Custom GPT:** Follow the setup guide in [`custom-gpt/README.md`](custom-gpt/README.md) to publish to the GPT Store.\n\n## KIE API\n\nAll integrations call the same REST endpoint:\n\n```\nPOST /v1/extract\n```\n\n**Request body:**\n\n```json\n{\n  \"document\": { \"content\": \"<base64>\", \"type\": \"pdf|image\" },\n  \"schema\": {\n    \"vendor_name\": \"string\",\n    \"invoice_date\": \"date (MM/DD/YYYY)\",\n    \"total_amount\": \"number\"\n  },\n  \"options\": { \"model\": \"<model_id>\" }\n}\n```\n\n**Response:** JSON object with extracted field values matching the schema keys.\n\n### Schema format\n\nSchemas are flat JSON objects where keys are field names and values are type hints:\n\n- `\"string\"` — free-form text\n- `\"number\"` — numeric value\n- `\"date (FORMAT)\"` — date with format hint, e.g. `\"date (MM/DD/YYYY)\"`\n- `\"boolean\"` — true/false\n- `\"currency\"` — monetary amount\n- Arrays of objects for tables/line items\n- Any descriptive hint, e.g. `\"5-digit zip code\"`\n\nSee [`claude-skill/references/example_schemas.md`](claude-skill/references/example_schemas.md) for ready-made schemas for invoices, receipts, W-2s, bills of lading, and purchase orders.\n\n## Configuration\n\nSet the `KIE_API_URL` environment variable to point to your extraction service:\n\n```bash\nexport KIE_API_URL=https://your-kie-service.example.com/v1/extract\n```\n\nDefaults to `http://localhost:8000/v1/extract` when not set.\n\n## Repository structure\n\n```\nkie-integrations/\n├── kie-core/                # Shared Python client library\n│   ├── src/kie_core/\n│   │   ├── client.py        #   Sync + async API client (httpx)\n│   │   ├── document.py      #   Document encoding\n│   │   └── schema.py        #   Schema loading\n│   └── tests/\n├── claude-skill/            # Claude Code skill (standalone, stdlib only)\n│   ├── SKILL.md\n│   ├── scripts/extract.py\n│   └── references/\n├── claude-plugin/           # Claude Code plugin (skill + MCP tool)\n│   └── doc-extractor/\n│       ├── skills/extract/\n│       ├── scripts/mcp-server.py\n│       └── .mcp.json\n├── mcp-server/              # MCP server (FastMCP)\n│   ├── src/kie_mcp_server/\n│   └── tests/\n├── openai-function/         # OpenAI function definition + handler\n│   ├── src/kie_openai/\n│   └── tests/\n├── langchain-tool/          # LangChain BaseTool wrapper\n│   ├── src/kie_langchain/\n│   └── tests/\n├── custom-gpt/              # Custom GPT for the OpenAI GPT Store\n│   ├── openapi.yaml         #   OpenAPI spec (Action)\n│   └── system_prompt.md     #   GPT system instructions\n├── pyproject.toml           # uv workspace root\n└── README.md\n```\n\n## Contributing\n\nEach integration lives in its own top-level directory. When adding a new integration:\n\n1. Create a new directory named `<framework>-<format>/` (e.g. `mcp-server/`).\n2. Add a `pyproject.toml` with `kie-core` as a workspace dependency.\n3. Include its own README with installation, usage, and testing instructions.\n4. Use `KIE_API_URL` for endpoint configuration to stay consistent.\n5. Add the package to the workspace `members` list in the root `pyproject.toml`.\n6. Write tests — see existing packages for patterns.\n\n## License\n\nSee [LICENSE](LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "doc-extractor",
+          "source": "./claude-plugins/doc-extractor",
+          "description": "Extract structured data from documents (images/PDFs) using a JSON schema via the KIE extraction API",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add rj74n6/kie-integrations",
+            "/plugin install doc-extractor@kie-integrations"
+          ]
+        }
+      ]
+    }
+  ]
+}

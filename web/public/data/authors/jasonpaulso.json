@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "jasonpaulso",
+    "display_name": "Jason Schulz",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11001042?u=04e3ecc4745a5dc19e3cc53d96e70e6d520cdc14&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jasonschulz-plugins",
+      "version": "1.0.0",
+      "description": "Jason Schulz's Claude Code plugins",
+      "repo_full_name": "jasonpaulso/jasonschulz-plugins",
+      "repo_url": "https://github.com/jasonpaulso/jasonschulz-plugins",
+      "repo_description": "Claude Code plugins marketplace - project-context-sync and more",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-30T16:16:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jasonschulz-plugins\",\n  \"owner\": {\n    \"name\": \"Jason Schulz\"\n  },\n  \"metadata\": {\n    \"description\": \"Jason Schulz's Claude Code plugins\",\n    \"version\": \"1.0.0\",\n    \"homepage\": \"https://github.com/jasonpaulso/jasonschulz-plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"project-context-sync\",\n      \"source\": \"./plugins/project-context-sync\",\n      \"description\": \"Automatic project context synchronization for long-running agent work\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"Jason Schulz\"\n      },\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/jasonpaulso/jasonschulz-plugins\",\n      \"keywords\": [\n        \"context\",\n        \"memory\",\n        \"long-running\",\n        \"progress\",\n        \"documentation\",\n        \"session\",\n        \"handoff\"\n      ]\n    }\n  ],\n  \"version\": \"1.0.0\"\n}\n",
+        "plugins/project-context-sync/README.md": "# project-context-sync\n\nAutomatic project context synchronization for long-running Claude Code sessions.\n\nBased on patterns from [Anthropic's research on effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).\n\n## The Problem\n\nWhen AI agents work across multiple sessions, each new session starts with no memory of what came before. This leads to:\n\n- **One-shotting**: Trying to do too much at once, leaving half-implemented features\n- **Premature completion**: Declaring victory without proper documentation\n- **Context loss**: Previous decisions and rationale forgotten\n- **Repeated mistakes**: Re-discovering issues that were already solved\n\n## The Solution\n\nThis plugin implements a two-part solution:\n\n1. **Structural state** (git): What code exists, what changed\n2. **Semantic state** (PROGRESS.md): Why changes were made, what was attempted, what's next\n\nTogether, these form a complete picture that bridges sessions.\n\n## How It Works\n\n### Deterministic Hooks\n\n| Hook | Behavior |\n|------|----------|\n| `SessionStart` | Injects PROGRESS.md + git history, validates schema |\n| `PostToolUse` | Tracks file modifications (session-isolated) |\n| `PreCompact` | Prompts context update before memory compaction |\n| `Stop` (pre-validate) | Machine-readable validation of PROGRESS.md |\n| `Stop` (prompt) | LLM evaluation with validation summary |\n| `SubagentStop` | Ensures subagents document their work |\n| `SessionEnd` | Spawns `claude -p --resume` with duplicate prevention |\n\n### v1.1 Improvements\n\n1. **SessionEnd lock file**: Prevents duplicate executions (5-second window)\n2. **Session ID isolation**: Modifications tracked per-session, not globally\n3. **Pre-validation for Stop hook**: Machine-readable summary injected into prompt\n4. **PROGRESS.md schema validation**: Checks for required sections, offers repair templates\n5. **Git repo validation**: Graceful handling of non-git directories\n\n### Model-Invoked Skill\n\nThe `project-context-sync` skill provides guidance on:\n- Reading and updating PROGRESS.md\n- Working incrementally (one feature at a time)\n- Leaving clean handoffs for future sessions\n\n### Slash Commands\n\n- `/sync-context` - Force synchronization of project context\n- `/whats-next` - Show prioritized next actions\n\n### Agent\n\n- `context-auditor` - Validates documentation accuracy against code state\n\n## Installation\n\n### From Local Directory\n\n```bash\nclaude /plugin add /path/to/project-context-sync\n```\n\n### Enable for a Project\n\nThe plugin activates automatically when enabled. To customize behavior, create `.claude/context-sync.json`:\n\n```json\n{\n  \"enabled\": true,\n  \"sessionEndSync\": true,\n  \"syncTimeout\": 180,\n  \"maxTurns\": 5,\n  \"minModificationsForSync\": 1,\n  \"requireProgressFile\": false,\n  \"gitHistoryLines\": 10,\n  \"showFullProgress\": true,\n  \"quietStart\": false\n}\n```\n\n## Usage\n\n### First Session\n\n1. Plugin detects no `.claude/PROGRESS.md`\n2. SessionStart injects guidance on creating one\n3. Run `/sync-context` or ask Claude to initialize context\n4. Claude creates PROGRESS.md with project overview and initial plan\n\n### Subsequent Sessions\n\n1. `SessionStart` hook injects context with schema validation\n2. Claude reads PROGRESS.md and git history\n3. Work on ONE prioritized task\n4. `Stop` hook validates documentation before allowing exit\n\n### Stop Hook Validation\n\nThe Stop hook now runs in two phases:\n\n1. **Pre-validation** (`validate-progress.js`): Generates machine-readable summary\n   - Checks PROGRESS.md exists\n   - Validates required sections present\n   - Counts commits since last update\n   - Lists files modified this session\n   - Provides repair template if sections missing\n\n2. **LLM Evaluation**: Receives validation summary in context\n   - Makes informed decision based on facts, not introspection\n   - Can reference specific issues from validation\n   - Blocks with actionable feedback\n\n### SessionEnd Behavior\n\nThe `SessionEnd` hook uses `--resume` to continue with the same session context:\n- Lock file prevents duplicate executions (5-second window)\n- Only runs if Stop hook didn't finalize (checks session ID)\n- Only runs if there's uncommitted work or modifications\n- Uses minimal turns (default: 5)\n- Hard timeout (default: 180s)\n- Validates git repo before running git commands\n\n## File Structure\n\n```\n.claude/\n├── PROGRESS.md              # Semantic state (required for full benefit)\n├── features.json            # Feature tracking (optional)\n├── context-sync.json        # Plugin config (optional)\n├── .context-state/          # Internal state (managed by plugin)\n│   ├── current-session.json # Session tracking with ID\n│   ├── modifications.json   # Session-isolated modification tracking\n│   └── .session-end.lock    # Duplicate execution prevention\n└── logs/                    # SessionEnd logs (for debugging)\n```\n\n## PROGRESS.md Required Sections\n\nThe plugin validates these sections exist:\n\n- **Current State**: What's working, what's broken\n- **Recent Work**: What was done recently and why\n- **Next Steps**: Prioritized list of what to work on\n\nIf sections are missing, the validation output includes a repair template.\n\n## Design Rationale\n\n### Why Machine Pre-Validation for Stop Hook\n\nRelying solely on LLM introspection for \"is documentation current?\" is fragile. The model can:\n- Hallucinate that PROGRESS.md is up to date\n- Miss that commits happened after the last update\n- Approve despite missing sections\n\nThe pre-validation script provides facts the LLM can't deny:\n- Exact count of commits since last PROGRESS.md update\n- List of files modified this session\n- Boolean checks for required sections\n\n### Why Session ID Isolation\n\nWithout session isolation, concurrent tabs or rapid session restarts cause:\n- Modifications from session A polluting session B's tracking\n- Stop hook approving based on stale modification data\n- SessionEnd spawning cleanup for wrong session\n\nEach session now tracks its own modifications and validates against its own ID.\n\n### Why Lock File for SessionEnd\n\nClaude Code v2.x has a known issue where hooks can fire multiple times. The lock file pattern (from dev-gom's hook-session-summary) prevents:\n- Multiple background `claude -p` processes spawning\n- Race conditions in state files\n- Duplicate documentation updates\n\n## Limitations\n\n- **Hooks can't force mid-session updates**: Stop hook creates backpressure, but can't force updates during work\n- **PreCompact timing**: May not catch all cases before compaction\n- **SessionEnd is best-effort**: Background process may fail silently (check logs)\n- **Non-git projects**: Less context available, but still tracks modifications\n\n## See Also\n\n- [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)\n- [Claude Code Hooks Reference](https://docs.anthropic.com/en/docs/claude-code/hooks)\n- [Agent Skills](https://docs.anthropic.com/en/docs/claude-code/skills)\n\n## Changelog\n\n### v1.1.0\n- Added timestamp-based lock file for SessionEnd duplicate prevention\n- Added session_id isolation for modification tracking\n- Added validate-progress.js pre-validation script for Stop hook\n- Added PROGRESS.md schema validation with repair templates\n- Added git repo detection before running git commands\n- Improved context markers for model salience\n- Updated Stop hook prompt to use validation summary\n\n### v1.0.0\n- Initial release\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "project-context-sync",
+          "source": "./plugins/project-context-sync",
+          "description": "Automatic project context synchronization for long-running agent work",
+          "version": "1.1.0",
+          "author": {
+            "name": "Jason Schulz"
+          },
+          "category": "productivity",
+          "homepage": "https://github.com/jasonpaulso/jasonschulz-plugins",
+          "keywords": [
+            "context",
+            "memory",
+            "long-running",
+            "progress",
+            "documentation",
+            "session",
+            "handoff"
+          ],
+          "categories": [
+            "context",
+            "documentation",
+            "handoff",
+            "long-running",
+            "memory",
+            "productivity",
+            "progress",
+            "session"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jasonpaulso/jasonschulz-plugins",
+            "/plugin install project-context-sync@jasonschulz-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

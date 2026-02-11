@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "jahanson",
+    "display_name": "Joseph Hanson",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1548511?u=649488617a339b375b218427a8057343ed733c81&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "local-plugins",
+      "version": null,
+      "description": "Local development plugins",
+      "repo_full_name": "jahanson/cc-plugins",
+      "repo_url": "https://github.com/jahanson/cc-plugins",
+      "repo_description": "Custom skills, hooks, etc for things I use regularly. ",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-08T21:48:48Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"local-plugins\",\n  \"owner\": {\n    \"name\": \"Local Developer\"\n  },\n  \"description\": \"Local development plugins\",\n  \"plugins\": [\n    {\n      \"name\": \"deno-lsp\",\n      \"source\": \"./deno-lsp\",\n      \"description\": \"Deno LSP integration for TypeScript/JavaScript development\"\n    },\n    {\n      \"name\": \"jsr-audit\",\n      \"source\": \"./jsr-audit\",\n      \"description\": \"Audit Deno/TypeScript packages for JSR compliance and publishing readiness\"\n    }\n  ]\n}\n",
+        "deno-lsp/README.md": "# deno-lsp\n\nFull Deno LSP integration for Claude Code, providing real-time code intelligence\nand comprehensive Deno development guidance.\n\n## Features\n\n### LSP Integration (via MCP)\n\nFull `deno lsp` integration providing:\n\n- **Diagnostics** - Real-time error and warning detection\n- **Hover** - Type information and documentation on hover\n- **Go-to-Definition** - Navigate to symbol definitions\n- **Code Actions** - Quick fixes and refactoring suggestions\n- **Completions** - Intelligent code completion\n\n### Supported File Extensions\n\n`.ts`, `.tsx`, `.js`, `.jsx`, `.mts`, `.cts`, `.mjs`, `.cjs`\n\n### Skills\n\nThis plugin includes comprehensive Deno development guidance:\n\n| Skill               | Focus                                                       |\n| ------------------- | ----------------------------------------------------------- |\n| **deno-typescript** | Quick reference for Deno TypeScript development             |\n| **deno-core**       | Configuration, imports, testing, permissions, anti-patterns |\n| **deno-ddd**        | Domain-Driven Design architecture patterns                  |\n| **deno-patterns**   | Modern TypeScript patterns, resource management, migration  |\n\n## Prerequisites\n\nInstall Deno globally:\n\n```bash\ncurl -fsSL https://deno.land/install.sh | sh\n```\n\nOr with Homebrew:\n\n```bash\nbrew install deno\n```\n\nVerify installation:\n\n```bash\ndeno --version\n```\n\n## Requirements\n\n- **Deno >= 2.0** (for full LSP support)\n- **deno.json** or **deno.jsonc** in project root (plugin only activates in Deno\n  projects)\n- **ENABLE_LSP_TOOL=1** environment variable (see Enabling LSP below)\n\n## Enabling LSP\n\nClaude Code requires the `ENABLE_LSP_TOOL` environment variable to be set for\nversion < 2.1.1:\n\n**Temporary (current session):**\n\n```bash\nENABLE_LSP_TOOL=1 claude\n```\n\n**Permanent (add to shell profile):**\n\n```bash\n# Add to ~/.bashrc, ~/.zshrc, or equivalent:\nexport ENABLE_LSP_TOOL=1\n```\n\nAfter enabling, restart Claude Code for the LSP to initialize\n\n## Usage\n\n### LSP Features\n\nThe LSP integration activates automatically when you work with\nTypeScript/JavaScript files in a Deno project. Claude will receive diagnostics,\ntype information, and suggestions from the Deno language server.\n\n### Skills\n\nSkills activate automatically based on context:\n\n- Ask about Deno configuration, imports, or testing → **deno-core** activates\n- Work on complex business logic or architecture → **deno-ddd** activates\n- Ask about modern patterns or Node.js migration → **deno-patterns** activates\n- Quick questions about Deno → **deno-typescript** activates\n\n## Configuration\n\nNo configuration required. The plugin uses your project's `deno.json` for LSP\nsettings.\n\n### LSP Configuration\n\nThe plugin configures the Deno LSP with these defaults (in `.lsp.json` and\n`plugin.json`):\n\n```json\n{\n  \"typescript\": {\n    \"command\": \"deno\",\n    \"args\": [\n      [\n        \"lsp\"\n      ]\n    ],\n    \"extensionToLanguage\": {\n      \".ts\": \"typescript\",\n      \".tsx\": \"typescriptreact\",\n      \".js\": \"javascript\",\n      \".jsx\": \"javascriptreact\",\n      \".mts\": \"typescript\",\n      \".cts\": \"typescript\",\n      \".mjs\": \"javascript\",\n      \". cjs\": \"javascript\"\n    },\n    \"transport\": \"stdio\",\n    \"initializationOptions\": {\n      \"enable\": true,\n      \"enablePaths\": [\n        \"src\",\n        \"tests\",\n        \"fixtures\"\n      ],\n      \"lint\": true,\n      \"unstable\": false,\n      \"suggest\": {\n        \"autoImports\": true,\n        \"imports\": {\n          \"autoDiscover\": true\n        }\n      }\n    },\n    \"maxRestarts\": 3\n  }\n}\n```\n\n**Note:** The server key is `\"typescript\"` to match the language identifiers in\n`extensionToLanguage`. This ensures Deno LSP handles TypeScript files as the\ndefault server.\n\n### Available LSP Settings\n\n| Setting               | Description                    |\n| --------------------- | ------------------------------ |\n| `enable`              | Enable/disable Deno LSP        |\n| `lint`                | Enable linting                 |\n| `unstable`            | Enable unstable APIs           |\n| `config`              | Path to deno.json              |\n| `importMap`           | Path to import map             |\n| `suggest.autoImports` | Enable auto-import suggestions |\n| `codeLens.test`       | Show test code lens            |\n\n### Custom Project Settings\n\nAdd the lint section to your `deno.json` file to configure project-specific LSP settings:\n```json\n{\n  \"lint\": {\n    \"rules\": {\n      \"include\": [\n        \"no-external-import\"\n      ]\n    },\n    \"include\": [\n      \"src/\"\n    ],\n    \"exclude\": [\n      \".tmp/\",\n    ]\n  }\n}\n```\n\n### LSP not using Deno for TypeScript\n\nIf another LSP (like typescript-language-server) handles TypeScript instead of Deno:\n\n- The deno-lsp plugin registers for the `\"typescript\"` language identifier\n- Disable conflicting TypeScript LSP plugins in settings\n- Ensure deno-lsp is enabled and loaded first\n\n### Debug Mode\n\nRun Claude Code with debug logging to see LSP initialization:\n\n```bash\nclaude --debug\n```\n\nLook for log lines mentioning \"LSP\" or \"deno\" to verify the server starts.\n\n## More Information\n\n- [Deno Runtime Documentation](https://docs.deno.com/runtime/)\n- [Deno Standard Library](https://jsr.io/@std)\n- [JSR Registry](https://jsr.io/)\n- [GitHub Repository](https://github.com/denoland/deno/)\n"
+      },
+      "plugins": [
+        {
+          "name": "deno-lsp",
+          "source": "./deno-lsp",
+          "description": "Deno LSP integration for TypeScript/JavaScript development",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jahanson/cc-plugins",
+            "/plugin install deno-lsp@local-plugins"
+          ]
+        },
+        {
+          "name": "jsr-audit",
+          "source": "./jsr-audit",
+          "description": "Audit Deno/TypeScript packages for JSR compliance and publishing readiness",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jahanson/cc-plugins",
+            "/plugin install jsr-audit@local-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

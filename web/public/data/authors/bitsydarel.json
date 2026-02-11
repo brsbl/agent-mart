@@ -1,0 +1,126 @@
+{
+  "author": {
+    "id": "bitsydarel",
+    "display_name": "Darel Bitsy",
+    "avatar_url": "https://avatars.githubusercontent.com/u/17922775?u=fb6c275ea3cd920fb646ab0e02af6bf5ee4e96fa&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bd-skills",
+      "version": "1.0.2",
+      "description": "Comprehensive development skills for clean code, testing, architecture, and quality assurance. Applies to Mobile, Web, Backend, and AI/ML development.",
+      "repo_full_name": "bitsydarel/BDSkills",
+      "repo_url": "https://github.com/bitsydarel/BDSkills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-26T02:54:38Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"bd-skills\",\n  \"version\": \"1.0.2\",\n  \"description\": \"Comprehensive development skills for clean code, testing, architecture, and quality assurance. Applies to Mobile, Web, Backend, and AI/ML development.\",\n  \"pluginRoot\": \"./plugins\",\n  \"owner\": {\n    \"name\": \"Bitsy Darel\",\n    \"email\": \"bitsydarel@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"bd-clean-code-writing\",\n      \"description\": \"Write clean, maintainable code following SOLID principles. Use when writing functions, classes, modules, or refactoring existing code.\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/bd-clean-code-writing\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"bd-test-design\",\n      \"description\": \"Design comprehensive test strategies and write well-structured tests. Use when creating tests, improving coverage, or designing test architectures.\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/bd-test-design\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"bd-problem-solving\",\n      \"description\": \"Apply systematic problem-solving approaches when debugging, designing solutions, or understanding code. Use when facing technical challenges.\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/bd-problem-solving\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"bd-quality-assurance\",\n      \"description\": \"Run quality checks and maintain code standards before committing. Use before commits, when preparing PRs, or after completing features.\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/bd-quality-assurance\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"bd-project-conventions\",\n      \"description\": \"Follow project structure conventions and setup procedures. Use when onboarding, setting up environments, or troubleshooting import/build issues.\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/bd-project-conventions\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"bd-software-architecture\",\n      \"description\": \"Structure software with strict layer separation, enforce dependency rules, and organize features correctly. Use when designing new features or refactoring.\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/bd-software-architecture\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"teg-mobile-architecture\",\n      \"description\": \"Enforce Transport Exchange Group (TEG) mobile architecture standards. Use this skill when designing new mobile features, structuring project folders, implementing architectural layers (UI, Use Case, Repository, Data Source), or reviewing PRs for compliance across Flutter, iOS, and Android.\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugins/teg-mobile-architecture\",\n      \"category\": \"development\"\n    }\n  ]\n}",
+        "README.md": "# BD Skills - Agent Skills Repository\n\nProfessional development skills for AI coding agents. Works with multiple agent tools including OpenCode, Cursor, Gemini CLI, and the Claude Code Plugin Marketplace.\n\n## Quick Start\n\nAfter cloning the repository, run the setup script:\n\n```bash\n./scripts/setup.sh\n```\n\nThis installs git hooks and syncs skills to all agent tool locations.\n\n## Global Skills Installation\n\nTo make BD Skills available system-wide for OpenCode, Gemini CLI, Claude Code, and Cursor, use:\n\n```bash\n./scripts/install-skills-globally.sh        # Installs/updates all skills globally\n./scripts/install-skills-globally.sh --dry-run  # Preview actions without making changes\n./scripts/install-skills-globally.sh --verbose  # Detailed output during install\n./scripts/install-skills-globally.sh --verify   # Deep verification after install\n./scripts/install-skills-globally.sh --status   # Show current global install status\n```\n\n- Installs all skills from the canonical `skills/` directory to each global config location for the tools:\n    - `~/.config/opencode/skills/` (OpenCode)\n    - `~/.gemini/skills/` (Gemini CLI)\n    - `~/.claude/skills/` (Claude Code)\n    - `~/.cursor/skills/` (Cursor)\n- Uses hard links for efficient syncing (no duplication). Automatically falls back to copying files when hard linking isn't supported, with warnings printed.\n- After install, automated verification confirms every skill and file is correctly present and linked/copies match the canonical source.\n- Supports complex skills with references, subdirectories, and assets, not just SKILL.md.\n\n### Windows Compatibility\n- Run script via **WSL** or **Git Bash** for full functionality.\n- If you encounter errors with hard linking (common on network/cloud drives), the script will copy files and print a warning.\n- For _native PowerShell_ currently manual copy is needed: copy the contents of `skills/` to the matching config directory (e.g., `%USERPROFILE%\\.config\\opencode\\skills\\`). Native PowerShell support is planned for future.\n\n## Repository Structure\n\n```\nBDSkills/\n├── skills/                    # CANONICAL SOURCE (edit skills here)\n│   ├── bd-clean-code-writing/\n│   ├── bd-test-design/\n│   ├── bd-problem-solving/\n│   ├── bd-quality-assurance/\n│   ├── bd-project-conventions/\n│   └── bd-software-architecture/\n│\n├── .opencode/skill/           # Symlinks for OpenCode\n├── .cursor/skills/            # Symlinks for Cursor\n├── .gemini/skills/            # Symlinks for Gemini CLI\n├── plugins/                   # Symlinks for Plugin Marketplace\n│\n├── scripts/\n│   ├── setup.sh               # Initial setup (run after clone)\n│   ├── sync-skills.sh         # Sync skills to all locations\n│   └── install-skills-globally.sh # Global skills installer (system-wide for all tools)\n│\n└── hooks/                     # Git hook templates\n```\n\n## How It Works\n\nThe `skills/` directory is the **single source of truth**. All other locations contain symlinks, hard links, or copies pointing to this directory. This ensures:\n\n- **One place to edit**: Modify skills in `skills/` only.\n- **Automatic updates**: Changes propagate to all agent tools instantly.\n- **No duplicates**: No risk of skills getting out of sync.\n\n## Supported Agent Tools\n\n| Tool | Location | Format |\n|------|----------|--------|\n| OpenCode | `.opencode/skill/<name>/SKILL.md` | Agent Skills |\n| Cursor | `.cursor/skills/<name>/SKILL.md` | Agent Skills |\n| Gemini CLI | `.gemini/skills/<name>/SKILL.md` | Agent Skills |\n| Claude Code Plugin | `plugins/<name>/skills/<name>/SKILL.md` | Marketplace |\n\n## Available Skills\n\n| Skill Name                | Description                                                               |\n|-------------------------- |---------------------------------------------------------------------------|\n| bd-create-agents-md       | Step-by-step guide for creating AGENTS.md/CLAUDE.md for repo context, onboarding, core commands.   |\n| bd-test-design            | Comprehensive guide for designing and implementing software tests (Unit, Integration, E2E, UI, AI). |\n| bd-clean-code-writing     | Workflow for generating/refactoring/reviewing code with SOLID principles, separation, type safety.  |\n| bd-skill-creating         | Step-by-step guide for creating effective agent skills (open agent-skills standard).                |\n| bd-skill-reviewing        | Framework for reviewing and improving agent skills for quality, effectiveness, compliance.           |\n| bd-software-architecture  | Architectural enforcement for software design. Guides layering, dependency, design/refactor.         |\n| bd-quality-assurance      | Enforces code standards, release readiness, guides pre-commit checks and finalization.              |\n| bd-project-conventions    | Standards for project structure, environment config, code organization, across all platforms.        |\n| bd-problem-solving        | Systematic guide for technical problem solving, debugging, decision making, root cause analysis.    |\n| teg-mobile-architecture   | Enforces TEG mobile architecture standard across Flutter, iOS, Android; layers, folder structure.   |\n\n## Manual Sync\n\nIf symlinks get out of sync, run:\n\n```bash\n./scripts/sync-skills.sh\n```\n\nTo check current status without making changes:\n\n```bash\n./scripts/sync-skills.sh --status\n```\n\n## Git Hooks\n\nAfter running `./scripts/setup.sh`, git hooks are installed that automatically sync skills after:\n\n- `git checkout` / `git switch`\n- `git pull` / `git merge`\n\n## Installation (Plugin Marketplace)\n\nTo install skills via Claude Code Plugin Marketplace:\n\n```bash\n/plugin marketplace add darelbitsy/BDSkills\n```\n\nThen browse and install skills:\n\n```bash\n/plugin menu\n```\n\n## Platform Support\n\nAll skills apply universally to:\n\n- **Mobile**: Flutter, iOS (Swift), Android (Kotlin)\n- **Web**: React, Vue, Angular, TypeScript\n- **Backend**: Python, Node.js, Go, Rust\n- **AI/ML**: Training pipelines, model serving\n\n## Troubleshooting\n- For missing skills or files in any global tool, re-run the installer script.\n- Use `--verify` for a deep check of file presence and correctness.\n- If you see hard link errors, your OS/filesystem may not support them for the target; copying will be used automatically.\n- For Windows native (PowerShell), manually copy until official support is added.\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "bd-clean-code-writing",
+          "description": "Write clean, maintainable code following SOLID principles. Use when writing functions, classes, modules, or refactoring existing code.",
+          "version": "1.0.2",
+          "source": "./plugins/bd-clean-code-writing",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bitsydarel/BDSkills",
+            "/plugin install bd-clean-code-writing@bd-skills"
+          ]
+        },
+        {
+          "name": "bd-test-design",
+          "description": "Design comprehensive test strategies and write well-structured tests. Use when creating tests, improving coverage, or designing test architectures.",
+          "version": "1.0.2",
+          "source": "./plugins/bd-test-design",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bitsydarel/BDSkills",
+            "/plugin install bd-test-design@bd-skills"
+          ]
+        },
+        {
+          "name": "bd-problem-solving",
+          "description": "Apply systematic problem-solving approaches when debugging, designing solutions, or understanding code. Use when facing technical challenges.",
+          "version": "1.0.2",
+          "source": "./plugins/bd-problem-solving",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bitsydarel/BDSkills",
+            "/plugin install bd-problem-solving@bd-skills"
+          ]
+        },
+        {
+          "name": "bd-quality-assurance",
+          "description": "Run quality checks and maintain code standards before committing. Use before commits, when preparing PRs, or after completing features.",
+          "version": "1.0.2",
+          "source": "./plugins/bd-quality-assurance",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bitsydarel/BDSkills",
+            "/plugin install bd-quality-assurance@bd-skills"
+          ]
+        },
+        {
+          "name": "bd-project-conventions",
+          "description": "Follow project structure conventions and setup procedures. Use when onboarding, setting up environments, or troubleshooting import/build issues.",
+          "version": "1.0.2",
+          "source": "./plugins/bd-project-conventions",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bitsydarel/BDSkills",
+            "/plugin install bd-project-conventions@bd-skills"
+          ]
+        },
+        {
+          "name": "bd-software-architecture",
+          "description": "Structure software with strict layer separation, enforce dependency rules, and organize features correctly. Use when designing new features or refactoring.",
+          "version": "1.0.2",
+          "source": "./plugins/bd-software-architecture",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bitsydarel/BDSkills",
+            "/plugin install bd-software-architecture@bd-skills"
+          ]
+        },
+        {
+          "name": "teg-mobile-architecture",
+          "description": "Enforce Transport Exchange Group (TEG) mobile architecture standards. Use this skill when designing new mobile features, structuring project folders, implementing architectural layers (UI, Use Case, Repository, Data Source), or reviewing PRs for compliance across Flutter, iOS, and Android.",
+          "version": "1.0.0",
+          "source": "./plugins/teg-mobile-architecture",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bitsydarel/BDSkills",
+            "/plugin install teg-mobile-architecture@bd-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

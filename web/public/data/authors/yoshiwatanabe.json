@@ -1,0 +1,65 @@
+{
+  "author": {
+    "id": "yoshiwatanabe",
+    "display_name": "Yoshi Watanabe",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1928901?u=9935c33392b61b9c2c05c23299728f9b28772d24&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "yoshiwatanabe-plugins",
+      "version": null,
+      "description": "Personal Claude Code plugins for domain-specific memory and configuration management",
+      "repo_full_name": "yoshiwatanabe/yoshiwatanabe-plugins",
+      "repo_url": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-02T03:02:26Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"yoshiwatanabe-plugins\",\n  \"owner\": {\n    \"name\": \"Yoshi Watanabe\",\n    \"email\": \"yoshi.watanabe@example.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code plugins for domain-specific memory and configuration management\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"yoshiwatanabe-dev\",\n      \"source\": \"./dev-memory\",\n      \"description\": \"Development domain memory management: Track coding sessions, repositories, and development work across multiple machines\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Yoshi Watanabe\",\n        \"email\": \"yoshi.watanabe@example.com\"\n      },\n      \"category\": \"development\",\n      \"keywords\": [\n        \"memory\",\n        \"episodes\",\n        \"repositories\",\n        \"development\",\n        \"tracking\",\n        \"git\",\n        \"cross-machine\"\n      ],\n      \"license\": \"MIT\",\n      \"homepage\": \"https://github.com/yoshiwatanabe/yoshiwatanabe-plugins\",\n      \"repository\": \"https://github.com/yoshiwatanabe/yoshiwatanabe-plugins\"\n    }\n  ]\n}\n",
+        "README.md": "# yoshiwatanabe-plugins\n\nPersonal Claude Code plugins for domain-specific memory and configuration management.\n\n## Plugins\n\n### `dev-memory/` - Development Domain Memory\n\nTrack coding sessions, repositories, and development work across multiple machines.\n\n**Features:**\n- Save coding session progress\n- Repository metadata management\n- Cross-machine repository discovery\n- Memory search by keywords\n- Local repository scanning\n- Archive/unarchive obsolete repositories\n\n**Status:** ✅ Production Ready\n\n[View Documentation →](dev-memory/README.md)\n\n### Future Plugins\n\n- `health/` - Health and medical tracking\n- `vehicles/` - Vehicle maintenance and specs\n- `finance/` - Financial planning and allocations\n\n## Architecture\n\nEach plugin is domain-focused and independent:\n- Has its own skills, agents, and scripts\n- Manages domain-specific memory and configuration\n- Stores data in separate domain directories\n- Can be installed and used independently\n\n## Installation\n\n**[📖 View Complete Installation Guide →](INSTALL.md)**\n\n### Quick Start\n\n```\n/plugin marketplace add yoshiwatanabe/yoshiwatanabe-plugins\n/plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins\n```\n\nThen add to `~/.claude/settings.json`:\n```json\n{\n  \"env\": {\n    \"YW_CONFIG_REPO_PATH\": \"/path/to/your-config-repo\"\n  }\n}\n```\n\n## Configuration Repository\n\nPlugins require a configuration repository with domain structure:\n\n```\nyour-config-repo/\n├── domains/\n│   ├── dev/           # Development domain\n│   ├── health/        # Health domain (future)\n│   ├── vehicles/      # Vehicles domain (future)\n│   └── finance/       # Finance domain (future)\n└── machines/          # Cross-domain machine configs\n```\n\n## Contributing\n\nIssues and pull requests welcome!\n\n## License\n\nMIT\n",
+        "dev-memory/README.md": "# yoshiwatanabe-dev\n\nDevelopment domain memory management plugin for Claude Code.\n\nTrack your coding sessions, repositories, and development work across multiple machines with persistent memory.\n\n## Features\n\n- 📝 **Save coding sessions** - Capture progress, goals, and context\n- 📦 **Repository metadata** - Describe repos with tags and notes\n- 🔍 **Find repo clones** - Locate repositories across machines\n- 🔎 **Search memory** - Find past work by keywords\n- 📊 **Scan repositories** - Discover untracked repos\n- 📅 **Recent activity** - See what you worked on recently\n\n## Installation\n\n### Prerequisites\n\n- Python 3.8+\n- Claude Code CLI\n- A configuration repository with domain structure (see Setup below)\n\n### Install Plugin\n\n**Linux/WSL:**\n```bash\ncd install\nchmod +x install.sh\n./install.sh\n```\n\n**Windows:**\n```powershell\ncd install\n.\\install.ps1\n```\n\n### Configure\n\nSet the path to your configuration repository:\n```bash\nclaude config set yoshiwatanabe-dev.configRepoPath \"/path/to/your-config-repo\"\n```\n\n## Configuration Repository Setup\n\nYour configuration repository needs this structure:\n\n```\nyour-config-repo/\n├── domains/\n│   └── dev/\n│       └── memory/\n│           ├── episodes/        # Coding session memory\n│           ├── repositories/    # Repository metadata\n│           ├── machines/        # Machine configs\n│           └── index/          # Search indices (optional)\n└── machines/                   # Cross-domain machine configs\n```\n\n**Example:** Clone and set up a config repo:\n```bash\n# Create your config repo\ngit clone https://github.com/yourusername/your-config-repo.git\ncd your-config-repo\n\n# Create domain structure\nmkdir -p domains/dev/memory/{episodes,repositories,machines,index}\nmkdir -p machines\n\n# Initialize as git repo (if new)\ngit init\ngit remote add origin https://github.com/yourusername/your-config-repo.git\n```\n\n## Skills\n\n### `/save-memory`\nSave your current coding session progress.\n\n**Example:** \"hey remember the progress in this session\"\n\nCaptures:\n- Current repository, branch, commit\n- Machine and OS\n- Session summary and keywords\n- Goals and next steps\n\n### `/describe-repo`\nAdd metadata to a repository.\n\n**Example:** \"This repo contains the auth service. It requires security team approval for PRs.\"\n\n### `/find-repo`\nFind where a repository is cloned across your machines.\n\n**Example:** \"where else do I have clones of this repo?\"\n\n### `/scan-repos`\nDiscover repositories on your machine that aren't being tracked.\n\n**Example:** \"scan my repos and show what's not tracked\"\n\n### `/list-recent-repos`\nShow recently accessed repositories across all machines.\n\n**Example:** \"show me 5 repos I worked on recently\"\n\n### `/search-memory`\nSearch your development memory by keywords.\n\n**Example:** \"I worked on Azure key vault isolation, which repo was that?\"\n\n## Documentation\n\n- [Architecture Overview](docs/design/01-architecture-overview.md)\n- [Data Model](docs/design/02-data-model.md)\n- [Python Implementation](docs/design/06-python-implementation.md)\n\n## Python Scripts\n\nScripts can also be run directly for testing:\n\n```bash\ncd ~/.claude/plugins/yoshiwatanabe-dev\nsource venv/bin/activate  # or .\\venv\\Scripts\\Activate.ps1 on Windows\n\n# Save memory episode\npython scripts/manage_memory.py save --config-repo /path/to/config ...\n\n# Query repositories\npython scripts/query_memory.py find-repo --config-repo /path/to/config ...\n\n# Scan local repos\npython scripts/scan_repos.py scan-repos --config-repo /path/to/config ...\n```\n\n## How It Works\n\n1. **Skills** define Claude Code commands (YAML frontmatter + Markdown)\n2. **Subagent** (memory-manager) handles operations in isolated context\n3. **Python scripts** perform git operations, save/query memory\n4. **Data** stored in your config repo's `domains/dev/memory/` directory\n5. **Git sync** keeps memory synchronized across machines\n\n## Cross-Platform\n\nWorks on:\n- ✅ Windows\n- ✅ WSL (Windows Subsystem for Linux)\n- ✅ Linux\n- ✅ macOS\n\n## Domain-Focused\n\nThis plugin focuses on the **development domain**. Other plugins can be created for other life domains:\n- `yoshiwatanabe-health` - Health and medical tracking\n- `yoshiwatanabe-vehicles` - Car/boat maintenance\n- `yoshiwatanabe-finance` - Financial planning\n\nEach domain is independent with its own memory structure.\n\n## License\n\nMIT\n\n## Contributing\n\nIssues and PRs welcome at: https://github.com/yoshiwatanabe/yoshiwatanabe-plugins\n"
+      },
+      "plugins": [
+        {
+          "name": "yoshiwatanabe-dev",
+          "source": "./dev-memory",
+          "description": "Development domain memory management: Track coding sessions, repositories, and development work across multiple machines",
+          "version": "1.0.0",
+          "author": {
+            "name": "Yoshi Watanabe",
+            "email": "yoshi.watanabe@example.com"
+          },
+          "category": "development",
+          "keywords": [
+            "memory",
+            "episodes",
+            "repositories",
+            "development",
+            "tracking",
+            "git",
+            "cross-machine"
+          ],
+          "license": "MIT",
+          "homepage": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
+          "repository": "https://github.com/yoshiwatanabe/yoshiwatanabe-plugins",
+          "categories": [
+            "cross-machine",
+            "development",
+            "episodes",
+            "git",
+            "memory",
+            "repositories",
+            "tracking"
+          ],
+          "install_commands": [
+            "/plugin marketplace add yoshiwatanabe/yoshiwatanabe-plugins",
+            "/plugin install yoshiwatanabe-dev@yoshiwatanabe-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

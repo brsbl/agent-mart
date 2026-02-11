@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "kanlanc",
+    "display_name": "Vikranth Kanumuru",
+    "avatar_url": "https://avatars.githubusercontent.com/u/20688709?u=e6f981c6f1b39a542852424293154a12361a9ac5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kanlanc-marketplace",
+      "version": "1.1.0",
+      "description": "A collection of Claude Code plugins for enhanced development workflows",
+      "repo_full_name": "kanlanc/Claude-Code-Kanlanc-Marketplace",
+      "repo_url": "https://github.com/kanlanc/Claude-Code-Kanlanc-Marketplace",
+      "repo_description": "This is the plugin for the workflows that i use ",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-15T18:09:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kanlanc-marketplace\",\n  \"version\": \"1.1.0\",\n  \"description\": \"A collection of Claude Code plugins for enhanced development workflows\",\n  \"owner\": {\n    \"name\": \"kanlanc\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"codex-consulting\",\n      \"source\": \"./codex-consulting\",\n      \"description\": \"Consult OpenAI Codex (gpt-5.2) for second opinions, code analysis, and expert insights\"\n    },\n    {\n      \"name\": \"ai-council\",\n      \"source\": \"./ai-council\",\n      \"description\": \"Multi-model AI council for ensemble consulting with Codex (GPT-5.2) and Gemini\"\n    }\n  ]\n}\n",
+        "README.md": "# Kanlanc Claude Code Plugin Marketplace\n\nA collection of Claude Code plugins for enhanced development workflows.\n\n## Available Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [codex-consulting](./codex-consulting/) | Consult OpenAI Codex (gpt-5.2) for second opinions, code analysis, and expert insights |\n\n## Installation\n\nInstall any plugin from this marketplace:\n\n```bash\nclaude plugins add kanlanc/Claude-Code-Kanlanc-Marketplace/<plugin-name>\n```\n\nFor example:\n```bash\nclaude plugins add kanlanc/Claude-Code-Kanlanc-Marketplace/codex-consulting\n```\n\n## Plugins vs MCP\n\n| Aspect | Plugins | MCP |\n|--------|---------|-----|\n| **Format** | Markdown files | Python/TypeScript server |\n| **Invocation** | `/command` | `mcp__server__tool` |\n| **Best for** | CLI wrappers, workflows | External APIs, stateful services |\n| **Complexity** | Simple | More involved |\n| **State** | Use native CLI features | Custom state management |\n\n**When to use Plugins**: CLI tool wrappers, simple command extensions, workflows that leverage native CLI session management.\n\n**When to use MCP**: Complex integrations, real-time data sources, external APIs, custom server logic.\n\n## Contributing\n\nAdd your own plugins by creating a new directory with the standard plugin structure:\n\n```\nyour-plugin/\n├── .claude-plugin/\n│   └── plugin.json\n├── README.md\n├── commands/\n├── skills/\n└── agents/\n```\n\n## License\n\nMIT\n",
+        "codex-consulting/README.md": "# codex-consulting\n\nConsult OpenAI Codex (gpt-5.2) for second opinions, code analysis, and expert insights.\n\n## Prerequisites\n\n- [Codex CLI](https://github.com/openai/codex) installed: `npm install -g @openai/codex`\n- Valid OpenAI/ChatGPT subscription with Codex access\n\n## Installation\n\n```bash\nclaude plugins add kanlanc/Claude-Code-Kanlanc-Marketplace/codex-consulting\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/codex-chat [medium\\|xhigh] <question>` | Ask Codex a question (default: high reasoning) |\n| `/codex-resume [session-id]` | Resume last Codex conversation |\n| `/codex-review` | Get Codex to review staged git changes |\n\n### Examples\n\n```bash\n# Ask a question with default (high) reasoning\n/codex-chat What's the best way to handle authentication in this codebase?\n\n# Ask with medium reasoning (faster)\n/codex-chat medium Explain this function\n\n# Ask with extra-high reasoning (deeper analysis)\n/codex-chat xhigh Design a caching strategy for this API\n\n# Resume last conversation\n/codex-resume\n\n# Resume specific session\n/codex-resume 019b18fa-24d4-7e50-a6f2-...\n\n# Review staged changes\n/codex-review\n```\n\n## Skills\n\nSkills are auto-invoked by Claude when your request matches their triggers.\n\n| Skill | Trigger Phrases | Reasoning | Purpose |\n|-------|-----------------|-----------|---------|\n| codex-chat | \"ask codex\", \"codex opinion\" | high | General consultation |\n| codex-thinkdeep | \"codex deep analysis\", \"investigate with codex\" | xhigh | Multi-step investigation |\n| codex-debug | \"codex debug\", \"codex root cause\" | xhigh | Root cause analysis |\n| codex-codereview | \"codex review code\" | high | Code review |\n| codex-consensus | \"codex perspectives\", \"pros and cons\" | high | Multi-perspective analysis |\n| codex-resume | \"continue codex\", \"resume codex\" | - | Resume last session |\n\n### Skill Examples\n\n```\n# Auto-invokes codex-thinkdeep skill\n\"Use codex to do a deep analysis of the authentication flow\"\n\n# Auto-invokes codex-debug skill\n\"Ask codex to debug this timeout issue\"\n\n# Auto-invokes codex-consensus skill\n\"Get codex perspectives on whether we should use Redux or Context\"\n```\n\n## Session Resumption\n\nCodex maintains conversation sessions automatically:\n\n```bash\n# Each exec creates a session\ncodex exec \"analyze this code\"\n# Output shows: session id: 019b18fa-24d4-7e50-a6f2-...\n\n# Resume the last session\n/codex-resume\n\n# Or resume a specific session\n/codex-resume 019b18fa-24d4-7e50-a6f2-...\n```\n\n## Agent\n\nThe `codex-agent` can be spawned as a background agent for longer consultations:\n\n```\nUse the codex-agent to analyze the security implications of our current auth implementation\n```\n\n## Reasoning Levels\n\n| Level | Flag | Use Case |\n|-------|------|----------|\n| medium | `-c model_reasoning_effort=\"medium\"` | Quick answers, simple queries |\n| high | (default) | Most consultations |\n| xhigh | `-c model_reasoning_effort=\"xhigh\"` | Deep analysis, complex debugging |\n",
+        "ai-council/README.md": "# ai-council\n\nMulti-model AI council for ensemble consulting with Codex (GPT-5.2) and Gemini. Query both models in parallel and get synthesized responses.\n\n## Prerequisites\n\n- [Codex CLI](https://github.com/openai/codex) installed: `npm install -g @openai/codex`\n- [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed\n- Valid API subscriptions for both services\n\n## Installation\n\n```bash\nclaude plugins add kanlanc/Claude-Code-Kanlanc-Marketplace/ai-council\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/council-chat [medium\\|xhigh] <question>` | Ask both Codex and Gemini, get synthesized response |\n| `/council-resume [codex\\|gemini]` | Resume last session for specified model |\n| `/council-review` | Review staged git changes with both models |\n\n### Examples\n\n```bash\n# Ask the council a question (default: high reasoning)\n/council-chat What's the best architecture for this feature?\n\n# Ask with extra-high reasoning for deep analysis\n/council-chat xhigh Analyze the security implications of this auth flow\n\n# Review staged changes\n/council-review\n\n# Resume last Codex conversation\n/council-resume codex\n```\n\n## Skills\n\nSkills are auto-invoked by Claude when your request matches their triggers.\n\n| Skill | Trigger Phrases | Purpose |\n|-------|-----------------|---------|\n| council-chat | \"ask council\", \"council opinion\", \"what do the AIs think\" | General consultation |\n| council-thinkdeep | \"council deep analysis\", \"investigate with council\" | Multi-step investigation |\n| council-debug | \"council debug\", \"council root cause\" | Root cause analysis |\n| council-codereview | \"council review code\" | Code review |\n| council-consensus | \"council perspectives\", \"council pros and cons\" | Multi-perspective analysis |\n\n### Skill Examples\n\n```\n# Auto-invokes council-thinkdeep skill\n\"Use the council for a deep analysis of the authentication flow\"\n\n# Auto-invokes council-debug skill\n\"Ask the council to debug this timeout issue\"\n\n# Auto-invokes council-consensus skill\n\"Get council perspectives on whether we should use Redux or Context\"\n```\n\n## Response Format\n\nThe council provides synthesized responses in this format:\n\n```markdown\n## AI Council Response\n\n### Codex (GPT-5.2) Says:\n[Codex's analysis]\n\n### Gemini Says:\n[Gemini's analysis]\n\n### Council Synthesis:\n**Agreement:** Points both models agree on\n**Divergence:** Where they differ\n**Recommendation:** Synthesized recommendation\n\n---\n*Session IDs: Codex=[id], Gemini=[id]*\n```\n\n## Safety\n\nBoth models run in read-only sandbox mode:\n- Codex: `--sandbox read-only`\n- Gemini: `-s -y`\n\nThis ensures no destructive commands can execute.\n\n## Agent\n\nThe `council-agent` can be spawned as a background agent for longer consultations:\n\n```\nUse the council-agent to analyze the architecture of our microservices\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "codex-consulting",
+          "source": "./codex-consulting",
+          "description": "Consult OpenAI Codex (gpt-5.2) for second opinions, code analysis, and expert insights",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kanlanc/Claude-Code-Kanlanc-Marketplace",
+            "/plugin install codex-consulting@kanlanc-marketplace"
+          ]
+        },
+        {
+          "name": "ai-council",
+          "source": "./ai-council",
+          "description": "Multi-model AI council for ensemble consulting with Codex (GPT-5.2) and Gemini",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kanlanc/Claude-Code-Kanlanc-Marketplace",
+            "/plugin install ai-council@kanlanc-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "author": {
+    "id": "Gnnng",
+    "display_name": "Deli Gong",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3510144?u=1d3c9c7d7c4c7dbd59e81b4deab1f3072f03f4e8&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-kit",
+      "version": null,
+      "description": "Claude Code toolkit - plugins and utilities for enhanced workflows",
+      "repo_full_name": "Gnnng/cc-kit",
+      "repo_url": "https://github.com/Gnnng/cc-kit",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-10T16:13:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-kit\",\n  \"owner\": {\n    \"name\": \"Gnnng\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code toolkit - plugins and utilities for enhanced workflows\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-devcontainer\",\n      \"source\": \"./cc-devcontainer\",\n      \"description\": \"Devcontainer setup with Claude Code authentication for headless agents\",\n      \"version\": \"1.0.0\",\n      \"category\": \"setup\",\n      \"tags\": [\"devcontainer\", \"docker\", \"authentication\", \"setup\"]\n    },\n    {\n      \"name\": \"cc-hive\",\n      \"source\": \"./cc-hive\",\n      \"description\": \"Headless Isolated Virtual Environment - Manage coding agent sessions in devcontainer\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"tags\": [\"devcontainer\", \"tmux\", \"worktree\", \"headless\"]\n    }\n  ]\n}\n",
+        "README.md": "# cc-kit\n\nA toolkit and plugin marketplace for Claude Code. Some components are installable plugins (via `claude plugin install`), others are standalone scripts or config files installed via curl.\n\n## Plugin Marketplace\n\ncc-kit doubles as a [Claude Code plugin marketplace](https://docs.anthropic.com/en/docs/claude-code/plugins). Plugins provide slash-command skills that run inside Claude Code. Not everything in cc-kit is a plugin — cc-launcher and cc-headless are standalone and installed separately.\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add https://github.com/Gnnng/cc-kit\n\n# Install a plugin\nclaude plugin install cc-devcontainer\n```\n\n### Available Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| `cc-devcontainer` | Devcontainer setup with Claude Code authentication for headless agents |\n\n## Installation\n\n### Standalone components (curl)\n\ncc-launcher and cc-headless are not plugins — install them with the install script:\n\n```bash\n# Install cc-launcher\ncurl -fsSL https://raw.githubusercontent.com/Gnnng/cc-kit/main/install.sh | bash -s cc-launcher\n\n# Install cc-headless config\ncurl -fsSL https://raw.githubusercontent.com/Gnnng/cc-kit/main/install.sh | bash -s cc-headless\n```\n\n### Plugins\n\nPlugins can be installed via the marketplace (see above) or with the install script:\n\n```bash\n# Install cc-devcontainer plugin\ncurl -fsSL https://raw.githubusercontent.com/Gnnng/cc-kit/main/install.sh | bash -s cc-devcontainer\n```\n\n### Options\n\n```bash\n# Force overwrite existing files\ncurl -fsSL ... | bash -s cc-launcher -f\n\n# Preview what will be installed\n./install.sh cc-launcher --dry-run\n```\n\n### Manual Install\n\nSee component-specific sections below for manual installation steps.\n\n---\n\n## What's Included\n\n| Component | Type | Description |\n|-----------|------|-------------|\n| [cc-launcher](#cc-launcher) | Standalone script | Multi-provider launcher - switch between Anthropic and alternative backends |\n| [cc-headless](#cc-headless) | Config files | Configuration for headless/API-only Claude Code sessions |\n| [cc-devcontainer](#cc-devcontainer) | Plugin | Devcontainer setup and troubleshooting with auth detection |\n\n---\n\n## cc-launcher\n\nMulti-provider launcher for Claude Code. Switch between Anthropic subscription, Anthropic API, third-party providers, and local servers.\n\n### Features\n\n- **Single file, zero dependencies** - one bash script, download and run\n- **Multiple providers** - Anthropic, DeepSeek, Zhipu, Moonshot, MiniMax, and more\n- **Local server support** - Ollama, LM Studio, LlamaBarn, llama.cpp\n- **Custom endpoints** - any Anthropic-compatible URL\n- **Model tier mapping** - configure opus/sonnet/haiku models per provider\n- **Fully transparent** - readable bash, see exactly what happens before `exec claude`\n\n### Quick Start\n\n```bash\n# Download\ncurl -o ~/.local/bin/cc-launcher https://raw.githubusercontent.com/Gnnng/cc-kit/main/cc-launcher\nchmod +x ~/.local/bin/cc-launcher\n\n# Run\ncc-launcher                      # Claude subscription (default)\ncc-launcher anthropic            # Anthropic API\ncc-launcher deepseek             # DeepSeek\ncc-launcher ollama \"qwen3:32b\"   # Local Ollama with model\n```\n\n### Providers\n\n| Provider | Aliases | URL | Env Variable |\n|----------|---------|-----|--------------|\n| Subscription | `sub` | - | `CLAUDE_CODE_OAUTH_TOKEN` |\n| Anthropic API | `anthropic`, `api` | api.anthropic.com | `ANTHROPIC_API_KEY` |\n| DeepSeek | `deepseek` | api.deepseek.com/anthropic | `DEEPSEEK_API_KEY` |\n| Zhipu AI | `zhipu`, `zai` | api.z.ai/api/anthropic | `ZAI_API_KEY` |\n| Moonshot | `moonshot`, `kimi` | api.moonshot.ai/anthropic | `MOONSHOT_API_KEY` |\n| MiniMax | `minimax` | api.minimax.io/anthropic | `MINIMAX_API_KEY` |\n\n### Local Servers\n\n| Provider | Default URL |\n|----------|-------------|\n| `ollama` | localhost:11434 |\n| `lmstudio` | localhost:1234 |\n| `llama-server` | localhost:8080 |\n| `llamabarn` | localhost:2276 |\n\n```bash\ncc-launcher ollama \"gpt-oss\"              # Single model for all tiers\ncc-launcher ollama \"big,small\"            # opus+sonnet=big, haiku=small\ncc-launcher ollama \"huge,big,small\"       # opus=huge, sonnet=big, haiku=small\n```\n\n### Custom URL\n\n```bash\ncc-launcher \"https://api.example.com\" \"api-key\" \"model-name\"\n```\n\nRun `cc-launcher --help` for full usage information.\n\n---\n\n## cc-headless\n\nConfiguration files for running Claude Code in headless/API-only mode without subscription login.\n\n### Features\n\n- **API key authentication** - use `ANTHROPIC_API_KEY` instead of subscription\n- **Yolo mode** - bypass permission prompts for automated workflows\n- **Custom endpoints** - configure alternative API URLs\n\n### Setup\n\n```bash\ncd cc-headless\ncp -r .claude ~/\ncp .claude.json ~/\n```\n\nThen set your API key:\n\n```bash\nexport ANTHROPIC_API_KEY=\"sk-ant-...\"\n```\n\nSee [cc-headless/README.md](cc-headless/README.md) for more details.\n\n---\n\n## cc-devcontainer\n\nPlugin for initializing and troubleshooting devcontainers with Claude Code authentication. Provides two skills: `/devcontainer-init` and `/devcontainer-troubleshoot`.\n\n### Authentication Detection\n\nThe plugin automatically detects your Claude Code credentials (in priority order):\n\n1. **OAuth token** (`CLAUDE_CODE_OAUTH_TOKEN`) — env var, then platform storage (macOS Keychain or `~/.claude/.credentials.json` on Linux)\n2. **Enterprise token** (`ANTHROPIC_AUTH_TOKEN`) — env var\n3. **API key** (`ANTHROPIC_API_KEY`) — env var\n\nDetected credentials are written to `.devcontainer/.env` and passed into the container automatically.\n\n### Skills\n\n**`/devcontainer-init`** — Scaffolds a `.devcontainer/` directory with Dockerfile, devcontainer.json, and an `.env` file containing your detected auth credentials. Optionally accepts `--name <container-name>`.\n\n**`/devcontainer-troubleshoot`** — Diagnoses auth and container issues. Checks host credentials, `.env` configuration, container environment, and Claude CLI availability. Run with `auth`, `container`, or `all`.\n\nSee [cc-devcontainer/skills/devcontainer-init/SKILL.md](cc-devcontainer/skills/devcontainer-init/SKILL.md) and [cc-devcontainer/skills/devcontainer-troubleshoot/SKILL.md](cc-devcontainer/skills/devcontainer-troubleshoot/SKILL.md) for full details.\n\n---\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cc-devcontainer",
+          "source": "./cc-devcontainer",
+          "description": "Devcontainer setup with Claude Code authentication for headless agents",
+          "version": "1.0.0",
+          "category": "setup",
+          "tags": [
+            "devcontainer",
+            "docker",
+            "authentication",
+            "setup"
+          ],
+          "categories": [
+            "authentication",
+            "devcontainer",
+            "docker",
+            "setup"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Gnnng/cc-kit",
+            "/plugin install cc-devcontainer@cc-kit"
+          ]
+        },
+        {
+          "name": "cc-hive",
+          "source": "./cc-hive",
+          "description": "Headless Isolated Virtual Environment - Manage coding agent sessions in devcontainer",
+          "version": "1.0.0",
+          "category": "productivity",
+          "tags": [
+            "devcontainer",
+            "tmux",
+            "worktree",
+            "headless"
+          ],
+          "categories": [
+            "devcontainer",
+            "headless",
+            "productivity",
+            "tmux",
+            "worktree"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Gnnng/cc-kit",
+            "/plugin install cc-hive@cc-kit"
+          ]
+        }
+      ]
+    }
+  ]
+}
