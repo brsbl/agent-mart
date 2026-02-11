@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "ItamarZand88",
+    "display_name": "‪Itamar Zand‬‏",
+    "avatar_url": "https://avatars.githubusercontent.com/u/133867530?u=7d5c4d6e137592b3b5e1bbf2620e545181c75fad&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-agentic-engineering",
+      "version": null,
+      "description": "Advanced agentic engineering workflow with specialized agents for ticket creation, planning, implementation, and code review.",
+      "repo_full_name": "ItamarZand88/claude-code-agentic-engineering",
+      "repo_url": "https://github.com/ItamarZand88/claude-code-agentic-engineering",
+      "repo_description": "Advanced Claude Code slash commands and subagents for agentic engineering workflows - complete task-to-implementation pipeline with intelligent delegation",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-07T15:48:11Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-agentic-engineering\",\n  \"owner\": {\n    \"name\": \"Itamar Zand\",\n    \"url\": \"https://github.com/ItamarZand88\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agi\",\n      \"source\": \"./plugin\",\n      \"description\": \"Advanced agentic engineering workflow with specialized agents for ticket creation, planning, implementation, and code review.\"\n    }\n  ]\n}\n",
+        "README.md": "# AGI - Agentic Engineering Plugin for Claude Code\n\nA Claude Code plugin that provides a structured 4-step workflow for software development: **Ticket → Plan → Implement → Review**.\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n[![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://claude.ai/code)\n\n## Install\n\n```bash\n# Inside Claude Code\n/plugin marketplace add ItamarZand88/claude-code-agentic-engineering\n/plugin install agi@claude-code-agentic-engineering\n```\n\n## Usage\n\n### Quick Start\n```bash\n# Run the complete workflow in one command\n/agi:all \"Add OAuth integration with Google\"\n```\n\n### Step-by-Step (Recommended)\n```bash\n# 1. Create task ticket with codebase analysis\n/agi:1_ticket \"Add OAuth integration with Google\"\n\n# 2. Generate implementation plan\n/agi:2_plan .claude/tasks/add-oauth-integration\n\n# 3. Execute the plan\n/agi:3_implement .claude/tasks/add-oauth-integration\n\n# 4. Code review\n/agi:4_review .claude/tasks/add-oauth-integration\n```\n\nReview artifacts in `.claude/tasks/{task-name}/` between steps for best results.\n\n### Auto-Continue\n```bash\n# Chain commands with --continue flag\n/agi:1_ticket \"Add feature\" --continue=plan      # ticket + plan\n/agi:1_ticket \"Add feature\" --continue=implement # ticket + plan + implement\n/agi:1_ticket \"Add feature\" --continue=all       # full workflow\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/agi:1_ticket <description>` | Create task ticket with codebase analysis |\n| `/agi:2_plan <task_folder>` | Generate implementation plan |\n| `/agi:3_implement <task_folder>` | Execute the plan |\n| `/agi:4_review <task_folder>` | Code review and QA |\n| `/agi:all <description>` | Run complete workflow |\n| `/agi:checks` | Run linting/type checks |\n| `/agi:best-practices` | Generate coding standards from PRs |\n| `/agi:fix-pr-comments <pr>` | Fix PR review comments |\n\n## Agents\n\nThe plugin uses 3 specialized agents:\n\n- **code-explorer** - Analyzes codebase structure and patterns (used in ticket creation)\n- **code-architect** - Designs architecture and implementation plans (used in planning)\n- **code-reviewer** - Reviews code quality and compliance (used in review)\n\n## Task Artifacts\n\nAll artifacts are organized in `.claude/tasks/`:\n```\n.claude/tasks/{task-name}/\n├── ticket.md   # Requirements\n├── plan.md     # Implementation plan\n└── review.md   # Code review\n```\n\n## Requirements\n\n- Claude Code v1.0.33+\n- GitHub CLI (`gh`) for best-practices and fix-pr-comments commands\n\n## Links\n\n- [Issues](https://github.com/ItamarZand88/claude-code-agentic-engineering/issues)\n- [CLAUDE.md](CLAUDE.md) - Full documentation\n",
+        "plugin/README.md": "# AGI - Agentic Engineering Plugin for Claude Code\n\nAdvanced agentic engineering workflow with specialized agents for ticket creation, planning, implementation, and code review.\n\n## Installation\n\n### Option 1: From Git Repository (Recommended)\n\n```bash\nclaude /plugin install https://github.com/ItamarZand88/claude-code-agentic-engineering\n```\n\n### Option 2: Local Development\n\n```bash\nclaude --plugin-dir /path/to/claude-code-agentic-engineering/plugin\n```\n\n## Commands\n\nAfter installation, use commands with the `agi:` prefix:\n\n| Command | Description |\n|---------|-------------|\n| `/agi:1_ticket <description>` | Create task ticket with codebase analysis |\n| `/agi:2_plan <task-folder>` | Research-driven implementation planning |\n| `/agi:3_implement <task-folder>` | Execute the implementation plan |\n| `/agi:4_review <task-folder>` | Quality assurance and code review |\n| `/agi:all <description>` | Run full workflow (ticket → plan → implement → review) |\n| `/agi:best-practices` | Generate project best practices |\n| `/agi:checks` | Run quality checks |\n| `/agi:fix-pr-comments` | Fix PR review comments |\n\n## Workflow\n\n### 4-Step Workflow\n\n```bash\n# 1. Create ticket\n/agi:1_ticket \"Add OAuth authentication\"\n\n# 2. Plan implementation\n/agi:2_plan .claude/tasks/oauth-authentication\n\n# 3. Implement\n/agi:3_implement .claude/tasks/oauth-authentication\n\n# 4. Review\n/agi:4_review .claude/tasks/oauth-authentication\n```\n\n### Quick Start (Full Workflow)\n\n```bash\n/agi:all \"Add OAuth authentication\"\n```\n\n### Command Chaining\n\nUse `--continue` flag to auto-continue through steps:\n\n```bash\n# Create ticket and auto-continue to planning\n/agi:1_ticket \"Add feature\" --continue=plan\n\n# Create ticket and run full workflow\n/agi:1_ticket \"Add feature\" --continue=all\n```\n\n## Agents\n\nThe plugin includes 9 specialized agents:\n\n- **architecture-explorer**: Project structure discovery\n- **codebase-analyst**: Pattern discovery and conventions\n- **code-reviewer**: Comprehensive code review\n- **dependency-mapper**: Dependency mapping\n- **feature-finder**: Similar implementation discovery\n- **implementation-strategist**: Architectural decision-making\n- **best-practices-generator**: Generate coding standards\n- **best-practices-compliance-agent**: Validate code compliance\n- **quality-assurance-agent**: QA checks\n\n## Skills\n\nThe plugin includes 3 skills:\n\n- **best-practices-extractor**: Extract best practices from PR comments\n- **code-compliance**: Validate code against best practices\n- **code-standards**: Legacy skill (deprecated, use the above two)\n\n## Task Folder Structure\n\nEach task creates an organized workspace:\n\n```\n.claude/tasks/{task-name}/\n├── ticket.md  - Task requirements and acceptance criteria\n├── plan.md    - Implementation plan with research\n└── review.md  - Code review and quality assessment\n```\n\n## Requirements\n\n- Claude Code v1.0.33 or later\n- GitHub CLI (`gh`) for best practices extraction\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "agi",
+          "source": "./plugin",
+          "description": "Advanced agentic engineering workflow with specialized agents for ticket creation, planning, implementation, and code review.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ItamarZand88/claude-code-agentic-engineering",
+            "/plugin install agi@claude-code-agentic-engineering"
+          ]
+        }
+      ]
+    }
+  ]
+}

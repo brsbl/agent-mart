@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "notiriel",
+    "display_name": "Stefan Riesen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/203263?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "notiriel-reforge",
+      "version": null,
+      "description": "LLM-directed refactoring engine -- orchestrate large-scale Java/Kotlin architectural refactorings using IntelliJ's refactoring engine via CLI + YAML config.",
+      "repo_full_name": "notiriel/reforge",
+      "repo_url": "https://github.com/notiriel/reforge",
+      "repo_description": "LLM-directed refactoring engine — IntelliJ plugin for headless architectural refactorings via YAML config",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T00:08:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"notiriel-reforge\",\n  \"owner\": {\n    \"name\": \"Stefan Riesen\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"reforge\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/notiriel/reforge.git\"\n      },\n      \"description\": \"LLM-directed refactoring engine -- orchestrate large-scale Java/Kotlin architectural refactorings using IntelliJ's refactoring engine via CLI + YAML config.\",\n      \"version\": \"1.0.0\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"reforge\",\n  \"description\": \"LLM-directed refactoring engine — orchestrate large-scale Java/Kotlin architectural refactorings using IntelliJ's refactoring engine via CLI + YAML config.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Stefan Riesen\"\n  },\n  \"repository\": \"https://github.com/notiriel/reforge\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# Reforge — LLM-Directed Refactoring Engine\n\nAn IntelliJ IDEA plugin that executes large-scale architectural refactorings headlessly via CLI + YAML config. Designed to be orchestrated by an LLM (via Claude Code skill) for refactorings that would otherwise burn tokens on individual file edits.\n\n## Features\n\n- **Move classes** between packages with full import/reference updating, wildcard pattern matching\n- **Extract interfaces** from classes, selecting specific methods\n- **Replace dependencies** — swap concrete types with interfaces in fields, constructors, and method parameters\n- Operation batching — consecutive same-type operations are grouped for efficiency\n- Source root awareness — test classes stay in test source roots\n- Multi-pass resolution to handle indexing race conditions\n- Automatic cleanup of empty packages after moves\n- Dry-run mode to preview changes\n- Headless execution (no UI dialogs)\n- Claude Code skill for LLM-directed refactoring\n\n## YAML Configuration\n\n```yaml\noperations:\n  # Move classes to new packages\n  - type: move\n    target: com.example.app.task.model\n    sources:\n      - com.example.app.model.Task*          # Task, TaskStatus, TaskPriority + tests\n\n  - type: move\n    target: com.example.app.task.service\n    sources:\n      - com.example.app.service.TaskService*  # TaskService + TaskServiceTest\n\n  # Extract interface from a class\n  - type: extract-interface\n    class: com.example.app.task.service.TaskService\n    interface: com.example.app.task.port.TaskPort\n    methods: [findAll, findById, createTask]\n\n  # Replace a concrete dependency with an interface\n  - type: replace-dependency\n    in: com.example.app.task.controller.TaskController\n    replace: com.example.app.task.service.TaskService\n    with: com.example.app.task.port.TaskPort\n```\n\n### Operation Types\n\n| Type | Description | Fields |\n|------|-------------|--------|\n| `move` | Move classes to a target package | `target`, `sources` (list of patterns) |\n| `extract-interface` | Create interface from class methods | `class`, `interface`, `methods` |\n| `replace-dependency` | Replace type references in a class | `in`, `replace`, `with` |\n\n### Wildcards (for move operations)\n\n- `*` — matches within a single segment (e.g., `Task*` matches `Task`, `TaskStatus`)\n- `**` — matches zero or more package segments\n\n### Ordering\n\nOperations execute in listed order. Consecutive same-type operations are batched automatically. Recommended order:\n\n1. `move` — restructure packages first\n2. `extract-interface` — create abstractions\n3. `replace-dependency` — wire up interfaces\n\n## Building\n\n```bash\n./gradlew buildPlugin\n```\n\nThe plugin ZIP is built to `build/distributions/`.\n\n## Usage\n\n### Via wrapper script (recommended)\n\nThe `reforge` wrapper script (`scripts/reforge.sh`) launches IntelliJ headlessly — no window, no dock icon, no conflict with a running IDE. Supports macOS and Linux.\n\n```bash\n# Real run\n./scripts/reforge.sh /path/to/project /path/to/reforge.yaml\n\n# Dry run\n./scripts/reforge.sh /path/to/project /path/to/reforge.yaml --dry-run\n```\n\nSet `IDEA_HOME` to override IntelliJ location if auto-detection doesn't work.\n\n### Via Gradle runIde (development)\n\n```bash\n./gradlew runIde --args=\"reforge /path/to/project /path/to/reforge.yaml\"\n```\n\n### Via `idea` CLI (alternative)\n\n```bash\nidea reforge /path/to/project /path/to/reforge.yaml [--dry-run]\n```\n\nNote: This uses macOS `open -na` which shows a dock icon and may conflict with a running IDE instance. Prefer the wrapper script.\n\n### Via Claude Code Skill\n\nInstall the IntelliJ plugin:\n\n```bash\nidea installPlugins ch.riesennet.reforge https://raw.githubusercontent.com/notiriel/reforge/main/updatePlugins.xml\n```\n\nInstall the Claude Code plugin:\n\n```\n/plugin marketplace add https://github.com/notiriel/reforge.git\n/plugin install reforge@notiriel-reforge\n```\n\nThen use in any project:\n\n```\n/reforge restructure the project into domain-driven packages\n```\n\nThe skill analyzes the codebase, generates the YAML config, executes Reforge, and validates by running tests.\n\n## How It Works\n\n1. Opens the target project in a headless IntelliJ instance\n2. Auto-configures project JDK and source roots if missing\n3. Waits for indexing to complete\n4. Parses YAML config into operation batches\n5. For each batch:\n   - Parses raw YAML into typed operation specs\n   - Waits for smart mode (indexing ready)\n   - Executes the operation (move: multi-pass resolve then batch execute; extract/replace: per-spec execution)\n   - Saves documents and syncs VFS\n6. Prints summary of results\n\n## Testing\n\n### Unit Tests\n\n```bash\n./gradlew test              # Run 59 unit tests\n./gradlew koverLog          # Print line coverage summary\n./gradlew koverHtmlReport   # HTML report → build/reports/kover/html/\n```\n\nUnit tests cover all pure logic: YAML config parsing, glob pattern matching, CLI arg parsing, operation batching, `parseSpec()` for all 3 operation types, operation registry, and progress tracking. Coverage is measured with [Kover](https://github.com/Kotlin/kotlinx-kover).\n\nIntelliJ API orchestration (`execute()` methods, PSI manipulation, indexing) is covered by the E2E test.\n\n### E2E Test\n\nA complete Spring Boot test project is included at `src/test/resources/test-project/` (21 source classes, 5 test classes, 46 JUnit 5 tests):\n\n```bash\n# Copy test project (runIde modifies files in place)\ncp -r src/test/resources/test-project /tmp/test-project\n\n# Run Reforge\n./gradlew buildPlugin\n./gradlew runIde --args=\"reforge /tmp/test-project /tmp/test-project/refactor.yaml\"\n# Expect: 25 moved, 0 failed, 7 packages removed\n```\n\n## Requirements\n\n- IntelliJ IDEA 2024.3+ (build 243+)\n- Java 21+ (for building)\n- Gradle 9+ (or use the included wrapper)\n\n## Tech Stack\n\n- Kotlin 2.3.10\n- IntelliJ Platform Gradle Plugin 2.11.0\n- IntelliJ Platform SDK (IC 2024.3)\n- SnakeYAML 2.2\n\n## License\n\nApache 2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "reforge",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/notiriel/reforge.git"
+          },
+          "description": "LLM-directed refactoring engine -- orchestrate large-scale Java/Kotlin architectural refactorings using IntelliJ's refactoring engine via CLI + YAML config.",
+          "version": "1.0.0",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add notiriel/reforge",
+            "/plugin install reforge@notiriel-reforge"
+          ]
+        }
+      ]
+    }
+  ]
+}

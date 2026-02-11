@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "openboundary",
+    "display_name": "Open Boundary",
+    "avatar_url": "https://avatars.githubusercontent.com/u/225608234?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "openboundary",
+      "version": null,
+      "description": "Architecture-as-code plugins for Claude Code",
+      "repo_full_name": "openboundary/openboundary",
+      "repo_url": "https://github.com/openboundary/openboundary",
+      "repo_description": "Architectural guardrails for AI-assisted development.",
+      "signals": {
+        "stars": 6,
+        "forks": 0,
+        "pushed_at": "2026-02-11T01:25:35Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"openboundary\",\n  \"owner\": {\n    \"name\": \"Bitwrite Limited\"\n  },\n  \"metadata\": {\n    \"description\": \"Architecture-as-code plugins for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"openboundary\",\n      \"source\": \"./.claude/plugins/openboundary\",\n      \"description\": \"Enforces architectural boundaries in AI-assisted development. Prevents edits to generated infrastructure and guides spec-driven workflows.\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"Bitwrite Limited\"\n      },\n      \"homepage\": \"https://openboundary.dev\",\n      \"repository\": \"https://github.com/openboundary/openboundary\",\n      \"license\": \"AGPL-3.0\",\n      \"keywords\": [\"architecture\", \"codegen\", \"boundaries\", \"typescript\", \"yaml\"],\n      \"category\": \"discipline\"\n    }\n  ]\n}\n",
+        "README.md": "<p align=\"center\">\n  <img alt=\"OpenBoundary\" src=\"website/public/images/logo-512.png\" width=\"300\">\n</p>\n\n<h1 align=\"center\">OpenBoundary</h1>\n\n<p align=\"center\"><strong>Define your architecture once. Regenerate it forever.</strong></p>\n\n<p align=\"center\">\n  <a href=\"https://www.gnu.org/licenses/agpl-3.0\"><img src=\"https://img.shields.io/badge/License-AGPL_v3-blue.svg\" alt=\"License: AGPL v3\"></a>\n  <a href=\"https://go.dev/\"><img src=\"https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go\" alt=\"Go Version\"></a>\n</p>\n\nAI agents generate code fast. They don't understand your architecture. OpenBoundary encodes auth, middleware, schemas, and boundaries in a YAML spec that compiles to TypeScript. Your business logic is never touched.\n\nAuth, middleware, and database wiring are declared once and enforced by the compiler. No endpoint can skip a security boundary -- it's structurally impossible.\n\n## Quick Start\n\n### Install\n\n```bash\ngo install github.com/openboundary/openboundary/cmd/bound@latest\n```\n\nOr build from source:\n\n```bash\ngit clone https://github.com/openboundary/openboundary.git\ncd openboundary\ngo build -o bound ./cmd/bound\n```\n\n### Create a project\n\n```bash\nbound init my-project\ncd my-project\n```\n\nThis scaffolds a spec file and config directory from a template.\n\n### Write your spec\n\n```yaml\nversion: \"0.1.0\"\nname: my-project\n\ncomponents:\n  - id: api\n    kind: http.server\n    spec:\n      framework: hono\n      port: 3000\n      middleware:\n        - middleware:authn\n        - middleware:authz\n      depends_on:\n        - postgres:primary\n\n  - id: authn\n    kind: middleware\n    spec:\n      provider: better-auth\n\n  - id: authz\n    kind: middleware\n    spec:\n      provider: casbin\n\n  - id: primary\n    kind: postgres\n    spec:\n      provider: drizzle\n      schema: ./config/drizzle.schema.ts\n\n  - id: create-user\n    kind: usecase\n    spec:\n      binds_to: http.server:api:POST:/users\n      middleware: []\n      goal: Register a new user account\n      actor: anonymous\n```\n\n### Compile\n\n```bash\nbound compile\n```\n\n```\n-> src/components/http-server-api/server.ts\n-> src/components/http-server-api/context.ts\n-> src/components/usecase-create-user/usecase.types.ts\n~  src/usecases/create-user.ts (exists, skipped)\n```\n\nThe compiler generates routing, middleware wiring, context types, and function signatures. Your business logic in `src/usecases/` is never overwritten.\n\n### Implement your logic\n\nOpen `src/usecases/create-user.ts` -- this is your code. The compiler generated the type signature and test scaffold. You write the handler:\n\n```typescript\nexport const createUser: CreateUserUsecaseFn = async (input, ctx) => {\n  // ctx.db is injected -- typed from the spec\n  // ctx.auth and ctx.enforcer are NOT available here\n  // because this usecase declared middleware: []\n  const user = await ctx.db.insert(users).values(input).returning();\n  return user;\n};\n```\n\nChange your spec, run `bound compile` again. Infrastructure updates everywhere. Your handler survives untouched.\n\n## How It Works\n\n**YAML in. TypeScript out.**\n\nYou declare components (servers, databases, middleware, usecases) in a spec file. The compiler reads those declarations and generates the infrastructure code that wires them together:\n\n- **Routing** -- HTTP methods and paths bound to usecase handlers\n- **Middleware** -- Auth and authorization enforced per-route based on the spec\n- **Context** -- Dependency injection types generated from declared dependencies\n- **Types** -- Function signatures with the exact context each usecase needs\n\nGenerated files are **WriteAlways** -- regenerated every compile to stay in sync. Usecase implementations are **WriteOnce** -- generated once, then yours forever.\n\n## Claude Code Plugin\n\nOpenBoundary ships a [Claude Code plugin](https://openboundary.dev/docs/agents) that enforces architectural boundaries in real-time. When an AI agent tries to edit generated infrastructure directly, the plugin intervenes, explains why, and redirects to the spec.\n\n**Install from the marketplace:**\n\n```bash\nclaude plugin marketplace add openboundary/openboundary\nclaude plugin install openboundary@openboundary\n```\n\n**What it does:**\n\n- Pre-edit hooks warn before touching generated files\n- Post-edit hooks detect boundary violations via git diff\n- `/ob-setup` installs the compiler\n- `/ob-compile` validates and compiles your spec\n- `/ob-plan` previews changes without writing files\n- `/ob-rollback` restores accidentally modified generated files\n\nThe plugin activates automatically in any project with a `spec.yaml`.\n\n## Supported\n\n| Component | Provider |\n|-----------|----------|\n| HTTP Server | Hono |\n| Database | Drizzle (PostgreSQL) |\n| Auth | better-auth |\n| Authorization | Casbin |\n| Contract | OpenAPI |\n\nMore on the [roadmap](https://openboundary.dev/docs/roadmap).\n\n## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md). By contributing, you agree to our [CLA](CLA.md).\n\n## License\n\n[AGPL-3.0](LICENSE)\n\n---\n\n**[Website](https://openboundary.dev)** · **[Documentation](https://openboundary.dev/docs/)** · **[Roadmap](https://openboundary.dev/docs/roadmap)** · **[Releases](https://github.com/openboundary/openboundary/releases)**\n",
+        ".claude/plugins/openboundary/README.md": "# OpenBoundary Claude Code Plugin\n\nEnforces the generation-gap pattern for OpenBoundary projects. Prevents AI agents from editing generated infrastructure while guiding spec-driven development.\n\n## How It Works\n\nOpenBoundary compiles YAML specs into TypeScript. This plugin ensures the boundary between generated code and user code is respected:\n\n- **Forbidden zone** — generated infrastructure files (WriteAlways). Never edit these directly.\n- **Safe zone** — scaffolded once, then user-owned (WriteOnce). Edit freely.\n- **User-owned** — spec.yaml, config files. Always editable.\n\n## File Structure\n\n```\n.claude/plugins/openboundary/\n├── .claude-plugin/plugin.json   # Plugin manifest\n├── boundaries.json              # Zone definitions (single source of truth)\n├── hooks/\n│   ├── hooks.json               # Hook configuration\n│   ├── pre-edit.md              # Advisory: warn before editing forbidden files\n│   └── post-edit.md             # Enforcement: detect violations via git diff\n├── rules/\n│   └── decision-gate.md         # Core workflow: decision gate + spec reference\n├── skills/\n│   ├── ob.md                    # /ob — status dashboard\n│   ├── ob-init.md               # /ob-init — initialize new project\n│   ├── ob-compile.md            # /ob-compile — validate + compile\n│   ├── ob-rollback.md           # /ob-rollback — restore forbidden files\n│   └── ob-plan.md               # /ob-plan — dry-run preview\n├── agents/\n│   └── openboundary.md          # Agent role definition\n└── README.md                    # This file\n```\n\n## Skills\n\n| Command | Purpose |\n|---------|---------|\n| `/ob` | Show project status: components, usecase progress, violations |\n| `/ob-init` | Initialize a new project from a template |\n| `/ob-compile` | Validate spec.yaml then compile to TypeScript |\n| `/ob-rollback` | Restore accidentally modified generated files |\n| `/ob-plan` | Dry-run compile to preview what would change |\n\n## Boundary Zones\n\nDefined in `boundaries.json`. Maps directly to the codegen WriteStrategy:\n\n| Zone | Codegen Strategy | Editable? |\n|------|-----------------|-----------|\n| `forbidden` | WriteAlways | No — regenerated every compile |\n| `safeZones` | WriteOnce | Yes — user-owned after scaffolding |\n| `userOwned` | Never generated | Yes — always editable |\n| `sensitive` | N/A | Yes — with warning |\n\n## Decision Gate\n\nBefore editing any file, the plugin classifies it:\n\n1. **Safe zone match?** → Allow (highest priority, covers test files under `src/components/`)\n2. **Forbidden match?** → Block, redirect to spec change + recompile\n3. **Sensitive match?** → Warn, then allow\n4. **User-owned match?** → Allow\n5. **No match?** → Allow (outside OpenBoundary scope)\n\n## Generated File Paths\n\nFrom `internal/codegen/typescript/paths.go`:\n\n| Pattern | Example |\n|---------|---------|\n| `src/components/{slug}/server.ts` | `src/components/http-server-api/server.ts` |\n| `src/components/{slug}/context.ts` | `src/components/http-server-api/context.ts` |\n| `src/components/{slug}/openapi.yaml` | `src/components/http-server-api/openapi.yaml` |\n| `src/components/{slug}/api.schemas.ts` | `src/components/http-server-api/api.schemas.ts` |\n| `src/usecases/{name}.ts` | `src/usecases/create-user.ts` (safe zone) |\n| `src/usecases/{name}.test.ts` | `src/usecases/create-user.test.ts` (safe zone) |\n"
+      },
+      "plugins": [
+        {
+          "name": "openboundary",
+          "source": "./.claude/plugins/openboundary",
+          "description": "Enforces architectural boundaries in AI-assisted development. Prevents edits to generated infrastructure and guides spec-driven workflows.",
+          "version": "2.0.0",
+          "author": {
+            "name": "Bitwrite Limited"
+          },
+          "homepage": "https://openboundary.dev",
+          "repository": "https://github.com/openboundary/openboundary",
+          "license": "AGPL-3.0",
+          "keywords": [
+            "architecture",
+            "codegen",
+            "boundaries",
+            "typescript",
+            "yaml"
+          ],
+          "category": "discipline",
+          "categories": [
+            "architecture",
+            "boundaries",
+            "codegen",
+            "discipline",
+            "typescript",
+            "yaml"
+          ],
+          "install_commands": [
+            "/plugin marketplace add openboundary/openboundary",
+            "/plugin install openboundary@openboundary"
+          ]
+        }
+      ]
+    }
+  ]
+}

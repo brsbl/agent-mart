@@ -1,0 +1,193 @@
+{
+  "author": {
+    "id": "ScottRBK",
+    "display_name": "Scott Raisbeck",
+    "avatar_url": "https://avatars.githubusercontent.com/u/29742434?u=8c451986559b21ea2ba18a7048f5bae29b0235f0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "forgetful-plugins",
+      "version": null,
+      "description": "Semantic memory for Claude Code using Zettelkasten principles",
+      "repo_full_name": "ScottRBK/context-hub-plugin",
+      "repo_url": "https://github.com/ScottRBK/context-hub-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 20,
+        "forks": 3,
+        "pushed_at": "2026-01-06T21:16:28Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"forgetful-plugins\",\n  \"owner\": {\n    \"name\": \"Scott Raisbeck\",\n    \"email\": \"scott_raisbeck1337@hotmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"forgetful-plugin\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"ScottRBK/forgetful-plugin\"\n      },\n      \"description\": \"Semantic memory for Claude Code using Zettelkasten principles\",\n      \"version\": \"1.1.1\",\n      \"author\": {\n        \"name\": \"Scott Raisbeck\"\n      },\n      \"repository\": \"https://github.com/ScottRBK/forgetful-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"memory\",\n        \"zettelkasten\",\n        \"mcp\",\n        \"forgetful\",\n        \"knowledge-base\"\n      ],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"context-hub-plugin\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"ScottRBK/context-hub-plugin\"\n      },\n      \"description\": \"Unified context retrieval from Forgetful Memory, Context7 docs, and Serena symbol analysis\",\n      \"version\": \"1.0.1\",\n      \"author\": {\n        \"name\": \"Scott Raisbeck\"\n      },\n      \"repository\": \"https://github.com/ScottRBK/context-hub-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"context\",\n        \"memory\",\n        \"documentation\",\n        \"context7\",\n        \"serena\",\n        \"forgetful\",\n        \"code-analysis\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"context-hub-plugin\",\n  \"description\": \"Unified context retrieval from Forgetful Memory, Context7 docs, and Serena symbol analysis\",\n  \"version\": \"1.0.1\",\n  \"author\": {\n    \"name\": \"Scott Raisbeck\",\n    \"url\": \"https://github.com/ScottRBK\"\n  },\n  \"license\": \"MIT\",\n  \"repository\": \"https://github.com/ScottRBK/context-hub-plugin\"\n}\n",
+        "README.md": "# Context Hub Plugin\n\nUnified context retrieval for Claude Code - orchestrates **Forgetful Memory**, **Context7 documentation**, and **Serena symbol analysis** into a single context-gathering workflow.\n\n## Installation\n\n```bash\nclaude plugins install context-hub-plugin --marketplace forgetful-plugins\n```\n\nOr install from local path:\n```bash\nclaude plugins install /path/to/context-hub-plugin\n```\n\n## Prerequisites\n\nContext Hub requires these plugins to be installed:\n\n### Required: Serena (for `/encode-repo-serena`)\n```bash\nclaude plugins install serena\n```\n\n### Recommended: Context7 (for framework docs in `/context_gather`)\n```bash\nclaude plugins install context7 --marketplace pleaseai/claude-code-plugins\n```\n\n## Setup\n\nRun the setup command to configure Forgetful MCP and verify prerequisites:\n\n```bash\n/context-hub-setup\n```\n\nThis will:\n1. Check if Serena and Context7 plugins are installed\n2. Configure Forgetful MCP server\n3. Report setup status\n\n## Skills\n\nContext Hub includes auto-discovered skills that guide Claude on effective tool usage:\n\n### Forgetful Skills (included)\n| Skill | Description |\n|-------|-------------|\n| `using-forgetful-memory` | When/how to query and create memories, atomic memory principles, importance scoring |\n| `curating-memories` | Updating, linking, and marking memories obsolete |\n| `exploring-knowledge-graph` | Deep traversal across memories, entities, and relationships |\n\n### Serena Skills\n| Skill | Description |\n|-------|-------------|\n| `using-serena-symbols` | When to use Serena vs grep, symbol path notation, core tools |\n| `serena-code-architecture` | Multi-phase architectural analysis workflow with Forgetful integration |\n\nSkills are automatically invoked by Claude when relevant to your task. They include:\n- **Tool Quick Reference** - Call Forgetful tools directly without meta-tool discovery\n- **TOOL_REFERENCE.md** - Complete schemas for all 38 Forgetful tools\n\n## Commands\n\n### Context Retrieval\n\n| Command | Description | Prerequisites |\n|---------|-------------|---------------|\n| `/context_gather <task>` | Gather context from all sources | Forgetful, Context7 (recommended) |\n| `/encode-repo-serena` | Bootstrap repository into Forgetful using symbol analysis | Forgetful, Serena |\n\n### Memory Management\n\n| Command | Description | Prerequisites |\n|---------|-------------|---------------|\n| `/memory-search <query>` | Search memories semantically | Forgetful |\n| `/memory-list [count]` | List recent memories | Forgetful |\n| `/memory-save` | Save current context as atomic memory | Forgetful |\n| `/memory-explore <query>` | Deep knowledge graph traversal | Forgetful |\n\n### Setup\n\n| Command | Description |\n|---------|-------------|\n| `/context-hub-setup` | Configure Forgetful MCP and check plugin prerequisites |\n\n## How It Works\n\n### /context_gather\n\nThe main command orchestrates multiple sources:\n\n1. **Forgetful Memory** - Searches your knowledge base across ALL projects\n2. **File System** - Reads actual code files referenced by memories\n3. **Context7** - Retrieves framework-specific documentation (if installed)\n4. **Serena** - Provides symbol-level code analysis (if installed)\n5. **WebSearch** - Falls back to web for recent information\n\nReturns a synthesized summary with:\n- Relevant memories and their connections\n- Code patterns and snippets\n- Framework guidance\n- Architectural decisions\n- Implementation notes\n\n### /encode-repo-serena\n\nUses Serena's LSP-powered analysis for accurate repo encoding:\n- **Symbol extraction** - Classes, functions, methods with precise locations\n- **Relationship discovery** - Who calls what, what depends on what\n- **Cross-file analysis** - Understand component connections\n\nStores findings as atomic memories in Forgetful for future retrieval.\n\n## Example Usage\n\n```bash\n# Before implementing a feature\n/context_gather implement OAuth2 authentication for the API\n\n# Bootstrap a new project into the knowledge base\n/encode-repo-serena\n\n# Quick memory search\n/memory-search authentication patterns\n\n# Save an important decision\n/memory-save\n```\n\n## Architecture\n\n```\ncontext-hub-plugin (self-contained)\n├── skills/\n│   ├── using-forgetful-memory/  ─── Memory usage + Tool Reference\n│   ├── curating-memories/       ─── Memory maintenance\n│   ├── exploring-knowledge-graph/ ─ Graph traversal\n│   ├── using-serena-symbols/    ─── Symbol analysis guidance\n│   └── serena-code-architecture/ ── Architecture workflows\n├── commands/\n│   ├── context_gather.md        ─── Multi-source context retrieval\n│   ├── encode-repo-serena.md    ─── Repository encoding\n│   └── memory-*.md              ─── Memory management\n└── Integrations\n    ├── Forgetful (MCP)          ─── Semantic memory storage\n    ├── Serena (Plugin)          ─── Symbol-level code analysis\n    └── Context7 (Plugin)        ─── Framework documentation\n```\n\n**Note**: Context Hub is self-contained - you don't need to install forgetful-plugin separately. All Forgetful skills are included.\n\n## Part of forgetful-plugins\n\nThis plugin is part of the [forgetful-plugins](https://github.com/ScottRBK/forgetful-plugin) marketplace.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "forgetful-plugin",
+          "source": {
+            "source": "github",
+            "repo": "ScottRBK/forgetful-plugin"
+          },
+          "description": "Semantic memory for Claude Code using Zettelkasten principles",
+          "version": "1.1.1",
+          "author": {
+            "name": "Scott Raisbeck"
+          },
+          "repository": "https://github.com/ScottRBK/forgetful-plugin",
+          "license": "MIT",
+          "keywords": [
+            "memory",
+            "zettelkasten",
+            "mcp",
+            "forgetful",
+            "knowledge-base"
+          ],
+          "category": "productivity",
+          "categories": [
+            "forgetful",
+            "knowledge-base",
+            "mcp",
+            "memory",
+            "productivity",
+            "zettelkasten"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ScottRBK/context-hub-plugin",
+            "/plugin install forgetful-plugin@forgetful-plugins"
+          ]
+        },
+        {
+          "name": "context-hub-plugin",
+          "source": {
+            "source": "github",
+            "repo": "ScottRBK/context-hub-plugin"
+          },
+          "description": "Unified context retrieval from Forgetful Memory, Context7 docs, and Serena symbol analysis",
+          "version": "1.0.1",
+          "author": {
+            "name": "Scott Raisbeck"
+          },
+          "repository": "https://github.com/ScottRBK/context-hub-plugin",
+          "license": "MIT",
+          "keywords": [
+            "context",
+            "memory",
+            "documentation",
+            "context7",
+            "serena",
+            "forgetful",
+            "code-analysis"
+          ],
+          "category": "productivity",
+          "categories": [
+            "code-analysis",
+            "context",
+            "context7",
+            "documentation",
+            "forgetful",
+            "memory",
+            "productivity",
+            "serena"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ScottRBK/context-hub-plugin",
+            "/plugin install context-hub-plugin@forgetful-plugins"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "forgetful-plugins",
+      "version": null,
+      "description": "Semantic memory for Claude Code using Zettelkasten principles",
+      "repo_full_name": "ScottRBK/forgetful-plugin",
+      "repo_url": "https://github.com/ScottRBK/forgetful-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-01-06T21:17:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"forgetful-plugins\",\n  \"owner\": {\n    \"name\": \"Scott Raisbeck\",\n    \"email\": \"scott_raisbeck1337@hotmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"forgetful-plugin\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"ScottRBK/forgetful-plugin\"\n      },\n      \"description\": \"Semantic memory for Claude Code using Zettelkasten principles\",\n      \"version\": \"1.1.1\",\n      \"author\": {\n        \"name\": \"Scott Raisbeck\"\n      },\n      \"repository\": \"https://github.com/ScottRBK/forgetful-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"memory\",\n        \"zettelkasten\",\n        \"mcp\",\n        \"forgetful\",\n        \"knowledge-base\"\n      ],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"context-hub-plugin\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"ScottRBK/context-hub-plugin\"\n      },\n      \"description\": \"Unified context retrieval from Forgetful Memory, Context7 docs, and Serena symbol analysis\",\n      \"version\": \"1.0.1\",\n      \"author\": {\n        \"name\": \"Scott Raisbeck\"\n      },\n      \"repository\": \"https://github.com/ScottRBK/context-hub-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"context\",\n        \"memory\",\n        \"documentation\",\n        \"context7\",\n        \"serena\",\n        \"forgetful\",\n        \"code-analysis\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n\"name\": \"forgetful-plugin\",\n\"description\": \"Plugin for the forgetful Agentic AI memory mcp solution\",\n\"version\": \"1.1.0\",\n\"author\": {\n\"name\": \"Scott Raisbeck\",\n\"url\": \"https://github.com/ScottRBK\"\n},\n\"license\": \"MIT\",\n\"repository\": \"https://github.com/ScottRBK/forgetful-plugin\"\n}",
+        "README.md": "![Forgetful Claude Code Plugin](/docs/images/hero_banner.png)\n\nThis plugin integrates [Forgetful AI Memory](https://github.com/ScottRBK/forgetful) with Claude Code - a semantic memory system using Zettelkasten principles.\n\n## Quick Start - Inside of Claude Code Session\n\n1. Install the plugin:\n```bash\n/plugin marketplace add ScottRBK/forgetful-plugin\n/plugin install forgetful-plugin@forgetful-plugin\n```\n\n2. Run setup:\n```bash\n/forgetful-setup\n```\n\nThe setup command will configure Forgetful MCP in your global `~/.claude.json` - this persists across plugin updates.\n\n**Standard setup** uses `uvx forgetful-ai` with SQLite storage (zero config, works immediately).\n\n**Custom setup** guides you through advanced options: remote HTTP server, PostgreSQL, custom embeddings, etc. See [Forgetful Configuration](https://github.com/ScottRBK/forgetful/blob/main/docs/configuration.md) for details.\n\n## What's Included\n\n**Commands:**\n- `/forgetful-setup` - Configure Forgetful MCP server (run after install)\n- `/memory-search` - Semantic search across memories\n- `/memory-save` - Create atomic memories with curation\n- `/memory-list` - Browse recent memories\n- `/memory-explore` - Deep knowledge graph traversal\n- `/encode-repo` - Bootstrap a repository into the knowledge base\n\n**Skills:**\n- `using-forgetful-memory` - Guidance on when to query vs create, atomic memory principles, **includes TOOL_REFERENCE.md with all 38 tool schemas**\n- `curating-memories` - Workflows for updating, linking, and marking memories obsolete\n- `exploring-knowledge-graph` - Deep graph traversal across memories, entities, and relationships\n\n## Related Plugins\n\n**[context-hub-plugin](https://github.com/ScottRBK/context-hub-plugin)** - An opinionated approach to gathering context for development work, combining Forgetful, Serena, and Context7 MCP servers. If you want a batteries-included context retrieval workflow, check it out.\n"
+      },
+      "plugins": [
+        {
+          "name": "forgetful-plugin",
+          "source": {
+            "source": "github",
+            "repo": "ScottRBK/forgetful-plugin"
+          },
+          "description": "Semantic memory for Claude Code using Zettelkasten principles",
+          "version": "1.1.1",
+          "author": {
+            "name": "Scott Raisbeck"
+          },
+          "repository": "https://github.com/ScottRBK/forgetful-plugin",
+          "license": "MIT",
+          "keywords": [
+            "memory",
+            "zettelkasten",
+            "mcp",
+            "forgetful",
+            "knowledge-base"
+          ],
+          "category": "productivity",
+          "categories": [
+            "forgetful",
+            "knowledge-base",
+            "mcp",
+            "memory",
+            "productivity",
+            "zettelkasten"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ScottRBK/forgetful-plugin",
+            "/plugin install forgetful-plugin@forgetful-plugins"
+          ]
+        },
+        {
+          "name": "context-hub-plugin",
+          "source": {
+            "source": "github",
+            "repo": "ScottRBK/context-hub-plugin"
+          },
+          "description": "Unified context retrieval from Forgetful Memory, Context7 docs, and Serena symbol analysis",
+          "version": "1.0.1",
+          "author": {
+            "name": "Scott Raisbeck"
+          },
+          "repository": "https://github.com/ScottRBK/context-hub-plugin",
+          "license": "MIT",
+          "keywords": [
+            "context",
+            "memory",
+            "documentation",
+            "context7",
+            "serena",
+            "forgetful",
+            "code-analysis"
+          ],
+          "category": "productivity",
+          "categories": [
+            "code-analysis",
+            "context",
+            "context7",
+            "documentation",
+            "forgetful",
+            "memory",
+            "productivity",
+            "serena"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ScottRBK/forgetful-plugin",
+            "/plugin install context-hub-plugin@forgetful-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

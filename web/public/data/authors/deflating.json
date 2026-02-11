@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "deflating",
+    "display_name": "deflating",
+    "avatar_url": "https://avatars.githubusercontent.com/u/216957417?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "memorable",
+      "version": null,
+      "description": "Persistent memory for Claude Code sessions",
+      "repo_full_name": "deflating/memorable",
+      "repo_url": "https://github.com/deflating/memorable",
+      "repo_description": "Persistent memory for Claude Code sessions",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T01:59:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"memorable\",\n  \"owner\": {\n    \"name\": \"Matt Kennelly\"\n  },\n  \"metadata\": {\n    \"description\": \"Persistent memory for Claude Code sessions\",\n    \"homepage\": \"https://github.com/deflating/memorable\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"memorable\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./plugin\",\n      \"description\": \"Persistent, intelligent memory across Claude Code sessions\"\n    }\n  ]\n}\n",
+        "README.md": "# Memorable\n\nPersistent memory for Claude Code sessions. Captures everything you do — tool calls, conversations, decisions — compresses it, extracts a knowledge graph, and makes it all searchable across sessions.\n\nRuns entirely on-device using Apple ML frameworks. No cloud APIs required (except one optional Sonnet call for KG quality filtering).\n\n## What It Does\n\n- **Captures** every tool call and user message during Claude Code sessions\n- **Compresses** transcripts to 50% with LLMLingua-2 (still searchable)\n- **Generates** session summaries and emoji-tagged headers via Apple's on-device Foundation Model\n- **Extracts** a knowledge graph of people, projects, technologies, and their relationships\n- **Embeds** everything with Apple NLEmbedding for semantic search\n- **Seeds** each new session with relevant context from past sessions\n\n## Requirements\n\n- macOS (Apple Silicon — uses NaturalLanguage.framework, Core ML)\n- Python 3.10+\n- Claude Code CLI (`claude`)\n- Apple Foundation Model CLI (`afm`)\n- PyObjC (auto-installed)\n\n## Setup\n\n### 1. Initialize\n\n```bash\ncd memorable/plugin\npython3 -m server --init\n```\n\nCreates `~/.memorable/config.json` and initializes the database at `~/.memorable/memorable.db`.\n\n### 2. Install Dependencies\n\n```bash\npip install -e .\n```\n\nInstalls: `llmlingua`, `watchdog`, `libsql-experimental`.\n\n### 3. Install as Claude Code Plugin\n\nThe plugin registers itself via `.mcp.json` and `hooks/hooks.json`. To install in Claude Code:\n\n```bash\nclaude plugin install /path/to/memorable/plugin\n```\n\nOr add to your MCP config manually. The MCP server runs `python3 -m server --watch` which starts both the MCP JSON-RPC handler and the background file watcher.\n\n### 4. (Optional) Start the Web Viewer\n\n```bash\ncd memorable/plugin\npython3 -m server.web --port 7777\n```\n\nOpen http://localhost:7777 to browse sessions, observations, and the knowledge graph.\n\n## How It Works\n\n### During a Session\n\n1. **SessionStart** hook loads context from past sessions (sacred facts, recent summaries)\n2. **PostToolUse** hook captures each tool call → queued for async processing\n3. **UserPromptSubmit** hook captures and embeds every user message\n4. **Stop** hook generates a session-level summary from all observations\n\n### Background Processing (every 30 seconds)\n\n1. Observation queue → deterministic descriptions + 512-dim embeddings\n2. KG extraction: Apple AFM proposes entity candidates → NLTagger catches names → Sonnet filters garbage → approved entities stored\n\n### After Session Ends (when transcript idle 15+ minutes)\n\n1. JSONL transcript parsed and validated\n2. LLMLingua-2 compresses at 50%\n3. Apple AFM generates emoji header tags and session note\n4. Everything stored in SQLite\n\n## MCP Tools\n\n| Tool | Description |\n|------|-------------|\n| `memorable_get_startup_seed` | Load context at session start |\n| `memorable_search_sessions` | Keyword search past sessions |\n| `memorable_search_observations` | Hybrid semantic + keyword search |\n| `memorable_get_observations` | List observations for a session |\n| `memorable_record_significant` | Save important moments to KG |\n| `memorable_query_kg` | Query the knowledge graph |\n| `memorable_get_system_status` | System stats and health |\n\n## Configuration\n\nEdit `~/.memorable/config.json`:\n\n```json\n{\n  \"db_path\": \"~/.memorable/memorable.db\",\n  \"transcript_dirs\": [\"~/.claude/projects\"],\n  \"stale_minutes\": 15,\n  \"min_messages\": 15,\n  \"min_human_words\": 100,\n  \"observer_process_interval\": 30,\n  \"compression_rate_storage\": 0.50\n}\n```\n\nSee [ARCHITECTURE.md](ARCHITECTURE.md) for the full configuration reference, database schema, pipeline details, and component documentation.\n\n## CLI\n\n```bash\npython3 -m server              # MCP server only (stdio)\npython3 -m server --watch      # MCP server + background watcher (normal operation)\npython3 -m server --watcher    # Standalone watcher daemon (for launchd)\npython3 -m server --process    # Process all pending transcripts and exit\npython3 -m server --init       # Initialize config and database\n```\n\n## Architecture\n\nSee [ARCHITECTURE.md](ARCHITECTURE.md) for comprehensive documentation including:\n\n- Complete data flow diagrams\n- Database schema with all tables and columns\n- Pipeline details (transcript processing, observation generation, KG extraction)\n- MCP tool specifications\n- Web viewer API endpoints\n- Technology stack and dependencies\n- Future plans (MLX fine-tuned model)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "memorable",
+          "version": "0.1.0",
+          "source": "./plugin",
+          "description": "Persistent, intelligent memory across Claude Code sessions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add deflating/memorable",
+            "/plugin install memorable@memorable"
+          ]
+        }
+      ]
+    }
+  ]
+}

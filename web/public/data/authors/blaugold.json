@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "blaugold",
+    "display_name": "Gabriel Terwesten",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5929595?u=b05ae9c5956d704bbc5aee904010f9ad52090fb8&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "local-plugins",
+      "version": null,
+      "description": "Automated code quality hooks: auto-fixes (ESLint/Prettier) after edits and quality gates before stopping",
+      "repo_full_name": "blaugold/claude-code-plugins",
+      "repo_url": "https://github.com/blaugold/claude-code-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-06T10:51:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"local-plugins\",\n  \"owner\": {\n    \"name\": \"Gabriel Terwesten\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"code-quality\",\n      \"source\": \"./plugins/code-quality\",\n      \"description\": \"Automated code quality hooks: auto-fixes (ESLint/Prettier) after edits and quality gates before stopping\"\n    },\n    {\n      \"name\": \"dart-lsp\",\n      \"source\": \"./plugins/dart-lsp\",\n      \"description\": \"LSP server integration for Dart files using the Dart Analysis Server\"\n    },\n    {\n      \"name\": \"vue-typescript-lsp\",\n      \"source\": \"./plugins/vue-typescript-lsp\",\n      \"description\": \"TypeScript Language Server with Vue support. Handles .vue, .ts, .tsx, .js, .jsx files. Use instead of a separate TypeScript LSP for Vue projects.\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nA collection of plugins for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).\n\n## Available Plugins\n\n| Plugin                                           | Description                                                                |\n| ------------------------------------------------ | -------------------------------------------------------------------------- |\n| [code-quality](plugins/code-quality)             | Auto-fixes (ESLint/Prettier) after edits and quality gates before stopping |\n| [dart-lsp](plugins/dart-lsp)                     | LSP integration for Dart files using the Dart Analysis Server              |\n| [vue-typescript-lsp](plugins/vue-typescript-lsp) | TypeScript Language Server with Vue support                                |\n\n## Setup\n\n### Add the Marketplace\n\nRun the following slash command in Claude Code:\n\n```\n/plugin marketplace add blaugold/claude-code-plugins\n```\n\n### Browse and Install Plugins\n\nList available plugins:\n\n```\n/plugin marketplace list\n```\n\nInstall a plugin:\n\n```\n/plugin install <plugin-name>@local-plugins\n```\n\n### Alternative: Settings File\n\nAdd the marketplace to your Claude Code settings file (`~/.claude/settings.json`\nor `.claude/settings.json` in your project):\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"local-plugins\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"blaugold/claude-code-plugins\"\n      }\n    }\n  }\n}\n```\n",
+        "plugins/code-quality/README.md": "# code-quality\n\nAutomated code quality hooks for Claude Code.\n\n## Features\n\n### Auto-fixes (PostToolUse)\n\nAutomatically applies ESLint fixes and Prettier formatting after every `Edit` or `Write` operation.\n\n- Detects package manager (npm, yarn, pnpm, bun)\n- Finds ESLint and Prettier configs by walking up from the edited file\n- Only runs on supported file types (.js, .ts, .tsx, .vue, .svelte, etc.)\n\n### Quality Gates (Stop)\n\nBlocks Claude from stopping until code quality checks pass.\n\n- Runs the `quality-gates` script from your package.json (if it exists)\n- Detects package manager automatically\n- Shows failure output and blocks stopping until issues are fixed\n\n## Installation\n\nAdd to your Claude Code settings:\n\n```json\n{\n  \"plugins\": [\n    \"/path/to/code-quality\"\n  ]\n}\n```\n\nOr use the `--plugin-dir` flag:\n\n```bash\nclaude --plugin-dir ~/dev/claude-code-plugins/code-quality\n```\n\n## Configuration\n\n### Quality Gates Script\n\nAdd a `quality-gates` script to your project's package.json:\n\n```json\n{\n  \"scripts\": {\n    \"quality-gates\": \"npm run check-types && npm run lint && npm run test\"\n  }\n}\n```\n\nThe script can run any combination of quality checks:\n- Type checking (`tsc --noEmit`)\n- Linting (`eslint .`)\n- Tests (`vitest run`)\n- Build verification (`npm run build`)\n\n### ESLint & Prettier\n\nThe auto-fixes hook automatically detects ESLint and Prettier configurations in your project. No additional configuration needed.\n\n## Requirements\n\n- `jq` must be installed for JSON parsing\n- ESLint and Prettier should be installed in your project (for auto-fixes)\n",
+        "plugins/dart-lsp/README.md": "# Dart LSP Plugin\n\nThis plugin provides Language Server Protocol (LSP) support for Dart files in Claude Code.\n\n## Prerequisites\n\nYou must have the Dart SDK installed and available in your PATH. The plugin uses the `dart language-server` command which is included with the Dart SDK.\n\n### Installation\n\n**macOS (Homebrew):**\n\n```bash\nbrew tap dart-lang/dart\nbrew install dart\n```\n\n**Linux:**\n\n```bash\nsudo apt-get update\nsudo apt-get install dart\n```\n\n**Windows:**\n\nDownload the Dart SDK from https://dart.dev/get-dart\n\n### Verify Installation\n\n```bash\ndart --version\n```\n\n## Features\n\n- Real-time diagnostics (errors, warnings, hints)\n- Go to definition\n- Find references\n- Hover information (types, documentation)\n- Document symbols\n\n## Configuration\n\nThe plugin uses the Dart Analysis Server in LSP mode with the following configuration:\n\n```json\n{\n  \"dart\": {\n    \"command\": \"dart\",\n    \"args\": [\"language-server\", \"--protocol=lsp\"],\n    \"extensionToLanguage\": {\n      \".dart\": \"dart\"\n    }\n  }\n}\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "code-quality",
+          "source": "./plugins/code-quality",
+          "description": "Automated code quality hooks: auto-fixes (ESLint/Prettier) after edits and quality gates before stopping",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add blaugold/claude-code-plugins",
+            "/plugin install code-quality@local-plugins"
+          ]
+        },
+        {
+          "name": "dart-lsp",
+          "source": "./plugins/dart-lsp",
+          "description": "LSP server integration for Dart files using the Dart Analysis Server",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add blaugold/claude-code-plugins",
+            "/plugin install dart-lsp@local-plugins"
+          ]
+        },
+        {
+          "name": "vue-typescript-lsp",
+          "source": "./plugins/vue-typescript-lsp",
+          "description": "TypeScript Language Server with Vue support. Handles .vue, .ts, .tsx, .js, .jsx files. Use instead of a separate TypeScript LSP for Vue projects.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add blaugold/claude-code-plugins",
+            "/plugin install vue-typescript-lsp@local-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

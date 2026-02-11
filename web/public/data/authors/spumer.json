@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "spumer",
+    "display_name": "spumer",
+    "avatar_url": "https://avatars.githubusercontent.com/u/735150?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "i-m-senior-developer",
+      "version": null,
+      "description": "Local development plugins",
+      "repo_full_name": "spumer/i-m-senior-developer",
+      "repo_url": "https://github.com/spumer/i-m-senior-developer",
+      "repo_description": "My developer mind as Claude Plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T11:11:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"i-m-senior-developer\",\n  \"description\": \"Local development plugins\",\n  \"owner\": {\n    \"name\": \"Svyatoslav Posokhin\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tdd-master\",\n      \"description\": \"TDD plugin with Red-Green-Refactor workflow, testing patterns, and TDD-focused agent for Python/Django projects.\",\n      \"author\": {\n        \"name\": \"Svyatoslav Posokhin\"\n      },\n      \"source\": \"./plugins/tdd-master\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"functional-clarity\",\n      \"description\": \"Functional Clarity principles — philosophy for building reliable, simple, and understandable code. 22 principles, Python style guide, fail-fast architecture.\",\n      \"author\": {\n        \"name\": \"Svyatoslav Posokhin\"\n      },\n      \"source\": \"./plugins/functional-clarity\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# I'm Senior Developer\n\nНабор плагинов для Claude Code, в которых собран мой опыт разработки.\n\nЭто не фреймворк и не методология ради методологии. Это рабочие принципы, выросшие из практики. Они работают потому что отражают реальность, а не потому что так написано в книге.\n\n## Философия\n\nПрограммирование — это отражение реальности. Решая задачи, мы моделируем мир. А значит то, что работает в коде — работает и в жизни. И наоборот.\n\nПринцип — это то, что работает везде. Если есть исключение — это не принцип. Принципов не может быть много. Их ровно столько, сколько нужно.\n\nПростота — это не когда нечего добавить, а когда нечего убрать. Надежность — это не когда всё обработано, а когда ничего не спрятано. Понятность — это не когда всё задокументировано, а когда документация не нужна.\n\nГлавный враг — не сложность. Главный враг — иллюзия простоты. Проглоченное исключение выглядит как стабильность. Возвращенный None выглядит как обработка ошибки. Логирование без re-raise выглядит как мониторинг. Но за каждой иллюзией — потерянные данные, которые никто никогда не найдет.\n\nПоэтому система должна падать. Честно и громко. Fail-fast — это не про хрупкость. Это про честность. Лучше упасть сейчас и узнать о проблеме, чем тихо потерять данные и узнать через месяц. Или никогда.\n\nИзменения постоянны. Код, который ты пишешь сегодня — завтра придется менять. Поэтому каждое решение должно не только решать задачу, но и делать следующее изменение дешевле. Это не про абстракции \"на будущее\". Это про ясность, которая снижает стоимость любого изменения.\n\nНичто ниоткуда не берется и никуда не пропадает. Сложность тоже. Если ты спрятал её в одном месте — она вылезет в другом. Поэтому лучше явная сложность в одном месте, чем скрытая во всех.\n\n## Что внутри\n\n### [functional-clarity](plugins/functional-clarity/)\n\n22 принципа Функциональной ясности. Философия написания надежного, простого и понятного кода. Fail-fast архитектура, запрет Error Hiding, минимальные изменения, явные зависимости.\n\nЗагружается при старте сессии. Полный набор принципов доступен через skill.\n\n### [tdd-master](plugins/tdd-master/)\n\nTDD методология по Кенту Беку и дяде Бобу. Red-Green-Refactor, FIRST принципы, паттерны тестирования для pytest и Django.\n\nДва плагина дополняют друг друга:\n- **functional-clarity** — КАК писать код\n- **tdd-master** — КАК писать тесты\n\n## Установка\n\n### 1. Подключить маркетплейс\n\nВнутри сессии Claude Code:\n\n```\n/plugin marketplace add spumer/i-m-senior-developer\n```\n\n### 2. Установить плагины\n\n```\n/plugin install functional-clarity@i-m-senior-developer\n/plugin install tdd-master@i-m-senior-developer\n```\n\n### Локальная разработка\n\n```bash\nclaude --plugin-dir plugins/functional-clarity --plugin-dir plugins/tdd-master\n```\n\n## Автор\n\nSvyatoslav Posokhin\n",
+        "plugins/tdd-master/README.md": "# tdd-master\n\nClaude Code plugin for Test-Driven Development methodology based on Kent Beck and Uncle Bob principles.\n\n## What it does\n\n- Guides agents through Red-Green-Refactor cycle\n- Automatically detects project frameworks (pytest, Django) and loads relevant patterns\n- Provides reference documentation for TDD methodology, fixture defaults, and testing patterns\n- Integrates with development workflow: tests are written BEFORE implementation\n\n## Structure\n\n```\ntdd-master-plugin/\n├── .claude-plugin/\n│   └── plugin.json              # Plugin manifest\n├── agents/\n│   └── tdd-master.md            # TDD agent (subagent for test writing)\n├── hooks/\n│   ├── hooks.json               # Hook configuration\n│   └── session-start.sh         # Injects TDD context at session start\n└── skills/\n    └── tdd-master/\n        ├── SKILL.md             # Skill definition with trigger phrases\n        └── references/\n            ├── TDD_GUIDE.md           # Core TDD methodology (always loaded)\n            ├── P0_DEFAULT_CONTEXT.md  # Context-adaptive defaults (always loaded)\n            └── frameworks/\n                ├── pytest.md          # Pytest patterns (conditional)\n                └── django.md          # Django patterns (conditional)\n```\n\n## Installation\n\nAdd the plugin path to your project's `.claude/settings.json`:\n\n```json\n{\n  \"plugins\": [\"./tdd-master-plugin\"]\n}\n```\n\n## How it works\n\n1. **SessionStart hook** — injects TDD workflow reminder into every new session\n2. **Skill activation** — triggers when user asks to write tests, implement features, fix bugs, or mentions TDD\n3. **Framework detection** — analyzes `pyproject.toml`, `conftest.py`, `manage.py` to determine pytest/Django usage\n4. **Reference loading** — always loads TDD_GUIDE + P0_DEFAULT_CONTEXT, conditionally loads framework-specific patterns\n5. **Agent execution** — tdd-master agent writes failing tests first, then minimal implementation, then refactors\n\n## Integration\n\nThis plugin works standalone. Other agents in your project can call tdd-master to write tests before implementation or verify TDD compliance during reviews.\n\n## Requirements\n\n- Claude Code CLI\n- Python project with pytest (recommended)\n- Django (optional, for Django-specific patterns)\n",
+        "plugins/functional-clarity/README.md": "# Functional Clarity Plugin\n\nПринципы \"Функциональной ясности\" — философия разработки надежного, простого и понятного кода.\n\n## Что это\n\nНабор из 22 принципов и стилевых рекомендаций для написания кода, который:\n- Легко понять и поддерживать\n- Падает быстро и честно (fail-fast, без Error Hiding)\n- Минимально сложен для решаемой задачи\n- Использует современные возможности Python\n\n## Что получаете при установке\n\n- **SessionStart hook** — краткое напоминание ключевых принципов при старте каждой сессии\n- **Skill `functional-clarity`** — полный набор принципов, загружается автоматически при упоминании \"принципы\", \"code quality\", \"fail-fast\", \"рефакторинг\" и др.\n\n## Установка\n\n```bash\nclaude --plugin-dir plugins/functional-clarity\n```\n\nИли добавьте в настройки проекта/глобальные настройки Claude Code.\n\n## Ключевые принципы\n\n1. Ограниченная зона ответственности (20-30 строк на функцию)\n2. Минимальные изменения (расширяй, не дублируй)\n3. Fail-Fast архитектура (graceful degradation только через feature flags)\n4. Явная обработка ошибок (запрет Error Hiding)\n5. Современный Python (типы, pathlib, context managers)\n\nПолный список — 22 принципа — доступен через skill `functional-clarity`.\n\n## Совместимость\n\nДополняет плагин `tdd-master`:\n- **functional-clarity** — КАК писать код\n- **tdd-master** — КОГДА писать тесты\n"
+      },
+      "plugins": [
+        {
+          "name": "tdd-master",
+          "description": "TDD plugin with Red-Green-Refactor workflow, testing patterns, and TDD-focused agent for Python/Django projects.",
+          "author": {
+            "name": "Svyatoslav Posokhin"
+          },
+          "source": "./plugins/tdd-master",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add spumer/i-m-senior-developer",
+            "/plugin install tdd-master@i-m-senior-developer"
+          ]
+        },
+        {
+          "name": "functional-clarity",
+          "description": "Functional Clarity principles — philosophy for building reliable, simple, and understandable code. 22 principles, Python style guide, fail-fast architecture.",
+          "author": {
+            "name": "Svyatoslav Posokhin"
+          },
+          "source": "./plugins/functional-clarity",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add spumer/i-m-senior-developer",
+            "/plugin install functional-clarity@i-m-senior-developer"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,43 @@
   },
   "marketplaces": [
     {
+      "name": "maxamillion-agentskill-redhat-contribution-report",
+      "version": null,
+      "description": "Evaluate Red Hat employee contributions to open source projects using LDAP org traversal and GitHub analysis",
+      "repo_full_name": "maxamillion/agentskill-redhat-contribution-report",
+      "repo_url": "https://github.com/maxamillion/agentskill-redhat-contribution-report",
+      "repo_description": "AgentSkilll to evaluate level of contribution by Red Hat to an open source project",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T21:20:06Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"maxamillion-agentskill-redhat-contribution-report\",\n  \"description\": \"Evaluate Red Hat employee contributions to open source projects using LDAP org traversal and GitHub analysis\",\n  \"owner\": {\n    \"name\": \"Adam Miller\",\n    \"email\": \"admiller@redhat.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"redhat-contribution-report\",\n      \"description\": \"Evaluates Red Hat contributions to OSS projects across PRs, maintainership, governance, roadmap influence, and leadership roles\",\n      \"author\": {\n        \"name\": \"Adam Miller\",\n        \"email\": \"admiller@redhat.com\"\n      },\n      \"source\": \"./redhat-contribution-report\",\n      \"category\": \"analysis\",\n      \"homepage\": \"https://github.com/maxamillion/agentskill-redhat-contribution-report\"\n    }\n  ]\n}\n",
+        "README.md": "# Red Hat Open Source Contribution Report\n\nA [Claude Code AgentSkill](https://agentskills.io/home) that evaluates Red Hat employee contributions to open source projects.\n\n## What It Does\n\nGiven an organizational leader's email address and a list of open source projects, this skill:\n\n1. **Discovers employees** by traversing Red Hat's internal LDAP hierarchy from the specified manager down through all reports\n2. **Resolves GitHub identities** from LDAP attributes (`rhatSocialURL`), git commit email matching, and GitHub user search\n3. **Evaluates 5 KPIs** per project using parallel sub-agents:\n   - **PR/Commit Contributions** — Code authored or co-authored by Red Hat employees\n   - **Release Management** — Release managers who are Red Hat employees\n   - **Maintainer/Reviewer/Approver Roles** — Red Hat employees in OWNERS, CODEOWNERS, MAINTAINERS files\n   - **Roadmap Influence** — Enhancement proposals and features led by Red Hat employees\n   - **Leadership Roles** — Governance positions (TAC, Steering Committee, Advisory Board) held by Red Hat employees\n4. **Generates a report** with per-employee role identification, per-project KPI scores, cross-project comparison, and confidence tracking\n\n## Prerequisites\n\n- **Operating System:** RHEL or Fedora Linux\n- **Network:** Red Hat internal network access (VPN)\n- **Kerberos:** Valid TGT (`kinit your-uid@REDHAT.COM`)\n- **LDAP Client:** `openldap-clients` package installed\n  ```bash\n  # Fedora\n  sudo dnf install openldap-clients\n\n  # RHEL\n  sudo yum install openldap-clients\n  ```\n- **GitHub CLI:** `gh` authenticated with your GitHub account\n  ```bash\n  sudo dnf install gh\n  gh auth login\n  ```\n- **Claude Code:** With this plugin installed\n\n## Installation\n\n### From Marketplace\n\nFirst, add the marketplace source (inside Claude Code):\n\n```\n/plugin marketplace add maxamillion/agentskill-redhat-contribution-report\n```\n\nThen install the plugin:\n\n```\n/plugin install redhat-contribution-report@maxamillion-agentskill-redhat-contribution-report\n```\n\n### From Source\n\nClone this repository and add it as a local plugin (inside Claude Code):\n\n```bash\ngit clone https://github.com/maxamillion/agentskill-redhat-contribution-report.git\n```\n\n```\n/plugin marketplace add /path/to/agentskill-redhat-contribution-report\n/plugin install redhat-contribution-report@maxamillion-agentskill-redhat-contribution-report\n```\n\n## Usage\n\n```\n/redhat-contribution-report <manager_email> <project1> [project2] [project3] ...\n```\n\n### Examples\n\nEvaluate Red Hat AI Engineering contributions to ML/AI projects:\n```\n/redhat-contribution-report manager@redhat.com kubeflow/kubeflow kserve/kserve mlflow/mlflow vllm-project/vllm\n```\n\nEvaluate a single project:\n```\n/redhat-contribution-report manager@redhat.com kubernetes/kubernetes\n```\n\n### Arguments\n\n| Argument | Required | Description |\n|----------|----------|-------------|\n| `manager_email` | Yes | Email of the org leader whose reports to evaluate (e.g., `manager@redhat.com`) |\n| `project(s)` | Yes (1+) | GitHub repositories in `owner/repo` format |\n\n## Output\n\nReports are saved to:\n```\nreports/YYYY-MM-DD-redhat-contribution-eval.md\n```\n\n### Report Contents\n\n- **Executive Summary** with overall scores across all projects\n- **Employee Roster** with GitHub username resolution coverage\n- **Per-Project Sections** containing:\n  - Employee contribution table (name, GitHub username, project roles)\n  - 5 KPI evaluations with scores (1-5), evidence, and confidence levels\n- **Cross-Project Comparison** table\n- **Data Quality & Methodology** notes\n\n### Scoring Scale\n\nEach KPI is scored 1-5:\n\n| Score | Label |\n|-------|-------|\n| 5 | Dominant/Primary presence |\n| 4 | Major contributor |\n| 3 | Significant contributor |\n| 2 | Minor/peripheral involvement |\n| 1 | No involvement found |\n\n### Confidence Levels\n\n| Level | Meaning |\n|-------|---------|\n| High | Data from authoritative sources (LDAP, GitHub API, governance files) |\n| Medium | Data from semi-structured sources or email-matched employees |\n| Low | Data from web search or name-matched employees |\n| Not Found | Could not find data for this metric |\n\n## Architecture\n\n```\nSKILL.md (orchestrator)\n  ├── Phase 1: Input parsing & prerequisite checks\n  ├── Phase 2: LDAP org traversal (GSSAPI auth)\n  ├── Phase 3: GitHub username resolution\n  ├── Phase 4: Parallel sub-agents (one per project)\n  │     ├── KPI 1: PR/Commit analysis (gh CLI)\n  │     ├── KPI 2: Release management (gh CLI)\n  │     ├── KPI 3: Governance files (OWNERS, CODEOWNERS, etc.)\n  │     ├── KPI 4: Roadmap issues & proposals (gh CLI)\n  │     └── KPI 5: Leadership roles (governance docs + web search)\n  ├── Phase 5: Result collection & merging\n  └── Phase 6: Report generation\n```\n\n## File Structure\n\n```\nredhat-contribution-report/\n├── .claude-plugin/\n│   └── plugin.json                  # Plugin identity\n└── skills/\n    └── redhat-contribution-report/\n        ├── SKILL.md                 # Main orchestrator\n        ├── assets/\n        │   └── scoring-rubric.json  # KPI scoring thresholds\n        └── references/\n            ├── LDAP-GUIDE.md        # LDAP connection & traversal docs\n            ├── DATA-SOURCES.md      # gh CLI commands by KPI\n            ├── REPORT-TEMPLATE.md   # Output format specification\n            └── RESEARCH-PROMPTS.md  # Sub-agent prompt templates\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "redhat-contribution-report",
+          "description": "Evaluates Red Hat contributions to OSS projects across PRs, maintainership, governance, roadmap influence, and leadership roles",
+          "author": {
+            "name": "Adam Miller",
+            "email": "admiller@redhat.com"
+          },
+          "source": "./redhat-contribution-report",
+          "category": "analysis",
+          "homepage": "https://github.com/maxamillion/agentskill-redhat-contribution-report",
+          "categories": [
+            "analysis"
+          ],
+          "install_commands": [
+            "/plugin marketplace add maxamillion/agentskill-redhat-contribution-report",
+            "/plugin install redhat-contribution-report@maxamillion-agentskill-redhat-contribution-report"
+          ]
+        }
+      ]
+    },
+    {
       "name": "claude-oss-eval-plugin",
       "version": null,
       "description": "15-phase OSS framework evaluation methodology with AI bias prevention. Evaluates open source projects for adoption decisions with rigorous safeguards against common AI analysis pitfalls.",

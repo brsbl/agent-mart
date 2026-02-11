@@ -1,0 +1,101 @@
+{
+  "author": {
+    "id": "copyx",
+    "display_name": "Jingi Kim",
+    "avatar_url": "https://avatars.githubusercontent.com/u/4283243?u=6ef50268b89d3b0babef801d71c19bf18594d625&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-queue",
+      "version": null,
+      "description": "Claude Code Queue Manager - FIFO auto-switch for multiple Claude Code sessions via tmux",
+      "repo_full_name": "copyx/claude-code-queue",
+      "repo_url": "https://github.com/copyx/claude-code-queue",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-11T07:01:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-queue\",\n  \"owner\": {\n    \"name\": \"copyx\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code Queue Manager - FIFO auto-switch for multiple Claude Code sessions via tmux\",\n    \"version\": \"0.1.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ccq\",\n      \"source\": \"./plugins/ccq\",\n      \"description\": \"Auto-switch between multiple Claude Code sessions using FIFO queue and tmux\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"copyx\"\n      },\n      \"repository\": \"https://github.com/copyx/claude-code-queue\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"tmux\", \"queue\", \"session-manager\", \"productivity\"]\n    }\n  ]\n}\n",
+        "README.md": "# ccq — Claude Code Queue Manager\n\nFIFO queue-based auto-switcher for multiple Claude Code sessions via tmux.\n\nRun several Claude Code sessions in a single tmux session. When you submit a prompt in the current window, ccq automatically switches you to the session that has been waiting for input the longest. No more missed idle prompts.\n\n## Prerequisites\n\n- **tmux** 3.0+\n- **Go** 1.22+ (only needed to build from source)\n- **Claude Code** CLI\n\n## Installation\n\n### Quick Install\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/copyx/claude-code-queue/main/install.sh | bash\n```\n\n**Prerequisites:** tmux must be installed first. See [tmux installation guide](https://github.com/tmux/tmux/wiki/Installing).\n\n### Claude Code Plugin\n\n**For Claude Code users:** Install the plugin first, then run the `/ccq:install-cli` skill.\n\nAdd the marketplace and install the plugin:\n\n```bash\n/plugin marketplace add copyx/claude-code-queue\n/plugin install ccq@claude-code-queue\n```\n\nThen install the CLI binary:\n\n```bash\n/ccq:install-cli\n```\n\n### Manual Installation\n\n1. Download the binary for your platform from [Releases](https://github.com/copyx/claude-code-queue/releases/latest):\n   - macOS (Intel): `ccq-darwin-amd64`\n   - macOS (Apple Silicon): `ccq-darwin-arm64`\n   - Linux (x64): `ccq-linux-amd64`\n   - Linux (ARM64): `ccq-linux-arm64`\n2. Move to `~/.local/bin/ccq`\n3. Make executable: `chmod +x ~/.local/bin/ccq`\n4. Ensure `~/.local/bin` is in your PATH\n\n### Build from Source\n\n```bash\ngit clone https://github.com/copyx/claude-code-queue.git\ncd claude-code-queue\nmake build\nmake install   # copies the binary to ~/.local/bin/ccq\n```\n\nMake sure `~/.local/bin` is on your `PATH`.\n\n## Usage\n\n### Start a session\n\n```bash\nccq\n```\n\nCreates a `ccq` tmux session, launches Claude Code inside it, and attaches your terminal. On first run you will be prompted to choose a tmux prefix key (`Ctrl+Space` is recommended since Claude Code uses most `Ctrl` combinations).\n\n### Add more sessions\n\nFrom a different terminal (or a different project directory), just run `ccq` again:\n\n```bash\nccq\n```\n\nIf a session already exists, ccq adds a new window and starts Claude Code in it. You'll see the new window briefly for initial setup (trust prompt, etc.), then ccq automatically returns you to your previous view.\n\n### Auto-switching\n\nWhile you work, ccq tracks every window's state through Claude Code hooks:\n\n1. You type a prompt in window 1 and press Enter.\n2. Window 1 becomes **busy**.\n3. ccq switches you to the window that has been **idle** the longest.\n4. When that window also becomes busy, you move to the next idle one, and so on.\n\nIf all windows are busy, ccq stays on the current window until one becomes idle.\n\n### Keybindings\n\nAll keybindings use the tmux prefix you chose during setup.\n\n| Key | Action |\n|---|---|\n| `prefix + a` | Toggle auto/manual mode |\n| `prefix + n` | Next window (tmux built-in) |\n| `prefix + p` | Previous window (tmux built-in) |\n\nIn **manual** mode, state tracking still happens but ccq will not switch windows for you. Press `prefix + a` again to re-enable auto-switching (ccq immediately checks the queue and switches if needed).\n\n## How it works\n\nccq is a hook-driven state machine with no long-running daemon.\n\n1. The Claude Code plugin registers hooks for key events (`Notification`, `UserPromptSubmit`, `PostToolUse`, `PostToolUseFailure`, `SessionEnd`).\n2. Each hook invokes `ccq _hook idle`, `ccq _hook busy`, or `ccq _hook remove` as a short-lived process.\n3. The hook handler reads and writes tmux window variables (`@ccq_state`, `@ccq_idle_since`) to track which windows are idle and when they became idle.\n4. When the current window is busy and at least one other window is idle, `ccq` issues a `tmux select-window` to the oldest idle window.\n5. No external database or lock file is needed. tmux itself serializes all commands, and any transient inconsistency self-corrects on the next hook invocation.\n\n## Configuration\n\nConfiguration is stored at `~/.config/ccq/config` (JSON):\n\n```json\n{\n  \"prefix\": \"C-Space\"\n}\n```\n\n| Key | Description | Default |\n|---|---|---|\n| `prefix` | tmux prefix key | Set on first run |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "ccq",
+          "source": "./plugins/ccq",
+          "description": "Auto-switch between multiple Claude Code sessions using FIFO queue and tmux",
+          "version": "0.1.0",
+          "author": {
+            "name": "copyx"
+          },
+          "repository": "https://github.com/copyx/claude-code-queue",
+          "license": "MIT",
+          "keywords": [
+            "tmux",
+            "queue",
+            "session-manager",
+            "productivity"
+          ],
+          "categories": [
+            "productivity",
+            "queue",
+            "session-manager",
+            "tmux"
+          ],
+          "install_commands": [
+            "/plugin marketplace add copyx/claude-code-queue",
+            "/plugin install ccq@claude-code-queue"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sense-lab-plugins",
+      "version": null,
+      "description": "A personal Claude Code plugin marketplace",
+      "repo_full_name": "copyx/sense-lab-plugins",
+      "repo_url": "https://github.com/copyx/sense-lab-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-08T02:26:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"sense-lab-plugins\",\n  \"owner\": {\n    \"name\": \"Jingi Kim\"\n  },\n  \"metadata\": {\n    \"description\": \"A personal Claude Code plugin marketplace\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"english-proofreader\",\n      \"source\": \"./english-proofreader\",\n      \"description\": \"Proofreads English prompts before execution with educational feedback\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"Jingi Kim\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"english\", \"proofreading\", \"grammar\", \"learning\"]\n    }\n  ]\n}\n",
+        "README.md": "# Sense Lab Plugins\n\nA personal Claude Code plugin marketplace by jingi.kim.\n\n## Available Plugins\n\n| Plugin | Description | Version |\n|--------|-------------|---------|\n| [english-proofreader](./english-proofreader) | Proofreads English prompts with educational feedback | 1.2.0 |\n\n## Installation\n\n### Step 1: Add Marketplace\n\n```bash\n/plugin marketplace add jingi-kim/sense-lab-plugins\n```\n\n### Step 2: Install Plugin\n\n```bash\n/plugin install english-proofreader@sense-lab-plugins\n```\n\n> **Note:** english-proofreader requires [Bun](https://bun.sh). Install with `curl -fsSL https://bun.sh/install | bash`\n\n## License\n\nMIT\n",
+        "english-proofreader/README.md": "# English Proofreader Plugin\n\nProofreads your English prompts before Claude Code executes them, providing educational feedback to help you improve your English.\n\n## Features\n\n- Automatic proofreading of all English prompts\n- Educational feedback with grammar explanations\n- Handles mixed Korean/English content (proofreads English parts only)\n- Does not consume conversation context\n- Automatic dependency installation on first use\n- Context-aware proofreading - Uses Claude's last response to understand contextual replies\n\n## Prerequisites\n\nInstall [Bun](https://bun.sh):\n\n```bash\ncurl -fsSL https://bun.sh/install | bash\n```\n\nThen restart your terminal.\n\n## Installation\n\n```bash\n# Add the marketplace (if not already added)\n/plugin marketplace add jingi-kim/sense-lab-plugins\n\n# Install the plugin\n/plugin install english-proofreader@sense-lab-plugins\n```\n\nDependencies are installed automatically on first session start.\n\n## Usage\n\nOnce installed, the plugin automatically proofreads every English prompt you submit.\n\n**If issues are found:**\n- Your prompt is blocked (not executed)\n- You see educational feedback explaining the errors\n- Revise your prompt and re-submit\n\n**If no issues:**\n- You see \"✅ No English issues found\"\n- Your prompt executes normally\n\n**If proofreading is skipped:**\n- You see \"⏭️ Proofreading skipped: [reason]\" with the specific reason\n- Your prompt executes normally\n- Reasons include: matches skip pattern, exceeds length limit, insufficient English content, etc.\n\n**If Bun is not installed:**\n- You see an error message with installation instructions\n\n## Configuration\n\nSettings are stored in `~/.english-proofreader/settings.json`. The file is automatically created with defaults on first use.\n\n### Available Settings\n\n| Property | Type | Default | Description |\n|----------|------|---------|-------------|\n| `skipPatterns` | `string[]` | `[\"^Analyze this conversation and determine:\"]` | Regular expression patterns to skip proofreading (e.g., system prompts) |\n| `skipAboveLength` | `number` | `0` | Skip proofreading if prompt exceeds this character count (0 = no limit) |\n| `minEnglishRatio` | `number` | `0.5` | Minimum ratio of English words to total words (0.0-1.0). Skips if below threshold. |\n| `minEnglishWords` | `number` | `3` | Minimum number of English words required for proofreading. Skips if below threshold. |\n\n### Auto-Merge Behavior\n\nWhen the plugin updates with new settings properties:\n- Your existing customizations are **preserved**\n- New properties are **automatically added** with default values\n- You don't need to manually update your settings file\n\n### Common Customizations\n\n**Skip very long prompts:**\n```json\n{\n  \"skipAboveLength\": 1000,\n  \"minEnglishRatio\": 0.5,\n  \"minEnglishWords\": 3,\n  \"skipPatterns\": [\"^Analyze this conversation and determine:\"]\n}\n```\n\n**Proofread Korean-heavy content (lower English ratio threshold):**\n```json\n{\n  \"minEnglishRatio\": 0.2,\n  \"minEnglishWords\": 2,\n  \"skipAboveLength\": 0,\n  \"skipPatterns\": [\"^Analyze this conversation and determine:\"]\n}\n```\n\n**Skip specific system prompt patterns:**\n```json\n{\n  \"skipPatterns\": [\n    \"^Analyze this conversation and determine:\",\n    \"^Please summarize the following:\",\n    \"^Debug output:\"\n  ],\n  \"minEnglishRatio\": 0.5,\n  \"minEnglishWords\": 3,\n  \"skipAboveLength\": 0\n}\n```\n\n**Disable length-based skipping entirely:**\n```json\n{\n  \"skipAboveLength\": 0,\n  \"minEnglishRatio\": 0.5,\n  \"minEnglishWords\": 3,\n  \"skipPatterns\": []\n}\n```\n\n## Example\n\n**Your prompt:**\n```\nHelp me to understand this code\n```\n\n**Feedback:**\n```\n📝 English Proofreading:\n\n✗ \"Help me to understand\" → \"Help me understand\"\nExplanation: After \"help + object\", use the bare infinitive without \"to\".\nThis is called the \"bare infinitive\" pattern. Compare: \"help me do\" (correct)\nvs \"help me to do\" (less natural in American English).\n\nPlease revise your prompt and re-submit.\n```\n\n## How It Works\n\n```\nSessionStart\n    ↓\nensure-deps.sh\n    ↓\nBun installed? ─No──→ Block with install instructions\n    ↓ Yes\nnode_modules exists? ─No──→ Run `bun install`\n    ↓ Yes\nReady\n\nUserPromptSubmit\n    ↓\nproofread.sh\n    ↓\nBun installed? ─No──→ Block with install instructions\n    ↓ Yes\nproofread.ts\n    ↓\nContains English? ─No──→ Skip + \"⏭️ Proofreading skipped: [reason]\"\n    ↓ Yes\nRead transcript → Get Claude's last response (if available)\n    ↓\nCall Claude Haiku (with context)\n    ↓\nIssues found? ─No──→ Allow + \"✅ No issues\"\n    ↓ Yes\nBlock + educational feedback\n```\n\n## Plugin Structure\n\n```\nenglish-proofreader/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin metadata\n├── hooks/\n│   ├── hooks.json           # Hook configuration\n│   ├── ensure-deps.sh       # Bun check + dependency installation\n│   ├── proofread.sh         # Bun check wrapper\n│   ├── proofread.ts         # Proofreading logic (TypeScript)\n│   └── proofread.test.ts    # Tests\n├── package.json             # Dependencies\n├── tsconfig.json            # TypeScript config\n└── README.md\n```\n\n## Development\n\n```bash\ncd english-proofreader\n\n# Install dependencies\nbun install\n\n# Run tests\nbun test\n\n# Type check\nbun run tsc --noEmit\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "english-proofreader",
+          "source": "./english-proofreader",
+          "description": "Proofreads English prompts before execution with educational feedback",
+          "version": "1.2.0",
+          "author": {
+            "name": "Jingi Kim"
+          },
+          "license": "MIT",
+          "keywords": [
+            "english",
+            "proofreading",
+            "grammar",
+            "learning"
+          ],
+          "categories": [
+            "english",
+            "grammar",
+            "learning",
+            "proofreading"
+          ],
+          "install_commands": [
+            "/plugin marketplace add copyx/sense-lab-plugins",
+            "/plugin install english-proofreader@sense-lab-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

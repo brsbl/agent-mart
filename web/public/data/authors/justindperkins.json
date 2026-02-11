@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "JustinDPerkins",
+    "display_name": "Justin Perkins",
+    "avatar_url": "https://avatars.githubusercontent.com/u/60413733?u=1e15c2f141a8450d10aff6913830764464be586b&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "trendai-security",
+      "version": null,
+      "description": "TrendAI Security Scanner - Scan code for vulnerabilities, secrets, malware, and IaC misconfigurations using TrendMicro Vision One TMAS",
+      "repo_full_name": "JustinDPerkins/TrendAI-Claude-Skill",
+      "repo_url": "https://github.com/JustinDPerkins/TrendAI-Claude-Skill",
+      "repo_description": "TrendAI Claude Code Skill",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-07T02:45:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"trendai-security\",\n  \"description\": \"TrendAI Security Scanner - Scan code for vulnerabilities, secrets, malware, and IaC misconfigurations using TrendMicro Vision One TMAS\",\n  \"owner\": {\n    \"name\": \"Justin Perkins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"trendai-security\",\n      \"description\": \"Scan code for vulnerabilities, secrets, malware, and IaC misconfigurations using TrendMicro Vision One TMAS\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Justin Perkins\"\n      },\n      \"source\": \"./\",\n      \"category\": \"security\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"trendai-security\",\n  \"description\": \"TrendAI Security Scanner - Scan code for vulnerabilities, secrets, malware, and IaC misconfigurations using TrendMicro Vision One TMAS\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Justin Perkins\"\n  }\n}\n",
+        "README.md": "# TrendAI Security Scanner for Claude Code\n\n> **Disclaimer:** This is an unofficial community project and is not officially supported by TrendAI. Use at your own discretion.\n\nScan your code for **vulnerabilities**, **secrets**, **malware**, and **IaC misconfigurations** using TrendMicro Vision One directly from Claude Code.\n\n## Quick Install\n\n```bash\nclaude plugin marketplace add JustinDPerkins/TrendAI-Claude-Skill && claude plugin install trendai-security\n```\n\nThen restart Claude Code for the plugin to load.\n\n## Setup\n\nAfter installing, run the setup command in Claude Code:\n\n```\n/trendai-setup\n```\n\nThis will:\n1. Install the TMAS CLI (if not already installed)\n2. Guide you through API key configuration\n\n### Manual Setup\n\nIf you prefer manual setup:\n\n**1. Install TMAS CLI**\n\n```bash\n# macOS (Apple Silicon)\ncurl -L https://cli.artifactscan.cloudone.trendmicro.com/tmas-cli/latest/tmas-cli_Darwin_arm64.zip -o /tmp/tmas.zip && unzip -o /tmp/tmas.zip -d ~/.local/bin && chmod +x ~/.local/bin/tmas\n\n# macOS (Intel)\ncurl -L https://cli.artifactscan.cloudone.trendmicro.com/tmas-cli/latest/tmas-cli_Darwin_x86_64.zip -o /tmp/tmas.zip && unzip -o /tmp/tmas.zip -d ~/.local/bin && chmod +x ~/.local/bin/tmas\n\n# Linux (x86_64)\ncurl -L https://cli.artifactscan.cloudone.trendmicro.com/tmas-cli/latest/tmas-cli_Linux_x86_64.tar.gz -o /tmp/tmas.tar.gz && tar -xzf /tmp/tmas.tar.gz -C ~/.local/bin && chmod +x ~/.local/bin/tmas\n\n# Linux (ARM64)\ncurl -L https://cli.artifactscan.cloudone.trendmicro.com/tmas-cli/latest/tmas-cli_Linux_arm64.tar.gz -o /tmp/tmas.tar.gz && tar -xzf /tmp/tmas.tar.gz -C ~/.local/bin && chmod +x ~/.local/bin/tmas\n```\n\n**Windows (Git Bash):**\n\n```bash\n# Create directory\nmkdir -p \"$HOME/.local/bin\"\n\n# Download\ncurl -L https://cli.artifactscan.cloudone.trendmicro.com/tmas-cli/latest/tmas-cli_Windows_x86_64.zip -o \"$HOME/tmas.zip\"\n\n# Extract (using PowerShell)\npowershell -ExecutionPolicy Bypass -Command \"Expand-Archive -Force -Path '$HOME/tmas.zip' -DestinationPath '$HOME/.local/bin'\"\n\n# Verify\n\"$HOME/.local/bin/tmas.exe\" version\n```\n\n**2. Get a Vision One API Key**\n\n1. Log in to [Trend Vision One](https://portal.xdr.trendmicro.com)\n2. Go to **Administration** > **API Keys**\n3. Create a new API key with **Cloud Security Operations** permissions\n4. Copy the key\n\n**3. Set Environment Variable**\n\n**macOS/Linux:** Add to your shell profile (`~/.zshrc` or `~/.bashrc`):\n\n```bash\nexport TMAS_API_KEY=\"your-api-key-here\"\n```\n\nThen reload your shell:\n```bash\nsource ~/.zshrc  # or ~/.bashrc\n```\n\n**Windows (Git Bash):**\n\n```bash\n# Persistent (future sessions)\nsetx TMAS_API_KEY \"your-api-key-here\"\n\n# Current session\nexport TMAS_API_KEY=\"your-api-key-here\"\n```\n\n## Usage\n\nOnce configured, use these commands:\n\n| Command | Description |\n|---------|-------------|\n| `/trendai-setup` | Configure API key and install TMAS CLI |\n| `/trendai-scan-tmas` | Scan code for vulnerabilities and secrets |\n| `/trendai-scan-iac` | Scan Terraform/CloudFormation for misconfigurations |\n| `/trendai-scan-llm` | Scan LLM endpoints for prompt injection |\n\n### LLM Scanning\n\nFor `/trendai-scan-llm`, you need an additional environment variable:\n\n```bash\n# The API key for the LLM endpoint you're testing (not the Vision One key)\nexport TARGET_API_KEY=\"your-llm-endpoint-api-key\"\n```\n\n**Features:**\n- **Drift tracking** - Compares scans over time to show improvement/regression\n- **Scan history** - Results saved to `.trendai-scans/` for trend analysis\n- **Detailed reports** - JSON output with attack prompts and responses\n\n### Regional Configuration\n\nBy default, the scanner uses the US region (`api.xdr.trendmicro.com`). For other regions, set:\n\n```bash\nexport V1_REGION=\"api.eu.xdr.trendmicro.com\"  # EU\nexport V1_REGION=\"api.au.xdr.trendmicro.com\"  # Australia\nexport V1_REGION=\"api.in.xdr.trendmicro.com\"  # India\nexport V1_REGION=\"api.jp.xdr.trendmicro.com\"  # Japan\nexport V1_REGION=\"api.sg.xdr.trendmicro.com\"  # Singapore\n```\n\n### What It Detects\n\n- **Vulnerabilities** - CVEs in dependencies with CVSS scores and remediation\n- **Secrets** - API keys, passwords, tokens, certificates\n- **Malware** - Malicious code in container images\n- **IaC Misconfigurations** - Security issues in Terraform/CloudFormation\n- **LLM Vulnerabilities** - Prompt injection, jailbreaks, system prompt leakage\n\n## Requirements\n\n- [Claude Code CLI](https://claude.com/product/claude-code)\n- [Trend Vision One account](https://www.trendmicro.com/en_us/business/products/vision-one.html)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "trendai-security",
+          "description": "Scan code for vulnerabilities, secrets, malware, and IaC misconfigurations using TrendMicro Vision One TMAS",
+          "version": "1.0.0",
+          "author": {
+            "name": "Justin Perkins"
+          },
+          "source": "./",
+          "category": "security",
+          "categories": [
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add JustinDPerkins/TrendAI-Claude-Skill",
+            "/plugin install trendai-security@trendai-security"
+          ]
+        }
+      ]
+    }
+  ]
+}
