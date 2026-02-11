@@ -1,0 +1,51 @@
+{
+  "author": {
+    "id": "vleytman",
+    "display_name": "vleytman",
+    "avatar_url": "https://avatars.githubusercontent.com/u/14976692?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "1wp-plugins",
+      "version": null,
+      "description": "1WP Plugin Marketplace for Claude Code",
+      "repo_full_name": "vleytman/1wp-plugins",
+      "repo_url": "https://github.com/vleytman/1wp-plugins",
+      "repo_description": "Claude Code Plugin Marketplace by 1WP",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2025-12-10T16:04:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"1wp-plugins\",\n  \"description\": \"1WP Plugin Marketplace for Claude Code\",\n  \"owner\": {\n    \"name\": \"1WP\",\n    \"email\": \"plugins@1wp.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"auggie-context\",\n      \"source\": \"./plugins/auggie-context\",\n      \"description\": \"Context management and enhancement plugin for Claude Code\",\n      \"version\": \"0.1.0\",\n      \"keywords\": [\"context\", \"auggie\", \"enhancement\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# 1WP Plugins\n\nA Claude Code plugin marketplace by 1WP.\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```bash\n/plugin marketplace add owner/1wp-plugins\n```\n\nOr for local development:\n\n```bash\n/plugin marketplace add ./path/to/1wp-plugins\n```\n\n## Available Plugins\n\n### auggie-context\n\nContext management and codebase exploration plugin.\n\n**Features:**\n- `/auggie` command for quick codebase questions\n- Specialized agent for deep exploration\n- Skill for context-aware assistance\n\n**Install:**\n```bash\n/plugin install auggie-context@1wp-plugins\n```\n\n## Structure\n\n```\n1wp-plugins/\n├── .claude-plugin/\n│   └── marketplace.json      # Marketplace catalog\n├── plugins/\n│   └── auggie-context/       # Plugin directory\n│       ├── .claude-plugin/\n│       │   └── plugin.json   # Plugin manifest\n│       ├── commands/         # Slash commands\n│       ├── agents/           # Specialized agents\n│       └── skills/           # Agent skills\n└── README.md\n```\n\n## License\n\nMIT\n",
+        "plugins/auggie-context/README.md": "# Auggie Context Plugin\n\nA context management and codebase exploration plugin for Claude Code, powered by the [Auggie SDK](https://docs.augmentcode.com/cli/sdk) and [Context Engine SDK](https://docs.augmentcode.com/context-services/sdk/overview).\n\n## Features\n\n- **`/auggie`**: Context-aware codebase assistant\n- **`/auggie-setup`**: Configure Auggie credentials\n- **`/auggie-index`**: Index your codebase for fast context search\n- **Auggie Agent**: Specialized subagent for codebase exploration\n- **Auggie Skill**: Automatic context-aware assistance\n\n## Getting Started\n\n### Step 1: Install the Plugin\n\n```bash\n# Add the 1wp-plugins marketplace\n/plugin marketplace add vleytman/1wp-plugins\n\n# Install the plugin\n/plugin install auggie-context@1wp-plugins\n```\n\n### Step 2: Set Up Credentials\n\n```bash\n/auggie-setup\n```\n\nOr manually:\n\n```bash\n# Install Auggie CLI (if not installed)\n# See: https://docs.augmentcode.com/cli\n\n# Login to Auggie\nauggie login\n\n# Verify it worked\nauggie token print\n```\n\nRestart Claude Code after logging in.\n\n### Step 3: Index Your Codebase\n\n```bash\n/auggie-index\n```\n\nThis creates `auggie-context.json` which persists your index between sessions.\n\n### Step 4: Start Using\n\n```bash\n/auggie How does the authentication system work?\n/auggie Find all API endpoints\n/auggie Explain the data flow in this component\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/auggie [query]` | Ask questions about your codebase |\n| `/auggie-setup` | Configure Auggie credentials |\n| `/auggie-index` | Index or re-index the codebase |\n\n## How It Works\n\n1. **Authentication**: Uses `auggie login` which stores credentials in `~/.augment/session.json`\n2. **Indexing**: Uses DirectContext API to index files and persist state to `auggie-context.json`\n3. **Search**: Queries are processed by Auggie's context engine for relevant code snippets\n4. **Persistence**: Index state is saved locally, enabling fast incremental updates\n\n## FAQ / Troubleshooting\n\n### \"Auggie not configured\" error\n\nRun `/auggie-setup` or:\n```bash\nauggie login\n```\nThen restart Claude Code.\n\n### \"Command not found: auggie\"\n\nInstall the Auggie CLI:\n- Visit https://docs.augmentcode.com/cli\n- Follow installation instructions for your platform\n\n### Index seems stale or incomplete\n\nRe-run the indexing command:\n```bash\n/auggie-index\n```\n\n### \"Not authenticated\" or token errors\n\nYour session may have expired. Re-authenticate:\n```bash\nauggie login\n```\n\n### How do I check if I'm authenticated?\n\n```bash\nauggie token print\n```\n\nIf it shows `accessToken` and `tenantURL`, you're good.\n\n### Where are credentials stored?\n\nCredentials are stored in `~/.augment/session.json` (created by `auggie login`). This file is outside your project and not committed to git.\n\n### Where is the index stored?\n\nThe index is stored in `auggie-context.json` in your project root. This file:\n- Is project-specific\n- Should be in `.gitignore` (added automatically)\n- Is regenerated by `/auggie-index`\n\n### How do I keep the index up to date?\n\nRun `/auggie-index` after making significant changes to your codebase. The indexing is incremental - only changed files are re-processed.\n\n### Large codebase taking too long to index?\n\n- Ensure you have a `.gitignore` file to exclude `node_modules/`, build artifacts, etc.\n- You can also create an `.augmentignore` file for additional exclusions\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "auggie-context",
+          "source": "./plugins/auggie-context",
+          "description": "Context management and enhancement plugin for Claude Code",
+          "version": "0.1.0",
+          "keywords": [
+            "context",
+            "auggie",
+            "enhancement"
+          ],
+          "category": "productivity",
+          "categories": [
+            "auggie",
+            "context",
+            "enhancement",
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add vleytman/1wp-plugins",
+            "/plugin install auggie-context@1wp-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

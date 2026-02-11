@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "swen128",
+    "display_name": "ogino",
+    "avatar_url": "https://avatars.githubusercontent.com/u/15214385?u=137275f388c70791360d4261d8b65b7ec4cf7123&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "harness",
+      "version": "1.0.0",
+      "description": "Custom plugins for Claude Code",
+      "repo_full_name": "swen128/claude-plugins",
+      "repo_url": "https://github.com/swen128/claude-plugins",
+      "repo_description": "Claude Code plugin marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-25T11:04:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"harness\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Custom plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"PND\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"todo-enforcer\",\n      \"source\": \"./todo-enforcer\",\n      \"description\": \"Enforces all TODO items are completed before Claude can stop working\"\n    },\n    {\n      \"name\": \"comment-checker\",\n      \"source\": \"./comment-checker\",\n      \"description\": \"Detects and warns about unnecessary comments in code changes, encouraging self-documenting code\"\n    }\n  ]\n}\n",
+        "README.md": "# Harness\n\nPlugins for [Claude Code](https://claude.ai/code).\n\n## Installation\n\n```\n/plugin marketplace add swen128/claude-plugins\n```\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [todo-enforcer](./todo-enforcer) | Blocks Claude from stopping until all TODO items are completed |\n| [comment-checker](./comment-checker) | Detects comments in code and prompts Claude to justify or remove them |\n",
+        "todo-enforcer/README.md": "# todo-enforcer\n\nBlocks Claude from stopping until all TODO items and Tasks are completed.\n\n## Installation\n\n```\n/plugin install todo-enforcer@swen128-claude-plugins\n```\n\n## Example\n\n**User**: Add input validation to the signup form\n\n**Claude** creates todos:\n1. Add email format validation ✓\n2. Add password strength check (in progress)\n3. Add error messages\n\n**Claude** tries to stop:\n\n> I've completed the email validation. That should cover the basic—\n\n**Hook output**:\n\n```json\n{\"decision\":\"block\",\"reason\":\"TODO is incomplete\"}\n```\n\n**Claude** corrects:\n\n> You're right, I still have incomplete todos. Let me continue with the password strength check and error messages before stopping.\n",
+        "comment-checker/README.md": "# comment-checker\n\nWhenever AI tries to write code comments, this plugin tells them to remove unnecessary comments.\n\n## Installation\n\n```\n/plugin install comment-checker@swen128-claude-plugins\n```\n\n## Example\n\n**User**: Create a function to calculate fibonacci numbers\n\n**Claude** writes:\n\n```typescript\n// Calculate the nth fibonacci number using recursion\nfunction fibonacci(n: number): number {\n  if (n <= 1) return n;\n  return fibonacci(n - 1) + fibonacci(n - 2);\n}\n```\n\n**Hook output**:\n\n```\nCOMMENT/DOCSTRING DETECTED - IMMEDIATE ACTION REQUIRED\n\n...\n\nPRIORITY-BASED ACTION GUIDELINES:\n\n1. This is a comment/docstring that already existed before\n   -> Explain to the user that this is an existing comment/docstring and proceed (justify it)\n\n2. This is a newly written comment: but it's in given, when, then format\n   -> Tell the user it's a BDD comment and proceed (justify it)\n   -> Note: This applies to comments only, not docstrings\n\n3. This is a newly written comment/docstring: but it's a necessary comment/docstring\n   -> Tell the user why this comment/docstring is absolutely necessary and proceed (justify it)\n   -> Examples of necessary comments: complex algorithms, security-related, performance optimization, regex, mathematical formulas\n   -> Examples of necessary docstrings: public API documentation, complex module/class interfaces\n   -> IMPORTANT: Most docstrings are unnecessary if the code is self-explanatory. Only keep truly essential ones.\n\n4. This is a newly written comment/docstring: but it's an unnecessary comment/docstring\n   -> Apologize to the user and remove the comment/docstring.\n   -> Make the code itself clearer so it can be understood without comments/docstrings.\n   -> For verbose docstrings: refactor code to be self-documenting instead of adding lengthy explanations.\n\n...\n\nDetected comments/docstrings:\n<comments file=\"fibonacci.ts\">\n  <comment line-number=\"1\">// Calculate the nth fibonacci number using recursion</comment>\n</comments>\n```\n\n**Claude** corrects:\n\nI apologize for adding an unnecessary comment. The function name `fibonacci` and parameter `n` are self-explanatory. Let me remove it:\n\n```typescript\nfunction fibonacci(n: number): number {\n  if (n <= 1) return n;\n  return fibonacci(n - 1) + fibonacci(n - 2);\n}\n```\n\n"
+      },
+      "plugins": [
+        {
+          "name": "todo-enforcer",
+          "source": "./todo-enforcer",
+          "description": "Enforces all TODO items are completed before Claude can stop working",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add swen128/claude-plugins",
+            "/plugin install todo-enforcer@harness"
+          ]
+        },
+        {
+          "name": "comment-checker",
+          "source": "./comment-checker",
+          "description": "Detects and warns about unnecessary comments in code changes, encouraging self-documenting code",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add swen128/claude-plugins",
+            "/plugin install comment-checker@harness"
+          ]
+        }
+      ]
+    }
+  ]
+}

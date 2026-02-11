@@ -1,0 +1,41 @@
+{
+  "author": {
+    "id": "tomashm",
+    "display_name": "Tomas Håheim Mortensen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1936696?u=4d42ceaffe2aece584182cc3dc4543fffd936c5d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bashbouncer",
+      "version": null,
+      "description": "Three-tier shell command safety gate for Claude Code",
+      "repo_full_name": "tomashm/bashbouncer",
+      "repo_url": "https://github.com/tomashm/bashbouncer",
+      "repo_description": "For those who run `claude --dangerously-skip-permissions` but still want a safety net.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-11T16:24:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"bashbouncer\",\n  \"owner\": {\n    \"name\": \"tomashm\"\n  },\n  \"metadata\": {\n    \"description\": \"Three-tier shell command safety gate for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"bashbouncer\",\n      \"source\": \"./\",\n      \"description\": \"Three-tier shell command safety gate: static rules, LLM, ask user\",\n      \"homepage\": \"https://github.com/tomashm/bashbouncer\",\n      \"repository\": \"https://github.com/tomashm/bashbouncer\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"bashbouncer\",\n  \"description\": \"Three-tier shell command safety gate: static rules, LLM, ask user\",\n  \"version\": \"0.1.1\"\n}\n",
+        "README.md": "# BashBouncer\n\nA shell command safety gate for Claude Code. Intercepts every Bash call before it runs.\n\nFor those who run `claude --dangerously-skip-permissions` but still want a safety net.\n\n## How it works\n\n```\ncommand ──► static rules ──► LLM ──► ask you\n              │                │          │\n            allow/block   allow/block   allow/block\n```\n\n**Static rules** handle the obvious cases instantly — `ls`, `git status`, `grep` run without interruption. `sudo`, `rm -rf`, `echo $API_KEY` get blocked.\n\n**LLM classification** catches the nuanced stuff that regex can't — destructive git flags, cloud CLI mutations, system-wide installs. Uses Cerebras for fast, cheap inference.\n\n**Ask you** is the fallback. If neither tier is confident, you decide.\n\n## What gets blocked\n\n| Category | Examples |\n|----------|----------|\n| **Always blocked** | `sudo`, `rm -rf`, `env`/`printenv` (dumps secrets), `$API_KEY`/`$DB_PASSWORD`, `/proc/*/environ`, file ops outside project root |\n| **Blocked by LLM** | `git push --force`, `docker --privileged`, `aws s3 rm`, `terraform destroy`, `curl` posting local files, system-wide installs |\n| **Always allowed** | `ls`, `cat`, `grep`, `find`, `echo`, `date`, `wc`, `file`, `stat` |\n\n## What you'll see\n\n**Nothing, most of the time.** Safe commands run silently.\n\nWhen something gets blocked:\n```\nBashBouncer [static] blocked: rm -rf node_modules -- 'rm -rf' is never allowed, use 'mv <target> /tmp/' instead\n```\n\nWhen BashBouncer isn't sure, Claude asks you to allow or deny. If you allow, it offers to remember your choice so you're not asked again.\n\n## Customizing rules\n\nCreate `.claude/bashbouncer.local.md` in your project root:\n\n```markdown\n---\nallowlist:\n  - docker\n  - rails\n  - bundle exec\n  - terraform plan\nblocklist:\n  - terraform destroy\n  - kubectl delete namespace\n---\n\n## Additional context\n\nssh to *.staging.example.com is safe.\nRails console is a normal part of our workflow.\n```\n\n**Allowlist/blocklist** entries are prefix-matched. `docker` matches `docker ps`, `docker compose up`, etc. `terraform plan` matches `terraform plan -out=foo` but not `terraform apply`.\n\n**The markdown body** (after the `---`) gives the LLM extra context for classification. Write project-specific knowledge that static rules can't capture.\n\nBlocklist wins over allowlist. Neither overrides built-in blocks (`sudo`, `rm -rf`, etc. are always blocked).\n\n## Installation\n\nBashBouncer uses [Cerebras](https://cloud.cerebras.ai/) for LLM classification (free API keys, generous limits):\n\n```bash\n# Add to your shell profile (~/.zshrc, ~/.bashrc, etc.)\nexport CEREBRAS_API_KEY=your-key-here\n```\n\nThen install the plugin:\n\n```bash\n# Add marketplace\nclaude plugin marketplace add tomashm/bashbouncer\n\n# Install plugin\nclaude plugin install bashbouncer@bashbouncer\n\n# Update later\nclaude plugin update bashbouncer@bashbouncer\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "bashbouncer",
+          "source": "./",
+          "description": "Three-tier shell command safety gate: static rules, LLM, ask user",
+          "homepage": "https://github.com/tomashm/bashbouncer",
+          "repository": "https://github.com/tomashm/bashbouncer",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tomashm/bashbouncer",
+            "/plugin install bashbouncer@bashbouncer"
+          ]
+        }
+      ]
+    }
+  ]
+}

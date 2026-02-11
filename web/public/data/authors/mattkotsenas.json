@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "MattKotsenas",
+    "display_name": "Matt Kotsenas",
+    "avatar_url": "https://avatars.githubusercontent.com/u/51421?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-plugins",
+      "version": null,
+      "description": "Plugin marketplace for Claude Code and Copilot CLI agent plugins.",
+      "repo_full_name": "MattKotsenas/agent-plugins",
+      "repo_url": "https://github.com/MattKotsenas/agent-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-11T16:00:52Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-plugins\",\n  \"owner\": {\n    \"name\": \"Matt Kotsenas\",\n    \"email\": \"mattkot@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugin marketplace for Claude Code and Copilot CLI agent plugins.\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"delve\",\n      \"source\": \"plugins/delve\",\n      \"description\": \"Interactive diff review skill that walks a human reviewer through chunked, screen-sized diffs and captures TODOs for downstream agents.\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"yes-milord\",\n      \"source\": \"plugins/yes-milord\",\n      \"description\": \"Warcraft II Peasant sound notifications on agent lifecycle events.\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Agent Plugins\n\nA plugin marketplace for [Claude Code](https://docs.anthropic.com/en/docs/claude-code)\nand [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli).\n\n## Installation\n\n### GitHub Copilot CLI / Claude Code\n\nAdd the marketplace, then install the plugin:\n\n```\n/plugin marketplace add MattKotsenas/agent-plugins\n/plugin install <plugin>@agent-plugins\n```\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [**Delve**](plugins/delve/) | Interactive diff review — walk through changes one chunk at a time and capture feedback as TODOs. |\n| [**yes-milord**](plugins/yes-milord/) | Warcraft II Peasant sound notifications — hear \"Yes, milord\" on prompt submit, \"Work complete\" when done. |\n",
+        "plugins/delve/README.md": "# Delve\n\nReview diffs the way you actually read code — one focused chunk at a time.\n\nDelve breaks a diff into small, logically grouped pieces, presents them in an\norder that makes sense, and captures your feedback as structured TODOs that the\nagent can act on immediately.\n\n## Why Delve?\n\n- **Stay focused.** Large diffs are split into screen-sized chunks grouped by\n  related changes, so you never lose context.\n- **Review in the right order.** Intelligent ordering means you understand _what_ something\n  does before seeing _where_ it's used.\n- **Comments become actions.** Every piece of feedback you leave is captured as a\n  TODO with enough context for the agent to implement it — no copy-pasting, no\n  separate issue tracker.\n- **Pick up where you left off.** Session state is saved automatically. Come back\n  later and resume from the chunk you were on.\n\n## Installation\n\n### GitHub Copilot CLI / Claude Code\n\n```\n/plugin marketplace add MattKotsenas/agent-plugins\n/plugin install delve@agent-plugins\n```\n\n## Sample workflow\n\n> [!TIP]\n> The exchange below is condensed for readability. In practice, each `>`\n> block is a separate prompt/response in your terminal.\n\n**1. Start a review**\n\n```\n/delve\n```\n\n**2. Choose a baseline**\n\n```\nAgent: You're on branch feature/auth at abc1234.\n       Choose a diff baseline:\n         ❯ Merge base (recommended)\n           Last change\n           Custom ref\n```\n\n**3. See the plan**\n\n```\nAgent: Diff Plan\n\n       | # | Chunk                        | File              |\n       |---|------------------------------|-------------------|\n       | 1 | New validateToken() helper   | src/auth/token.ts |\n       | 2 | Login endpoint uses helper   | src/auth/login.ts |\n       | 3 | Add token expiry config      | config/auth.json  |\n\n       3 chunks · 3 files · ~3 min\n```\n\n**4. Walk through chunks**\n\nThe agent shows each chunk as a colored diff:\n\n````\nAgent: Chunk 1 / 3 — New validateToken() helper\n       File: src/auth/token.ts\n\n       ```diff\n        export function validateToken(token: string): boolean {\n       +  if (!token || token.length < 16) {\n       +    return false;\n       +  }\n       +  const decoded = decodeBase64(token);\n       +  return decoded.exp > Date.now();\n        }\n       ```\n\n       [Next]  [Previous]  or type a comment\n````\n\n**5. Leave feedback inline**\n\n```\nYou:  Should we throw instead of returning false? The caller\n      needs to know *why* validation failed.\n\nAgent: 📝 TODO captured. Still on Chunk 1/3.\n       [Next]  [Previous]  or type a comment\n\nYou:  Next\n```\n\n**6. Finish and hand off**\n\n```\nAgent: ✅ Review complete\n\n       | Chunks reviewed | 3 / 3 |\n       | TODOs captured  | 2     |\n       | Files covered   | 3     |\n\n       TODOs:\n       1. Throw instead of returning false in validateToken()\n          → src/auth/token.ts · validateToken()\n       2. Token expiry should be configurable per environment\n          → config/auth.json\n\n       What would you like to do?\n         ❯ Hand off TODOs to an implementation agent\n           Revisit a specific chunk\n           Done — keep TODOs for later\n```\n\nThe agent then applies your feedback automatically.\n\n## What about `/review`?\n\nThe `/review` command is aimed at agents reviewing the code. `/delve`\nis aimed at _you_ reviewing the code.\n",
+        "plugins/yes-milord/README.md": "# yes-milord\n\nYour Peasant reports for duty when your agent needs attention.\n\nCopilot CLI and Claude Code don't notify you when they finish or need input.\nYou tab away, lose focus, and waste time. **yes-milord** fixes this with\nWarcraft II Human Peasant voice lines — so you never miss a beat.\n\n## What you'll hear\n\n| Event | Sound | Examples |\n|---|---|---|\n| Prompt submitted | Acknowledgment | *\"Right-o.\"*, *\"Yes, milord.\"*, *\"As you wish.\"* |\n| Agent stops | Completion | *\"Ready, milord.\"*, *\"Work complete.\"* |\n\n## Installation\n\n### GitHub Copilot CLI / Claude Code\n\n```\n/plugin marketplace add MattKotsenas/agent-plugins\n/plugin install yes-milord@agent-plugins\n```\n\n## Quick controls\n\nToggle sounds on/off during a session:\n\n| Method | Command |\n|---|---|\n| **Slash command** | `/yes-milord-toggle` |\n| **PowerShell** | `powershell path\\to\\play-sound.ps1 -toggle` |\n\nOther commands:\n\n```powershell\nplay-sound.ps1 -pause     # Mute sounds\nplay-sound.ps1 -resume    # Unmute sounds\nplay-sound.ps1 -status    # Check if paused or active\n```\n\n## Configuration\n\nEdit `scripts/config.json` inside the plugin directory:\n\n```json\n{\n  \"enabled\": true,\n  \"active_pack\": \"peasant\",\n  \"categories\": {\n    \"acknowledge\": true,\n    \"complete\": true\n  }\n}\n```\n\n- **enabled**: Master on/off switch\n- **active_pack**: Which sound pack to use\n- **categories**: Toggle individual sound types on/off\n\n## Requirements\n\n- Windows (uses `System.Media.SoundPlayer`)\n- PowerShell 5.1+\n\n## How it works\n\n`play-sound.ps1` is registered as a hook for `UserPromptSubmit` and `Stop` /\n`sessionEnd` events. On each event it maps to a sound category, picks a random\nvoice line (avoiding repeats), and plays it synchronously.\n\n## Sound credits\n\nSound files are from Warcraft II: Tides of Darkness by Blizzard Entertainment,\nsourced via [Thanatos Realms](https://www.thanatosrealms.com/).\n"
+      },
+      "plugins": [
+        {
+          "name": "delve",
+          "source": "plugins/delve",
+          "description": "Interactive diff review skill that walks a human reviewer through chunked, screen-sized diffs and captures TODOs for downstream agents.",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add MattKotsenas/agent-plugins",
+            "/plugin install delve@agent-plugins"
+          ]
+        },
+        {
+          "name": "yes-milord",
+          "source": "plugins/yes-milord",
+          "description": "Warcraft II Peasant sound notifications on agent lifecycle events.",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add MattKotsenas/agent-plugins",
+            "/plugin install yes-milord@agent-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

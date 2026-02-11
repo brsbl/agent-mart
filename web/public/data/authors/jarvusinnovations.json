@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "JarvusInnovations",
+    "display_name": "Jarvus Innovations",
+    "avatar_url": "https://avatars.githubusercontent.com/u/609450?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jarvus-claude-assist",
+      "version": null,
+      "description": "Backend services for Claude-based assistants: session recall, email triage, calendar queries",
+      "repo_full_name": "JarvusInnovations/claude-assist",
+      "repo_url": "https://github.com/JarvusInnovations/claude-assist",
+      "repo_description": "Core tooling for building a Claude-based personal executive assistant",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-03T00:31:12Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jarvus-claude-assist\",\n  \"owner\": {\n    \"name\": \"Jarvus Innovations\",\n    \"email\": \"hello@jarv.us\"\n  },\n  \"metadata\": {\n    \"description\": \"Backend services for Claude-based assistants: session recall, email triage, calendar queries\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-assist\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"JarvusInnovations/claude-assist\"\n      },\n      \"description\": \"Search past Claude sessions for context across multiple machines\",\n      \"skills\": [\n        \"./skills/session-recall\",\n        \"./skills/google-email\",\n        \"./skills/google-account-setup\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-assist\",\n  \"description\": \"Backend services for Claude-based assistants: session recall, email triage, calendar queries. Provides postgres-backed APIs for managing Claude sessions, Gmail integration, and Google Calendar.\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Chris Alfano\",\n    \"email\": \"chris@jarv.us\"\n  },\n  \"repository\": \"https://github.com/JarvusInnovations/claude-assist\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# claude-assist\n\nBackend services for a Claude-based personal executive assistant. Provides postgres-backed APIs for session recall, email triage, and calendar queries.\n\n## Plugin Installation\n\nInstall as a Claude Code plugin to use the session-recall skill:\n\n```\n/plugin marketplace add JarvusInnovations/claude-assist\n/plugin install claude-assist@jarvus-claude-assist\n```\n\nAfter installation, the `/session-recall` skill becomes available. Use it when you need to search past Claude sessions.\n\n**Note:** The plugin requires a running backend server with PostgreSQL. See [Quick Start](#quick-start) below.\n\n## Prerequisites\n\n- Docker with Compose plugin\n\n## Quick Start\n\n```bash\ncd apps/server\ndocker compose up --build -d\n```\n\nThe API will be available at <http://localhost:2529>\n\nSessions from `~/.claude/` on the host machine sync automatically. To sync from other machines:\n\n```bash\nbunx @jarvus/claude-assist-sessions push -m laptop -s https://your-server:2529\n```\n\n## Environment Setup\n\nCopy the example environment file and configure:\n\n```bash\ncp apps/server/.env.example apps/server/.env\n```\n\nEdit `.env` to set your `ANTHROPIC_API_KEY` if you want AI-generated session outlines. Get your key at <https://console.anthropic.com/>\n\n## Local Development\n\nFor contributors who want to develop locally with hot reload:\n\n```bash\n# Install bun via asdf (uses .tool-versions) or directly from bun.sh\nasdf install  # or: curl -fsSL https://bun.sh/install | bash\n\n# Install dependencies\nbun install\n\n# Start PostgreSQL only\ncd apps/server\ndocker compose up postgres -d\n\n# Start development server with watch mode\nbun run dev\n```\n\n**VS Code debugging:** Use the provided launch configurations in `.vscode/launch.json`:\n\n- \"Debug Server\" - runs with watch mode and debugger attached\n- \"Debug Server (no watch)\" - single run with debugger\n- \"Attach to Bun\" - attach to running bun process\n\n## Project Structure\n\n```\npackages/\n  core/         # Shared utilities (scheduler, migrations, search)\napps/\n  server/       # Fastify host application\nskills/\n  session-recall/  # Session search skill\n```\n\n## Development\n\n```bash\n# Build all packages\nbun run build\n\n# Run tests\nbun test\n\n# Type check\ncd packages/core && bun run build\ncd apps/server && bun run build\n```\n\n## API Endpoints\n\n### Health Check\n\n```\nGET /health\n```\n\n### Scheduler\n\n```\nGET  /scheduler/tasks          # List registered tasks\nPOST /scheduler/tasks/:name    # Trigger task manually\n```\n\n## Docker\n\n```bash\ncd apps/server\n\n# Start full stack\ndocker compose up --build -d\n\n# Start PostgreSQL only (for local development)\ndocker compose up postgres -d\n\n# View logs\ndocker compose logs -f\n```\n\n### Local Port Overrides\n\nBy default, services bind to localhost only on ports 2528 (PostgreSQL) and 2529 (API).\nTo expose on additional interfaces (e.g., Tailscale), create `docker-compose.override.yml` (gitignored):\n\n```yaml\nservices:\n  postgres:\n    ports:\n      - \"127.0.0.1:2528:5432\"\n      - \"<your-ip>:2528:5432\"\n  api:\n    ports:\n      - \"127.0.0.1:2529:2529\"\n      - \"<your-ip>:2529:2529\"\n```\n\nRun `docker compose config` to verify the merged configuration.\n\n## Environment Variables\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| PORT | 2529 | Server port |\n| HOST | 0.0.0.0 | Server host |\n| DATABASE_URL | postgres://claude:dev@localhost:2528/claude_assist | PostgreSQL connection |\n| LOG_LEVEL | info | Log level (debug, info, warn, error) |\n| NODE_ENV | development | Environment (development, production) |\n| ANTHROPIC_API_KEY | (none) | Enables AI-generated session outlines |\n| OUTLINE_CONCURRENCY | 5 | Parallel outline generation workers |\n\n## Skills\n\nSkills are loaded on-demand by Claude. Available skills:\n\n- **session-recall** - Search past Claude sessions\n\nSee `skills/*/SKILL.md` for usage documentation.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-assist",
+          "source": {
+            "source": "github",
+            "repo": "JarvusInnovations/claude-assist"
+          },
+          "description": "Search past Claude sessions for context across multiple machines",
+          "skills": [
+            "./skills/session-recall",
+            "./skills/google-email",
+            "./skills/google-account-setup"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JarvusInnovations/claude-assist",
+            "/plugin install claude-assist@jarvus-claude-assist"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "lefant",
+    "display_name": "Fabian Linzberger",
+    "avatar_url": "https://avatars.githubusercontent.com/u/64208?u=bcfeadcb9aebe2d2b70907c8c23d807006a03228&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lefant-claude-code-plugins",
+      "version": null,
+      "description": "Claude Code plugins for development workflows",
+      "repo_full_name": "lefant/claude-code-plugins",
+      "repo_url": "https://github.com/lefant/claude-code-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-04T21:12:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lefant-claude-code-plugins\",\n  \"description\": \"Claude Code plugins for development workflows\",\n  \"owner\": {\n    \"name\": \"Fabian Linzberger\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lefant\",\n      \"source\": \"./lefant\",\n      \"description\": \"Development commands: /devlog, /handover, /adr, /changelog, /spec\"\n    },\n    {\n      \"name\": \"ntfy\",\n      \"source\": \"./ntfy\",\n      \"description\": \"Send Claude Code notifications via ntfy\"\n    },\n    {\n      \"name\": \"rpi\",\n      \"source\": \"./rpi\",\n      \"description\": \"Research/Plan/Implement workflow with specialized agents\"\n    }\n  ]\n}\n",
+        "README.md": "# lefant-claude-code-plugins\n\nClaude Code plugins for development workflows.\n\n## Plugins\n\n- **lefant** - Commands: /devlog, /handover, /adr, /changelog, /spec\n- **ntfy** - Notifications via ntfy.sh\n- **rpi** - Research/Plan/Implement workflow agents\n\n## Related\n\nSkills have been migrated to [lefant/agent-skills](https://github.com/lefant/agent-skills).\n",
+        "lefant/README.md": "# Lefant Misc Commands\n\nCollection of utility commands (currently `devlog` and `handover`) extracted from the monorepo for reuse as a plugin.\n\n## Structure\n- `.claude-plugin/plugin.json` — plugin manifest\n- `commands/` — slash commands (`devlog.md`, `handover.md`)\n\n## Usage\nInstall this plugin (or load via a local marketplace) to expose the commands in Claude Code sessions. No external dependencies required.\n",
+        "ntfy/README.md": "# Ntfy Plugin\n\nSend Claude Code notifications via [ntfy](https://ntfy.sh) when sessions complete or events occur.\n\n## Features\n\n- Sends notifications on Claude Code events (primarily `Notification` hook)\n- Includes session context: project name, branch, directory, token usage\n- Extracts token usage from session transcripts\n- Supports authenticated ntfy topics\n\n## Configuration\n\nThis plugin requires environment variables to be set:\n\n### Required\n- `NTFY_URL` - Your ntfy topic URL (e.g., `https://ntfy.sh/claude-your-topic`)\n\n### Optional\n- `NTFY_TOKEN` - Bearer token for authenticated topics (e.g., `tk_...`)\n\n### Setup\n\nSet these environment variables in your shell or environment configuration:\n\n```bash\nexport NTFY_URL=https://ntfy.sh/claude-your-topic\nexport NTFY_TOKEN=tk_your_token_here\n```\n\nThe environment variables need to be available when Claude Code runs.\n\n## How It Works\n\nThe plugin hooks into Claude Code's `Notification` event and sends:\n- **Title**: Event type (e.g., \"Claude: Notification\")\n- **Body**: Project context + message\n  - Project name and branch (from git)\n  - Current directory\n  - Token usage statistics\n  - Event message (if available)\n\n## Requirements\n\n- `jq` - JSON parsing\n- `curl` - Sending notifications\n- `git` (optional) - For project/branch detection\n\n## Hook Configuration\n\nThe plugin registers a `Notification` hook that runs the `claude-ntfy.sh` script using `${CLAUDE_PLUGIN_ROOT}` to ensure it works regardless of working directory.\n\n## Testing\n\nYou can test the hook manually by sending JSON to the script:\n\n```bash\necho '{\"hook_event_name\":\"Test\",\"session_id\":\"test123\",\"message\":\"Hello\"}' | \\\n  NTFY_URL=https://ntfy.sh/your-topic \\\n  .claude/plugins/ntfy/scripts/claude-ntfy.sh\n```\n\nCheck your ntfy topic to see if the notification arrived.\n\n## Disabling\n\nTo disable notifications without uninstalling the plugin, either:\n1. Unset the `NTFY_URL` environment variable\n2. Disable the plugin using `/plugin disable ntfy`\n3. Add to `.claude/settings.json`:\n   ```json\n   {\n     \"disabledPlugins\": [\"ntfy\"]\n   }\n   ```\n",
+        "rpi/README.md": "# RPI Plugin\n\nRPI (Research/Plan/Implement) workflow agents and commands for structured development.\n\nFor a broader introduction, check out the [Advanced Context Engineering for Coding Agents talk](https://www.youtube.com/watch?v=IS_y40zY-hc) and the companion [ACE Framework for Coding Agents guide](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/ace-fca.md). Command catalog lives in the [HumanLayer Claude commands reference](https://github.com/humanlayer/humanlayer/tree/main/.claude).\n\n## Structure\n- `.claude-plugin/plugin.json` — plugin manifest\n- `agents/` — specialized agents (`codebase-analyzer`, `locator`, `pattern-finder`, `web-search-researcher`, etc.)\n- `commands/` — slash commands (`research_codebase`, `create_plan`, `implement_plan`)\n\n## Usage\nInstall this plugin (or load via a local marketplace) to enable the RPI workflow in Claude Code. Requires no external dependencies beyond standard tool access used by the original agents/commands.\n"
+      },
+      "plugins": [
+        {
+          "name": "lefant",
+          "source": "./lefant",
+          "description": "Development commands: /devlog, /handover, /adr, /changelog, /spec",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add lefant/claude-code-plugins",
+            "/plugin install lefant@lefant-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "ntfy",
+          "source": "./ntfy",
+          "description": "Send Claude Code notifications via ntfy",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add lefant/claude-code-plugins",
+            "/plugin install ntfy@lefant-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "rpi",
+          "source": "./rpi",
+          "description": "Research/Plan/Implement workflow with specialized agents",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add lefant/claude-code-plugins",
+            "/plugin install rpi@lefant-claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

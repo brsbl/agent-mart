@@ -97,39 +97,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "ralph-eats-beads",
-      "version": null,
-      "description": "Autonomous AI coding loop using bd (beads) for task management with parallel tmux subagents.",
-      "repo_full_name": "rawwerks/ralph-eats-beads",
-      "repo_url": "https://github.com/rawwerks/ralph-eats-beads",
-      "repo_description": "Autonomous AI coding loop using bd for task management",
-      "signals": {
-        "stars": 2,
-        "forks": 0,
-        "pushed_at": "2026-01-21T20:48:06Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ralph-eats-beads\",\n  \"owner\": {\n    \"name\": \"rawwerks\"\n  },\n  \"metadata\": {\n    \"description\": \"Autonomous AI coding loop using bd (beads) for task management with parallel tmux subagents.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ralph-eats-beads\",\n      \"description\": \"Autonomous AI coding loop that ships features while you sleep. Uses tmux for observability and parallel subagents picking work from bd ready.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./\"\n      ]\n    }\n  ]\n}\n",
-        "README.md": "# Ralph Eats Beads\n\n![Ralph Eats Beads](ralph-eats-beads.jpg)\n\n\"[Ralph Wiggum](https://ghuntley.com/ralph/)\" autonomous AI coding loop, using [bd (beads)](https://github.com/steveyegge/beads) for task management with parallel tmux subagents.\n\nRalph ships features while you sleep, by eating all of the beads. \n\nFor those in the know, you can think of Ralph Eats Beads as \"Gas Town Lite\". I find it much more powerful than a \"vanilla Ralph\" loop, yet much faster to start and easier to wield than [Gas Town](https://github.com/steveyegge/gastown).\n\n## Installation\n\n### Claude Code (Interactive)\n\n```\n/plugin marketplace add rawwerks/ralph-eats-beads\n/plugin install ralph-eats-beads@ralph-eats-beads\n```\n\n### Claude CLI\n\n```bash\nclaude plugin marketplace add rawwerks/ralph-eats-beads\nclaude plugin install ralph-eats-beads@ralph-eats-beads\n```\n\n## What It Does\n\nThe \"parent\" Ralph/Claude picks issues from `bd ready`, spawns parallel Ralph/Claude subagents in tmux windows to implement them, and closes issues on success. Each iteration:\n\n1. Parent agent checks `bd ready` for available work\n2. Spawns 3-5 subagent tmux windows (one per issue)\n3. Each subagent implements ONE issue, commits, closes it\n4. Watchdog monitors for stuck agents and nudges/kills them\n5. Loop repeats until no work remains or max iterations hit\n\n```\nralph (tmux session)\n├── parent (window 0) - orchestrator\n├── watchdog (window 1) - health monitor  \n├── issue-1 (window 2) - subagent\n├── issue-2 (window 3) - subagent\n└── issue-3 (window 4) - subagent\n```\n\n## Prerequisites\n\n- **[bd (beads)](https://github.com/steveyegge/beads)** - Issue tracker (beads)\n- **tmux** - Terminal multiplexer\n- **claude** - Claude CLI with `--dangerously-skip-permissions`\n\n## Quick Start\n\n```bash\n# 1. Create issues to work on\nbd create --type epic \"Feature: User Auth\"\nbd create \"Add login form\" --parent <epic-id>\nbd create \"Add validation\" --parent <epic-id>\n\n# 2. Start Ralph (default: 10 iterations max)\n./scripts/ralph.sh\n\n# 3. Or specify max iterations\n./scripts/ralph.sh 25\n\n# 4. Watch progress\ntmux attach -t ralph-<project>\n```\n\n## How Iterations Work\n\n- **Max iterations** = how many times the parent can spawn a batch of subagents\n- Each iteration handles multiple issues in parallel (3-5 concurrent)\n- Loop exits early if `bd ready` returns no work\n- Default timeout: 1 hour per iteration\n\n## On Failure\n\n- Subagent adds comment: `bd comments add <id> \"Blocked: <reason>\"`\n- Issue stays open for next iteration or manual fix\n- Watchdog kills stuck windows after 2 nudge attempts\n\n## Planning: Converting Requirements to Issues\n\nIn a typical \"Ralph eats beads\" workflow, you would have already converted your plan into bd epics, issues, dependencies, and notes before running `ralph.sh`. This is the recommended approach: carefully curate the plan, collaborate with Claude/Codex/etc to convert to bd and make sure that the agent does not miss any details. I often find it helpful to ask Claude to spin up an \"auditor\" subagent to check that every aspect of the plan was converted to bd. I also include in my CLAUDE.md: `When exiting Plan Mode, all plans must be fully converted into bd epics, issues, dependencies, and notes`.\n\nHowever, if you haven't done that step yet, you can use the **planner script** to generate bd issues from a requirements file:\n\n```bash\n# From a requirements file\n./scripts/planner.sh requirements.md\n\n# From inline text\n./scripts/planner.sh <<< \"Add OAuth2 authentication with Google and GitHub\"\n\n# From a pipe\ncat feature-spec.md | ./scripts/planner.sh\n```\n\nThe planner runs a recursive loop that:\n1. Reads your requirements\n2. Creates an epic and stories in bd\n3. Sets up dependencies between issues\n4. Iterates until the plan fully covers the requirements\n\nOnce planning is complete, run `ralph.sh` to implement.\n\n## Files\n\n| File | Purpose |\n|------|---------|\n| `scripts/ralph.sh` | Main entry point |\n| `scripts/planner.sh` | Generate issues from requirements |\n| `scripts/watchdog.sh` | Health monitor |\n| `SKILL.md` | Full agent instructions |\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "ralph-eats-beads",
-          "description": "Autonomous AI coding loop that ships features while you sleep. Uses tmux for observability and parallel subagents picking work from bd ready.",
-          "source": "./",
-          "strict": false,
-          "skills": [
-            "./"
-          ],
-          "categories": [],
-          "install_commands": [
-            "/plugin marketplace add rawwerks/ralph-eats-beads",
-            "/plugin install ralph-eats-beads@ralph-eats-beads"
-          ]
-        }
-      ]
     }
   ]
 }

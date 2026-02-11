@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "fvadicamo",
+    "display_name": "Francesco Vadicamo",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1905363?u=3bd9ea5031f0c56d38c5f35d0ce1322d70fe43f0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "dev-agent-skills",
+      "version": null,
+      "description": "Agent skills for development workflows - Git, GitHub, and skill authoring",
+      "repo_full_name": "fvadicamo/dev-agent-skills",
+      "repo_url": "https://github.com/fvadicamo/dev-agent-skills",
+      "repo_description": "Claude Code skills plugin for Git, GitHub, and skill authoring workflows",
+      "signals": {
+        "stars": 36,
+        "forks": 3,
+        "pushed_at": "2026-02-07T22:47:26Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"dev-agent-skills\",\n  \"owner\": {\n    \"name\": \"Francesco Vadicamo\",\n    \"email\": \"fvadicamo@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Agent skills for development workflows - Git, GitHub, and skill authoring\",\n    \"version\": \"1.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"github-workflow\",\n      \"description\": \"Git commit, PR creation, review, and merge skills following Conventional Commits\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/git-commit\",\n        \"./skills/github-pr-creation\",\n        \"./skills/github-pr-merge\",\n        \"./skills/github-pr-review\"\n      ]\n    },\n    {\n      \"name\": \"skill-authoring\",\n      \"description\": \"Guide for creating Claude Code skills following Anthropic's best practices\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/creating-skills\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# dev-agent-skills\n\nAgent skills for development workflows - Git, GitHub, and skill authoring.\n\nThese skills are designed for [Claude Code](https://claude.com/claude-code), the CLI tool by Anthropic.\n\n## Why these skills?\n\nClaude Code already knows how to commit, create PRs, and review code. But without structured guidance it tends to:\n\n- Use inconsistent commit formats across a session\n- Skip target branch confirmation and create PRs against the wrong branch\n- Not search for task documentation or validate task completion before opening a PR\n- Suggest labels that don't exist in the project\n- Process review comments in random order instead of by severity\n- Use the wrong GitHub API syntax for replying to threads (`-f` instead of `--input -`)\n- Generate verbose merge messages that clutter the git log\n- Merge without verifying all review comments have been addressed\n\nThese skills add structured workflows that prevent these issues. They don't replace Claude's capabilities - they guide them through the right sequence of steps.\n\nThere are no official Anthropic skills for Git/GitHub workflows. This plugin fills that gap.\n\n## Quick install\n\n```bash\n# Add marketplace\n/plugin marketplace add fvadicamo/dev-agent-skills\n\n# Install plugins\n/plugin install github-workflow@dev-agent-skills\n/plugin install skill-authoring@dev-agent-skills\n```\n\n## How skills work\n\nSkills are **model-invoked** - Claude automatically activates them based on your request:\n\n- \"Create a commit\" -> activates `git-commit`\n- \"Open a PR\" -> activates `github-pr-creation`\n- \"Merge the PR\" -> activates `github-pr-merge`\n- \"Address review comments\" -> activates `github-pr-review`\n- \"Help me create a skill\" -> activates `creating-skills`\n\n## Plugin: github-workflow\n\nSkills for Git and GitHub workflows following [Conventional Commits](https://www.conventionalcommits.org/).\n\n### git-commit\n\nCreates commits following Conventional Commits format with type/scope/subject.\n\n**What it adds over Claude's default behavior:**\n\n| Without this skill | With this skill |\n|--------------------|-----------------|\n| Inconsistent commit format across a session | Enforces CC format with required scope, max 50 chars, imperative tense |\n| Ignores existing commit style in the project | Dynamic context injection loads recent commits so Claude matches the style |\n| Sometimes uses generic messages (\"update code\") | Strict rules against vague messages |\n| No HEREDOC for multi-line commits | Provides HEREDOC pattern for clean multi-line messages |\n\nAdditional features:\n- Checks CLAUDE.md for project-specific commit conventions\n- Extra commit type `security` beyond standard CC\n\n### github-pr-creation\n\nCreates Pull Requests with automated validation, task tracking, and label suggestions.\n\n**What it adds over Claude's default behavior:**\n\n| Without this skill | With this skill |\n|--------------------|-----------------|\n| Often skips target branch confirmation | Always asks user to confirm base branch |\n| Doesn't search for task documentation | Searches Kiro, Cursor, Trae, GitHub Issues, and generic paths for task specs |\n| No task completion validation | Maps commits to tasks and reports missing sub-tasks before creating PR |\n| Suggests labels that may not exist in the project | Checks `gh label list` first, matches available labels, suggests creating missing ones |\n| Generic PR body | 7 type-specific templates (feature, release, bugfix, hotfix, refactoring, docs, CI/CD) |\n| May skip tests | Tests must pass before PR creation |\n\n### github-pr-merge\n\nMerges Pull Requests after validating a pre-merge checklist.\n\n**What it adds over Claude's default behavior:**\n\n| Without this skill | With this skill |\n|--------------------|-----------------|\n| May merge without checking review comments | Detects unreplied comments via jq query, stops merge and redirects to review skill |\n| Inconsistent merge strategy | Always merge commit (`--merge`), never squash/rebase |\n| Verbose or empty merge messages | Concise format: 3-5 bullets + reviews/tests/refs (~10 lines max) |\n| May skip CI/lint checks | Full pre-merge checklist (tests, lint, CI, comments) with summary shown to user |\n| Forgets branch cleanup | Auto-deletes remote branch, switches to develop and pulls |\n\n### github-pr-review\n\nHandles PR review comments and feedback resolution.\n\n**What it adds over Claude's default behavior:**\n\n| Without this skill | With this skill |\n|--------------------|-----------------|\n| Processes comments in random order | Classifies by severity (CRITICAL > HIGH > MEDIUM > LOW) and processes in order |\n| No severity detection | Detects Gemini badges, Cursor HTML comments, and keyword-based severity |\n| One commit per fix regardless of impact | Batch strategy: separate commits for functional fixes, single batch for cosmetic |\n| May use `-f in_reply_to=...` (broken) | Uses correct `--input -` JSON syntax for thread replies |\n| Generic or no replies to threads | Standard templates: Fixed, Won't fix, By design, Deferred, Acknowledged |\n| Triggers bot review loops on every push | Strategies to avoid loops: batch pushes, draft PR, skip keywords |\n| Forgets to submit formal review | Prompts `gh pr review` with appropriate flag (approve/request-changes/comment) |\n\n## Plugin: skill-authoring\n\n### creating-skills\n\nGuide for creating Claude Code skills following Anthropic's official best practices.\n\n**What it adds over Claude's default behavior:**\n\nClaude knows the basics of skill creation, but this skill provides a comprehensive, up-to-date reference covering features that Claude may not know about or consistently apply.\n\n- Complete frontmatter reference (all 10 fields including `allowed-tools`, `context`, `agent`, `hooks`)\n- Invocation control matrix (`disable-model-invocation`, `user-invocable`)\n- Dynamic features: context injection (`` !`cmd` ``), string substitutions (`$ARGUMENTS`), subagent execution\n- Degrees of freedom concept for matching specificity to task fragility\n- Directory structure with `scripts/`, `references/`, and `assets/` resource types\n- Description formula, naming conventions, progressive disclosure patterns\n\n#### Comparison with the official skill-creator\n\nThis skill complements the official [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) from Anthropic. They serve different purposes and can be used together.\n\n| Feature | This skill | Official skill-creator |\n|---------|-----------|----------------------|\n| Complete frontmatter reference (10 fields) | Yes | No (only 5 fields) |\n| Invocation control matrix | Yes | No |\n| Dynamic context injection (`` !`cmd` ``) | Yes, with examples | No |\n| String substitutions (`$ARGUMENTS`, `$1`) | Yes | No |\n| Subagent execution (`context: fork`) | Yes, with example | No |\n| Discovery hierarchy | Yes | No |\n| Context budget (2%, 16k fallback) | Yes | No |\n| Skills/commands unification | Yes | No |\n| Frontmatter validation rules | Yes | No |\n| 6 feature-specific examples | Yes | No |\n| Scaffolding script (`init_skill.py`) | No | Yes |\n| Packaging script (`package_skill.py`) | No | Yes |\n| Validation script (`quick_validate.py`) | No | Yes |\n| Workflow patterns reference | No | Yes |\n| Output patterns reference | No | Yes |\n\n**In short**: this skill is a practical, up-to-date reference for all available features. The official skill is a conceptual guide with scaffolding/packaging tools. Install both for the most complete experience.\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "github-workflow",
+          "description": "Git commit, PR creation, review, and merge skills following Conventional Commits",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/git-commit",
+            "./skills/github-pr-creation",
+            "./skills/github-pr-merge",
+            "./skills/github-pr-review"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fvadicamo/dev-agent-skills",
+            "/plugin install github-workflow@dev-agent-skills"
+          ]
+        },
+        {
+          "name": "skill-authoring",
+          "description": "Guide for creating Claude Code skills following Anthropic's best practices",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/creating-skills"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fvadicamo/dev-agent-skills",
+            "/plugin install skill-authoring@dev-agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "chenxizhang",
+    "display_name": "Ares Chen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1996954?u=037090eb5aa521f1d3aecc17684381d73594d411&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "awesome-plugins",
+      "version": null,
+      "description": "Custom Claude Code plugins marketplace",
+      "repo_full_name": "chenxizhang/claude-code-plugins",
+      "repo_url": "https://github.com/chenxizhang/claude-code-plugins",
+      "repo_description": "Custom Claude Code plugins marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T14:24:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"awesome-plugins\",\n  \"owner\": {\n    \"name\": \"Ares Chen\"\n  },\n  \"metadata\": {\n    \"description\": \"Custom Claude Code plugins marketplace\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"codeblend\",\n      \"source\": \"./plugins/codeblend\",\n      \"description\": \"Automatically records Claude Code usage metrics when git commits are made\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins Marketplace\n\nA curated collection of plugins for [Claude Code](https://claude.ai/code), Anthropic's official CLI for Claude.\n\n## Installation\n\nInstall the entire marketplace with a single command:\n\n```bash\n/plugin marketplace add chenxizhang/claude-code-plugins\n```\n\nOr add the marketplace and install codeblend plugin in one line:\n\n```bash\n/plugin marketplace add chenxizhang/claude-code-plugins && /plugin install codeblend\n```\n\nOr install individual plugins locally:\n\n```bash\nclaude --plugin-dir ./plugins/<plugin-name>\n```\n\n## Available Plugins\n\n### codeblend\n\n**Automatically records Claude Code usage metrics when git commits are made.**\n\nThis plugin tracks your Claude Code sessions and enriches commit messages with useful metadata about how the code was created.\n\n#### Features\n\n- **Session Tracking**: Records tool usage, file operations, and search patterns during your Claude Code session\n- **Commit Enhancement**: Automatically appends usage summaries to your git commit messages\n- **Metrics Storage**: Saves detailed JSON metrics in `.codeblend/commits/` for analysis\n- **AI Agent Detection**: Identifies other AI coding assistants configured in your repo (Cursor, Copilot, Aider, etc.)\n\n#### What Gets Tracked\n\n| Category | Details |\n|----------|---------|\n| Tool Usage | Count of each built-in tool (Read, Edit, Bash, Glob, Grep, etc.) |\n| File Operations | Files read, created, and modified |\n| Search Patterns | Glob and grep patterns used |\n| Subagents | Task agents spawned (Explore, Plan, etc.) |\n| MCP Tools | Any MCP server tools invoked |\n| Skills | Slash command skills used |\n\n#### Example Commit Message\n\nAfter the plugin is installed, your commits will include a footer like:\n\n```\nFix authentication bug in login flow\n\n---\nGenerated with [CodeBlend](https://github.com/anthropics/claude-code)\nModel: claude-opus-4-5\nTools: Read(12), Edit(5), Bash(3), Grep(2)\nAgents: Explore(1)\nFiles: 4 changed (+127 -23)\n```\n\n#### Privacy\n\nAll data is stored locally in your repository. No data is sent externally. The `.codeblend/` directory can be added to `.gitignore` if you prefer not to commit the detailed metrics.\n\n## Repository Structure\n\n```\nclaude-code-plugins/\n├── .claude-plugin/\n│   └── marketplace.json      # Marketplace definition\n├── plugins/\n│   └── codeblend/            # CodeBlend plugin\n│       ├── .claude-plugin/\n│       │   └── plugin.json   # Plugin manifest\n│       ├── hooks/\n│       │   └── hooks.json    # Hook definitions\n│       └── scripts/          # Hook implementation scripts\n├── CLAUDE.md                 # Development guidance\n└── README.md                 # This file\n```\n\n## Creating Your Own Plugin\n\nThis repository follows the Claude Code plugin architecture. Each plugin is self-contained under `plugins/` with:\n\n- **`.claude-plugin/plugin.json`** - Plugin manifest (name, version, description)\n- **`commands/`** - Slash commands (Markdown files)\n- **`agents/`** - Custom agents (Markdown files)\n- **`skills/`** - Interactive skills (subdirectories with SKILL.md)\n- **`hooks/`** - Event hooks (JSON configuration)\n- **`.mcp.json`** - MCP server definitions (optional)\n\nSee [CLAUDE.md](./CLAUDE.md) for detailed development guidance.\n\n## Testing Locally\n\n```bash\n# Test a specific plugin\nclaude --plugin-dir ./plugins/codeblend\n\n# Validate plugin structure\nclaude plugin validate ./plugins/codeblend\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "codeblend",
+          "source": "./plugins/codeblend",
+          "description": "Automatically records Claude Code usage metrics when git commits are made",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add chenxizhang/claude-code-plugins",
+            "/plugin install codeblend@awesome-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

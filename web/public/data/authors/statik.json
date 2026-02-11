@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "statik",
+    "display_name": "Elliot Murphy",
+    "avatar_url": "https://avatars.githubusercontent.com/u/983?u=f5b937fd3c8ca015d2c9b34698f694ec637530df&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "statik-skills",
+      "version": null,
+      "description": "A collection of skills that extend Claude's capabilities for specialized tasks",
+      "repo_full_name": "statik/skills",
+      "repo_url": "https://github.com/statik/skills",
+      "repo_description": "Agent skill for verifying/troubleshooting DNS and SPF records",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-10T03:40:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"statik-skills\",\n  \"owner\": {\n    \"name\": \"statik\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of skills that extend Claude's capabilities for specialized tasks\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dns-troubleshooter\",\n      \"source\": \"./\",\n      \"description\": \"Diagnose and troubleshoot DNS issues including delegation verification, record conflicts, authoritative vs local DNS comparison, and SPF validation\",\n      \"version\": \"1.0.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"dns\", \"networking\", \"troubleshooting\", \"spf\", \"email\"],\n      \"repository\": \"https://github.com/statik/skills\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"dns-troubleshooter\",\n  \"description\": \"Diagnose and troubleshoot DNS issues including delegation verification, record conflicts, authoritative vs local DNS comparison, and SPF validation\",\n  \"version\": \"1.0.0\",\n  \"repository\": \"https://github.com/statik/skills\"\n}\n",
+        "README.md": "# Skills\n\nA collection of skills that extend Claude's capabilities for specialized tasks.\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| [dns-troubleshooter](./skills/dns-troubleshooter/) | *It's not DNS / There's no way it's DNS / It was DNS.* Diagnose DNS issues including delegation verification, SPF validation, record conflicts, and authoritative vs local DNS comparison |\n\n> **Copilot Compatible:** All skills in this repository work with both Claude and GitHub Copilot (December 2025+).\n\n## Quick Install\n\n### Claude Code Plugin (Recommended)\n\nInstall directly as a Claude Code plugin:\n\n```bash\n/plugin marketplace add statik/skills\n/plugin install dns-troubleshooter@statik-skills\n```\n\n### Install Script\n\nUse the install script for manual installation:\n\n```bash\n# Clone the repo\ngit clone https://github.com/statik/skills.git\ncd skills\n\n# Install to a specific platform\n./install.sh --claude          # Claude Code\n./install.sh --codex           # Codex CLI\n./install.sh --opencode        # OpenCode\n./install.sh --desktop         # Claude Desktop\n./install.sh --copilot . .     # GitHub Copilot (current project)\n./install.sh --all             # All global locations\n\n# Or use just commands\njust install-claude\njust install-codex\njust install-opencode\njust install-all\n```\n\n## Installation\n\nSkills can be added to Claude in several ways depending on your environment.\n\n### Claude Code (CLI)\n\n**Option 1: Plugin install (recommended)**\n\n```bash\n/plugin marketplace add statik/skills\n/plugin install dns-troubleshooter@statik-skills\n```\n\n**Option 2: Manual install**\n\nClone this repository and copy skills to your project's `.claude/skills/` directory:\n\n```bash\n# Clone the repo\ngit clone https://github.com/statik/skills.git\n\n# Copy a skill to your project\ncp -r skills/skills/dns-troubleshooter /path/to/your/project/.claude/skills/\n```\n\nOr add skills globally to `~/.claude/skills/`:\n\n```bash\nmkdir -p ~/.claude/skills\ncp -r skills/skills/dns-troubleshooter ~/.claude/skills/\n```\n\n### Codex CLI\n\nCodex loads skills from `$CODEX_HOME/skills` (defaults to `~/.codex/skills`). Install the skill into that directory:\n\n```bash\n# Codex requires OPENAI_API_KEY\nexport OPENAI_API_KEY=\"your-key\"\n\nmkdir -p ~/.codex/skills\ncp -r skills/skills/dns-troubleshooter ~/.codex/skills/\n```\n\nTo run Codex with the skill available:\n\n```bash\ncodex exec \"Check if the SPF record for example.com is valid.\"\n```\n\n### OpenCode\n\nOpenCode natively supports skills in the same format. Copy skills to one of these locations:\n\n**Project-level (recommended):**\n```bash\n# Native skills directory (OpenCode v1.0.190+)\ncp -r skills/skills/dns-troubleshooter /path/to/your/project/skill/\n\n# Or the .opencode directory\ncp -r skills/skills/dns-troubleshooter /path/to/your/project/.opencode/skills/\n```\n\n**Global installation:**\n```bash\n# XDG config location (Linux/macOS)\nmkdir -p ~/.config/opencode/skills\ncp -r skills/skills/dns-troubleshooter ~/.config/opencode/skills/\n\n# Alternative global location\nmkdir -p ~/.opencode/skills\ncp -r skills/skills/dns-troubleshooter ~/.opencode/skills/\n```\n\n### VS Code with GitHub Copilot\n\nGitHub Copilot supports Agent Skills as of December 2025. Skills can be installed in multiple locations:\n\n**Option 1: GitHub Skills directory (recommended)**\n```\nyour-project/\n├── .github/\n│   └── skills/\n│       └── dns-troubleshooter/\n│           ├── SKILL.md\n│           └── references/\n│               └── spf.md\n└── ... your code\n```\n\n**Option 2: Claude Skills directory (also supported)**\n\nCopilot automatically discovers skills in `.claude/skills/`:\n```\nyour-project/\n├── .claude/\n│   └── skills/\n│       └── dns-troubleshooter/\n│           ├── SKILL.md\n│           └── references/\n│               └── spf.md\n└── ... your code\n```\n\n**Note:** Ensure the `chat.useAgentSkills` setting is enabled in VS Code.\n\n### Claude.app (Desktop)\n\nSkills can be added to Claude.app by placing them in your user skills directory:\n\n**macOS:**\n```bash\nmkdir -p ~/Library/Application\\ Support/Claude/skills\ncp -r skills/dns-troubleshooter ~/Library/Application\\ Support/Claude/skills/\n```\n\n**Windows:**\n```powershell\nmkdir -p \"$env:APPDATA\\Claude\\skills\"\nCopy-Item -Recurse skills\\dns-troubleshooter \"$env:APPDATA\\Claude\\skills\\\"\n```\n\n**Linux:**\n```bash\nmkdir -p ~/.config/claude/skills\ncp -r skills/dns-troubleshooter ~/.config/claude/skills/\n```\n\n## Using Skills\n\nOnce installed, skills are automatically available to Claude. Simply ask Claude to perform tasks related to the skill's domain:\n\n**DNS Troubleshooter examples:**\n- \"Why am I getting NXDOMAIN for example.com?\"\n- \"Check if my SPF record is configured correctly\"\n- \"Compare what my local DNS says vs the authoritative server for mysite.com\"\n- \"Are there any conflicting DNS records for api.example.com?\"\n\nClaude will use the skill's knowledge and workflows to help diagnose and resolve issues.\n\n## Evaluation Results\n\nSkills are evaluated using [InspectAI](https://inspect.aisi.org.uk/). View the latest evaluation results at:\n\nhttps://statik.github.io/skills/\n\n## Contributing\n\nSee [CONTRIBUTING.md](./CONTRIBUTING.md) for information on creating your own skills, running evaluations, and development setup.\n\n## License\n\nSee [LICENSE](./LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "dns-troubleshooter",
+          "source": "./",
+          "description": "Diagnose and troubleshoot DNS issues including delegation verification, record conflicts, authoritative vs local DNS comparison, and SPF validation",
+          "version": "1.0.0",
+          "license": "MIT",
+          "keywords": [
+            "dns",
+            "networking",
+            "troubleshooting",
+            "spf",
+            "email"
+          ],
+          "repository": "https://github.com/statik/skills",
+          "categories": [
+            "dns",
+            "email",
+            "networking",
+            "spf",
+            "troubleshooting"
+          ],
+          "install_commands": [
+            "/plugin marketplace add statik/skills",
+            "/plugin install dns-troubleshooter@statik-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

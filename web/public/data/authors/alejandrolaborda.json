@@ -1,0 +1,98 @@
+{
+  "author": {
+    "id": "alejandrolaborda",
+    "display_name": "Alejandro Laborda",
+    "avatar_url": "https://avatars.githubusercontent.com/u/952478?u=ed8f9580b42f134cdb781534f384db618d606d96&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-tools",
+      "version": null,
+      "description": "AI development plugins and multi-agent tools",
+      "repo_full_name": "alejandrolaborda/agent-tools",
+      "repo_url": "https://github.com/alejandrolaborda/agent-tools",
+      "repo_description": "Agent Tools",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-17T06:31:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-tools\",\n  \"description\": \"AI development plugins and multi-agent tools\",\n  \"owner\": {\n    \"name\": \"Alejandro Laborda\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"apple-shared\",\n      \"source\": \"./plugins/apple-shared\",\n      \"description\": \"Shared Apple platform skills (Swift, App Store, Accessibility)\"\n    },\n    {\n      \"name\": \"apple-tv-dev\",\n      \"source\": \"./plugins/apple-tv-dev\",\n      \"description\": \"Apple TV/tvOS development with specialized agents. Requires: apple-shared\"\n    },\n    {\n      \"name\": \"agent-openai\",\n      \"source\": \"./plugins/agent-openai\",\n      \"description\": \"MCP server exposing OpenAI as an agent for second opinions\"\n    },\n    {\n      \"name\": \"agent-anthropic\",\n      \"source\": \"./plugins/agent-anthropic\",\n      \"description\": \"MCP server exposing Anthropic Claude as an agent for second opinions\"\n    },\n    {\n      \"name\": \"agent-gemini\",\n      \"source\": \"./plugins/agent-gemini\",\n      \"description\": \"MCP server exposing Google Gemini as an agent for second opinions\"\n    },\n    {\n      \"name\": \"agent-github\",\n      \"source\": \"./plugins/agent-github\",\n      \"description\": \"MCP server exposing GitHub Models as an agent for second opinions\"\n    },\n    {\n      \"name\": \"second-opinion\",\n      \"source\": \"./plugins/second-opinion\",\n      \"description\": \"MCP orchestrator for querying multiple AI agents with consensus detection\"\n    }\n  ]\n}\n",
+        "README.md": "# Agent Tools\n\nA Claude Code plugin marketplace for Apple platform development, with specialized agents and reusable skills.\n\n## Usage\n\n### Local Development (Testing)\n\nLoad plugins directly from this directory:\n\n```bash\n# Load a single plugin\nclaude --plugin-dir ./plugins/apple-shared\n\n# Load multiple plugins\nclaude --plugin-dir ./plugins/apple-shared --plugin-dir ./plugins/apple-tv-dev\n```\n\n### Install from GitHub Marketplace\n\nOnce this repo is published to GitHub:\n\n```bash\n# 1. Add the marketplace (one-time setup)\n/plugin marketplace add alejandrolaborda/agent-tools\n\n# 2. Install plugins\n/plugin install apple-shared@agent-tools\n/plugin install apple-tv-dev@agent-tools\n```\n\nOr use the interactive plugin browser:\n```bash\n/plugin\n# Navigate to \"Discover\" tab → select marketplace → choose plugin\n```\n\n### Installation Scopes\n\n```bash\n# User scope (default) - available in all your projects\n/plugin install apple-shared@agent-tools\n\n# Project scope - shared with team via .claude/settings.json\nclaude plugin install apple-shared@agent-tools --scope project\n\n# Local scope - gitignored, personal use\nclaude plugin install apple-shared@agent-tools --scope local\n```\n\n### Team Configuration\n\nAdd to `.claude/settings.json` for automatic team setup:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"agent-tools\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"alejandrolaborda/agent-tools\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"apple-shared@agent-tools\": true,\n    \"apple-tv-dev@agent-tools\": true\n  }\n}\n```\n\n### Managing Plugins\n\n```bash\n# List installed plugins\n/plugin\n\n# Disable without uninstalling\n/plugin disable apple-shared@agent-tools\n\n# Re-enable\n/plugin enable apple-shared@agent-tools\n\n# Uninstall\n/plugin uninstall apple-shared@agent-tools\n```\n\n### Updates\n\n**Auto-updates** are disabled by default for third-party marketplaces. Enable via:\n```bash\n/plugin\n# → Marketplaces tab → select \"agent-tools\" → Enable auto-update\n```\n\n**Manual updates:**\n```bash\n# Refresh marketplace listings\n/plugin marketplace update agent-tools\n\n# Update a specific plugin\nclaude plugin update apple-shared@agent-tools\n```\n\n**Environment variables:**\n```bash\n# Disable ALL auto-updates (Claude Code + plugins)\nexport DISABLE_AUTOUPDATER=true\n\n# Keep plugin auto-updates while disabling Claude Code updates\nexport DISABLE_AUTOUPDATER=true\nexport FORCE_AUTOUPDATE_PLUGINS=true\n```\n\nWhen auto-update is enabled, Claude Code checks for updates at startup and notifies you to restart if plugins were updated.\n\n## Structure\n\n```\nagent-tools/\n├── .claude-plugin/\n│   └── marketplace.json          # Marketplace manifest\n├── plugins/\n│   ├── apple-shared/             # Shared Apple platform skills\n│   │   ├── .claude-plugin/plugin.json\n│   │   └── skills/\n│   │       ├── swift-language/   # Swift 6.2 expert\n│   │       ├── app-store-review/ # Guidelines compliance\n│   │       └── ...\n│   └── apple-tv-dev/             # Apple TV development\n│       ├── .claude-plugin/plugin.json\n│       ├── agents/               # Specialized sub-agents\n│       ├── skills/               # tvOS-specific skills\n│       └── commands/             # Slash commands\n├── AGENTS.md                     # Development guidelines\n└── README.md\n```\n\n## Plugins\n\n### apple-shared\nShared skills for all Apple platforms (iOS, macOS, tvOS, visionOS).\n\n| Skill | Description | Status |\n|-------|-------------|--------|\n| `swift-language` | Swift 6.2 expert | Ready |\n| `app-store-review` | App Store guidelines | Planned |\n| `app-store-connect` | Publishing workflow | Planned |\n| `accessibility` | VoiceOver, accessibility | Planned |\n| `localization` | i18n/l10n | Planned |\n\n### apple-tv-dev\nApple TV/tvOS development with specialized agents.\n\n**Skills:**\n| Skill | Description | Status |\n|-------|-------------|--------|\n| `swiftui-tvos` | SwiftUI + focus system | Building |\n| `focus-engine` | tvOS navigation | Planned |\n| `avkit-media` | Video/audio playback | Planned |\n| `gamekit` | Game Center | Planned |\n| `metal-graphics` | High-perf graphics | Planned |\n| `testflight-qa` | Testing workflow | Planned |\n\n**Agents:**\n| Agent | Role |\n|-------|------|\n| `developer` | Code implementation |\n| `designer` | UI/UX, HIG compliance |\n| `qa-tester` | Testing, automation |\n| `publisher` | App Store submission |\n| `legal` | Privacy, compliance |\n| `media` | Video/audio specialist |\n\n## Documentation\n\n- **[AGENTS.md](AGENTS.md)** - Development guidelines\n- **[Claude Code Plugins](https://code.claude.com/docs/en/plugins)** - Plugin documentation\n- **[Agent Skills Standard](https://agentskills.io/)** - Skill specification\n\n---\n\n## Apple Skills Maintenance\n\n> **IMPORTANT**: Update all Apple-related skills after every Apple event.\n\n### Key Events\n\n| Event | Timing | Updates |\n|-------|--------|---------|\n| **WWDC** | June | Swift, APIs, frameworks, Xcode |\n| **iPhone Event** | September | iOS/watchOS SDK |\n| **Mac Event** | Oct/Nov | macOS SDK, Apple Silicon |\n\n### Post-Event Checklist\n\n- [ ] Check https://www.swift.org/ and https://developer.apple.com/\n- [ ] Update `target-software-version` in SKILL.md\n- [ ] Update `last-updated` date\n- [ ] Add new features, mark deprecated APIs\n- [ ] Query Context7 MCP for updated docs\n\n### Current Versions\n\n```yaml\nswift: \"6.2.3\"\nxcode: \"16.2\"\ntvos-sdk: \"18.2\"\n```\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "apple-shared",
+          "source": "./plugins/apple-shared",
+          "description": "Shared Apple platform skills (Swift, App Store, Accessibility)",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alejandrolaborda/agent-tools",
+            "/plugin install apple-shared@agent-tools"
+          ]
+        },
+        {
+          "name": "apple-tv-dev",
+          "source": "./plugins/apple-tv-dev",
+          "description": "Apple TV/tvOS development with specialized agents. Requires: apple-shared",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alejandrolaborda/agent-tools",
+            "/plugin install apple-tv-dev@agent-tools"
+          ]
+        },
+        {
+          "name": "agent-openai",
+          "source": "./plugins/agent-openai",
+          "description": "MCP server exposing OpenAI as an agent for second opinions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alejandrolaborda/agent-tools",
+            "/plugin install agent-openai@agent-tools"
+          ]
+        },
+        {
+          "name": "agent-anthropic",
+          "source": "./plugins/agent-anthropic",
+          "description": "MCP server exposing Anthropic Claude as an agent for second opinions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alejandrolaborda/agent-tools",
+            "/plugin install agent-anthropic@agent-tools"
+          ]
+        },
+        {
+          "name": "agent-gemini",
+          "source": "./plugins/agent-gemini",
+          "description": "MCP server exposing Google Gemini as an agent for second opinions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alejandrolaborda/agent-tools",
+            "/plugin install agent-gemini@agent-tools"
+          ]
+        },
+        {
+          "name": "agent-github",
+          "source": "./plugins/agent-github",
+          "description": "MCP server exposing GitHub Models as an agent for second opinions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alejandrolaborda/agent-tools",
+            "/plugin install agent-github@agent-tools"
+          ]
+        },
+        {
+          "name": "second-opinion",
+          "source": "./plugins/second-opinion",
+          "description": "MCP orchestrator for querying multiple AI agents with consensus detection",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add alejandrolaborda/agent-tools",
+            "/plugin install second-opinion@agent-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

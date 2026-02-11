@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "ekusiadadus",
+    "display_name": "ekusiadadus",
+    "avatar_url": "https://avatars.githubusercontent.com/u/70436490?u=a714da7802c65046265c6848887eecddfc58b5c0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "draw-mcp",
+      "version": null,
+      "description": "Generate high-quality draw.io diagrams with Claude Code. Handles font settings, arrow layering, Japanese text, and PNG export validation.",
+      "repo_full_name": "ekusiadadus/draw-mcp",
+      "repo_url": "https://github.com/ekusiadadus/draw-mcp",
+      "repo_description": null,
+      "signals": {
+        "stars": 17,
+        "forks": 1,
+        "pushed_at": "2025-12-16T07:46:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"draw-mcp\",\n  \"owner\": {\n    \"name\": \"ekusiadadus\",\n    \"email\": \"ekusiadadus@example.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"draw-io\",\n      \"source\": \"./\",\n      \"description\": \"Generate high-quality draw.io diagrams with Claude Code. Handles font settings, arrow layering, Japanese text, and PNG export validation.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"ekusiadadus\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"draw-io\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude Code skill for generating high-quality draw.io diagrams with proper font settings, arrow placement, and Japanese text support\",\n  \"author\": {\n    \"name\": \"ekusiadadus\",\n    \"url\": \"https://github.com/ekusiadadus\"\n  },\n  \"homepage\": \"https://github.com/ekusiadadus/draw-mcp\",\n  \"repository\": \"https://github.com/ekusiadadus/draw-mcp\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"draw.io\",\n    \"diagrams\",\n    \"flowchart\",\n    \"architecture\",\n    \"xml\",\n    \"visualization\",\n    \"japanese\",\n    \"claude-code\",\n    \"skill\"\n  ]\n}\n",
+        "README.md": "# Claude Skill: draw.io Diagram Generator\n\nA Claude Code skill for generating high-quality draw.io diagrams with proper font settings, arrow placement, and Japanese text support.\n\n## Features\n\n- **Font Management**: Ensures `fontFamily` is set on all text elements\n- **Arrow Layering**: Correct Z-order placement (arrows behind boxes)\n- **Japanese Text Support**: Proper width allocation for CJK characters\n- **PNG Validation**: Pre-commit hooks for automatic PNG generation\n- **Best Practices**: Comprehensive checklist and examples\n\n## Installation\n\n### Plugin Installation (Recommended)\n\n```bash\n# Via Claude Code marketplace\n/plugin marketplace add ekusiadadus/draw-mcp\n\n# Or install directly\n/plugin add https://github.com/ekusiadadus/draw-mcp\n```\n\n### Manual Installation\n\nClone to your Claude Code skills directory:\n\n```bash\n# Global (personal use)\ngit clone https://github.com/ekusiadadus/draw-mcp ~/.claude/skills/draw-io\n\n# Project-specific\ngit clone https://github.com/ekusiadadus/draw-mcp .claude/skills/draw-io\n```\n\n## Usage\n\nOnce installed, Claude Code will automatically use this skill when you ask to create draw.io diagrams.\n\n### Example Prompts\n\n```\nCreate a simple flowchart showing: Start -> Process -> End\n\nDraw an architecture diagram with Web Server, API, and Database\n\nCreate a sequence diagram for user login flow\n```\n\n### Manual Trigger\n\nIf needed, you can explicitly request the skill:\n\n```\nUsing the draw-io skill, create a flowchart for the authentication process\n```\n\n## Requirements\n\n### draw.io CLI (for PNG export)\n\n**macOS:**\n```bash\nbrew install --cask drawio\n```\n\n**Linux:**\nDownload from [draw.io Desktop Releases](https://github.com/jgraph/drawio-desktop/releases)\n\n### Python (for tests and validation)\n\n```bash\npip install pytest\n```\n\n## Project Structure\n\n```\ndraw-mcp/\n├── .claude-plugin/\n│   ├── plugin.json          # Plugin manifest\n│   └── marketplace.json     # Marketplace configuration\n├── skills/\n│   └── draw-io/\n│       ├── SKILL.md         # Main skill definition\n│       ├── reference.md     # XML structure reference\n│       ├── examples.md      # Production-ready examples\n│       └── checklist.md     # Validation checklist\n├── scripts/\n│   └── convert-drawio-to-png.sh\n├── tests/\n│   └── test_drawio_skill.py\n├── docs/\n│   └── RULE.md\n├── .pre-commit-config.yaml\n├── .gitignore\n├── LICENSE\n└── README.md\n```\n\n## Key Rules\n\n### 1. Font Settings\n\n```xml\n<!-- In mxGraphModel -->\n<mxGraphModel defaultFontFamily=\"Noto Sans JP\" ...>\n\n<!-- In EVERY text element -->\n<mxCell style=\"...fontFamily=Noto Sans JP;fontSize=18;...\" />\n```\n\n### 2. Arrow Placement\n\nArrows must be declared FIRST in XML to render behind other elements:\n\n```xml\n<root>\n  <!-- Arrows first (background) -->\n  <mxCell id=\"arrow1\" edge=\"1\" ... />\n\n  <!-- Boxes after (foreground) -->\n  <mxCell id=\"box1\" vertex=\"1\" ... />\n</root>\n```\n\n### 3. Japanese Text Width\n\nAllocate 30-40px per Japanese character:\n\n```xml\n<!-- 6 characters × 35px = 210px -->\n<mxGeometry width=\"220\" ... />\n```\n\n### 4. PNG Verification\n\nAlways export to PNG and verify visually:\n\n```bash\ndrawio -x -f png -s 2 -t -o diagram.png diagram.drawio\n```\n\n## Pre-commit Hooks\n\nThis project includes pre-commit hooks for:\n\n1. **XML Validation**: Check font settings and structure\n2. **PNG Conversion**: Auto-generate PNG on commit\n3. **Python Tests**: Run skill validation tests\n\nSetup:\n\n```bash\npip install pre-commit\npre-commit install\n```\n\n## Running Tests\n\n```bash\n# Run all tests\npytest tests/ -v\n\n# Run specific test file\npytest tests/test_drawio_skill.py -v\n```\n\n## Contributing\n\n1. Fork the repository\n2. Create a feature branch\n3. Make your changes\n4. Run tests: `pytest tests/ -v`\n5. Submit a pull request\n\n## License\n\nMIT License - see [LICENSE](LICENSE)\n\n## Related Resources\n\n- [draw.io Desktop](https://github.com/jgraph/drawio-desktop)\n- [Claude Code Documentation](https://docs.anthropic.com/claude-code)\n- [draw.io XML Format Reference](https://www.diagrams.net/doc/faq/xml-format)\n\n## Changelog\n\n### v1.0.0 (2025-12-16)\n\n- Initial release\n- Core skill with font, arrow, and text handling\n- Pre-commit hooks for validation\n- Comprehensive documentation and examples\n"
+      },
+      "plugins": [
+        {
+          "name": "draw-io",
+          "source": "./",
+          "description": "Generate high-quality draw.io diagrams with Claude Code. Handles font settings, arrow layering, Japanese text, and PNG export validation.",
+          "version": "1.0.0",
+          "author": {
+            "name": "ekusiadadus"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ekusiadadus/draw-mcp",
+            "/plugin install draw-io@draw-mcp"
+          ]
+        }
+      ]
+    }
+  ]
+}

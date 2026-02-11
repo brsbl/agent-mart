@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "kks0488",
+    "display_name": "kks0488",
+    "avatar_url": "https://avatars.githubusercontent.com/u/128643712?u=760be17c9ada3f39ed6fe5559b0ca1b82c6c8e97&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "anthropic-agent-skills",
+      "version": null,
+      "description": "Anthropic example skills",
+      "repo_full_name": "kks0488/vibe-codex",
+      "repo_url": "https://github.com/kks0488/vibe-codex",
+      "repo_description": "⚡ AI-first skills for autonomous coding. Fast loops, zero-setup, Codex & OpenCode compatible.",
+      "signals": {
+        "stars": 5,
+        "forks": 0,
+        "pushed_at": "2026-02-09T13:05:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"anthropic-agent-skills\",\n  \"owner\": {\n    \"name\": \"Keith Lazuka\",\n    \"email\": \"klazuka@anthropic.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Anthropic example skills\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"document-skills\",\n      \"description\": \"Collection of document processing suite including Excel, Word, PowerPoint, and PDF capabilities\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/xlsx\",\n        \"./skills/docx\",\n        \"./skills/pptx\",\n        \"./skills/pdf\"\n      ]\n    },\n    {\n      \"name\": \"example-skills\",\n      \"description\": \"Collection of example skills demonstrating various capabilities including skill creation, MCP building, visual design, algorithmic art, internal communications, web testing, artifact building, Slack GIFs, and theme styling\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/algorithmic-art\",\n        \"./skills/brand-guidelines\",\n        \"./skills/canvas-design\",\n        \"./skills/doc-coauthoring\",\n        \"./skills/frontend-design\",\n        \"./skills/internal-comms\",\n        \"./skills/mcp-builder\",\n        \"./skills/skill-creator\",\n        \"./skills/slack-gif-creator\",\n        \"./skills/theme-factory\",\n        \"./skills/web-artifacts-builder\",\n        \"./skills/webapp-testing\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# vibe-codex\n\n**ULTIMATE EDITION** - Codex-first skills for Vibe Codex, now with infinite retry, self-healing, and completion proof.\nPurpose-built for Codex CLI workflows and skill routing.\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                                                             │\n│   SAY WHAT YOU WANT.                                        │\n│   WE PLAN IT. EXECUTE IT. FIX WHATEVER BREAKS.              │\n│   RETRY UNTIL SUCCESS. PROVE IT WORKS.                      │\n│                                                             │\n│   NO QUESTIONS. NO EXCUSES. NO STOPPING.                    │\n│                                                             │\n└─────────────────────────────────────────────────────────────┘\n```\n\n## Want it simpler?\n\nIf you want a fast, minimal plan -> code -> exec loop:\nhttps://github.com/kks0488/codex-triad\n\nIf you want deeper, multi-skill automation and routers, stay with vibe-codex.\n\n## What's New in ULTIMATE EDITION\n\n- **Infinite Retry Engine** - Never stops on failure, adapts and retries\n- **Self-Healing Protocol** - Auto-diagnoses and fixes errors\n- **Completion Proof** - Evidence-based verification, not just \"looks done\"\n- **Parallel Execution** - Independent tasks run simultaneously\n- **State Persistence** - Work documents track progress, can resume\n- **Skill Composition** - Chains skills intelligently when needed\n- **Smart Fallback** - Always has a path forward, no dead ends\n\n## Latest Release (v0.4.1)\n\n- Added **Codex-native Agent Teams** runtime (`vc teams`) with:\n  - team lifecycle + membership management\n  - mailbox-based protocol (`message`, `broadcast`, shutdown/plan approvals)\n  - `watch` + `await` operations for live coordination and strict request-response waits\n  - dedupe, stale-lock recovery, and events log (`~/.vc/teams/<team>/events.jsonl`)\n- Added new skill: `vc-agent-teams`\n- Added PR CI validation for teams E2E (`node --test scripts/vc-teams.test.mjs`)\n\n## Super simple (copy/paste)\n\nOne-liner install/update (recommended):\n\nMac/Linux:\n```bash\ncurl -fsSL https://raw.githubusercontent.com/kks0488/vibe-codex/main/bootstrap.sh | bash\n```\n\nWindows (PowerShell):\n```powershell\nirm https://raw.githubusercontent.com/kks0488/vibe-codex/main/bootstrap.ps1 | iex\n```\n\n## Codex CLI compatibility\n\n- Tested against recent `codex-cli` (Rust releases). See `docs/codex-upgrade-check.md` for upgrade notes (skills discovery, sandbox/approvals, MCP, connectors).\n- Recommended setup checklist: `docs/codex-setup.md` (MCP + config).\n- Recommended: skills are the core (MCP servers are helpers); Codex docs now prefer `.agents/skills`, while vibe-codex keeps `.codex/skills` as canonical source and supports both install targets (`--agents` or legacy default). Skills use `agents/openai.yaml` (plus optional legacy `SKILL.json`) for Codex UI metadata + dependency hints (including OpenAI Docs MCP).\n- Core flows are sub-agent aware (uses Codex collaboration tools for parallel recon/testing when available).\n\n## Usage\n\n### Maximum Power Mode\n\n**The shortest, most powerful command:**\n```\nvcf: build a login page\n```\n\nOr via the helper command (prints a `vcf:` prompt for Codex chat):\n```\nvc finish build a login page\n```\n\nThis triggers:\n1. Auto-creates work document for tracking\n2. Plans 10-20 phases\n3. Executes all phases (parallel where possible)\n4. Self-heals on any failure\n5. Runs tests\n6. Provides completion proof\n\n### Router Mode (Auto-Select Skill)\n\n```\nvc go build a login page\n```\n\nRouter analyzes your request and picks the best skill automatically.\n\n### Explicit Skill Invocation\n\nUse `/skills` or type `$` to pick a skill explicitly. This works in the CLI and IDE extension; web/iOS still rely on automatic selection.\n\n## Core Skills (ULTIMATE EDITION)\n\n### vc-phase-loop\n**The Ultimate Execution Engine**\n- 10/20 phase planning\n- Infinite retry on failure\n- Self-healing protocol\n- Completion proof required\n- No questions, no stopping\nAliases: `vcf`\n\n### vc-router\n**Intelligent Skill Selection**\n- Intent classification (action, domain, output, scope)\n- Confidence scoring\n- Skill composition when needed\n- Smart fallback (never \"I don't know\")\nAlias: `vcg`\n\n### vc-agent-teams\n**Codex-native Team Orchestration**\n- Team lifecycle (`create`, `delete`)\n- Member management (`add-member`, `remove-member`)\n- Mailbox protocol (`message`, `broadcast`, `shutdown`, `plan approval`)\n- File-backed runtime under `~/.vc/teams`\n\n## The Iron Laws\n\n```\n1. NEVER STOP UNTIL PROVEN DONE\n2. NEVER ASK - DECIDE AND RECORD\n3. NEVER FAIL - ADAPT AND RETRY\n4. NEVER FORGET - TRACK EVERYTHING\n5. NEVER ASSUME DONE - VERIFY WITH EVIDENCE\n```\n\n## Shortcut Commands\n\n```bash\nvc install [--repo|--agents|--path <dir>]  # Install vc skills\nvc update [--repo|--agents|--path <dir>]   # Update repo + reinstall skills\nvc doctor        # Check installation\nvc list          # List installed skills\nvc teams <cmd>   # Team lifecycle + mailbox commands\nvc mcp docs      # Add OpenAI dev docs MCP server\nvc mcp skills    # Add vibe skills MCP server (npx)\nvc mcp list      # List configured MCP servers\nvc go <task>     # Router mode (auto-select skill)\nvcf: <task>      # Maximum power mode (recommended)\n```\n\n## Completion Proof Format\n\nEvery task ends with proof:\n\n```markdown\n## COMPLETION PROOF\n\n✓ Executed:\n  Command: npm run dev\n  Output: Server running on localhost:3000\n\n✓ Tests:\n  Command: npm test\n  Result: 47 passed, 0 failed\n\n✓ Requirements Verified:\n  - [Login page]: src/pages/Login.tsx:1-89\n  - [OAuth integration]: src/lib/auth.ts:15-67\n\n✓ Quality Checks:\n  - Build: PASS\n  - Lint: PASS\n  - Types: PASS\n```\n\n## Who this is for\n\n- Codex users who want outcomes, not explanations\n- People who prefer \"tell AI the goal, review the result\"\n- Teams that want Git as single source of truth\n- Anyone who wants AI to complete tasks, not stop at problems\n- Non-technical users who just want things done\n\n## Skills\n\n| Skill | Purpose |\n|-------|---------|\n| `vc-phase-loop` | End-to-end execution engine (sub-agent aware) |\n| `vc-router` | Intelligent skill selection (sub-agent assisted when useful) |\n| `vc-agent-teams` | Codex-native team lifecycle + mailbox coordination |\n| `vcf` | Alias for `vc-phase-loop` |\n| `vcg` | Alias for `vc-router` |\n\n## Agent Teams (Codex-native)\n\nThe Claude-style Teams concept is implemented for Codex via `vc teams` commands and JSON mailboxes.\n\n```bash\nvc teams create --name my-project --description \"research + implementation\"\nvc teams add-member --team my-project --name researcher --agent-type researcher\nvc teams add-member --team my-project --name implementer --agent-type coder\nvc teams send --team my-project --type message --from team-lead --recipient researcher --content \"Map architecture\"\nvc teams watch --team my-project --interval-ms 500 --max-iterations 5\nvc teams status --team my-project\nvc teams read --team my-project --agent researcher --unread\n```\n\nProtocol notes:\n- `shutdown_request` / `plan_approval_request` auto-create `requestId` if missing.\n- `shutdown_response` / `plan_approval_response` require `--request-id` and `--approve`.\n- Use `vc teams await --team <team> --agent <agent> --request-id <id> --timeout-ms <n>` for strict request-response waits.\n\nStorage layout:\n\n```text\n~/.vc/teams/{team}/config.json\n~/.vc/teams/{team}/inboxes/{agent}.json\n~/.vc/teams/{team}/tasks/\n```\n\n## Installation\n\nManual install:\n```bash\ngit clone https://github.com/kks0488/vibe-codex.git\ncd vibe-codex\nbash scripts/install-skills.sh                 # Core skills (legacy-compatible): $CODEX_HOME/skills\nbash scripts/install-skills.sh --agents        # Core skills (Codex docs default): ~/.agents/skills\nbash scripts/install-skills.sh --repo          # Repo scope: <repo>/.codex/skills\nbash scripts/install-skills.sh --repo --agents # Repo scope (docs style): <repo>/.agents/skills\n```\n\nThe installer copies skills to the selected scope and moves any overwritten skills into a sibling `skills.bak-<timestamp>` folder (outside your `skills/` directory). Restart Codex to pick up new skills.\nTip: `vc mcp docs` sets up the OpenAI Developer Docs MCP server (or Codex may prompt to install it because it is declared as a dependency in `agents/openai.yaml` / `SKILL.json`).\n\nIf you previously installed older vibe-codex bundles and want a clean vc-only skills directory, run `vc prune` (backs up removed skills).\n\n## Philosophy\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                                                             │\n│   THE VIBE CODEX PROMISE                                    │\n│                                                             │\n│   We throw agents at it.                                    │\n│   We throw retries at it.                                   │\n│   We throw self-healing at it.                              │\n│                                                             │\n│   Until it's done.                                          │\n│   Actually done.                                            │\n│   Proven done.                                              │\n│                                                             │\n└─────────────────────────────────────────────────────────────┘\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "document-skills",
+          "description": "Collection of document processing suite including Excel, Word, PowerPoint, and PDF capabilities",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/xlsx",
+            "./skills/docx",
+            "./skills/pptx",
+            "./skills/pdf"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kks0488/vibe-codex",
+            "/plugin install document-skills@anthropic-agent-skills"
+          ]
+        },
+        {
+          "name": "example-skills",
+          "description": "Collection of example skills demonstrating various capabilities including skill creation, MCP building, visual design, algorithmic art, internal communications, web testing, artifact building, Slack GIFs, and theme styling",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/algorithmic-art",
+            "./skills/brand-guidelines",
+            "./skills/canvas-design",
+            "./skills/doc-coauthoring",
+            "./skills/frontend-design",
+            "./skills/internal-comms",
+            "./skills/mcp-builder",
+            "./skills/skill-creator",
+            "./skills/slack-gif-creator",
+            "./skills/theme-factory",
+            "./skills/web-artifacts-builder",
+            "./skills/webapp-testing"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kks0488/vibe-codex",
+            "/plugin install example-skills@anthropic-agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
