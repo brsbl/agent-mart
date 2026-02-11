@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "hereinthehive",
+    "display_name": "Dan Donald",
+    "avatar_url": "https://avatars.githubusercontent.com/u/24129?u=efbaf381d8804b9f2f2b96494550d3d9f5fb2a94&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "Gotrino",
+      "version": null,
+      "description": "Review code for inclusive design, accessibility, and ethical considerations",
+      "repo_full_name": "hereinthehive/gotrino-inclusion",
+      "repo_url": "https://github.com/hereinthehive/gotrino-inclusion",
+      "repo_description": "A Claude Code plugin to review code for inclusive design, accessibility, and ethical considerations",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-14T17:29:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"Gotrino\",\n  \"owner\": {\n    \"name\": \"Dan Donald\",\n    \"email\": \"dan@gotrino.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"gotrino-inclusion\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"hereinthehive/gotrino-inclusion\"\n      },\n      \"description\": \"Review code for inclusive design, accessibility, and ethical considerations\"\n    }\n  ]\n}",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"gotrino-inclusion\",\n  \"description\": \"Review code for inclusive design, accessibility, and ethical considerations\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Dan Donald\",\n    \"url\": \"https://hereinthehive.com\"\n  },\n  \"homepage\": \"https://gotrino.com/resources/inclusion\",\n  \"repository\": \"https://github.com/hereinthehive/inclusion\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"ethics\", \"inclusion\", \"accessibility\", \"i18n\", \"diversity\", \"a11y\"]\n}",
+        "README.md": "# Gotrino - Inclusion Plugin\n\nA Claude Code plugin for reviewing code with an inclusion lens.\n\n## What It Does\n\nThis plugin helps you build more inclusive software by asking:\n\n> \"Who might this exclude? What assumptions are baked in?\"\n\nIt's not a linter. It's a second pair of eyes that sees your code from the perspective of users who aren't like you.\n\n## Quick Start\n\n```bash\n# Set up for your project (recommended)\n/teach-charter\n\n# Quick gut-check on code you just wrote\n/guardian src/components/SignupForm.tsx\n\n# Full audit before release\n/inclusion-audit src/\n```\n\n## Available Commands\n\n### Fast Checks\n| Command | What it does |\n|---------|--------------|\n| `/guardian [path]` | Quick inclusion gut-check (lightweight, fast) |\n| `/language-check [path]` | Scan for non-inclusive language |\n| `/names-check [path]` | Check name diversity in examples |\n| `/i18n-check [path]` | Find internationalization issues |\n\n### Deeper Analysis\n| Command | What it does |\n|---------|--------------|\n| `/examples-audit [path]` | Analyze mock data for cultural assumptions |\n| `/inclusion-audit [path]` | Comprehensive inclusion review |\n| `/test-assumption [path]` | Identify hidden assumptions about users |\n\n### Utilities\n| Command | What it does |\n|---------|--------------|\n| `/inclusive-names` | Generate diverse names for mock data |\n| `/explain [path]` | Create decision record in `decisions/` |\n| `/impact [path]` | Analyze change impact before making it |\n\n### Setup\n| Command | What it does |\n|---------|--------------|\n| `/teach-charter` | Configure plugin for your project |\n| `/plugin-help` | Show all commands and workflow |\n\n## Configuration\n\nRun `/teach-charter` to create `.inclusion-config.md` in your project root. This stores:\n\n- **Scope decisions**: What's in/out of scope (e.g., i18n for US-only products)\n- **Acknowledged findings**: Issues you've reviewed and accepted as intentional\n- **Priorities**: What matters most for your team\n- **Project context**: Where your tests, docs, and decisions live\n\nOnce configured, the plugin respects your decisions and won't nag you about acknowledged issues.\n\n### Example Workflow\n\n```\nYou: \"Create a registration form\"\nClaude: [creates form with gender dropdown: Male/Female]\n\nYou: \"/guardian src/components/RegisterForm.tsx\"\nGuardian: \"⚠️ Binary gender field excludes non-binary users\"\n\nYou: \"That's intentional - we need it for legal compliance\"\nGuardian: \"Added to config with rationale. Won't flag again.\"\n```\n\n## Typical Workflow\n\n**Starting a new project:**\n1. Run `/teach-charter` to set up configuration\n2. Define your scope (US-only? Global?)\n3. Set priorities for your team\n\n**During development:**\n- Run `/guardian` after generating forms, UI, or examples\n- Chain it: \"create the signup form, then /guardian it\"\n- Run focused checks as needed\n\n**Before shipping:**\n- Run `/inclusion-audit` for comprehensive review\n- Run `/test-assumption` on user-facing flows\n\n## File Structure\n\n```\n.claude-plugin/\n  plugin.json           # Plugin metadata\n\nreferences/\n  charter-core.md       # Core inclusion principles\n  language-terms.md     # Inclusive language alternatives\n  i18n-checklist.md     # Internationalization checklist\n  diverse-names.md      # Names by region + edge cases\n  assumption-test.md    # Assumption analysis framework\n  examples-checklist.md # Mock data audit checklist\n\nskills/\n  guardian/             # Quick inclusion check (agent)\n  language-check/       # Language scan\n  names-check/          # Name diversity check\n  i18n-check/           # Internationalization issues\n  examples-audit/       # Cultural assumption audit\n  inclusive-names/      # Diverse name generator\n  inclusion-audit/      # Comprehensive audit\n  teach-charter/        # Project setup & config\n  explain/              # Decision documentation\n  impact/               # Change impact analysis\n  test-assumption/      # Assumption test\n  plugin-help/          # Help & command reference\n\nagents/\n  inclusion-guardian.md # Quick review agent (haiku model)\n```\n\n## Design Philosophy\n\n1. **Judgment over pattern-matching**: Understands context before flagging issues\n2. **Explains why**: Shows who's excluded, not just what's wrong\n3. **Actionable**: Provides specific fixes, not vague complaints\n4. **Respects decisions**: Config stores acknowledged findings so they don't repeat\n5. **Layered depth**: Quick checks for daily use, thorough audits when needed\n6. **Humble**: Recommends dedicated a11y tools for runtime accessibility testing\n\n## What It Checks\n\n- **Language**: Gendered, ableist, or exclusionary terms in code and docs\n- **Names**: Western-centric placeholder names in examples and test data\n- **i18n**: Hardcoded dates, currencies, US-only fields, LTR assumptions\n- **Assumptions**: Hidden assumptions about users' abilities, identities, circumstances\n- **Examples**: Cultural assumptions in mock data (holidays, food, family structures)\n\n## What It Doesn't Do\n\n- **Runtime accessibility testing**: Use axe-core, pa11y, or Lighthouse instead\n- **Automated fixes**: It reviews and suggests; you decide what to change\n- **Enforce compliance**: It's a thinking tool, not a gate\n\n## Contributing\n\nContributions welcome:\n- Add terms to language reference\n- Expand name diversity lists\n- Improve assumption categories\n- Add regional/cultural context\n\n## License\n\nMIT License - see [LICENSE](LICENSE)\n\n## Credits\n\n- **Author**: Dan Donald ([hereinthehive.com](https://hereinthehive.com))\n- **Part of**: [Gotrino](https://gotrino.com) design system tools\n"
+      },
+      "plugins": [
+        {
+          "name": "gotrino-inclusion",
+          "source": {
+            "source": "github",
+            "repo": "hereinthehive/gotrino-inclusion"
+          },
+          "description": "Review code for inclusive design, accessibility, and ethical considerations",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add hereinthehive/gotrino-inclusion",
+            "/plugin install gotrino-inclusion@Gotrino"
+          ]
+        }
+      ]
+    }
+  ]
+}

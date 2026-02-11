@@ -1,0 +1,167 @@
+{
+  "author": {
+    "id": "nalyk",
+    "display_name": "Ion (Nalyk) Calmîș",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1785705?u=318375103103366a2073f477e8a682f039003ddf&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nalyk-skills",
+      "version": null,
+      "description": "Custom Claude Code skills and tools",
+      "repo_full_name": "nalyk/nalyk-skills-demo",
+      "repo_url": "https://github.com/nalyk/nalyk-skills-demo",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-02T12:24:25Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nalyk-skills\",\n  \"owner\": {\n    \"name\": \"nalyk\"\n  },\n  \"metadata\": {\n    \"description\": \"Custom Claude Code skills and tools\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"auto-ralph\",\n      \"source\": \"./plugins/auto-ralph\",\n      \"description\": \"Proactively detects tasks suitable for Ralph Loop iteration. Auto-scores tasks, generates prompts, and executes with configurable iterations.\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"automation\", \"iteration\", \"ralph-loop\", \"task-detection\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"orchestrator\",\n      \"source\": \"./plugins/orchestrator\",\n      \"description\": \"Multi-agent orchestration with task decomposition, parallel execution, and smart agent routing. Commands: /orchestrate, /parallel, /plan-only\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"orchestration\", \"parallel\", \"multi-agent\", \"decomposition\", \"workflow\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"audit-agent\",\n      \"source\": \"./plugins/audit-agent\",\n      \"description\": \"Multi-framework audit agent: Jobs (design simplification), Carlin (BS detection), Vibe (engineering quality). Auto-detects contexts. Commands: /jobs-audit, /carlin-audit, /vibe-audit, /multi-audit\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"audit\", \"design\", \"engineering\", \"bs-detector\", \"code-review\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"debate\",\n      \"source\": \"./plugins/debate\",\n      \"description\": \"Multi-model adversarial debate. Claude defends positions against external CLI models (Gemini, Codex, Qwen). Requires at least 1 external CLI. Produces tradeoff documents exposing hidden assumptions. Commands: /debate, /debate:doctor, /debate:adr\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"debate\", \"multi-model\", \"adversarial\", \"decision-support\", \"tradeoffs\", \"gemini\", \"codex\", \"qwen\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"statusline\",\n      \"source\": \"./plugins/statusline\",\n      \"description\": \"Premium powerline-style statusline for Claude Code with git status, context window, and model info\",\n      \"version\": \"2.0.0\",\n      \"keywords\": [\"statusline\", \"powerline\", \"ui\", \"display\", \"git-status\", \"context-window\"],\n      \"category\": \"ui\"\n    }\n  ]\n}\n",
+        "README.md": "# nalyk-skills\n\nPersonal Claude Code plugin marketplace.\n\n## Installation\n\n```bash\n/plugin marketplace add nalyk/nalyk-skills\n```\n\n## Available Plugins\n\n### auto-ralph\n\nProactively detects tasks suitable for Ralph Loop iteration. Auto-scores tasks (0-4),\ngenerates optimized prompts, and executes with configurable iterations.\n\n**Install:**\n```bash\n/plugin install auto-ralph@nalyk-skills\n```\n\n**Configure (optional):** Create `~/.claude/auto-ralph.local.md`:\n```yaml\n---\nmax_iterations: 25\nscore_threshold: 3\nskip_explore_for_score: 4\ndefault_language: ro\nauto_execute: false\ndocker_analysis: true\n---\n```\n\n**Triggers:**\n- Explicit: \"ralph this\", \"auto ralph\", \"loop it\"\n- Auto-detect: Bug fixes, feature requests, refactoring (score >= 3/4)\n\n**Output:** Romanian (accepts input in ro/en/ru/mixed)\n\n## Scripts\n\n### enable-session-memory.py\n\nEnables the unreleased Claude Code Session Memory feature by modifying local feature flags.\n\n**What it does:**\n- Enables `tengu_session_memory` and `tengu_sm_compact` flags in `~/.claude.json`\n- Sets thresholds to code defaults (not server defaults which are much higher)\n\n**Thresholds:**\n| Setting | Server Default | Script Sets |\n|---------|---------------|-------------|\n| First trigger | 140,000 tokens | **10,000 tokens** |\n| Update interval | 10,000 tokens | **5,000 tokens** |\n| Tool call trigger | 5 calls | **3 calls** |\n\n**Usage:**\n```bash\npython3 scripts/enable-session-memory.py\n# Then restart Claude Code\n```\n\n**Storage location:**\n```\n~/.claude/projects/{project}/{session-id}/session-memory/summary.md\n```\n\n**Note:** The server may reset these flags on sync. Re-run the script if session memory stops working.\n\nSource: [decodeclaude.com/session-memory](https://decodeclaude.com/session-memory/)\n\n## Adding Plugins\n\nSee individual plugin READMEs in `plugins/` for detailed documentation.\n",
+        "plugins/auto-ralph/README.md": "# auto-ralph\n\nDeterministic Ralph Loop activation via UserPromptSubmit hook.\n\n## v2.0 Changes\n\n**Problem solved:** In v1.0, skill activation was probabilistic - Claude had to recognize when to invoke the skill, which wasn't guaranteed.\n\n**Solution:** Added a `UserPromptSubmit` hook that injects a scoring reminder into EVERY user prompt, ensuring Claude always evaluates tasks for Ralph Loop suitability.\n\n## Architecture\n\n```\nUser prompt → Hook injects scoring reminder → Claude scores (0-4) →\n  Score >= 3? → Invoke auto-ralph skill → Generate prompt → Execute ralph-loop\n  Score < 3?  → Normal response\n```\n\n## Features\n\n- **Deterministic activation** via UserPromptSubmit hook (NEW in v2.0)\n- Auto-scores tasks (0-4) based on clear criteria\n- Generates optimized prompts for iteration\n- Configurable via `~/.claude/auto-ralph.local.md`\n\n## Configuration\n\nCreate `~/.claude/auto-ralph.local.md`:\n\n```yaml\n---\nmax_iterations: 25       # Max iterations (default: 25)\nscore_threshold: 3       # Min score for Ralph mode (default: 3)\nskip_explore_for_score: 4 # Skip explore at this score (default: 4)\ndefault_language: ro     # Output: ro/en/ru (default: ro)\nauto_execute: false      # Skip confirmation (default: false)\ndocker_analysis: true    # Include Docker context (default: true)\n---\n\n# Auto-Ralph Settings\n\nPersonal configuration for the auto-ralph skill.\n\n## Parameters\n\n| Parameter | Default | Description |\n|-----------|---------|-------------|\n| max_iterations | 25 | Maximum Ralph Loop iterations |\n| score_threshold | 3 | Minimum score for Ralph mode activation |\n| skip_explore_for_score | 4 | Score at which to skip Explore phase |\n| default_language | ro | Output language (ro/en/ru) |\n| auto_execute | false | If true, skip confirmation prompt |\n| docker_analysis | true | Include Docker in context detection |\n\n## Learned Patterns\n\n(Will be populated automatically in future versions)\n```\n\n## Triggers\n\n**Explicit:** \"ralph this\", \"auto ralph\", \"loop it\", \"iterate\"\n\n**Auto-detect (score >= 3):**\n- Bug fixes (\"fix\", \"repair\", \"repara\")\n- Features (\"add\", \"implement\", \"adauga\")\n- Refactoring (\"refactor\", \"clean up\")\n\n**Disable:** \"just answer\", \"don't loop\", \"explain first\"\n\n## Scoring Criteria\n\n| +1 point | Description |\n|----------|-------------|\n| Clear criteria | Keywords detected (fix, add, implement, etc.) |\n| Iteration useful | Bug fix, feature, refactor (not questions) |\n| Defined scope | Specific files/functions mentioned |\n| Verifiable | Tests available or concrete error |\n\nScore >= 3 -> Ralph mode | Score < 3 -> Normal response\n\n## Language\n\n- **Output:** Always Romanian\n- **Input:** Accepts ro/en/ru/mixed without questions\n- **Promise:** \"GATA\" (standard completion signal)\n",
+        "plugins/orchestrator/README.md": "# orchestrator\n\nMulti-agent task orchestration with intelligent decomposition and parallel execution.\n\n## Features\n\n- **Auto-detection** of complex multi-part tasks\n- **Smart decomposition** into parallel/sequential workstreams\n- **Agent routing** to Explore, Plan, or general-purpose agents\n- **Phase execution** with dependency management\n- **Result synthesis** into coherent output\n\n## Commands\n\n### /orchestrate [task]\n\nFull orchestration workflow:\n1. Assess complexity\n2. Decompose into workstreams\n3. Route to appropriate agents\n4. Execute phases (parallel and sequential)\n5. Synthesize results\n\n```\n/orchestrate add user authentication, request logging, and rate limiting\n```\n\n### /parallel [tasks...]\n\nQuick parallel launch without decomposition:\n\n```\n/parallel \"explore:find all API routes\" \"explore:check test coverage\" \"review auth flow\"\n```\n\nPrefixes:\n- `explore:` → Explore agent (read-only)\n- `plan:` → Plan agent (research)\n- No prefix → general-purpose agent\n\n### /plan-only [task]\n\nPreview execution plan without running:\n\n```\n/plan-only migrate user service to TypeScript\n```\n\n## Auto-Detection\n\nOrchestrator activates automatically on patterns like:\n- \"research and implement\"\n- \"analyze and fix\"\n- \"comprehensive review\"\n- \"audit everything\"\n- Multiple AND-connected tasks\n- Migrations, refactoring, multi-file changes\n\n## Complexity Levels\n\n| Level | Points | Workstreams |\n|-------|--------|-------------|\n| SIMPLE | 0-1 | No orchestration |\n| MODERATE | 2-3 | 2-3 workstreams |\n| COMPLEX | 4-5 | 3-5 workstreams |\n| EPIC | 6+ | 5+ workstreams |\n\n## Agent Types\n\n| Agent | Use Case | Model |\n|-------|----------|-------|\n| Explore | Read-only codebase scanning | Haiku |\n| Plan | Research and planning | Sonnet |\n| general-purpose | Implementation, testing | Sonnet |\n\n## Configuration\n\nCreate `~/.claude/orchestrator.local.md`:\n\n```yaml\n---\nmax_parallel_agents: 3\ndefault_timeout_minutes: 30\nauto_ralph_handoff: true\nultrathink_for_plan: true\nverbose_progress: true\nconfirm_before_execute: true\n---\n```\n\n| Parameter | Default | Description |\n|-----------|---------|-------------|\n| max_parallel_agents | 3 | Maximum simultaneous agents |\n| default_timeout_minutes | 30 | Per-workstream timeout |\n| auto_ralph_handoff | true | Offer Ralph Loop for iterative tasks |\n| ultrathink_for_plan | true | Apply ULTRATHINK to Plan agents |\n| verbose_progress | true | Show detailed execution progress |\n| confirm_before_execute | true | Confirm plan before running |\n\n## Integration\n\n### auto-ralph\n\nIterative workstreams are flagged as `[RALPH-CANDIDATE]` with option to delegate.\n\n### ultrathink\n\nPlan agent workstreams automatically apply deep analysis protocol.\n\n## Examples\n\nSee `skills/orchestrator/examples/` for detailed walkthroughs:\n- `multi-feature.md` - Auth + logging + rate limiting\n- `codebase-migration.md` - JavaScript to TypeScript\n- `parallel-research.md` - Multi-agent codebase exploration\n\n## Resources\n\n- `skills/orchestrator/references/agent-routing.md` - Agent selection rules\n- `skills/orchestrator/references/decomposition-rules.md` - Task breakdown patterns\n- `skills/orchestrator/references/phase-patterns.md` - Execution strategies\n- `skills/orchestrator/references/synthesis-rules.md` - Result aggregation\n\n## License\n\nMIT\n",
+        "plugins/audit-agent/README.md": "# Audit Agent\n\nMulti-framework audit agent with three complementary lenses for comprehensive product and code analysis.\n\n## The Three Frameworks\n\n| Framework | Focus | Best For | Questions/Metrics |\n|-----------|-------|----------|-------------------|\n| **Jobs** | Design simplification | UX, features, workflows | 13 questions |\n| **Carlin** | BS detection | Marketing, docs, pitches | 13 questions |\n| **Vibe** | Engineering quality | Code, architecture, infra | 20 metrics |\n\n## Quick Start\n\n### Individual Audits\n\n```bash\n# Design thinking audit\n/jobs-audit my-product-feature\n\n# BS detection\n/carlin-audit our-marketing-copy\n\n# Engineering quality\n/vibe-audit ./src\n```\n\n### Combined Analysis\n\n```bash\n# Run all three\n/multi-audit my-product --all\n\n# Run specific combination\n/multi-audit my-feature --jobs --carlin\n\n# Run two frameworks\n/multi-audit ./codebase --vibe --carlin\n```\n\n## When to Use Each\n\n### Steve Jobs Design Thinking (`/jobs-audit`)\n\nUse when:\n- Something feels \"too complex\"\n- Users are confused\n- Evaluating new features\n- Deciding what to cut\n- Product design reviews\n\nKey questions address: simplification, elegance, beginner's mind, restraint.\n\n### George Carlin BS Detector (`/carlin-audit`)\n\nUse when:\n- Marketing copy feels hollow\n- Documentation promises don't match reality\n- Evaluating competitor claims\n- Preparing honest positioning\n- Internal communication audit\n\nKey questions address: hidden agendas, euphemisms, contradictions, performance vs reality.\n\n### Brutal Vibe Audit (`/vibe-audit`)\n\nUse when:\n- Assessing code quality\n- Technical due diligence\n- Evaluating AI-generated code\n- Pre-launch review\n- Architecture decisions\n\nScores 20 metrics across architecture, engineering, performance, security, and operations.\n\n## Framework Synergy\n\n| Combination | Power | Use Case |\n|-------------|-------|----------|\n| Jobs + Carlin | Design + Marketing alignment | Product launches |\n| Jobs + Vibe | Simple AND solid | Core features, MVPs |\n| Carlin + Vibe | Honest AND production-ready | Technical due diligence |\n| All Three | Complete product audit | Major releases, acquisitions |\n\n## Auto-Detection\n\nSkills auto-activate on relevant keywords:\n\n**Jobs triggers:** \"simplify\", \"too complex\", \"UX review\", \"feature bloat\"\n\n**Carlin triggers:** \"BS\", \"jargon\", \"sounds fake\", \"marketing speak\"\n\n**Vibe triggers:** \"code review\", \"production ready\", \"vibe check\", \"slop check\"\n\n## Output Expectations\n\n### Jobs Audit Output\n- 13 answered questions with evidence\n- Completion checklist (13/13)\n- Top 3 immediate actions\n- THE ONE GREAT IDEA\n\n### Carlin Audit Output\n- 13 answered questions in Carlin's voice\n- Completion checklist (13/13)\n- Top 3 BS to eliminate\n- THE ONE THING TO SAY OUT LOUD\n\n### Vibe Audit Output\n- 20 scored metrics (0-5 each)\n- Section and total scores\n- Verdict band (0-100 scale)\n- 10-item Pareto fix plan\n- Deployment confidence level\n\n### Multi-Audit Output\n- Summary from each framework\n- Cross-reference matrix\n- Priority escalation analysis\n- Unified 10-item action plan\n- Meta-insight from combined analysis\n\n## Philosophy\n\n**Jobs:** \"Simplicity is the ultimate sophistication.\"\n\n**Carlin:** \"The reason I talk to myself is because I'm the only one whose answers I accept.\"\n\n**Vibe:** \"Assume every README is lying until proven otherwise.\"\n\n## File Structure\n\n```\naudit-agent/\n├── .claude-plugin/\n│   └── plugin.json\n├── commands/\n│   ├── jobs-audit.md\n│   ├── carlin-audit.md\n│   ├── vibe-audit.md\n│   └── multi-audit.md\n├── skills/\n│   ├── jobs-audit/SKILL.md\n│   ├── carlin-audit/SKILL.md\n│   └── vibe-audit/SKILL.md\n├── references/\n│   ├── synthesis-matrix.md\n│   └── audit-protocol.md\n└── README.md\n```\n\n## License\n\nMIT\n",
+        "plugins/debate/README.md": "# debate\n\nMulti-model adversarial debate plugin for Claude Code. Claude defends positions against external CLI models (Gemini, Codex, Qwen) through structured confrontation.\n\n## The Problem\n\n- **Decision paralysis** - Complex decisions with no obvious answer\n- **Blind spots** - Your ideas pass your own review, but what are you missing?\n- **Yes-man AI** - Claude agrees too easily, you want genuine pushback\n- **No audit trail** - Decisions made without documented reasoning\n\n## The Solution\n\n**Real debate, not theater.**\n\nClaude forms a position, then external AI models challenge it. Claude must defend, accept valid critiques, or synthesize. Different models = different training = different blind spots = genuine adversarial value.\n\n**This plugin refuses to run with Claude-only.** Claude debating itself provides no genuine diversity.\n\n## Requirements\n\n**Minimum:** 1 external CLI installed and authenticated\n\n| CLI | Install | Free Tier |\n|-----|---------|-----------|\n| Gemini | `npm i -g @google/gemini-cli` | 1000 req/day |\n| Codex | `npm i -g @openai/codex` | ChatGPT Plus |\n| Qwen | `npm i -g @qwen-code/qwen-code` | 2000 req/day |\n\n## Installation\n\n```bash\n# Add marketplace (if not already added)\n/plugin marketplace add nalyk/nalyk-skills-demo\n\n# Install plugin\n/plugin install debate@nalyk-skills-demo\n\n# Check system health\n/debate:doctor\n```\n\n## Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/debate <topic>` | Full adversarial debate on any topic |\n| `/debate:doctor` | Check CLI availability and authentication |\n| `/debate:adr <topic>` | Debate with formal ADR output |\n\n## How It Works\n\n### The Hybrid Protocol\n\n1. **Claude forms position** on your topic\n2. **Parallel challenge** - All external models critique simultaneously\n3. **Consensus check** - If all agree → fast exit with high confidence\n4. **Sequential confrontation** - If disagreement, back-and-forth debate\n5. **Iterate** until consensus OR max rounds (default: 5)\n6. **Assumption extraction** - Surface WHY positions differ\n7. **Output** - Consensus OR structured tradeoff document\n\n### The Key Innovation\n\n**Disagreement is signal, not failure.**\n\nWhen models can't agree, the output isn't \"we failed\" - it's a structured tradeoff document that exposes:\n- What each option assumes\n- When each option is correct\n- The hidden assumptions causing the split\n\nThis transforms \"who's right?\" into **\"what would have to be true for each to be right?\"**\n\n## Example\n\n```\nYou: /debate Should we use microservices or monolith for this project?\n\nClaude: I recommend a modular monolith because [reasons]...\n        Confidence: MEDIUM\n        Assumptions: Team size stays under 10, traffic under 10k req/s\n\n[Gemini challenges]: \"Claude ignores scaling. At 100k users you'll regret this.\"\n[Codex challenges]: \"Microservices add DevOps overhead Claude underestimates.\"\n[Qwen agrees]: \"Modular monolith is correct for this context.\"\n\nClaude responds to Gemini: \"Valid point about scale. But the assumption is\ngrowth to 100k in 18 months. If that's true, I update my position to\nrecommend microservices. If growth is slower, monolith wins.\"\n\n[Debate continues until consensus or max rounds]\n\nOUTCOME: TRADEOFF IDENTIFIED\n\nOption A (Monolith): Best if team < 10, growth < 50k users/year\nOption B (Microservices): Best if team > 15 or growth > 100k users/year\n\nThe real question: What's your realistic growth trajectory?\n```\n\n## Configuration\n\nCreate `~/.claude/debate.local.md`:\n\n```yaml\n---\nmax_rounds: 5\ntimeout_per_cli: 120\nsave_debate_logs: true\ndebate_log_path: \"./debate-logs\"\nadr_path: \"./docs/decisions\"\nskeptical_of_early_agreement: true\n---\n```\n\n## Capability Levels\n\n| External CLIs | Status | Quality |\n|---------------|--------|---------|\n| 0 | DISABLED | Won't run - no genuine diversity |\n| 1 | MINIMAL | Functional, limited perspectives |\n| 2 | FUNCTIONAL | Good coverage |\n| 3+ | OPTIMAL | Maximum adversarial pressure |\n\n## Universal Application\n\nWorks for ANY decision:\n- Code architecture\n- Business strategy\n- Product features\n- Technical tradeoffs\n- Writing and content\n- Life decisions\n\n## Academic Foundation\n\nInspired by:\n- **Irving et al. (2018)** - \"AI safety via debate\" - Scalable oversight via adversarial AI\n- **Adversarial-spec** - Multi-LLM consensus for specifications\n- **Anthropic alignment research** - Debate as verification mechanism\n\n## Plugin Structure\n\n```\ndebate/\n├── .claude-plugin/plugin.json\n├── SKILL.md\n├── README.md\n├── commands/\n│   ├── debate.md\n│   ├── doctor.md\n│   └── adr.md\n├── agents/\n│   ├── challenger-gemini.md\n│   ├── challenger-codex.md\n│   ├── challenger-qwen.md\n│   └── assumption-extractor.md\n├── templates/\n│   ├── tradeoff-document.md\n│   └── adr-template.md\n└── references/\n    ├── debate-protocol.md\n    └── cli-invocation.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "auto-ralph",
+          "source": "./plugins/auto-ralph",
+          "description": "Proactively detects tasks suitable for Ralph Loop iteration. Auto-scores tasks, generates prompts, and executes with configurable iterations.",
+          "version": "1.0.0",
+          "keywords": [
+            "automation",
+            "iteration",
+            "ralph-loop",
+            "task-detection"
+          ],
+          "category": "productivity",
+          "categories": [
+            "automation",
+            "iteration",
+            "productivity",
+            "ralph-loop",
+            "task-detection"
+          ],
+          "install_commands": [
+            "/plugin marketplace add nalyk/nalyk-skills-demo",
+            "/plugin install auto-ralph@nalyk-skills"
+          ]
+        },
+        {
+          "name": "orchestrator",
+          "source": "./plugins/orchestrator",
+          "description": "Multi-agent orchestration with task decomposition, parallel execution, and smart agent routing. Commands: /orchestrate, /parallel, /plan-only",
+          "version": "1.0.0",
+          "keywords": [
+            "orchestration",
+            "parallel",
+            "multi-agent",
+            "decomposition",
+            "workflow"
+          ],
+          "category": "productivity",
+          "categories": [
+            "decomposition",
+            "multi-agent",
+            "orchestration",
+            "parallel",
+            "productivity",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add nalyk/nalyk-skills-demo",
+            "/plugin install orchestrator@nalyk-skills"
+          ]
+        },
+        {
+          "name": "audit-agent",
+          "source": "./plugins/audit-agent",
+          "description": "Multi-framework audit agent: Jobs (design simplification), Carlin (BS detection), Vibe (engineering quality). Auto-detects contexts. Commands: /jobs-audit, /carlin-audit, /vibe-audit, /multi-audit",
+          "version": "1.0.0",
+          "keywords": [
+            "audit",
+            "design",
+            "engineering",
+            "bs-detector",
+            "code-review"
+          ],
+          "category": "productivity",
+          "categories": [
+            "audit",
+            "bs-detector",
+            "code-review",
+            "design",
+            "engineering",
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add nalyk/nalyk-skills-demo",
+            "/plugin install audit-agent@nalyk-skills"
+          ]
+        },
+        {
+          "name": "debate",
+          "source": "./plugins/debate",
+          "description": "Multi-model adversarial debate. Claude defends positions against external CLI models (Gemini, Codex, Qwen). Requires at least 1 external CLI. Produces tradeoff documents exposing hidden assumptions. Commands: /debate, /debate:doctor, /debate:adr",
+          "version": "1.0.0",
+          "keywords": [
+            "debate",
+            "multi-model",
+            "adversarial",
+            "decision-support",
+            "tradeoffs",
+            "gemini",
+            "codex",
+            "qwen"
+          ],
+          "category": "productivity",
+          "categories": [
+            "adversarial",
+            "codex",
+            "debate",
+            "decision-support",
+            "gemini",
+            "multi-model",
+            "productivity",
+            "qwen",
+            "tradeoffs"
+          ],
+          "install_commands": [
+            "/plugin marketplace add nalyk/nalyk-skills-demo",
+            "/plugin install debate@nalyk-skills"
+          ]
+        },
+        {
+          "name": "statusline",
+          "source": "./plugins/statusline",
+          "description": "Premium powerline-style statusline for Claude Code with git status, context window, and model info",
+          "version": "2.0.0",
+          "keywords": [
+            "statusline",
+            "powerline",
+            "ui",
+            "display",
+            "git-status",
+            "context-window"
+          ],
+          "category": "ui",
+          "categories": [
+            "context-window",
+            "display",
+            "git-status",
+            "powerline",
+            "statusline",
+            "ui"
+          ],
+          "install_commands": [
+            "/plugin marketplace add nalyk/nalyk-skills-demo",
+            "/plugin install statusline@nalyk-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

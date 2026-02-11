@@ -1,0 +1,87 @@
+{
+  "author": {
+    "id": "amoscicki",
+    "display_name": "amoscicki",
+    "avatar_url": "https://avatars.githubusercontent.com/u/82836981?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "amoscicki-plugins",
+      "version": null,
+      "description": "Personal Claude Code plugins by Arkadiusz Moscicki",
+      "repo_full_name": "amoscicki/aromatt",
+      "repo_url": "https://github.com/amoscicki/aromatt",
+      "repo_description": "Claude Code plugins marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-06T18:57:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"amoscicki-plugins\",\n  \"owner\": {\n    \"name\": \"Arkadiusz Moscicki\",\n    \"url\": \"https://github.com/amoscicki\"\n  },\n  \"description\": \"Personal Claude Code plugins by Arkadiusz Moscicki\",\n  \"plugins\": [\n    {\n      \"name\": \"docs-researcher\",\n      \"description\": \"Manage project knowledge base. Use 'init' to setup, or provide a topic to research.\",\n      \"source\": \"./docs-researcher\",\n      \"version\": \"1.0.2\"\n    },\n    {\n      \"name\": \"swarm-orchestrator\",\n      \"description\": \"Multi-agent parallel task orchestration with wave-based execution, automatic auditing, and model escalation\",\n      \"source\": \"./swarm\",\n      \"version\": \"1.0.4\"\n    },\n    {\n      \"name\": \"gapi\",\n      \"description\": \"Google Tag Manager + Analytics Admin APIs CLI - manage GTM containers/tags/triggers and GA properties/data-streams\",\n      \"source\": \"./gapi\",\n      \"version\": \"1.0.0\"\n    },\n    {\n      \"name\": \"semantic-indexer\",\n      \"description\": \"Semantic codebase search with pgvector. Multi-project support, persistent daemon. USE FIRST before grep/glob.\",\n      \"source\": \"./semantic-indexer\",\n      \"version\": \"1.2.0\"\n    },\n    {\n      \"name\": \"payload\",\n      \"description\": \"Payload CMS query/mutate CLI for Claude Code (persistent local API server)\",\n      \"source\": \"./payload\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# aromatt\n\nClaude Code plugins marketplace.\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [docs-researcher](./docs-researcher) | Research technical documentation and create knowledge files |\n| [payload](./payload) | Payload CMS query/mutate CLI via persistent local server |\n| [swarm](./swarm) | Multi-agent parallel task orchestration with wave-based execution |\n\n## Installation\n\nAdd to your Claude Code settings:\n\n```json\n{\n  \"plugins\": [\n    \"aromatt/docs-researcher\",\n    \"aromatt/payload\",\n    \"aromatt/swarm\"\n  ]\n}\n```\n",
+        "docs-researcher/README.md": "# docs-researcher\n\nA Claude Code plugin that provides a documentation research agent. The agent searches official documentation, filters relevant information for the current task, and saves it to `.claude/skills/project-knowledge-base/` as a reusable project-local knowledge base skill.\n\n## Purpose\n\nThis plugin enables Claude to build its own knowledge base for each project. Instead of repeatedly searching for the same documentation, Claude:\n\n1. Initializes the project knowledge base skill (if not exists)\n2. Checks `.claude/skills/project-knowledge-base/references/` for existing documentation\n3. If not found, uses the `docs-researcher` agent to gather information\n4. Saves filtered, task-relevant documentation for future sessions\n5. Updates the skill index for easy discovery\n\n## Installation\n\nCopy the `docs-researcher` folder to your Claude Code plugins directory, or reference it in your dotfiles setup.\n\n## How It Works\n\n### Automatic Initialization\n\nWhen `docs-researcher` runs in a new project, it automatically:\n\n1. Creates `.claude/skills/project-knowledge-base/` structure\n2. Initializes `SKILL.md` with references index\n3. Creates `references/` directory for documentation\n4. Optionally adds knowledge base section to project's `CLAUDE.md`\n5. Migrates any existing `.claude/knowledge/` files (legacy format)\n\n### Knowledge Base Skill\n\nThe skill created in each project provides:\n\n```\n{project}/\n└── .claude/\n    └── skills/\n        └── project-knowledge-base/\n            ├── SKILL.md           # Index with all references\n            └── references/\n                ├── react-hooks.md\n                ├── tanstack-router/    # Tree for large topics (>500 lines)\n                │   ├── _index.md\n                │   └── route-guards.md\n                └── ...\n```\n\n## Project Setup\n\nTo enable the knowledge-building workflow in a project, add this to your project's `CLAUDE.md`:\n\n```markdown\n## Knowledge Base\n\nTen projekt używa `.claude/skills/project-knowledge-base/`.\nPrzed kodowaniem zapoznaj się ze skillem.\n```\n\nThe agent will add this section automatically if it doesn't exist.\n\n## Components\n\n### Agent: docs-researcher\n\nAutonomous agent that:\n- Initializes project knowledge base skill (Step 0)\n- Validates research requests (technology, topic, context required)\n- Checks existing references before researching\n- Uses WebSearch/WebFetch for documentation\n- Filters results for relevance\n- Saves to standardized knowledge format\n- Updates SKILL.md index\n- Applies progressive disclosure for large documents (>500 lines)\n\n**Model**: Haiku (fast, cost-effective for research tasks)\n\n### Skill: research-methodology\n\nProvides the agent with:\n- WebSearch query patterns for different technology domains\n- Source prioritization (official docs first)\n- Filtering criteria\n- Document template and formatting rules\n- Progressive disclosure guidelines\n\n### Script: init.js\n\nNode.js script that creates the knowledge base skill structure:\n- Creates `.claude/skills/project-knowledge-base/`\n- Initializes `SKILL.md` with base template\n- Creates `references/` directory\n\n## Knowledge File Format\n\nFiles are saved as `.claude/skills/project-knowledge-base/references/{technology}-{topic}.md`:\n\n```yaml\n---\ntopic: \"React useEffect Cleanup for Subscriptions\"\ntechnology: \"react\"\nversion: \"18.x\"\nsources:\n  - https://react.dev/reference/react/useEffect\ncreated: 2025-01-15\ncontext: \"Memory leak in subscription component\"\n---\n```\n\n## Progressive Disclosure\n\nWhen a reference exceeds 500 lines, it's automatically split into a tree:\n\n```\nreferences/tanstack-router.md  (>500 lines)\n↓ split to\nreferences/tanstack-router/\n├── _index.md        # Overview + TOC\n├── route-guards.md\n├── data-loading.md\n└── navigation.md\n```\n\n## Migration\n\nProjects with the legacy `.claude/knowledge/` format are automatically migrated:\n\n1. Agent detects existing `.claude/knowledge/*.md` files\n2. Copies each file to `.claude/skills/project-knowledge-base/references/`\n3. Adds entries to SKILL.md index\n4. **Does NOT delete originals** - user verifies and removes manually\n\n## Directory Structure\n\n```\ndocs-researcher/\n├── .claude-plugin/\n│   └── plugin.json\n├── agents/\n│   └── docs-researcher.md\n├── scripts/\n│   └── init.js\n├── skills/\n│   └── research-methodology/\n│       ├── SKILL.md\n│       └── references/\n│           ├── query-patterns.md\n│           └── document-template.md\n└── README.md\n```\n\n## License\n\nMIT\n",
+        "gapi/README.md": "# gtm\n\nClaude Code plugin: Google Tag Manager API v2 CLI + skill.\n\n## One-time setup (per machine)\n\nInstall plugin dependencies in this plugin folder:\n\n```bash\nbun install\n```\n\n## Project setup (per repo)\n\nThis tool stores credentials and tokens in the current project directory:\n\n- `.gtm/credentials.json`\n- `.gtm/token.json`\n\nRecommended `.gitignore` entries in your project:\n\n```gitignore\n/.gtm/credentials.json\n/.gtm/token*.json\n```\n\n## Usage\n\nUse the `gtm` skill (plugin) to run:\n\n```bash\nnode ${CLAUDE_PLUGIN_ROOT}/scripts/gtm.js help\nnode ${CLAUDE_PLUGIN_ROOT}/scripts/gtm.js auth login\nnode ${CLAUDE_PLUGIN_ROOT}/scripts/gtm.js accounts list\n```\n",
+        "semantic-indexer/README.md": "# Semantic Codebase Indexer\n\nSemantic codebase search plugin for Claude Code using **CocoIndex**, **pgvector**, and **Gemini embeddings**.\n\n## Architecture\n\n- **Orchestrator**: CocoIndex (Python) - file watching & AST parsing\n- **Parsing Engine**: Tree-sitter (language-aware chunking)\n- **Embedding Model**: Google Gemini gemini-embedding-001\n- **Vector Store**: PostgreSQL with pgvector\n\n## Features\n\n- **Semantic search** - Find code by meaning, not just keywords\n- **Multi-project support** - One pgvector container serves all projects\n- **Persistent daemon** - Background indexer runs independently of Claude\n- **AST-aware chunking** - Tree-sitter extracts functions/classes for better results\n- **SHA-256 deduplication** - Only re-embeds changed code\n- **Gitignore-aware** - Respects `.gitignore` patterns\n\n## Prerequisites\n\n- **Docker** - For pgvector container\n- **Python 3.8+** - For CocoIndex\n- **Node.js 18+** - For CLI wrappers\n- **Gemini API key** - For embeddings\n\n## Quick Start\n\n```bash\n# 1. Install Node.js dependencies\ncd semantic-indexer\nnpm install\n\n# 2. Start pgvector container\nnode scripts/setup.js docker-up\n\n# 3. Install CocoIndex Python dependencies\nnode scripts/setup.js install-python\n\n# 4. Set Gemini API key\nnode scripts/setup.js auth set-key --key \"your-api-key\"\n\n# 5. Check setup\nnode scripts/setup.js check-env\n\n# 6. Start daemon\nnode scripts/daemon.js start\n\n# 7. Add project to index\nnode scripts/projects.js add .\n\n# 8. Search!\nnode scripts/search.js --query \"user authentication\" --project .\n```\n\n## Directory Structure\n\n```\nsemantic-indexer/\n├── cocoindex/\n│   ├── main.py               # CocoIndex flow definition\n│   └── requirements.txt      # Python dependencies\n├── docker/\n│   ├── docker-compose.yml    # pgvector container\n│   └── init.sql              # Database schema\n├── scripts/\n│   ├── setup.js              # Docker + auth + Python install\n│   ├── daemon.js             # Start/stop background indexer\n│   ├── projects.js           # Project management\n│   ├── search.js             # Semantic search CLI\n│   ├── watcher-main.js       # Spawns CocoIndex daemon\n│   └── lib/                  # Node.js libraries\n└── skills/\n    └── semantic-search/      # Claude Code skill\n```\n\n## Commands\n\n### Setup\n```bash\nnode scripts/setup.js docker-up          # Start container\nnode scripts/setup.js docker-down        # Stop container\nnode scripts/setup.js install-python     # Install CocoIndex\nnode scripts/setup.js auth set --file <path>   # Set API key from JSON\nnode scripts/setup.js auth paste-win     # Set from clipboard (Windows)\nnode scripts/setup.js check-env          # Verify setup\n```\n\n### Daemon\n```bash\nnode scripts/daemon.js start    # Start background indexer (uses CocoIndex)\nnode scripts/daemon.js stop     # Stop indexer\nnode scripts/daemon.js status   # Check status\nnode scripts/daemon.js logs     # View logs\n```\n\n### Projects\n```bash\nnode scripts/projects.js add <path>      # Add project to watch\nnode scripts/projects.js remove <path>   # Stop watching\nnode scripts/projects.js list            # List all projects\nnode scripts/projects.js reindex <path>  # Force reindex\nnode scripts/projects.js clear <path>    # Remove from DB\n```\n\n### Search\n```bash\nnode scripts/search.js --query \"...\" --project . --limit 10 --threshold 0.7\n```\n\n## How It Works\n\n1. **CocoIndex** watches configured project directories\n2. When files change, **Tree-sitter** parses them into AST nodes\n3. Functions, classes, and methods are extracted as semantic chunks\n4. Each chunk is hashed (SHA-256) for deduplication\n5. Changed chunks are embedded using **Gemini gemini-embedding-001**\n6. Embeddings are stored in **pgvector** for fast similarity search\n\n## Environment Variables\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `GEMINI_API_KEY` | - | Gemini API key (fallback if no credentials file) |\n| `COCOINDEX_DATABASE_URL` | See below | Full Postgres connection URL |\n| `PGVECTOR_HOST` | localhost | Database host |\n| `PGVECTOR_PORT` | 5433 | Database port |\n| `PGVECTOR_DB` | codebase_index | Database name |\n| `PGVECTOR_USER` | indexer | Database user |\n| `PGVECTOR_PASSWORD` | indexer_dev | Database password |\n\n## Credentials Format\n\n`credentials.json`:\n```json\n{\n  \"gemini_api_key\": \"AIza...\"\n}\n```\n\n## Database Schema\n\n```sql\nCREATE TABLE codebase_segments (\n    id SERIAL PRIMARY KEY,\n    project_root TEXT NOT NULL,\n    file_path TEXT NOT NULL,\n    file_name TEXT NOT NULL,\n    content TEXT NOT NULL,\n    start_line INTEGER NOT NULL,\n    end_line INTEGER NOT NULL,\n    symbol_name TEXT,\n    node_type TEXT,\n    content_hash TEXT NOT NULL,\n    embedding vector(3072),\n    updated_at TIMESTAMP DEFAULT NOW()\n);\n```\n\n## Supported Languages (via Tree-sitter)\n\n- TypeScript/JavaScript (`.ts`, `.tsx`, `.js`, `.jsx`)\n- Python (`.py`)\n- Go (`.go`)\n- Rust (`.rs`)\n- Java (`.java`)\n- C/C++ (`.c`, `.cpp`, `.h`)\n- And 25+ more languages\n\n## Sources\n\n- [CocoIndex GitHub](https://github.com/cocoindex-io/cocoindex)\n- [CocoIndex Documentation](https://cocoindex.io/docs/getting_started/quickstart)\n- [Real-Time Codebase Indexing Example](https://github.com/cocoindex-io/realtime-codebase-indexing)\n\n## License\n\nMIT\n",
+        "payload/README.md": "# @aromatt/payload\n\nPayload CMS CLI plugin for Claude Code. Query and mutate Payload collections via a persistent local HTTP server.\n\n## How it works\n\n1. **`server.ts`** — Persistent HTTP server that initializes Payload once (avoiding 10-15s cold start per query)\n2. **`payload.js`** — Thin CLI client that routes commands to the server via HTTP\n\n## Setup\n\n1. Enable the plugin in Claude Code settings:\n   ```json\n   { \"enabledPlugins\": { \"payload@aromatt\": true } }\n   ```\n\n2. Start the server from your project root:\n   ```bash\n   node <plugin-root>/scripts/payload.js start\n   ```\n\n3. Query data:\n   ```bash\n   node <plugin-root>/scripts/payload.js find users --limit 5\n   node <plugin-root>/scripts/payload.js schema tutors\n   ```\n\n## Requirements\n\n- Project must have `@payload-config` resolvable (standard Payload CMS setup)\n- `pnpm tsx` available in the project\n- PostgreSQL running for dev (and optionally test) database\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `start` | Start persistent Payload server |\n| `stop` | Graceful shutdown |\n| `status` | Health check |\n| `collections list` | List all collections |\n| `schema <col>` | Field definitions |\n| `find <col>` | Query documents |\n| `find-by-id <col> --id <id>` | Get by ID |\n| `count <col>` | Count documents |\n| `create <col> --data <json>` | Create document |\n| `update <col> --id <id> --data <json>` | Update document |\n| `delete <col> --id <id>` | Delete document |\n\nRun `node <plugin-root>/scripts/payload.js help` for full reference.\n"
+      },
+      "plugins": [
+        {
+          "name": "docs-researcher",
+          "description": "Manage project knowledge base. Use 'init' to setup, or provide a topic to research.",
+          "source": "./docs-researcher",
+          "version": "1.0.2",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add amoscicki/aromatt",
+            "/plugin install docs-researcher@amoscicki-plugins"
+          ]
+        },
+        {
+          "name": "swarm-orchestrator",
+          "description": "Multi-agent parallel task orchestration with wave-based execution, automatic auditing, and model escalation",
+          "source": "./swarm",
+          "version": "1.0.4",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add amoscicki/aromatt",
+            "/plugin install swarm-orchestrator@amoscicki-plugins"
+          ]
+        },
+        {
+          "name": "gapi",
+          "description": "Google Tag Manager + Analytics Admin APIs CLI - manage GTM containers/tags/triggers and GA properties/data-streams",
+          "source": "./gapi",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add amoscicki/aromatt",
+            "/plugin install gapi@amoscicki-plugins"
+          ]
+        },
+        {
+          "name": "semantic-indexer",
+          "description": "Semantic codebase search with pgvector. Multi-project support, persistent daemon. USE FIRST before grep/glob.",
+          "source": "./semantic-indexer",
+          "version": "1.2.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add amoscicki/aromatt",
+            "/plugin install semantic-indexer@amoscicki-plugins"
+          ]
+        },
+        {
+          "name": "payload",
+          "description": "Payload CMS query/mutate CLI for Claude Code (persistent local API server)",
+          "source": "./payload",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add amoscicki/aromatt",
+            "/plugin install payload@amoscicki-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

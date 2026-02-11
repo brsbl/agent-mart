@@ -1,0 +1,92 @@
+{
+  "author": {
+    "id": "princespaghetti",
+    "display_name": "Anthony Barbieri",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2935312?u=f26852296927bd3994887f75a07a74eba43c80c9&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "princespaghetti-marketplace",
+      "version": null,
+      "description": "A collection of developer productivity plugins for Claude Code",
+      "repo_full_name": "princespaghetti/claude-marketplace",
+      "repo_url": "https://github.com/princespaghetti/claude-marketplace",
+      "repo_description": "My claude marketplace for claude plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-04T15:57:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"princespaghetti-marketplace\",\n  \"owner\": {\n    \"name\": \"Anthony Barbieri\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of developer productivity plugins for Claude Code\",\n    \"version\": \"1.7.0\",\n    \"repository\": \"https://github.com/princespaghetti/claude-marketplace\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"learnfrompast\",\n      \"source\": \"./learnfrompast\",\n      \"description\": \"Analyzes your shell command history, git workflows, Claude usage patterns, evaluates dependencies, and provides multi-perspective analysis for complex decisions. Identifies productivity improvements, automation opportunities, and helps make informed decisions about package adoption and strategic choices\",\n      \"version\": \"1.7.0\",\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/princespaghetti/claude-marketplace\",\n      \"keywords\": [\"shell\", \"history\", \"productivity\", \"analysis\", \"zsh\", \"bash\", \"automation\", \"git\", \"workflow\", \"version-control\", \"patterns\", \"commands\", \"dependencies\", \"packages\", \"npm\", \"pip\", \"cargo\", \"security\", \"evaluation\", \"decision-making\", \"multi-perspective\", \"strategy\", \"consultation\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# princespaghetti-marketplace\n\nA collection of developer productivity plugins for Claude Code.\n\n## About\n\nThis marketplace provides curated plugins designed to enhance your development workflow with Claude Code. Each plugin is focused on improving productivity, providing insights, and automating common tasks.\n\n## Installation\n\nFirst, add this marketplace to Claude Code:\n\n```bash\n/plugin marketplace add princespaghetti/claude-marketplace\n```\n\nThen install individual plugins:\n\n```bash\n/plugin install learnfrompast@princespaghetti-marketplace\n```\n\nOr browse and install interactively:\n\n```bash\n/plugin\n```\n\n## Available Plugins\n\n### learnfrompast\n\nAnalyzes your development workflows to identify productivity improvements and automation opportunities based on your actual shell, git, and Claude usage patterns.\n\n**Capabilities:**\n- **Claude Workflow Analysis** (workflow-analyzer skill): Detects repeated multi-step workflows in your Claude sessions and generates custom commands to automate them. Shows time savings estimates and creates ready-to-use command definitions. Simply ask Claude to \"analyze my workflows\" to activate.\n- **Shell History Analysis** (`/review_history` command): Analyzes zsh/bash history for command patterns, suggests aliases and automation opportunities\n- **Git Workflow Patterns** (git-workflow-patterns skill): Identifies git habits, analyzes commit/branch/collaboration patterns, and suggests workflow improvements. Activates automatically when discussing git workflows.\n\n**[Full documentation →](learnfrompast/README.md)**\n\n**Quick install:**\n```bash\n/plugin install learnfrompast@princespaghetti-marketplace\n```\n\n## Contributing\n\nContributions are welcome! Please feel free to submit issues or pull requests.\n",
+        "learnfrompast/README.md": "# learnfrompast\n\nAnalyzes your shell command history, git workflows, and Claude usage patterns to identify productivity improvements, automation opportunities, and suggest custom commands based on your actual development workflows.\n\n## Overview\n\nThis Claude Code plugin provides personalized insights into your development habits by analyzing your zsh/bash history, git workflows, and Claude Code usage patterns to reveal patterns, inefficiencies, and opportunities for automation.\n\n## Installation\n\nFirst, add the marketplace to Claude Code:\n\n```bash\n/plugin marketplace add princespaghetti/claude-marketplace\n```\n\nThen install this plugin:\n\n```bash\n/plugin install learnfrompast@princespaghetti-marketplace\n```\n\n## Usage\n\n### Shell History Analysis (Command)\n\nExplicitly analyze your shell command history using the command:\n\n```bash\n/review_history\n```\n\n**Note on command invocation**: If there are no naming conflicts with other plugins or built-in commands, you can use the short form `/review_history`. However, if Claude Code detects a namespace collision, you may need to use the fully-qualified form:\n\n```bash\n/learnfrompast:review_history\n```\n\nThe namespaced format (`plugin-name:command-name`) will always work regardless of conflicts.\n\n### Claude Workflow Analysis (Skill)\n\nThe **workflow-analyzer** skill helps you discover repeated workflows and automation opportunities. Simply ask Claude:\n\n```\n\"Analyze my workflows\"\n\"What workflows am I repeating in Claude Code?\"\n\"Analyze my workflows from the last 60 days\"\n```\n\nThe skill activates automatically when you ask about workflow analysis. It identifies repeated multi-step workflows (like \"add → commit → push\") and suggests custom slash commands to automate them. Provides time savings estimates and implementation priorities. All analysis is local—no external data transmission.\n\n### Git Workflow Analysis (Skill)\n\nThe plugin also includes a **git-workflow-patterns** skill that activates automatically when you:\n- Mention git workflows, commits, branches, or rebasing\n- Express frustration with git operations\n- Work with merge conflicts, force pushes, or PRs\n- Ask about git best practices or workflow optimization\n\nThe skill analyzes your git history and provides personalized recommendations based on your actual patterns. No explicit command needed—Claude activates it contextually when relevant.\n\n## What It Analyzes\n\n### Claude Workflow Patterns (via `workflow-analyzer` skill)\n\nDetects repeated workflows in your session history by analyzing patterns like:\n- Git workflows (add/commit/push sequences, branch operations)\n- File operations (consistent read/edit/write patterns)\n- Project workflows (phase-based development, feature patterns)\n- Development cycles (build → test → fix → commit)\n- Plugin/tool workflows (installation, configuration, updates)\n\nProvides actionable automation suggestions with time savings estimates based on frequency and complexity. Requires 3+ occurrences for high-confidence suggestions.\n\n### Shell Command Patterns (via `/review_history` command)\n- Top 10-15 most frequent commands with usage counts\n- Command categorization (version control, package management, file operations, development tools, etc.)\n- Repeated command sequences that could be automated\n- Long or repetitive commands suitable for aliasing (prioritized by frequency × length)\n- Command chains executed together frequently\n- Excessive directory navigation patterns that could be optimized\n\n**Deliverables**:\n- **Summary**: Brief overview of your command patterns and workflow (2-3 sentences)\n- **Top Commands**: Your 10-15 most frequent commands with counts\n- **Improvement Opportunities**: 3-4 specific recommendations with Impact/Effort ratings\n- **Suggested Aliases & Functions**: Ready-to-use, copy-pasteable code for your ~/.zshrc or ~/.bashrc\n- **Quick Wins**: 2-3 improvements that take less than 5 minutes to implement\n\n### Git Workflow Patterns (via `git-workflow-patterns` skill)\n\nThe skill analyzes your git history to identify:\n\n**Commit Patterns**:\n- Message consistency and format\n- Commit size (lines changed per commit)\n- Commit frequency and batching behavior\n- WIP/fixup commits that should be squashed\n- Test commit patterns\n\n**Branch Patterns**:\n- Naming conventions and consistency\n- Branch lifespan (time from creation to merge)\n- Abandoned branches\n- Branch size and long-lived branches (20+ commits)\n\n**Collaboration Patterns**:\n- Solo vs. co-authored commits\n- Merge vs. rebase preferences\n- Force push frequency and safety\n- PR size and review patterns\n\n**Error Recovery Patterns**:\n- Reflog usage (indicating mistakes/uncertainty)\n- Reset/revert patterns\n- Cherry-pick frequency\n- Stash accumulation\n\n**Workflow Efficiency**:\n- Repeated command sequences (alias opportunities)\n- Conflict patterns in specific files\n- Context switching frequency\n\n**Deliverables**:\n- Personalized recommendations based on your actual git behavior\n- Safety improvements (e.g., `--force-with-lease` instead of `--force`)\n- Git aliases and config suggestions\n- Workflow optimizations (branch strategy, commit strategy, etc.)\n- Quick wins for immediate improvement\n\n## Features\n\n- **Triple analysis**: Shell command history + Git workflow patterns + Claude usage patterns\n- **Workflow automation**: Detects repeated workflows and suggests custom slash commands\n- **Natural pattern detection**: Uses Claude's reasoning to identify patterns even when worded differently\n- **Hybrid invocation**: Git skill auto-activates contextually; workflow and shell analysis invoked on-demand\n- **Concrete recommendations**: Actionable, specific suggestions with working code\n- **Impact prioritization**: Suggestions ranked by frequency × time saved\n- **Privacy-conscious**: Local analysis, no external data transmission\n- **Copy-pasteable solutions**: Ready-to-use aliases, configs, and command suggestions\n- **Time savings estimates**: Shows potential monthly savings based on your usage\n- **Encouraging feedback**: Highlights strengths while suggesting improvements\n\n## Example Scenarios\n\n### Claude Workflow Analysis\n\nAsk Claude to \"analyze my workflows\" to discover repeated patterns:\n\n- **Git workflow** (12 occurrences): \"add → commit → push\" → suggests `/ship-git` command (saves ~25 min/month)\n- **Phase development** (8 occurrences): \"review PLAN.md → implement → commit\" → suggests `/do-phase` command\n- **Documentation sync** (8 occurrences): \"update README → check consistency\" → suggests `/sync-docs` command\n\nThe skill provides a comprehensive report with specific recommendations ranked by time savings and ROI.\n\n### Shell History Analysis\nRun `/review_history` to:\n- Discover your most-used commands\n- Find opportunities to create time-saving aliases\n- Identify command chains that could be automated\n- Improve overall shell workflow efficiency\n\n### Git Workflow Analysis (Automatic)\n\n**Scenario 1**: You mention \"I always mess up rebasing\"\n- Skill activates, analyzes your reflog and reset patterns\n- Suggests backup workflow before rebasing\n- Provides safe rebase aliases based on your habits\n\n**Scenario 2**: Working on a branch with 40+ commits\n- Skill detects long-lived branch pattern\n- Analyzes your historical PR sizes and review times\n- Suggests breaking into smaller PRs with specific split points\n\n**Scenario 3**: You ask \"Why do I keep having merge conflicts?\"\n- Skill identifies files that conflict frequently\n- Analyzes your conflict resolution patterns\n- Suggests git config changes and workflow improvements\n\n## Requirements\n\n- Claude Code installation\n- Access to `~/.zsh_history` or `~/.bash_history` for shell analysis\n- Git repository for git workflow analysis\n\n## License\n\nMIT License - see [LICENSE](../LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "learnfrompast",
+          "source": "./learnfrompast",
+          "description": "Analyzes your shell command history, git workflows, Claude usage patterns, evaluates dependencies, and provides multi-perspective analysis for complex decisions. Identifies productivity improvements, automation opportunities, and helps make informed decisions about package adoption and strategic choices",
+          "version": "1.7.0",
+          "license": "MIT",
+          "repository": "https://github.com/princespaghetti/claude-marketplace",
+          "keywords": [
+            "shell",
+            "history",
+            "productivity",
+            "analysis",
+            "zsh",
+            "bash",
+            "automation",
+            "git",
+            "workflow",
+            "version-control",
+            "patterns",
+            "commands",
+            "dependencies",
+            "packages",
+            "npm",
+            "pip",
+            "cargo",
+            "security",
+            "evaluation",
+            "decision-making",
+            "multi-perspective",
+            "strategy",
+            "consultation"
+          ],
+          "category": "productivity",
+          "categories": [
+            "analysis",
+            "automation",
+            "bash",
+            "cargo",
+            "commands",
+            "consultation",
+            "decision-making",
+            "dependencies",
+            "evaluation",
+            "git",
+            "history",
+            "multi-perspective",
+            "npm",
+            "packages",
+            "patterns",
+            "pip",
+            "productivity",
+            "security",
+            "shell",
+            "strategy",
+            "version-control",
+            "workflow",
+            "zsh"
+          ],
+          "install_commands": [
+            "/plugin marketplace add princespaghetti/claude-marketplace",
+            "/plugin install learnfrompast@princespaghetti-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

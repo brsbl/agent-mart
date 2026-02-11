@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "onsails",
+    "display_name": "Andrey Kuznetsov",
+    "avatar_url": "https://avatars.githubusercontent.com/u/107261?u=39a9d1d388770ff7d63732c1efd5b41640738ae4&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "onsails-cc",
+      "version": null,
+      "description": "Automated code review loop",
+      "repo_full_name": "onsails/cc",
+      "repo_url": "https://github.com/onsails/cc",
+      "repo_description": "Claude Code skills: review-loop (iterative code review with per-issue subagents) and rust-dev (FAIL FAST standards)",
+      "signals": {
+        "stars": 12,
+        "forks": 0,
+        "pushed_at": "2026-02-10T18:15:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"onsails-cc\",\n  \"owner\": { \"name\": \"Andrey Kuz\" },\n  \"plugins\": [\n    { \"name\": \"review-loop\", \"source\": \"./review-loop\", \"description\": \"Automated code review loop\" },\n    { \"name\": \"rust-dev\", \"source\": \"./rust-dev\", \"description\": \"Rust development with strict standards and build/review agents\" }\n  ]\n}\n",
+        "README.md": "# onsails/cc\n\nClaude Code plugins for power users.\n\n## Plugins\n\n### review-loop\n\nAutomated code review and fix loop with per-issue subagents.\n\n- Optional code-simplifier pre-pass (install from [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official))\n- Runs minimum 4 review iterations until stable\n- Spawns isolated Task agent per issue (preserves main context)\n- Auto-discovers project standards: CLAUDE.md, CI configs, linter rules\n- Smart target branch detection via PR or git history\n\n<img width=\"804\" height=\"699\" alt=\"Screenshot 2026-01-24 at 15 17 56\" src=\"https://github.com/user-attachments/assets/db1bfd12-a76f-4696-8804-2e48da2a5f57\" />\n\n[Full documentation →](./review-loop/README.md)\n\n### rust-dev\n\nStrict Rust development standards with FAIL FAST error handling.\n\n- Enforces Edition 2024, proper error propagation\n- Workspace templates and dependency version lookup\n- rust-builder and review-rust-code agents included\n- Module organization guidance (split at 500+ lines)\n\n[Full documentation →](./rust-dev/README.md)\n\n## Installation\n\n```bash\nclaude plugin marketplace add https://github.com/onsails/cc\nclaude plugin install review-loop@onsails-cc\nclaude plugin install rust-dev@onsails-cc\n```\n\n## License\n\nMIT\n",
+        "review-loop/README.md": "# review-loop\n\nAutomated code review and fix loop with per-issue subagents.\n\n<img width=\"804\" height=\"699\" alt=\"Screenshot 2026-01-24 at 15 17 56\" src=\"https://github.com/user-attachments/assets/db1bfd12-a76f-4696-8804-2e48da2a5f57\" />\n\n## Why a Loop?\n\nSingle-pass reviews miss issues that only surface after fixes. A fix in file A\nmight break file B. The loop continues until the codebase stabilizes - minimum\n3 iterations, exit only when zero critical/major issues remain.\n\n## Why Subagents?\n\nFixing 10 issues in the main conversation bloats context and degrades quality.\nEach fix runs in an isolated Task agent with fresh context. The main session\nstays clean, tracks progress, and coordinates.\n\n## Install\n\n```bash\nclaude plugin marketplace add https://github.com/onsails/cc\nclaude plugin install review-loop@onsails-cc\n```\n\n## Usage\n\n```bash\nclaude /review-loop\n```\n\nOr mention the skill in conversation.\n\n## Key Features\n\n**Code simplification pre-pass** - If `code-simplifier` plugin is installed,\nruns it before review iterations to simplify code changes between your branch\nand the target branch. This reduces review noise and catches issues that would\notherwise require multiple fix cycles.\n\nRecommended: Install from [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official):\n```bash\nclaude plugin install code-simplifier@anthropic-official\n```\n\n**Auto-discovery of project standards** - The reviewer discovers and synthesizes:\n- CLAUDE.md / AGENTS.md instructions\n- CI workflow definitions\n- Linter and formatter configs (clippy, eslint, prettier, etc.)\n\n**Smart target branch detection** - Checks for existing PR first, falls back to\ngit history analysis. Never assumes master/main.\n\n**False positive tracking** - Issues confirmed as intentional get excluded from\nfuture iterations.\n\n**Escalation handling** - Issues requiring architectural decisions get flagged\nfor human review instead of infinite retry loops.\n",
+        "rust-dev/README.md": "# rust-dev\n\nStrict Rust development standards with FAIL FAST error handling.\n\n## Why This Exists\n\nClaude can write Rust, but without guardrails it produces:\n- `unwrap_or_default()` that silently swallows errors\n- `if let Err(e) = ... { log::error!() }` without propagation\n- Edition 2021 instead of 2024\n- Hardcoded dependency versions that rot\n\nThis skill enforces standards that prevent subtle bugs from shipping.\n\n## Install\n\n```bash\nclaude plugin marketplace add https://github.com/onsails/cc\nclaude plugin install rust-dev@onsails-cc\n```\n\n## Usage\n\nActivate automatically when working with Rust code, or invoke explicitly:\n\n```bash\nclaude /rust-dev\n```\n\n## Key Features\n\n**FAIL FAST error handling** - Every error must propagate with `?` or explicit\nreturn. Logging is not handling. `unwrap_or_default()` is forbidden.\n\n**Edition 2024 enforcement** - Always uses the current edition, not legacy 2021.\n\n**Dependency version lookup** - Bundled script queries crates.io for latest\nversions. Uses `x.x` format (e.g., `serde = \"1.0\"`).\n\n**Workspace templates** - Ready-to-use structure: library crate with thiserror,\nbinary crate with anyhow + clap. Proper separation of concerns.\n\n**Module organization** - Guidance on when to split (500+ lines, 50%+ tests),\nwith patterns for test extraction to sibling files.\n\n## Included Agents\n\n- **rust-builder** - Runs cargo build/clippy commands\n- **review-rust-code** - Reviews Rust code for standards compliance\n"
+      },
+      "plugins": [
+        {
+          "name": "review-loop",
+          "source": "./review-loop",
+          "description": "Automated code review loop",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add onsails/cc",
+            "/plugin install review-loop@onsails-cc"
+          ]
+        },
+        {
+          "name": "rust-dev",
+          "source": "./rust-dev",
+          "description": "Rust development with strict standards and build/review agents",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add onsails/cc",
+            "/plugin install rust-dev@onsails-cc"
+          ]
+        }
+      ]
+    }
+  ]
+}

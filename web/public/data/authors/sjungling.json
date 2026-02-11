@@ -1,0 +1,110 @@
+{
+  "author": {
+    "id": "sjungling",
+    "display_name": "Scott Jungling",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8387?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "sjungling-plugins",
+      "version": null,
+      "description": "Personal collection of Claude Code plugins",
+      "repo_full_name": "sjungling/sjungling-claude-plugins",
+      "repo_url": "https://github.com/sjungling/sjungling-claude-plugins",
+      "repo_description": "personal collection of Claude Code plugins",
+      "signals": {
+        "stars": 8,
+        "forks": 0,
+        "pushed_at": "2026-02-03T16:15:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"sjungling-plugins\",\n  \"metadata\": {\n    \"description\": \"Personal collection of Claude Code plugins\",\n    \"version\": \"2.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"owner\": {\n    \"name\": \"Scott\",\n    \"email\": \"scott.jungling@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"swift-engineer\",\n      \"source\": \"./plugins/swift-engineer\"\n    },\n    {\n      \"name\": \"cli-developer\",\n      \"source\": \"./plugins/cli-developer\"\n    },\n    {\n      \"name\": \"technical-writer\",\n      \"source\": \"./plugins/technical-writer\"\n    },\n    {\n      \"name\": \"git-tools\",\n      \"source\": \"./plugins/git-tools\"\n    },\n    {\n      \"name\": \"workflow\",\n      \"source\": \"./plugins/workflow\"\n    },\n    {\n      \"name\": \"data-tools\",\n      \"source\": \"./plugins/data-tools\"\n    },\n    {\n      \"name\": \"tmux-tools\",\n      \"source\": \"./plugins/tmux-tools\"\n    },\n    {\n      \"name\": \"tailscale-notify\",\n      \"source\": \"./plugins/tailscale-notify\"\n    }\n  ]\n}\n",
+        "README.md": "# sjungling-plugins\npersonal collection of Claude Code plugins\n",
+        "plugins/tmux-tools/README.md": "# tmux-tools\n\nTMUX session awareness and process management for Claude Code.\n\n## Features\n\n- **Automatic detection**: SessionStart hook detects if running in TMUX\n- **Dedicated workspace**: All Claude-created panes go in a `claude-controlled` window\n- **Service management**: Start, stop, and restart services in isolated panes\n- **Output capture**: Read pane output and detect errors automatically\n- **Named panes**: Find and interact with panes by name\n\n## Components\n\n### SessionStart Hook\n\nRuns automatically when a Claude Code session starts. Detects TMUX and provides context:\n\n```\nTMUX Session Detected:\n- Current: window \"dev\" (#2), pane 0\n- Claude-controlled window: exists (#4)\n- Windows: [0:main] [1:logs] [2:dev] [4:claude-controlled]\n```\n\n### tmux-aware Skill\n\nProvides workflow guidance for:\n\n- Starting services in new panes\n- Finding existing panes by name\n- Capturing and analyzing output\n- Error detection after commands\n\n## Usage\n\nOnce installed, Claude automatically becomes TMUX-aware. Examples:\n\n- \"Start the API server\" → Creates pane in claude-controlled window, runs command\n- \"Check the redis logs\" → Finds redis pane, captures recent output\n- \"Restart the dev server\" → Finds pane, sends Ctrl+C, restarts\n\n## Naming Convention\n\n- **Window**: `claude-controlled` (dedicated workspace for Claude)\n- **Panes**: Named after service (e.g., `api-server`, `redis`, `postgres`)\n\n## Installation\n\n```\n/plugin install tmux-tools@sjungling-plugins\n```\n\n## Requirements\n\n- TMUX 3.0+ (uses pane titles feature)\n- Running Claude Code inside a TMUX session\n",
+        "plugins/tailscale-notify/README.md": "# tailscale-notify\n\nSends Claude Code notifications to a Tailscale endpoint via HTTP POST.\n\n## Installation\n\n```\n/plugin install tailscale-notify@sjungling-plugins\n```\n\n## Configuration\n\nThe notification endpoint can be configured via environment variable:\n\n```bash\nexport TAILSCALE_NOTIFY_URL=\"https://your-device.your-tailnet.ts.net:7080/endpoint\"\n```\n\nIf not set, defaults to `https://pi.tail07fea6.ts.net:7080/<hostname>` where `<hostname>` is your machine's hostname (lowercase).\n\n## How It Works\n\nWhen Claude Code sends a notification, this plugin:\n1. Checks if the macOS screen is locked (using `ioreg` to query `CGSSessionScreenIsLocked`)\n2. If locked, extracts the message content and POSTs it to your Tailscale endpoint\n3. If unlocked, skips the notification (user is assumed to be actively watching)\n4. Silently handles failures (best-effort delivery)\n\nThe curl request has a 5-second timeout to avoid blocking.\n\n**Note:** This plugin only sends notifications when the screen is locked, assuming an active user doesn't need remote notifications.\n"
+      },
+      "plugins": [
+        {
+          "name": "swift-engineer",
+          "source": "./plugins/swift-engineer",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install swift-engineer@sjungling-plugins"
+          ]
+        },
+        {
+          "name": "cli-developer",
+          "source": "./plugins/cli-developer",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install cli-developer@sjungling-plugins"
+          ]
+        },
+        {
+          "name": "technical-writer",
+          "source": "./plugins/technical-writer",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install technical-writer@sjungling-plugins"
+          ]
+        },
+        {
+          "name": "git-tools",
+          "source": "./plugins/git-tools",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install git-tools@sjungling-plugins"
+          ]
+        },
+        {
+          "name": "workflow",
+          "source": "./plugins/workflow",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install workflow@sjungling-plugins"
+          ]
+        },
+        {
+          "name": "data-tools",
+          "source": "./plugins/data-tools",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install data-tools@sjungling-plugins"
+          ]
+        },
+        {
+          "name": "tmux-tools",
+          "source": "./plugins/tmux-tools",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install tmux-tools@sjungling-plugins"
+          ]
+        },
+        {
+          "name": "tailscale-notify",
+          "source": "./plugins/tailscale-notify",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sjungling/sjungling-claude-plugins",
+            "/plugin install tailscale-notify@sjungling-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "intellectronica",
+    "display_name": "Eleanor Berger",
+    "avatar_url": "https://avatars.githubusercontent.com/u/46264?u=a843173bc4b1407395eb556f6bcc4559be54e0d5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "intellectronica-claude-agentsmd",
+      "version": null,
+      "description": "Syncs AGENTS.md to CLAUDE.md recursively across your project tree",
+      "repo_full_name": "intellectronica/claude-agentsmd",
+      "repo_url": "https://github.com/intellectronica/claude-agentsmd",
+      "repo_description": "Claude Code plugin that syncs AGENTS.md → CLAUDE.md",
+      "signals": {
+        "stars": 11,
+        "forks": 2,
+        "pushed_at": "2026-02-10T12:13:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"intellectronica-claude-agentsmd\",\n  \"description\": \"Syncs AGENTS.md to CLAUDE.md recursively across your project tree\",\n  \"owner\": {\n    \"name\": \"Eleanor Berger\",\n    \"url\": \"https://intellectronica.net\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-agentsmd\",\n      \"source\": \"./plugins/claude-agentsmd\",\n      \"description\": \"Syncs all AGENTS.md files to CLAUDE.md (recursively) and adds CLAUDE.md to .gitignore. Useful when your tooling uses AGENTS.md but Claude Code reads CLAUDE.md.\",\n      \"version\": \"0.1.0\",\n      \"category\": \"standards\"\n    }\n  ]\n}\n",
+        "README.md": "# claude-agentsmd\n\nA Claude Code plugin that syncs `AGENTS.md` → `CLAUDE.md` recursively across your entire project tree.\n\n## What it does\n\n- On session start and before every prompt, finds all `AGENTS.md` files in your project\n- Copies each to a sibling `CLAUDE.md` in the same directory\n- Injects the content directly into Claude's context (so it takes effect immediately, without requiring a restart)\n- Adds `CLAUDE.md` to `.gitignore` (if not already present)\n\n## Why\n\nSome tools and workflows standardise on `AGENTS.md` for agent instructions. Claude Code reads `CLAUDE.md`. This plugin keeps them in sync transparently.\n\n## Install\n\n```bash\n/plugin marketplace add intellectronica/claude-agentsmd\n/plugin install claude-agentsmd@intellectronica-claude-agentsmd\n```\n\nThen restart Claude Code.\n\n## How it works\n\nUses `SessionStart` and `UserPromptSubmit` hooks that run a shell script. The script:\n\n1. `find`s all `AGENTS.md` files (excluding `.git/`)\n2. `cp`s each to a sibling `CLAUDE.md`\n3. Ensures `CLAUDE.md` is in `.gitignore`\n4. Outputs the content to stdout wrapped in `<claudeMd>` tags, which Claude Code injects directly into context\n\nThe hooks have a 10-second timeout.\n\n## Requirements\n\n- Claude Code with plugin support\n- `bash`, `find`, `cp`, `grep` (standard on macOS and Linux)\n\n## Licence\n\nCC0 1.0 Universal\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-agentsmd",
+          "source": "./plugins/claude-agentsmd",
+          "description": "Syncs all AGENTS.md files to CLAUDE.md (recursively) and adds CLAUDE.md to .gitignore. Useful when your tooling uses AGENTS.md but Claude Code reads CLAUDE.md.",
+          "version": "0.1.0",
+          "category": "standards",
+          "categories": [
+            "standards"
+          ],
+          "install_commands": [
+            "/plugin marketplace add intellectronica/claude-agentsmd",
+            "/plugin install claude-agentsmd@intellectronica-claude-agentsmd"
+          ]
+        }
+      ]
+    }
+  ]
+}

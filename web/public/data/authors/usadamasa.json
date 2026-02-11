@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "usadamasa",
+    "display_name": "UCHIDA Masaru",
+    "avatar_url": "https://avatars.githubusercontent.com/u/513226?u=286bed5690b4b0869f23e83367a42d252ee69110&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "orm-discovery-mcp-go",
+      "version": null,
+      "description": "O'Reilly Learning Platform research agent with MCP server integration",
+      "repo_full_name": "usadamasa/orm-discovery-mcp-go",
+      "repo_url": "https://github.com/usadamasa/orm-discovery-mcp-go",
+      "repo_description": null,
+      "signals": {
+        "stars": 2,
+        "forks": 3,
+        "pushed_at": "2026-02-08T13:31:55Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"orm-discovery-mcp-go\",\n  \"owner\": {\n    \"name\": \"usadamasa\",\n    \"url\": \"https://github.com/usadamasa\"\n  },\n  \"metadata\": {\n    \"description\": \"O'Reilly Learning Platform research agent with MCP server integration\",\n    \"version\": \"0.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"orm-discovery-mcp-go\",\n      \"source\": \"./\",\n      \"description\": \"O'Reilly content search and Q&A MCP server with research agent\",\n      \"version\": \"0.2.0\",\n      \"author\": {\n        \"name\": \"usadamasa\"\n      },\n      \"repository\": \"https://github.com/usadamasa/orm-discovery-mcp-go\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"oreilly\", \"research\", \"mcp\", \"agent\"],\n      \"category\": \"research\",\n      \"tags\": [\"oreilly\", \"learning\", \"education\", \"q-and-a\", \"research\", \"mcp\", \"ai-assisted\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"orm-discovery-mcp-go\",\n  \"version\": \"0.2.0\",\n  \"description\": \"O'Reilly Learning Platform research agent with MCP server\",\n  \"author\": {\n    \"name\": \"usadamasa\"\n  },\n  \"repository\": \"https://github.com/usadamasa/orm-discovery-mcp-go\",\n  \"license\": \"MIT\",\n  \"agents\": [\"./plugins/agents/oreilly-researcher.md\"],\n  \"mcpServers\": {\n    \"orm\": {\n      \"command\": \"orm-discovery-mcp-go\",\n      \"args\": [],\n      \"transport\": \"stdio\",\n      \"description\": \"O'Reilly content search and Q&A MCP server\",\n      \"env\": {\n        \"OREILLY_USER_ID\": \"${OREILLY_USER_ID}\",\n        \"OREILLY_PASSWORD\": \"${OREILLY_PASSWORD}\",\n        \"TRANSPORT\": \"stdio\"\n      }\n    }\n  }\n}\n",
+        "README.md": "# O'Reilly Learning Platform MCP Server\n\nO'Reilly Learning PlatformのコンテンツをModel Context Protocol (MCP)経由で検索・アクセスできるGoサーバーです。\n\n> [!WARNING]\n> This project is an unofficial implementation of an MCP server for interacting with the O'Reilly Learning Platform.\n> It is **not affiliated with or endorsed by O'Reilly Media, Inc.** in any way.\n> This tool is provided **for educational and personal use only**, and may break at any time if the internal APIs or authentication flows used by O'Reilly change.\n> Use at your own risk, and please refer to O'Reilly's [Terms of Service](https://www.oreilly.com/terms/) before using this tool.\n\n## クイックスタート\n\n### Claude Code Pluginとしてインストール (推奨)\n\nClaude Codeのプラグインシステムを使って簡単にインストールできます。\n\n```bash\n# マーケットプレイスを追加\n/plugin marketplace add usadamasa/orm-discovery-mcp-go\n\n# プラグインをインストール\n/plugin install orm-discovery-mcp-go\n\n# 環境変数設定 (必須)\nexport OREILLY_USER_ID=\"your_email@acm.org\"\nexport OREILLY_PASSWORD=\"your_password\"\n```\n\n**注意**: MCP Serverバイナリは別途インストールが必要です。[Releases](https://github.com/usadamasa/orm-discovery-mcp-go/releases)からダウンロードするか、下記の手動ビルドを行ってください。\n\n### 手動インストール\n\n#### 1. ツールのインストール\n\n```bash\n# aquaでツールをインストール\naqua install\n\n# ビルド\ntask build\n```\n\n### 2. 認証設定\n\nプロジェクトディレクトリに`.env`ファイルを作成：\n\n```bash\n# .env\nOREILLY_USER_ID=your_email@acm.org\nOREILLY_PASSWORD=your_password\n```\n\n### 3. 起動\n\n```bash\n# 開発用\ngo run .\n\n# Claude Code MCP設定\nclaude mcp add -s user orm-discovery-mcp-go \\\n  -e OREILLY_USER_ID=\"your_email@acm.org\" \\\n  -e OREILLY_PASSWORD=\"your_password\" \\\n  -- /your/path/to/orm-discovery-mcp-go\n```\n\n## 機能\n\n### MCPツール\n- **`search_content`**: O'Reillyコンテンツの検索（書籍、動画、記事の発見）\n- **`ask_question`**: O'Reilly Answers AIへの自然言語での質問\n\n### MCPリソース\n- **`oreilly://book-details/{product_id}`**: 書籍詳細情報\n- **`oreilly://book-toc/{product_id}`**: 書籍目次\n- **`oreilly://book-chapter/{product_id}/{chapter_name}`**: チャプター内容\n- **`oreilly://answer/{question_id}`**: AI生成回答の取得\n- **`orm-mcp://history/recent`**: 直近20件の調査履歴\n- **`orm-mcp://history/search?keyword=xxx`**: キーワードで履歴検索\n- **`orm-mcp://history/{id}`**: 特定の調査履歴の詳細\n\n### MCPプロンプト\n- **`learn-technology`**: 特定技術の学習パスを生成（例: Kubernetes、React）\n- **`research-topic`**: 技術トピックの多角的な調査（例: マイクロサービスアーキテクチャ）\n- **`debug-error`**: エラーメッセージのデバッグガイドを生成\n- **`review-history`**: 過去の調査履歴をレビューしてパターンや傾向を分析\n- **`continue-research`**: 過去の調査を継続して深掘りする\n\n### 利用フロー\n\n#### コンテンツ検索・アクセス\n1. `search_content`で検索 → `product_id`取得\n2. `book-details`で書籍情報確認\n3. `book-chapter`で必要な章を取得\n\n#### AI質問応答\n1. `ask_question`で技術的な質問を投稿 → `question_id`取得\n2. `oreilly://answer/{question_id}`でAI生成回答を取得\n\n#### プロンプト活用\n1. **技術学習**: `learn-technology`で学習したい技術名を指定 → 体系的な学習パスを取得\n2. **技術調査**: `research-topic`で調査トピックを指定 → 多角的な調査結果を取得\n3. **エラー解決**: `debug-error`でエラーメッセージを指定 → デバッグガイドを取得\n\n#### 調査履歴の活用\n1. `orm-mcp://history/recent`で直近の調査履歴を確認\n2. `orm-mcp://history/search?keyword=docker`でキーワード検索\n3. `review-history`プロンプトで傾向分析\n4. `continue-research`プロンプトで過去の調査を深掘り\n\n## ファイル保存先\n\nXDG Base Directory Specificationに準拠しています。\n\n| 用途 | XDG環境変数 | デフォルトパス |\n|------|-------------|----------------|\n| ログ、Chrome一時データ、スクリーンショット | `$XDG_STATE_HOME` | `~/.local/state/orm-mcp-go/` |\n| Cookie | `$XDG_CACHE_HOME` | `~/.cache/orm-mcp-go/` |\n| 調査履歴 | `$XDG_DATA_HOME` | `~/.local/share/orm-mcp-go/research_history.json` |\n| 将来の設定ファイル | `$XDG_CONFIG_HOME` | `~/.config/orm-mcp-go/` |\n\n**デバッグ用**: `ORM_MCP_GO_DEBUG_DIR`を設定すると、全てのパスがその値で上書きされます。\n\n詳細は[API_REFERENCE.md](API_REFERENCE.md)を参照してください。\n"
+      },
+      "plugins": [
+        {
+          "name": "orm-discovery-mcp-go",
+          "source": "./",
+          "description": "O'Reilly content search and Q&A MCP server with research agent",
+          "version": "0.2.0",
+          "author": {
+            "name": "usadamasa"
+          },
+          "repository": "https://github.com/usadamasa/orm-discovery-mcp-go",
+          "license": "MIT",
+          "keywords": [
+            "oreilly",
+            "research",
+            "mcp",
+            "agent"
+          ],
+          "category": "research",
+          "tags": [
+            "oreilly",
+            "learning",
+            "education",
+            "q-and-a",
+            "research",
+            "mcp",
+            "ai-assisted"
+          ],
+          "categories": [
+            "agent",
+            "ai-assisted",
+            "education",
+            "learning",
+            "mcp",
+            "oreilly",
+            "q-and-a",
+            "research"
+          ],
+          "install_commands": [
+            "/plugin marketplace add usadamasa/orm-discovery-mcp-go",
+            "/plugin install orm-discovery-mcp-go@orm-discovery-mcp-go"
+          ]
+        }
+      ]
+    }
+  ]
+}

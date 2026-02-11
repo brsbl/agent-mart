@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "matthewod11-stack",
+    "display_name": "Matt OD",
+    "avatar_url": "https://avatars.githubusercontent.com/u/230781746?u=622ef7634f34476acfe8bce8ebe0d3ac8be72a88&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-setup",
+      "version": null,
+      "description": "Workflow skills for Claude Code: planning wizards, multi-model review, session management, and knowledge capture",
+      "repo_full_name": "matthewod11-stack/claude-setup",
+      "repo_url": "https://github.com/matthewod11-stack/claude-setup",
+      "repo_description": "Personal Claude Code Workflow (0 to 1)",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-10T01:21:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-setup\",\n  \"owner\": {\n    \"name\": \"matthewod11-stack\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-setup\",\n      \"source\": \"./\",\n      \"description\": \"Workflow skills for Claude Code: planning wizards, multi-model review, session management, and knowledge capture\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"workflow\", \"planning\", \"multi-model\", \"review\", \"session\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-setup\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Workflow skills for Claude Code: planning wizards, multi-model review, session management, and knowledge capture\",\n  \"author\": {\n    \"name\": \"matthewod11-stack\"\n  },\n  \"repository\": \"https://github.com/matthewod11-stack/claude-setup\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"workflow\", \"planning\", \"multi-model\", \"review\", \"session\", \"skills\"]\n}\n",
+        "README.md": "# Claude Code Workflow Skills\n\n**From idea to working code** — a skill system for Claude Code with multi-agent review, validation, and session management.\n\n> \"Give Claude a way to verify its work.\" — Boris Cherny\n\n---\n\n## What This Does\n\n1. **Planning** — Turn ideas into validated, executable roadmaps\n2. **Multi-Model Review** — Real AI CLIs (Codex, Gemini, Cursor) + Claude review your spec\n3. **Session Management** — Start/end work sessions with context preservation\n4. **Knowledge Capture** — Document learnings for future lookup\n\nThis is the **public, shareable** skill system. It installs into your existing Claude Code setup alongside any personal configuration you already have.\n\n---\n\n## Install\n\n### Plugin (Recommended)\n\nFrom any Claude Code session:\n\n```\n/plugin marketplace add matthewod11-stack/claude-setup\n```\n\nThis installs the skills as a plugin — no manual file copying needed.\n\n### Legacy (install.sh)\n\n```bash\ngit clone https://github.com/matthewod11-stack/claude-setup.git\ncd claude-setup\n./install.sh\n```\n\nThen restart Claude Code.\n\nThe installer copies skills, reference docs, scripts, and templates into `~/.claude/` — it won't overwrite existing files in your solutions library.\n\n### Optional: Multi-Model CLI Setup\n\nFor real multi-perspective reviews (4 different AI models), install external CLIs:\n\n```bash\nnpm install -g @openai/codex @google/gemini-cli\n# Plus: cursor-agent from cursor.sh\n```\n\nSee [Multi-Model Setup](docs/MULTI-MODEL-SETUP.md) for details.\n\n---\n\n## Quick Start\n\n### New Project\n\n```\n/plan-master\n```\n\nWalk through:\n1. Spec interview -> `SPEC.md`\n2. Multi-model review -> `consolidated_feedback.md`\n3. Interactive scoping -> `ROADMAP.md`\n4. Exec setup -> Ready to build\n\n### Daily Work\n\n```bash\n/session-start    # Context + next task\n# ... work ...\n/session-end      # Commit + document\n```\n\n---\n\n## Skills\n\n7 skills available via `/command` in Claude Code:\n\n| Command | Purpose |\n|---------|---------|\n| `/plan-master` | Master planning wizard with checkpoints |\n| `/spec-review-multi` | Real multi-model parallel spec review |\n| `/roadmap-with-validation` | Scoping + validation |\n| `/session-start` | Begin work session |\n| `/session-end` | End with commit + capture |\n| `/checkpoint` | Mid-session save |\n| `/compound` | Capture learnings |\n\nEach skill is defined in `skills/<name>/SKILL.md` with YAML frontmatter specifying metadata and tool permissions.\n\n---\n\n## Multi-Model Review\n\nThe `/spec-review-multi` skill launches **real external AI CLIs** for genuine diversity:\n\n| Model | Provider | Focus |\n|-------|----------|-------|\n| **Claude** | Anthropic | Edge cases, security, architecture |\n| **Codex** | OpenAI | Feasibility, API design, DX |\n| **Gemini** | Google | Patterns, breadth, documentation |\n| **Cursor** | Anysphere | File structure, modules, navigation |\n\n**Without CLIs installed:** Falls back to Claude-only review.\n\n**With CLIs installed:** 4 genuinely different AI perspectives, consolidated with consensus and divergence tagging.\n\n---\n\n## Workflow Tiers\n\n| Tier | Flow | Best For |\n|------|------|----------|\n| **Lite** | Spec -> Roadmap -> Build | Side projects |\n| **Full** | Spec -> Review -> Roadmap -> Validate -> Build | Production |\n\n**Rule of thumb:** Could rebuild in a weekend? -> Lite. Otherwise -> Full.\n\n---\n\n## Key Concepts\n\n- **Checkpoints** — Pause for review at each step\n- **Consensus Tagging** — Items flagged by 2+ models get priority\n- **Solutions Library** — First debug (30 min) -> future lookup (seconds)\n- **Parallel Execution** — Independent domains in separate terminals\n\n---\n\n## Documentation\n\n- [Philosophy](docs/PHILOSOPHY.md) — Why this approach works\n- [Skills Reference](docs/SKILLS.md) — Detailed skill documentation\n- [Multi-Model Setup](docs/MULTI-MODEL-SETUP.md) — External CLI installation\n- [Reference Protocols](reference/) — Implementation details\n\n---\n\n## Repo Structure\n\n```\nclaude-setup/\n├── .claude-plugin/            # Plugin manifest for marketplace install\n│   ├── plugin.json            #   Plugin metadata\n│   └── marketplace.json       #   Marketplace distribution\n├── skills/                    # Modern skill definitions\n│   ├── plan-master/SKILL.md\n│   ├── spec-review-multi/SKILL.md\n│   ├── roadmap-with-validation/SKILL.md\n│   ├── session-start/SKILL.md\n│   ├── session-end/SKILL.md\n│   ├── checkpoint/SKILL.md\n│   └── compound/SKILL.md\n├── reference/                 # Protocol documentation (source of truth)\n│   ├── protocol-*.md          #   7 protocol definitions\n│   ├── guide-*.md             #   Setup, session, parallel build guides\n│   ├── research-*.md          #   Workflow analysis and feedback\n│   └── source-*.md            #   Curated external references\n├── scripts/                   # Multi-model orchestrator\n│   ├── multi-model-review.sh\n│   ├── lib/cli-wrappers.sh\n│   └── templates/             #   Prompt templates per model\n├── docs/                      # Human-readable guides\n│   ├── PHILOSOPHY.md\n│   ├── SKILLS.md\n│   └── MULTI-MODEL-SETUP.md\n├── templates/                 # Starter files for new projects\n│   ├── ROADMAP.md             #   Roadmap template\n│   └── features.json          #   Feature tracking template\n├── solutions/                 # Solutions library structure\n├── archive/                   # Design docs and original workflow steps\n├── install.sh                 # Legacy installer (fallback)\n├── CLAUDE.md                  # Project instructions for Claude Code\n└── LICENSE                    # MIT\n```\n\n### Plugin Installation\n\nWhen installed via `/plugin marketplace add`, Claude Code reads skills directly from `skills/*/SKILL.md`. No files are copied.\n\n### Legacy Installation\n\nRunning `./install.sh` copies into `~/.claude/`:\n\n```\n~/.claude/\n├── commands/         # 7 skills (from skills/*/SKILL.md)\n├── scripts/          # Multi-model orchestrator + templates\n├── reference/        # All protocol and guide docs\n├── reviews/          # Output directory for review results\n└── solutions/        # Learnings library (universal/, typescript/, react/, node/, python/)\n```\n\n---\n\n## Extending This\n\nThese skills are designed as a foundation. You can:\n\n- **Edit skills** — Modify `skills/*/SKILL.md` files directly\n- **Add your own skills** — Create new `skills/<name>/SKILL.md` directories\n- **Build a private config** — Keep a separate `~/.claude/` git repo for personal tools and use this repo's installer to layer skills on top\n- **Fork and customize** — Clone, remove what you don't need, add your own protocols\n\n---\n\n## Credits\n\n- **Boris Cherny** — Claude Code creator, verification philosophy ([tips](reference/source-boris-twitter-thread.md))\n- **Every.to** — Compound engineering methodology ([source](reference/source-every-compound-engineering.md))\n- **Steve Jobs** — Design questions in reviews ([prompts](reference/source-steve-jobs-design.md))\n- **Thariq** — Spec interview pattern\n\n---\n\n## License\n\n[MIT](LICENSE) — use however you want.\n\n---\n\n*Built with Claude Code. Improved through multi-model review.*\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-setup",
+          "source": "./",
+          "description": "Workflow skills for Claude Code: planning wizards, multi-model review, session management, and knowledge capture",
+          "version": "1.0.0",
+          "keywords": [
+            "workflow",
+            "planning",
+            "multi-model",
+            "review",
+            "session"
+          ],
+          "categories": [
+            "multi-model",
+            "planning",
+            "review",
+            "session",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add matthewod11-stack/claude-setup",
+            "/plugin install claude-setup@claude-setup"
+          ]
+        }
+      ]
+    }
+  ]
+}
