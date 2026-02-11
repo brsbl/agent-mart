@@ -6,44 +6,693 @@
   },
   "marketplaces": [
     {
-      "name": "multi-agent-workflow",
-      "version": "2.4.2",
-      "description": "Multi-Agent Workflow - 多視角並行工作流生態系（研究、規劃、實作、審查、驗證）",
-      "repo_full_name": "miles990/multi-agent-workflow",
-      "repo_url": "https://github.com/miles990/multi-agent-workflow",
-      "repo_description": "Multi-Agent Research Framework - 多視角並行研究，智能匯總成完整報告",
+      "name": "claude-software-skills",
+      "version": null,
+      "description": "48 modular software development skills for Claude Code - from architecture to deployment",
+      "repo_full_name": "miles990/claude-software-skills",
+      "repo_url": "https://github.com/miles990/claude-software-skills",
+      "repo_description": "Claude Software Skills - 47 domain skills + Auto-Dev workflow for Human-in-the-Loop development",
       "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-02-06T03:07:51Z"
+        "stars": 2,
+        "forks": 2,
+        "pushed_at": "2026-01-20T07:04:35Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"multi-agent-workflow\",\n  \"owner\": {\n    \"name\": \"miles990\"\n  },\n  \"metadata\": {\n    \"description\": \"Multi-Agent Workflow - \\u591a\\u8996\\u89d2\\u4e26\\u884c\\u5de5\\u4f5c\\u6d41\\u751f\\u614b\\u7cfb\\uff08\\u7814\\u7a76\\u3001\\u898f\\u5283\\u3001\\u5be6\\u4f5c\\u3001\\u5be9\\u67e5\\u3001\\u9a57\\u8b49\\uff09\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"multi-agent-workflow\",\n      \"source\": \"./\",\n      \"description\": \"\\u591a Agent \\u4e26\\u884c\\u5de5\\u4f5c\\u6d41\\u751f\\u614b\\u7cfb\\uff1aRESEARCH \\u2192 PLAN \\u2192 IMPLEMENT \\u2192 REVIEW \\u2192 VERIFY\",\n      \"version\": \"2.4.2\",\n      \"keywords\": [\n        \"multi-agent\",\n        \"workflow\",\n        \"parallel-agents\",\n        \"map-reduce\",\n        \"orchestrate\"\n      ]\n    }\n  ],\n  \"version\": \"2.4.2\"\n}\n",
-        "README.md": "# Multi-Agent Workflow\n\n[![Version](https://img.shields.io/badge/version-2.4.2-blue.svg)](https://github.com/miles990/multi-agent-workflow)\n[![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)\n[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)](https://claude.ai/code)\n\n> 多視角並行工作流生態系：RESEARCH → PLAN → TASKS → IMPLEMENT → REVIEW → VERIFY\n\n## Architecture\n\n```\n┌──────────────────────────────────────────────────────────────────────────────┐\n│                      multi-agent-workflow（統一專案）                         │\n├──────────────────────────────────────────────────────────────────────────────┤\n│                                                                               │\n│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐ │\n│  │RESEARCH │→ │  PLAN   │→ │  TASKS  │→ │IMPLEMENT│→ │ REVIEW  │→ │ VERIFY  │ │\n│  │   ✅    │  │   ✅    │  │   ✅    │  │   ✅    │  │   ✅    │  │   ✅    │ │\n│  └─────────┘  └─────────┘  └─────────┘  └─────────┘  └─────────┘  └─────────┘ │\n│       ↓            ↓            ↓            ↓            ↓            ↓      │\n│  research/     plans/       tasks/       code/       reviews/    verification/│\n│                                                                               │\n│  ┌────────────────────────────────────────────────────────────────────────┐  │\n│  │                     🔗 ORCHESTRATE（編排器）✅                          │  │\n│  │               串聯所有階段，自動流轉，智能回退                          │  │\n│  └────────────────────────────────────────────────────────────────────────┘  │\n└──────────────────────────────────────────────────────────────────────────────┘\n```\n\n## Features\n\n- **6 階段完整工作流**：研究 → 規劃 → 任務分解 → 實作 → 審查 → 驗證\n- **多視角並行處理**：每個階段 4 個視角同時工作\n- **Map-Reduce 協調**：並行執行 → 交叉驗證 → 智能匯總\n- **Git Worktree 隔離**：IMPLEMENT/REVIEW/VERIFY 在隔離分支中執行\n- **零依賴設計**：只使用 Claude Code 內建工具\n- **Memory 整合**：成果自動存檔，支持跨階段復用\n- **共用模組架構**：避免重複程式碼\n- **指標收集系統**：自動追蹤執行、品質、效率指標\n- **報告系統**：單次報告、週報、基準線追蹤\n- **即時進度顯示**：階段和視角狀態可視化\n- **結構化錯誤處理**：標準化錯誤碼和排除指南\n\n## Installation\n\n### Via Plugin Marketplace (Recommended)\n\n```bash\n# 1. 添加 Marketplace\n/plugin marketplace add miles990/multi-agent-workflow\n\n# 2. 安裝 Plugin\n/plugin install multi-agent-workflow@multi-agent-workflow\n\n# 3. 重啟 Claude Code 載入新 Plugin\n```\n\n### Direct Install\n\n```bash\n/plugin install miles990/multi-agent-workflow\n```\n\n## Available Skills\n\n| Skill | Command | Description | Status |\n|-------|---------|-------------|--------|\n| **research** | `/multi-research` | 多視角並行研究 | ✅ Ready |\n| **plan** | `/multi-plan` | 多視角規劃設計 | ✅ Ready |\n| **tasks** | `/multi-tasks` | 多視角任務分解（v2.2 新增） | ✅ Ready |\n| **implement** | `/multi-implement` | 監督式並行實作 | ✅ Ready |\n| **review** | `/multi-review` | 多視角程式碼審查 | ✅ Ready |\n| **verify** | `/multi-verify` | 多視角驗證測試 | ✅ Ready |\n| **orchestrate** | `/orchestrate` | 端到端編排 | ✅ Ready |\n| **plugin-dev** | `/plugin-dev` | Plugin 開發工作流 | ✅ Ready |\n\n## Quick Start\n\n### Research\n\n```bash\n# 基本用法\n/multi-research AI Agent 架構設計模式\n\n# 快速模式（2 視角）\n/multi-research --quick 技術選型問題\n\n# 深度模式（6 視角）\n/multi-research --deep 重大架構決策\n```\n\n### Plan\n\n```bash\n# 基本用法\n/multi-plan 建立用戶認證系統\n\n# 從研究報告載入\n/multi-plan --from-research user-auth\n```\n\n### Tasks (v2.2 新增)\n\n```bash\n# 從計劃載入並分解任務\n/multi-tasks user-auth\n\n# 快速模式（2 視角）\n/multi-tasks --quick user-auth\n\n# 深度模式（6 視角）\n/multi-tasks --deep user-auth\n\n# 強制 TDD 順序\n/multi-tasks --tdd user-auth\n```\n\n### Implement\n\n```bash\n# 從計劃載入\n/multi-implement --from-plan user-auth\n\n# 快速模式（2 視角）\n/multi-implement --quick --from-plan small-feature\n```\n\n### Review\n\n```bash\n# 審查指定範圍\n/multi-review src/auth/\n\n# 審查 git diff\n/multi-review --diff HEAD~3\n```\n\n### Verify\n\n```bash\n# 驗證功能\n/multi-verify user-auth\n\n# 嚴格模式\n/multi-verify --strict user-auth\n```\n\n### Full Workflow\n\n```bash\n# 端到端編排（自動判斷起始點）\n/orchestrate 新增用戶認證功能\n\n# 從已有計劃開始\n/orchestrate --from-plan user-auth\n```\n\n### Git Worktree Mode\n\n```bash\n# 自動使用 worktree（預設）\n/orchestrate 新增用戶認證功能\n\n# 強制使用 worktree\n/orchestrate --worktree 新增功能\n\n# 禁用 worktree（直接在 main 工作）\n/orchestrate --no-worktree 快速修復\n\n# 恢復中斷的工作流\n/orchestrate --resume user-auth\n\n# 清理孤立的 worktrees\n/orchestrate --cleanup-worktrees\n```\n\n## Skill Perspectives\n\n### research\n\n| ID | Name | Focus |\n|----|------|-------|\n| `architecture` | 架構分析師 | 系統結構、設計模式、可擴展性 |\n| `cognitive` | 認知科學研究員 | 方法論、思維模式、認知框架 |\n| `workflow` | 工作流設計師 | 執行流程、整合策略、實作步驟 |\n| `industry` | 業界實踐研究員 | 現有框架、案例研究、最佳實踐 |\n\n### plan\n\n| ID | Name | Focus |\n|----|------|-------|\n| `architect` | 系統架構師 | 技術可行性、組件設計、擴展性 |\n| `risk-analyst` | 風險分析師 | 潛在風險、依賴問題、失敗場景 |\n| `estimator` | 估算專家 | 工作量評估、優先順序、時程規劃 |\n| `ux-advocate` | UX 倡導者 | 使用者體驗、API 設計、開發者體驗 |\n\n### implement\n\n| ID | Name | Focus |\n|----|------|-------|\n| `tdd-enforcer` | TDD 守護者 | 測試先行、覆蓋率、邊界案例 |\n| `performance-optimizer` | 效能優化師 | 時間複雜度、記憶體、快取 |\n| `security-auditor` | 安全審計員 | OWASP、輸入驗證、授權 |\n| `maintainer` | 維護性專家 | 可讀性、文檔、重構友善 |\n\n### review\n\n| ID | Name | Focus |\n|----|------|-------|\n| `code-quality` | 程式碼品質審查員 | 風格一致性、重複程式碼、設計模式 |\n| `test-coverage` | 測試覆蓋審查員 | 測試品質、邊界案例、Mock 適當性 |\n| `documentation` | 文檔審查員 | API 文檔、註解、README |\n| `integration` | 整合審查員 | 向後相容、API 契約、依賴影響 |\n\n### tasks (v2.2 新增)\n\n| ID | Name | Focus |\n|----|------|-------|\n| `dependency-analyst` | 依賴分析師 | 依賴關係、執行順序、並行機會 |\n| `task-decomposer` | 任務分解師 | 實作任務、估算、驗收標準 |\n| `test-planner` | 測試規劃師 | 測試任務、TDD 案例、邊界條件 |\n| `risk-preventor` | 風險預防師 | 風險任務、回退點、監控任務 |\n\n### verify\n\n| ID | Name | Focus |\n|----|------|-------|\n| `functional-tester` | 功能測試員 | 核心功能、Happy Path、使用者流程 |\n| `edge-case-hunter` | 邊界獵人 | 極端輸入、錯誤處理、容錯 |\n| `regression-checker` | 回歸檢查員 | 現有功能、API 相容、向後相容 |\n| `acceptance-validator` | 驗收驗證員 | 需求符合度、Definition of Done |\n\n## Memory Structure\n\n```\n.claude/memory/\n├── research/           # research skill 產出\n│   └── [topic-id]/\n│       ├── meta.yaml\n│       ├── overview.md\n│       ├── perspectives/\n│       └── synthesis.md\n├── plans/              # plan skill 產出\n│   └── [feature-id]/\n│       ├── meta.yaml\n│       ├── perspectives/\n│       └── implementation-plan.md\n├── tasks/              # tasks skill 產出\n│   └── [feature-id]/\n│       ├── meta.yaml\n│       ├── perspectives/\n│       ├── tasks.yaml\n│       └── dependency-graph.md\n├── implementations/    # implement skill 產出\n├── reviews/            # review skill 產出\n└── verifications/      # verify skill 產出\n```\n\n## Project Structure\n\n```\nmulti-agent-workflow/\n├── skills/\n│   ├── research/                 # ✅ Ready\n│   │   ├── SKILL.md\n│   │   ├── 00-quickstart/\n│   │   └── 01-perspectives/\n│   ├── plan/                     # ✅ Ready\n│   ├── tasks/                    # ✅ Ready (v2.2 新增)\n│   ├── implement/                # ✅ Ready\n│   ├── review/                   # ✅ Ready\n│   ├── verify/                   # ✅ Ready\n│   └── orchestrate/              # ✅ Ready\n├── scripts/                      # 開發工具\n│   ├── create-skill.sh           # Skill 腳手架工具\n│   └── validate-skills.sh        # Skill 結構驗證\n├── shared/                       # 共用模組\n│   ├── skill-structure/          # Skill 結構規範 (v2.3 新增)\n│   │   ├── STANDARD.md           # 結構規範文件\n│   │   ├── CLAUDE.md             # AI 自動載入說明\n│   │   └── templates/            # 模板檔案\n│   ├── coordination/\n│   │   ├── map-phase.md          # 並行執行\n│   │   └── reduce-phase.md       # 整合匯總\n│   ├── synthesis/\n│   │   ├── cross-validation.md   # 交叉驗證\n│   │   └── conflict-resolution.md # 矛盾解決\n│   ├── perspectives/\n│   │   └── base-perspective.md   # 視角基礎結構\n│   ├── isolation/                # Git Worktree 隔離\n│   │   ├── worktree-setup.md     # Worktree 創建\n│   │   ├── worktree-completion.md # Worktree 完成\n│   │   └── path-resolution.md    # 路徑解析\n│   ├── integration/\n│   │   ├── evolve-checkpoints.md # CP 對應\n│   │   └── memory-system.md      # Memory 寫入\n│   ├── metrics/                  # 指標收集\n│   │   ├── schema.yaml           # 指標定義\n│   │   ├── collector.md          # 收集器\n│   │   └── memory-structure.md   # Memory 結構\n│   ├── reporting/                # 報告系統\n│   │   ├── single-report.md      # 單次報告\n│   │   ├── weekly-report.md      # 週報\n│   │   └── baseline.md           # 基準線\n│   ├── progress/                 # 進度顯示\n│   │   └── display.md            # 進度模組\n│   └── errors/                   # 錯誤處理\n│       ├── error-codes.md        # 錯誤碼定義\n│       └── formatter.md          # 錯誤格式化\n├── docs/\n│   └── troubleshooting/          # 錯誤排除指南\n├── templates/                    # 共用模板\n├── plugin.json                   # Plugin manifest\n├── .claude-plugin/marketplace.json\n├── LICENSE\n└── README.md\n```\n\n## Documentation\n\n| Module | Description | Link |\n|--------|-------------|------|\n| **research** | 多視角研究 | [→](./skills/research/SKILL.md) |\n| **orchestrate** | 端到端編排 | [→](./skills/orchestrate/SKILL.md) |\n| **Skill Structure** | Skill 結構規範 | [→](./shared/skill-structure/STANDARD.md) |\n| **Map Phase** | 並行執行 | [→](./shared/coordination/map-phase.md) |\n| **Reduce Phase** | 整合匯總 | [→](./shared/coordination/reduce-phase.md) |\n| **Cross Validation** | 交叉驗證 | [→](./shared/synthesis/cross-validation.md) |\n| **Conflict Resolution** | 矛盾解決 | [→](./shared/synthesis/conflict-resolution.md) |\n| **Perspectives** | 視角配置 | [→](./shared/perspectives/base-perspective.md) |\n| **Git Worktree** | Worktree 隔離 | [→](./skills/orchestrate/04-git-worktree/) |\n| **Memory System** | 存儲系統 | [→](./shared/integration/memory-system.md) |\n| **Checkpoints** | evolve 整合 | [→](./shared/integration/evolve-checkpoints.md) |\n| **Metrics Schema** | 指標定義 | [→](./shared/metrics/schema.yaml) |\n| **Metrics Collector** | 指標收集 | [→](./shared/metrics/collector.md) |\n| **Single Report** | 單次報告 | [→](./shared/reporting/single-report.md) |\n| **Weekly Report** | 週報/趨勢 | [→](./shared/reporting/weekly-report.md) |\n| **Baseline** | 基準線機制 | [→](./shared/reporting/baseline.md) |\n| **Progress Display** | 進度顯示 | [→](./shared/progress/display.md) |\n| **Error Codes** | 錯誤碼定義 | [→](./shared/errors/error-codes.md) |\n| **Troubleshooting** | 錯誤排除指南 | [→](./docs/troubleshooting/) |\n\n## Development Tools\n\n### 建立新 Skill\n\n使用腳手架工具快速建立符合規範的 Skill 結構：\n\n```bash\n# 互動模式（引導式）\n./scripts/create-skill.sh\n\n# 非互動模式（CI/自動化）\n./scripts/create-skill.sh --non-interactive \\\n  --name my-skill \\\n  --desc \"Skill 描述\" \\\n  --version 1.0.0\n```\n\n產生的結構：\n```\nskills/my-skill/\n├── SKILL.md                    # 主要定義檔（frontmatter）\n├── 00-quickstart/\n│   └── _base/usage.md          # 快速開始指南\n└── 01-perspectives/\n    └── _base/default-perspectives.md  # 視角定義\n```\n\n### 驗證 Skill 結構\n\n使用驗證工具確保所有 Skills 符合標準：\n\n```bash\n# 驗證所有 Skills\n./scripts/validate-skills.sh\n\n# 驗證單一 Skill\n./scripts/validate-skills.sh research\n\n# CI 模式（嚴格，有退出碼）\n./scripts/validate-skills.sh --ci\n```\n\n驗證項目：\n- SKILL.md 存在且 frontmatter 完整（name, description, version）\n- 00-quickstart/_base/usage.md 存在\n- 01-perspectives/_base/default-perspectives.md 存在\n\n詳細規範請參考 [Skill 結構標準](./shared/skill-structure/STANDARD.md)。\n\n### 查詢視角定義\n\n查詢集中管理的視角定義：\n\n```bash\n# 列出所有視角\n./scripts/list-perspectives.sh\n\n# 按類別過濾\n./scripts/list-perspectives.sh --category plan\n\n# 按 skill 過濾\n./scripts/list-perspectives.sh --skill implement\n\n# 顯示視角詳細資訊\n./scripts/list-perspectives.sh --show tdd-enforcer\n\n# 顯示預設組合\n./scripts/list-perspectives.sh --preset standard\n```\n\n### 查詢配置索引\n\n查詢集中管理的配置索引：\n\n```bash\n# 列出所有配置類別\n./scripts/get-config.sh --list-categories\n\n# 列出某類別的配置\n./scripts/get-config.sh --category skill-config\n\n# 搜尋配置\n./scripts/get-config.sh --search \"tdd\"\n\n# 顯示配置詳情\n./scripts/get-config.sh --show skills/implement/SKILL.md\n\n# 顯示配置間的引用關係\n./scripts/get-config.sh --relations\n```\n\n## For Plugin Developers\n\n### Development Setup\n\n```bash\n# Clone repository\ngit clone https://github.com/miles990/multi-agent-workflow.git\ncd multi-agent-workflow\n\n# Start development mode (hot-reload)\n/plugin-dev watch\n# Or: ./scripts/plugin/dev-watch.sh\n```\n\n### Development Workflow (using /plugin-dev Skill)\n\n```bash\n# 1. Sync to Claude Code cache\n/plugin-dev sync\n\n# 2. Validate structure\n/plugin-dev validate\n\n# 3. Check status\n/plugin-dev status\n\n# 4. Start watch mode (auto-sync on file changes)\n/plugin-dev watch\n```\n\n### Release Workflow\n\n```bash\n# 1. Dry-run to preview\n/plugin-dev release patch --dry-run\n\n# 2. Release\n/plugin-dev release patch   # Bug fixes\n/plugin-dev release minor   # New features\n/plugin-dev release major   # Breaking changes\n\n# 3. Resume from interruption\n/plugin-dev release --resume\n```\n\n### Version Management\n\n```bash\n# Show current version\n/plugin-dev version\n\n# Bump version\n/plugin-dev version bump patch\n\n# Check consistency\n/plugin-dev version check\n```\n\n### Shell Scripts (Fallback)\n\n```bash\n# Sync\n./scripts/plugin/sync-to-cache.sh\n\n# Watch\n./scripts/plugin/dev-watch.sh\n\n# Release\n./scripts/plugin/publish.sh patch\n```\n\n### Testing\n\n```bash\n# Run all plugin tests\npython -m pytest tests/plugin/ -v\n\n# With coverage\npython -m pytest tests/plugin/ --cov=cli/plugin\n```\n\n### Project Structure\n\n```\nskills/plugin-dev/    # /plugin-dev Skill\n├── SKILL.md          # Main definition\n├── 00-quickstart/    # Quick start guide\n├── 01-commands/      # Command documentation\n└── config/           # Command config\n\ncli/plugin/           # Python CLI modules\n├── __main__.py       # CLI entry point\n├── cache.py          # CacheManager\n├── version.py        # VersionManager\n├── dev.py            # DevCommands\n└── release.py        # ReleaseCommands\n\nscripts/plugin/       # Shell scripts\n├── sync-to-cache.sh\n├── dev-watch.sh\n├── validate-plugin.sh\n├── bump-version.sh\n├── generate-changelog.sh\n└── publish.sh\n\nshared/plugin/        # Configuration\n├── config.yaml\n├── cache-policy.yaml\n└── version-strategy.yaml\n\ntests/plugin/         # Tests (73 tests)\n```\n\n## Core Design Principles\n\n| Principle | Description |\n|-----------|-------------|\n| **Zero Dependencies** | 只使用 Task API + 內建工具，無外部 MCP 依賴 |\n| **Multi-Perspective** | Map-Reduce 模式，4 視角同時工作 |\n| **Cross Validation** | 共識識別 + 矛盾解決 |\n| **Git Worktree Isolation** | main 穩定，feature 在隔離分支開發 |\n| **Memory Integration** | 與 evolve Checkpoint 對應 |\n| **Shared Modules** | shared/ 避免重複程式碼 |\n| **Unified Entry** | 單一 plugin，7 個 skill |\n| **Standard Structure** | 所有 Skill 遵循統一結構規範 |\n\n## Related Projects\n\n- [self-evolving-agent](https://github.com/miles990/self-evolving-agent) — 自我進化 Agent 框架\n\n## Changelog\n\n### v2.5.0 (2026-02-01)\n- **plugin-dev Skill**\n  - 新增 `/plugin-dev` Skill：統一的 Plugin 開發工作流入口\n  - 命令：sync, watch, validate, status, version, release\n  - 統一 CLI 入口：`python -m cli.plugin <command>`\n  - Skill + Python CLI 雙層架構（可測試、可 fallback）\n  - Dogfooding：用 plugin-dev 開發 plugin-dev\n\n### v2.4.0 (2026-02-01)\n- **Plugin 開發工作流系統**\n  - 新增 `cli/plugin/` 模組：CacheManager, VersionManager, DevCommands, ReleaseCommands\n  - 新增 `scripts/plugin/` 腳本：sync-to-cache, dev-watch, validate, bump-version, changelog, publish\n  - 新增 `shared/plugin/` 配置：config.yaml, cache-policy.yaml, version-strategy.yaml\n  - 熱載入開發模式（fswatch/inotifywait/polling）\n  - 增量同步（Hash-based）\n  - 語義化版本管理\n  - 自動變更日誌生成\n  - 一鍵發布流程\n  - 73 個測試覆蓋\n\n### v2.3.2 (2026-02-01)\n- **Git 操作統一模組**\n  - 新增 `scripts/git_lib/` 模組，統一所有 Git 操作\n  - 消除重複代碼（`_get_current_workflow_id()` 等 65 行重複）\n  - 實作 Facade Pattern，簡化 Hook 開發\n  - 55 個單元測試，覆蓋率 80%+\n  - Hook 代碼減少 54%\n\n### v2.3.0 (2026-02-01)\n- **Skill 結構規範化**\n  - 新增 `shared/skill-structure/STANDARD.md` 定義標準結構\n  - 新增 `scripts/create-skill.sh` 腳手架工具（互動/非互動模式）\n  - 新增 `scripts/validate-skills.sh` 驗證工具（含 CI 模式）\n  - 統一所有 Skill 目錄結構\n\n### v2.2.0 (2026-01-25)\n- 新增 TASKS 階段（在 PLAN 和 IMPLEMENT 之間）\n  - 4 視角任務分解：dependency-analyst, task-decomposer, test-planner, risk-preventor\n  - tasks.yaml 結構化任務輸出\n  - DAG 依賴分析和 Wave 分組\n  - TDD 順序支持\n- 更新 ORCHESTRATE 支持 TASKS 階段\n- 工作流更新為 6 階段：RESEARCH → PLAN → TASKS → IMPLEMENT → REVIEW → VERIFY\n\n### v2.1.0 (2026-01-24)\n- 新增指標收集系統（Phase 1）\n  - metrics schema 定義執行、品質、效率指標\n  - metrics collector 標準化收集 API\n  - 各 SKILL.md 嵌入指標收集點\n- 新增報告系統（Phase 2）\n  - 單次執行報告：詳細分析和改善建議\n  - 週報/趨勢報告：長期追蹤和趨勢分析\n  - 基準線機制：滾動平均和目標管理\n- 新增進度和錯誤處理（Phase 3）\n  - 即時進度顯示：階段和視角狀態可視化\n  - 標準化錯誤碼：E-AGT, E-WKF, E-MEM, E-USR, E-GIT, E-ENV\n  - 結構化錯誤訊息：可能原因 + 建議步驟\n  - Troubleshooting 文檔：詳細錯誤排除指南\n\n### v2.0.0 (2025-01-24)\n- 重組專案為 multi-agent-workflow\n- 提取共用模組到 shared/\n- 更新 research skill 至 v2.0.0\n- 新增 plan skill：多視角規劃設計\n- 新增 implement skill：監督式並行實作（獨特設計）\n- 新增 review skill：多視角程式碼審查\n- 新增 verify skill：多視角驗證測試 + pass@k 機制\n- 新增 orchestrate skill：端到端編排 + 智能回退\n\n### v1.0.0 (2025-01-23)\n- 初始版本：multi-agent-research-skill\n\n## License\n\n[MIT](./LICENSE)\n\n## Author\n\n**miles990** — [GitHub](https://github.com/miles990)\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-software-skills\",\n  \"owner\": {\n    \"name\": \"miles990\",\n    \"email\": \"alexlee7171@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"48 modular software development skills for Claude Code - from architecture to deployment\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"architecture-patterns\",\n      \"description\": \"Software architecture patterns and best practices\",\n      \"source\": \"./software-design/architecture-patterns\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"design-patterns\",\n      \"description\": \"Classic and modern software design patterns\",\n      \"source\": \"./software-design/design-patterns\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"api-design\",\n      \"description\": \"RESTful, GraphQL, gRPC, and API best practices\",\n      \"source\": \"./software-design/api-design\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"system-design\",\n      \"description\": \"Scalability, availability, and distributed systems design\",\n      \"source\": \"./software-design/system-design\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"data-design\",\n      \"description\": \"Data modeling, schema design, and data architecture\",\n      \"source\": \"./software-design/data-design\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"ux-principles\",\n      \"description\": \"User experience design principles for developers\",\n      \"source\": \"./software-design/ux-principles\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"code-quality\",\n      \"description\": \"Clean code principles, SOLID, and code review practices\",\n      \"source\": \"./software-engineering/code-quality\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"testing-strategies\",\n      \"description\": \"Unit, integration, E2E testing and TDD practices\",\n      \"source\": \"./software-engineering/testing-strategies\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"devops-cicd\",\n      \"description\": \"CI/CD pipelines, infrastructure as code, and deployment strategies\",\n      \"source\": \"./software-engineering/devops-cicd\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"performance-optimization\",\n      \"description\": \"Profiling, optimization techniques, and performance best practices\",\n      \"source\": \"./software-engineering/performance-optimization\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"security-practices\",\n      \"description\": \"OWASP Top 10, authentication, and secure coding practices\",\n      \"source\": \"./software-engineering/security-practices\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"reliability-engineering\",\n      \"description\": \"SRE principles, observability, and incident management\",\n      \"source\": \"./software-engineering/reliability-engineering\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"documentation\",\n      \"description\": \"Technical writing, API docs, and documentation best practices\",\n      \"source\": \"./software-engineering/documentation\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"internationalization\",\n      \"description\": \"i18n/l10n architecture design and multi-language best practices\",\n      \"source\": \"./software-engineering/internationalization\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"frontend\",\n      \"description\": \"Modern frontend development with React, Vue, and web technologies\",\n      \"source\": \"./development-stacks/frontend\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"backend\",\n      \"description\": \"Backend development with Node.js, Express, NestJS, and server patterns\",\n      \"source\": \"./development-stacks/backend\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"mobile\",\n      \"description\": \"Mobile development with React Native, Flutter, and native patterns\",\n      \"source\": \"./development-stacks/mobile\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"database\",\n      \"description\": \"Database design, SQL, NoSQL, and data management patterns\",\n      \"source\": \"./development-stacks/database\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"cloud-platforms\",\n      \"description\": \"AWS, GCP, Azure services and cloud-native development\",\n      \"source\": \"./development-stacks/cloud-platforms\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"ai-ml-integration\",\n      \"description\": \"AI/ML APIs, LLM integration, and intelligent application patterns\",\n      \"source\": \"./development-stacks/ai-ml-integration\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"realtime-systems\",\n      \"description\": \"WebSocket, real-time communication, and event-driven architectures\",\n      \"source\": \"./development-stacks/realtime-systems\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"edge-iot\",\n      \"description\": \"Edge computing, IoT protocols, and embedded systems integration\",\n      \"source\": \"./development-stacks/edge-iot\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"git-workflows\",\n      \"description\": \"Git version control, branching strategies, and collaboration patterns\",\n      \"source\": \"./tools-integrations/git-workflows\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"project-management\",\n      \"description\": \"Agile methodologies, issue tracking, and team collaboration tools\",\n      \"source\": \"./tools-integrations/project-management\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"development-environment\",\n      \"description\": \"IDE setup, dev containers, and local development tools\",\n      \"source\": \"./tools-integrations/development-environment\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"monitoring-logging\",\n      \"description\": \"Application monitoring, logging systems, and alerting\",\n      \"source\": \"./tools-integrations/monitoring-logging\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"analyze-repo\",\n      \"description\": \"Deep analysis tool for GitHub repos and local projects, generates Markdown reports with Mermaid diagrams\",\n      \"source\": \"./tools-integrations/analyze-repo\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"api-tools\",\n      \"description\": \"API testing, documentation, and development tools\",\n      \"source\": \"./tools-integrations/api-tools\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"automation-scripts\",\n      \"description\": \"Build automation, task runners, and scripting tools\",\n      \"source\": \"./tools-integrations/automation-scripts\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"auto-dev-setup\",\n      \"description\": \"Auto-Dev workflow setup for Human-in-the-Loop automation\",\n      \"source\": \"./tools-integrations/auto-dev-setup\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"claude-code-plugin\",\n      \"description\": \"Claude Code Plugin development, publishing, and marketplace management\",\n      \"source\": \"./tools-integrations/claude-code-plugin\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"claude-code-sdk\",\n      \"description\": \"Claude Code SDK integration for AI-powered applications\",\n      \"source\": \"./tools-integrations/claude-code-sdk\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"application-patterns\",\n      \"description\": \"Common application development patterns and implementations\",\n      \"source\": \"./domain-applications/application-patterns\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"e-commerce\",\n      \"description\": \"E-commerce platforms, payment processing, and shopping cart patterns\",\n      \"source\": \"./domain-applications/e-commerce\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"saas-platforms\",\n      \"description\": \"SaaS architecture, multi-tenancy, and subscription management\",\n      \"source\": \"./domain-applications/saas-platforms\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"content-platforms\",\n      \"description\": \"CMS, blogging platforms, and content management patterns\",\n      \"source\": \"./domain-applications/content-platforms\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"communication-systems\",\n      \"description\": \"Email, notifications, and messaging system patterns\",\n      \"source\": \"./domain-applications/communication-systems\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"developer-tools\",\n      \"description\": \"CLI tools, SDKs, and developer experience patterns\",\n      \"source\": \"./domain-applications/developer-tools\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"game-development\",\n      \"description\": \"Game development patterns, architectures, and best practices\",\n      \"source\": \"./domain-applications/game-development\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"flame\",\n      \"description\": \"Flame Engine 2D game development for Flutter\",\n      \"source\": \"./domain-applications/game-development/flame\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"flame-core\",\n      \"description\": \"Flame Engine core fundamentals - components, input, collision, camera\",\n      \"source\": \"./domain-applications/game-development/flame/flame-core\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"flame-systems\",\n      \"description\": \"Flame Engine 14 game systems - quest, dialogue, inventory, combat\",\n      \"source\": \"./domain-applications/game-development/flame/flame-systems\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"flame-templates\",\n      \"description\": \"Game type templates for Flame Engine - RPG, Platformer, Roguelike\",\n      \"source\": \"./domain-applications/game-development/flame/flame-templates\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"desktop-apps\",\n      \"description\": \"Desktop application development with Electron and Tauri\",\n      \"source\": \"./domain-applications/desktop-apps\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"javascript-typescript\",\n      \"description\": \"Modern JavaScript and TypeScript development patterns\",\n      \"source\": \"./programming-languages/javascript-typescript\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"python\",\n      \"description\": \"Python programming patterns and best practices\",\n      \"source\": \"./programming-languages/python\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"go\",\n      \"description\": \"Go programming patterns and idioms\",\n      \"source\": \"./programming-languages/go\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"rust\",\n      \"description\": \"Rust programming patterns and ownership concepts\",\n      \"source\": \"./programming-languages/rust\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"java-kotlin\",\n      \"description\": \"Java and Kotlin programming patterns\",\n      \"source\": \"./programming-languages/java-kotlin\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"csharp-dotnet\",\n      \"description\": \"C# and .NET development patterns\",\n      \"source\": \"./programming-languages/csharp-dotnet\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"cpp\",\n      \"description\": \"Modern C++ programming patterns and idioms\",\n      \"source\": \"./programming-languages/cpp\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"ruby\",\n      \"description\": \"Ruby programming patterns and idioms\",\n      \"source\": \"./programming-languages/ruby\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"php\",\n      \"description\": \"Modern PHP programming patterns\",\n      \"source\": \"./programming-languages/php\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"swift\",\n      \"description\": \"Swift programming patterns for iOS and macOS\",\n      \"source\": \"./programming-languages/swift\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"shell-bash\",\n      \"description\": \"Shell scripting and Bash programming patterns\",\n      \"source\": \"./programming-languages/shell-bash\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"sql\",\n      \"description\": \"SQL patterns for database querying and design\",\n      \"source\": \"./programming-languages/sql\",\n      \"version\": \"1.0.0\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        "README.md": "# Claude Software Skills\n\n> 55 modular software development skills for Claude Code - from architecture to deployment\n\n[![Skills](https://img.shields.io/badge/skills-55-blue)](./README.md)\n[![Categories](https://img.shields.io/badge/categories-6-green)](./README.md)\n[![Plugin](https://img.shields.io/badge/Claude_Code-Plugin-orange)](https://code.claude.com/docs/en/discover-plugins)\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                  Claude Software Skills                         │\n│                                                                 │\n│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │\n│   │   Software   │  │   Software   │  │ Development  │         │\n│   │    Design    │  │ Engineering  │  │    Stacks    │         │\n│   │      6       │  │      8       │  │      8       │         │\n│   └──────────────┘  └──────────────┘  └──────────────┘         │\n│                                                                 │\n│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │\n│   │    Tools &   │  │   Domain     │  │ Programming  │         │\n│   │ Integrations │  │ Applications │  │  Languages   │         │\n│   │      9       │  │     12       │  │     12       │         │\n│   └──────────────┘  └──────────────┘  └──────────────┘         │\n│                                                                 │\n│              AI 自動識別任務 → 載入對應領域知識                 │\n└─────────────────────────────────────────────────────────────────┘\n```\n\n## Features\n\n- **MCP Compatible** - Works with Claude Code, Cursor, and other MCP clients\n- **Semantic Search** - Claude automatically finds relevant skills for your task\n- **Cross-Domain Integration** - Skills work together seamlessly\n- **Best Practices Built-In** - Each skill includes patterns and anti-patterns\n- **Modular Architecture** - Use only what you need\n- **Sharp Edges** - Proactive warnings about common pitfalls with detection patterns\n- **Validations** - Executable code quality rules with regex/ast patterns\n- **Collaboration** - Skills declare relationships for smart delegation and context passing\n\n## Installation\n\n### Plugin Marketplace (Recommended)\n\n```bash\n# 1. Add marketplace (GitHub format: owner/repo)\n/plugin marketplace add miles990/claude-software-skills\n\n# 2. Open plugin management interface, view available plugins in Discover tab\n/plugin\n\n# 3. Install specific skills (choose what you need)\n/plugin install frontend@claude-software-skills\n/plugin install backend@claude-software-skills\n/plugin install api-design@claude-software-skills\n\n# Or mention skill name in conversation, Claude will auto-load\n```\n\n**Supported GitHub formats:**\n```bash\n# Short format (recommended)\n/plugin marketplace add miles990/claude-software-skills\n\n# HTTPS URL\n/plugin marketplace add https://github.com/miles990/claude-software-skills.git\n\n# Specify branch or tag\n/plugin marketplace add miles990/claude-software-skills#main\n```\n\n**Plugin commands:**\n| Command | Description |\n|---------|-------------|\n| `/plugin` | Open interactive plugin management interface |\n| `/plugin install <name>@<marketplace>` | Install specific plugin |\n| `/plugin disable <name>@<marketplace>` | Temporarily disable plugin |\n| `/plugin uninstall <name>@<marketplace>` | Completely remove plugin |\n\n## Available Skills\n\n### Software Design (6 skills)\n\n| Skill | Description |\n|-------|-------------|\n| `architecture-patterns` | Software architecture patterns and best practices |\n| `design-patterns` | Classic and modern software design patterns |\n| `api-design` | RESTful, GraphQL, gRPC, and API best practices |\n| `system-design` | Scalability, availability, and distributed systems design |\n| `data-design` | Data modeling, schema design, and data architecture |\n| `ux-principles` | User experience design principles for developers |\n\n### Software Engineering (8 skills)\n\n| Skill | Description |\n|-------|-------------|\n| `code-quality` | Clean code principles, SOLID, and code review practices |\n| `testing-strategies` | Unit, integration, E2E testing and TDD practices |\n| `devops-cicd` | CI/CD pipelines, infrastructure as code, and deployment |\n| `performance-optimization` | Profiling, optimization techniques, and best practices |\n| `security-practices` | OWASP Top 10, authentication, and secure coding |\n| `reliability-engineering` | SRE principles, observability, and incident management |\n| `documentation` | Technical writing, API docs, and documentation best practices |\n| `internationalization` | i18n/l10n architecture design and multi-language support |\n\n### Development Stacks (8 skills)\n\n| Skill | Description |\n|-------|-------------|\n| `frontend` | Modern frontend with React, Vue, and web technologies |\n| `backend` | Backend with Node.js, Express, NestJS, and server patterns |\n| `mobile` | Mobile with React Native, Flutter, and native patterns |\n| `database` | Database design, SQL, NoSQL, and data management |\n| `cloud-platforms` | AWS, GCP, Azure services and cloud-native development |\n| `ai-ml-integration` | AI/ML APIs, LLM integration, and intelligent apps |\n| `realtime-systems` | WebSocket, real-time communication, event-driven |\n| `edge-iot` | Edge computing, IoT protocols, and embedded systems |\n\n### Tools & Integrations (9 skills)\n\n| Skill | Description |\n|-------|-------------|\n| `git-workflows` | Git version control, branching, and collaboration |\n| `project-management` | Agile, Scrum, Kanban, and issue tracking |\n| `development-environment` | IDE setup, dev containers, and local development |\n| `monitoring-logging` | Application monitoring, logging, and alerting |\n| `api-tools` | API testing, documentation, and development tools |\n| `automation-scripts` | Build automation, task runners, and scripting |\n| `auto-dev-setup` | Auto-Dev workflow for Human-in-the-Loop automation |\n| `claude-code-plugin` | Claude Code Plugin development and marketplace management |\n| `claude-code-sdk` | Claude Code SDK for AI-powered applications |\n\n### Domain Applications (12 skills)\n\n| Skill | Description |\n|-------|-------------|\n| `application-patterns` | Common application development patterns |\n| `e-commerce` | E-commerce platforms, payments, shopping cart |\n| `saas-platforms` | SaaS architecture, multi-tenancy, subscriptions |\n| `content-platforms` | CMS, blogging platforms, content management |\n| `communication-systems` | Email, notifications, messaging systems |\n| `developer-tools` | CLI tools, SDKs, developer experience |\n| `game-development` | Game development patterns and architectures |\n| `flame` | Flame Engine 2D game development for Flutter |\n| `flame-core` | Flame Engine core - components, input, collision |\n| `flame-systems` | Flame Engine 14 game systems |\n| `flame-templates` | Game templates - RPG, Platformer, Roguelike |\n| `desktop-apps` | Desktop apps with Electron and Tauri |\n\n### Programming Languages (12 skills)\n\n| Skill | Description |\n|-------|-------------|\n| `javascript-typescript` | Modern JavaScript and TypeScript patterns |\n| `python` | Python programming patterns and best practices |\n| `go` | Go programming patterns and idioms |\n| `rust` | Rust patterns and ownership concepts |\n| `java-kotlin` | Java and Kotlin programming patterns |\n| `csharp-dotnet` | C# and .NET development patterns |\n| `cpp` | Modern C++ programming patterns and idioms |\n| `ruby` | Ruby programming patterns and idioms |\n| `php` | Modern PHP programming patterns |\n| `swift` | Swift patterns for iOS and macOS |\n| `shell-bash` | Shell scripting and Bash programming |\n| `sql` | SQL patterns for database querying and design |\n\n## Other Installation Methods\n\n### Clone to Skills Directory\n\n```bash\n# Clone to your skills directory\ngit clone https://github.com/miles990/claude-software-skills.git ~/.claude/skills/software-skills\n```\n\nClaude will automatically discover and use the skills when relevant to your tasks.\n\n### With MCP Server\n\nThis repository is compatible with [claude-skills-mcp](https://github.com/K-Dense-AI/claude-skills-mcp):\n\n```bash\n# Install the MCP server\npip install claude-skills-mcp\n\n# Add this repository as a skill source\n# The server will load skills from ~/.claude/skills/\n```\n\n### Cursor IDE\n\nAdd to your Cursor MCP settings:\n```json\n{\n  \"mcpServers\": {\n    \"software-skills\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"claude-skills-mcp\"],\n      \"env\": {\n        \"SKILLS_PATH\": \"/path/to/claude-software-skills\"\n      }\n    }\n  }\n}\n```\n\n### Manual Reference\n\nSimply clone and reference the SKILL.md files in your prompts:\n```bash\ngit clone https://github.com/miles990/claude-software-skills.git\n```\n\n## Auto-Dev: Automated Development Workflow\n\nOne-click setup for GitHub Actions automated development workflow, let Claude help you complete development tasks.\n\n### Quick Setup\n\n**Using API Key:**\n```bash\ncurl -fsSL https://raw.githubusercontent.com/miles990/claude-software-skills/main/scripts/setup-auto-dev-apikey.sh | bash\n```\n\n**Using Claude Max (OAuth):**\n```bash\ncurl -fsSL https://raw.githubusercontent.com/miles990/claude-software-skills/main/scripts/setup-auto-dev-max.sh | bash\n```\n\n### Post-Installation Setup\n\n| Version | Setup Method |\n|---------|--------------|\n| API Key | Get Key from [console.anthropic.com](https://console.anthropic.com/settings/keys), set in GitHub Secrets `ANTHROPIC_API_KEY` |\n| Claude Max | Run `claude /install-github-app` for auto OAuth Token setup |\n\n### Usage\n\n- **Issue Trigger**: Create Issue → Add `auto-dev` label\n- **Comment Trigger**: Comment `@claude [instruction]` on any Issue/PR\n\nDetailed docs: [AUTO-DEV.md](.github/AUTO-DEV.md)\n\n## Usage Examples\n\n```\nUser: Help me design a microservices architecture for an e-commerce platform\n\nClaude: [Automatically uses architecture-patterns + e-commerce + api-design skills]\n```\n\n```\nUser: Review this Python code for performance issues\n\nClaude: [Automatically uses python + performance-optimization + code-quality skills]\n```\n\n```\nUser: Set up CI/CD for a React + Node.js monorepo\n\nClaude: [Automatically uses devops-cicd + frontend + backend + git-workflows skills]\n```\n\n## Directory Structure\n\n```\nclaude-software-skills/\n├── .claude-plugin/          # Plugin configuration\n│   └── marketplace.json     # Lists all 55 skills as individual plugins\n├── .github/\n│   └── workflows/           # CI/CD automation\n├── software-design/         # Architecture & design skills\n├── software-engineering/    # Development practices\n├── development-stacks/      # Tech stack skills\n├── tools-integrations/      # Developer tools\n├── domain-applications/     # Domain-specific patterns\n├── programming-languages/   # Language-specific skills\n├── docs/\n│   ├── SKILL-TEMPLATE.md    # Template for new skills\n│   └── software-skills.md\n├── CONTRIBUTING.md\n├── LICENSE\n└── README.md\n```\n\n## How It Works\n\nEach skill module contains a `SKILL.md` file with:\n\n1. **Metadata** - Name, description, tags for semantic search\n2. **Key Concepts** - Core knowledge and terminology\n3. **Best Practices** - Recommended approaches with examples\n4. **Common Pitfalls** - What to avoid and why\n5. **Patterns & Anti-patterns** - Do's and don'ts with code\n6. **Tools & Resources** - Recommended tools and references\n7. **Decision Guide** - When to use this skill\n\nWhen you describe a task, Claude:\n1. Searches for relevant skills using semantic matching\n2. Loads the appropriate SKILL.md files\n3. Applies the knowledge to your specific context\n4. Follows best practices while avoiding common pitfalls\n\n## Contributing\n\nWe welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.\n\n### Adding a New Skill\n\n1. Create a directory under the appropriate category\n2. Add a `SKILL.md` following our [template](docs/SKILL-TEMPLATE.md)\n3. Include practical examples and best practices\n4. Submit a pull request\n\n## License\n\nMIT License - See [LICENSE](LICENSE) for details.\n\n## Related Projects\n\n- [claude-domain-skills](https://github.com/miles990/claude-domain-skills) - Non-technical domain skills\n- [claude-skills-mcp](https://github.com/K-Dense-AI/claude-skills-mcp) - MCP server for skill discovery\n\n---\n\n*Built for developers, by developers, with Claude*\n",
+        "tools-integrations/analyze-repo/README.md": "# analyze-repo Skill v2.0\n\n> 企業級專案深度分析工具 — 從程式碼到商業價值的完整洞察\n\n## 解決的問題\n\n### 你是否曾遇到這些困境？\n\n| 角色 | 痛點 |\n|------|------|\n| **新進工程師** | 接手專案卻不知從何下手，文件過時或根本不存在 |\n| **技術主管** | 需要快速評估技術債務和風險，卻沒有客觀指標 |\n| **架構師** | 想了解系統全貌，卻只能靠人工閱讀數萬行程式碼 |\n| **投資人/PM** | 需要評估專案價值，但技術細節太過複雜 |\n| **面試官** | 想評估候選人的 Side Project，但時間有限 |\n\n### 傳統方式的問題\n\n- **耗時**：手動分析一個中型專案需要數天甚至數週\n- **主觀**：不同人的評估標準不一致，難以比較\n- **不完整**：容易遺漏安全性、依賴健康度等重要面向\n- **缺乏商業視角**：技術報告無法轉化為商業決策\n\n## 目標與價值\n\n### 核心目標\n\n**在 10 分鐘內，產出一份專業級的專案分析報告**\n\n這份報告能讓：\n- 工程師快速上手專案\n- 主管做出技術決策\n- 投資人評估技術價值\n- 團隊識別風險和改善方向\n\n### 提供的價值\n\n| 價值 | 說明 |\n|------|------|\n| **節省時間** | 將數天的人工分析壓縮到 10 分鐘 |\n| **客觀評估** | 8 維度量化指標，消除主觀偏見 |\n| **全面覆蓋** | 從程式碼品質到市場價值，一次到位 |\n| **可行建議** | 不只指出問題，更提供解決方案和優先順序 |\n| **多角色適用** | 同一份報告，不同視角閱讀 |\n\n## 核心特色\n\n| 特色 | 說明 |\n|------|------|\n| **arc42 + C4 架構** | 業界標準軟體架構文件 + 四層視覺化 |\n| **8 維度品質評估** | 可維護性、可測試性、可擴展性、安全性、文件、架構、依賴、DX |\n| **技術債務量化** | SQALE 模型 + 修復時間估算 + 優先級矩陣 |\n| **安全性評估** | OWASP Top 10 + 依賴漏洞掃描 + 敏感資訊檢測 |\n| **市場價值分析** | TAM/SAM/SOM + 技術趨勢對齊 + SWOT + 投資建議 |\n| **多視角報告** | Executive / Architect / Developer / Investor |\n\n## 誰適合使用？\n\n| 角色 | 使用情境 | 推薦視角 |\n|------|----------|----------|\n| **Executive** | 快速了解專案狀況、風險和投資價值 | `--perspective=executive` |\n| **Architect** | 深入分析架構設計、技術債務、改善路線圖 | `--perspective=architect` |\n| **Developer** | 快速上手專案、了解程式碼結構和開發流程 | `--perspective=developer` |\n| **Investor** | Due Diligence、技術資產估值、競品分析 | `--perspective=investor` |\n\n## 使用方式\n\n```bash\n# 分析當前目錄\n/analyze-repo .\n\n# 分析 GitHub 專案\n/analyze-repo https://github.com/owner/repo\n\n# 分析本地路徑\n/analyze-repo /path/to/project\n\n# 指定視角\n/analyze-repo . --perspective=executive    # 高層摘要\n/analyze-repo . --perspective=architect    # 架構深度分析\n/analyze-repo . --perspective=developer    # 開發者上手指南\n/analyze-repo . --perspective=investor     # Due Diligence 報告\n/analyze-repo . --perspective=full         # 完整報告（預設）\n```\n\n## 報告結構\n\n完整報告包含 11 個主要區塊：\n\n```\n1. Executive Summary\n   └── 一句話定位 + 健康分數 + 關鍵發現 + 立即行動\n\n2. Project Overview\n   └── 基本資訊 + 技術棧 + 生命週期階段\n\n3. Architecture Analysis (C4 Model)\n   ├── Level 1: System Context\n   ├── Level 2: Container\n   ├── Level 3: Component\n   └── Level 4: Code（選擇性）\n\n4. Quality Assessment (8 維度)\n   ├── 可維護性 / 可測試性 / 可擴展性 / 安全性\n   └── 文件完整度 / 架構健康度 / 依賴健康度 / DX\n\n5. Technical Debt Report\n   └── SQALE 分類 + 量化估算 + 優先級矩陣\n\n6. Dependency Analysis\n   └── 依賴圖譜 + 健康檢查 + 循環依賴 + 授權合規\n\n7. Security Assessment\n   └── 漏洞掃描 + OWASP Top 10 + 敏感資訊\n\n8. Value & Competitive Analysis\n   └── UVP + 不可替代性 + 競品比較 + 採用建議\n\n9. Market Future Value Analysis\n   └── 技術趨勢對齊 + TAM/SAM/SOM + SWOT + 投資建議\n\n10. Strategic Recommendations\n    └── 優先級矩陣 + 時間軸路線圖 + 詳細建議\n\n11. Appendix\n    └── 目錄結構 + 關鍵檔案 + 術語表 + 方法說明\n```\n\n## 評估框架\n\n### 8 維度品質評估（1-100 分）\n\n| 維度 | 權重 | 回答的問題 | 評估標準 |\n|------|------|------------|----------|\n| 可維護性 | 15% | 程式碼好不好改？ | 複雜度、命名、模組化、Maintainability Index |\n| 可測試性 | 12% | 測試覆蓋率夠嗎？ | 覆蓋率、測試品質、Mock 使用 |\n| 可擴展性 | 12% | 能撐住 10 倍流量嗎？ | 架構彈性、水平擴展、設計模式 |\n| 安全性 | 15% | 有沒有安全漏洞？ | 依賴漏洞、敏感資訊、OWASP |\n| 文件完整度 | 10% | 新人能看懂嗎？ | README、API 文件、註解 |\n| 架構健康度 | 15% | 設計有沒有問題？ | SOLID、關注點分離、依賴方向 |\n| 依賴健康度 | 11% | 依賴穩定嗎？ | 數量、版本、循環依賴 |\n| 開發者體驗 | 10% | 開發順不順手？ | 上手難度、工具配置、錯誤訊息 |\n\n### 技術債務分類（SQALE 模型）\n\n| 類別 | 偵測指標 |\n|------|----------|\n| 可靠性債務 | 未處理例外、空指標、資源洩漏 |\n| 安全性債務 | 已知漏洞、硬編碼密鑰、注入風險 |\n| 可維護性債務 | 重複程式碼、過長函數、過深巢狀 |\n| 效能債務 | N+1 查詢、無快取、同步阻塞 |\n| 測試債務 | 低覆蓋率、無整合測試、脆弱測試 |\n\n### 建議優先級框架\n\n**重要性**（對專案的長期影響）：\n\n| 重要性 | 說明 |\n|--------|------|\n| ⭐⭐⭐ 核心/必要 | 不做會導致專案失敗或嚴重風險 |\n| ⭐⭐ 重要/建議 | 顯著提升品質或降低風險 |\n| ⭐ 可選/增強 | 錦上添花，提升體驗 |\n\n**優先級**（何時執行）：\n\n| 優先級 | 時間軸 |\n|--------|--------|\n| 🔴 Critical | 立即（本週內） |\n| 🟠 High | 短期（1-3 個月） |\n| 🟡 Medium | 中期（3-6 個月） |\n| 🟢 Low | 長期（6-12 個月） |\n\n## 檔案結構\n\n```\nanalyze-repo/\n├── SKILL.md              # 核心 Skill 定義\n├── README.md             # 本文件\n└── extended/\n    └── output-template.md  # 完整輸出模板\n```\n\n## v2.0 更新記錄\n\n| 項目 | v1.0 | v2.0 |\n|------|------|------|\n| 架構標準 | 自訂 | arc42 + C4 Model |\n| 品質維度 | 5 維度 | 8 維度 |\n| 技術債務 | 簡單列表 | SQALE 量化 |\n| 安全評估 | 基本檢查 | OWASP Top 10 |\n| 市場分析 | 競品比較 | TAM/SAM/SOM + SWOT |\n| 建議系統 | 優先級 | 重要性 + 優先級 + 路線圖 |\n| 輸出格式 | 6 區塊 | 11 區塊 |\n\n## 採用的業界標準\n\n| 標準 | 用途 |\n|------|------|\n| [arc42](https://arc42.org/overview) | 軟體架構文件標準 |\n| [C4 Model](https://c4model.com/) | 架構視覺化方法 |\n| [SQALE](https://www.sqale.org/) | 技術債務量化 |\n| [OWASP Top 10](https://owasp.org/www-project-top-ten/) | Web 安全風險 |\n\n## 相關 Skill\n\n- [/evolve](../../.claude/skills/evolve/) — 自主完成複雜目標\n- [/commit](../../.claude/skills/commit/) — 提交程式碼變更\n- [/code-review](../../.claude/skills/code-review/) — 深度程式碼審查\n\n## 安裝\n\n### 方式 1：Claude Code Plugin Marketplace（推薦）\n\n```bash\n/install plugin:claude-software-skills\n```\n\n### 方式 2：手動安裝\n\n```bash\ncp -r tools-integrations/analyze-repo ~/.claude/skills/\n```\n\n## 授權\n\nMIT License\n"
       },
       "plugins": [
         {
-          "name": "multi-agent-workflow",
-          "source": "./",
-          "description": "多 Agent 並行工作流生態系：RESEARCH → PLAN → IMPLEMENT → REVIEW → VERIFY",
-          "version": "2.4.2",
-          "keywords": [
-            "multi-agent",
-            "workflow",
-            "parallel-agents",
-            "map-reduce",
-            "orchestrate"
-          ],
-          "categories": [
-            "map-reduce",
-            "multi-agent",
-            "orchestrate",
-            "parallel-agents",
-            "workflow"
-          ],
+          "name": "architecture-patterns",
+          "description": "Software architecture patterns and best practices",
+          "source": "./software-design/architecture-patterns",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
           "install_commands": [
-            "/plugin marketplace add miles990/multi-agent-workflow",
-            "/plugin install multi-agent-workflow@multi-agent-workflow"
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install architecture-patterns@claude-software-skills"
+          ]
+        },
+        {
+          "name": "design-patterns",
+          "description": "Classic and modern software design patterns",
+          "source": "./software-design/design-patterns",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install design-patterns@claude-software-skills"
+          ]
+        },
+        {
+          "name": "api-design",
+          "description": "RESTful, GraphQL, gRPC, and API best practices",
+          "source": "./software-design/api-design",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install api-design@claude-software-skills"
+          ]
+        },
+        {
+          "name": "system-design",
+          "description": "Scalability, availability, and distributed systems design",
+          "source": "./software-design/system-design",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install system-design@claude-software-skills"
+          ]
+        },
+        {
+          "name": "data-design",
+          "description": "Data modeling, schema design, and data architecture",
+          "source": "./software-design/data-design",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install data-design@claude-software-skills"
+          ]
+        },
+        {
+          "name": "ux-principles",
+          "description": "User experience design principles for developers",
+          "source": "./software-design/ux-principles",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install ux-principles@claude-software-skills"
+          ]
+        },
+        {
+          "name": "code-quality",
+          "description": "Clean code principles, SOLID, and code review practices",
+          "source": "./software-engineering/code-quality",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install code-quality@claude-software-skills"
+          ]
+        },
+        {
+          "name": "testing-strategies",
+          "description": "Unit, integration, E2E testing and TDD practices",
+          "source": "./software-engineering/testing-strategies",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install testing-strategies@claude-software-skills"
+          ]
+        },
+        {
+          "name": "devops-cicd",
+          "description": "CI/CD pipelines, infrastructure as code, and deployment strategies",
+          "source": "./software-engineering/devops-cicd",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install devops-cicd@claude-software-skills"
+          ]
+        },
+        {
+          "name": "performance-optimization",
+          "description": "Profiling, optimization techniques, and performance best practices",
+          "source": "./software-engineering/performance-optimization",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install performance-optimization@claude-software-skills"
+          ]
+        },
+        {
+          "name": "security-practices",
+          "description": "OWASP Top 10, authentication, and secure coding practices",
+          "source": "./software-engineering/security-practices",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install security-practices@claude-software-skills"
+          ]
+        },
+        {
+          "name": "reliability-engineering",
+          "description": "SRE principles, observability, and incident management",
+          "source": "./software-engineering/reliability-engineering",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install reliability-engineering@claude-software-skills"
+          ]
+        },
+        {
+          "name": "documentation",
+          "description": "Technical writing, API docs, and documentation best practices",
+          "source": "./software-engineering/documentation",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install documentation@claude-software-skills"
+          ]
+        },
+        {
+          "name": "internationalization",
+          "description": "i18n/l10n architecture design and multi-language best practices",
+          "source": "./software-engineering/internationalization",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install internationalization@claude-software-skills"
+          ]
+        },
+        {
+          "name": "frontend",
+          "description": "Modern frontend development with React, Vue, and web technologies",
+          "source": "./development-stacks/frontend",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install frontend@claude-software-skills"
+          ]
+        },
+        {
+          "name": "backend",
+          "description": "Backend development with Node.js, Express, NestJS, and server patterns",
+          "source": "./development-stacks/backend",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install backend@claude-software-skills"
+          ]
+        },
+        {
+          "name": "mobile",
+          "description": "Mobile development with React Native, Flutter, and native patterns",
+          "source": "./development-stacks/mobile",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install mobile@claude-software-skills"
+          ]
+        },
+        {
+          "name": "database",
+          "description": "Database design, SQL, NoSQL, and data management patterns",
+          "source": "./development-stacks/database",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install database@claude-software-skills"
+          ]
+        },
+        {
+          "name": "cloud-platforms",
+          "description": "AWS, GCP, Azure services and cloud-native development",
+          "source": "./development-stacks/cloud-platforms",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install cloud-platforms@claude-software-skills"
+          ]
+        },
+        {
+          "name": "ai-ml-integration",
+          "description": "AI/ML APIs, LLM integration, and intelligent application patterns",
+          "source": "./development-stacks/ai-ml-integration",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install ai-ml-integration@claude-software-skills"
+          ]
+        },
+        {
+          "name": "realtime-systems",
+          "description": "WebSocket, real-time communication, and event-driven architectures",
+          "source": "./development-stacks/realtime-systems",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install realtime-systems@claude-software-skills"
+          ]
+        },
+        {
+          "name": "edge-iot",
+          "description": "Edge computing, IoT protocols, and embedded systems integration",
+          "source": "./development-stacks/edge-iot",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install edge-iot@claude-software-skills"
+          ]
+        },
+        {
+          "name": "git-workflows",
+          "description": "Git version control, branching strategies, and collaboration patterns",
+          "source": "./tools-integrations/git-workflows",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install git-workflows@claude-software-skills"
+          ]
+        },
+        {
+          "name": "project-management",
+          "description": "Agile methodologies, issue tracking, and team collaboration tools",
+          "source": "./tools-integrations/project-management",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install project-management@claude-software-skills"
+          ]
+        },
+        {
+          "name": "development-environment",
+          "description": "IDE setup, dev containers, and local development tools",
+          "source": "./tools-integrations/development-environment",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install development-environment@claude-software-skills"
+          ]
+        },
+        {
+          "name": "monitoring-logging",
+          "description": "Application monitoring, logging systems, and alerting",
+          "source": "./tools-integrations/monitoring-logging",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install monitoring-logging@claude-software-skills"
+          ]
+        },
+        {
+          "name": "analyze-repo",
+          "description": "Deep analysis tool for GitHub repos and local projects, generates Markdown reports with Mermaid diagrams",
+          "source": "./tools-integrations/analyze-repo",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install analyze-repo@claude-software-skills"
+          ]
+        },
+        {
+          "name": "api-tools",
+          "description": "API testing, documentation, and development tools",
+          "source": "./tools-integrations/api-tools",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install api-tools@claude-software-skills"
+          ]
+        },
+        {
+          "name": "automation-scripts",
+          "description": "Build automation, task runners, and scripting tools",
+          "source": "./tools-integrations/automation-scripts",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install automation-scripts@claude-software-skills"
+          ]
+        },
+        {
+          "name": "auto-dev-setup",
+          "description": "Auto-Dev workflow setup for Human-in-the-Loop automation",
+          "source": "./tools-integrations/auto-dev-setup",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install auto-dev-setup@claude-software-skills"
+          ]
+        },
+        {
+          "name": "claude-code-plugin",
+          "description": "Claude Code Plugin development, publishing, and marketplace management",
+          "source": "./tools-integrations/claude-code-plugin",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install claude-code-plugin@claude-software-skills"
+          ]
+        },
+        {
+          "name": "claude-code-sdk",
+          "description": "Claude Code SDK integration for AI-powered applications",
+          "source": "./tools-integrations/claude-code-sdk",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install claude-code-sdk@claude-software-skills"
+          ]
+        },
+        {
+          "name": "application-patterns",
+          "description": "Common application development patterns and implementations",
+          "source": "./domain-applications/application-patterns",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install application-patterns@claude-software-skills"
+          ]
+        },
+        {
+          "name": "e-commerce",
+          "description": "E-commerce platforms, payment processing, and shopping cart patterns",
+          "source": "./domain-applications/e-commerce",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install e-commerce@claude-software-skills"
+          ]
+        },
+        {
+          "name": "saas-platforms",
+          "description": "SaaS architecture, multi-tenancy, and subscription management",
+          "source": "./domain-applications/saas-platforms",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install saas-platforms@claude-software-skills"
+          ]
+        },
+        {
+          "name": "content-platforms",
+          "description": "CMS, blogging platforms, and content management patterns",
+          "source": "./domain-applications/content-platforms",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install content-platforms@claude-software-skills"
+          ]
+        },
+        {
+          "name": "communication-systems",
+          "description": "Email, notifications, and messaging system patterns",
+          "source": "./domain-applications/communication-systems",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install communication-systems@claude-software-skills"
+          ]
+        },
+        {
+          "name": "developer-tools",
+          "description": "CLI tools, SDKs, and developer experience patterns",
+          "source": "./domain-applications/developer-tools",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install developer-tools@claude-software-skills"
+          ]
+        },
+        {
+          "name": "game-development",
+          "description": "Game development patterns, architectures, and best practices",
+          "source": "./domain-applications/game-development",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install game-development@claude-software-skills"
+          ]
+        },
+        {
+          "name": "flame",
+          "description": "Flame Engine 2D game development for Flutter",
+          "source": "./domain-applications/game-development/flame",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install flame@claude-software-skills"
+          ]
+        },
+        {
+          "name": "flame-core",
+          "description": "Flame Engine core fundamentals - components, input, collision, camera",
+          "source": "./domain-applications/game-development/flame/flame-core",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install flame-core@claude-software-skills"
+          ]
+        },
+        {
+          "name": "flame-systems",
+          "description": "Flame Engine 14 game systems - quest, dialogue, inventory, combat",
+          "source": "./domain-applications/game-development/flame/flame-systems",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install flame-systems@claude-software-skills"
+          ]
+        },
+        {
+          "name": "flame-templates",
+          "description": "Game type templates for Flame Engine - RPG, Platformer, Roguelike",
+          "source": "./domain-applications/game-development/flame/flame-templates",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install flame-templates@claude-software-skills"
+          ]
+        },
+        {
+          "name": "desktop-apps",
+          "description": "Desktop application development with Electron and Tauri",
+          "source": "./domain-applications/desktop-apps",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install desktop-apps@claude-software-skills"
+          ]
+        },
+        {
+          "name": "javascript-typescript",
+          "description": "Modern JavaScript and TypeScript development patterns",
+          "source": "./programming-languages/javascript-typescript",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install javascript-typescript@claude-software-skills"
+          ]
+        },
+        {
+          "name": "python",
+          "description": "Python programming patterns and best practices",
+          "source": "./programming-languages/python",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install python@claude-software-skills"
+          ]
+        },
+        {
+          "name": "go",
+          "description": "Go programming patterns and idioms",
+          "source": "./programming-languages/go",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install go@claude-software-skills"
+          ]
+        },
+        {
+          "name": "rust",
+          "description": "Rust programming patterns and ownership concepts",
+          "source": "./programming-languages/rust",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install rust@claude-software-skills"
+          ]
+        },
+        {
+          "name": "java-kotlin",
+          "description": "Java and Kotlin programming patterns",
+          "source": "./programming-languages/java-kotlin",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install java-kotlin@claude-software-skills"
+          ]
+        },
+        {
+          "name": "csharp-dotnet",
+          "description": "C# and .NET development patterns",
+          "source": "./programming-languages/csharp-dotnet",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install csharp-dotnet@claude-software-skills"
+          ]
+        },
+        {
+          "name": "cpp",
+          "description": "Modern C++ programming patterns and idioms",
+          "source": "./programming-languages/cpp",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install cpp@claude-software-skills"
+          ]
+        },
+        {
+          "name": "ruby",
+          "description": "Ruby programming patterns and idioms",
+          "source": "./programming-languages/ruby",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install ruby@claude-software-skills"
+          ]
+        },
+        {
+          "name": "php",
+          "description": "Modern PHP programming patterns",
+          "source": "./programming-languages/php",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install php@claude-software-skills"
+          ]
+        },
+        {
+          "name": "swift",
+          "description": "Swift programming patterns for iOS and macOS",
+          "source": "./programming-languages/swift",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install swift@claude-software-skills"
+          ]
+        },
+        {
+          "name": "shell-bash",
+          "description": "Shell scripting and Bash programming patterns",
+          "source": "./programming-languages/shell-bash",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install shell-bash@claude-software-skills"
+          ]
+        },
+        {
+          "name": "sql",
+          "description": "SQL patterns for database querying and design",
+          "source": "./programming-languages/sql",
+          "version": "1.0.0",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add miles990/claude-software-skills",
+            "/plugin install sql@claude-software-skills"
           ]
         }
       ]

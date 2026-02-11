@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "FZRKexEr",
+    "display_name": "Li Xinpeng",
+    "avatar_url": "https://avatars.githubusercontent.com/u/51793302?u=663a8b7379d6e1e15d825815e708caf27b322ffc&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "crawl-docs-marketplace",
+      "version": null,
+      "description": "Crawl documentation and wiki sites, save as local markdown files for on-demand reading. Powered by crawl4ai.",
+      "repo_full_name": "FZRKexEr/crawl-docs",
+      "repo_url": "https://github.com/FZRKexEr/crawl-docs",
+      "repo_description": "Crawl documentation/wiki sites and save as local markdown files for on-demand reading.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-07T20:33:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"crawl-docs-marketplace\",\n  \"owner\": {\n    \"name\": \"xinpeng\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"crawl-docs\",\n      \"source\": \"./\",\n      \"description\": \"Crawl documentation and wiki sites, save as local markdown files for on-demand reading. Powered by crawl4ai.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"xinpeng\"\n      },\n      \"repository\": \"https://github.com/FZRKexEr/crawl-docs\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"crawl\", \"docs\", \"documentation\", \"wiki\", \"markdown\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"crawl-docs\",\n  \"description\": \"Crawl documentation and wiki sites, save as local markdown files for on-demand reading. Powered by crawl4ai.\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"xinpeng\"\n  },\n  \"repository\": \"https://github.com/FZRKexEr/crawl-docs\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"crawl\", \"docs\", \"documentation\", \"wiki\", \"markdown\"],\n  \"commands\": [\"./commands\"]\n}\n",
+        "README.md": "# crawl-docs\n\nA [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin that crawls documentation/wiki sites and saves content as local markdown files.\n\nUnlike MCP-based approaches where all crawled content is returned through the transport layer (slow, token-heavy), this plugin saves results to local files and lets Claude read them on-demand — only loading what's relevant to your question.\n\nPowered by [crawl4ai](https://github.com/unclecode/crawl4ai).\n\n## Install\n\n### Via Marketplace (Recommended)\n\n```bash\nclaude plugin marketplace add FZRKexEr/crawl-docs\nclaude plugin install crawl-docs@crawl-docs-marketplace\n```\n\n### Via Git URL\n\n```bash\nclaude plugin install https://github.com/FZRKexEr/crawl-docs\n```\n\n### Manual Install\n\n```bash\ngit clone https://github.com/FZRKexEr/crawl-docs.git ~/.claude/plugins/crawl-docs\n```\n\nFirst time you run `/crawl`, it will automatically set up a Python venv and install dependencies (including a headless Chromium browser). This takes a few minutes.\n\n## Update\n\n```bash\nclaude plugin update crawl-docs\n```\n\nOr if manually installed:\n\n```bash\ncd ~/.claude/plugins/crawl-docs && git pull\n```\n\n## Usage\n\n```\n/crawl https://opencode.ai/docs\n```\n\nThat's it. Claude will crawl the site, then read and answer based on the content.\n\n### Options\n\n```\n/crawl https://example.com/docs --depth 5 --max-pages 100\n```\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `--depth N` | 3 | Max link depth to follow (1-10) |\n| `--max-pages N` | 50 | Max number of pages to crawl (1-500) |\n\n### Single page mode\n\nIf you only need one page:\n\n```\n/crawl https://example.com/docs/api-reference (just this page)\n```\n\n## How it works\n\n1. `/crawl <url>` triggers a BFS deep crawl using a headless browser\n2. Each page is saved as a separate `.md` file under `.crawl/<domain>/`\n3. An `index.md` is generated listing all crawled pages\n4. Claude reads the index, then selectively reads only the pages relevant to your question\n\n```\n.crawl/opencode.ai/\n├── index.md\n└── pages/\n    ├── 000_docs.md\n    ├── 001_docs_getting-started.md\n    ├── 002_docs_configuration.md\n    └── ...\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "crawl-docs",
+          "source": "./",
+          "description": "Crawl documentation and wiki sites, save as local markdown files for on-demand reading. Powered by crawl4ai.",
+          "version": "0.1.0",
+          "author": {
+            "name": "xinpeng"
+          },
+          "repository": "https://github.com/FZRKexEr/crawl-docs",
+          "license": "MIT",
+          "keywords": [
+            "crawl",
+            "docs",
+            "documentation",
+            "wiki",
+            "markdown"
+          ],
+          "category": "productivity",
+          "categories": [
+            "crawl",
+            "docs",
+            "documentation",
+            "markdown",
+            "productivity",
+            "wiki"
+          ],
+          "install_commands": [
+            "/plugin marketplace add FZRKexEr/crawl-docs",
+            "/plugin install crawl-docs@crawl-docs-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

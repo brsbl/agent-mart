@@ -1,0 +1,69 @@
+{
+  "author": {
+    "id": "daniel-ddtech",
+    "display_name": "Daniel",
+    "avatar_url": "https://avatars.githubusercontent.com/u/161848749?u=0a9ce43dab8e7645afdb34f1a985e0e108f8d672&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mcplite",
+      "version": null,
+      "description": "mcplite - Lighter context for Claude Code",
+      "repo_full_name": "daniel-ddtech/mcplite",
+      "repo_url": "https://github.com/daniel-ddtech/mcplite",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-12T19:01:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mcplite\",\n  \"owner\": {\n    \"name\": \"ddtech\"\n  },\n  \"metadata\": {\n    \"description\": \"mcplite - Lighter context for Claude Code\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mcplite\",\n      \"source\": \"./\",\n      \"description\": \"Lighter context - load only the MCPs you need\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"ddtech\"\n      },\n      \"homepage\": \"https://github.com/ddtech/mcplite\",\n      \"repository\": \"https://github.com/ddtech/mcplite\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"mcp\", \"context\", \"optimization\", \"profiles\", \"lite\"],\n      \"category\": \"productivity\",\n      \"tags\": [\"mcp\", \"context-management\", \"workflow\", \"lite\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mcplite\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Lighter context - load only the MCPs you need\",\n  \"author\": {\n    \"name\": \"ddtech\",\n    \"url\": \"https://github.com/ddtech\"\n  },\n  \"homepage\": \"https://github.com/ddtech/mcplite\",\n  \"repository\": \"https://github.com/ddtech/mcplite\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"mcp\", \"context\", \"optimization\", \"profiles\", \"lite\"],\n\n  \"commands\": \"./commands/\"\n}\n",
+        "README.md": "# mcplite\n\n**Lighter context for Claude Code** - Load only the MCPs you need.\n\nEach MCP server consumes context tokens (450-7,200+ tokens). With multiple MCPs enabled, you can lose 16,000+ tokens before writing a single prompt. mcplite lets you dynamically manage which MCPs are active, preserving your context window for what matters.\n\n## Installation\n\n### Via Claude Code Plugin Manager\n\n```bash\n/plugin marketplace add ddtech/mcplite\n/plugin install mcplite@mcplite\n```\n\n### Manual Installation\n\n```bash\ngit clone https://github.com/ddtech/mcplite ~/.claude/plugins/mcplite\ncd ~/.claude/plugins/mcplite\nnpm install && npm run build\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/mcplite:mcp-status` | Show active MCPs and token usage |\n| `/mcplite:mcp-profile` | Switch between preset profiles |\n| `/mcplite:mcp-add` | Enable specific MCPs |\n| `/mcplite:mcp-clean` | Disable all MCPs (maximum context) |\n\n## Profiles\n\nPre-configured MCP combinations for common workflows:\n\n| Profile | MCPs | Tokens | Use Case |\n|---------|------|--------|----------|\n| **minimal** | exa | 650 | General coding with web search |\n| **research** | exa, notion | 1,450 | Web research and documentation |\n| **devops** | sentry, filesystem | 1,050 | Error tracking and file ops |\n| **communication** | slack, notion | 1,300 | Team communication |\n| **database** | supabase | 5,800 | Database-heavy projects |\n| **scraping** | apify, exa | 7,850 | Web scraping and data collection |\n| **full** | all 7 MCPs | 16,000 | Everything enabled |\n| **empty** | none | 0 | Maximum context available |\n\n## Supported MCPs\n\nAll packages verified on npm as of January 2025:\n\n| MCP | Package | Tokens | Description |\n|-----|---------|--------|-------------|\n| **Supabase** | `@supabase/mcp-server-supabase` | 5,800 | Database, auth, storage, edge functions |\n| **Apify** | `@apify/actors-mcp-server` | 7,200 | Web scraping and automation |\n| **Exa** | `exa-mcp-server` | 650 | AI-powered web search |\n| **Notion** | `@notionhq/notion-mcp-server` | 800 | Pages, databases, blocks |\n| **Sentry** | `@sentry/mcp-server` | 600 | Error tracking and monitoring |\n| **Slack** | `@modelcontextprotocol/server-slack` | 500 | Messaging and channels |\n| **Filesystem** | `@modelcontextprotocol/server-filesystem` | 450 | File operations |\n\n## Auto-Detection\n\nmcplite automatically detects your project dependencies and suggests the optimal profile:\n\n- Detects `package.json` dependencies (e.g., `@supabase/supabase-js`)\n- Reads `.env` files for API keys (e.g., `SUPABASE_URL`)\n- Checks for marker files (e.g., `supabase/config.toml`, `sentry.client.config.ts`)\n\n## CLI Usage\n\n```bash\n# Show status\nmcplite status\n\n# Apply a profile\nmcplite profile apply database\n\n# Enable specific MCPs\nmcplite enable supabase exa\n\n# Disable MCPs\nmcplite disable apify\n\n# Disable all MCPs\nmcplite clean\n\n# Interactive startup prompt\nmcplite prompt\n```\n\n## Configuration\n\nUser configuration is stored in `~/.claude/mcplite/`:\n\n- `registry.json` - MCP definitions and token costs\n- `profiles.json` - Profile configurations\n\nSettings are applied to `~/.claude/settings.json`.\n\n## Environment Variables\n\nSet these for MCPs that require authentication:\n\n```bash\n# Supabase\nSUPABASE_ACCESS_TOKEN=your_token\n\n# Apify\nAPIFY_TOKEN=your_token\n\n# Exa\nEXA_API_KEY=your_key\n\n# Notion\nNOTION_API_KEY=your_key\n\n# Sentry\nSENTRY_AUTH_TOKEN=your_token\n\n# Slack\nSLACK_BOT_TOKEN=xoxb-your-token\nSLACK_TEAM_ID=T0123456789\n```\n\n## Requirements\n\n- Node.js >= 18.0.0\n- Claude Code >= 1.0.33\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "mcplite",
+          "source": "./",
+          "description": "Lighter context - load only the MCPs you need",
+          "version": "0.1.0",
+          "author": {
+            "name": "ddtech"
+          },
+          "homepage": "https://github.com/ddtech/mcplite",
+          "repository": "https://github.com/ddtech/mcplite",
+          "license": "MIT",
+          "keywords": [
+            "mcp",
+            "context",
+            "optimization",
+            "profiles",
+            "lite"
+          ],
+          "category": "productivity",
+          "tags": [
+            "mcp",
+            "context-management",
+            "workflow",
+            "lite"
+          ],
+          "categories": [
+            "context",
+            "context-management",
+            "lite",
+            "mcp",
+            "optimization",
+            "productivity",
+            "profiles",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add daniel-ddtech/mcplite",
+            "/plugin install mcplite@mcplite"
+          ]
+        }
+      ]
+    }
+  ]
+}

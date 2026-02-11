@@ -1,0 +1,69 @@
+{
+  "author": {
+    "id": "Youhai020616",
+    "display_name": "Youhai",
+    "avatar_url": "https://avatars.githubusercontent.com/u/185432073?u=13ccdee162a2e59eb6a8d4295d89105418d0ad9c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agentmind-marketplace",
+      "version": null,
+      "description": "AgentMind — Self-Learning Memory System for AI Agents",
+      "repo_full_name": "Youhai020616/Agentmind",
+      "repo_url": "https://github.com/Youhai020616/Agentmind",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 1,
+        "pushed_at": "2026-02-11T13:47:31Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agentmind-marketplace\",\n  \"owner\": {\n    \"name\": \"Youhai\"\n  },\n  \"metadata\": {\n    \"description\": \"AgentMind — Self-Learning Memory System for AI Agents\",\n    \"version\": \"0.5.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agentmind\",\n      \"source\": \"./\",\n      \"description\": \"Self-learning memory system that observes interactions, learns preferences, and makes AI Agents understand you better over time\",\n      \"version\": \"0.5.0\",\n      \"author\": {\n        \"name\": \"Youhai\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"learning\", \"memory\", \"agent\", \"instinct\", \"evolution\", \"self-learning\"],\n      \"category\": \"productivity\",\n      \"tags\": [\"memory\", \"learning\", \"preferences\", \"workflow\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agentmind\",\n  \"version\": \"0.5.0\",\n  \"description\": \"Agent Self-Learning Memory System — Make AI Agents understand you better over time\",\n  \"author\": {\n    \"name\": \"Youhai\"\n  },\n  \"homepage\": \"https://github.com/Youhai020616/Agentmind\",\n  \"repository\": \"https://github.com/Youhai020616/Agentmind\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"learning\", \"memory\", \"agent\", \"instinct\", \"evolution\", \"self-learning\"]\n}\n",
+        "README.md": "<p align=\"center\">\n  <img src=\"./agentmind-hero-minimal.png\" alt=\"AgentMind\" width=\"800\">\n</p>\n\n# AgentMind — Self-Learning Memory System for AI Agents\n\n> **Give your AI Agent memory, let it grow, and make it understand you better over time.**\n\n[中文文档](./README.zh-CN.md)\n\nAgentMind is a Claude Code Plugin that observes user-agent interactions, automatically learns coding preferences, workflow patterns, and best practices, then intelligently applies them in future sessions.\n\n## Core Philosophy\n\n```\nObserve → Understand → Memorize → Apply → Validate → Evolve\n   O          U           M         A         V         E\n```\n\n## Installation\n\n### Option 1: Marketplace (Recommended)\n\n```bash\n# Run in Claude Code\n/plugin marketplace add Youhai020616/Agentmind\n/plugin install agentmind@agentmind-marketplace\n```\n\n### Option 2: Local Development\n\n```bash\n# Clone the project\ngit clone https://github.com/Youhai020616/Agentmind.git\ncd Agentmind\n\n# Install dependencies\nnpm install\n\n# Load in development mode\nclaude --plugin-dir .\n```\n\n## Features\n\n### Automatic Learning (Zero Configuration)\n\nAgentMind runs automatically in the background after installation:\n\n- **Intent Observation** — Detects user corrections and preference expressions\n- **Execution Observation** — Records tool call patterns (no code content stored)\n- **Evaluation Observation** — Tracks error patterns and resolutions\n- **Context Injection** — Automatically loads learned preferences at each session start\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/agentmind:status` | View learning status overview |\n| `/agentmind:instincts` | Browse and manage learned instincts |\n| `/agentmind:reflect` | Review pending learning outcomes |\n| `/agentmind:evolve` | Analyze and execute instinct evolution |\n| `/agentmind:dashboard` | Visualize learning data |\n\n### Confidence System\n\nAgentMind uses a three-dimensional composite confidence score:\n\n```\nComposite Confidence = Frequency × 0.35 + Effectiveness × 0.40 + Human × 0.25\n```\n\n| Confidence | Level | Behavior |\n|------------|-------|----------|\n| ≥ 0.8 | Core | Auto-injected into agent context |\n| 0.6–0.8 | Strong | Auto-suggested when contextually relevant |\n| 0.4–0.6 | Moderate | Provided only when asked |\n| 0.2–0.4 | Tentative | Silent observation, not applied |\n| < 0.2 | Deprecated | Marked for deletion |\n\n### Four-Level Evolution\n\n```\nLevel 0: Instinct    — Single trigger → Single action\nLevel 1: Pattern     — Multi-step ordered sequence\nLevel 2: Strategy    — Transferable decision principles\nLevel 3: Expert      — Complete domain capability set\n```\n\n## Development\n\n### Prerequisites\n\n- Node.js 20+\n- Claude Code (latest)\n- jq (shell script dependency)\n\n### Local Development\n\n```bash\n# Install dependencies\nnpm install\n\n# Grant execute permissions to scripts\nchmod +x scripts/*.sh\n\n# Start Claude Code in development mode\nclaude --plugin-dir .\n\n# Debug mode (view Hook output)\nclaude --plugin-dir . --debug\n```\n\n### Run Tests\n\n```bash\nnpm test\n```\n\n### Build\n\n```bash\nnpm run build\n```\n\n### Lint\n\n```bash\nnpm run lint\n```\n\n## Architecture\n\n<p align=\"center\">\n  <img src=\"./agentmind-architecture-minimal.png\" alt=\"AgentMind Architecture\" width=\"800\">\n</p>\n\n### Data Flow\n\n<p align=\"center\">\n  <img src=\"./agentmind-dataflow-minimal.png\" alt=\"AgentMind Data Flow\" width=\"800\">\n</p>\n\n### Hook Mapping\n\n| Event | Script | Mode | Purpose |\n|-------|--------|------|---------|\n| SessionStart | inject-context.sh | Sync | Inject learning context |\n| UserPromptSubmit | observe-intent.sh | Async | Intent layer observation |\n| PreToolUse | observe-execution.sh | Async | Execution observation (pre) |\n| PostToolUse | observe-execution.sh | Async | Execution observation (post) |\n| PostToolUseFailure | observe-evaluation.sh | Async | Error pattern collection |\n| Stop | analyze-session.sh | Async | Session analysis |\n| PreCompact | pre-compact-save.sh | Sync | Save critical data |\n| SessionEnd | analyze-session.sh | Sync | Final persistence |\n\n## Privacy\n\nAgentMind only stores **behavioral patterns**, never code content:\n\n- Tool call sequences (e.g., `Grep → Read → Edit`)\n- File extensions (`.ts`, `.tsx`) instead of file paths\n- Error types (`TypeError`) instead of error details\n- User correction patterns instead of conversation transcripts\n\nAll data is stored locally in the `data/` directory by default.\n\n## Roadmap\n\n- [x] Phase 0: Plugin skeleton and core files\n- [x] Phase 0.5: Script debugging and local testing\n- [ ] Phase 1: Analysis engine enhancement + Confidence system\n- [ ] Phase 2: Evolution system + Dashboard\n- [ ] Phase 3: Marketplace release\n- [ ] Phase 4: SDK extraction + Cloud version\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "agentmind",
+          "source": "./",
+          "description": "Self-learning memory system that observes interactions, learns preferences, and makes AI Agents understand you better over time",
+          "version": "0.5.0",
+          "author": {
+            "name": "Youhai"
+          },
+          "license": "MIT",
+          "keywords": [
+            "learning",
+            "memory",
+            "agent",
+            "instinct",
+            "evolution",
+            "self-learning"
+          ],
+          "category": "productivity",
+          "tags": [
+            "memory",
+            "learning",
+            "preferences",
+            "workflow"
+          ],
+          "categories": [
+            "agent",
+            "evolution",
+            "instinct",
+            "learning",
+            "memory",
+            "preferences",
+            "productivity",
+            "self-learning",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Youhai020616/Agentmind",
+            "/plugin install agentmind@agentmind-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

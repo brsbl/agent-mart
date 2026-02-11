@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "chuilishi",
+    "display_name": "chuilishi",
+    "avatar_url": "https://avatars.githubusercontent.com/u/108377487?u=b480739937987eac9c30426c61132242d6c5ebad&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-notify",
+      "version": null,
+      "description": "Native Windows toast notifications for Claude Code",
+      "repo_full_name": "chuilishi/claude-code-notify",
+      "repo_url": "https://github.com/chuilishi/claude-code-notify",
+      "repo_description": "Claude Code 结束 windows toast 消息提醒",
+      "signals": {
+        "stars": 10,
+        "forks": 0,
+        "pushed_at": "2026-02-10T07:23:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-notify\",\n  \"description\": \"Native Windows toast notifications for Claude Code\",\n  \"owner\": {\n    \"name\": \"chuilishi\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-code-notify\",\n      \"description\": \"Native Windows toast notifications for Claude Code with window activation\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"chuilishi\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-code-notify\",\n  \"description\": \"Native Windows toast notifications for Claude Code with window activation\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"chuilishi\"\n  },\n  \"homepage\": \"https://github.com/chuilishi/claude-code-notify\",\n  \"repository\": \"https://github.com/chuilishi/claude-code-notify\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "<div align=\"center\">\n\n# 🔔 Claude Code Notify\n\n**Native Windows Toast notifications for Claude Code**\n\n**[📖 中文文档](README_CN.md)**\n\n![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?logo=windows&logoColor=white)\n![License](https://img.shields.io/badge/License-MIT-green)\n\n<img src=\"assets/demo.gif\" width=\"450\">\n\n*Click the notification to jump back to your Claude Code window*\n\n</div>\n\n---\n\n## ✨ Features\n\n- 🔔 **Native Windows Toast** — Clean, system-integrated notifications\n- 🎯 **One-Click Return** — Click to jump back to your terminal/editor\n- 🖥️ **Wide Compatibility** — VSCode, Cursor, JetBrains, Windows Terminal, and more\n- 🔄 **Tab-Aware** — Supports Windows Terminal tab switching\n- 🎨 **Auto Icon** — Extracts the calling application's icon\n\n---\n\n## 🚀 Installation\n\n```bash\nclaude plugin marketplace add chuilishi/claude-code-notify\nclaude plugin install claude-code-notify@claude-code-notify\n```\n\nThat's it. Restart Claude Code and notifications will work automatically.\n\n---\n\n## 📖 Usage\n\nAfter Claude finishes responding, a notification appears:\n\n| Action | Result |\n|--------|--------|\n| **Left-click** | Jump back to Claude Code window |\n| **Right-click** / **X** | Dismiss notification |\n\n---\n\n## 🗑️ Uninstall\n\n```bash\nclaude plugin uninstall claude-code-notify\n```\n\n---\n\n<details>\n<summary><b>⚙️ How It Works</b></summary>\n\n<br>\n\n### Plugin System\n\nThis project uses Claude Code's **plugin system** to register hooks automatically — no manual `settings.json` editing required. Hooks are defined in `hooks/hooks.json` and discovered by Claude Code at startup.\n\n### Hook Flow\n\n| Hook | Trigger | Action |\n|------|---------|--------|\n| `UserPromptSubmit` | You send a message | Saves current window handle, active tab, and caller app icon |\n| `Stop` | Claude finishes | Shows \"Task completed\" notification (orange border) |\n| `Notification` | Claude needs input | Shows \"Input required\" notification (yellow border) |\n| *Click notification* | — | Activates saved window and switches to the correct tab |\n\n### Session Isolation\n\nEach Claude Code session has a unique `session_id` (received via stdin JSON). State is stored per-session in `%TEMP%\\claude-notify-{session_id}.txt`, so multiple Claude instances don't interfere with each other.\n\n### Windows Terminal Tab Switching\n\nWhen running inside Windows Terminal, simply bringing the window to the foreground isn't enough — the user may have switched to a different tab. This project uses the **Windows UI Automation API** to:\n\n1. Detect if the foreground window is Windows Terminal (by checking for the `CASCADIA_HOSTING_WINDOW_CLASS` window class)\n2. Enumerate all tab items and record the **RuntimeId** of the currently selected tab at prompt time\n3. On notification click, find the tab with the matching RuntimeId and call `IUIAutomationSelectionItemPattern::Select()` to switch back to it\n\n### Caller App Icon Extraction\n\nThe notification displays the icon of the app you're using (VSCode, Cursor, JetBrains IDEs, etc.), not a generic icon. This is done by **walking up the process tree** at prompt time:\n\n- Skips known shell/runtime processes (cmd, powershell, bash, node, python, uv, etc.)\n- Recognizes known apps: **VSCode**, **Cursor**, **Windsurf**, **Codium**, **JetBrains IDEs** (IntelliJ, WebStorm, PyCharm, Rider, GoLand, CLion), **Windows Terminal**, **ConEmu**, **Tabby**, **WezTerm**\n- Extracts the app's icon via `ExtractIconExW()` and displays it in the toast\n\n### Window Activation\n\nWindows restricts `SetForegroundWindow()` — a background process can't just steal focus. This project uses several techniques to work around it:\n\n- `AllowSetForegroundWindow(ASFW_ANY)` to permit foreground changes\n- ALT key simulation trick to satisfy Windows' focus-stealing prevention\n- Thread input attachment (`AttachThreadInput`) between current, foreground, and target threads\n- Combined `SetWindowPos` + `BringWindowToTop` + `SwitchToThisWindow` + `SetForegroundWindow` for reliable activation\n\n### Toast Stacking\n\nMultiple notifications stack vertically (Telegram-style) without overlapping:\n\n- All toasts share the class name `ClaudeCodeToast` and discover each other via `EnumWindows`\n- New toasts appear above existing ones; when one closes, others slide down smoothly\n- Only the bottom toast starts the auto-dismiss timer; upper toasts wait\n- Mouse hover over **any** toast pauses the timer for **all** toasts\n\n### Non-Intrusive Display\n\nToasts are created with `WS_EX_NOACTIVATE | WS_EX_TOPMOST | WS_EX_LAYERED`, so they:\n\n- Never steal focus from your current window\n- Stay on top of all windows\n- Support smooth fade-out animation via alpha blending\n\n</details>\n\n---\n\n<div align=\"center\">\n\nMIT License\n\n</div>\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-code-notify",
+          "description": "Native Windows toast notifications for Claude Code with window activation",
+          "version": "1.0.0",
+          "source": "./",
+          "author": {
+            "name": "chuilishi"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add chuilishi/claude-code-notify",
+            "/plugin install claude-code-notify@claude-code-notify"
+          ]
+        }
+      ]
+    }
+  ]
+}

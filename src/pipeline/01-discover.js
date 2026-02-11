@@ -1,11 +1,11 @@
-import { searchCode, safeApiCall, checkFileExists } from '../lib/github.js';
+import { searchCode, safeApiCall, batchVerifyFileExists } from '../lib/github.js';
 import { saveJson, loadJson, log, logError, getRepoLimit } from '../lib/utils.js';
 
 const OUTPUT_PATH = './data/01-discovered.json';
 const FETCHED_PATH = './data/02-repos.json';
 const REPO_LIMIT = getRepoLimit();
 const STANDARD_PATH = '.claude-plugin/marketplace.json';
-const MAX_VERIFY = 50;
+
 
 /**
  * Load renames map from the most recent fetch step output
@@ -120,18 +120,6 @@ async function runSearchPass(passNumber, onProgress) {
 }
 
 /**
- * Check if a search pass is missing any repos from previous run
- */
-function hasMissingRepos(searchResults, previousRepos) {
-  for (const fullName of previousRepos.keys()) {
-    if (!searchResults.has(fullName)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
  * Merge multiple search results into one map
  */
 function mergeResults(...maps) {
@@ -145,8 +133,43 @@ function mergeResults(...maps) {
 }
 
 /**
+ * Phase A: Verify all known repos still have marketplace.json
+ * @param {Map<string, Object>} previousRepos - Previously discovered repos
+ * @param {Function} onProgress - Progress callback
+ * @returns {Promise<{verified: Map<string, Object>, dropped: string[]}>}
+ */
+async function verifyKnownRepos(previousRepos, onProgress) {
+  if (previousRepos.size === 0) {
+    return { verified: new Map(), dropped: [] };
+  }
+
+  log(`Phase A: Verifying ${previousRepos.size} known repos...`);
+  const repos = [...previousRepos.values()];
+  const existsMap = await batchVerifyFileExists(repos, STANDARD_PATH);
+
+  const verified = new Map();
+  const dropped = [];
+
+  for (const [fullName, repo] of previousRepos) {
+    const exists = existsMap.get(fullName);
+    if (exists) {
+      verified.set(fullName, repo);
+    } else {
+      dropped.push(fullName);
+      log(`  Dropping ${fullName} (file no longer exists or repo removed)`);
+    }
+  }
+
+  log(`Phase A: ${verified.size} verified, ${dropped.length} dropped`);
+  onProgress?.(verified.size, previousRepos.size);
+
+  return { verified, dropped };
+}
+
+/**
  * Discover all repositories containing marketplace.json
- * Uses multiple search passes to handle GitHub search variance
+ * Phase A: Verify known repos still have marketplace.json via GraphQL
+ * Phase B: Run Code Search passes for new repos
  */
 export async function discover({ onProgress } = {}) {
   log('Starting marketplace discovery...');
@@ -154,57 +177,48 @@ export async function discover({ onProgress } = {}) {
     log(`REPO_LIMIT set to ${REPO_LIMIT} - will stop after finding ${REPO_LIMIT} repos`);
   }
 
+  const stats = {
+    phase_a_verified: 0,
+    phase_a_dropped: 0,
+    phase_b_new_from_search: 0
+  };
+
+  // Load previous repos
   const previousRepos = loadPreviousRepos();
 
-  // Pass 1
-  const pass1Results = await runSearchPass(1, onProgress);
+  // Phase A: Verify known repos
+  const { verified, dropped } = await verifyKnownRepos(previousRepos, onProgress);
+  stats.phase_a_verified = verified.size;
+  stats.phase_a_dropped = dropped.length;
 
-  // Pass 2
+  // Phase B: Code Search passes for genuinely new repos
+  log('Phase B: Running Code Search passes...');
+  const pass1Results = await runSearchPass(1, onProgress);
   const pass2Results = await runSearchPass(2, onProgress);
 
-  // Check if either pass is missing repos from previous run
+  // Run a conditional third pass when search results show variance
   let pass3Results = new Map();
-  const pass1Missing = hasMissingRepos(pass1Results, previousRepos);
-  const pass2Missing = hasMissingRepos(pass2Results, previousRepos);
-
-  if (pass1Missing || pass2Missing) {
-    log(`Previous repos missing from pass 1: ${pass1Missing}, pass 2: ${pass2Missing}`);
-    log('Running pass 3 to improve coverage...');
+  if (pass1Results.size !== pass2Results.size) {
+    log(`Search variance detected (pass1: ${pass1Results.size}, pass2: ${pass2Results.size}), running pass 3...`);
     pass3Results = await runSearchPass(3, onProgress);
   }
 
-  // Merge all results
-  const allDiscovered = mergeResults(pass1Results, pass2Results, pass3Results);
-  log(`Total unique repos from all passes: ${allDiscovered.size}`);
-
-  // Find repos still missing after all passes
-  const missingRepos = [];
-  for (const [fullName, repo] of previousRepos) {
-    if (!allDiscovered.has(fullName)) {
-      missingRepos.push(repo);
-    }
-  }
-
-  // Verify missing repos still have marketplace.json before dropping them
-  if (missingRepos.length > 0) {
-    if (missingRepos.length > MAX_VERIFY) {
-      log(`WARNING: ${missingRepos.length} missing repos exceeds MAX_VERIFY (${MAX_VERIFY}), only verifying first ${MAX_VERIFY}`);
-      missingRepos.length = MAX_VERIFY;
-    }
-    log(`Verifying ${missingRepos.length} repos missing from all search passes...`);
-    for (const repo of missingRepos) {
-      const stillExists = await safeApiCall(
-        () => checkFileExists(repo.owner, repo.repo, STANDARD_PATH),
-        `check ${repo.full_name}`
-      );
-      if (stillExists) {
-        log(`  Keeping ${repo.full_name} (file still exists, search missed it)`);
-        allDiscovered.set(repo.full_name, repo);
-      } else {
-        log(`  Dropping ${repo.full_name} (file no longer exists)`);
+  // Identify genuinely new repos from search (not already in verified set)
+  const searchNew = new Map();
+  for (const searchMap of [pass1Results, pass2Results, pass3Results]) {
+    for (const [fullName, repo] of searchMap) {
+      if (!verified.has(fullName) && !searchNew.has(fullName)) {
+        searchNew.set(fullName, repo);
       }
     }
   }
+  stats.phase_b_new_from_search = searchNew.size;
+
+  log(`Phase B: Found ${searchNew.size} genuinely new repos from search`);
+
+  // Merge: verified + search-new
+  const allDiscovered = mergeResults(verified, searchNew);
+  log(`Total unique repos: ${allDiscovered.size}`);
 
   let unique = [...allDiscovered.values()];
 
@@ -217,6 +231,7 @@ export async function discover({ onProgress } = {}) {
   const output = {
     discovered_at: new Date().toISOString(),
     total: unique.length,
+    discovery_stats: stats,
     repos: unique
   };
 

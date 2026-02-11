@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "Su1ph3r",
+    "display_name": "Paul White",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6089420?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "su1ph3r-plugins",
+      "version": null,
+      "description": "Custom Claude Code plugins by su1ph3r — security tools, code quality, and development automation",
+      "repo_full_name": "Su1ph3r/claude-plugins",
+      "repo_url": "https://github.com/Su1ph3r/claude-plugins",
+      "repo_description": "Claude Code plugin marketplace — custom plugins for code quality, security, and development automation",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T00:23:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"su1ph3r-plugins\",\n  \"description\": \"Custom Claude Code plugins by su1ph3r — security tools, code quality, and development automation\",\n  \"owner\": {\n    \"name\": \"su1ph3r\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"bug-hunter\",\n      \"description\": \"Multi-agent bug hunting with 8 parallel specialist agents, deduplication, regression guard, and prioritized reporting\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"su1ph3r\"\n      },\n      \"source\": \"./plugins/bug-hunter\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"bounty-pipeline\",\n      \"description\": \"End-to-end bug bounty hunting pipeline that orchestrates 8 security tools through agent-driven phases from recon to attack path synthesis\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"su1ph3r\"\n      },\n      \"source\": \"./plugins/bounty-pipeline\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# su1ph3r Claude Code Plugins\n\nCustom Claude Code plugin marketplace.\n\n## Plugins\n\n### bug-hunter\n\nMulti-agent bug hunting for Claude Code. Launches parallel specialist agents across 8 bug categories, deduplicates and scores findings, runs a regression guard, and produces a prioritized report.\n\n**Usage:**\n\n```\n/bug-hunter:bughunt                     # Diff-based scan, top 5 agents\n/bug-hunter:bughunt --full              # Full codebase, top 5 agents\n/bug-hunter:bughunt --thorough          # All 8 agents, diff-based\n/bug-hunter:bughunt --security          # Deep security audit only\n/bug-hunter:bughunt src/auth/           # Specific path\n/bug-hunter:bughunt --thorough --full   # All agents, full codebase\n```\n\n**Agents:**\n\n| Agent | Hunts For |\n|---|---|\n| `logic-hunter` | Off-by-ones, wrong comparisons, inverted conditions, unreachable code |\n| `error-handler` | Silent failures, swallowed exceptions, empty catches, fallback masking |\n| `edge-case-finder` | Null paths, empty collections, boundary values, overflow, Unicode |\n| `security-scanner` | Injection, auth bypass, path traversal, SSRF, hardcoded secrets |\n| `race-condition-detector` | Shared mutable state, TOCTOU, deadlocks, async pitfalls |\n| `resource-leak-hunter` | Unclosed files/connections, missing cleanup, thread leaks |\n| `api-contract-checker` | Type mismatches, wrong arg order, schema drift, return value misuse |\n| `state-bug-finder` | Stale state, missing UI updates, cache invalidation, state machine bugs |\n| `regression-guard` | Test coverage gaps, downstream consumers, public API breaks, fix risk |\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```\n/plugins marketplace add su1ph3r/claude-plugins\n```\n\nThen install a plugin:\n\n```\n/plugins install bug-hunter\n```\n",
+        "plugins/bug-hunter/README.md": "# Bug Hunter Plugin\n\nMulti-agent bug hunting for Claude Code. Launches parallel specialist agents across 8 bug categories, deduplicates and scores findings, runs a regression guard, and produces a prioritized report.\n\n## Usage\n\n```\n/bug-hunter:bughunt                     # Diff-based scan, top 5 agents\n/bug-hunter:bughunt --full              # Full codebase, top 5 agents\n/bug-hunter:bughunt --thorough          # All 8 agents, diff-based\n/bug-hunter:bughunt --security          # Deep security audit only\n/bug-hunter:bughunt src/auth/           # Specific path\n/bug-hunter:bughunt --thorough --full   # All agents, full codebase\n```\n\n## Pipeline\n\n1. **Recon** — Detect language/framework, determine file scope, select agents\n2. **Parallel Hunt** — Launch specialist agents simultaneously via Task tool\n3. **Cross-Cutting** — Deduplicate, score (priority 1-5), detect bug chains\n4. **Regression Guard** — Assess fix risk: SAFE / CAUTION / BREAKING\n5. **Report** — Prioritized findings, regression summary, recommended fix order\n\n## Agents\n\n| Agent | Hunts For |\n|---|---|\n| `logic-hunter` | Off-by-ones, wrong comparisons, inverted conditions, unreachable code |\n| `error-handler` | Silent failures, swallowed exceptions, empty catches, fallback masking |\n| `edge-case-finder` | Null paths, empty collections, boundary values, overflow, Unicode |\n| `security-scanner` | Injection, auth bypass, path traversal, SSRF, hardcoded secrets |\n| `race-condition-detector` | Shared mutable state, TOCTOU, deadlocks, async pitfalls |\n| `resource-leak-hunter` | Unclosed files/connections, missing cleanup, thread leaks |\n| `api-contract-checker` | Type mismatches, wrong arg order, schema drift, return value misuse |\n| `state-bug-finder` | Stale state, missing UI updates, cache invalidation, state machine bugs |\n| `regression-guard` | Test coverage gaps, downstream consumers, public API breaks, fix risk |\n\n## Agent Selection (default mode)\n\n**Always run**: logic-hunter, error-handler, edge-case-finder\n\n**Conditional** (based on files changed): security-scanner, race-condition-detector, resource-leak-hunter, api-contract-checker, state-bug-finder — top 2 by file-match count are selected (5 total cap).\n\nUse `--thorough` to run all 8 hunters regardless.\n\n## Finding Format\n\nAll agents produce findings in a standardized format:\n- File path and line number\n- Severity: CRITICAL / HIGH / MEDIUM / LOW\n- Confidence: 0-100 (threshold >= 75)\n- Category, title, description, evidence, suggested fix\n- Regression risk and notes\n\n## Priority Scoring\n\n| Priority | Criteria |\n|---|---|\n| 1 | CRITICAL severity + confidence >= 90 |\n| 2 | CRITICAL 75-89, or HIGH >= 90 |\n| 3 | HIGH 75-89, or MEDIUM >= 90 |\n| 4 | MEDIUM 75-89 |\n| 5 | LOW (any confidence) |\n\n## Regression Guard\n\nRuns after findings are collected (Phase 3). For each finding:\n- Checks test coverage (COVERED / PARTIAL / UNCOVERED)\n- Analyzes downstream consumers\n- Checks public API surface impact\n- Classifies fix as **SAFE** / **CAUTION** / **BREAKING**\n- Suggests test cases before and after fix\n",
+        "plugins/bounty-pipeline/README.md": "# bounty-pipeline\n\nClaude Code plugin that orchestrates 8 security tools into an end-to-end bug bounty hunting pipeline.\n\n## Tools\n\n| Tool | Type | Purpose |\n|------|------|---------|\n| Reticustos | Docker/REST | Network reconnaissance |\n| Indago | CLI (Go) | AI-powered API fuzzing |\n| BypassBurrito | CLI (Go) | LLM-powered WAF bypass |\n| Mobilicustos | Docker/REST | Mobile app security |\n| Nubicustos | Docker/REST | Cloud security audit |\n| Cepheus | CLI (Python) | Container escape modeling |\n| Vinculum | CLI (Python) | Finding correlation |\n| Ariadne | CLI (Python) | Attack path synthesis |\n\n## Pipeline Types\n\n```\nweb:    recon --> api-fuzz --> waf-bypass --> correlate --> attack-paths\nmobile: mobile-scan --> correlate --> attack-paths\ncloud:  cloud-audit --> container-escape --> correlate --> attack-paths\nfull:   [recon + mobile + cloud] --> [api-fuzz + containers] --> waf-bypass --> correlate --> attack-paths\napi:    api-fuzz --> waf-bypass --> correlate --> attack-paths\n```\n\n## Cross-Tool Data Flow\n\n```\nReticustos (endpoints.json) ----> Indago (--targets-from)\n                                      |\n                                      | (waf-blocked.json)\n                                      v\n                                  BypassBurrito (--from-indago)\n\nNubicustos (containers.json) ---> Cepheus (--from-nubicustos)\n\nALL tool outputs ----------------> Vinculum (auto-detect parsers)\n                                      |\n                                      | (--format ariadne)\n                                      v\n                                  Ariadne (attack path synthesis)\n```\n\n## Usage\n\n```\n/bounty web example.com                          # Full web pipeline\n/bounty api --spec openapi.yaml                   # API-only pipeline\n/bounty mobile --app-id com.example.app           # Mobile analysis\n/bounty cloud aws-account-id                      # Cloud audit\n/bounty full example.com --app-id com.example.app # Everything\n/bounty web example.com --dry-run                 # Show plan only\n/bounty web example.com --skip waf-bypass         # Skip a phase\n/bounty web example.com --resume <workspace>      # Resume a run\n```\n\n## Prerequisites\n\n### Docker Services\n- Reticustos running on port 8002\n- Mobilicustos running on port 8000\n- Nubicustos running on port 8001\n\n### CLI Tools\n- `~/GitHub/indago/indago` (Go binary)\n- `~/GitHub/bypassburrito/burrito` (Go binary)\n- `~/GitHub/Cepheus/.venv/bin/cepheus` (Python)\n- `~/GitHub/vinculum/.venv/bin/vinculum` (Python)\n- `~/GitHub/ariadne/.venv/bin/ariadne` (Python)\n\n## Configuration\n\nDefault config at `~/.bounty-pipeline/config.yaml`. Override with environment variables using `BOUNTY_PIPELINE_` prefix:\n\n```\nBOUNTY_PIPELINE_SERVICES__RETICUSTOS__URL=http://localhost:9000\n```\n\n## Workspace\n\nEach run creates `~/.bounty-pipeline/runs/<target>-<timestamp>/` containing all intermediate JSON files. Supports resumability via `--resume`.\n\n## Verification\n\n```bash\n# Check services\npython3 ~/.claude/plugins/local/bounty-pipeline/src/orchestrator.py check-services --type web\n\n# Init workspace\npython3 ~/.claude/plugins/local/bounty-pipeline/src/orchestrator.py init-workspace --target test --type web\n\n# List runs\npython3 ~/.claude/plugins/local/bounty-pipeline/src/orchestrator.py list-runs\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "bug-hunter",
+          "description": "Multi-agent bug hunting with 8 parallel specialist agents, deduplication, regression guard, and prioritized reporting",
+          "version": "1.0.0",
+          "author": {
+            "name": "su1ph3r"
+          },
+          "source": "./plugins/bug-hunter",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Su1ph3r/claude-plugins",
+            "/plugin install bug-hunter@su1ph3r-plugins"
+          ]
+        },
+        {
+          "name": "bounty-pipeline",
+          "description": "End-to-end bug bounty hunting pipeline that orchestrates 8 security tools through agent-driven phases from recon to attack path synthesis",
+          "version": "1.0.0",
+          "author": {
+            "name": "su1ph3r"
+          },
+          "source": "./plugins/bounty-pipeline",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Su1ph3r/claude-plugins",
+            "/plugin install bounty-pipeline@su1ph3r-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

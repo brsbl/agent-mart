@@ -52,7 +52,7 @@ function StatCard({ value, label, animate = true }: StatCardProps) {
 
   return (
     <div className="flex flex-col items-center px-3 py-1.5">
-      <span className="text-xl md:text-[30px] font-mono font-bold tracking-tight tabular-nums text-foreground">
+      <span className="text-xl md:text-[30px] font-mono font-bold tracking-tight tabular-nums text-gray-600 dark:text-gray-600">
         {finalValue.toLocaleString()}
       </span>
       <span className="text-[10px] md:text-[14px] font-mono font-bold tracking-tight text-foreground-secondary uppercase">

@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "newtro",
+    "display_name": "Scott Smith",
+    "avatar_url": "https://avatars.githubusercontent.com/u/24457520?u=dcf46dc14715b8f96eceec83b0ca929d50b4ad3c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mathews-claude-plugins",
+      "version": null,
+      "description": "Interactive development workflow with planning, coding, and browser-based verification loops",
+      "repo_full_name": "newtro/claude-plugins",
+      "repo_url": "https://github.com/newtro/claude-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-14T17:00:53Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mathews-claude-plugins\",\n  \"owner\": {\n    \"name\": \"Mathew's Claude Plugins\",\n    \"email\": \"\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"interactive-dev\",\n      \"source\": \"./interactive-dev\",\n      \"description\": \"Interactive development workflow with planning, coding, and browser-based verification loops\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Mathew's Claude Plugins\n\nA collection of Claude Code plugins for development workflows.\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```\n/plugin marketplace add newtro/claude-plugins\n```\n\nThen browse available plugins via `/plugin` → **Discover** tab, or install directly:\n\n```\n/plugin install <plugin-name>@mathews-claude-plugins\n```\n\n## Available Plugins\n\n### interactive-dev\n\nInteractive development workflow with planning, coding, and browser-based verification loops.\n\n**Install:**\n```\n/plugin install interactive-dev@mathews-claude-plugins\n```\n\n**Usage:**\n```\n/interactive-dev [task description]\n```\n\n**Features:**\n- Interview-style requirement gathering with multi-choice questions\n- Testable acceptance criteria definition\n- Automated implementation loop: coding agent → verification agent → fix cycle\n- Playwright MCP integration for browser-based testing\n\n[View full documentation](./interactive-dev/README.md)\n\n## Adding New Plugins\n\n1. Create a new folder at the repo root with your plugin structure\n2. Add an entry to `.claude-plugin/marketplace.json`\n3. Commit and push\n\n**Plugin structure:**\n```\nmy-plugin/\n├── .claude-plugin/\n│   └── plugin.json       # Required manifest\n├── commands/             # Slash commands\n├── agents/               # Subagents\n├── skills/               # Agent skills\n├── hooks/                # Event handlers\n└── README.md\n```\n\n## License\n\nMIT\n",
+        "interactive-dev/README.md": "# Interactive Dev Plugin\n\nA Claude Code plugin that provides an interactive development workflow with planning, implementation, and browser-based verification loops.\n\n## Overview\n\nThis plugin guides you through a structured development process:\n\n1. **Planning**: Interview-style requirement gathering using multi-choice questions\n2. **Criteria Definition**: Establish testable acceptance criteria\n3. **Implementation Loop**: Automated code → verify → fix cycle until all criteria pass\n\n## Installation\n\n1. Clone or copy this plugin to your Claude Code plugins directory\n2. The plugin will be automatically discovered by Claude Code\n\n## Usage\n\n```\n/interactive-dev [task description]\n```\n\n### Example\n\n```\n/interactive-dev Add a user login form with email/password authentication\n```\n\n## How It Works\n\n### Phase 1: Planning Interview\n\nThe plugin asks targeted questions to understand your requirements:\n- What's the feature scope?\n- What UI/UX patterns to follow?\n- How to handle edge cases?\n\nQuestions use multi-choice format with recommended options.\n\n### Phase 2: Done Criteria\n\nBased on your answers, the plugin proposes testable acceptance criteria:\n- Functional requirements (feature works)\n- Visual requirements (UI renders correctly)\n- Validation requirements (errors handled)\n- Build requirements (no errors)\n\n### Phase 3: Implementation Loop\n\n```\n┌─────────────────┐\n│  Coding Agent   │──────────────┐\n│  (implement)    │              │\n└────────┬────────┘              │\n         │                       │\n         ▼                       │\n┌─────────────────┐              │\n│ Verification    │              │\n│ Agent (test)    │              │\n└────────┬────────┘              │\n         │                       │\n         ▼                       │\n    ┌────────────┐               │\n    │ All pass?  │───No──────────┘\n    └─────┬──────┘\n          │ Yes\n          ▼\n       Complete\n```\n\nThe loop continues until all criteria pass (max 5 iterations).\n\n## Plugin Structure\n\n```\ninteractive-dev/\n├── .claude-plugin/\n│   └── plugin.json        # Plugin manifest\n├── commands/\n│   └── interactive-dev.md # Main slash command\n├── agents/\n│   ├── coding-agent.md    # Implementation subagent\n│   └── verification-agent.md # QA verification subagent\n├── skills/\n│   ├── planning/\n│   │   └── SKILL.md       # Requirement gathering guidance\n│   └── done-criteria/\n│       └── SKILL.md       # Acceptance criteria guidance\n├── hooks/\n│   └── hooks.json         # Hook configuration\n├── .mcp.json              # Playwright MCP config\n└── README.md\n```\n\n## Task Files\n\nTasks are tracked in `.claude/tasks/` with timestamped filenames:\n\n```\n.claude/tasks/2024-01-15-1430-add-login-form.md\n```\n\nEach task file contains:\n- Requirements\n- Done criteria (with checkboxes)\n- Technical decisions\n- Files changed\n\n## Requirements\n\n### Project Configuration\n\nYour project's `CLAUDE.md` should include:\n\n```markdown\n## Build Commands\nnpm run build\nnpm run lint\nnpm run typecheck\n\n## Dev Server\nnpm run dev\n# Port: 3000\n# URL: http://localhost:3000\n```\n\n### Dependencies\n\nThe verification agent uses Playwright MCP for browser testing. The `.mcp.json` file configures this automatically.\n\n## Agents\n\n### Coding Agent\n\nImplements features based on task specifications:\n- Reads requirements and done criteria\n- Writes clean code following project patterns\n- Runs build/lint/typecheck until clean\n- Does NOT start dev server or run browser tests\n\n### Verification Agent\n\nTests implementations against criteria:\n- Fresh eyes approach (doesn't see code implementation)\n- Manages dev server lifecycle\n- Uses Playwright for browser testing\n- Updates checkboxes in task file\n\n## Skills\n\n### Planning Skill\n\nGuides requirement interviews:\n- Question categories (scope, data, UI/UX, edge cases)\n- Question structure with recommendations\n- When to stop asking questions\n\n### Done Criteria Skill\n\nHelps define testable criteria:\n- Observable, specific, testable requirements\n- Categories: functional, visual, validation, build\n- Examples of good vs bad criteria\n\n## Configuration\n\n### hooks.json\n\nMinimal hooks that notify when files change. The coding agent handles build/lint/typecheck as part of its workflow.\n\n### .mcp.json\n\nConfigures Playwright MCP server for browser-based testing:\n\n```json\n{\n  \"mcpServers\": {\n    \"playwright\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@anthropic/mcp-playwright\"]\n    }\n  }\n}\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "interactive-dev",
+          "source": "./interactive-dev",
+          "description": "Interactive development workflow with planning, coding, and browser-based verification loops",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add newtro/claude-plugins",
+            "/plugin install interactive-dev@mathews-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

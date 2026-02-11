@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "farworld-labs",
+    "display_name": "Farworld Labs",
+    "avatar_url": "https://avatars.githubusercontent.com/u/161499640?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "remix-agent-publish",
+      "version": null,
+      "description": "Skills for API-driven game publishing on Remix",
+      "repo_full_name": "farworld-labs/remix-skills",
+      "repo_url": "https://github.com/farworld-labs/remix-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-10T09:29:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n\t\"name\": \"remix-agent-publish\",\n\t\"owner\": {\n\t\t\"name\": \"Remix\",\n\t\t\"url\": \"https://remix.gg\"\n\t},\n\t\"metadata\": {\n\t\t\"description\": \"Skills for API-driven game publishing on Remix\",\n\t\t\"version\": \"1.0.0\",\n\t\t\"repository\": \"https://github.com/farworld-labs/skills\"\n\t},\n\t\"plugins\": [\n\t\t{\n\t\t\t\"name\": \"remix-agent-publish\",\n\t\t\t\"description\": \"Remix agent publishing skill (auth, API reference, workflow, snippets)\",\n\t\t\t\"source\": \"./\",\n\t\t\t\"strict\": false,\n\t\t\t\"skills\": [\"./skills\"]\n\t\t}\n\t]\n}\n",
+        "README.md": "# Remix Skills\n\nBest practices, references, and templates for building games on Remix via API-driven agent workflows.\n\n## What is Remix.gg?\n\n[Remix.gg](https://remix.gg) is a platform for creating, publishing, and iterating on web games. These docs focus on using Remix's agent APIs so assistants and backend services can programmatically create and manage game drafts, code updates, and validation checks.\n\n## Installation\n\n```bash\nnpx skills add farworld-labs/remix-skills\n```\n\n## Skill Contents\n\n| Topic | Description |\n|-------|-------------|\n| [API Reference](skills/api/reference.md) | Endpoint reference for `https://api.remix.gg/v1/agents/*` |\n| [API Authentication](skills/api/authentication.md) | Using bearer API keys from Remix account settings |\n| [Auth Setup](skills/auth/SKILL.md) | How to create/use API keys for agents |\n| [Submission Rules](skills/rules/submission-requirements.md) | Validation and publish constraints |\n| [MCP Quickstart](skills/mcp/quickstart.md) | Suggested tool workflow for assistants |\n| [REST Snippets](skills/snippets/rest-client.md) | Copy-paste client examples |\n| [Phaser 2D Arcade Skill](skills/frameworks/phaser-2d-arcade/SKILL.md) | Companion build skill for Phaser browser games |\n| [Three.js Lite Skill](skills/frameworks/threejs-lite/SKILL.md) | Companion build skill for lightweight 3D browser games |\n\n## API Key Setup\n\n1. Log in to your Remix account.\n2. Open `https://remix.gg/api-keys`.\n3. Generate a new API key.\n4. Store it securely and use it as a bearer token.\n\n## Quick Start\n\n```ts\nconst baseUrl = 'https://api.remix.gg'\n\n// 0) fetch the live contract first\nconst openApiSpec = await fetch(`${baseUrl}/docs/json`).then((r) => r.json())\n\n// 1) create draft game\nconst create = await fetch(`${baseUrl}/v1/agents/games`, {\n  method: 'POST',\n  headers,\n  body: JSON.stringify({ name: 'Neon Dash' }),\n}).then((r) => r.json())\n\nconst gameId = create.data.game.id\nconst versionId = create.data.game.version.id\n\n// 2) update current version code\nawait fetch(`${baseUrl}/v1/agents/games/${gameId}/versions/${versionId}/code`, {\n  method: 'POST',\n  headers,\n  body: JSON.stringify({ code: html }),\n})\n\n// 3) validate blockers\nconst report = await fetch(\n  `${baseUrl}/v1/agents/games/${gameId}/versions/${versionId}/validate`,\n  { method: 'GET', headers },\n).then((r) => r.json())\n\n// 4) check status\nawait fetch(`${baseUrl}/v1/agents/games/${gameId}/versions/${versionId}/status`, {\n  method: 'GET',\n  headers,\n})\n```\n\n## Additional Read Endpoints\n\n- `GET /v1/agents/metadata/categories`\n- `GET /v1/agents/games`\n- `GET /v1/agents/games/{gameId}`\n- `GET /v1/agents/games/{gameId}/versions`\n- `GET /v1/agents/games/{gameId}/versions/{versionId}`\n- `GET /v1/agents/games/{gameId}/versions/{versionId}/code`\n- `GET /v1/agents/games/{gameId}/versions/{versionId}/thread`\n- `GET /v1/agents/games/{gameId}/assets`\n- `GET /v1/agents/games/{gameId}/launch-readiness?versionId={versionId}`\n\n## Asset Uploads (Current)\n\n- As of February 9, 2026, asset upload is handled through the Remix app/Studio flow.\n- Agent REST currently exposes `GET /v1/agents/games/{gameId}/assets` for read-only asset discovery.\n- Recommended workflow: upload icon/sprites/audio in the app first, then reference returned hosted URLs in game code.\n\n## Auth Model (Current Pass)\n\nThis repo documents the current model:\n- API keys created in `https://remix.gg/api-keys`\n- bearer auth (`Authorization: Bearer <api_key>`)\n- ownership checks + lightweight rate limiting\n- no agent REST submit endpoint\n- docs fallback at `https://api.remix.gg/docs`\n"
+      },
+      "plugins": [
+        {
+          "name": "remix-agent-publish",
+          "description": "Remix agent publishing skill (auth, API reference, workflow, snippets)",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add farworld-labs/remix-skills",
+            "/plugin install remix-agent-publish@remix-agent-publish"
+          ]
+        }
+      ]
+    }
+  ]
+}

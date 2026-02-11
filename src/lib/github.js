@@ -489,6 +489,81 @@ export async function batchGetFiles(owner, repo, branch, paths) {
 }
 
 /**
+ * Batch verify whether a file exists across multiple repos using GraphQL
+ * Uses object() queries to check for a file at HEAD in batches of 20.
+ * @param {Array<{owner: string, repo: string, full_name: string}>} repos - Repos to check
+ * @param {string} filePath - File path to check (e.g., '.claude-plugin/marketplace.json')
+ * @returns {Promise<Map<string, boolean>>} Map of full_name -> exists
+ */
+export async function batchVerifyFileExists(repos, filePath) {
+  const results = new Map();
+  const safePath = sanitizeForGraphQL(filePath);
+
+  // Filter out repos with missing required fields
+  const validRepos = repos.filter(r => r.owner && r.repo && r.full_name);
+  if (validRepos.length < repos.length) {
+    log(`WARNING: Skipped ${repos.length - validRepos.length} repos with missing owner/repo/full_name`);
+  }
+
+  for (let i = 0; i < validRepos.length; i += FILE_BATCH_SIZE) {
+    const batch = validRepos.slice(i, i + FILE_BATCH_SIZE);
+    log(`Verifying repos ${i + 1}-${Math.min(i + FILE_BATCH_SIZE, validRepos.length)} of ${validRepos.length}`);
+
+    const repoQueries = batch.map((r, idx) => `
+      repo${idx}: repository(owner: "${sanitizeForGraphQL(r.owner)}", name: "${sanitizeForGraphQL(r.repo)}") {
+        object(expression: "HEAD:${safePath}") {
+          ... on Blob { byteSize }
+        }
+      }
+    `).join('\n');
+
+    const query = `
+      query batchVerify {
+        rateLimit { remaining resetAt }
+        ${repoQueries}
+      }
+    `;
+
+    try {
+      const response = await executeGraphQL(query);
+
+      batch.forEach((r, idx) => {
+        const repoData = response[`repo${idx}`];
+        // null repo = deleted/private/renamed, null object = file removed
+        const exists = repoData?.object !== null && repoData?.object !== undefined;
+        results.set(r.full_name, exists);
+      });
+    } catch (error) {
+      logError(`GraphQL batch verify error for repos ${i + 1}-${i + batch.length}`, error);
+
+      // Extract partial data from GraphQL errors (e.g., one deleted repo causes
+      // an error, but data for the other repos is still available on error.data)
+      const partialData = error.data || {};
+
+      for (const [idx, r] of batch.entries()) {
+        const repoData = partialData[`repo${idx}`];
+        if (repoData !== undefined) {
+          const exists = repoData?.object !== null && repoData?.object !== undefined;
+          results.set(r.full_name, exists);
+        } else {
+          // No data — fall back to individual REST check
+          try {
+            const exists = await checkFileExists(r.owner, r.repo, filePath);
+            results.set(r.full_name, exists);
+          } catch {
+            // REST also failed — conservatively assume still exists
+            results.set(r.full_name, true);
+          }
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+
+/**
  * Wrapper for API calls with error handling and retry logic
  * @param {Function} fn - API function to call
  * @param {string} context - Context for error messages

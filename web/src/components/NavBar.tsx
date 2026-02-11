@@ -22,7 +22,7 @@ function GitHubLink() {
 
 function AsciiLogo() {
   return (
-    <pre className="text-foreground leading-none font-mono text-[4px] xl:text-[5px] tracking-tight">
+    <pre className="text-gray-700 dark:text-gray-700 leading-none font-mono text-[4px] xl:text-[5px] tracking-tight">
 {`  █████╗  ██████╗ ███████╗███╗   ██╗████████╗    ███╗   ███╗ █████╗ ██████╗ ████████╗
  ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝    ████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
  ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║       ██╔████╔██║███████║██████╔╝   ██║
