@@ -1,18 +1,66 @@
-import { searchCode, safeApiCall } from '../lib/github.js';
-import { saveJson, log, logError, getRepoLimit } from '../lib/utils.js';
+import { searchCode, safeApiCall, checkFileExists } from '../lib/github.js';
+import { saveJson, loadJson, log, logError, getRepoLimit } from '../lib/utils.js';
 
 const OUTPUT_PATH = './data/01-discovered.json';
+const FETCHED_PATH = './data/02-repos.json';
 const REPO_LIMIT = getRepoLimit();
+const STANDARD_PATH = '.claude-plugin/marketplace.json';
+const MAX_VERIFY = 50;
 
 /**
- * Discover all repositories containing marketplace.json
+ * Load renames map from the most recent fetch step output
+ * @returns {Object} Map of old_full_name -> new_full_name
  */
-export async function discover({ onProgress } = {}) {
-  log('Starting marketplace discovery...');
-  if (REPO_LIMIT) {
-    log(`REPO_LIMIT set to ${REPO_LIMIT} - will stop after finding ${REPO_LIMIT} repos`);
+function loadRenames() {
+  try {
+    const fetched = loadJson(FETCHED_PATH);
+    if (fetched?.renames && Object.keys(fetched.renames).length > 0) {
+      log(`Loaded ${Object.keys(fetched.renames).length} renames from fetch step`);
+      return fetched.renames;
+    }
+  } catch {
+    // No fetched data or no renames
   }
+  return {};
+}
 
+/**
+ * Load previously discovered repos to avoid dropping due to search variance
+ * Applies any known renames so stale full_name entries are updated.
+ */
+function loadPreviousRepos() {
+  try {
+    const previous = loadJson(OUTPUT_PATH);
+    if (previous?.repos?.length) {
+      log(`Loaded ${previous.repos.length} previously discovered repos`);
+      const renames = loadRenames();
+      const repoMap = new Map();
+      for (const r of previous.repos) {
+        const newName = renames[r.full_name];
+        if (newName) {
+          log(`Applying rename: ${r.full_name} → ${newName}`);
+          const [owner, repo] = newName.split('/');
+          repoMap.set(newName, { ...r, full_name: newName, owner, repo });
+        } else {
+          repoMap.set(r.full_name, r);
+        }
+      }
+      return repoMap;
+    }
+  } catch {
+    // No previous data
+  }
+  return new Map();
+}
+
+/**
+ * Run a single search pass through all pages
+ * @param {number} passNumber - Which pass this is (for logging)
+ * @param {Function} onProgress - Progress callback
+ * @returns {Promise<Map<string, Object>>} Map of full_name -> repo data
+ */
+async function runSearchPass(passNumber, onProgress) {
+  log(`Search pass ${passNumber}: starting...`);
   const results = [];
   let page = 1;
   let totalCount = 0;
@@ -20,14 +68,14 @@ export async function discover({ onProgress } = {}) {
   while (true) {
     const response = await safeApiCall(
       () => searchCode('path:.claude-plugin filename:marketplace.json', page),
-      `code search page ${page}`
+      `pass ${passNumber} page ${page}`
     );
 
     if (!response) break;
 
     if (page === 1) {
       totalCount = response.total_count;
-      log(`Found ${totalCount} total results`);
+      log(`Search pass ${passNumber}: found ${totalCount} total results`);
     }
 
     for (const item of response.items || []) {
@@ -39,26 +87,126 @@ export async function discover({ onProgress } = {}) {
       });
     }
 
-    log(`Discovered ${results.length}/${totalCount} repos...`);
+    log(`Search pass ${passNumber}: ${results.length}/${totalCount} repos...`);
     onProgress?.(results.length, totalCount);
 
     // Check REPO_LIMIT first
     if (REPO_LIMIT && results.length >= REPO_LIMIT) {
-      log(`Reached REPO_LIMIT of ${REPO_LIMIT}`);
+      log(`Search pass ${passNumber}: reached REPO_LIMIT of ${REPO_LIMIT}`);
       break;
     }
 
-    if (!response.items || response.items.length < 100) break;
+    // Continue if we haven't fetched all results yet
+    if (!response.items || response.items.length === 0) break;
+    if (results.length >= totalCount) break;
     if (results.length >= 1000) {
-      log('Reached max 1000 results limit');
+      log(`Search pass ${passNumber}: reached max 1000 results limit`);
       break;
     }
 
     page++;
   }
 
-  // Deduplicate by full_name (in case same repo appears multiple times)
-  let unique = [...new Map(results.map(r => [r.full_name, r])).values()];
+  // Filter to standard path and deduplicate
+  const repoMap = new Map();
+  for (const repo of results) {
+    if (repo.marketplace_path === STANDARD_PATH) {
+      repoMap.set(repo.full_name, repo);
+    }
+  }
+
+  log(`Search pass ${passNumber}: found ${repoMap.size} unique repos`);
+  return repoMap;
+}
+
+/**
+ * Check if a search pass is missing any repos from previous run
+ */
+function hasMissingRepos(searchResults, previousRepos) {
+  for (const fullName of previousRepos.keys()) {
+    if (!searchResults.has(fullName)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Merge multiple search results into one map
+ */
+function mergeResults(...maps) {
+  const merged = new Map();
+  for (const map of maps) {
+    for (const [key, value] of map) {
+      merged.set(key, value);
+    }
+  }
+  return merged;
+}
+
+/**
+ * Discover all repositories containing marketplace.json
+ * Uses multiple search passes to handle GitHub search variance
+ */
+export async function discover({ onProgress } = {}) {
+  log('Starting marketplace discovery...');
+  if (REPO_LIMIT) {
+    log(`REPO_LIMIT set to ${REPO_LIMIT} - will stop after finding ${REPO_LIMIT} repos`);
+  }
+
+  const previousRepos = loadPreviousRepos();
+
+  // Pass 1
+  const pass1Results = await runSearchPass(1, onProgress);
+
+  // Pass 2
+  const pass2Results = await runSearchPass(2, onProgress);
+
+  // Check if either pass is missing repos from previous run
+  let pass3Results = new Map();
+  const pass1Missing = hasMissingRepos(pass1Results, previousRepos);
+  const pass2Missing = hasMissingRepos(pass2Results, previousRepos);
+
+  if (pass1Missing || pass2Missing) {
+    log(`Previous repos missing from pass 1: ${pass1Missing}, pass 2: ${pass2Missing}`);
+    log('Running pass 3 to improve coverage...');
+    pass3Results = await runSearchPass(3, onProgress);
+  }
+
+  // Merge all results
+  const allDiscovered = mergeResults(pass1Results, pass2Results, pass3Results);
+  log(`Total unique repos from all passes: ${allDiscovered.size}`);
+
+  // Find repos still missing after all passes
+  const missingRepos = [];
+  for (const [fullName, repo] of previousRepos) {
+    if (!allDiscovered.has(fullName)) {
+      missingRepos.push(repo);
+    }
+  }
+
+  // Verify missing repos still have marketplace.json before dropping them
+  if (missingRepos.length > 0) {
+    if (missingRepos.length > MAX_VERIFY) {
+      log(`WARNING: ${missingRepos.length} missing repos exceeds MAX_VERIFY (${MAX_VERIFY}), only verifying first ${MAX_VERIFY}`);
+      missingRepos.length = MAX_VERIFY;
+    }
+    log(`Verifying ${missingRepos.length} repos missing from all search passes...`);
+    for (const repo of missingRepos) {
+      const stillExists = await safeApiCall(
+        () => checkFileExists(repo.owner, repo.repo, STANDARD_PATH),
+        `check ${repo.full_name}`
+      );
+      if (stillExists) {
+        log(`  Keeping ${repo.full_name} (file still exists, search missed it)`);
+        allDiscovered.set(repo.full_name, repo);
+      } else {
+        log(`  Dropping ${repo.full_name} (file no longer exists)`);
+      }
+    }
+  }
+
+  let unique = [...allDiscovered.values()];
 
   // Apply REPO_LIMIT to final output
   if (REPO_LIMIT && unique.length > REPO_LIMIT) {

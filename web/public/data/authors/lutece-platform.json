@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "lutece-platform",
+    "display_name": "LUTECE",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8707688?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lutece-plugins",
+      "version": null,
+      "description": "Marketplace for Lutece plugins",
+      "repo_full_name": "lutece-platform/lutece-dev-plugin-claude",
+      "repo_url": "https://github.com/lutece-platform/lutece-dev-plugin-claude",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T15:35:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lutece-plugins\",\n  \"description\": \"Marketplace for Lutece plugins\",\n  \"owner\": {\n    \"name\": \"Lutece\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lutecepowers-v8\",\n      \"description\": \"Claude Code plugin for Lutece 8 framework development. Rules, skills, Agents, and references.\",\n      \"version\": \"1.0.5\",\n      \"source\": \"./\"\n    }\n  ]\n}",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"lutecepowers-v8\",\n  \"description\": \"Claude Code plugin for Lutece 8 framework development. Rules, skills, Agents, and references.\",\n  \"version\": \"1.0.5\",\n  \"author\": {\n    \"name\": \"Lutece\"\n  }\n}\n",
+        "README.md": "# Lutecepowers\n\nAI coding agent plugin for **Lutece 8** framework development. Works with **Claude Code** and **OpenCode**.\n\n## Installation\n\n### Claude Code\n\n```bash\n/plugin marketplace add lutece-platform/lutece-dev-plugin-claude\n/plugin install lutecepowers-v8\n# install in user scope\n```\n\n### OpenCode\n\nSee [.opencode/INSTALL.md](.opencode/INSTALL.md) — clone, symlink plugin + skills, restart OpenCode.\n\n## What it does\n\nAt session start, the plugin automatically:\n\n1. **Clones/updates reference repos** — 21 Lutece v8 repositories into `~/.lutece-references/` (shared script: `scripts/setup-references.sh`)\n2. **Copies rules** — Detects if the current project is a Lutece plugin and copies coding constraint rules into `.claude/rules/` (or equivalent)\n3. **Injects context** — Bootstrap message (Claude Code) or system prompt injection (OpenCode) with architecture patterns and available skills\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `lutece-patterns` | Architecture reference: layered design, CDI patterns, CRUD lifecycle, pagination, XPages, daemons, security checklist |\n| `lutece-migration-v8` | Migration v7 → v8 (Spring → CDI/Jakarta). 6 phases, 5 scripts for mechanical work + AI for the rest |\n| `lutece-scaffold` | Interactive plugin scaffold generator. Optional XPage, Cache, RBAC, Site features |\n| `lutece-site` | Interactive site generator with database config and plugin dependencies |\n| `lutece-dao` | DAO + Home layer patterns: DAOUtil lifecycle, SQL constants, CDI lookup |\n| `lutece-workflow` | Workflow module patterns: tasks, CDI producers, components, templates |\n| `lutece-rbac` | RBAC: entity permissions, ResourceIdService, plugin.xml, JspBean authorization |\n| `lutece-cache` | Cache: AbstractCacheableService, CDI init, invalidation via CDI events |\n| `lutece-lucene-indexer` | Plugin-internal Lucene search: custom index, daemon, CDI events |\n| `lutece-solr-indexer` | Solr search module: SolrIndexer interface, CDI auto-discovery, batch indexing |\n| `lutece-elasticdata` | Elasticsearch DataSource: DataSource/DataObject interfaces, two-daemon indexing |\n\n## Agent\n\n| Agent | Model | Description |\n|-------|-------|-------------|\n| `lutece-v8-reviewer` | Opus | Read-only compliance reviewer. Runs `scan-project.sh` + `verify-migration.sh`, then semantic analysis (CDI scopes, singletons, producers, cache guards). Produces a structured PASS/WARN/FAIL report. |\n\n## Migration flow (`/lutece-migration-v8`)\n\n**Input:** a Lutece v7 plugin/module/library (Spring, javax, XML context).\n\n**Architecture:** scripts handle the mechanical 80%, AI handles the intelligent 20% (CDI scopes, producers, events, templates).\n\n| Phase | What |\n|-------|------|\n| 0 — Scan | `scan-project.sh` → structured inventory. Verify all Lutece deps have v8 versions. |\n| 1 — POM | Parent → `8.0.0-SNAPSHOT`, remove Spring/EhCache, update dependency versions |\n| 2 — Java | `replace-imports.sh` + `replace-spring-simple.sh` → then CDI scopes, producers, events, cache, REST, deprecated APIs |\n| 3 — Web | web.xml namespace, plugin descriptor, beans.xml, SQL Liquibase headers |\n| 4 — UI | JSP scriptlet→EL, admin templates→v8 macros, jQuery→vanilla JS, SuggestPOI→LuteceAutoComplete |\n| 5 — Tests | JUnit 4→5, assertion order, mock class renames |\n| 6 — Build | `verify-migration.sh`, `mvn clean install` (max 5 iterations), v8-reviewer agent |\n\n**Output:** migrated v8 plugin with green build and clean compliance report.\n\n### Migration scripts\n\n| Script | Purpose |\n|--------|---------|\n| `scan-project.sh` | Full project scan → structured inventory |\n| `replace-imports.sh` | javax → jakarta mass replacement |\n| `replace-spring-simple.sh` | Spring → CDI annotation replacements |\n| `verify-migration.sh` | All verification checks → PASS/FAIL report |\n| `add-liquibase-headers.sh` | Liquibase headers on SQL files |\n| `setup-references.sh` | Clone/update 21 Lutece v8 reference repos |\n\n## Rules\n\nRules are short constraints (5-15 lines) automatically loaded when the agent touches matching files.\n\n| Rule | Scope |\n|------|-------|\n| `web-bean` | `**/web/**/*.java` — JspBean/XPage: CDI, CRUD lifecycle, security tokens |\n| `service-layer` | `**/service/**/*.java` — CDI scopes, injection, events, cache |\n| `dao-patterns` | `**/business/**/*.java` — DAOUtil lifecycle, SQL constants, Home facade |\n| `template-back-office` | `**/templates/admin/**/*.html` — v8 Freemarker macros, BS5/Tabler |\n| `template-front-office` | `**/templates/skin/**/*.html` — BS5 classes, vanilla JS, no jQuery |\n| `jsp-admin` | `**/*.jsp` — JSP boilerplate, bean naming |\n| `plugin-descriptor` | `**/plugins/*.xml` — Mandatory tags, core-version-dependency |\n| `messages-properties` | global — i18n key conventions |\n| `dependency-references` | global — Auto-fetch Lutece dep sources, v8 branch detection |\n\n## Platform compatibility\n\n| Feature | Claude Code | OpenCode |\n|---------|-------------|----------|\n| Session init (refs + rules) | SessionStart hook | `session.created` event |\n| System prompt context | Hook echo | `experimental.chat.system.transform` |\n| Skills | Native `/skill` | Native `skill` tool (via symlink) |\n| Agent (v8-reviewer) | Native Task delegation | Not yet supported |\n| Rules (path-scoped) | Native `.claude/rules/` | Copied but no path-scoping |\n| Scripts (bash) | Native Bash tool | Native shell |\n\n## Tests\n\n```bash\npip install -r tests/requirements.txt\npython3 -m pytest tests/test.py -v\n\n# Run a specific test\npython3 -m pytest tests/test.py -v -k \"v8_reviewer\"\n\n# Run tests in parallel\npython3 -m pytest tests/test.py -v -n 4\n```\n\nLatest results: [TEST_REPORT.md](TEST_REPORT.md)\n\n## Local development\n\n```bash\n# Test against a Lutece project\ncd /path/to/your-lutece-plugin\nclaude --plugin-dir /path/to/lutecepowers\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "lutecepowers-v8",
+          "description": "Claude Code plugin for Lutece 8 framework development. Rules, skills, Agents, and references.",
+          "version": "1.0.5",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add lutece-platform/lutece-dev-plugin-claude",
+            "/plugin install lutecepowers-v8@lutece-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

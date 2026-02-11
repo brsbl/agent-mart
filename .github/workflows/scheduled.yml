@@ -104,6 +104,8 @@ jobs:
           EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
           if [ -n "$EXISTING_PR" ]; then
             echo "PR #$EXISTING_PR updated with new commit"
+            # Re-enable auto-merge in case it was disabled
+            gh pr merge "$EXISTING_PR" --auto --squash || true
             exit 0
           fi
 
@@ -118,3 +120,6 @@ jobs:
 
           ---
           *This PR was automatically created by the scheduled workflow.*"
+
+          # Enable auto-merge - PR will merge automatically when CI passes
+          gh pr merge --auto --squash || true

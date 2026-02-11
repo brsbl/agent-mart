@@ -133,6 +133,11 @@ export interface PluginWithComponents extends Plugin {
 export type SortOption = "stars" | "recent";
 export type MarketplaceSortOption = "popular" | "trending" | "recent";
 
+export interface MarketplacesData {
+  meta: Meta;
+  marketplaces: BrowseMarketplace[];
+}
+
 export interface BrowseMarketplace {
   name: string;
   description: string | null;

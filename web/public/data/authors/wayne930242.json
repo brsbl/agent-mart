@@ -6,6 +6,47 @@
   },
   "marketplaces": [
     {
+      "name": "rcc",
+      "version": null,
+      "description": "A skills-driven Agentic Context Engineering workflow for Claude Code with TDD-based skill design",
+      "repo_full_name": "wayne930242/Reflexive-Claude-Code",
+      "repo_url": "https://github.com/wayne930242/Reflexive-Claude-Code",
+      "repo_description": "A skills-driven Agentic Context Engineering workflow for Claude Code.",
+      "signals": {
+        "stars": 7,
+        "forks": 2,
+        "pushed_at": "2026-02-04T15:11:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rcc\",\n  \"owner\": {\n    \"name\": \"Wei Hung\",\n    \"email\": \"wayne930242@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A skills-driven Agentic Context Engineering workflow for Claude Code with TDD-based skill design\",\n    \"version\": \"7.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"rcc\",\n      \"source\": \"./plugins/rcc\",\n      \"description\": \"Core ACE workflow with TDD-based skills, task enforcement, and quality reviewers\",\n      \"version\": \"7.0.0\"\n    },\n    {\n      \"name\": \"rcc-dev\",\n      \"source\": \"./plugins/rcc-dev\",\n      \"description\": \"Development helper tools for creating Claude Code plugins\",\n      \"version\": \"2.0.1\"\n    }\n  ]\n}\n",
+        "README.md": "# Reflexive Claude Code\n\n[English](README.md) | [繁體中文](README.zh-TW.md)\n\nA **skills-driven Agentic Context Engineering** workflow for Claude Code with TDD-based skill design.\n\n## Core Philosophy\n\nThe agent maintains and refactors its own core prompts and agent system — not external documents or memory banks.\n\n**Skills-driven Agentic Context Engineering** means:\n- Before each task, the agent reviews the skill library for relevant capabilities\n- Users explicitly trigger learning moments through skills like `reflecting`\n- Through deliberate teaching, the agent integrates learnings into its skill library\n- Skills are abstract, reusable, and link to reference directories with examples and documentation\n\n## What's New in v7.0.0\n\n- **TDD-based skill design**: RED (baseline test) → GREEN (write skill) → REFACTOR (close loopholes)\n- **Mandatory task lists**: Every skill enforces TaskCreate/TaskUpdate for verifiable progress\n- **Quality reviewers**: Built-in subagents for skill, CLAUDE.md, and rule review\n- **Architecture advisor**: Consult in Task 1 of every skill workflow\n- **Anti-rationalization**: Red Flags and Rationalizations tables prevent skipping steps\n- **Flowcharts**: Visual process diagrams in every skill\n\n## Plugins\n\nThis marketplace provides two plugins:\n\n### rcc (v7.0.0)\n\nCore ACE workflow with TDD-based skills, task enforcement, and quality reviewers.\n\n**Skills:**\n\n| Skill | Description |\n|-------|-------------|\n| `writing-skills` | TDD-based skill creation with baseline testing and review |\n| `writing-claude-md` | Create CLAUDE.md with `<law>` constitution |\n| `writing-subagents` | Create subagent configurations for `.claude/agents/` |\n| `writing-rules` | Create rule files for `.claude/rules/` with conventions |\n| `writing-hooks` | Create hooks for static analysis and code quality |\n| `reflecting` | Reflect on conversation, classify learnings, integrate |\n| `improving-skills` | Optimize a skill through targeted improvements |\n| `refactoring-skills` | Analyze and consolidate all skills |\n| `initializing-projects` | Initialize new project with framework and agent system |\n| `migrating-agent-systems` | Migrate existing systems to best practices architecture |\n| `creating-plugins` | Scaffold a new Claude Code plugin |\n\n**Subagents (Reviewers):**\n\n| Agent | Description |\n|-------|-------------|\n| `architecture-advisor` | Architecture consultant for Task 1 of all workflows |\n| `skill-reviewer` | Quality review for skills |\n| `claudemd-reviewer` | Quality review for CLAUDE.md |\n| `rule-reviewer` | Quality review for rules |\n\n### rcc-dev (v2.0.1)\n\nDevelopment helper tools for creating Claude Code plugins with complete manifests, skills, and marketplaces.\n\n**Skills:**\n\n| Skill | Description |\n|-------|-------------|\n| `writing-plugins` | Create complete plugin packages with manifests, skills, and marketplaces |\n| `creating-plugins` | Scaffold a new Claude Code plugin |\n\n## Component Architecture\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                    Claude Code Context                          │\n├─────────────────────────────────────────────────────────────────┤\n│  Auto-Injected                     │  On-Demand                  │\n│  ─────────────                     │  ─────────                  │\n│  • CLAUDE.md (high-level)          │  • Skills (capabilities)    │\n│  • .claude/rules/*.md (conventions)│  • Subagents (isolated ctx) │\n│    └─ paths: conditional trigger   │                             │\n└─────────────────────────────────────────────────────────────────┘\n```\n\n| Component | Location | Trigger | Token Impact |\n|-----------|----------|---------|--------------|\n| **Rules** | `.claude/rules/*.md` | Auto-inject | High |\n| **Skills** | `.claude/skills/*/SKILL.md` | Claude decides | Progressive disclosure |\n| **Subagents** | `.claude/agents/*.md` | Task tool | Isolated |\n| **CLAUDE.md** | `./CLAUDE.md` | Auto-inject | High |\n\n## Skill Design Principles\n\nAll skills follow TDD-based design with these components:\n\n| Component | Purpose |\n|-----------|---------|\n| **Task Initialization** | Mandatory TaskCreate before any action |\n| **TDD Mapping** | RED → GREEN → REFACTOR phases |\n| **Verification Criteria** | Objective checks for each task |\n| **Red Flags** | Anti-rationalization triggers |\n| **Rationalizations Table** | Counter-arguments for common excuses |\n| **Flowchart** | Visual process diagram |\n| **Reviewer Gate** | Quality review before completion |\n\n## Workflow\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                   Work Session                                   │\n├─────────────────────────────────────────────────────────────────┤\n│  1. Task 1        │  Consult architecture-advisor               │\n│  2. RED Phase     │  Baseline test - observe failures           │\n│  3. GREEN Phase   │  Create component addressing failures       │\n│  4. REFACTOR      │  Quality review via reviewer subagent       │\n│  5. Validate      │  Test in real usage                         │\n└─────────────────────────────────────────────────────────────────┘\n```\n\n## Installation\n\n```bash\n# From GitHub\n/plugin marketplace add wayne930242/Reflexive-Claude-Code\n/plugin install rcc@rcc\n# or\n/plugin install rcc-dev@rcc\n\n# From local path\n/plugin install /path/to/Reflexive-Claude-Code/plugins/rcc\n```\n\n## Project Structure\n\n```\nReflexive-Claude-Code/\n├── .claude-plugin/\n│   └── marketplace.json     # Marketplace definition\n├── plugins/\n│   ├── rcc/                 # Core ACE plugin\n│   │   ├── skills/          # All skills\n│   │   ├── agents/          # Reviewer subagents\n│   │   └── commands/        # Command aliases\n│   └── rcc-dev/             # Development helper plugin\n└── README.md\n```\n\n## Credits\n\nThis project's skill design patterns are inspired by:\n\n- **[superpowers](https://github.com/anthropics/claude-code-superpowers)** - The TDD-based skill design, task enforcement, and verification patterns are adapted from the superpowers plugin by Anthropic. Special thanks for pioneering the \"discipline-enforcing skill\" pattern with Red Flags and Rationalization tables.\n\n- **Agentic Context Engineering (ACE) Framework**:\n  > Zhang, Q., Hu, C., Upasani, S., Ma, B., Hong, F., Kamanuru, V., Rainton, J., Wu, C., Ji, M., Li, H., Thakker, U., Zou, J., & Olukotun, K. (2025). *Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models*. arXiv:2510.04618. https://arxiv.org/abs/2510.04618\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "rcc",
+          "source": "./plugins/rcc",
+          "description": "Core ACE workflow with TDD-based skills, task enforcement, and quality reviewers",
+          "version": "7.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add wayne930242/Reflexive-Claude-Code",
+            "/plugin install rcc@rcc"
+          ]
+        },
+        {
+          "name": "rcc-dev",
+          "source": "./plugins/rcc-dev",
+          "description": "Development helper tools for creating Claude Code plugins",
+          "version": "2.0.1",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add wayne930242/Reflexive-Claude-Code",
+            "/plugin install rcc-dev@rcc"
+          ]
+        }
+      ]
+    },
+    {
       "name": "ttt-marketplace",
       "version": null,
       "description": "Task management tools for Claude Code - supports Linear and Trello, efficient workflow without MCP overhead",
