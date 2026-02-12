@@ -73,7 +73,7 @@ export function StatsRow({ data, loading }: StatsRowProps) {
     return (
       <section className="flex justify-center">
         <div className="flex flex-wrap justify-center gap-4 md:gap-8 px-4 py-2">
-          {["Authors", "Marketplaces", "Plugins"].map((label) => (
+          {["Creators", "Marketplaces", "Plugins"].map((label) => (
             <div key={label} className="flex flex-col items-center px-3 py-1.5">
               <div className="h-6 md:h-8 w-12 md:w-16 bg-foreground/10 rounded animate-pulse" />
               <span className="text-[10px] md:text-[14px] font-mono font-bold tracking-tight text-foreground-secondary uppercase mt-1">
@@ -89,7 +89,7 @@ export function StatsRow({ data, loading }: StatsRowProps) {
   return (
     <section className="flex justify-center">
       <div className="flex flex-wrap justify-center gap-4 md:gap-8 px-4 py-2">
-        <StatCard value={totalAuthors} label="Authors" />
+        <StatCard value={totalAuthors} label="Creators" />
         <StatCard value={totalMarketplaces} label="Marketplaces" />
         <StatCard value={totalPlugins} label="Plugins" />
       </div>
