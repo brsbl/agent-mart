@@ -236,12 +236,13 @@ async function retryMissingRepos(repos, results, reason) {
         const repoData = await getRepo(r.owner, r.repo);
         results.repos[fullName] = repoData;
 
-        if (!results.owners[r.owner]) {
+        const actualOwner = repoData.owner?.login || r.owner;
+        if (!results.owners[actualOwner]) {
           try {
-            const userData = await getUser(r.owner);
-            results.owners[r.owner] = userData;
+            const userData = await getUser(actualOwner);
+            results.owners[actualOwner] = userData;
           } catch (userErr) {
-            log(`Could not fetch owner ${r.owner}: ${userErr.message}`);
+            log(`Could not fetch owner ${actualOwner}: ${userErr.message}`);
           }
         }
         break;

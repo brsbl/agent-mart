@@ -2,6 +2,7 @@ import { describe, it, before } from 'node:test';
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
+import { isAcceptableDrop } from '../src/lib/dropReasons.js';
 
 const DISCOVERED_PATH = './data/01-discovered.json';
 const REPOS_PATH = './data/02-repos.json';
@@ -46,11 +47,7 @@ describe('Data Flow: Pipeline Drop Tracking', () => {
       allDrops.push(...(filesData.dropped_repos || []).map(d => ({ ...d, step: 'fetch-files' })));
     }
 
-    const acceptable = d =>
-      d.reason.includes('404') ||
-      d.reason.includes('no valid marketplace.json');
-
-    const badDrops = allDrops.filter(d => !acceptable(d));
+    const badDrops = allDrops.filter(d => !isAcceptableDrop(d.reason));
 
     if (allDrops.length > 0) {
       const deletions = allDrops.filter(d => d.reason.includes('404'));
@@ -81,7 +78,7 @@ describe('Data Flow: Pipeline Drop Tracking', () => {
       enrichedData.dropped_repos || [],
     ]) {
       for (const d of drops) {
-        if (d.reason.includes('404') || d.reason.includes('no valid marketplace.json')) {
+        if (isAcceptableDrop(d.reason)) {
           acceptablyDropped.add(d.full_name);
         }
       }
@@ -90,7 +87,7 @@ describe('Data Flow: Pipeline Drop Tracking', () => {
     const filesData = loadJsonSafe('./data/04-files.json');
     if (filesData) {
       for (const d of filesData.dropped_repos || []) {
-        if (d.reason.includes('404') || d.reason.includes('no valid marketplace.json')) {
+        if (isAcceptableDrop(d.reason)) {
           acceptablyDropped.add(d.full_name);
         }
       }

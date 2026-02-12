@@ -215,7 +215,7 @@ function SearchFilterControlsContent() {
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground-muted" size={16} />
             <input
               type="text"
-              placeholder="Search plugins, keywords, authors..."
+              placeholder="Search plugins, keywords, creators..."
               value={localSearchQuery}
               onChange={(e) => handleSearchInput(e.target.value)}
               className="w-full pl-8 pr-8 py-2 border border-border rounded-lg text-sm bg-card text-foreground"

@@ -110,9 +110,23 @@ export async function fetchFiles({ onProgress } = {}) {
       const pluginReadmePaths = getPluginReadmePaths(marketplaceFile.content);
 
       if (pluginReadmePaths.length > 0) {
-        try {
-          const readmeResults = await batchGetFiles(owner, repo, branch, pluginReadmePaths);
+        let readmeResults;
+        for (let attempt = 1; attempt <= MAX_FILE_RETRIES; attempt++) {
+          try {
+            readmeResults = await batchGetFiles(owner, repo, branch, pluginReadmePaths);
+            break;
+          } catch (error) {
+            if (attempt < MAX_FILE_RETRIES) {
+              const delay = 5000 * attempt;
+              log(`Plugin README fetch failed for ${full_name} (attempt ${attempt}/${MAX_FILE_RETRIES}), retrying in ${delay / 1000}s...`);
+              await sleep(delay);
+            } else {
+              log(`Plugin README fetch failed for ${full_name} after ${MAX_FILE_RETRIES} attempts: ${error.message}`);
+            }
+          }
+        }
 
+        if (readmeResults) {
           for (const path of pluginReadmePaths) {
             const fileData = readmeResults[path];
             if (fileData && fileData.content) {
@@ -126,8 +140,6 @@ export async function fetchFiles({ onProgress } = {}) {
               fetchedCount++;
             }
           }
-        } catch (error) {
-          log(`Plugin README fetch failed for ${full_name}: ${error.message}`);
         }
       }
     }

@@ -1,5 +1,6 @@
 import { batchGetRepos } from '../lib/github.js';
 import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
+import { DROP_DELETED, DROP_FAILED } from '../lib/dropReasons.js';
 
 const INPUT_PATH = './data/01-discovered.json';
 const OUTPUT_PATH = './data/02-repos.json';
@@ -88,8 +89,8 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
   }
 
   const dropped_repos = [
-    ...deleted.map(name => ({ full_name: name, reason: 'deleted (404)' })),
-    ...failed.map(name => ({ full_name: name, reason: 'failed after retries' })),
+    ...deleted.map(name => ({ full_name: name, reason: DROP_DELETED })),
+    ...failed.map(name => ({ full_name: name, reason: DROP_FAILED })),
   ];
 
   const output = {
