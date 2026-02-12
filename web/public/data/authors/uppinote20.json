@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "uppinote20",
+    "display_name": "uppinote",
+    "avatar_url": "https://avatars.githubusercontent.com/u/67043631?u=993b2f357675f4afb551ffac0c50f569b619d8a7&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-dashboard",
+      "version": "1.10.1",
+      "description": "Comprehensive status line with context usage, API rate limits, and cost tracking",
+      "repo_full_name": "uppinote20/claude-dashboard",
+      "repo_url": "https://github.com/uppinote20/claude-dashboard",
+      "repo_description": "Comprehensive status line plugin for Claude Code with context usage, API rate limits, and cost tracking",
+      "signals": {
+        "stars": 139,
+        "forks": 18,
+        "pushed_at": "2026-02-12T05:46:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-dashboard\",\n  \"owner\": {\n    \"name\": \"uppinote\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Comprehensive status line with context usage, API rate limits, and cost tracking\",\n    \"version\": \"1.10.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-dashboard\",\n      \"source\": \"./\",\n      \"description\": \"Real-time status line showing model, context usage with color-coded progress bar, token count, cost, and API rate limits (5h/7d). Supports Max and Pro plans with i18n (English/Korean).\",\n      \"category\": \"monitoring\",\n      \"tags\": [\n        \"statusline\",\n        \"monitoring\",\n        \"context\",\n        \"rate-limits\",\n        \"cost\",\n        \"i18n\"\n      ]\n    }\n  ],\n  \"version\": \"1.10.1\"\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-dashboard\",\n  \"version\": \"1.10.1\",\n  \"description\": \"Comprehensive status line with context usage, API rate limits, and cost tracking\",\n  \"author\": {\n    \"name\": \"uppinote\"\n  },\n  \"repository\": \"https://github.com/uppinote20/claude-dashboard\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"statusline\",\n    \"context\",\n    \"rate-limits\",\n    \"cost\",\n    \"i18n\"\n  ]\n}\n",
+        "README.md": "# claude-dashboard\n\n![License](https://img.shields.io/github/license/uppinote20/claude-dashboard)\n![Stars](https://img.shields.io/github/stars/uppinote20/claude-dashboard)\n\nComprehensive status line plugin for Claude Code with context usage, API rate limits, cost tracking, and modular widget system.\n\n## Demo\n\n![Demo](demo.gif)\n\n## Installation\n\n**Requirements:** Claude Code v1.0.80+ / Node.js 18+\n\n### From Plugin Marketplace\n\n```\n/plugin marketplace add uppinote20/claude-dashboard\n/plugin install claude-dashboard\n/claude-dashboard:setup\n```\n\n### Manual Installation\n\n```bash\ngit clone https://github.com/uppinote20/claude-dashboard.git ~/.claude/plugins/claude-dashboard\n/claude-dashboard:setup\n```\n\n## Display Modes\n\n**Compact (1 line) - Default:**\n\n![Compact](images/compact.png)\n\n> Model, context progress bar, cost, rate limits (5h/7d/7d-Sonnet) or z.ai usage (mutually exclusive by provider)\n\n**Normal (2 lines):**\n\n![Normal](images/normal.png)\n\n> Adds project info, session ID, session duration, burn rate, todo progress\n\n**Detailed (4 lines):**\n\n![Detailed](images/detailed.png)\n\n> Adds depletion time, config counts, tool activity, agent status, cache hit, Codex/Gemini usage\n\nMulti-provider support: z.ai/ZHIPU, Codex, Gemini auto-detected when installed.\n\n## Widgets\n\n| Category | Widget | Description |\n|----------|--------|-------------|\n| **Core** | `model` | Model name with emoji, effort level for Opus (H/M/L) |\n| | `context` | Progress bar, percentage, tokens (🟢 0-50% / 🟡 51-80% / 🔴 81-100%) |\n| | `cost` | Session cost in USD |\n| | `projectInfo` | Directory name + git branch (`*` if dirty) |\n| **Rate Limits** | `rateLimit5h` | 5-hour rate limit with reset countdown |\n| | `rateLimit7d` | 7-day rate limit (Max only) |\n| | `rateLimit7dSonnet` | 7-day Sonnet limit (Max only) |\n| **Session** | `sessionId` | Session ID (short 8-char) |\n| | `sessionIdFull` | Session ID (full UUID) |\n| | `sessionDuration` | Session duration |\n| | `configCounts` | CLAUDE.md, rules, MCPs, hooks |\n| **Activity** | `toolActivity` | Running/completed tools |\n| | `agentStatus` | Subagent progress |\n| | `todoProgress` | Todo completion rate |\n| **Analytics** | `burnRate` | Token consumption per minute |\n| | `cacheHit` | Cache hit rate percentage |\n| | `depletionTime` | Estimated time to rate limit (approx)¹ |\n| **Multi-CLI** | `codexUsage` | OpenAI Codex CLI usage (auto-hide if not installed)² |\n| | `geminiUsage` | Google Gemini CLI - current model (auto-hide if not installed)³ |\n| | `geminiUsageAll` | Google Gemini CLI - all models (auto-hide if not installed)³ |\n| | `zaiUsage` | z.ai/ZHIPU usage (auto-hide if not using z.ai)⁴ |\n\n> ¹ Assumes all utilization came from this session; improves as session runs longer.\n> ² Auto-hides if `~/.codex/auth.json` not found. ³ Auto-hides if `~/.gemini/oauth_creds.json` not found. ⁴ Auto-hides if not detected via `ANTHROPIC_BASE_URL`.\n\ni18n: English and Korean supported (auto-detect or set via setup).\n\n## Configuration\n\n```bash\n# Preset modes\n/claude-dashboard:setup compact             # 1 line (default)\n/claude-dashboard:setup normal en pro       # 2 lines, English, Pro plan\n/claude-dashboard:setup detailed ko max     # 4 lines, Korean, Max plan\n\n# Custom mode: control widget order and line composition\n# Format: \"widget1,widget2,...|widget3,widget4,...\" (| separates lines)\n/claude-dashboard:setup custom auto max \"model,context,cost|projectInfo,todoProgress\"\n```\n\n**Plan differences:**\n\n| Feature | Max | Pro |\n|---------|-----|-----|\n| 5h rate limit + countdown | ✅ | ✅ |\n| 7d all models | ✅ | ❌ |\n\n<details>\n<summary><strong>Advanced Configuration</strong></summary>\n\n**Interactive Mode:** Run `/claude-dashboard:setup` without arguments. Best for preset selection; for full widget control, use Direct Mode or edit the JSON file directly.\n\n**Display Mode Presets** (`zaiUsage` and `rateLimit*` are mutually exclusive based on provider):\n\n| Mode | Lines | Widgets |\n|------|-------|---------|\n| `compact` | 1 | model, context, cost, rateLimit5h/7d/7dSonnet, zaiUsage |\n| `normal` | 2 | + projectInfo, sessionId, sessionDuration, burnRate, todoProgress |\n| `detailed` | 4 | + depletionTime, configCounts, toolActivity, agentStatus, cacheHit, codexUsage, geminiUsage |\n\n**Configuration file** (`~/.claude/claude-dashboard.local.json`):\n\n```json\n{\n  \"language\": \"auto\",\n  \"plan\": \"max\",\n  \"displayMode\": \"custom\",\n  \"lines\": [\n    [\"model\", \"context\", \"cost\", \"rateLimit5h\"],\n    [\"projectInfo\", \"todoProgress\"]\n  ],\n  \"cache\": { \"ttlSeconds\": 60 }\n}\n```\n\n**Color Legend:** 🟢 0-50% Safe / 🟡 51-80% Warning / 🔴 81-100% Critical\n\n</details>\n\n## Commands\n\n### `/claude-dashboard:setup`\n\nConfigure the status line display mode, language, and plan. See [Configuration](#configuration).\n\n### `/claude-dashboard:check-usage`\n\nCheck usage limits for all AI CLIs (Claude, Codex, Gemini, z.ai) at once and get a recommendation for which CLI has the most available capacity.\n\n```bash\n/claude-dashboard:check-usage              # Interactive output with colors\n/claude-dashboard:check-usage --json       # JSON output for scripting\n/claude-dashboard:check-usage --lang ko    # Specify language\n```\n\n![check-usage](images/check-usage.png)\n\n### `/claude-dashboard:update`\n\nUpdate the plugin and refresh the statusLine path in settings. Run after updating via git pull or marketplace.\n\n```bash\n/claude-dashboard:update\n```\n\n## Troubleshooting\n\n<details>\n<summary><strong>Status line not showing</strong></summary>\n\n1. Check if plugin is installed: `/plugin list`\n2. Verify settings.json has statusLine config\n3. Restart Claude Code\n\n</details>\n\n<details>\n<summary><strong>Rate limits showing ⚠️</strong></summary>\n\n- API token may be expired - re-login to Claude Code\n- Network issue - check internet connection\n- API rate limited - wait 60 seconds for cache refresh\n\n</details>\n\n<details>\n<summary><strong>Wrong language</strong></summary>\n\nRun setup with explicit language:\n\n```\n/claude-dashboard:setup normal ko  # Korean\n/claude-dashboard:setup normal en  # English\n```\n\n</details>\n\n<details>\n<summary><strong>Cache issues</strong></summary>\n\nAPI response cache is stored in `~/.cache/claude-dashboard/`. To clear:\n\n```bash\nrm -rf ~/.cache/claude-dashboard/\n```\n\nCache files are automatically cleaned up after 1 hour.\n\n</details>\n\n## Development\n\n```bash\nnpm install && npm run build\n```\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for details.\n\n## Star History\n\n[![Star History Chart](https://api.star-history.com/svg?repos=uppinote20/claude-dashboard&type=Date)](https://star-history.com/#uppinote20/claude-dashboard&Date)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-dashboard",
+          "source": "./",
+          "description": "Real-time status line showing model, context usage with color-coded progress bar, token count, cost, and API rate limits (5h/7d). Supports Max and Pro plans with i18n (English/Korean).",
+          "category": "monitoring",
+          "tags": [
+            "statusline",
+            "monitoring",
+            "context",
+            "rate-limits",
+            "cost",
+            "i18n"
+          ],
+          "categories": [
+            "context",
+            "cost",
+            "i18n",
+            "monitoring",
+            "rate-limits",
+            "statusline"
+          ],
+          "install_commands": [
+            "/plugin marketplace add uppinote20/claude-dashboard",
+            "/plugin install claude-dashboard@claude-dashboard"
+          ]
+        }
+      ]
+    }
+  ]
+}
