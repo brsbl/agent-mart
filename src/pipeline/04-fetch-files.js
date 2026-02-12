@@ -1,5 +1,7 @@
 import { batchGetFiles } from '../lib/github.js';
-import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
+import { saveJson, loadJson, log, logError, applyRepoLimit, sleep } from '../lib/utils.js';
+
+const MAX_FILE_RETRIES = 3;
 
 const REPOS_PATH = './data/02-repos.json';
 const OUTPUT_PATH = './data/04-files.json';
@@ -49,6 +51,7 @@ export async function fetchFiles({ onProgress } = {}) {
 
   const { repos: allRepos } = loadJson(REPOS_PATH);
   const files = [];
+  const dropped = [];
 
   const reposToProcess = applyRepoLimit(allRepos);
 
@@ -57,6 +60,7 @@ export async function fetchFiles({ onProgress } = {}) {
 
     if (!full_name || !full_name.includes('/')) {
       log(`Invalid full_name: ${full_name}, skipping`);
+      dropped.push({ full_name: full_name || '(empty)', reason: 'invalid full_name' });
       continue;
     }
 
@@ -65,14 +69,24 @@ export async function fetchFiles({ onProgress } = {}) {
 
     onProgress?.(i + 1, reposToProcess.length);
 
-    // Pass 1: Fetch base files
+    // Pass 1: Fetch base files (retry with backoff on failure)
     let baseResults;
-    try {
-      baseResults = await batchGetFiles(owner, repo, branch, BASE_PATHS);
-    } catch (error) {
-      log(`Batch failed for ${full_name}: ${error.message}`);
-      continue;
+    for (let attempt = 1; attempt <= MAX_FILE_RETRIES; attempt++) {
+      try {
+        baseResults = await batchGetFiles(owner, repo, branch, BASE_PATHS);
+        break;
+      } catch (error) {
+        if (attempt < MAX_FILE_RETRIES) {
+          const delay = 5000 * attempt;
+          log(`File fetch failed for ${full_name} (attempt ${attempt}/${MAX_FILE_RETRIES}), retrying in ${delay / 1000}s...`);
+          await sleep(delay);
+        } else {
+          log(`File fetch failed for ${full_name} after ${MAX_FILE_RETRIES} attempts: ${error.message}`);
+          dropped.push({ full_name, reason: `batch fetch failed after ${MAX_FILE_RETRIES} attempts: ${error.message}` });
+        }
+      }
     }
+    if (!baseResults) continue;
 
     // Store base files
     let fetchedCount = 0;
@@ -96,9 +110,23 @@ export async function fetchFiles({ onProgress } = {}) {
       const pluginReadmePaths = getPluginReadmePaths(marketplaceFile.content);
 
       if (pluginReadmePaths.length > 0) {
-        try {
-          const readmeResults = await batchGetFiles(owner, repo, branch, pluginReadmePaths);
+        let readmeResults;
+        for (let attempt = 1; attempt <= MAX_FILE_RETRIES; attempt++) {
+          try {
+            readmeResults = await batchGetFiles(owner, repo, branch, pluginReadmePaths);
+            break;
+          } catch (error) {
+            if (attempt < MAX_FILE_RETRIES) {
+              const delay = 5000 * attempt;
+              log(`Plugin README fetch failed for ${full_name} (attempt ${attempt}/${MAX_FILE_RETRIES}), retrying in ${delay / 1000}s...`);
+              await sleep(delay);
+            } else {
+              log(`Plugin README fetch failed for ${full_name} after ${MAX_FILE_RETRIES} attempts: ${error.message}`);
+            }
+          }
+        }
 
+        if (readmeResults) {
           for (const path of pluginReadmePaths) {
             const fileData = readmeResults[path];
             if (fileData && fileData.content) {
@@ -112,8 +140,6 @@ export async function fetchFiles({ onProgress } = {}) {
               fetchedCount++;
             }
           }
-        } catch (error) {
-          log(`Plugin README fetch failed for ${full_name}: ${error.message}`);
         }
       }
     }
@@ -125,9 +151,14 @@ export async function fetchFiles({ onProgress } = {}) {
     }
   }
 
+  if (dropped.length > 0) {
+    log(`Dropped ${dropped.length}/${reposToProcess.length} repos: ${dropped.map(d => d.full_name).join(', ')}`);
+  }
+
   const output = {
     fetched_at: new Date().toISOString(),
     total: files.length,
+    dropped_repos: dropped,
     files
   };
 

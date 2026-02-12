@@ -1,5 +1,6 @@
 import { batchGetRepos } from '../lib/github.js';
 import { saveJson, loadJson, log, logError, applyRepoLimit } from '../lib/utils.js';
+import { DROP_DELETED, DROP_FAILED } from '../lib/dropReasons.js';
 
 const INPUT_PATH = './data/01-discovered.json';
 const OUTPUT_PATH = './data/02-repos.json';
@@ -21,7 +22,7 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
 
   // Use GraphQL batching to fetch all repos and owners in batches of 15
   const batchInput = repos.map(r => ({ owner: r.owner, repo: r.repo }));
-  const { repos: repoData, owners: ownerData } = await batchGetRepos(batchInput);
+  const { repos: repoData, owners: ownerData, deleted, failed } = await batchGetRepos(batchInput);
 
   // Transform results to match expected output format
   const enriched = [];
@@ -29,10 +30,7 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
 
   for (const { full_name, marketplace_path } of repos) {
     const data = repoData[full_name];
-    if (!data) {
-      log(`No data for ${full_name}, skipping`);
-      continue;
-    }
+    if (!data) continue;
 
     // Detect repo renames/transfers: use actual owner from API response
     const actualOwner = data.owner.login;
@@ -83,10 +81,23 @@ export async function fetchRepos({ onProgress: _onProgress } = {}) {
     };
   }
 
+  if (deleted.length > 0) {
+    log(`Deleted repos (404): ${deleted.join(', ')}`);
+  }
+  if (failed.length > 0) {
+    log(`WARNING: ${failed.length} repos failed after retries: ${failed.join(', ')}`);
+  }
+
+  const dropped_repos = [
+    ...deleted.map(name => ({ full_name: name, reason: DROP_DELETED })),
+    ...failed.map(name => ({ full_name: name, reason: DROP_FAILED })),
+  ];
+
   const output = {
     fetched_at: new Date().toISOString(),
     total_repos: enriched.length,
     total_owners: Object.keys(ownersOutput).length,
+    dropped_repos,
     repos: enriched,
     owners: ownersOutput,
     renames

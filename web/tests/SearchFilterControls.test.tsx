@@ -83,13 +83,13 @@ describe('SearchFilterControls', () => {
 
   it('renders search input', () => {
     render(<SearchFilterControls />);
-    expect(screen.getByPlaceholderText('Search plugins, keywords, authors...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search plugins, keywords, creators...')).toBeInTheDocument();
   });
 
   it('routes to /browse when search is submitted (not /)', () => {
     render(<SearchFilterControls />);
 
-    const input = screen.getByPlaceholderText('Search plugins, keywords, authors...');
+    const input = screen.getByPlaceholderText('Search plugins, keywords, creators...');
     fireEvent.change(input, { target: { value: 'my-query' } });
     fireEvent.submit(input.closest('form')!);
 
@@ -130,7 +130,7 @@ describe('SearchFilterControls', () => {
   it('preserves /browse path when only default params remain', () => {
     render(<SearchFilterControls />);
 
-    const input = screen.getByPlaceholderText('Search plugins, keywords, authors...');
+    const input = screen.getByPlaceholderText('Search plugins, keywords, creators...');
     fireEvent.change(input, { target: { value: '' } });
     fireEvent.submit(input.closest('form')!);
 

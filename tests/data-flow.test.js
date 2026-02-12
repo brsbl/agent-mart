@@ -2,12 +2,17 @@ import { describe, it, before } from 'node:test';
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
+import { isAcceptableDrop } from '../src/lib/dropReasons.js';
 
+const DISCOVERED_PATH = './data/01-discovered.json';
+const REPOS_PATH = './data/02-repos.json';
 const ENRICHED_PATH = './data/06-enriched.json';
 const MARKETPLACES_BROWSE_PATH = './web/public/data/marketplaces-browse.json';
 const AUTHORS_DIR = './web/public/data/authors';
 
 // Load data files once for all tests
+let discoveredData = null;
+let reposData = null;
 let enrichedData = null;
 let marketplacesBrowseData = null;
 
@@ -21,8 +26,94 @@ function loadJsonSafe(filePath) {
 }
 
 before(() => {
+  discoveredData = loadJsonSafe(DISCOVERED_PATH);
+  reposData = loadJsonSafe(REPOS_PATH);
   enrichedData = loadJsonSafe(ENRICHED_PATH);
   marketplacesBrowseData = loadJsonSafe(MARKETPLACES_BROWSE_PATH);
+});
+
+describe('Data Flow: Pipeline Drop Tracking', () => {
+  it('should only drop repos for acceptable reasons (deletion or invalid marketplace.json)', function() {
+    if (!reposData || !enrichedData) return this.skip();
+
+    // Collect all drops across pipeline steps
+    const allDrops = [
+      ...(reposData.dropped_repos || []).map(d => ({ ...d, step: 'fetch-repos' })),
+      ...(enrichedData.dropped_repos || []).map(d => ({ ...d, step: 'enrich' })),
+    ];
+
+    const filesData = loadJsonSafe('./data/04-files.json');
+    if (filesData) {
+      allDrops.push(...(filesData.dropped_repos || []).map(d => ({ ...d, step: 'fetch-files' })));
+    }
+
+    const badDrops = allDrops.filter(d => !isAcceptableDrop(d.reason));
+
+    if (allDrops.length > 0) {
+      const deletions = allDrops.filter(d => d.reason.includes('404'));
+      const invalid = allDrops.filter(d => d.reason.includes('no valid marketplace.json'));
+      console.log(`  Deletions: ${deletions.length}, Invalid marketplace.json: ${invalid.length}, Unacceptable: ${badDrops.length}`);
+    }
+
+    assert.strictEqual(
+      badDrops.length,
+      0,
+      `${badDrops.length} repos dropped for unacceptable reasons: ${badDrops.map(d => `${d.full_name} [${d.step}] (${d.reason})`).join(', ')}`
+    );
+  });
+
+  it('should have every discovered repo in browse output or dropped for an acceptable reason', function() {
+    if (!discoveredData || !marketplacesBrowseData || !reposData || !enrichedData) return this.skip();
+
+    // Repos present in the final output
+    const outputRepos = new Set(
+      marketplacesBrowseData.marketplaces.map(m => m.repo_full_name)
+    );
+
+    // Repos dropped for acceptable reasons across all steps
+    const acceptablyDropped = new Set();
+
+    for (const drops of [
+      reposData.dropped_repos || [],
+      enrichedData.dropped_repos || [],
+    ]) {
+      for (const d of drops) {
+        if (isAcceptableDrop(d.reason)) {
+          acceptablyDropped.add(d.full_name);
+        }
+      }
+    }
+
+    const filesData = loadJsonSafe('./data/04-files.json');
+    if (filesData) {
+      for (const d of filesData.dropped_repos || []) {
+        if (isAcceptableDrop(d.reason)) {
+          acceptablyDropped.add(d.full_name);
+        }
+      }
+    }
+
+    // Renames: a repo discovered as X may appear in output as Y
+    const renames = reposData.renames || {};
+
+    const missing = [];
+    for (const repo of discoveredData.repos) {
+      const name = repo.full_name;
+      const renamedTo = renames[name];
+
+      if (outputRepos.has(name)) continue;
+      if (renamedTo && outputRepos.has(renamedTo)) continue;
+      if (acceptablyDropped.has(name)) continue;
+
+      missing.push(name);
+    }
+
+    assert.strictEqual(
+      missing.length,
+      0,
+      `${missing.length} discovered repos missing from output without acceptable reason: ${missing.slice(0, 10).join(', ')}${missing.length > 10 ? '...' : ''}`
+    );
+  });
 });
 
 describe('Data Flow: Enriched to Marketplaces Browse Consistency', () => {
@@ -136,6 +227,47 @@ describe('Data Flow: Author File Existence', () => {
         assert.ok(parsed.marketplaces, `Author file ${authorId}.json missing marketplaces field`);
       }
     }
+  });
+});
+
+describe('Data Flow: Every Enriched Author in Browse Data', () => {
+  it('should have a browse entry for every enriched author', function() {
+    if (!enrichedData || !marketplacesBrowseData) return this.skip();
+
+    const browseAuthorIds = new Set(
+      marketplacesBrowseData.marketplaces.map(m => m.author_id)
+    );
+
+    const missingAuthors = Object.keys(enrichedData.authors).filter(
+      authorId => !browseAuthorIds.has(authorId)
+    );
+
+    assert.ok(
+      missingAuthors.length === 0,
+      `Enriched authors missing from browse data: ${missingAuthors.slice(0, 10).join(', ')}${missingAuthors.length > 10 ? '...' : ''}`
+    );
+  });
+
+  it('should have all enriched marketplaces in browse data', function() {
+    if (!enrichedData || !marketplacesBrowseData) return this.skip();
+
+    const browseRepos = new Set(
+      marketplacesBrowseData.marketplaces.map(m => m.repo_full_name)
+    );
+
+    const missing = [];
+    for (const author of Object.values(enrichedData.authors)) {
+      for (const marketplace of author.marketplaces) {
+        if (!browseRepos.has(marketplace.repo_full_name)) {
+          missing.push(marketplace.repo_full_name);
+        }
+      }
+    }
+
+    assert.ok(
+      missing.length === 0,
+      `Enriched marketplaces missing from browse: ${missing.slice(0, 10).join(', ')}${missing.length > 10 ? '...' : ''}`
+    );
   });
 });
 

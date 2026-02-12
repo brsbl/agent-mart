@@ -221,12 +221,57 @@ async function getUser(username) {
 }
 
 /**
+ * Retry fetching individual repos via REST with exponential backoff.
+ * Distinguishes 404 (deleted) from transient errors (retried).
+ * @param {Array<{owner: string, repo: string}>} repos - Repos to retry
+ * @param {Object} results - Results object to populate (repos, owners, deleted, failed)
+ * @param {string} reason - Why these repos need retry (for logging)
+ */
+async function retryMissingRepos(repos, results, reason) {
+  for (const r of repos) {
+    const fullName = `${r.owner}/${r.repo}`;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        log(`Retrying ${fullName} via REST (${reason}, attempt ${attempt}/${MAX_RETRIES})`);
+        const repoData = await getRepo(r.owner, r.repo);
+        results.repos[fullName] = repoData;
+
+        const actualOwner = repoData.owner?.login || r.owner;
+        if (!results.owners[actualOwner]) {
+          try {
+            const userData = await getUser(actualOwner);
+            results.owners[actualOwner] = userData;
+          } catch (userErr) {
+            log(`Could not fetch owner ${actualOwner}: ${userErr.message}`);
+          }
+        }
+        break;
+      } catch (err) {
+        if (err.status === 404) {
+          log(`${fullName} confirmed deleted (404)`);
+          results.deleted.push(fullName);
+          break;
+        }
+        if (attempt < MAX_RETRIES) {
+          const delay = RETRY_DELAYS[attempt - 1] || 15000;
+          log(`${fullName} failed (${err.message}), retrying in ${delay / 1000}s...`);
+          await sleep(delay);
+        } else {
+          logError(`${fullName} failed after ${MAX_RETRIES} attempts`, err);
+          results.failed.push(fullName);
+        }
+      }
+    }
+  }
+}
+
+/**
  * Batch fetch repository and owner metadata using GraphQL
  * @param {Array<{owner: string, repo: string}>} repos - Array of {owner, repo} objects
- * @returns {Promise<{repos: Object, owners: Object}>} Batched results
+ * @returns {Promise<{repos: Object, owners: Object, deleted: string[], failed: string[]}>} Batched results
  */
 export async function batchGetRepos(repos) {
-  const results = { repos: {}, owners: {} };
+  const results = { repos: {}, owners: {}, deleted: [], failed: [] };
 
   // Process in batches
   for (let i = 0; i < repos.length; i += REPO_BATCH_SIZE) {
@@ -278,7 +323,8 @@ export async function batchGetRepos(repos) {
     try {
       const response = await executeGraphQL(query);
 
-      // Process each repo in the batch
+      // Process each repo in the batch, collect failures for REST retry
+      const missingFromBatch = [];
       batch.forEach((r, idx) => {
         const repoData = response[`repo${idx}`];
         if (repoData) {
@@ -318,25 +364,17 @@ export async function batchGetRepos(repos) {
               followers: owner.followers?.totalCount ?? owner.membersWithRole?.totalCount ?? 0
             };
           }
+        } else {
+          missingFromBatch.push(r);
         }
       });
+
+      // Retry repos that returned null from GraphQL via REST with backoff
+      await retryMissingRepos(missingFromBatch, results, 'null from GraphQL');
     } catch (error) {
       logError(`GraphQL batch error for repos ${i + 1}-${i + batch.length}`, error);
-      // Fall back to individual REST calls for this batch
-      for (const r of batch) {
-        try {
-          const repoData = await getRepo(r.owner, r.repo);
-          const fullName = `${r.owner}/${r.repo}`;
-          results.repos[fullName] = repoData;
-
-          if (!results.owners[r.owner]) {
-            const userData = await getUser(r.owner);
-            results.owners[r.owner] = userData;
-          }
-        } catch (err) {
-          logError(`Fallback REST error for ${r.owner}/${r.repo}`, err);
-        }
-      }
+      // Retry entire batch via individual REST calls
+      await retryMissingRepos(batch, results, 'GraphQL batch error');
     }
   }
 
