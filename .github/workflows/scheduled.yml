@@ -46,20 +46,9 @@ jobs:
           restore-keys: |
             discovery-
 
-      - name: Seed discovery from browse data
+      - name: Seed discovery from committed data
         if: steps.discovery-cache.outputs.cache-hit != 'true'
-        run: |
-          node -e '
-            const fs = require("fs");
-            const browse = JSON.parse(fs.readFileSync("web/public/data/marketplaces-browse.json", "utf8"));
-            const repos = browse.marketplaces.map(m => {
-              const [owner, repo] = m.repo_full_name.split("/");
-              return { owner, repo, full_name: m.repo_full_name, marketplace_path: ".claude-plugin/marketplace.json" };
-            });
-            fs.mkdirSync("data", { recursive: true });
-            fs.writeFileSync("data/01-discovered.json", JSON.stringify({ discovered_at: new Date().toISOString(), total: repos.length, repos }, null, 2));
-            console.log("Seeded discovery with " + repos.length + " repos from browse data");
-          '
+        run: node scripts/seed-discovery.js
 
       - name: Restore signals history
         uses: actions/cache/restore@v5
@@ -80,6 +69,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PIPELINE_GITHUB_TOKEN }}
           NODE_OPTIONS: '--max-old-space-size=4096'
         run: npm run pipeline:dev
+
+      - name: Validate pipeline output
+        run: npm run test:data
 
       - name: Save discovery cache
         uses: actions/cache/save@v5
@@ -116,7 +108,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # Check if there are changes to commit
-          if [ -z "$(git status web/public/data/ data/signals-history.json --porcelain)" ]; then
+          if [ -z "$(git status web/public/data/ data/signals-history.json data/01-discovered.json --porcelain)" ]; then
             echo "No changes to commit"
             exit 0
           fi
@@ -130,7 +122,7 @@ jobs:
           # Always reset to main and force-push to keep the branch clean
           git checkout -b "$BRANCH"
 
-          git add -f web/public/data/ data/signals-history.json
+          git add -f web/public/data/ data/signals-history.json data/01-discovered.json
           git commit -m "chore: update directory data $(date +%Y-%m-%d)" --no-verify
           git push -u origin "$BRANCH" --force --no-verify
 

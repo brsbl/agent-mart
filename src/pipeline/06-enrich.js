@@ -64,6 +64,7 @@ export function enrich({ onProgress: _onProgress } = {}) {
   const filesMap = parsedData.files || {};
 
   const enrichedAuthors = new Map();
+  const dropped = [];
 
   for (const repo of reposData.repos) {
     const { full_name, owner: ownerInfo } = repo;
@@ -94,6 +95,7 @@ export function enrich({ onProgress: _onProgress } = {}) {
     const marketplace = marketplaceMap.get(full_name);
     if (!marketplace) {
       log(`No marketplace.json found for ${full_name}, skipping`);
+      dropped.push({ full_name, reason: 'no valid marketplace.json' });
       continue;
     }
 
@@ -105,6 +107,7 @@ export function enrich({ onProgress: _onProgress } = {}) {
 
     if (!full_name || !full_name.includes('/')) {
       log(`Invalid full_name: ${full_name}, skipping`);
+      dropped.push({ full_name: full_name || '(empty)', reason: 'invalid full_name' });
       continue;
     }
 
@@ -159,9 +162,14 @@ export function enrich({ onProgress: _onProgress } = {}) {
     authorData.marketplaces.push(marketplaceEntry);
   }
 
+  if (dropped.length > 0) {
+    log(`Dropped ${dropped.length}/${reposData.repos.length} repos: ${dropped.map(d => d.full_name).join(', ')}`);
+  }
+
   const output = {
     enriched_at: new Date().toISOString(),
     total_authors: enrichedAuthors.size,
+    dropped_repos: dropped,
     authors: Object.fromEntries(enrichedAuthors)
   };
 
