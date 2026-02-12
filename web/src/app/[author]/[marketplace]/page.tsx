@@ -491,9 +491,9 @@ export default function MarketplaceDetailPage() {
             )}
           </div>
 
-          {/* Right Sidebar - More from Author */}
+          {/* Right Sidebar - More from Creator */}
           <aside className="mt-8 lg:mt-0 space-y-6">
-            {/* More from Author */}
+            {/* More from Creator */}
             {hasOtherMarketplaces && (
               <section className="glass-card border border-border rounded-2xl p-4 shadow-lg">
                 <h3 className="text-sm font-semibold text-foreground mb-4">

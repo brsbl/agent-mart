@@ -26,7 +26,7 @@ function TrendingCard({ marketplace }: TrendingCardProps) {
       href={marketplaceUrl}
       className="flex-shrink-0 w-[220px] border border-border rounded-xl hover:border-border-hover hover:shadow-md transition-all bg-card p-4 group"
     >
-      {/* Author info */}
+      {/* Creator info */}
       <div className="flex items-center gap-2 mb-3">
         {marketplace.author_avatar_url ? (
           <Image
