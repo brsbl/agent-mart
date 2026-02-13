@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "mave99a",
+    "display_name": "Robert Mao",
+    "avatar_url": "https://avatars.githubusercontent.com/u/41923?u=c5d086748958e96e4cf5eff2f4df5b1d3136327b&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "novel-skill-marketplace",
+      "version": null,
+      "description": "Interactive novel creation with RPG-style storytelling and EPUB output",
+      "repo_full_name": "mave99a/novel-skill",
+      "repo_url": "https://github.com/mave99a/novel-skill",
+      "repo_description": "Agent Skill for creating a full novel",
+      "signals": {
+        "stars": 3,
+        "forks": 2,
+        "pushed_at": "2026-01-08T03:17:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"novel-skill-marketplace\",\n  \"owner\": {\n    \"name\": \"Rob Mao\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"novel-creator\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"mave99a/novel-skill\"\n      },\n      \"description\": \"Interactive novel creation with RPG-style storytelling and EPUB output\",\n      \"version\": \"1.0.0\",\n      \"category\": \"Writing\",\n      \"tags\": [\"novel\", \"writing\", \"epub\", \"creative\", \"chinese\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"novel-creator\",\n  \"description\": \"Interactive novel creation workflow combining RPG-style storytelling with professional EPUB ebook production. Transform story ideas into complete novels through a 5-phase workflow.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Rob Mao\"\n  },\n  \"homepage\": \"https://github.com/mave99a/novel-skill\",\n  \"repository\": \"https://github.com/mave99a/novel-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"novel\",\n    \"writing\",\n    \"creative-writing\",\n    \"epub\",\n    \"ebook\",\n    \"storytelling\",\n    \"rpg\",\n    \"interactive-fiction\",\n    \"chinese-novel\"\n  ],\n  \"category\": \"Writing\",\n  \"skills\": {\n    \"novel-creator\": \"./skills/novel-creator\"\n  }\n}\n",
+        "README.md": "# Novel Creator Skill\n\nTransform story ideas into complete novels with EPUB output through an interactive RPG-style workflow.\n\n## Features\n\n- **Interactive Story Building**: Guide users through key plot decisions using an RPG-style choice system\n- **Structured Writing Process**: 5-phase workflow from concept to finished ebook\n- **Professional EPUB Generation**: Auto-converts markdown chapters to beautifully formatted ebooks\n- **Chinese Novel Optimization**: Built-in support for Chinese typography, poetry pairings, and literary styles\n- **Customizable Writing Styles**: Support for various genres and literary influences (e.g., 琼瑶, 张爱玲)\n\n## Workflow Overview\n\n```\n[Story Concept] → [Interactive RPG] → [Writing Plan] → [Chapters] → [EPUB]\n     Phase 1           Phase 2           Phase 3        Phase 4     Phase 5\n```\n\n### Phase 1: Story Setup\nGather core story elements through interactive questions:\n- Genre (穿越/Fantasy/Romance/Mystery)\n- Setting (Ancient palace/Modern city/Fantasy world)\n- Protagonist details\n- Story goals and length\n\n### Phase 2: Interactive RPG\nRun 10-15 decision points where the user makes meaningful choices:\n- Present vivid scene descriptions\n- Offer 3-4 choices via `AskUserQuestion`\n- Track consequences and plot development\n- Weave in romance, conflict, and character growth\n\n### Phase 3: Writing Plan\nGenerate a comprehensive `task_plan.md` including:\n- Character profiles and arcs\n- Foreshadowing matrix\n- Chapter-by-chapter outline\n- Poetry/lyrics pairings (for Chinese novels)\n- Progress tracking table\n\n### Phase 4: Chapter Writing\nWrite each chapter (~4000-5500 words) with:\n- Opening and closing song lyrics/poetry\n- Vivid sensory descriptions\n- Character internal monologue\n- Proper pacing and chapter-end hooks\n- Consistent file naming: `[##]_[章节标题].md`\n\n### Phase 5: EPUB Generation\nAuto-generate professional ebook with:\n- Cover page with title/author\n- Table of contents\n- Chinese typography CSS\n- Proper chapter formatting\n\n## Installation\n\n### Prerequisites\n- Python 3.7+\n- Claude Code CLI\n\n### Install from Marketplace\n```bash\n# Add the marketplace\n/plugin marketplace add mave99a/novel-skill\n\n# Install the plugin\n/plugin install novel-creator\n```\n\n### Manual Setup\n```bash\n# Install required Python package\npip install ebooklib\n\n# Clone and add as local plugin\ngit clone https://github.com/mave99a/novel-skill.git\n/plugin add ./novel-skill\n```\n\n## Usage\n\n### Quick Commands\n\n| User Request | Action |\n|-------------|--------|\n| `写一部小说` / `Write a novel` | Full workflow (Phase 1-5) |\n| `根据大纲写小说` + outline | Start from Phase 3 |\n| `把章节转成epub` | Phase 5 only |\n| `继续写下一章` | Resume Phase 4 |\n\n### Example Session\n\n```\nUser: 写一部小说\n\nClaude: [Asks about genre, setting, protagonist...]\n\nUser: [Makes choices]\n\nClaude: [Runs interactive RPG scenes, user makes plot decisions]\n\nClaude: [Creates writing plan, writes chapters, generates EPUB]\n\nOutput: novel_title.epub\n```\n\n### EPUB Generator CLI\n\n```bash\npython3 scripts/create_epub.py [options]\n\nOptions:\n    --title TITLE       Book title (auto-detects from task_plan.md)\n    --author AUTHOR     Author name (default: \"Claude AI\")\n    --path PATH         Chapter directory (default: current)\n    --output OUTPUT     Output filename (default: [title].epub)\n    --subtitle SUBTITLE Book subtitle/tagline\n```\n\n## File Structure\n\n```\nnovel-skill/\n├── .claude-plugin/\n│   ├── plugin.json        # Plugin manifest for Claude Code\n│   └── marketplace.json   # Marketplace catalog\n├── skills/\n│   └── novel-creator/\n│       ├── SKILL.md       # Skill definition\n│       ├── scripts/\n│       │   └── create_epub.py\n│       └── references/\n│           ├── personas.md\n│           └── poetry_pairs.md\n├── samples/               # Example novel outputs\n├── README.md              # This file\n├── LICENSE                # MIT License\n├── CHANGELOG.md           # Version history\n└── requirements.txt       # Python dependencies\n```\n\n## Output Structure\n\nWhen a novel is created, the following files are generated:\n\n```\nyour-project/\n├── task_plan.md           # Writing plan with outlines\n├── 01_章节标题.md          # Chapter 1\n├── 02_章节标题.md          # Chapter 2\n├── ...\n├── 10_章节标题.md          # Chapter 10\n└── 书名.epub              # Final EPUB ebook\n```\n\n## Writing Style Guidelines\n\nThe skill supports customizable writing styles:\n\n### Supported Influences\n- **琼瑶 (Chiung Yao)**: Romantic, emotional dialogues, dramatic conflicts\n- **张爱玲 (Eileen Chang)**: Rich imagery, psychological depth, subtle emotions\n- **金庸 (Jin Yong)**: Martial arts, chivalry, intricate plots\n- **Custom**: Any style specified by user\n\n### Key Writing Elements\n- Long, flowing paragraphs (avoid excessive short sentences)\n- Deep psychological descriptions\n- Sensory-rich scene setting\n- Romantic tension in ambiguous scenes\n- Proper use of Chinese literary devices\n\n## Customization\n\n### Adding New Genres\nEdit `skill.md` to add new genre options in Phase 1.\n\n### Modifying Chapter Structure\nThe default structure includes:\n- Opening lyrics/poetry quote\n- 3 main scenes per chapter\n- Closing lyrics/poetry quote\n- Chapter-end hook\n\nModify `skill.md` Phase 4 section to customize.\n\n### Styling EPUB Output\nEdit `scripts/create_epub.py` function `get_css_style()` to customize:\n- Fonts\n- Line spacing\n- Quote styling\n- Chapter heading appearance\n\n## Examples\n\n### Generated Novel Sample\n- **Title**: 《误入心扉》\n- **Genre**: Modern Urban Romance\n- **Length**: 10 chapters, ~50,000 words\n- **Features**: Office romance, family revenge, identity mystery, dramatic twists\n\n### Chapter Naming Convention\n```\n01_当女孩遇见男孩.md\n02_月光下的三明治.md\n03_流言蜚语飞满天.md\n...\n```\n\n## Troubleshooting\n\n### EPUB Generation Fails\n```bash\n# Ensure ebooklib is installed\npip install ebooklib\n\n# Check chapter file naming (must match patterns):\n# - XX_title.md (e.g., 01_chapter.md)\n# - 第X章_title.md\n# - chapter_X.md\n```\n\n### No Chapters Found\nEnsure your markdown files follow the naming convention and are in the correct directory.\n\n### Chinese Characters Display Issues\nThe EPUB uses fallback fonts. Ensure your ebook reader supports Chinese fonts:\n- Songti SC\n- SimSun\n- Noto Serif CJK SC\n\n## Contributing\n\nContributions are welcome! Areas for improvement:\n- Additional genre templates\n- More reference materials (personas, poetry)\n- Enhanced EPUB styling\n- Multi-language support\n- Cover image generation\n\n## License\n\nMIT License - Feel free to use and modify for your projects.\n\n## Credits\n\n- Created with Claude Code\n- EPUB generation powered by [ebooklib](https://github.com/aerkalov/ebooklib)\n"
+      },
+      "plugins": [
+        {
+          "name": "novel-creator",
+          "source": {
+            "source": "github",
+            "repo": "mave99a/novel-skill"
+          },
+          "description": "Interactive novel creation with RPG-style storytelling and EPUB output",
+          "version": "1.0.0",
+          "category": "Writing",
+          "tags": [
+            "novel",
+            "writing",
+            "epub",
+            "creative",
+            "chinese"
+          ],
+          "categories": [
+            "chinese",
+            "creative",
+            "epub",
+            "novel",
+            "writing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mave99a/novel-skill",
+            "/plugin install novel-creator@novel-skill-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "author": {
+    "id": "madebynoam",
+    "display_name": "Noam Almosnino",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8889977?u=5912d92857bc59e2e6f758d741ec29438e8daabe&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "canvai",
+      "version": null,
+      "description": "Canvai — design studio on an infinite canvas with live React code",
+      "repo_full_name": "madebynoam/canvai",
+      "repo_url": "https://github.com/madebynoam/canvai",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-12T16:13:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"canvai\",\n  \"owner\": {\n    \"name\": \"Noam Almosnino\",\n    \"email\": \"noam@noamalmos.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Canvai — design studio on an infinite canvas with live React code\",\n    \"version\": \"0.0.16\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"canvai\",\n      \"source\": \"./plugin/plugins/canvai\",\n      \"description\": \"Canvai design skills — init projects, iterate designs, and ship components from an infinite canvas\",\n      \"version\": \"0.0.16\",\n      \"category\": \"design\",\n      \"tags\": [\n        \"canvas\",\n        \"design\",\n        \"react\",\n        \"figma\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Canvai\n\n> **Work in progress.** Canvai is under active development. Things will break and change.\n\nA design studio on an infinite canvas where every design is live React code. Describe what you want, the agent builds it on the canvas, annotate elements to iterate, and ship the final code to a production repo.\n\n**Current version: 0.0.16**\n\n## Quick start\n\n### 1. Install the Claude Code plugin\n\n```bash\nclaude plugin marketplace add madebynoam/canvai\nclaude plugin install canvai@canvai\n```\n\n### 2. Create a project\n\nOpen Claude Code in any directory and run:\n\n```\n/canvai-init my-component\n```\n\nThis will:\n- Install canvai and dependencies\n- Scaffold the project files (`index.html`, `vite.config.ts`, `App.tsx`, etc.)\n- Start the dev server with live canvas\n\n### 3. Describe your component\n\nTell the agent what to build. It generates a React component with all meaningful variations and states laid out as a matrix on the canvas:\n\n- **Columns** = states (Default, Hover, Active, Disabled)\n- **Rows** = variations (Short text, Long text, With icon, Error)\n\n### 4. Annotate and iterate\n\nClick \"Annotate\" on the canvas, select an element, describe the change, and click \"Apply\". The agent receives the annotation automatically and updates the component live.\n\nFor rapid annotation sessions, run `/canvai-watch` to enter watch mode — the agent processes every annotation as it arrives. Send any message to exit back to chat.\n\nRun `/canvai-iterate` to create a new version (page) while keeping previous iterations frozen.\n\n### 5. Ship\n\nRun `/canvai-ship` to PR the finished component to a production repo.\n\n## Updating\n\nRun `/canvai-update` inside a Claude Code session to update both the npm package and plugin.\n\n## Skills\n\n| Skill | Description |\n|---|---|\n| `/canvai-init <name>` | Create a new design project |\n| `/canvai-dev` | Start the dev server (chat mode) |\n| `/canvai-watch` | Enter watch mode for rapid annotations |\n| `/canvai-iterate` | Create a new design iteration |\n| `/canvai-share` | Build and deploy to GitHub Pages for sharing |\n| `/canvai-ship` | Ship component to a production repo |\n| `/canvai-update` | Update canvai to latest version |\n\n## CLI\n\n```bash\nnpx canvai init      # Scaffold project files and install dependencies\nnpx canvai dev       # Start Vite dev server + annotation HTTP server\nnpx canvai update    # Update canvai npm package to latest\n```\n\n## Project structure\n\nEach design project lives in `src/projects/<name>/`:\n\n```\nsrc/projects/\n  my-component/\n    MyComponent.tsx   # The React component\n    manifest.ts       # Pages and frames (auto-discovered by the canvas)\n```\n\nThe manifest declares which component variations to render:\n\n```ts\nimport { MyComponent } from './MyComponent'\nimport type { ProjectManifest } from 'canvai/runtime'\n\nconst manifest: ProjectManifest = {\n  project: 'my-component',\n  pages: [\n    {\n      name: 'V1 — Initial',\n      grid: { columns: 3, columnWidth: 300, rowHeight: 160, gap: 40 },\n      frames: [\n        { id: 'my-component-short-default', title: 'MyComponent / Short / Default', component: MyComponent, props: { text: 'Click' } },\n        { id: 'my-component-short-hover', title: 'MyComponent / Short / Hover', component: MyComponent, props: { text: 'Click', state: 'hover' } },\n      ],\n    },\n  ],\n}\n\nexport default manifest\n```\n\n## Architecture\n\n- **npm package** — canvas runtime, Vite plugin, and CLI (`canvai init`, `canvai dev`)\n- **Claude Code plugin** — skills, MCP config, and agent instructions\n\n## Development\n\n### Setup\n\n```bash\ngit clone https://github.com/madebynoam/canvai.git\ncd canvai\nnpm install\n```\n\n### Runtime & CLI changes\n\n1. Edit files in `src/runtime/`, `src/cli/`, `src/vite-plugin/`\n2. Run `npm test` to verify the export contract\n3. Dogfood with `canvai-ui` — run `npx canvai dev` from the repo root, changes reflect via HMR\n4. Breaking export changes need a migration in `src/cli/migrations/` and a template update in `src/cli/templates.js`\n\n### Plugin & skill changes\n\nPlugin changes (skills, MCP, CLAUDE.md) can't be tested until installed. To test locally without pushing:\n\n1. Run `/plugin-local` in the canvai repo — swaps the marketplace to the local `plugin/` directory\n2. In your consumer test folder: `claude plugin update canvai@canvai` then restart the session\n3. Test the skills\n4. Iterate: edit skill files → `claude plugin update canvai@canvai` → restart → test again\n5. When done, run `/plugin-release` in the canvai repo — swaps back to GitHub\n\nThe consumer folder always uses `canvai@canvai` and doesn't need to know whether the source is local or GitHub.\n\n### Publishing\n\n1. `npm test` — export contract + migration tests\n2. `npm run test:smoke` — scaffold smoke test\n3. `./scripts/bump-version.sh <version>` — bumps all 5 version fields across 4 files\n4. Update `CHANGELOG.md`\n5. Commit and push to main\n6. `/plugin-release` — ensure marketplace points to GitHub\n7. In the consumer folder: `claude plugin marketplace update canvai` then `claude plugin update canvai@canvai`\n\n### Commands\n\n| Command | What it does |\n|---|---|\n| `npm test` | Export contract + migration tests |\n| `npm run test:smoke` | Scaffold smoke test |\n| `./scripts/bump-version.sh <version>` | Bump all version fields |\n| `npx canvai dev` | Start dev server + annotation MCP |\n| `npx canvai init` | Scaffold consumer project files |\n| `npx canvai update` | Update consumer to latest canvai |\n\n### Dev skills\n\nThese skills are only available in the canvai repo (not in consumer projects):\n\n| Skill | Description |\n|---|---|\n| `/plugin-local` | Swap canvai marketplace to local for testing |\n| `/plugin-release` | Swap canvai marketplace back to GitHub |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "canvai",
+          "source": "./plugin/plugins/canvai",
+          "description": "Canvai design skills — init projects, iterate designs, and ship components from an infinite canvas",
+          "version": "0.0.16",
+          "category": "design",
+          "tags": [
+            "canvas",
+            "design",
+            "react",
+            "figma"
+          ],
+          "categories": [
+            "canvas",
+            "design",
+            "figma",
+            "react"
+          ],
+          "install_commands": [
+            "/plugin marketplace add madebynoam/canvai",
+            "/plugin install canvai@canvai"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "codekit",
+      "version": null,
+      "description": "Productivity skills for Claude Code — task management, session continuity, universal dev commands, and component finding.",
+      "repo_full_name": "madebynoam/codekit",
+      "repo_url": "https://github.com/madebynoam/codekit",
+      "repo_description": "Claude Code plugins for getting things done — task management, session continuity, universal dev commands, and component finding.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T14:29:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"codekit\",\n  \"owner\": {\n    \"name\": \"Noam Almosnino\",\n    \"email\": \"noam@noamalmos.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Productivity skills for Claude Code — task management, session continuity, universal dev commands, and component finding.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"do\",\n      \"source\": \"./plugins/do\",\n      \"description\": \"Task management with prioritization coaching — add, list, complete, and coach your way through work\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"tags\": [\"tasks\", \"productivity\", \"prioritization\", \"coaching\"]\n    },\n    {\n      \"name\": \"sesh\",\n      \"source\": \"./plugins/sesh\",\n      \"description\": \"Session continuity — save transcripts, resume where you left off, reflect on learnings, and close cleanly\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"tags\": [\"session\", \"continuity\", \"reflection\", \"journaling\"]\n    },\n    {\n      \"name\": \"dev-workflow\",\n      \"source\": \"./plugins/dev-workflow\",\n      \"description\": \"Universal dev commands — auto-detecting start, build, lint, test, commit, branch, rebase, and PR creation\",\n      \"version\": \"1.0.0\",\n      \"category\": \"development\",\n      \"tags\": [\"dev\", \"git\", \"build\", \"test\", \"lint\", \"ci\"]\n    },\n    {\n      \"name\": \"find-component\",\n      \"source\": \"./plugins/find-component\",\n      \"description\": \"Find UI components from screenshots, routes, or names — for designers navigating codebases\",\n      \"version\": \"1.0.0\",\n      \"category\": \"design\",\n      \"tags\": [\"design\", \"components\", \"screenshots\", \"navigation\"]\n    }\n  ]\n}\n",
+        "README.md": "# codekit\n\nClaude Code plugins for getting things done — task management, session continuity, universal dev commands, and component finding.\n\nBy [Noam Almosnino](https://noamalmos.com)\n\n## Quick Start\n\nIn Claude Code, run:\n\n```bash\n# Add the marketplace\n/plugin marketplace add madebynoam/codekit\n\n# Install what you need\n/plugin install do@codekit\n/plugin install sesh@codekit\n/plugin install dev-workflow@codekit\n/plugin install find-component@codekit\n```\n\n## Plugins\n\n### do — Task Management\n\nA task stack with prioritization coaching. Add tasks, check them off, and get help deciding what to work on next.\n\n| Command | What it does |\n|---------|-------------|\n| `/do:add fix the header` | Add a task (use `--local` for project-level) |\n| `/do:add task 1 \\| task 2` | Add multiple tasks at once |\n| `/do:list` | Show all pending tasks |\n| `/do:done 3` | Mark task #3 complete |\n| `/do:done fix header` | Mark by text match |\n| `/do:coach` | Quick prioritization check-in |\n| `/do:coach --deep` | Thorough review with goal scoring |\n| `/do:learned git rebase -i #git` | Log a learning to Day One |\n| `/do:review week` | Review recent learnings |\n| `/do:decompose the problem` | Break down a complex problem |\n| `/do:refine-prompt my rough prompt` | Improve a prompt using Transformer principles |\n\nThe coach reads your `~/.claude/goals.md` and tracks decisions in `~/.claude/coach-history.md` to spot patterns over time.\n\n### sesh — Session Continuity\n\nSave sessions, pick up where you left off, and reflect on what you learned.\n\n| Command | What it does |\n|---------|-------------|\n| `/sesh:save my-feature` | Save transcript + summary to `~/Claude Sessions/` |\n| `/sesh:resume` | Read project context and show where you left off |\n| `/sesh:reflect` | Guided reflection → Day One journal entry |\n| `/sesh:close` | Save state, update trackers, show next steps |\n| `/sesh:suggest` | Analyze session for reusable command ideas |\n\nSessions are saved to `~/Claude Sessions/{date}-{name}/` with both a human-readable summary and the raw transcript.\n\n### dev-workflow — Universal Dev Commands\n\nAuto-detecting commands that work in any repository. No configuration needed — they figure out your project type and do the right thing.\n\n| Command | What it does |\n|---------|-------------|\n| `/dev:start` | Start dev server (detects Next.js, Vite, Rails, Django, etc.) |\n| `/dev:stop` | Stop running dev server |\n| `/dev:build` | Build project (`--clean`, `--production`) |\n| `/dev:lint` | Run linters (`--fix` for auto-fix) |\n| `/dev:test` | Run tests (`--watch`, `--coverage`) |\n| `/dev:commit` | Smart commit — groups changes logically, writes clear messages |\n| `/dev:branch \"fix: slider bug\"` | Create properly named branch from trunk |\n| `/dev:rebase` | Safely rebase with trunk (handles stash, conflicts, push) |\n| `/dev:pr` | Create draft PR (problem-first, no AI attribution) |\n| `/dev:pr-respond #123` | Draft response to PR review comments |\n| `/dev:worktrees` | List git worktrees and branch status |\n| `/dev:bugfix-check` | Pre-commit checklist for bug fixes |\n\n**Supported project types**: Node.js, Python, Ruby, Go, Rust, PHP, Java, and anything with a `Makefile` or `docker-compose.yml`.\n\n### find-component — Component Detective\n\nFind where UI components live in a codebase from screenshots, routes, or names.\n\n| Command | What it does |\n|---------|-------------|\n| `/find ~/Desktop/screenshot.png` | Find code from a screenshot |\n| `/find settings/profile` | Find components for a route |\n| `/find UserCard` | Find component definition and usage |\n\nWorks with React, Vue, Angular, and other component-based frameworks. Returns the main component file, styles, types, tests, hooks, sub-components, and Storybook stories.\n\n## Installation\n\n### Via Plugin Marketplace (Recommended)\n\n```bash\n/plugin marketplace add madebynoam/codekit\n```\n\nThen install individual plugins — you don't have to install everything:\n\n```bash\n/plugin install dev-workflow@codekit    # Just the dev commands\n/plugin install do@codekit        # Just task management\n```\n\n### Manual\n\n```bash\ngit clone https://github.com/madebynoam/codekit.git\ncp -r codekit/plugins/dev-workflow/commands/* ~/.claude/commands/\ncp -r codekit/plugins/do/skills/* ~/.claude/skills/\ncp -r codekit/plugins/do/commands/* ~/.claude/commands/\n# etc.\n```\n\n## Optional Dependencies\n\n- **Day One** — `do:learned`, `do:review`, and `sesh:reflect` write to a Day One journal via MCP. These commands still work without Day One — they'll just skip the journaling part.\n- **GitHub CLI** (`gh`) — `dev:pr` and `dev:pr-respond` use `gh` to create PRs and fetch comments.\n\n## Philosophy\n\nThese started as personal tools built from real daily work — navigating large codebases, keeping track of tasks across sessions, and avoiding the \"where was I?\" problem every morning.\n\nThree principles:\n\n1. **Auto-detect everything** — Commands figure out your project type. No config files.\n2. **Session continuity** — Work should survive closing the terminal.\n3. **Coach, don't just track** — The task system doesn't just list tasks, it helps you pick the right one.\n\n## Also See\n\n- [dcode](https://github.com/madebynoam/dcode) — Design-focused Claude Code skills (UX copy improvement, pattern mining, session reflection for designers)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "do",
+          "source": "./plugins/do",
+          "description": "Task management with prioritization coaching — add, list, complete, and coach your way through work",
+          "version": "1.0.0",
+          "category": "productivity",
+          "tags": [
+            "tasks",
+            "productivity",
+            "prioritization",
+            "coaching"
+          ],
+          "categories": [
+            "coaching",
+            "prioritization",
+            "productivity",
+            "tasks"
+          ],
+          "install_commands": [
+            "/plugin marketplace add madebynoam/codekit",
+            "/plugin install do@codekit"
+          ]
+        },
+        {
+          "name": "sesh",
+          "source": "./plugins/sesh",
+          "description": "Session continuity — save transcripts, resume where you left off, reflect on learnings, and close cleanly",
+          "version": "1.0.0",
+          "category": "productivity",
+          "tags": [
+            "session",
+            "continuity",
+            "reflection",
+            "journaling"
+          ],
+          "categories": [
+            "continuity",
+            "journaling",
+            "productivity",
+            "reflection",
+            "session"
+          ],
+          "install_commands": [
+            "/plugin marketplace add madebynoam/codekit",
+            "/plugin install sesh@codekit"
+          ]
+        },
+        {
+          "name": "dev-workflow",
+          "source": "./plugins/dev-workflow",
+          "description": "Universal dev commands — auto-detecting start, build, lint, test, commit, branch, rebase, and PR creation",
+          "version": "1.0.0",
+          "category": "development",
+          "tags": [
+            "dev",
+            "git",
+            "build",
+            "test",
+            "lint",
+            "ci"
+          ],
+          "categories": [
+            "build",
+            "ci",
+            "dev",
+            "development",
+            "git",
+            "lint",
+            "test"
+          ],
+          "install_commands": [
+            "/plugin marketplace add madebynoam/codekit",
+            "/plugin install dev-workflow@codekit"
+          ]
+        },
+        {
+          "name": "find-component",
+          "source": "./plugins/find-component",
+          "description": "Find UI components from screenshots, routes, or names — for designers navigating codebases",
+          "version": "1.0.0",
+          "category": "design",
+          "tags": [
+            "design",
+            "components",
+            "screenshots",
+            "navigation"
+          ],
+          "categories": [
+            "components",
+            "design",
+            "navigation",
+            "screenshots"
+          ],
+          "install_commands": [
+            "/plugin marketplace add madebynoam/codekit",
+            "/plugin install find-component@codekit"
+          ]
+        }
+      ]
+    }
+  ]
+}

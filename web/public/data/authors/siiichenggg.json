@@ -43,6 +43,49 @@
           ]
         }
       ]
+    },
+    {
+      "name": "cc-workbench-marketplace",
+      "version": null,
+      "description": "Claude Code Workbench - 增强 Claude CLI 的本地 TUI 工作台",
+      "repo_full_name": "Siiichenggg/cc-workbench",
+      "repo_url": "https://github.com/Siiichenggg/cc-workbench",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-22T21:49:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-workbench-marketplace\",\n  \"owner\": {\n    \"name\": \"Siiichenggg\",\n    \"email\": \"noreply@github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code Workbench - 增强 Claude CLI 的本地 TUI 工作台\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-workbench\",\n      \"description\": \"为 Claude Code CLI 提供侧边工作台：用量监控、上下文追踪、Git 快照恢复\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugins/cc-workbench\",\n      \"category\": \"productivity\",\n      \"tags\": [\"tui\", \"workbench\", \"git\", \"monitoring\"]\n    }\n  ]\n}\n",
+        "README.md": "# cc-workbench\n\nClaude Code workbench for local CLI: automatic side TUI with usage, context, history, and Git patch restore.\n\n中文说明见 `README_CN.md`。\n\n## Installation\n\n### Option 1: Via Claude Code Marketplace (Recommended)\n\n```\n/plugin marketplace add https://github.com/Siiichenggg/cc-workbench\n/plugin install cc-workbench\n/install\n```\n\n### Option 2: Manual Build\n\n## Build\n\n```\ncargo build --release\n```\n\nBinary: `target/release/cc-workbench`\n\n## Install (shim)\n\nThis tool wraps the real Claude CLI. The wrapper starts a TUI with the Claude process on the left and the workbench on the right.\n\n### Option A: manual alias\n\n```\nalias claude=\"/path/to/target/release/cc-workbench\"\n```\n\n### Option B: rename + shim\n\n1) Locate your current Claude binary:\n\n```\nwhich claude\n```\n\n2) Rename it to `claude.real` (same directory).\n\n3) Place `cc-workbench` in the same directory and name it `claude`.\n\nThe wrapper will call `claude.real` automatically if it sits next to the wrapper binary. You can also force a command:\n\n```\nexport CCWB_CLAUDE_CMD=claude.real\n```\n\n### Option C: helper script\n\n```\n./scripts/install.sh /path/to/target/release/cc-workbench\n```\n\n## Usage\n\nRun `claude` as usual. The workbench appears automatically on the right.\n\n### Keys\n\n- `Ctrl+Q`: quit\n- `Tab`: focus history panel\n- `Enter` (history): jump to message output\n- `d` (history): diff preview\n- `r` (history): diff preview + restore prompt\n- `y`/`n` (diff): confirm/cancel restore\n- `PageUp`/`PageDown`: scroll output\n- `End`: follow output\n\n## Config\n\nCreate `.cc-workbench/config.json` in your workspace (or `~/.cc-workbench/config.json`) to set limits and providers.\n\nExample:\n\n```\n{\n  \"context_limit\": 200000,\n  \"compress_threshold\": 0.85,\n  \"usage_poll_seconds\": 30,\n  \"providers\": [\n    {\"type\": \"local\", \"name\": \"local-estimate\", \"limit_tokens\": 200000},\n    {\"type\": \"manual\", \"name\": \"claude\", \"limit_tokens\": 1000000, \"used_tokens\": 12345},\n    {\n      \"type\": \"httpjson\",\n      \"name\": \"glm\",\n      \"url\": \"https://api.example.com/usage\",\n      \"method\": \"GET\",\n      \"headers\": {\"Authorization\": \"Bearer YOUR_KEY\"},\n      \"used_pointer\": \"/data/used\",\n      \"limit_pointer\": \"/data/limit\"\n    }\n  ]\n}\n```\n\n## Data\n\nPer workspace data is stored in `.cc-workbench/`:\n\n- `ccwb.sqlite` session metadata\n- `snapshots.git` Git patch history\n- `backup/` restore backups\n\n## Notes\n\n- Usage panel uses local token estimation by default.\n- Snapshot system excludes `.cc-workbench`.\n- `httpjson` providers accept JSON Pointer paths (RFC 6901). Example: `/data/usage/used`.\n- `httpjson` providers use `curl` under the hood (macOS default).\n\n## Provider templates\n\nYou can add Claude/GLM/Minimax usage once you have their official usage endpoints and JSON paths. Example:\n\n```\n{\n  \"type\": \"httpjson\",\n  \"name\": \"claude\",\n  \"url\": \"https://<official-usage-endpoint>\",\n  \"method\": \"GET\",\n  \"headers\": {\"Authorization\": \"Bearer <KEY>\"},\n  \"used_pointer\": \"/usage/used\",\n  \"limit_pointer\": \"/usage/limit\"\n}\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "cc-workbench",
+          "description": "为 Claude Code CLI 提供侧边工作台：用量监控、上下文追踪、Git 快照恢复",
+          "version": "1.0.0",
+          "source": "./plugins/cc-workbench",
+          "category": "productivity",
+          "tags": [
+            "tui",
+            "workbench",
+            "git",
+            "monitoring"
+          ],
+          "categories": [
+            "git",
+            "monitoring",
+            "productivity",
+            "tui",
+            "workbench"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Siiichenggg/cc-workbench",
+            "/plugin install cc-workbench@cc-workbench-marketplace"
+          ]
+        }
+      ]
     }
   ]
 }

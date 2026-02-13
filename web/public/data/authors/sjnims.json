@@ -106,6 +106,60 @@
           ]
         }
       ]
+    },
+    {
+      "name": "rails-expert-marketplace",
+      "version": null,
+      "description": "Rails Expert plugin marketplace. A collection of plugins designed to enhance Claude's capabilities in Ruby on Rails development.",
+      "repo_full_name": "sjnims/rails-expert",
+      "repo_url": "https://github.com/sjnims/rails-expert",
+      "repo_description": "Claude Code plugin marketplace for opinionated Rails 8 development guidance — skills, commands, agents, and hooks based on DHH's philosophy",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-13T20:41:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rails-expert-marketplace\",\n  \"owner\": {\n    \"name\": \"Steve Nims\",\n    \"url\": \"https://github.com/sjnims\"\n  },\n  \"metadata\": {\n    \"description\": \"Rails Expert plugin marketplace. A collection of plugins designed to enhance Claude's capabilities in Ruby on Rails development.\",\n    \"version\": \"0.7.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"rails-expert\",\n      \"description\": \"An opinionated plugin that provides expert advice and guidance on Ruby on Rails development. It can answer questions about best practices, debugging, performance optimization, and more.\",\n      \"version\": \"0.7.0\",\n      \"author\": {\n        \"name\": \"Steve Nims\",\n        \"url\": \"https://github.com/sjnims\"\n      },\n      \"homepage\": \"https://github.com/sjnims/rails-expert\",\n      \"tags\": [\n        \"ruby\",\n        \"rails\",\n        \"rails8\",\n        \"dhh\",\n        \"hotwire\",\n        \"kamal\",\n        \"solid-queue\",\n        \"minitest\"\n      ],\n      \"source\": \"./plugins/rails-expert\"\n    }\n  ]\n}\n",
+        "README.md": "# Rails Expert\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n[![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsjnims%2Frails-expert%2Fmain%2F.claude-plugin%2Fmarketplace.json&query=%24.metadata.version&label=version&color=blue)](CHANGELOG.md)\n[![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet.svg)](https://docs.anthropic.com/en/docs/claude-code)\n\nA [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-code) that provides opinionated Rails 8 development guidance based on DHH's philosophy through skills, commands, and agents. Pure Markdown content -- no Ruby, JavaScript, or build step required.\n\n## Installation\n\n```bash\nclaude plugin add --marketplace https://github.com/sjnims/rails-expert\n```\n\n## Skills\n\n| Skill                     | Description                                                             |\n| ------------------------- | ----------------------------------------------------------------------- |\n| **rails-architecture**    | Majestic monolith, code organization, engines, modular monolith         |\n| **rails-models**          | Fat models, concerns, validations, associations, Active Record patterns |\n| **rails-controllers**     | Skinny controllers, RESTful design, routing, strong parameters          |\n| **rails-testing**         | Minitest, fixtures, test organization, Rails testing philosophy         |\n| **rails-frontend**        | Hotwire (Turbo + Stimulus), import maps, no-build philosophy            |\n| **rails-deployment**      | Kamal, Solid Trifecta (Cache/Cable/Queue), production config            |\n| **rails-background-jobs** | Solid Queue, Active Job, continuations, recurring jobs                  |\n\nSkills activate automatically when you ask Claude about their topics. For example, asking \"where should I put this business logic?\" triggers the architecture skill, while \"how do I set up Turbo Frames?\" triggers the frontend skill.\n\n## Commands\n\n| Command               | Description                                      |\n| --------------------- | ------------------------------------------------ |\n| `/codebase`           | Audit codebase for DHH philosophy violations     |\n| `/routes`             | Audit routes for RESTful compliance              |\n| `/security`           | Audit Rails security best practices              |\n| `/concern`            | Generate or extract a model concern              |\n| `/test`               | Generate MiniTest tests for a Rails file         |\n| `/stimulus`           | Generate Stimulus controller with no-build setup |\n| `/service-to-concern` | Convert service object into a model concern      |\n| `/controller`         | Extract non-RESTful action into new controller   |\n| `/kamal`              | Set up Kamal 2 deployment interactively          |\n| `/solid-trifecta`     | Migrate from Redis to Solid Cache/Queue/Cable    |\n\nCommands are action-oriented -- they audit, generate, refactor, and configure your Rails project. Skills teach _why_; commands _do_.\n\n## Agents\n\n| Agent                 | Description                                                          |\n| --------------------- | -------------------------------------------------------------------- |\n| **rails-new-feature** | Build complete features end-to-end (model, controller, views, tests) |\n| **migration-safety**  | Review migrations for production safety (locking, data loss)         |\n| **performance-scout** | Detect N+1 queries, missing indexes, caching opportunities           |\n| **pr-reviewer**       | Comprehensive pre-PR review across 7 DHH philosophy dimensions       |\n| **model-architect**   | Review model architecture: associations, concerns, validations       |\n| **upgrade-rails**     | Incremental Rails version upgrades with deprecation fixes            |\n\nAgents are autonomous multi-step tasks that can trigger proactively (e.g., migration-safety activates after editing a migration) or on explicit request (e.g., \"check my app for N+1 queries\"). Skills teach _why_; commands _do_; agents _handle complex workflows_.\n\n## Hooks\n\n| Hook                        | Event       | Trigger     | Behavior                                                        |\n| --------------------------- | ----------- | ----------- | --------------------------------------------------------------- |\n| **check-anti-pattern-dirs** | PreToolUse  | Write\\|Edit | Warns when writing to `app/services/`, `app/interactors/`, etc. |\n| **check-system-test-gen**   | PreToolUse  | Bash        | Blocks `rails generate system_test` (dropped in Rails 8.1)      |\n| **check-rspec-patterns**    | PreToolUse  | Write\\|Edit | Detects RSpec patterns and suggests MiniTest equivalents        |\n| **notify-migration-safety** | PostToolUse | Write\\|Edit | Reminds to run migration-safety agent after editing migrations  |\n\nHooks enforce DHH's Rails philosophy at write time, catching anti-patterns before they land in the codebase. They run automatically -- no configuration needed.\n\n## Language Server\n\nThe plugin integrates [ruby-lsp](https://github.com/Shopify/ruby-lsp) for\nreal-time code intelligence. When installed, Claude gains:\n\n- **Instant diagnostics** after each edit (syntax errors, type issues, linter offenses)\n- **Go-to-definition** for methods, classes, constants, associations, callbacks\n- **Find references** across the entire codebase\n- **Hover information** including model schemas, column types, and documentation\n- **Code navigation** via document symbols and workspace symbols\n\n### Prerequisites\n\nInstall the ruby-lsp gem:\n\n```bash\ngem install ruby-lsp\n```\n\nIn Rails projects, ruby-lsp automatically discovers the\n[ruby-lsp-rails](https://github.com/Shopify/ruby-lsp-rails) addon for\nRails-specific features like model schema hover, route code lenses, and\nassociation navigation. No additional configuration needed.\n\n## What's Included\n\nEach skill contains:\n\n- **SKILL.md** -- main content with YAML frontmatter\n- **references/** -- deep-dive guides on specific topics\n- **examples/** -- code samples in `.rb`, `.html.erb`, `.yml`, etc.\n\nEach command is a single `.md` file with YAML frontmatter that references skill content for domain knowledge.\n\nEach agent is a single `.md` file with YAML frontmatter that defines triggering conditions, tool access, loaded skills, and a system prompt guiding the agent's autonomous workflow.\n\nThe guidance is sourced from DHH's public writings and talks on Rails 8 (2025-2026), emphasizing convention over configuration, the majestic monolith, and the no-build frontend stack.\n\n## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting issues,\nsuggesting new content, and submitting pull requests.\n\nThis project follows the [Contributor Covenant 3.0](CODE_OF_CONDUCT.md).\n\n## Changelog\n\nSee [CHANGELOG.md](CHANGELOG.md) for release history and version details.\n\n## License\n\nMIT License -- See [LICENSE](LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "rails-expert",
+          "description": "An opinionated plugin that provides expert advice and guidance on Ruby on Rails development. It can answer questions about best practices, debugging, performance optimization, and more.",
+          "version": "0.7.0",
+          "author": {
+            "name": "Steve Nims",
+            "url": "https://github.com/sjnims"
+          },
+          "homepage": "https://github.com/sjnims/rails-expert",
+          "tags": [
+            "ruby",
+            "rails",
+            "rails8",
+            "dhh",
+            "hotwire",
+            "kamal",
+            "solid-queue",
+            "minitest"
+          ],
+          "source": "./plugins/rails-expert",
+          "categories": [
+            "dhh",
+            "hotwire",
+            "kamal",
+            "minitest",
+            "rails",
+            "rails8",
+            "ruby",
+            "solid-queue"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sjnims/rails-expert",
+            "/plugin install rails-expert@rails-expert-marketplace"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,44 @@
+{
+  "author": {
+    "id": "tbdng",
+    "display_name": "tbdng",
+    "avatar_url": "https://avatars.githubusercontent.com/u/47891969?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "compound-teams-marketplace",
+      "version": null,
+      "description": "Agent Teams + Ralph Loops + Compound Learning — a coding factory workflow for Claude Code",
+      "repo_full_name": "tbdng/compound-teams-plugin",
+      "repo_url": "https://github.com/tbdng/compound-teams-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-07T20:50:30Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"compound-teams-marketplace\",\n  \"owner\": {\n    \"name\": \"tbdng\",\n    \"url\": \"https://github.com/tbdng\"\n  },\n  \"metadata\": {\n    \"description\": \"Agent Teams + Ralph Loops + Compound Learning — a coding factory workflow for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"compound-teams\",\n      \"source\": \"./plugins/compound-teams\",\n      \"description\": \"Compound engineering workflow using Agent Teams with embedded Ralph Loops. Commands: /ct:setup (safe install into existing projects), /ct:plan (research + plan), /ct:build (Agent Team execution with Ralph loops), /ct:review (multi-lens code review team), /ct:quick (fast builds), /ct:compound (extract learnings). Skills: ralph-loop (persistent retry-until-green pattern), compound-learning (CLAUDE.md knowledge management).\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"tbdng\",\n        \"url\": \"https://github.com/tbdng\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Compound Teams Marketplace\n\nA Claude Code plugin marketplace distributing the **compound-teams** plugin.\n\n## Install\n\n```\n/plugin marketplace add https://github.com/tbdng/compound-teams-plugin\n/plugin install compound-teams\n```\n\nThen in any project:\n```\n/ct:setup\n```\n\n## What's Inside\n\nSee [plugins/compound-teams/README.md](plugins/compound-teams/README.md) for full documentation.\n\n## License\n\nMIT\n",
+        "plugins/compound-teams/README.md": "# Compound Teams\n\nAgent Teams + Ralph Loops + Compound Learning — a coding factory workflow for Claude Code.\n\n## What It Does\n\nCombines three ideas into one workflow:\n\n1. **Agent Teams** — spawn coordinated teammates that work in parallel, communicate peer-to-peer, and claim tasks from a shared list\n2. **Ralph Loops** — every teammate iterates (implement → test → fix → retest) until all checks pass, never shipping broken code\n3. **Compound Learning** — after each cycle, learnings get captured in CLAUDE.md so future sessions start smarter\n\n## Install\n\n```\n/plugin marketplace add https://github.com/tbdng/compound-teams-plugin\n/plugin install compound-teams\n```\n\nThen in any project:\n```\n/ct:setup\n```\n\nThis safely installs the workflow into your existing project without overwriting anything.\n\n## The Loop\n\n```\n/ct:plan  →  /ct:build  →  /ct:review  →  /ct:compound  →  repeat\n```\n\n| Command | What it does |\n|---------|-------------|\n| `/ct:setup` | Safe install into existing projects. Detects your stack, enables Agent Teams, augments CLAUDE.md |\n| `/ct:plan` | Research codebase + web, create task-by-task implementation plan |\n| `/ct:build` | Spawn Agent Team. Each teammate runs Ralph Loops until tests pass |\n| `/ct:review` | 3 specialized reviewers (security, architecture, correctness) |\n| `/ct:quick` | Fast build for small tasks — 1 builder + 1 verifier |\n| `/ct:compound` | Extract learnings into CLAUDE.md for next cycle |\n\n## Skills\n\n| Skill | Purpose |\n|-------|---------|\n| `ralph-loop` | Reference for the retry-until-green pattern. Max retries, escalation rules, anti-patterns |\n| `compound-learning` | How to write good CLAUDE.md entries. Format, sections, maintenance |\n\n## How /ct:build Works\n\n1. Reads your plan from `.claude/plans/`\n2. Spawns an Agent Team (builders + QA)\n3. Creates tasks in the shared task list with dependencies\n4. Each builder follows the Ralph Loop:\n   - Pick task → implement → test → fail? fix and retry → pass? lint → typecheck → commit → next task\n5. QA runs full test suite on completed tasks, creates fix tasks if needed\n6. Team lead monitors, unblocks stuck teammates, shuts down runaway loops\n7. Final test pass → clean up → report\n\n## Cost Awareness\n\nAgent Teams use more tokens than single-agent work. Each teammate has its own context window. The Ralph Loop adds iterations. Built-in safeguards prevent runaway costs:\n\n- Max 5 retries per unique error\n- Stuck teammates escalate after 3 attempts\n- Team lead shuts down teammates looping without progress\n\n## Tips\n\n- **Always start with `/ct:plan`** — good plans = fast builds\n- **Run `/ct:compound` after every meaningful session** — this is what makes it compound\n- **Use tmux split-pane mode** to watch all teammates simultaneously\n- **Use delegate mode** (Shift+Tab) during builds — lead coordinates, doesn't code\n- **Use `/ct:quick` for small stuff** — don't over-engineer a bug fix\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "compound-teams",
+          "source": "./plugins/compound-teams",
+          "description": "Compound engineering workflow using Agent Teams with embedded Ralph Loops. Commands: /ct:setup (safe install into existing projects), /ct:plan (research + plan), /ct:build (Agent Team execution with Ralph loops), /ct:review (multi-lens code review team), /ct:quick (fast builds), /ct:compound (extract learnings). Skills: ralph-loop (persistent retry-until-green pattern), compound-learning (CLAUDE.md knowledge management).",
+          "version": "1.0.0",
+          "author": {
+            "name": "tbdng",
+            "url": "https://github.com/tbdng"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tbdng/compound-teams-plugin",
+            "/plugin install compound-teams@compound-teams-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

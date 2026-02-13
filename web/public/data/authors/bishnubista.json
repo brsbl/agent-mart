@@ -6,6 +6,63 @@
   },
   "marketplaces": [
     {
+      "name": "plangate",
+      "version": null,
+      "description": "PLAN.md execution pipeline with implementation, objective quality gates, and independent review for Claude Code.",
+      "repo_full_name": "bishnubista/plangate",
+      "repo_url": "https://github.com/bishnubista/plangate",
+      "repo_description": "PLAN.md-driven development with quality gates — a Claude Code plugin",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-08T23:22:24Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"plangate\",\n  \"metadata\": {\n    \"description\": \"PLAN.md execution pipeline with implementation, objective quality gates, and independent review for Claude Code.\"\n  },\n  \"owner\": {\n    \"name\": \"Bishnu Bista\",\n    \"email\": \"collab@bishnu.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"plangate\",\n      \"description\": \"PLAN.md execution plugin for Claude Code that runs every task through an implementation subagent, objective quality gate, and independent reviewer before completion. It auto-detects stack commands across Node, Python, Kotlin, Go, Rust, and Swift, supports custom command overrides, and manages phase workflows for branch setup, checkpointed orchestration, troubleshooting investigations, and pre-PR validation.\",\n      \"version\": \"1.1.2\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Bishnu Bista\",\n        \"email\": \"collab@bishnu.dev\"\n      },\n      \"homepage\": \"https://github.com/bishnubista/plangate\",\n      \"repository\": \"https://github.com/bishnubista/plangate\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"workflow\", \"orchestration\", \"quality-gates\", \"code-review\", \"plan-driven\", \"testing\", \"ci-cd\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"plangate\",\n  \"description\": \"PLAN.md execution plugin for Claude Code that runs every task through an implementation subagent, objective quality gate, and independent reviewer before completion. It auto-detects stack commands across Node, Python, Kotlin, Go, Rust, and Swift, supports custom command overrides, and manages phase workflows for branch setup, checkpointed orchestration, troubleshooting investigations, and pre-PR validation.\",\n  \"version\": \"1.1.2\",\n  \"author\": {\n    \"name\": \"Bishnu Bista\",\n    \"email\": \"collab@bishnu.dev\"\n  },\n  \"license\": \"MIT\",\n  \"repository\": \"https://github.com/bishnubista/plangate\",\n  \"homepage\": \"https://github.com/bishnubista/plangate#readme\",\n  \"keywords\": [\n    \"workflow\",\n    \"orchestration\",\n    \"quality-gates\",\n    \"code-review\",\n    \"plan-driven\",\n    \"testing\",\n    \"ci-cd\"\n  ]\n}\n",
+        "README.md": "# plangate\n\nPLAN.md-driven development with quality gates for [Claude Code](https://claude.com/claude-code).\n\nEach task flows through: **implement** (subagent) > **build gate** (pass/fail) > **review** (independent subagent). Fresh context per stage prevents the failure mode where AI agents mark their own homework.\n\n## Installation\n\n```bash\n/plugin marketplace add bishnubista/plangate\n/plugin install plangate@plangate\n```\n\nOr run `/plugin` and install from the **Discover** tab.\n\n## Prerequisites\n\n- Claude Code installed (`claude --version`)\n- Git repository initialized in your project\n- GitHub CLI (`gh`) authenticated if you use `/plangate:phase finish` to create PRs\n- Stack toolchain available for your project (or provide custom commands via `.plangate.json`)\n\n## Marketplace Submission\n\nUse `MARKETPLACE_SUBMISSION.md` as a copy-paste pack for Claude Plugin Directory submission fields.\n\nIncluded assets:\n- Listing copy and 3 example prompts: `MARKETPLACE_SUBMISSION.md`\n- 1200x630 listing image: `assets/plangate-marketplace-card.svg`\n\n## Commands\n\nAll commands are provided by plugin skills (no legacy `commands/*.md` wrappers).\n\n| Command | What it does |\n|---------|-------------|\n| `/plangate:orchestrate [N]` | Execute phase N tasks through the full pipeline |\n| `/plangate:gate` | Typecheck + lint + build + tests validation |\n| `/plangate:status` | Show current phase, task progress, orchestration state |\n| `/plangate:phase start N` / `finish` | Branch creation, PLAN.md updates, PR creation |\n| `/plangate:investigate {name}` | Structured investigation doc for complex bugs |\n\n## How It Works\n\n### The Pipeline\n\nFor each task in a phase, the orchestrator runs:\n\n```text\n1. IMPLEMENTER (Sonnet subagent)\n   Implement > write tests > self-validate > commit\n\n2. BUILD GATE (Bash, no AI)\n   typecheck > lint > build — objective pass/fail\n\n3. REVIEWER (Sonnet subagent, independent)\n   Spec compliance + code quality + distrust of implementer\n\n4. UPDATE PLAN.MD\n   Check off completed task\n```\n\nIf any stage fails, a fix subagent is dispatched and the gate re-runs. Max 2 retries per stage.\n\n### Why Independent Review Matters\n\nThe reviewer receives the original task spec and the git diff — never the implementer's self-assessment. It's explicitly told: **\"Do NOT trust the implementer.\"** This catches skipped features, fake tests, missed edge cases, and bugs from blindly following patterns.\n\n### Build Gate\n\n`/plangate:gate` runs validation and reports results:\n\n```text\n| Check      | Status | Details              |\n|------------|--------|----------------------|\n| Typecheck  | PASS   | clean                |\n| Lint       | PASS   | clean                |\n| Build      | PASS   | clean                |\n| Tests      | PASS   | 24 passing, 0 failing|\n\nVerdict: GATE PASSED\n```\n\nThe gate stops on first failure — build won't run if typecheck fails. Non-negotiable before every PR.\n\n### Phase Lifecycle\n\n```bash\n/plangate:phase start 2 core-api    # Create branch feat/phase-2-core-api\n/plangate:orchestrate 2              # Run all Phase 2 tasks through pipeline\n/plangate:phase finish               # Gate + push + create PR\n```\n\n### Investigation Docs\n\nFor bugs that need more than a quick fix:\n\n```bash\n/plangate:investigate auth-token-expiry\n# Creates docs/investigations/2026-02-07-auth-token-expiry.md\n```\n\nTracks hypotheses, trials, root cause, and lessons learned. Follows the 3-fix rule: if 3 fixes fail, stop and question the architecture.\n\n## Stack Detection\n\nThe session hook auto-detects your project stack. No manual configuration needed.\n\n| Marker | Stack | Package Manager |\n|--------|-------|-----------------|\n| `bun.lock` | node/nextjs | bun |\n| `pnpm-lock.yaml` | node/nextjs | pnpm |\n| `yarn.lock` | node/nextjs | yarn |\n| `package-lock.json` or `package.json` (fallback) | node/nextjs | npm |\n| `pyproject.toml` | python | uv |\n| `build.gradle.kts` | kotlin | gradle |\n| `go.mod` | go | go |\n| `Cargo.toml` | rust | cargo |\n| `Package.swift` | swift | spm |\n\nOverride with `.plangate.json`:\n\n```json\n{\n  \"commands\": {\n    \"typecheck\": \"your-custom-typecheck\",\n    \"lint\": \"your-custom-lint\",\n    \"build\": \"your-custom-build\",\n    \"test\": \"your-custom-test\"\n  }\n}\n```\n\n## When to Use\n\n- Multi-task feature phases with a PLAN.md\n- Projects where you want independent review of AI-generated code\n- Teams that want a repeatable quality gate before every PR\n- Any stack — Node.js, Python, Kotlin, Go, Rust, Swift\n\n## Troubleshooting\n\n### \"Unknown skill: install-plugin\"\n\nThere is no `/install-plugin` command. Use `/plugin install plangate@plangate` after adding the marketplace.\n\n### \"Orchestrate does nothing\"\n\nThe skill reads `PLAN.md` for tasks. Create one with `- [ ]` checkboxes.\n\n### \"Stack detected as 'unknown'\"\n\nThe hook needs lockfiles or `package.json`. Run `bun init`, `npm init`, etc., or create `.plangate.json` with custom commands.\n\n### \"Reviewer keeps finding issues in a loop\"\n\nRetry limit is 2 cycles. After that, the orchestrator stops and reports. The issues may indicate a deeper design problem.\n\n## Privacy and Data Handling\n\n- plangate is a local workflow plugin. It does not run its own hosted API.\n- The plugin does not collect or transmit personal data to a plangate backend.\n- Optional tools you invoke (`git`, `gh`) operate under your own local credentials and account settings.\n\n## Support\n\n- Issues: `https://github.com/bishnubista/plangate/issues`\n- Contact: `collab@bishnu.dev`\n- Troubleshooting guide: this README (see the Troubleshooting section above)\n\n## Plugin Structure\n\n```text\nplangate/\n  .claude-plugin/\n    plugin.json              # Plugin metadata\n    marketplace.json         # Marketplace catalog\n  agents/\n    implementer.md           # Implementation agent (Sonnet)\n    reviewer.md              # Independent review agent (Sonnet)\n  skills/\n    orchestrate/SKILL.md     # /plangate:orchestrate\n    gate/SKILL.md            # /plangate:gate\n    status/SKILL.md          # /plangate:status\n    phase/SKILL.md           # /plangate:phase\n    investigate/SKILL.md     # /plangate:investigate\n  hooks/\n    hooks.json               # Hook registration\n    session-start.sh         # Stack detection (9 languages)\n  assets/\n    plangate-marketplace-card.svg  # 1200x630 directory image\n  MARKETPLACE_SUBMISSION.md  # Submission copy + prompt examples\n  try-plangate.sh            # Plugin verification\n```\n\n## Verification\n\n```bash\n./try-plangate.sh              # Structure + hook output validation\n./try-plangate.sh --scaffold   # Also create a sample project to test with\nclaude plugin validate .       # Official marketplace manifest check\n```\n\n## Author\n\nBishnu Bista (collab@bishnu.dev)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "plangate",
+          "description": "PLAN.md execution plugin for Claude Code that runs every task through an implementation subagent, objective quality gate, and independent reviewer before completion. It auto-detects stack commands across Node, Python, Kotlin, Go, Rust, and Swift, supports custom command overrides, and manages phase workflows for branch setup, checkpointed orchestration, troubleshooting investigations, and pre-PR validation.",
+          "version": "1.1.2",
+          "source": "./",
+          "author": {
+            "name": "Bishnu Bista",
+            "email": "collab@bishnu.dev"
+          },
+          "homepage": "https://github.com/bishnubista/plangate",
+          "repository": "https://github.com/bishnubista/plangate",
+          "license": "MIT",
+          "keywords": [
+            "workflow",
+            "orchestration",
+            "quality-gates",
+            "code-review",
+            "plan-driven",
+            "testing",
+            "ci-cd"
+          ],
+          "category": "productivity",
+          "categories": [
+            "ci-cd",
+            "code-review",
+            "orchestration",
+            "plan-driven",
+            "productivity",
+            "quality-gates",
+            "testing",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bishnubista/plangate",
+            "/plugin install plangate@plangate"
+          ]
+        }
+      ]
+    },
+    {
       "name": "stacklane",
       "version": null,
       "description": "Script-backed operations workflows with adapter profiles for Bun projects (default: Next.js + Supabase + Railway; optional TanStack + Fly.io).",

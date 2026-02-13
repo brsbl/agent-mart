@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "LeanEntropy",
+    "display_name": "Civax ",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9026003?u=0b10b2c049aa9eec5d2963c2a80bf519a5a8a8d6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "civax-cc-agents",
+      "version": "1.0.0",
+      "description": "Claude Code agents and plugins for DevOps, Railway deployment, and workflow automation",
+      "repo_full_name": "LeanEntropy/civax-cc-agents",
+      "repo_url": "https://github.com/LeanEntropy/civax-cc-agents",
+      "repo_description": "Claude Code agents and plugins for DevOps, Railway deployment, and workflow automation",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-30T23:23:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"civax-cc-agents\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude Code agents and plugins for DevOps, Railway deployment, and workflow automation\",\n  \"owner\": {\n    \"name\": \"Civax\",\n    \"email\": \"contact@civax.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"railway-deployer\",\n      \"description\": \"Complete Railway DevOps toolkit for multi-environment deployments with agents for setup, operations, environment sync, and git workflows\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Civax\"\n      },\n      \"source\": \"./plugins/railway-deployer\",\n      \"category\": \"devops\"\n    }\n  ]\n}\n",
+        "README.md": "# Civax Claude Code Agents\n\nA collection of Claude Code plugins for DevOps, deployment automation, and workflow management.\n\n## Available Plugins\n\n### railway-deployer\nComplete Railway DevOps toolkit for multi-environment deployments.\n\n**Agents:**\n- `railway-devops` - Full Railway setup and maintenance\n- `railway-ops` - Day-to-day Railway operations\n- `env-sync` - Environment variable synchronization\n- `git-workflow` - Git branch and deployment workflows\n\n**Commands:**\n- `/deploy` - Deploy to Railway\n- `/promote` - Promote staging to production\n- `/rollback` - Rollback deployment\n- `/setup` - Initial Railway setup\n- `/status` - Check deployment status\n- `/sync-env` - Sync environment variables\n\n**Skills:**\n- `railway-deployment` - Railway deployment patterns\n- `git-workflow` - Git workflow automation\n\n## Installation\n\n```bash\n# Add this marketplace\n/plugin marketplace add LeanEntropy/civax-cc-agents\n\n# Install a plugin\n/plugin install railway-deployer@civax-cc-agents\n```\n\n## License\n\nMIT\n",
+        "plugins/railway-deployer/README.md": "# Railway Deployer Plugin for Claude Code\n\nA comprehensive deployment management plugin for Railway + Git workflows with staging/production environments.\n\n## Features\n\n- **Multi-environment deployment**: Staging (develop) and Production (main)\n- **Git workflow automation**: Branch management, PRs, releases\n- **Environment variable sync**: Local ↔ Railway synchronization\n- **Deployment monitoring**: Status checks, logs, health monitoring\n- **Rollback support**: Safe rollback procedures\n\n## Installation\n\n### Option 1: Local Plugin (Recommended for Development)\n```bash\n# The plugin is located at:\n~/.claude/plugins/railway-deployer/\n\n# Claude Code will automatically detect plugins in ~/.claude/plugins/\n```\n\n### Option 2: Project-Specific\nCopy the plugin to your project:\n```bash\ncp -r ~/.claude/plugins/railway-deployer ./.claude/plugins/\n```\n\n## Prerequisites\n\n1. **Railway CLI** installed and authenticated:\n   ```bash\n   npm install -g @railway/cli\n   railway login\n   ```\n\n2. **Git** with GitHub remote configured\n\n3. **Branch structure**:\n   - `main` branch for production\n   - `develop` branch for staging\n\n## Agents\n\n| Agent | Description |\n|-------|-------------|\n| `railway-devops` | **Complete setup specialist** - Use for initial Railway setup, creating Dockerfiles, configuring environments |\n| `railway-ops` | Day-to-day deployment orchestrator |\n| `git-workflow` | Git branch and PR management |\n| `env-sync` | Environment variable synchronization |\n\n## Slash Commands\n\n| Command | Description |\n|---------|-------------|\n| `/railway-deployer:setup` | Initialize Railway structure for a project |\n| `/railway-deployer:status` | Check deployment status |\n| `/railway-deployer:deploy` | Deploy to staging or production |\n| `/railway-deployer:promote` | Promote staging to production |\n| `/railway-deployer:sync-env` | Sync environment variables |\n| `/railway-deployer:rollback` | Rollback a deployment |\n\n## Quick Start\n\n### 1. Set up a new project\n```\n/railway-deployer:setup\n```\n\n### 2. Check current status\n```\n/railway-deployer:status\n```\n\n### 3. Deploy to staging\n```\n/railway-deployer:deploy staging\n```\n\n### 4. Promote to production\n```\n/railway-deployer:promote --tag v1.0.0\n```\n\n## Environment Architecture\n\n```\n┌─────────────────────────────────────────┐\n│           PRODUCTION                     │\n│    Railway ← main branch                 │\n└─────────────────────────────────────────┘\n                    ↑\n              merge/promote\n                    │\n┌─────────────────────────────────────────┐\n│            STAGING                       │\n│    Railway ← develop branch              │\n└─────────────────────────────────────────┘\n                    ↑\n             push changes\n                    │\n┌─────────────────────────────────────────┐\n│             LOCAL                        │\n│    .env files for development            │\n└─────────────────────────────────────────┘\n```\n\n## Usage Examples\n\n### Deploy workflow\n```\n# 1. Make changes on develop\ngit checkout develop\n# ... make changes ...\ngit add . && git commit -m \"feat: new feature\"\ngit push origin develop\n# Railway auto-deploys to staging\n\n# 2. Verify staging works\n/railway-deployer:status staging\n\n# 3. Promote to production\n/railway-deployer:promote --tag v1.1.0\n```\n\n### Environment variable management\n```\n# Compare local vs staging\n/railway-deployer:sync-env compare staging\n\n# Pull staging vars for reference\n/railway-deployer:sync-env pull staging\n\n# Push local vars to staging (careful!)\n/railway-deployer:sync-env push staging\n```\n\n### Emergency rollback\n```\n/railway-deployer:rollback production\n```\n\n## Skills (Knowledge Base)\n\nThe plugin includes knowledge bases that Claude uses automatically:\n\n- **railway-deployment**: Railway platform patterns and best practices\n- **git-workflow**: Git branching strategies and conventions\n\n## File Structure\n\n```\nrailway-deployer/\n├── .claude-plugin/\n│   └── plugin.json           # Plugin manifest\n├── agents/\n│   ├── railway-devops.md     # Complete setup specialist\n│   ├── railway-ops.md        # Day-to-day orchestrator\n│   ├── git-workflow.md       # Git specialist\n│   └── env-sync.md           # Env var management\n├── skills/\n│   ├── railway-deployment/\n│   │   └── SKILL.md\n│   └── git-workflow/\n│       └── SKILL.md\n├── commands/\n│   ├── setup.md\n│   ├── status.md\n│   ├── deploy.md\n│   ├── promote.md\n│   ├── sync-env.md\n│   └── rollback.md\n└── README.md\n```\n\n## Best Practices\n\n1. **Always test in staging first** before promoting to production\n2. **Use semantic versioning** for releases (v1.2.3)\n3. **Keep secrets out of git** - use Railway environment variables\n4. **Monitor deployments** - check logs after every deploy\n5. **Document breaking changes** in release notes\n\n## Troubleshooting\n\n### Railway CLI not found\n```bash\nnpm install -g @railway/cli\nrailway login\n```\n\n### Branch not tracking remote\n```bash\ngit branch --set-upstream-to=origin/develop develop\ngit branch --set-upstream-to=origin/main main\n```\n\n### Deployment stuck\n1. Check Railway dashboard for build logs\n2. Verify Dockerfile/build configuration\n3. Check resource limits\n\n## Contributing\n\nFeel free to extend this plugin with additional agents, commands, or skills for your specific workflows.\n"
+      },
+      "plugins": [
+        {
+          "name": "railway-deployer",
+          "description": "Complete Railway DevOps toolkit for multi-environment deployments with agents for setup, operations, environment sync, and git workflows",
+          "version": "1.0.0",
+          "author": {
+            "name": "Civax"
+          },
+          "source": "./plugins/railway-deployer",
+          "category": "devops",
+          "categories": [
+            "devops"
+          ],
+          "install_commands": [
+            "/plugin marketplace add LeanEntropy/civax-cc-agents",
+            "/plugin install railway-deployer@civax-cc-agents"
+          ]
+        }
+      ]
+    }
+  ]
+}

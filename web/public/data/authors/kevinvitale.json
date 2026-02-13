@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "KevinVitale",
+    "display_name": "Kevin Vitale",
+    "avatar_url": "https://avatars.githubusercontent.com/u/276137?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "context-commit-marketplace",
+      "version": null,
+      "description": "Git-based context management plugin for Claude Code",
+      "repo_full_name": "KevinVitale/context-commit",
+      "repo_url": "https://github.com/KevinVitale/context-commit",
+      "repo_description": "Persist your AI agent's session state entirely in git comments 📝🤖",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-13T04:06:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"context-commit-marketplace\",\n  \"description\": \"Git-based context management plugin for Claude Code\",\n  \"owner\": {\n    \"name\": \"Kevin Vitale\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"context-commit\",\n      \"source\": \"./\",\n      \"description\": \"Git-based context management workflow using commit messages for project documentation and progress tracking\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Kevin Vitale\"\n      },\n      \"repository\": \"https://github.com/KevinVitale/context-commit\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"git\", \"context\", \"documentation\", \"workflow\", \"commit\", \"project-management\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"context-commit\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Git-based context management workflow using commit messages for project documentation and progress tracking\",\n  \"author\": {\n    \"name\": \"Kevin Vitale\"\n  }\n}\n",
+        "README.md": "# Context Commit\n\n**Git-native project documentation that Claude reads automatically.**\n\nStore requirements, workflows, and progress in git commits. No external docs. No sync issues. Claude loads everything on session start and resumes exactly where you left off.\n\n## Why This Matters\n\n- **Zero Setup Per Session**: Claude reads your project context automatically\n- **Auto Session Resume**: Every commit captures your work state - new sessions know exactly what you were doing\n- **Version Controlled**: Documentation evolves with your code\n- **Team Shareable**: Context lives in the repository\n\n## Quick Start\n\n```bash\n# 1. Install from marketplace\n/plugin marketplace add KevinVitale/context-commit\n/plugin install context-commit@context-commit-marketplace\n\n# 2. Initialize in your project\n# Claude: \"Initialize context workflow\"\n\n# 3. Install hooks for automatic session capture\n~/.claude/plugins/marketplaces/context-commit-marketplace/hooks/install-hooks.sh\n\n# Done. Work normally - context is captured automatically.\n```\n\n## How It Works\n\n**Three components:**\n\n1. **CLAUDE.md** - Index file that Claude reads automatically\n2. **[CONTEXT] commits** - Documentation stored in git commits with `[CONTEXT]` prefix\n3. **context-progress branch** - Mutable progress tracking with auto-captured session state\n\n**On every commit, the pre-commit hook automatically:**\n- Captures what you're working on (commit message, files modified, recent work)\n- Updates `context-progress` with a \"Current Session\" section\n- Runs tests and keeps branches synchronized\n\n**Result:** New Claude sessions instantly resume your work. No manual notes needed.\n\n## Skills\n\nUse these slash commands to manage your project context:\n\n- `/context-init` - Set up the workflow in a repository\n- `/context-add` - Add documentation (requirements, architecture, workflows)\n- `/context-progress` - Manually update progress (hooks handle this automatically)\n- `/context-read` - View all project context and current session\n\n## Example CLAUDE.md\n\n```markdown\nREAD THESE COMMIT MESSAGES FOR CONTEXT:\n 1. [e7b0129] Project requirements and technical specifications\n 2. [ae291fc] Development workflow and TDD practices\n 3. [context-progress] Current project progress (branch reference)\n\nSESSION INITIALIZATION:\n- Read the context-progress commit message using: `git log context-progress -1 --format=%B`\n- Acknowledge that you have read and understood the project context\n- Wait for the user's specific task request\n```\n\nClaude reads this automatically and loads all referenced commits.\n\n## Automatic Session Capture\n\n**Default behavior** (no action required):\n```bash\ngit commit -m \"Add JWT authentication\"\n# Hook automatically captures session state in context-progress\n```\n\n**Detailed notes** (for end-of-day commits):\n```bash\nCONTEXT_SESSION_PROMPT=1 git commit -m \"Complete auth system\"\n# Prompts for accomplishments, next steps, blockers\n```\n\n**What gets captured:**\n- Latest commit message and modified files\n- Recent work (last 3 commits)\n- Timestamp\n\n**Example captured session:**\n```markdown\n## Current Session (2026-01-12 17:45)\n**Latest Commit:** Add JWT token generation\n**Files Modified:**\n  - src/auth.ts\n  - src/middleware/auth.ts\n\n**Recent Work:**\n- Add JWT token generation (abc1234)\n- Update auth middleware (def5678)\n```\n\nNew sessions read this and know exactly what you were doing.\n\n## Git Hooks\n\nInstall with: `~/.claude/plugins/context-commit/hooks/install-hooks.sh`\n\n**Included hooks:**\n- `pre-commit` - Auto-captures session state, runs tests, enforces sync\n- `commit-msg` - Validates [CONTEXT] commit format\n- `post-commit` - Auto-generates progress.html visualization\n- `pre-push` - Ensures context-progress is synced\n- `prepare-commit-msg` - Provides templates\n\nSee `hooks/README.md` for details.\n\n## Best Practices\n\n**Creating [CONTEXT] commits:**\n```bash\ngit commit --allow-empty -m \"[CONTEXT] API Authentication Design\n\nUses JWT tokens with 15-minute expiry and refresh tokens.\n\n## Implementation\n- Access tokens in Authorization header\n- Refresh tokens in httpOnly cookies\n- Token rotation on refresh\n\n## Security\n- bcrypt for password hashing\n- Rate limiting on auth endpoints\n\"\n```\n\nThen update CLAUDE.md to reference the commit hash.\n\n**What belongs in [CONTEXT] commits:**\n- Requirements and specifications (immutable)\n- Architecture decisions (immutable)\n- Workflows and standards (immutable)\n\n**What belongs in context-progress:**\n- Task checklists (mutable)\n- Current session state (auto-captured)\n- Work-in-progress notes (mutable)\n\n## Auto-Extraction (New!)\n\nAutomatically extract structured progress from git history, inspired by `/compact`:\n\n```bash\n# Preview what will be extracted\n~/.claude/plugins/context-commit/hooks/update-progress.sh --preview\n\n# Update context-progress with auto-extracted content\n~/.claude/plugins/context-commit/hooks/update-progress.sh\n\n# Non-interactive mode (for CI/automation)\nCONTEXT_SKIP_EDIT=1 ~/.claude/plugins/context-commit/hooks/update-progress.sh\n```\n\n**What gets auto-extracted:**\n\n| Category | Description |\n|----------|-------------|\n| **Commits** | Categorized by type (feature, fix, test, refactor) |\n| **File Changes** | Added, modified, deleted files |\n| **Issues Resolved** | Commits containing \"fix\", \"resolve\", etc. |\n| **Key References** | Functions, classes, structs added |\n\n**Merge modes:**\n- `smart` (default): Preserve your manual \"In Progress\" and \"Planned\" edits\n- `replace`: Use only auto-extracted content\n- `append`: Add auto-extracted as new section\n\n```bash\nCONTEXT_MERGE_MODE=replace ./update-progress.sh\n```\n\n## Manual Progress Updates (Optional)\n\nHooks handle this automatically. For manual control:\n\n```bash\ngit checkout context-progress\ngit rebase master\ngit commit --amend  # Edit checklist\ngit checkout master\n```\n\n## Installation Methods\n\n**Marketplace (Recommended):**\n```bash\n/plugin marketplace add KevinVitale/context-commit\n/plugin install context-commit@context-commit-marketplace\n```\n\n**Git Clone:**\n```bash\nmkdir -p ~/.claude/plugins\ngit clone https://github.com/KevinVitale/context-commit.git ~/.claude/plugins/context-commit\n```\n\n## Team Collaboration\n\n- Push [CONTEXT] commits normally - they're immutable\n- Force-push `context-progress` branch - it's safe and expected\n- Never force-push main/master\n- Coordinate CLAUDE.md updates to avoid conflicts\n\n## Troubleshooting\n\n**CLAUDE.md not found:**\nRun `/context-init` to create it.\n\n**Missing commit hash:**\n```bash\ngit log --oneline --grep=\"^\\[CONTEXT\\]\"\n```\n\n**Missing context-progress branch:**\n```bash\ngit checkout -b context-progress\ngit commit --allow-empty -m \"[CONTEXT] Project Progress\n\n## Completed ✓\n- [x] Initial setup\n\n## In Progress\n- [ ] Your tasks\n\n## Planned\n- [ ] Future tasks\n\"\ngit checkout master\n```\n\n**Merge conflicts on rebase:**\n```bash\ngit status  # See conflicts\n# Resolve manually\ngit add .\ngit rebase --continue\ngit commit --amend\n```\n\n## Advanced Usage\n\n**Multiple progress branches:**\n```markdown\n - [context-progress-backend] Backend progress\n - [context-progress-frontend] Frontend progress\n```\n\n**Progress snapshots:**\n```bash\ngit commit --allow-empty -m \"[PROGRESS-SNAPSHOT] 2026-01-12\n\nMilestone: MVP complete\n\"\n```\n\n**Categorized context:**\n```markdown\n 1. [abc123] [REQ] User authentication requirements\n 2. [def456] [WORKFLOW] TDD practices\n 3. [ghi789] [ARCH] Database schema decisions\n```\n\n## Templates\n\nSee `templates/` directory:\n- `CLAUDE.md.template` - Starting template\n- `context-commit-template.md` - [CONTEXT] commit template\n- `progress-template.md` - Progress tracking template\n\n## License\n\nMIT License\n\n## Support\n\n- GitHub Issues: Report bugs or request features\n- Documentation: `hooks/README.md`\n\n---\n\nMade with Claude Code\n"
+      },
+      "plugins": [
+        {
+          "name": "context-commit",
+          "source": "./",
+          "description": "Git-based context management workflow using commit messages for project documentation and progress tracking",
+          "version": "1.0.0",
+          "author": {
+            "name": "Kevin Vitale"
+          },
+          "repository": "https://github.com/KevinVitale/context-commit",
+          "license": "MIT",
+          "keywords": [
+            "git",
+            "context",
+            "documentation",
+            "workflow",
+            "commit",
+            "project-management"
+          ],
+          "categories": [
+            "commit",
+            "context",
+            "documentation",
+            "git",
+            "project-management",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add KevinVitale/context-commit",
+            "/plugin install context-commit@context-commit-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

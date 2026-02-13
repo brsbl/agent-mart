@@ -34,6 +34,51 @@
           ]
         }
       ]
+    },
+    {
+      "name": "0xBigBoss-silo",
+      "version": null,
+      "description": "Isolated local development environments for Tilt and k3d projects",
+      "repo_full_name": "0xBigBoss/silo",
+      "repo_url": "https://github.com/0xBigBoss/silo",
+      "repo_description": "Isolated local development environments. silo solves instance isolation and k3d bootstrap sequencing for Tilt-based projects.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-30T21:26:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"0xBigBoss-silo\",\n  \"owner\": {\n    \"name\": \"0xBigBoss\",\n    \"email\": \"github@0xbigboss.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"Isolated local development environments for Tilt and k3d projects\",\n    \"version\": \"0.5.4\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"silo\",\n      \"source\": \"./.claude-plugin/silo\",\n      \"description\": \"CLI skill for managing isolated local development environments\",\n      \"version\": \"0.5.4\",\n      \"keywords\": [\n        \"cli\",\n        \"dev-environment\",\n        \"tilt\",\n        \"k3d\",\n        \"kubernetes\",\n        \"local-development\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# silo\n\nIsolated local development environments. silo solves instance isolation and k3d bootstrap sequencing for Tilt-based projects.\n\n![silo version](docs/screenshot.png)\n\n## Requirements\n\n- Bun (runtime)\n- Tilt\n- k3d (optional, only if `k3d.enabled = true`)\n\n## Install\n\n```bash\nnpm i -g @0xbigboss/silo\n```\n\n### Claude Code Skill\n\nInstall the silo skill in [Claude Code](https://claude.ai/code) so your AI assistant knows how to use silo:\n\n```bash\n/plugin marketplace add 0xBigBoss/silo\n/plugin install silo@0xBigBoss-silo\n```\n\n## Quick start\n\n```bash\nsilo init\n# edit silo.toml\nsilo up dev\n```\n\nPrint the bundled `silo.toml` reference:\n\n```bash\nsilo doc config\n```\n\n## Commands\n\n```bash\nsilo init            # Create silo.toml starter config\nsilo up [name]       # Start environment (creates k3d if needed, starts Tilt)\nsilo down            # Stop environment (stops Tilt, keeps k3d by default)\nsilo status          # Show current instance state\nsilo env [name]      # Generate env file only, don't start anything\nsilo ci [name]       # Run Tilt in CI mode (tilt ci) after env + k3d setup\nsilo profiles        # List available profiles\nsilo doc [topic]     # Print bundled docs (config, profiles, k3d, hooks, etc.)\nsilo version         # Print version\n```\n\n## Configuration\n\n`silo.toml` defines ports, hosts, URLs, k3d settings, and hooks. For the canonical reference, run:\n\n```bash\nsilo doc config\n```\n\nYou can also browse `SPEC.md` for a detailed specification.\n\n## Child process environment\n\nWhen silo launches child processes (Tilt, hooks, k3d, kubectl), it injects:\n\n- `SILO_ACTIVE=1`\n- `SILO_WORKSPACE=<workspace name>`\n- `SILO_ENV_FILE=<absolute path to generated env file>`\n\n## CI usage\n\n`silo env` and `silo ci` auto-export env vars to `$GITHUB_ENV` when running in\nCI (or when `--export-ci` is provided):\n\n```bash\nsilo ci e2e --timeout 300s\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "silo",
+          "source": "./.claude-plugin/silo",
+          "description": "CLI skill for managing isolated local development environments",
+          "version": "0.5.4",
+          "keywords": [
+            "cli",
+            "dev-environment",
+            "tilt",
+            "k3d",
+            "kubernetes",
+            "local-development"
+          ],
+          "categories": [
+            "cli",
+            "dev-environment",
+            "k3d",
+            "kubernetes",
+            "local-development",
+            "tilt"
+          ],
+          "install_commands": [
+            "/plugin marketplace add 0xBigBoss/silo",
+            "/plugin install silo@0xBigBoss-silo"
+          ]
+        }
+      ]
     }
   ]
 }

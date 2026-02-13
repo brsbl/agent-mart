@@ -1,0 +1,66 @@
+{
+  "author": {
+    "id": "trkbt10",
+    "display_name": "trkbt10",
+    "avatar_url": "https://avatars.githubusercontent.com/u/689986?u=c0410cd4344d2aa61ffbf0134efd064713aaf61b&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aurochs-claude-plugin",
+      "version": null,
+      "description": "Office document manipulation plugins for Claude Code",
+      "repo_full_name": "trkbt10/aurochs",
+      "repo_url": "https://github.com/trkbt10/aurochs",
+      "repo_description": null,
+      "signals": {
+        "stars": 5,
+        "forks": 0,
+        "pushed_at": "2026-02-12T08:29:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aurochs-claude-plugin\",\n  \"owner\": {\n    \"name\": \"trkbt10\"\n  },\n  \"metadata\": {\n    \"description\": \"Office document manipulation plugins for Claude Code\",\n    \"version\": \"0.5.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aurochs-office\",\n      \"source\": \"./skills/aurochs-office\",\n      \"description\": \"Inspect, build, and verify Office documents (PPTX, DOCX, XLSX) using the aurochs CLI. Supports ASCII preview, JSON spec-based building, and text extraction.\",\n      \"version\": \"0.5.0\",\n      \"author\": {\n        \"name\": \"trkbt10\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"pptx\",\n        \"docx\",\n        \"xlsx\",\n        \"office\",\n        \"cli\"\n      ],\n      \"category\": \"document\",\n      \"tags\": [\n        \"pptx\",\n        \"docx\",\n        \"xlsx\",\n        \"office\",\n        \"cli\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"aurochs-claude-plugin\",\n  \"description\": \"Office document manipulation plugins for Claude Code\",\n  \"version\": \"0.5.0\",\n  \"author\": {\n    \"name\": \"trkbt10\"\n  },\n  \"repository\": \"https://github.com/trkbt10/aurochs\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# aurochs\n\nParse, render, and edit Office documents (PPTX, DOCX, XLSX) in pure TypeScript. No native dependencies, no server required.\n\n**[Demo](https://trkbt10.github.io/aurochs/)**\n\n## Features\n\n- **Parsers** — PPTX, DOCX, XLSX (ECMA-376) and legacy PPT, DOC, XLS, plus Figma `.fig` and PDF\n- **Renderers** — SVG, WebGL, React components, ASCII terminal preview\n- **Builders** — programmatic document creation from JSON spec\n- **Converters** — DOC→DOCX, PPT→PPTX, XLS→XLSX, PDF→PPTX\n- **CLI** — 45 commands for inspecting, building, and comparing files\n- **MCP Server** — 20 tools for AI-assisted presentation editing\n- **VS Code Extension** — view PPTX/PPT, DOCX/DOC, XLSX/XLS directly in the editor\n- **Browser demo** — viewer, editor, and slideshow, all client-side\n\n## Setup\n\n```bash\nbun install\nbun run dev:pages    # start demo app\n```\n\n```bash\nbun run test         # run tests\nbun run lint         # lint\nbun run typecheck    # type check\n```\n\n## CLI\n\n```bash\nnpx aurochs pptx <command> [options] <file>\nnpx aurochs docx <command> [options] <file>\nnpx aurochs xlsx <command> [options] <file>\n```\n\n### PPTX commands\n\n| Category | Commands |\n| -------- | -------- |\n| Inspect | `info`, `list`, `show`, `theme`, `inventory` |\n| Extract | `extract`, `tables`, `images` |\n| Preview | `preview` |\n| Build | `build`, `patch`, `verify` |\n| Compare | `diff` |\n\n### DOCX commands\n\n| Category | Commands |\n| -------- | -------- |\n| Inspect | `info`, `list`, `show`, `styles`, `numbering`, `headers-footers`, `toc` |\n| Extract | `extract`, `tables`, `images`, `comments` |\n| Preview | `preview` |\n| Build | `build`, `patch`, `verify` |\n\n### XLSX commands\n\n| Category | Commands |\n| -------- | -------- |\n| Inspect | `info`, `list`, `show`, `styles`, `names`, `tables` |\n| Extract | `extract`, `formulas`, `strings`, `comments`, `hyperlinks` |\n| Data | `autofilter`, `validation`, `conditional` |\n| Preview | `preview` |\n| Build | `build`, `verify` |\n\nAll commands support `-o json|pretty` output format (default: `pretty`).\n\n## VS Code Extension\n\nView Office documents directly in VS Code with zero configuration.\n\n**Install from Marketplace:**\n```\next install trkbt10.aurochs-office-viewer\n```\n\nSupported formats: PPTX, PPT, DOCX, DOC, XLSX, XLS — files open automatically in the custom viewer.\n\n[Marketplace page](https://marketplace.visualstudio.com/items?itemName=trkbt10.aurochs-office-viewer)\n\n## MCP Server\n\nModel Context Protocol server for AI-assisted presentation editing. Works with Claude Desktop, Cline, and other MCP clients.\n\n```bash\n# stdio transport (default)\nbun packages/@aurochs-mcp/pptx-mcp/src/index.ts\n\n# HTTP transport\nbun packages/@aurochs-mcp/pptx-mcp/src/index.ts --transport http --port 3000\n```\n\n20 tools available:\n\n| Category | Tools |\n| -------- | ----- |\n| Presentation | `pptx_create_presentation`, `pptx_get_info`, `pptx_build` |\n| Slides | `pptx_add_slide`, `pptx_remove_slide`, `pptx_duplicate_slide`, `pptx_reorder_slide`, `pptx_modify_slide` |\n| Shapes | `pptx_add_shape`, `pptx_add_text_box`, `pptx_add_image`, `pptx_add_connector`, `pptx_add_group` |\n| Tables | `pptx_add_table`, `pptx_update_table` |\n| Effects | `pptx_set_transition`, `pptx_add_animations` |\n| Notes | `pptx_set_speaker_notes`, `pptx_add_comments` |\n| Rendering | `pptx_render_slide` |\n\nEach tool operates on an in-memory session and returns SVG previews after every operation.\n\n## Converters\n\nConvert legacy and cross-format documents. All converters run entirely in-memory.\n\n| Converter | From | To |\n| --------- | ---- | -- |\n| `@aurochs-converters/doc-to-docx` | DOC (Word 97-2003) | DOCX |\n| `@aurochs-converters/ppt-to-pptx` | PPT (PowerPoint 97-2003) | PPTX |\n| `@aurochs-converters/xls-to-xlsx` | XLS (BIFF8) | XLSX |\n| `@aurochs-converters/pdf-to-pptx` | PDF | PPTX |\n\n## Builders\n\nCreate documents programmatically from JSON specifications.\n\n| Package | Description |\n| ------- | ----------- |\n| `@aurochs-builder/pptx` | Slides, shapes, images, tables, connectors, groups |\n| `@aurochs-builder/docx` | Paragraphs, tables, styles, numbering, headers/footers |\n| `@aurochs-builder/xlsx` | Worksheets, cells, formulas, styles, shared strings |\n| `@aurochs-builder/chart` | Bar, line, pie, scatter, area charts with embedded data |\n| `@aurochs-builder/diagram` | SmartArt / diagram layouts |\n| `@aurochs-builder/mermaid` | Office chart / diagram → Mermaid syntax serializer |\n\n## Renderers\n\nMultiple output targets for each format.\n\n| Package | SVG | React | ASCII | Mermaid |\n| ------- | --- | ----- | ----- | ------- |\n| `@aurochs-renderer/pptx` | yes | yes | yes | — |\n| `@aurochs-renderer/docx` | — | — | yes | — |\n| `@aurochs-renderer/xlsx` | — | — | yes | — |\n| `@aurochs-renderer/chart` | yes | — | yes | yes |\n| `@aurochs-renderer/diagram` | — | yes | yes | yes |\n| `@aurochs-renderer/figma` | yes | — | — | — |\n\n### Figma `.fig` renderer\n\nParses Figma binary files and renders to SVG or WebGL.\n\n- **SVG** — all node types, fills, effects, text, symbol/instance resolution\n- **WebGL** — GPU-accelerated rendering with stencil-based path fill, Gaussian blur, inner/drop shadows\n\n## Parsers\n\nLow-level format parsers. Each returns a typed domain model.\n\n| Package | Format |\n| ------- | ------ |\n| `@aurochs-office/pptx` | ECMA-376 PresentationML |\n| `@aurochs-office/docx` | ECMA-376 WordprocessingML |\n| `@aurochs-office/xlsx` | ECMA-376 SpreadsheetML |\n| `@aurochs-office/ppt` | PowerPoint 97-2003 binary |\n| `@aurochs-office/doc` | Word 97-2003 binary |\n| `@aurochs-office/xls` | Excel BIFF8 binary |\n| `@aurochs-office/chart` | Office chart XML |\n| `@aurochs-office/diagram` | Office diagram / SmartArt XML |\n| `@aurochs-office/drawing-ml` | DrawingML (shapes, effects, 3D) |\n| `@aurochs-office/cfb` | Compound File Binary (OLE) |\n| `@aurochs/fig` | Figma `.fig` (Kiwi binary) |\n| `@aurochs/pdf` | PDF (structure, fonts, images, paths) |\n\n## Claude Code Skill\n\nA [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code/skills) that teaches Claude how to inspect, build, and verify Office documents via the `aurochs` CLI.\n\n### Install\n\n```\n/plugin marketplace add trkbt10/aurochs\n/plugin install aurochs-office\n```\n\nOnce installed, ask Claude naturally — e.g. \"Show me what's in presentation.pptx\" or \"Build a PPTX from this spec\" — and it will pick the right commands.\n\nSee [`skills/aurochs-office/SKILL.md`](./skills/aurochs-office/SKILL.md) for full command reference.\n\n## Package structure\n\n```\npackages/\n  @aurochs/              # Core utilities (zip, xml, color, buffer, fig, pdf, ...)\n  @aurochs-office/       # Format parsers (pptx, docx, xlsx, ppt, doc, xls, ...)\n  @aurochs-builder/      # Document builders (pptx, docx, xlsx, chart, diagram, mermaid)\n  @aurochs-renderer/     # Renderers (pptx, docx, xlsx, chart, diagram, figma)\n  @aurochs-converters/   # Format converters (doc→docx, ppt→pptx, xls→xlsx, pdf→pptx)\n  @aurochs-cli/          # CLI packages (cli, pptx-cli, docx-cli, xlsx-cli, cli-core)\n  @aurochs-ui/           # React editor components (pptx, docx, xlsx, chart, diagram, ...)\n  @aurochs-mcp/          # MCP server (pptx-mcp)\n  @aurochs-build/        # Build tooling (vscode-office-viewer)\nextensions/\n  aurochs-office-viewer/ # VS Code extension\n```"
+      },
+      "plugins": [
+        {
+          "name": "aurochs-office",
+          "source": "./skills/aurochs-office",
+          "description": "Inspect, build, and verify Office documents (PPTX, DOCX, XLSX) using the aurochs CLI. Supports ASCII preview, JSON spec-based building, and text extraction.",
+          "version": "0.5.0",
+          "author": {
+            "name": "trkbt10"
+          },
+          "license": "MIT",
+          "keywords": [
+            "pptx",
+            "docx",
+            "xlsx",
+            "office",
+            "cli"
+          ],
+          "category": "document",
+          "tags": [
+            "pptx",
+            "docx",
+            "xlsx",
+            "office",
+            "cli"
+          ],
+          "categories": [
+            "cli",
+            "document",
+            "docx",
+            "office",
+            "pptx",
+            "xlsx"
+          ],
+          "install_commands": [
+            "/plugin marketplace add trkbt10/aurochs",
+            "/plugin install aurochs-office@aurochs-claude-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "author": {
+    "id": "Oz-Networks",
+    "display_name": "Oz Networks",
+    "avatar_url": "https://avatars.githubusercontent.com/u/168576214?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mirra",
+      "version": null,
+      "description": "Official Mirra plugins for Claude Code",
+      "repo_full_name": "Oz-Networks/mirra-sdk",
+      "repo_url": "https://github.com/Oz-Networks/mirra-sdk",
+      "repo_description": "Build on the Internet of You",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-13T19:15:52Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mirra\",\n  \"description\": \"Official Mirra plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"Mirra\",\n    \"url\": \"https://getmirra.app\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mirra-cc-bridge\",\n      \"version\": \"1.6.2\",\n      \"description\": \"Bridge Claude Code to Mirra Messenger - control coding sessions from your phone via text and voice\",\n      \"source\": \"./packages/mirra-cc-bridge\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://docs.getmirra.app/claude-code\"\n    }\n  ]\n}\n",
+        "README.md": "# Mirra SDK\n\nOfficial SDKs, templates, and tools for building on the Mirra platform.\n\n## 📦 Packages\n\n### TypeScript/JavaScript SDK\n- **Location**: [`packages/mirra-sdk-js/`](./packages/mirra-sdk-js/)\n- **npm**: `@mirra-messenger/sdk`\n- **Install**: `npm install @mirra-messenger/sdk`\n- **Docs**: [README](./packages/mirra-sdk-js/README.md)\n\n### Python SDK\n- **Location**: [`packages/mirra-sdk-python/`](./packages/mirra-sdk-python/)\n- **PyPI**: `mirra-sdk`\n- **Install**: `pip install mirra-sdk`\n- **Docs**: [README](./packages/mirra-sdk-python/README.md)\n\n### Claude Code Bridge (Plugin)\n- **Location**: [`packages/mirra-cc-bridge/`](./packages/mirra-cc-bridge/)\n- **Install**: Clone, build, then `claude plugin install .` (see [README](./packages/mirra-cc-bridge/README.md))\n- Control Claude Code sessions from your phone via Mirra\n\n## 🎨 Templates\n\nPre-built templates for common use cases:\n- **Location**: [`templates/`](./templates/)\n- **Browse**: [Templates Directory](./templates/)\n\n## 📚 Documentation\n\n- [Getting Started Guide](./GETTING_STARTED_WITH_SDKS.md)\n- [Publishing Guide](./PUBLISHING_GUIDE.md)\n- [SDK Implementation Summary](./SDK_IMPLEMENTATION_SUMMARY.md)\n- [SDK Packages Summary](./SDK_PACKAGES_SUMMARY.md)\n\n## 🚀 Quick Start\n\n### TypeScript\n\n```typescript\nimport { MirraSDK } from '@mirra-messenger/sdk';\n\nconst mirra = new MirraSDK({ apiKey: 'your_api_key' });\n\n// Create a memory\nconst memory = await mirra.memory.create({\n  content: 'Important information',\n  type: 'note'\n});\n\n// Chat with AI\nconst response = await mirra.ai.chat({\n  messages: [{ role: 'user', content: 'Hello!' }]\n});\n```\n\n### Python\n\n```python\nfrom mirra import MirraSDK\n\nmirra = MirraSDK(api_key='your_api_key')\n\n# Create a memory\nmemory = mirra.memory.create({\n    'content': 'Important information',\n    'type': 'note'\n})\n\n# Chat with AI\nresponse = mirra.ai.chat({\n    'messages': [{'role': 'user', 'content': 'Hello!'}]\n})\n```\n\n## 🔗 Links\n\n- **Documentation**: https://docs.getmirra.app\n- **Website**: https://getmirra.app\n- **npm Package**: https://www.npmjs.com/package/@mirra-messenger/sdk\n- **PyPI Package**: https://pypi.org/project/mirra-sdk/\n\n## 📄 License\n\nMIT License - see individual package LICENSE files for details.\n\n## 🤝 Contributing\n\nThis repository is automatically synced from our main monorepo. For contributions:\n1. Visit https://docs.getmirra.app\n2. Open an issue or discussion\n3. Contact: support@getmirra.app\n\n---\n\n**Note**: This repository is automatically synced from our private monorepo. Direct commits here will be overwritten.\n",
+        "packages/mirra-cc-bridge/README.md": "# Mirra Claude Code Bridge\n\nA Claude Code plugin that bridges your coding sessions to the Mirra mobile app. Control Claude Code from your phone via text messages and voice calls.\n\n## Features\n\n- **Remote Control** - Start and manage Claude Code sessions from your phone\n- **Session Resume** - Browse recent sessions and pick up where you left off\n- **Permission Prompts** - Approve or deny tool usage with a single tap\n- **Execution Details** - See what Claude did with step-by-step cards\n- **Memory Notes** - Rolling session logs stored in your Mirra knowledge graph\n- **Multi-turn Conversations** - Send follow-up prompts naturally\n- **Secure Tunnel** - Auto-provisioned tunnel, no ngrok or port forwarding needed\n\n## Install\n\nAdd the Mirra marketplace and install the plugin:\n\n```bash\nclaude plugin marketplace add https://github.com/Oz-Networks/mirra-sdk.git\nclaude plugin install mirra-cc-bridge\n```\n\nRestart Claude Code for the plugin to load.\n\n## Quick Start\n\n### 1. Configure\n\nRun inside Claude Code:\n\n```\n/mirra-cc-bridge:configure\n```\n\nThis walks you through:\n- Authenticating with Mirra (opens your browser, or enter an API key manually)\n- Choosing which chat receives Claude Code output\n- Saving configuration to `~/.mirra/cc-bridge.json`\n\n### 2. Start the bridge\n\n```\n/mirra-cc-bridge:start\n```\n\nThis starts a local server and opens a secure tunnel. The bridge:\n- Registers your PC as a Mirra resource\n- Connects via a persistent tunnel (no port forwarding needed)\n- Configures authentication automatically\n- Logs startup status so you can confirm everything connected\n\nThe bridge runs in the background for the duration of your Claude Code session.\n\n### 3. Check status\n\n```\n/mirra-cc-bridge:status\n```\n\nShows configuration state, hook registration, tunnel connectivity, and active sessions.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/mirra-cc-bridge:configure` | Set up API key and chat destination |\n| `/mirra-cc-bridge:start` | Start the bridge server and tunnel |\n| `/mirra-cc-bridge:status` | Show bridge and connection status |\n\n## API Endpoints\n\nOnce running, the bridge exposes these endpoints (via tunnel):\n\n| Method | Path | Description |\n|--------|------|-------------|\n| `GET` | `/health` | Health check (unauthenticated) |\n| `GET` | `/sessions` | List active managed sessions |\n| `POST` | `/sessions` | Spawn a new Claude Code session |\n| `POST` | `/sessions/resume` | Resume an existing Claude Code session |\n| `GET` | `/sessions/:id` | Get session details |\n| `POST` | `/sessions/:id/input` | Send follow-up input to a session |\n| `DELETE` | `/sessions/:id` | Kill a session |\n| `GET` | `/claude-sessions` | List resumable sessions from `~/.claude/projects` |\n| `POST` | `/respond` | Respond to a permission prompt (allow/deny) |\n\nAll endpoints except `/health` require a Bearer token, which is configured automatically during setup.\n\n## How It Works\n\n```\nYour Phone (Mirra App)\n    |\n    v\nMirra Cloud\n    |\n    v\nSecure Tunnel  --->  Bridge Server (localhost:3847)\n                          |\n                          v\n                     Claude Code CLI (--resume / new session)\n```\n\n1. **Configure** registers your Mirra API key and picks a chat destination\n2. **Start** launches the bridge server, opens a tunnel, and registers your PC as a Mirra resource\n3. **From your phone**, send a message to start a new Claude Code session or resume an existing one\n4. **Claude's output** syncs back to Mirra as rich cards (code blocks, diffs, file trees)\n5. **Permission prompts** appear as tappable Allow/Deny buttons\n6. **Session memory** is stored as notes in your Mirra knowledge graph for context across sessions\n\n## Requirements\n\n- Node.js 18+\n- Claude Code CLI installed\n- Mirra account ([getmirra.app](https://getmirra.app))\n\n## Documentation\n\nFor detailed setup instructions, troubleshooting, and advanced usage:\n\n**[docs.getmirra.app/docs/claude-code](https://docs.getmirra.app/docs/claude-code)**\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "mirra-cc-bridge",
+          "version": "1.6.2",
+          "description": "Bridge Claude Code to Mirra Messenger - control coding sessions from your phone via text and voice",
+          "source": "./packages/mirra-cc-bridge",
+          "category": "productivity",
+          "homepage": "https://docs.getmirra.app/claude-code",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Oz-Networks/mirra-sdk",
+            "/plugin install mirra-cc-bridge@mirra"
+          ]
+        }
+      ]
+    }
+  ]
+}

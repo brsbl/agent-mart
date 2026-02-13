@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "docker",
+    "display_name": "Docker",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5429470?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "docker",
+      "version": null,
+      "description": "Official Docker plugins for Claude Code",
+      "repo_full_name": "docker/claude-plugins",
+      "repo_url": "https://github.com/docker/claude-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 13,
+        "forks": 6,
+        "pushed_at": "2026-01-30T16:26:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"docker\",\n  \"owner\": {\n    \"name\": \"Docker Inc.\"\n  },\n  \"metadata\": {\n    \"description\": \"Official Docker plugins for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mcp-toolkit\",\n      \"source\": \"./plugins/mcp-toolkit\",\n      \"description\": \"Integrates Docker Desktop's MCP Toolkit with Claude Code, enabling access to containerized MCP servers. Requires Docker Desktop 4.28+ with MCP Toolkit enabled.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Docker Inc.\"\n      },\n      \"keywords\": [\"docker\", \"mcp\", \"gateway\", \"containers\", \"docker-desktop\", \"mcp-toolkit\"],\n      \"category\": \"integration\",\n      \"license\": \"MIT\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# Docker Marketplace for Claude Code\n\nThis repository contains a Claude Code plugin marketplace that provides Docker-related plugins.\n\n## Structure\n\n```\nclaude-plugins/\n├── .claude-plugin/\n│   └── marketplace.json          # Marketplace configuration\n└── plugins/\n    └── docker-mcp-toolkit/       # Docker MCP Toolkit plugin\n        ├── .claude-plugin/\n        │   └── plugin.json       # Plugin manifest\n        └── .mcp.json             # MCP server configuration\n```\n\n## Plugins\n\n### docker-mcp-toolkit\n\nIntegrates Docker Desktop's MCP Toolkit with Claude Code, enabling access to containerized MCP servers managed by Docker Desktop.\n\n> **Note**: This plugin is designed specifically for Docker Desktop's bundled MCP Toolkit. It is not intended for the standalone open-source MCP Gateway. A separate plugin for the OSS version may be provided in the future.\n\n**Features:**\n- Connects Claude Code to Docker Desktop's MCP Gateway\n- Provides access to all MCP servers configured via Docker Desktop's MCP Toolkit\n- Includes diagnostic commands for troubleshooting gateway issues\n- Leverages Docker Desktop's integrated secrets management\n\n**Prerequisites:**\n- Docker Desktop 4.28+ with MCP Toolkit feature enabled\n- MCP Gateway accessible via `docker mcp` command\n\n## Usage\n\n### Adding the Marketplace\n\nAdd this marketplace to Claude Code using one of the following methods:\n\n**If your git works with SSH:**\n```bash\n/plugin marketplace add docker/claude-plugins\n```\n\n**If your git doesn't work with SSH (or prefer HTTPS):**\n```bash\n/plugin marketplace add https://github.com/docker/claude-plugins.git\n```\n\n### Installing the Plugin\n\nOnce the marketplace is added, you can browse available plugins and install the Docker MCP Toolkit plugin:\n\n```bash\n# Browse all plugins in the docker marketplace\n/plugin\n\n# Install the docker-mcp-toolkit plugin\n/plugin install docker-mcp-toolkit@docker\n```\n\n### Troubleshooting Commands\n\nIf the MCP Gateway server isn't working as expected, the plugin provides two diagnostic slash commands to help identify and resolve issues:\n\n- **`/docker-mcp-toolkit:gateway-status`** - Quick health check showing enabled servers and available tools\n- **`/docker-mcp-toolkit:gateway-debug`** - Comprehensive diagnostics to troubleshoot installation and configuration problems\n\nThese commands will automatically check your Docker MCP Gateway setup and provide actionable recommendations if problems are found.\n\n### Verifying Installation\n\nOnce installed, the Docker MCP Gateway will be available as an MCP server in Claude Code. You can verify by:\n\n1. Running `/docker-mcp-toolkit:gateway-status` to see enabled servers and tool count\n2. Checking that MCP tools are available in Claude's toolkit\n3. Using Claude to interact with your configured MCP servers\n\n## Development\n\nTo test changes locally:\n\n1. Make modifications to the plugin files\n2. If the marketplace is already added, update it:\n   ```bash\n   /plugin marketplace update docker\n   ```\n3. Reinstall or update the plugin if needed\n\n## License\n\nMIT\n",
+        "plugins/mcp-toolkit/README.md": "# Docker MCP Toolkit Plugin\n\nThis plugin integrates Docker Desktop's MCP Toolkit with Claude Code, providing seamless access to containerized MCP servers managed by Docker Desktop.\n\n> **⚠️ Important**: This plugin is designed specifically for Docker Desktop's bundled MCP Toolkit. It is **not** intended for the standalone open-source MCP Gateway from the [mcp-gateway repository](https://github.com/docker/mcp-gateway). While it may work with the standalone version, compatibility is not guaranteed and features may differ.\n\n## Prerequisites\n\n**This plugin requires Docker Desktop with MCP Toolkit:**\n\n- **Docker Desktop** - Version 4.28.0 or later\n- **MCP Toolkit Feature Enabled** - Navigate to: Settings → Beta Features → Enable \"Docker MCP Toolkit\"\n\nDocker Desktop's MCP Toolkit provides:\n- Pre-configured MCP Gateway bundled with Docker Desktop\n- Integrated secrets management\n- Automatic catalog management\n- Native Docker Desktop UI integration\n\n### Verifying Docker Desktop MCP Toolkit\n\nBefore installing this plugin, verify the Docker MCP Toolkit is enabled in Docker Desktop:\n\n```bash\n# Check if the docker mcp command is available\ndocker mcp --help\n\n# Should display the MCP Gateway help information from Docker Desktop\n```\n\nIf this command fails, ensure:\n1. Docker Desktop 4.28+ is installed\n2. MCP Toolkit feature is enabled in Docker Desktop settings\n\n## What This Plugin Does\n\nWhen enabled, this plugin:\n\n1. Automatically starts the Docker MCP Gateway as an MCP server within Claude Code\n2. Exposes all MCP servers configured in Docker Desktop (via `docker mcp server enable`)\n3. Makes containerized MCP tools, resources, and prompts available to Claude\n\n## Available Commands\n\nThis plugin provides helpful slash commands for managing and debugging Docker MCP Gateway:\n\n- **`/docker-mcp-toolkit:gateway-status`** - Quick status check showing enabled servers and available tools\n- **`/docker-mcp-toolkit:gateway-debug`** - Comprehensive diagnostics for troubleshooting gateway issues\n\n## Usage\n\n### Installation\n\n```bash\n# Add the marketplace (if not already added)\n/plugin marketplace add /path/to/claude-plugins\n\n# Install the plugin\n/plugin install docker-mcp-toolkit@docker\n```\n\n### Configuration\n\nThis plugin uses the default Docker MCP Gateway configuration. To configure which MCP servers are available:\n\n```bash\n# List available servers in the Docker MCP catalog\ndocker mcp catalog show docker-mcp\n\n# Enable specific MCP servers\ndocker mcp server enable <server-name>\n\n# List currently enabled servers\ndocker mcp server ls\n\n# Configure server settings (if needed)\ndocker mcp config write '<yaml-config>'\n```\n\n### Verification\n\nOnce the plugin is installed and Claude Code is running, the Docker MCP Gateway will automatically start. You can verify this by:\n\n1. Running `/docker-mcp-toolkit:gateway-status` to see enabled servers and tool count\n2. Checking that MCP tools are available in Claude's toolkit\n3. Using Claude to interact with your enabled MCP servers\n4. Running `/docker-mcp-toolkit:gateway-debug` if you encounter any issues\n\n## Troubleshooting\n\n### Plugin fails to start\n\n**Error**: `command not found: docker` or `unknown command: mcp`\n\n**Solution**: Ensure Docker Desktop is installed with Docker MCP Toolkit enabled (Settings → Beta Features → Enable \"Docker MCP Toolkit\").\n\n### No MCP servers available\n\n**Error**: Gateway starts but no tools are available\n\n**Solution**: Enable MCP servers using `docker mcp server enable <server-name>`\n\n### Gateway connection issues\n\n**Error**: MCP server fails to connect\n\n**Solution**:\n1. Verify Docker daemon is running: `docker ps`\n2. Check MCP server status: `docker mcp server ls`\n3. Review gateway logs for errors\n\n## Learn More\n\n- [Docker MCP Gateway Documentation](https://github.com/docker/mcp-gateway)\n- [Docker MCP Catalog](https://hub.docker.com/mcp)\n- [MCP Specification](https://spec.modelcontextprotocol.io/)\n- [Claude Code MCP Integration](https://docs.claude.com/en/docs/claude-code/mcp)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "mcp-toolkit",
+          "source": "./plugins/mcp-toolkit",
+          "description": "Integrates Docker Desktop's MCP Toolkit with Claude Code, enabling access to containerized MCP servers. Requires Docker Desktop 4.28+ with MCP Toolkit enabled.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Docker Inc."
+          },
+          "keywords": [
+            "docker",
+            "mcp",
+            "gateway",
+            "containers",
+            "docker-desktop",
+            "mcp-toolkit"
+          ],
+          "category": "integration",
+          "license": "MIT",
+          "strict": false,
+          "categories": [
+            "containers",
+            "docker",
+            "docker-desktop",
+            "gateway",
+            "integration",
+            "mcp",
+            "mcp-toolkit"
+          ],
+          "install_commands": [
+            "/plugin marketplace add docker/claude-plugins",
+            "/plugin install mcp-toolkit@docker"
+          ]
+        }
+      ]
+    }
+  ]
+}

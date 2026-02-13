@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "decocms",
+    "display_name": "deco CMS",
+    "avatar_url": "https://avatars.githubusercontent.com/u/230447903?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "decocms-mcps",
+      "version": null,
+      "description": "Claude Code plugins from the decocms MCPs monorepo",
+      "repo_full_name": "decocms/mcps",
+      "repo_url": "https://github.com/decocms/mcps",
+      "repo_description": "First-party MCPs maintained by the decocms team.",
+      "signals": {
+        "stars": 4,
+        "forks": 1,
+        "pushed_at": "2026-02-13T15:51:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"decocms-mcps\",\n  \"owner\": {\n    \"name\": \"decocms\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins from the decocms MCPs monorepo\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"github-repo-reports\",\n      \"source\": \"./github-repo-reports-plugin\",\n      \"description\": \"Generate structured Markdown reports with YAML frontmatter for repository health monitoring. Includes metrics, tables, and status tracking.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"viktormarinho\"\n      },\n      \"homepage\": \"https://github.com/decocms/mcps/tree/main/github-repo-reports-plugin\",\n      \"repository\": \"https://github.com/decocms/mcps\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"reports\", \"github\", \"health\", \"monitoring\", \"metrics\"],\n      \"category\": \"development-workflows\",\n      \"tags\": [\"reports\", \"github\", \"metrics\", \"security\", \"performance\"]\n    }\n  ]\n}\n",
+        "README.md": "# mcps \n\nFirst-party MCPs maintained by the decocms team.\n\n## Getting Started\n\nAfter cloning the repository, install dependencies:\n\n```bash\nbun install\n```\n\nThis will automatically set up git hooks that run formatting and linting checks before each commit.\n\nTo manually set up the git hooks later, run:\n\n```bash\nbun run prepare\n```\n\n## Creating a New MCP\n\nUse the `new.ts` script to quickly scaffold a new MCP:\n\n```bash\nbun run new <name> [options]\n```\n\n### Options\n\n- `-d, --description` - Description for package.json\n- `-h, --help` - Show help message\n\n### Examples\n\n**Create a new MCP:**\n\n```bash\nbun run new weather-api\n```\n\n**Create with custom description:**\n\n```bash\nbun run new weather-api --description \"Weather forecast API\"\n```\n\n### After Creating\n\n```bash\ncd your-mcp-name\nbun install\nbun run dev\n```\n\nThat's it! The deployment workflows will automatically detect your new MCP - no manual configuration needed.\n\n## Deployment\n\nThis monorepo uses centralized GitHub Actions workflows with **automatic MCP discovery**.\n\n### How It Works\n\n- **Automatic MCP Discovery**: The workflows automatically find all directories with a `package.json` (excluding special folders like `scripts`, `shared`, etc.)\n- **Smart Change Detection**: Uses git diff to detect which MCPs have changed in each commit or PR\n- **Selective Deployment**: Only MCPs with actual changes are built and deployed\n- **Parallel Execution**: Multiple changed MCPs deploy simultaneously using GitHub's matrix strategy\n\n### Workflows\n\n- `.github/workflows/deploy.yml` - Production deployment on push to main\n- `.github/workflows/deploy-preview.yml` - Preview deployment on pull requests\n\n### What Gets Deployed?\n\n**Production (push to main)**:\n\n- Compares current commit with previous commit\n- Deploys all MCPs that have file changes\n\n**Preview (pull requests)**:\n\n- Compares PR branch with base branch (main)\n- Deploys all MCPs that have changes in the PR\n- Posts preview URLs as a comment on the PR\n\n### Manual Deployment\n\nYou can also deploy MCPs manually using the deployment script:\n\n```bash\n# Deploy to production\nbun run scripts/deploy.ts your-mcp-name\n\n# Deploy preview\nbun run scripts/deploy.ts your-mcp-name --preview\n```\n\n### Requirements\n\nEach MCP directory must have:\n\n- A `package.json` with a `build` script\n- Build output in `dist/server` directory (or as configured for Deco)\n\nRepository requirements:\n\n- `DECO_DEPLOY_TOKEN` secret configured in GitHub repository settings\n\n### Adding a New MCP\n\nJust create a new directory with a `package.json` - that's it! The workflows will automatically:\n\n1. Detect it as an MCP\n2. Monitor it for changes\n3. Deploy it when changes are pushed\n\nNo manual workflow configuration needed!\n",
+        "github-repo-reports-plugin/README.md": "# GitHub Repo Reports Plugin for Claude Code\n\nA [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-code/plugins) that adds a `/generate-report` slash command for creating structured Markdown reports with YAML frontmatter.\n\nReports follow a standardized format designed for repository health monitoring — performance audits, security scans, uptime checks, code quality, and more.\n\n## Installation\n\n### From a plugin marketplace\n\nIf the marketplace that includes this plugin is already configured, run inside Claude Code:\n\n```\n/plugin install github-repo-reports\n```\n\n### Local testing\n\nClone the repo and point Claude Code at the plugin directory:\n\n```bash\nclaude --plugin-dir /path/to/github-repo-reports-plugin\n```\n\n## Usage\n\nOnce installed, you get the `/github-repo-reports:generate-report` slash command:\n\n```\n/github-repo-reports:generate-report security audit of npm dependencies\n/github-repo-reports:generate-report performance lighthouse for homepage\n/github-repo-reports:generate-report quality test coverage summary\n```\n\nClaude will analyze the relevant code/data in your repository and produce a `.md` report with:\n\n- **YAML frontmatter** — title, category, status, summary, timestamps, structured sections (metrics, tables)\n- **Markdown body** — detailed findings, recommendations, action items\n\nThe skill also activates automatically when Claude detects you want to create a report, health check, or audit.\n\n## Report format\n\nReports are `.md` files with YAML frontmatter:\n\n```markdown\n---\ntitle: \"Dependency Vulnerability Scan\"\ncategory: security\nstatus: failing\nsummary: \"3 high-severity vulnerabilities found\"\nsource: security-auditor\ntags: [dependencies, npm]\nupdatedAt: \"2025-06-15T06:00:00Z\"\nsections:\n  - type: metrics\n    title: \"Vulnerability Summary\"\n    items:\n      - label: Critical\n        value: 0\n        status: passing\n      - label: High\n        value: 3\n        status: failing\n  - type: table\n    title: \"High Severity Issues\"\n    columns: [Package, CVE, Severity, Installed, Patched]\n    rows:\n      - [lodash, CVE-2024-1234, High, 4.17.20, 4.17.21]\n---\n\n## Action Required\n\nRun `npm audit fix` to apply automatic patches.\n```\n\n### Supported section types\n\n| Type | Description |\n|---|---|\n| `metrics` | Key-value indicators with optional status, units, and deltas |\n| `table` | Tabular data with column headers |\n| `markdown` | Free-form GFM content |\n\n### Status values\n\n| Status | When to use |\n|---|---|\n| `passing` | Everything within acceptable thresholds |\n| `warning` | Metrics degraded or approaching thresholds |\n| `failing` | Critical issues needing immediate attention |\n| `info` | Informational, no pass/fail judgment |\n\n### Categories\n\n`performance` · `security` · `accessibility` · `seo` · `quality` · `uptime` · `compliance` (or define your own)\n\n## Plugin structure\n\n```\ngithub-repo-reports-plugin/\n├── .claude-plugin/\n│   └── plugin.json\n├── skills/\n│   └── generate-report/\n│       ├── SKILL.md          # Slash command instructions\n│       └── examples.md       # Complete report examples\n└── README.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "github-repo-reports",
+          "source": "./github-repo-reports-plugin",
+          "description": "Generate structured Markdown reports with YAML frontmatter for repository health monitoring. Includes metrics, tables, and status tracking.",
+          "version": "1.0.0",
+          "author": {
+            "name": "viktormarinho"
+          },
+          "homepage": "https://github.com/decocms/mcps/tree/main/github-repo-reports-plugin",
+          "repository": "https://github.com/decocms/mcps",
+          "license": "MIT",
+          "keywords": [
+            "reports",
+            "github",
+            "health",
+            "monitoring",
+            "metrics"
+          ],
+          "category": "development-workflows",
+          "tags": [
+            "reports",
+            "github",
+            "metrics",
+            "security",
+            "performance"
+          ],
+          "categories": [
+            "development-workflows",
+            "github",
+            "health",
+            "metrics",
+            "monitoring",
+            "performance",
+            "reports",
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add decocms/mcps",
+            "/plugin install github-repo-reports@decocms-mcps"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "delexw",
+    "display_name": "Yang Liu",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8164026?u=dfe45f397cba48d037bb927a6610830fcf907fc9&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "yang-claude-kit",
+      "version": null,
+      "description": "Orchestrated JIRA ticket implementation workflow",
+      "repo_full_name": "delexw/claude-code-misc",
+      "repo_url": "https://github.com/delexw/claude-code-misc",
+      "repo_description": "Useful Collection of Claude Code Configurations",
+      "signals": {
+        "stars": 24,
+        "forks": 5,
+        "pushed_at": "2026-02-13T09:40:59Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"yang-claude-kit\",\n  \"owner\": {\n    \"name\": \"YangL\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"implement-workflow\",\n      \"source\": \"./plugins/implement-workflow\",\n      \"description\": \"Orchestrated JIRA ticket implementation workflow\",\n      \"version\": \"1.0.1\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Misc Configurations\n\nCollection of Claude Code Configurations\n\n## 1. Meta-Prompter MCP And Slash commands\n\n![eval-opt](workflow.jpg)\n\n### Meta-Prompter MCP\n**Location**: `.claude/mcp/meta-prompter/`\n\nA tiny meta‑prompt MCP server that grades prompts and returns JSON‑only analysis. Evaluates prompts across 8 dimensions (clarity, specificity, context, actionability, safety, testability, hallucination prevention, token efficiency) with weighted global scoring.\n\n**Key Features**:\n- Temperature-controlled evaluation (0 vs Claude Code's default 1)\n- Machine-readable JSON output for agentic workflows  \n- Built-in result viewer with `eval-viewer.html`\n- Support for multiple AI providers (Anthropic, OpenAI)\n\nSee [meta-prompter README](.claude/mcp/meta-prompter/README.md) for detailed setup and usage instructions.\n\n### Commands\n**Location**: `.claude/commands/`\n\nCustom slash commands for Claude Code:\n\n- **`/meta-prompter:eval`** - Quick prompt evaluation via **Meta-Prompter MCP**, returns JSON scores and analysis\n- **`/meta-prompter:prep-run`**\n  - Full workflow: evaluate → self-clarify or user-clarify based on chat context → execute with quality gates (global score ≥8)\n- **`/debug-partner`** - AI-assisted debugging partner for systematic troubleshooting\n  - Evidence-based investigation with code-centric traces\n  - Progressive clarification and hypothesis testing\n  - Includes specific file names, function names, and line numbers\n  - Collaborative approach with verification at each step\n\n## 2. Implement Plugin\n**Location**: `plugins/implement-workflow/`\n\nA Claude Code plugin that orchestrates JIRA ticket implementation end-to-end. Fetches ticket details, discovers domain knowledge, scans linked resources and designs, optimizes the prompt, then executes the task.\n\n**Skills**: implement, jira-ticket-viewer, confluence-page-viewer, figma-reader, domain-discover, meta-prompter\n\nSee [plugin README](plugins/implement-workflow/README.md) for setup and usage.\n\n## 3. StatusLine\n**Location**: `.claude/statusline/`\n\nContext monitoring script that displays real-time usage:\n- **`ctx_monitor.js`**\n  - Shows context window usage percentage with color coding (green/yellow/red)\n  - Tracks session ID and token consumption\n  - Displays model name and usage statistics\n\n**Features**:\n- Real-time context window monitoring (0-200k tokens)\n- Color-coded usage indicators  \n- Session tracking and identification\n- Automatic synthetic message filtering\n\n![statusline](statusline.png)\n",
+        "plugins/implement-workflow/README.md": "# implement-workflow\n\nA Claude Code plugin that orchestrates JIRA ticket implementation end-to-end: fetches ticket details, discovers domain knowledge, scans linked resources and designs, optimizes the prompt, then executes the task.\n\n## Setup\n\n### Required\n\n| Dependency | Description |\n|---|---|\n| [jira-cli](https://github.com/ankitpokhrel/jira-cli) | Jira CLI tool |\n| [confluence-cli](https://github.com/pchuri/confluence-cli) | Confluence CLI tool |\n| `JIRA_API_TOKEN` | [Jira API token](https://id.atlassian.com/manage-profile/security/api-tokens) — set as env var |\n\n### Optional\n\n| Dependency | Description |\n|---|---|\n| [Figma MCP](https://github.com/nichochar/figma-mcp) | Read Figma designs from ticket links |\n| `PROMPT_EVAL_API_KEY` | Prompt optimization via [meta-prompter](https://github.com/delexw/claude-code-misc/tree/main/.claude/mcp/meta-prompter#cli) |\n| `PROMPT_EVAL_MODEL` | Model for prompt evaluation (default: `anthropic:claude-sonnet-4-5`). Format: `provider:model-id` |\n\n## Usage\n\n```\n/implement-workflow:implement <JIRA-URL> [\"optional context\"]\n```\n\nExample:\n```\n/implement-workflow:implement https://myco.atlassian.net/browse/PROJ-123\n```\n\n## Skills Included\n\n| Skill | Description |\n|---|---|\n| `implement` | Orchestrator — runs all phases end-to-end |\n| `jira-ticket-viewer` | Fetches and parses JIRA tickets via `--raw` JSON |\n| `confluence-page-viewer` | Reads Confluence pages |\n| `figma-reader` | Reads Figma designs via MCP |\n| `domain-discover` | Discovers codebase domain knowledge |\n| `meta-prompter` | Evaluates and optimizes prompts before execution |\n"
+      },
+      "plugins": [
+        {
+          "name": "implement-workflow",
+          "source": "./plugins/implement-workflow",
+          "description": "Orchestrated JIRA ticket implementation workflow",
+          "version": "1.0.1",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add delexw/claude-code-misc",
+            "/plugin install implement-workflow@yang-claude-kit"
+          ]
+        }
+      ]
+    }
+  ]
+}
