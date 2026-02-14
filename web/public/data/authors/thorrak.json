@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "thorrak",
+    "display_name": "John",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2457900?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "imagegen-marketplace",
+      "version": null,
+      "description": "Image generation and editing plugin for Claude Code",
+      "repo_full_name": "thorrak/imagegen-plugin",
+      "repo_url": "https://github.com/thorrak/imagegen-plugin",
+      "repo_description": "Claude Code plugin for image generation with OpenAI",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T16:40:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"imagegen-marketplace\",\n  \"description\": \"Image generation and editing plugin for Claude Code\",\n  \"owner\": {\n    \"name\": \"thorrak\",\n    \"url\": \"https://github.com/thorrak\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"imagegen\",\n      \"description\": \"Generate and edit images using OpenAI's image models (GPT-Image-1, DALL-E 2, DALL-E 3)\",\n      \"version\": \"0.1.0\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/thorrak/imagegen-plugin.git\"\n      },\n      \"category\": \"tools\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"imagegen\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Generate and edit images using OpenAI's image models via the imagegen-mcp server\",\n  \"author\": {\n    \"name\": \"jbeeler\"\n  },\n  \"keywords\": [\"image-generation\", \"openai\", \"dall-e\", \"gpt-image\", \"mcp\"]\n}\n",
+        "README.md": "# imagegen - Claude Code Plugin\n\nGenerate and edit images directly from Claude Code using OpenAI's image models (GPT-Image-1, DALL-E 2, DALL-E 3). Powered by [imagegen-mcp](https://github.com/spartanz51/imagegen-mcp).\n\n## Prerequisites\n\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed\n- [Node.js](https://nodejs.org/) v18+ (for `npx`)\n- An [OpenAI API key](https://platform.openai.com/api-keys) with image generation access\n\n## Installation\n\n### Option 1: Install from This Marketplace (Recommended)\n\nThis repository serves as its own plugin marketplace. Add it to Claude Code, then install the plugin:\n\n**Step 1: Add the marketplace**\n\nRun Claude Code and use the `/plugins` command, then select **Manage marketplaces** and add this repository:\n\n```\nthorrak/imagegen-plugin\n```\n\n**Step 2: Install the plugin**\n\nOnce the marketplace is added, install the plugin:\n\n```\n/plugins install imagegen@imagegen-marketplace\n```\n\nOr browse interactively via `/plugins` > **Discover**.\n\n### Option 2: Local Installation (Development)\n\nClone the repository and point Claude Code to it directly:\n\n```bash\ngit clone https://github.com/thorrak/imagegen-plugin.git\nclaude --plugin-dir /path/to/imagegen-plugin\n```\n\n## Setup\n\nSet your OpenAI API key as an environment variable:\n\n```bash\nexport OPENAI_API_KEY=\"your-api-key-here\"\n```\n\nAdd this to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) to persist across sessions. The plugin's MCP server reads this variable automatically on startup.\n\n## Usage\n\n### Slash Commands\n\n**Generate an image from a text prompt:**\n\n```\n/generate-image a minimalist weather app icon, flat design, blue gradient\n/generate-image --model dall-e-3 --size 1792x1024 a panoramic mountain landscape\n/generate-image --transparent a coffee shop logo, simple vector style\n```\n\n**Edit an existing image:**\n\n```\n/edit-image ./assets/logo.png change the background color to navy blue\n/edit-image ./photo.png --mask ./mask.png replace the sky with a starry night\n```\n\n### Natural Language\n\nYou can also ask Claude conversationally — the plugin's skill activates automatically:\n\n- \"Generate an icon for my app\"\n- \"Create a hero banner for the landing page\"\n- \"Edit the logo to make the text larger\"\n- \"Make a transparent PNG version of this image\"\n\n### Command Flags\n\nBoth commands support optional flags:\n\n| Flag | Values | Default | Notes |\n|------|--------|---------|-------|\n| `--model` | `gpt-image-1`, `dall-e-2`, `dall-e-3` | `gpt-image-1` | |\n| `--size` | e.g. `1024x1024`, `1792x1024` | `1024x1024` | Valid sizes vary by model |\n| `--format` | `png`, `jpeg`, `webp` | `png` | |\n| `--quality` | `auto`, `standard`, `hd` | `auto` | `hd` is DALL-E 3 only |\n| `--transparent` | (flag, no value) | off | GPT-Image-1 + PNG/WebP only |\n| `--n` | number | `1` | DALL-E 3 limited to 1 |\n\n## Available Models\n\n| Model | Best For | Editing | Transparent BG | Sizes |\n|-------|----------|---------|----------------|-------|\n| gpt-image-1 | General use, highest quality | Yes | Yes | 1024x1024, 1536x1024, 1024x1536 |\n| dall-e-3 | Artistic/creative images | No | No | 1024x1024, 1792x1024, 1024x1792 |\n| dall-e-2 | Quick drafts, low cost | Yes | No | 256x256, 512x512, 1024x1024 |\n\n## Output\n\nGenerated images are saved to `./generated-images/` in your project directory with descriptive filenames (e.g., `weather-app-icon.png`, `hero-banner.png`).\n\n## Plugin Components\n\n| Component | Description |\n|-----------|-------------|\n| **MCP Server** | Auto-starts `imagegen-mcp` via `npx` — connects to OpenAI's image APIs |\n| **Skill** | Activates automatically when you discuss image generation — guides model selection, parameters, and prompting |\n| **Commands** | `/generate-image` and `/edit-image` for quick, flag-based access |\n\n## Troubleshooting\n\n**MCP server fails to start:**\n- Verify `OPENAI_API_KEY` is set: `echo $OPENAI_API_KEY`\n- Verify Node.js is installed: `node --version` (v18+ required)\n- Check that `npx` works: `npx --version`\n\n**Image generation fails:**\n- Check your OpenAI API key has image generation permissions\n- Verify the requested size is valid for the chosen model (see table above)\n- If you get a content policy error, try rephrasing your prompt\n\n**Plugin not loading:**\n- Run `/plugins` in Claude Code and verify `imagegen` is listed and enabled\n- Restart Claude Code after installing the plugin\n\n## Credits\n\nBuilt on [imagegen-mcp](https://github.com/spartanz51/imagegen-mcp) by spartanz51.\n"
+      },
+      "plugins": [
+        {
+          "name": "imagegen",
+          "description": "Generate and edit images using OpenAI's image models (GPT-Image-1, DALL-E 2, DALL-E 3)",
+          "version": "0.1.0",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/thorrak/imagegen-plugin.git"
+          },
+          "category": "tools",
+          "categories": [
+            "tools"
+          ],
+          "install_commands": [
+            "/plugin marketplace add thorrak/imagegen-plugin",
+            "/plugin install imagegen@imagegen-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "author": {
+    "id": "sirreal",
+    "display_name": "Jon Surrell",
+    "avatar_url": "https://avatars.githubusercontent.com/u/841763?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "sirreal",
+      "version": null,
+      "description": "Sirreal's Claude plugins.",
+      "repo_full_name": "sirreal/agent-skills",
+      "repo_url": "https://github.com/sirreal/agent-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T11:49:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"sirreal\",\n  \"owner\": {\n    \"name\": \"Jon Surrell\",\n    \"email\": \"sirreal@users.noreply.github.com\"\n  },\n  \"metadata\": {\n      \"description\": \"Sirreal's Claude plugins.\"\n  },\n  \"plugins\": [\n    {\n      \"source\": \"./plugins/wordpress-trac\",\n      \"name\": \"wordpress-trac\",\n      \"version\": \"3.0.2\",\n      \"description\": \"Tools for working with WordPress Trac tickets, changesets, and searches\",\n      \"license\": \"GPL-2.0-or-later\",\n      \"keywords\": [\"WordPress\", \"Trac\", \"Changeset\", \"ticket\", \"core\"],\n      \"skills\": [\n        \"./plugins/wordpress-trac/skills/wp-trac-ticket\",\n        \"./plugins/wordpress-trac/skills/wp-trac-changeset\",\n        \"./plugins/wordpress-trac/skills/wp-trac-search\",\n        \"./plugins/wordpress-trac/skills/wp-trac-timeline\"\n      ]\n    },\n    {\n      \"source\": \"./plugins/phptools-lsp\",\n      \"name\": \"phptools-lsp\",\n      \"version\": \"1.0.0\",\n      \"description\": \"LSP server for DEVSENSE phptools\",\n      \"license\": \"GPL-2.0-or-later\",\n      \"keywords\": [\"PHP\", \"LSP\"]\n    }\n  ]\n}\n",
+        "README.md": "# Agent Skills\n\nA collection of Claude Code plugins.\n\n## Installation\n\n```sh\nclaude plugin marketplace add sirreal/agent-skills\nclaude plugin install wordpress-trac@sirreal\n```\n\n## Plugins\n\n### [wordpress-trac](./plugins/wordpress-trac/)\n\nTools for working with WordPress Trac tickets, changesets, searches, and timeline activity.\n\n**Prerequisites:** PHP 8.4+, curl extension\n\n## License\n\nThis project is licensed under the GPL-2.0-or-later. See [LICENSE](./LICENSE) for details.\n",
+        "plugins/wordpress-trac/README.md": "# WordPress Trac Plugin\n\nA Claude Code plugin for working with WordPress Trac tickets, changesets, and searches.\n\n## Installation\n\n```sh\nclaude plugin marketplace add sirreal/agent-skills\nclaude plugin install wordpress-trac@sirreal\n```\n\n## Prerequisites\n\n- PHP 8.4+ (required for `Dom\\HTMLDocument`)\n- curl extension enabled\n\n## Demo\n\n```\nTell me about trac ticket 30,000\n```\n\n> Ticket #30000 is a joke/commemorative ticket from the WordPress 4.1 milestone era. It references the \"Alot\" meme from Hyperbole and a Half (a comic about the common misspelling of \"a lot\") with an image attachment.\n>\n> The ticket is closed and was filed under the WordPress.org Site component. It's essentially a playful marker celebrating the project reaching 30,000 tickets, similar to how projects sometimes note round-number milestones. The reference to #30005 and Mike Nolan suggests there was some coordination around these milestone ticket numbers.\n\n## Skills\n\n### `/wp-trac-ticket <ticket-number>`\n\nLook up a WordPress Trac ticket by number or URL.\n\n```\n/wp-trac-ticket 30000\n/wp-trac-ticket #30000\n/wp-trac-ticket https://core.trac.wordpress.org/ticket/30000\n```\n\nThe ticket command supports `--discussion` to include comments:\n\n```\n/wp-trac-ticket --discussion 30000\n```\n\n### `/wp-trac-changeset <changeset-number>`\n\nLook up a WordPress Trac changeset by number.\n\n```\n/wp-trac-changeset 41062\n/wp-trac-changeset r27195\n/wp-trac-changeset [26851]\n```\n\n### `/wp-trac-search <description>`\n\nSearch WordPress Trac tickets using natural language or specific filters.\n\n```\n/wp-trac-search open HTML API tickets\n/wp-trac-search closed REST API bugs\n/wp-trac-search tickets about block editor\n```\n\nThe search command supports various filters:\n- `--component` - Filter by component (e.g., \"HTML API\", \"REST API\")\n- `--status` - Filter by status (new, assigned, accepted, closed, reopened, reviewing)\n- `--type` - Filter by type (defect, enhancement, feature request, task)\n- `--milestone` - Filter by milestone\n- `--summary` / `--description` - Text search\n\nRun the script with `--help` for full documentation:\n\n```bash\n./scripts/search.php --help\n```\n\n### `/wp-trac-timeline <time period and/or author>`\n\nBrowse WordPress Trac timeline activity. Useful for seeing what you or others have worked on.\n\n```\n/wp-trac-timeline my activity last 2 weeks\n/wp-trac-timeline what did saxmatt work on in January 2005\n/wp-trac-timeline all trac activity yesterday\n```\n\nThe timeline command supports:\n- `--from=YYYY-MM-DD` - End date (default: today)\n- `--daysback=N` - Days to look back (1-90, default: 30)\n- `--author=USER` - Filter by author (repeat for multiple)\n\nRun the script with `--help` for full documentation:\n\n```bash\n./scripts/timeline.php --help\n```\n",
+        "plugins/phptools-lsp/README.md": "# PHP Tools LSP Plugin\n\nA Claude Code plugin that configures the DEVSENSE PHP Language Server for enhanced PHP development capabilities including code completion, go-to-definition, diagnostics, and more.\n\n## Installation\n\n```sh\nclaude plugin marketplace add sirreal/agent-skills\nclaude plugin install phptools-lsp@sirreal\n```\n\n**Important**: Disable the official PHP LSP plugin to avoid conflicts:\n\n```sh\nclaude plugin disable php-lsp@claude-plugins-official\n```\n\n## Prerequisites\n\n- **PHP Tools License**: Requires a valid DEVSENSE PHP Tools license key\n- **Language Server Binary**: Install `devsense-php-ls` from [DEVSENSE PHP Tools](https://www.devsense.com/en/download)\n\n## Configuration\n\nAdd your PHP Tools license key to `~/.claude/settings.json`:\n\n```json\n{\n  \"env\": {\n    \"DEVSENSE_PHP_LS_LICENSE\": \"YOUR KEY HERE\"\n  }\n}\n```\n\n**Where to get a license:**\n- Free trial: Available at [devsense.com](https://www.devsense.com)\n- Purchase: Check DEVSENSE pricing for individual or team licenses\n\n## Features\n\nOnce configured, the language server provides:\n\n- **IntelliSense**: Context-aware code completion\n- **Go to Definition**: Navigate to symbol definitions\n- **Find References**: Locate all usages of symbols\n- **Diagnostics**: Real-time error and warning detection\n- **Hover Information**: View documentation on hover\n- **Code Actions**: Quick fixes and refactoring suggestions\n\n## Troubleshooting\n\n**Language server not starting?**\n- Verify `devsense-php-ls` is in your PATH: `which devsense-php-ls`\n- Check that `DEVSENSE_PHP_LS_LICENSE` is set correctly in settings.json\n- Verify your license key is valid and not expired\n\n**No completions appearing?**\n- Ensure PHP files use the `.php` extension\n- Check Claude Code logs for LSP connection errors\n"
+      },
+      "plugins": [
+        {
+          "source": "./plugins/wordpress-trac",
+          "name": "wordpress-trac",
+          "version": "3.0.2",
+          "description": "Tools for working with WordPress Trac tickets, changesets, and searches",
+          "license": "GPL-2.0-or-later",
+          "keywords": [
+            "WordPress",
+            "Trac",
+            "Changeset",
+            "ticket",
+            "core"
+          ],
+          "skills": [
+            "./plugins/wordpress-trac/skills/wp-trac-ticket",
+            "./plugins/wordpress-trac/skills/wp-trac-changeset",
+            "./plugins/wordpress-trac/skills/wp-trac-search",
+            "./plugins/wordpress-trac/skills/wp-trac-timeline"
+          ],
+          "categories": [
+            "changeset",
+            "core",
+            "ticket",
+            "trac",
+            "wordpress"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sirreal/agent-skills",
+            "/plugin install wordpress-trac@sirreal"
+          ]
+        },
+        {
+          "source": "./plugins/phptools-lsp",
+          "name": "phptools-lsp",
+          "version": "1.0.0",
+          "description": "LSP server for DEVSENSE phptools",
+          "license": "GPL-2.0-or-later",
+          "keywords": [
+            "PHP",
+            "LSP"
+          ],
+          "categories": [
+            "lsp",
+            "php"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sirreal/agent-skills",
+            "/plugin install phptools-lsp@sirreal"
+          ]
+        }
+      ]
+    }
+  ]
+}

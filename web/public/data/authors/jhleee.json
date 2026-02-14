@@ -15,7 +15,7 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-11T05:25:17Z"
+        "pushed_at": "2026-02-13T08:03:35Z"
       },
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"cc-useful\",\n  \"description\": \"Practical skills for Claude Code — critical feedback evaluation and backend-to-frontend integration document generation\",\n  \"owner\": {\n    \"name\": \"jhleee\"\n  },\n  \"metadata\": {\n    \"description\": \"Practical skills for Claude Code — critical feedback evaluation and backend-to-frontend integration document generation\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-useful\",\n      \"description\": \"A collection of practical skills for Claude Code — critical feedback evaluation (비판적수용) and backend-to-frontend integration document generation.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"jhleee\"\n      },\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"jhleee/cc-useful\"\n      },\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/jhleee/cc-useful\"\n    }\n  ]\n}\n",
@@ -42,6 +42,37 @@
           "install_commands": [
             "/plugin marketplace add jhleee/cc-useful",
             "/plugin install cc-useful@cc-useful"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "layered-agent-architect-marketplace",
+      "version": null,
+      "description": "LangGraph 7-layer agent architecture skill — scaffolding, tools, subgraphs, nodes, prompt versioning, and dependency linting for StateGraph projects",
+      "repo_full_name": "jhleee/layered-agent-architecture",
+      "repo_url": "https://github.com/jhleee/layered-agent-architecture",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-08T22:18:33Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"layered-agent-architect-marketplace\",\n  \"owner\": {\n    \"name\": \"jhleee\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"layered-agent-architect\",\n      \"source\": \"./\",\n      \"description\": \"LangGraph 7-layer agent architecture skill — scaffolding, tools, subgraphs, nodes, prompt versioning, and dependency linting for StateGraph projects\",\n      \"version\": \"1.2.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"layered-agent-architect\",\n  \"version\": \"1.2.0\",\n  \"description\": \"LangGraph 7-layer agent architecture skill — scaffolding, tools, subgraphs, nodes, prompt versioning, and dependency linting for StateGraph projects\",\n  \"author\": {\n    \"name\": \"jhleee\"\n  },\n  \"repository\": \"https://github.com/jhleee/agent_archetecture_whitepaper\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"langgraph\",\n    \"agent\",\n    \"architecture\",\n    \"stategraph\",\n    \"multi-agent\",\n    \"scaffolding\"\n  ]\n}\n",
+        "README.md": "# LangGraph 에이전트 시스템 통합 아키텍처\n\n> **직관성과 확장성의 균형: 프로토타입에서 프로덕션까지 하나의 구조로**\n\n---\n\n## 개요\n\n본 프로젝트는 LangGraph 기반 에이전트 시스템을 구축할 때 반복적으로 직면하는 아키텍처 딜레마 — \"빠르게 만들 수 있지만 확장이 어려운 구조\"와 \"확장 가능하지만 시작이 무거운 구조\" — 를 해소하기 위한 **통합 아키텍처**를 제시한다.\n\n7개 레이어, 약 18개 파일로 구성된 이 아키텍처는 최소 8개 파일로 동작하는 프로토타입에서 시작하여, 코드 재설계 없이 프로덕션 수준의 시스템으로 점진 확장할 수 있다.\n\n---\n\n## 아키텍처 한눈에 보기\n\n```\nsrc/\n├── core/           # 기반 레이어 — State, Schema, Model Factory\n│   ├── state.py         # State 정의 + Reducer\n│   ├── schemas.py       # Pydantic I/O 모델\n│   └── models.py        # LLM 설정 + 팩토리\n│\n├── memory/         # 메모리 레이어 — 상태 영속화\n│   ├── checkpointer.py  # 체크포인터 전략\n│   └── store.py         # 영속 저장소\n│\n├── prompts/        # 프롬프트 레이어 — 템플릿 관리\n│   ├── templates.py     # 프롬프트 템플릿\n│   └── builder.py       # 동적 조합 빌더\n│\n├── tools/          # 도구 레이어 — 외부 도구 정의\n│   ├── __init__.py      # 레지스트리 + 내보내기\n│   ├── base.py          # 도구 베이스 클래스\n│   └── <tool>.py        # 개별 도구 구현\n│\n├── nodes/          # 노드 레이어 — 처리 로직\n│   ├── reasoning.py     # 추론/사고 노드\n│   ├── execution.py     # 도구 실행 노드\n│   └── routing.py       # 조건부 분기 로직\n│\n├── graphs/         # 그래프 레이어 — 워크플로 조립\n│   ├── builder.py       # 그래프 빌더 유틸\n│   ├── <subgraph>.py    # 서브그래프 (독립 파일)\n│   └── main.py          # 메인 그래프 조립\n│\n├── interfaces/     # 인터페이스 레이어 — 외부 노출\n│   ├── api.py           # REST 엔드포인트\n│   └── stream.py        # SSE 스트리밍 핸들러\n│\n├── config/         # 설정 — 환경 및 에이전트 구성\n│   ├── settings.py      # 환경 변수 (Pydantic Settings)\n│   └── agents.yaml      # 선언적 에이전트 구성\n│\n└── main.py         # 실행 진입점\n```\n\n---\n\n## 7대 설계 원칙\n\n| # | 원칙 | 적용 |\n|---|------|------|\n| 1 | **평면 우선 구조** (Flat-First) | `layers/` 래퍼 없이 폴더 = 레이어 |\n| 2 | **역할별 파일 분리** (Role per File) | nodes/ 내 reasoning/execution/routing 각각 파일 |\n| 3 | **선택적 레이어** (Optional Layer) | memory/, interfaces/ 등은 빈 껍데기로 시작 가능 |\n| 4 | **팩토리로 추상화** (Factory Pattern) | models.py, tool registry로 교체 용이성 확보 |\n| 5 | **단방향 의존** (Unidirectional) | core → 상위 방향만 의존, 역방향 금지 |\n| 6 | **설정 외부화** (Externalize Config) | 하드코딩 → settings.py / agents.yaml로 추출 |\n| 7 | **서브그래프 독립성** (Subgraph Independence) | 각 서브그래프 = 독립 파일, 단독 테스트 가능 |\n\n---\n\n## 점진적 확장 전략\n\n### Phase 1 — 최소 시작 (~8 파일)\n\n```\ncore/state.py, core/schemas.py\nprompts/templates.py\ntools/__init__.py, tools/<tool>.py\nnodes/reasoning.py, nodes/routing.py\ngraphs/main.py\n```\n\n### Phase 2 — 기능 확장 (~14 파일)\n\n```\n+ core/models.py           → 모델 팩토리\n+ tools/base.py            → 도구 표준화\n+ prompts/builder.py       → 동적 프롬프트\n+ nodes/execution.py       → 실행 노드 분리\n+ graphs/<subgraph>.py     → 서브그래프\n```\n\n### Phase 3 — 프로덕션 전환 (~18 파일)\n\n```\n+ memory/checkpointer.py   → 상태 영속화\n+ memory/store.py          → 장기 메모리\n+ interfaces/api.py        → REST API\n+ interfaces/stream.py     → 스트리밍\n+ config/settings.py       → 환경 설정\n+ config/agents.yaml       → 선언적 구성\n```\n\n---\n\n## 레이어 의존성 흐름\n\n```\nmain.py\n  ↓\ninterfaces/        API, 스트리밍\n  ↓\ngraphs/            그래프 조립\n  ↓\n├── nodes/         추론, 실행, 라우팅\n├── memory/        체크포인터, 스토어\n└── config/        설정\n  ↓\n├── prompts/       템플릿, 빌더\n├── tools/         레지스트리, 도구\n└── core/          State, Schema, Models ← 최하위 기반\n```\n\n> **규칙:** 화살표 방향(하향)으로만 import 허용. 역방향·순환 의존 금지.\n\n---\n\n## 문서 구조\n\n상세 설계 문서는 [`docs/`](./docs/) 디렉토리에 챕터별로 정리되어 있다.\n\n| 장 | 제목 | 핵심 내용 |\n|---|------|----------|\n| [1장](./docs/01-서론.md) | 서론 | 배경, 목적, 대상 독자, 용어 정의 |\n| [2장](./docs/02-설계-원칙.md) | 설계 원칙 | 설계 철학, 7대 원칙, 채택·폐기 기준 |\n| [3장](./docs/03-전체-구조.md) | 전체 구조 | 디렉토리 구조, 의존성 흐름, 데이터 흐름 |\n| [4장](./docs/04-core-레이어.md) | Core 레이어 | State, Schema, Model Factory |\n| [5장](./docs/05-memory-레이어.md) | Memory 레이어 | 체크포인터, 영속 저장소, 환경별 구성 |\n| [6장](./docs/06-prompts-레이어.md) | Prompts 레이어 | 템플릿, 동적 빌더, 버전 관리 |\n| [7장](./docs/07-tools-레이어.md) | Tools 레이어 | 베이스 클래스, 레지스트리, 확장 전략 |\n| [8장](./docs/08-nodes-레이어.md) | Nodes 레이어 | 추론, 실행, 라우팅 노드 |\n| [9장](./docs/09-graphs-레이어.md) | Graphs 레이어 | 빌더 유틸, 서브그래프, 메인 그래프 |\n| [10장](./docs/10-interfaces-레이어.md) | Interfaces 레이어 | REST API, 스트리밍 핸들러 |\n| [11장](./docs/11-config-레이어.md) | Config 레이어 | 환경 변수, 선언적 에이전트 구성 |\n\n---\n\n## Claude Code 플러그인\n\n이 레포지토리는 Claude Code 플러그인으로 배포된다. 설치하면 LangGraph 프로젝트를 스케폴딩하고, 도구/노드/서브그래프를 추가하고, 아키텍처 규칙을 검증하는 스킬을 사용할 수 있다.\n\n### 설치\n\n```bash\n/plugin marketplace add jhleee/layered-agent-architecture\n/plugin install layered-agent-architect\n```\n\n### 사용 예시\n\n| 프롬프트 | 동작 |\n|---------|------|\n| \"langgraph로 날씨 봇 만들어줘\" | Phase 1 프로젝트 스케폴딩 |\n| \"weather_tool 추가해줘\" | 도구 생성 + 레지스트리 등록 |\n| \"리서처 서브그래프 추가\" | 부분 State + 팩토리 함수 + 메인 그래프 연결 |\n| \"요약 reasoning 노드 추가\" | 역할별 노드 템플릿 적용 |\n| \"시스템 프롬프트 v2 만들어줘\" | 프롬프트 버전 관리 |\n| \"의존성 규칙 검사해줘\" | AST 기반 import lint |\n| \"Phase 1에서 Phase 2로 확장\" | 증분 파일 추가 |\n\n### 설치 범위\n\n```bash\n/plugin install layered-agent-architect --scope user      # 모든 프로젝트\n/plugin install layered-agent-architect --scope project   # 현재 프로젝트 (팀 공유)\n/plugin install layered-agent-architect --scope local     # 로컬만\n```\n\n---\n\n## SKILLS (구현 지침)\n\n아키텍처를 기반으로 실제 코드를 생성하기 위한 SKILLS 지침은 [`SKILLS.md`](./SKILLS.md)에 정의되어 있다. 플러그인 설치 후에는 스킬이 자동으로 참조되므로 이 문서를 직접 읽을 필요가 없다.\n\n---\n\n## 문서 정보\n\n- **버전:** 1.0\n- **대상 프레임워크:** LangGraph (Python)\n- **범위:** 단일 에이전트 ~ 멀티 에이전트 서브그래프 구조\n"
+      },
+      "plugins": [
+        {
+          "name": "layered-agent-architect",
+          "source": "./",
+          "description": "LangGraph 7-layer agent architecture skill — scaffolding, tools, subgraphs, nodes, prompt versioning, and dependency linting for StateGraph projects",
+          "version": "1.2.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jhleee/layered-agent-architecture",
+            "/plugin install layered-agent-architect@layered-agent-architect-marketplace"
           ]
         }
       ]

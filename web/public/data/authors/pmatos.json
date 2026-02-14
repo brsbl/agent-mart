@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "pmatos",
+    "display_name": "Paulo Matos",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7911?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "badminton-cli",
+      "version": null,
+      "description": "Claude Code plugin for German U19 badminton rankings",
+      "repo_full_name": "pmatos/badminton-cli",
+      "repo_url": "https://github.com/pmatos/badminton-cli",
+      "repo_description": "German Badminton U19 rank list analyzer",
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2026-02-13T12:37:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"badminton-cli\",\n  \"owner\": {\n    \"name\": \"Paulo Matos\",\n    \"email\": \"p@ocmatos.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugin for German U19 badminton rankings\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"badminton-cli\",\n      \"source\": \"./plugin\",\n      \"description\": \"Explore German U19 badminton rankings with slash commands, skills, and a specialized analysis agent\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Paulo Matos\"\n      },\n      \"keywords\": [\"badminton\", \"rankings\", \"sports\", \"germany\", \"dbv\"]\n    }\n  ]\n}\n",
+        "README.md": "# Badminton CLI\n\nA beautiful console application for exploring German U19 badminton rankings from the German Badminton Association (DBV).\n\n## Features\n\n- **Search players** by name with fuzzy matching\n- **View player details** including rankings across all disciplines\n- **Compare players** side-by-side\n- **Calculate team points** for doubles partnerships\n- **View top rankings** filtered by discipline\n- **Track ranking history** with terminal graphs\n- **JSON output** for all commands for programmatic access\n\n## Installation\n\n```bash\n# Using uv (recommended)\nuv tool install badminton-cli\n\n# Or using pipx\npipx install badminton-cli\n\n# Or using pip\npip install badminton-cli\n```\n\n## Quick Start\n\n```bash\n# Download ranking data\nbadminton-cli update\n\n# Search for a player\nbadminton-cli search \"Max Mustermann\"\n\n# View player details\nbadminton-cli player 01-150083\n\n# Show top rankings in Men's Singles\nbadminton-cli top --discipline HE\n\n# Compare two players\nbadminton-cli compare 01-150083 01-150086\n\n# View ranking history graph\nbadminton-cli graph 01-150083 --since 6m\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `update` | Download and index ranking data from DBV |\n| `search <name>` | Fuzzy search for players |\n| `player <id>` | Show detailed player information |\n| `compare <id1> <id2>` | Side-by-side player comparison |\n| `team <id1> <id2>` | Calculate combined team points |\n| `top` | Show top-ranked players |\n| `graph <id>` | Show ranking history graph |\n| `history` | List available ranking weeks |\n\nAll commands support `--json` for structured output.\n\n## Disciplines\n\n| Code | German | English |\n|------|--------|---------|\n| HE | Herren Einzel | Men's Singles |\n| DE | Damen Einzel | Women's Singles |\n| HD | Herren Doppel | Men's Doubles |\n| DD | Damen Doppel | Women's Doubles |\n| HM | Herren Mixed | Mixed (male player) |\n| DM | Damen Mixed | Mixed (female player) |\n\n## Interactive Mode\n\nRun without arguments for an interactive TUI:\n\n```bash\nbadminton-cli\n```\n\n## Claude Code Plugin\n\nA Claude Code plugin is available for AI-assisted ranking exploration. See the [claude-plugin](./claude-plugin/) directory.\n\n## Requirements\n\n- Python 3.12+\n\n## License\n\nMIT License - see [LICENSE](./LICENSE) for details.\n\n## Links\n\n- [PyPI](https://pypi.org/project/badminton-cli/)\n- [GitHub](https://github.com/pmatos/badminton-cli)\n- [Issues](https://github.com/pmatos/badminton-cli/issues)\n",
+        "plugin/README.md": "# Badminton CLI Plugin for Claude Code\n\nA Claude Code plugin for exploring German U19 badminton rankings using the `badminton-cli` tool.\n\n## Features\n\n- **Search players** by name with fuzzy matching\n- **View player details** including rankings across all disciplines\n- **Compare players** side-by-side\n- **Calculate team points** for doubles partnerships\n- **View top rankings** filtered by discipline\n- **Analyze trends** with historical ranking data\n- **Specialized agent** for in-depth ranking analysis\n\n## Installation\n\n### Step 1: Install badminton-cli\n\nThe plugin requires `badminton-cli` to be installed. Install it from PyPI:\n\n```bash\n# Using uv (recommended)\nuv tool install badminton-cli\n\n# Or using pipx\npipx install badminton-cli\n```\n\n### Step 2: Install the Plugin\n\nIn Claude Code, run:\n\n```\n/plugin marketplace add pmatos/badminton-cli\n/plugin install badminton-cli@badminton-cli\n```\n\nThe first command adds the marketplace, the second installs the plugin.\n\n#### Alternative: Development Mode\n\nFor local development or testing:\n\n```bash\ngit clone https://github.com/pmatos/badminton-cli.git\nclaude --plugin-dir ./badminton-cli/plugin\n```\n\n### Step 3: Enable the Plugin (if not auto-enabled)\n\n```\n/plugin enable badminton-cli\n```\n\n### Step 4: Initialize Ranking Data\n\nBefore using the plugin, download the ranking data:\n\n```bash\n/badminton:update\n```\n\nOr for historical data:\n\n```bash\n/badminton:update --all\n```\n\n## Usage\n\n### Slash Commands\n\n| Command | Description | Example |\n|---------|-------------|---------|\n| `/badminton:search <name>` | Search for players | `/badminton:search Mustermann` |\n| `/badminton:player <id>` | Show player details | `/badminton:player 01-150083` |\n| `/badminton:top [discipline]` | Top rankings | `/badminton:top HE` |\n| `/badminton:compare <id1> <id2>` | Compare two players | `/badminton:compare 01-150083 01-150084` |\n| `/badminton:update [flags]` | Update ranking data | `/badminton:update --all` |\n\n### Natural Language Queries\n\nWith the plugin installed, Claude understands badminton ranking queries:\n\n- \"Who are the top 10 players in men's singles?\"\n- \"Show me details for player 01-150083\"\n- \"Compare these two players and tell me who's better\"\n- \"Find the best mixed doubles partner for this player\"\n- \"How has this player's ranking changed over the past 6 months?\"\n\n### Ranking Analyst Agent\n\nFor complex analysis tasks, Claude can use the specialized ranking analyst agent:\n\n- Trend analysis across multiple players\n- Finding optimal doubles partnerships\n- Age-group performance comparisons\n- Rising star identification\n\n## Disciplines\n\n| Code | German | English |\n|------|--------|---------|\n| HE | Herren Einzel | Men's Singles |\n| DE | Damen Einzel | Women's Singles |\n| HD | Herren Doppel | Men's Doubles |\n| DD | Damen Doppel | Women's Doubles |\n| HM | Herren Mixed | Mixed (male player) |\n| DM | Damen Mixed | Mixed (female player) |\n\n## Dependencies\n\n- **badminton-cli**: The underlying CLI tool (install from PyPI)\n- **Python 3.12+**: Required by badminton-cli\n- **Claude Code**: The AI coding assistant\n\n## Plugin Structure\n\n```\nplugin/\n├── .claude-plugin/\n│   └── plugin.json           # Plugin manifest\n├── commands/\n│   ├── search.md             # /badminton:search\n│   ├── player.md             # /badminton:player\n│   ├── top.md                # /badminton:top\n│   ├── compare.md            # /badminton:compare\n│   └── update.md             # /badminton:update\n├── skills/\n│   └── badminton-cli/\n│       ├── SKILL.md          # CLI usage skill\n│       └── references/       # Detailed documentation\n├── agents/\n│   └── ranking-analyst.md    # Analysis agent\n└── README.md                 # This file\n```\n\n## Troubleshooting\n\n### \"Command not found: badminton-cli\"\n\nInstall the CLI tool:\n\n```bash\nuv tool install badminton-cli\n```\n\n### \"No data available\"\n\nDownload ranking data first:\n\n```bash\nbadminton-cli update\n```\n\n### \"Player not found\"\n\n- Check the player ID format (XX-XXXXXX)\n- Use `/badminton:search` to find the correct ID\n- The player may not be in U19 rankings\n\n## Development\n\nTo modify the plugin:\n\n1. Edit files in the `plugin/` directory\n2. Test with Claude Code using `--plugin-dir`:\n   ```bash\n   claude --plugin-dir /path/to/badminton-cli/plugin\n   ```\n\n## License\n\nMIT License - see [LICENSE](../LICENSE) for details.\n\n## Links\n\n- [badminton-cli on PyPI](https://pypi.org/project/badminton-cli/)\n- [GitHub Repository](https://github.com/pmatos/badminton-cli)\n- [Issue Tracker](https://github.com/pmatos/badminton-cli/issues)\n"
+      },
+      "plugins": [
+        {
+          "name": "badminton-cli",
+          "source": "./plugin",
+          "description": "Explore German U19 badminton rankings with slash commands, skills, and a specialized analysis agent",
+          "version": "1.0.0",
+          "author": {
+            "name": "Paulo Matos"
+          },
+          "keywords": [
+            "badminton",
+            "rankings",
+            "sports",
+            "germany",
+            "dbv"
+          ],
+          "categories": [
+            "badminton",
+            "dbv",
+            "germany",
+            "rankings",
+            "sports"
+          ],
+          "install_commands": [
+            "/plugin marketplace add pmatos/badminton-cli",
+            "/plugin install badminton-cli@badminton-cli"
+          ]
+        }
+      ]
+    }
+  ]
+}

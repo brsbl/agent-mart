@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "SamCuipogobongo",
+    "display_name": "Sam Cui",
+    "avatar_url": "https://avatars.githubusercontent.com/u/164855981?u=5d12c5c28b7406deb69aab0a6502542c8ef67863&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "x-collect",
+      "version": "1.0.0",
+      "description": "X/Twitter topic intelligence via Actionbook browser automation",
+      "repo_full_name": "SamCuipogobongo/x-collect",
+      "repo_url": "https://github.com/SamCuipogobongo/x-collect",
+      "repo_description": "X/Twitter topic intelligence skill for Claude Code. Scrapes real tweets, engagement metrics, and KOL accounts via Playwright browser automation.",
+      "signals": {
+        "stars": 5,
+        "forks": 1,
+        "pushed_at": "2026-02-11T02:33:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"x-collect\",\n  \"version\": \"1.0.0\",\n  \"description\": \"X/Twitter topic intelligence via Actionbook browser automation\",\n  \"owner\": {\n    \"name\": \"Sam\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"x-collect\",\n      \"description\": \"X/Twitter topic intelligence — scrapes real tweets, engagement metrics, and KOL accounts for content research\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Sam\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"twitter\", \"x-com\", \"intelligence\", \"actionbook\", \"content-research\"],\n      \"homepage\": \"https://github.com/SamCuipogobongo/x-collect\",\n      \"repository\": \"https://github.com/SamCuipogobongo/x-collect\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"x-collect\",\n  \"version\": \"1.0.0\",\n  \"description\": \"X/Twitter topic intelligence via Actionbook browser automation\",\n  \"author\": {\n    \"name\": \"Sam\"\n  }\n}\n",
+        "README.md": "<div align=\"center\">\n  <a href=\"https://github.com/mindfold-ai/Trellis\">\n    <img src=\".github/trellis-banner.png\" width=\"600\" alt=\"Trellis\">\n  </a>\n  <p>\n    This skill is built with <a href=\"https://github.com/mindfold-ai/Trellis\"><b>Trellis</b></a> — an all-in-one AI framework & toolkit for Claude Code, Cursor & iFlow.<br>\n    <a href=\"https://github.com/mindfold-ai/Trellis\">Try it out here</a>\n  </p>\n</div>\n\n---\n\n# x-collect\n\n[![npm version](https://img.shields.io/npm/v/x-collect-skill)](https://www.npmjs.com/package/x-collect-skill)\n[![license](https://img.shields.io/npm/l/x-collect-skill)](./LICENSE)\n[![Discord](https://img.shields.io/discord/1338058872492eback?label=Discord&logo=discord&logoColor=white)](https://discord.gg/tjCB6tVPAm)\n\nEnglish | [中文](./README.zh-CN.md)\n\nX/Twitter topic intelligence skill for Claude Code. Uses Actionbook browser automation to search x.com directly, scraping real tweets with engagement metrics.\n\n## What it does\n\n`/x-collect [topic]` opens x.com in Chrome, runs 3 search rounds, and extracts real tweet data:\n\n1. **Top / Viral Posts** — x.com search \"Top\" tab, most popular tweets\n2. **Trending / Recent Posts** — Top tab with `min_faves:50 since:YESTERDAY`, hottest posts from the last 24h\n3. **KOL Posts** — filtered by `min_faves:100`, high-engagement accounts only\n\nOptional bonus rounds:\n\n4. **Hook Study** — pure text posts (`-filter:media -filter:links`) with 500+ likes, for studying copy patterns\n5. **Conversation Starters** — high-reply posts (`min_replies:30`), to find what drives discussion\n\nOutput: JSONL + Markdown in `./x-collect-data/` with real handles, tweet text, likes, retweets, replies, views, and a Content Opportunity Summary.\n\n## Prerequisites\n\n| Dependency | Purpose | Required |\n|------------|---------|----------|\n| [Claude Code](https://claude.ai/claude-code) | Runtime | Yes |\n| [Actionbook CLI](https://actionbook.dev) | Browser automation (`actionbook` command) | Yes |\n| Actionbook Chrome Extension | Controls user's existing Chrome browser | Yes |\n| Logged-in X/Twitter session | Chrome must have x.com logged in | Yes |\n\n### Setup Actionbook Extension\n\nFollow the official guide: **[Actionbook Installation](https://actionbook.dev/docs/guides/installation)**\n\n```bash\nactionbook extension install           # install extension files\n# Then load unpacked extension in Chrome (chrome://extensions)\nactionbook extension serve             # start bridge (keep running)\n```\n\n## Install\n\n### Option A: Claude Plugin Marketplace (Recommended)\n\n```bash\nclaude plugin marketplace add SamCuipogobongo/x-collect\nclaude plugin install x-collect\n```\n\n### Option B: npm global install\n\n```bash\nnpm install -g x-collect-skill\n```\n\n### Option C: One-line install\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/SamCuipogobongo/x-collect/main/install.sh | bash\n```\n\n### Option D: Manual\n\n```bash\ngit clone https://github.com/SamCuipogobongo/x-collect.git\nmkdir -p ~/.claude/skills/x-collect\ncp x-collect/SKILL.md ~/.claude/skills/x-collect/\n```\n\n## Usage\n\n```bash\n# In Claude Code (with Chrome open and x.com logged in):\n/x-collect Claude Code       # research \"Claude Code\" on X\n/x-collect vibe coding       # research \"vibe coding\" on X\n/x-collect                    # interactive mode (asks for topic)\n```\n\n## Output\n\nData saved to `./x-collect-data/`:\n\n| File | Description |\n|------|-------------|\n| `intel.jsonl` | One JSON object per tweet, deduped by URL |\n| `intel.md` | Formatted report with engagement data + Content Opportunity Summary |\n\n### JSONL Schema\n\n```json\n{\n  \"url\": \"https://x.com/bcherny/status/123\",\n  \"text\": \"I'm Boris and I created Claude Code...\",\n  \"intel_type\": \"viral_post\",\n  \"topic\": \"Claude Code\",\n  \"account\": \"@bcherny\",\n  \"display_name\": \"Boris Cherny\",\n  \"angle\": \"Creator shares vanilla setup with 15+ parallel sessions\",\n  \"format\": \"thread\",\n  \"likes\": 5800,\n  \"retweets\": 1200,\n  \"replies\": 340,\n  \"views\": 6500000,\n  \"posted_at\": \"2026-01-15T10:30:00Z\",\n  \"key_takeaway\": \"Behind-the-scenes from creator + actionable tips = mega engagement\",\n  \"collected\": \"2026-02-08\"\n}\n```\n\n### Intel Types\n\n| Type | Source |\n|------|--------|\n| `viral_post` | x.com search \"Top\" tab |\n| `trending_post` | Top tab with `min_faves:50 since:YESTERDAY` |\n| `kol_post` | x.com search with `min_faves:100` filter |\n| `hook_study` | Pure text posts (`-filter:media -filter:links`) with 500+ likes |\n| `conversation_starter` | High-reply posts (`min_replies:30`) |\n\n## How it works\n\nThe skill uses Actionbook Extension mode to:\n1. Control the user's Chrome browser (with existing x.com login)\n2. Navigate to x.com search pages with Top tab and various filters\n3. Wait for tweets to load\n4. Extract tweet data via JavaScript evaluation\n5. Deduplicate by tweet URL\n6. Output JSONL + Markdown with Content Opportunity Summary\n\nNo third-party API needed — reads directly from x.com via Actionbook browser automation.\n\n## Community\n\nQuestions, feedback, or feature requests? Join our [Discord](https://discord.gg/tjCB6tVPAm).\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "x-collect",
+          "description": "X/Twitter topic intelligence — scrapes real tweets, engagement metrics, and KOL accounts for content research",
+          "version": "1.0.0",
+          "author": {
+            "name": "Sam"
+          },
+          "source": "./",
+          "category": "productivity",
+          "keywords": [
+            "twitter",
+            "x-com",
+            "intelligence",
+            "actionbook",
+            "content-research"
+          ],
+          "homepage": "https://github.com/SamCuipogobongo/x-collect",
+          "repository": "https://github.com/SamCuipogobongo/x-collect",
+          "license": "MIT",
+          "categories": [
+            "actionbook",
+            "content-research",
+            "intelligence",
+            "productivity",
+            "twitter",
+            "x-com"
+          ],
+          "install_commands": [
+            "/plugin marketplace add SamCuipogobongo/x-collect",
+            "/plugin install x-collect@x-collect"
+          ]
+        }
+      ]
+    }
+  ]
+}

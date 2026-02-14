@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "aguinaldotupy",
+    "display_name": "Aguinaldo Tupy",
+    "avatar_url": "https://avatars.githubusercontent.com/u/44652991?u=3c8b62e44b2cde44cc989ce139ae5adc8b580f61&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aguinaldotupy",
+      "version": null,
+      "description": null,
+      "repo_full_name": "aguinaldotupy/claude-session-tracker",
+      "repo_url": "https://github.com/aguinaldotupy/claude-session-tracker",
+      "repo_description": "Track Claude Code session duration with persistent timestamps, elapsed time status, timer reset, and status line integration.",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-12T13:39:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aguinaldotupy\",\n  \"owner\": {\n    \"name\": \"Aguinaldo Tupy\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"session-tracker\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"session-tracker\",\n  \"description\": \"Track Claude Code session duration with automatic timestamps, elapsed time skill, and optional status line integration\",\n  \"version\": \"2.1.0\",\n  \"author\": {\n    \"name\": \"Aguinaldo Tupy\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"session\",\n    \"time-tracking\",\n    \"status-line\",\n    \"productivity\"\n  ]\n}",
+        "README.md": "<p align=\"center\">\n  <img src=\"art/github-header-banner.png\" alt=\"Session Tracker\" />\n</p>\n\n# session-tracker\n\nTrack Claude Code session duration with automatic timestamps.\n\n## Features\n\n- **SessionStart hook** - saves timestamp in plugin directory, exports `CLAUDE_SESSION_FILE` env var\n- **Persistent session files** - session data survives session end so you can track hours later\n- **`/session-tracker:session-status` skill** - check elapsed time anytime\n- **`/session-tracker:reset-session` command** - reset the timer to zero\n- **Auto-reset on `/clear`** - clearing the session automatically restarts the timer\n- **Status line snippet** - optional integration for live timer display\n\n## Installation\n\n### Option 1: From Marketplace (recommended)\n\n```bash\n# Add as a standalone marketplace plugin\nclaude plugin marketplace add aguinaldotupy/claude-session-tracker\n\n# Install the plugin\nclaude plugin install session-tracker@aguinaldotupy --scope user\n\n# Restart Claude Code to activate hooks\n```\n\n### Option 2: Local Install (development)\n\n```bash\ngit clone https://github.com/aguinaldotupy/claude-session-tracker.git\nclaude --plugin-dir ./claude-session-tracker\n```\n\n### Option 3: Manual Install\n\n```bash\n# Clone into the plugins directory\ngit clone https://github.com/aguinaldotupy/claude-session-tracker.git \\\n  ~/.claude/plugins/marketplaces/claude-session-tracker\n```\n\nThen enable in `~/.claude/settings.json`:\n\n```json\n{\n  \"enabledPlugins\": {\n    \"session-tracker@claude-session-tracker\": true\n  }\n}\n```\n\n### Verify Installation\n\nInside a Claude Code session:\n\n```\n/plugin\n```\n\nNavigate to the **Installed** tab - `session-tracker` should appear.\n\n## Usage\n\n### Check Session Time\n\nType `/session-tracker:session-status` or ask naturally:\n\n- \"how long is this session?\"\n- \"quanto tempo de sessao?\"\n- \"session duration\"\n\nExample output:\n\n```\nSession: 1h 23m (started at 14:30)\n```\n\n### Reset Timer\n\nType `/session-tracker:reset-session` or ask naturally:\n\n- \"reset the session timer\"\n- \"reiniciar o tempo\"\n- \"restart timer\"\n\nThe timer resets to zero from the current time. The `/clear` command also resets the timer automatically.\n\n## Status Line (optional)\n\nTo show elapsed time in the status line, copy the contents of `statusline-snippet.sh` into your `~/.claude/statusline-command.sh`.\n\nExample output:\n\n```\ntupy@host:project (main*) [Opus 4.6] 45m\n```\n\n## How It Works\n\n1. On session start, a timestamp is saved to the plugin directory as `session-tracker-$SESSION_ID` and the full path is exported as `CLAUDE_SESSION_FILE` via `CLAUDE_ENV_FILE`\n2. The session ID is stable across context compaction, so the timestamp survives compact and resume without extra hooks\n3. `/session-tracker:session-status` and the statusline read the file using `$CLAUDE_SESSION_FILE`\n4. Session files persist after session end - no data is lost when closing Claude Code\n5. Using `/clear` or starting a new session creates a fresh timestamp\n\n## Managing the Plugin\n\n```bash\n# Disable without uninstalling\nclaude plugin disable session-tracker@aguinaldotupy --scope user\n\n# Re-enable\nclaude plugin enable session-tracker@aguinaldotupy --scope user\n\n# Uninstall\nclaude plugin uninstall session-tracker@aguinaldotupy --scope user\n\n# Update to latest version\nclaude plugin update session-tracker@aguinaldotupy --scope user\n```\n\n## Requirements\n\n- Claude Code >= 2.1.x\n- bash, date, cat, jq (standard on macOS and Linux; install jq if missing)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "session-tracker",
+          "source": "./",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add aguinaldotupy/claude-session-tracker",
+            "/plugin install session-tracker@aguinaldotupy"
+          ]
+        }
+      ]
+    }
+  ]
+}

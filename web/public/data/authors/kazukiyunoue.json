@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "KazukiYunoue",
+    "display_name": "Kazuki Yunoue",
+    "avatar_url": "https://avatars.githubusercontent.com/u/799325?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ia-writer-annotations-marketplace",
+      "version": null,
+      "description": "Claude Code plugin for iA Writer authorship annotations",
+      "repo_full_name": "KazukiYunoue/claude-code-ia-writer-annotations",
+      "repo_url": "https://github.com/KazukiYunoue/claude-code-ia-writer-annotations",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-11-26T07:49:47Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ia-writer-annotations-marketplace\",\n  \"owner\": {\n    \"name\": \"KazukiYunoue\",\n    \"url\": \"https://github.com/KazukiYunoue\"\n  },\n  \"description\": \"Claude Code plugin for iA Writer authorship annotations\",\n  \"plugins\": [\n    {\n      \"name\": \"ia-writer-annotations\",\n      \"description\": \"Automatically add iA Writer authorship annotations to your text files when Claude Code edits them (Terminal version only)\",\n      \"author\": {\n        \"name\": \"Kazuki Yunoue\",\n        \"url\": \"https://github.com/KazukiYunoue\"\n      },\n      \"version\": \"0.2.0\",\n      \"homepage\": \"https://github.com/KazukiYunoue/claude-code-ia-writer-annotations\",\n      \"source\": \"./.claude-plugin\",\n      \"tags\": [\"iA Writer\", \"annotations\", \"authorship\", \"markdown\", \"text\", \"terminal\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ia-writer-annotations\",\n  \"version\": \"0.2.0\",\n  \"description\": \"Automatically add iA Writer authorship annotations to your text files when Claude Code edits them (Terminal version only)\",\n  \"author\": \"Kazuki Yunoue\",\n  \"homepage\": \"https://github.com/KazukiYunoue/claude-code-ia-writer-annotations\",\n  \"config\": {\n    \"authorName\": \"Claude\",\n    \"authorKind\": \"Other\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Write|Edit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/scripts/auto-annotate.js\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "README.md": "# iA Writer Annotations Plugin for Claude Code\n\n> **⚠️ Terminal Version Only**: This plugin currently only works with the **terminal version** of Claude Code. The VSCode extension does not support PostToolUse hooks that modify files.\n\nAutomatically add authorship annotations to your text files when Claude Code edits them, using the [iA Writer Markdown Annotations](https://github.com/iainc/Markdown-Annotations) open format.\n\n## Overview\n\nThis plugin tracks Claude's contributions to your markdown and text files by automatically appending authorship metadata at the end of files. The annotations are invisible in iA Writer's editor but can be viewed in other text editors, and help you distinguish between human-written and AI-generated content.\n\n## Features\n\n### 🤖 Automatic Annotation\n- Automatically annotates files when Claude Code uses `Write` or `Edit` tools\n- Tracks character ranges of Claude's contributions\n- Validates annotations with SHA-256 hash\n- Works seamlessly in the background - no manual intervention required\n\n### ⚙️ Configurable\n- Default author name: `@Claude`\n- Customizable to use `@AI`, `@Bot`, or any other author name\n- Per-project or global configuration\n\n### 📄 File Support\n- `.md` - Markdown files\n- `.txt` - Plain text files\n- `.text` - Text files\n\n## Installation\n\n```bash\n# Add the plugin marketplace\n/plugin marketplace add KazukiYunoue/claude-code-ia-writer-annotations\n\n# Install the plugin\n/plugin install ia-writer-annotations\n\n# Enable the plugin (if not auto-enabled)\n/plugin enable ia-writer-annotations\n```\n\n## Configuration\n\nThe plugin can be configured via `.claude-plugin/plugin.json`:\n\n```json\n{\n  \"name\": \"ia-writer-annotations\",\n  \"version\": \"1.0.0\",\n  \"config\": {\n    \"authorName\": \"Claude\",\n    \"authorKind\": \"Other\"\n  }\n}\n```\n\n### Configuration Options\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `authorName` | `\"Claude\"` | The author name to use in annotations (e.g., `\"AI\"`, `\"Bot\"`) |\n| `authorKind` | `\"Other\"` | The kind of author for iA Writer (either `\"Human\"` or `\"Other\"`) |\n\n## Usage\n\n### Automatic Annotation\n\nOnce installed, the plugin works automatically:\n\n1. Edit a markdown or text file using Claude Code\n2. The plugin automatically appends annotation metadata to the end of the file\n3. Open the file in iA Writer to see visual authorship indicators\n\n**Example:**\n\nWhen Claude writes \"Hello, world!\" at the beginning of a file, the annotation block is automatically added:\n\n```markdown\nHello, world!\n\n---\nAnnotations: 0,13 SHA-256 a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447\n@Claude: 0,13\n```\n\n### Enable/Disable Plugin\n\nUse Claude Code's built-in plugin management:\n\n```bash\n# Disable when you don't need annotations\n/plugin disable ia-writer-annotations\n\n# Re-enable when needed\n/plugin enable ia-writer-annotations\n```\n\n## iA Writer Setup\n\nTo visualize annotations in iA Writer, you need to register the author:\n\n### On Mac:\n1. Open iA Writer\n2. Go to **Settings → Authors**\n3. Click **+ Add Author**\n4. Enter:\n   - **Name**: `Claude` (or your configured `authorName`)\n   - **Identifier**: `noreply@anthropic.com` (optional)\n   - **Kind**: Select `Other` (for AI)\n5. Click **Add**\n\n### On iPhone/iPad:\n1. Open iA Writer\n2. Go to **Settings → Authors**\n3. Tap **Add Author…**\n4. Enter the same information as above\n5. Tap **Add**\n\nOnce registered, the author syncs across all your devices via iCloud.\n\n## How It Works\n\n### Markdown Annotations Format\n\nThe plugin uses the [Markdown Annotations](https://github.com/iainc/Markdown-Annotations) open format:\n\n```\n[Your text content here]\n\n---\nAnnotations: start,length SHA-256 hash\n@AuthorName: start1,length1 start2,length2 ...\n```\n\n**Key features:**\n- **Character ranges**: Use grapheme cluster indexes (not byte offsets)\n- **SHA-256 hash**: Validates the integrity of annotated ranges\n- **Multiple authors**: Support for multiple contributors in the same file\n- **Portable**: Plain text format that works across editors\n\n### PostToolUse Hook\n\nThe plugin registers a `PostToolUse` hook that triggers when Claude Code edits files:\n\n1. Detects `Write` or `Edit` tool usage on `.md`, `.txt`, or `.text` files\n2. Calculates character ranges for Claude's changes\n3. Parses existing annotations (if any)\n4. Merges new annotations with existing ones\n5. Recalculates SHA-256 hash\n6. Appends/updates annotation block at end of file\n\n### Character Range Calculation\n\nThe plugin uses JavaScript's `Intl.Segmenter` API to correctly count grapheme clusters, ensuring proper handling of:\n- Emoji (e.g., 👍 counts as 1, not 2 or 4)\n- Combined characters (e.g., é as single character)\n- Surrogate pairs (e.g., 𝕳𝖊𝖑𝖑𝖔)\n\nThis ensures annotations remain valid across different environments and text encodings.\n\n## Limitations\n\n### Platform Compatibility\n\n**Terminal Version Only**\n\nThe plugin currently only works with the **terminal version** of Claude Code. The VSCode extension does not support PostToolUse hooks that modify files, which are essential for automatic annotation functionality.\n\n- ✅ **Claude Code (Terminal)**: Fully supported\n- ❌ **Claude Code (VSCode Extension)**: Not supported\n\n### Incremental Edit Tracking\n\nThe plugin currently does not track incremental edits to files that already have annotations. This means:\n\n- ✅ **New files created by Claude** (`Write` tool): Fully annotated\n- ✅ **Files without existing annotations** (`Edit` tool): Fully annotated\n- ❌ **Files with existing annotations** (`Edit` tool): Not updated\n\nWhen Claude edits a file that already contains annotations (indicating human or previous AI contributions), the plugin conservatively skips auto-annotation to avoid incorrectly attributing human-written content to Claude.\n\n**Future Enhancement**: A future version may implement proper diff tracking to accurately annotate only the changed portions of files with existing annotations.\n\n## Technical Details\n\n### Directory Structure\n\n```\n.claude-plugin/\n├── plugin.json           # Plugin metadata and configuration\n└── scripts/\n    ├── auto-annotate.js # Automatic annotation logic\n    └── lib/\n        ├── parser.js    # Annotation parsing\n        ├── generator.js # Annotation generation\n        └── hash.js      # SHA-256 calculation\n```\n\n### Dependencies\n\n- Node.js (for script execution)\n- Built-in `crypto` module (for SHA-256)\n- Built-in `Intl.Segmenter` API (for grapheme counting)\n\n## Contributing\n\nContributions are welcome! Please feel free to submit issues or pull requests.\n\n### Development\n\n```bash\n# Clone the repository\ngit clone <repository-url>\n\n# Test locally\n/plugin install /path/to/local/plugin\n\n# Make changes and test\n/plugin disable ia-writer-annotations\n/plugin enable ia-writer-annotations\n```\n\n## License\n\n[To be determined]\n\n## Resources\n\n- [iA Writer Markdown Annotations Specification](https://github.com/iainc/Markdown-Annotations)\n- [iA Writer Authorship Documentation](https://ia.net/writer/support/editor/authorship)\n- [Claude Code Plugins Documentation](https://docs.claude.com/en/docs/claude-code/plugins)\n\n## Acknowledgments\n\n- iA Inc. for creating the Markdown Annotations open format\n- Anthropic for Claude Code and the plugin system\n"
+      },
+      "plugins": [
+        {
+          "name": "ia-writer-annotations",
+          "description": "Automatically add iA Writer authorship annotations to your text files when Claude Code edits them (Terminal version only)",
+          "author": {
+            "name": "Kazuki Yunoue",
+            "url": "https://github.com/KazukiYunoue"
+          },
+          "version": "0.2.0",
+          "homepage": "https://github.com/KazukiYunoue/claude-code-ia-writer-annotations",
+          "source": "./.claude-plugin",
+          "tags": [
+            "iA Writer",
+            "annotations",
+            "authorship",
+            "markdown",
+            "text",
+            "terminal"
+          ],
+          "categories": [
+            "annotations",
+            "authorship",
+            "ia-writer",
+            "markdown",
+            "terminal",
+            "text"
+          ],
+          "install_commands": [
+            "/plugin marketplace add KazukiYunoue/claude-code-ia-writer-annotations",
+            "/plugin install ia-writer-annotations@ia-writer-annotations-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

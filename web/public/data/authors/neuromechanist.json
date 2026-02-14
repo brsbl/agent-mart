@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "neuromechanist",
+    "display_name": "Seyed (Yahya) Shirazi",
+    "avatar_url": "https://avatars.githubusercontent.com/u/44906843?u=28240c760dbd56dd0fa66504cce7a89696f69067&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "neuromechanist-opencite",
+      "version": null,
+      "description": "Academic literature search, citation management, and PDF retrieval using the opencite CLI",
+      "repo_full_name": "neuromechanist/opencite",
+      "repo_url": "https://github.com/neuromechanist/opencite",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T19:58:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"neuromechanist-opencite\",\n  \"description\": \"Academic literature search, citation management, and PDF retrieval using the opencite CLI\",\n  \"owner\": {\n    \"name\": \"Seyed Yahya Shirazi\",\n    \"email\": \"shirazi@ieee.org\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"opencite\",\n      \"description\": \"Academic literature search, citation management, and PDF retrieval using the opencite CLI\",\n      \"version\": \"0.2.0\",\n      \"author\": {\n        \"name\": \"Seyed Yahya Shirazi\",\n        \"email\": \"shirazi@ieee.org\"\n      },\n      \"source\": \"./plugins/opencite\",\n      \"category\": \"development\",\n      \"homepage\": \"https://github.com/neuromechanist/opencite\"\n    }\n  ]\n}\n",
+        "README.md": "# OpenCite\n\nAcademic literature search, citation management, and PDF retrieval CLI.\n\nSearches Semantic Scholar, OpenAlex, and PubMed in parallel, deduplicates results, and supports BibTeX output, citation graph traversal, PDF retrieval, batch downloads, and PDF-to-markdown conversion.\n\n## Quick Start\n\nInstall and set up your API keys:\n\n```bash\nuv pip install opencite                # or: pip install opencite\nopencite config init                   # creates ~/.opencite/config.toml\n```\n\nAdd your API keys to `~/.opencite/config.toml` or export them as environment variables:\n\n```bash\nexport SEMANTIC_SCHOLAR_API_KEY=your_key\nexport PUBMED_API_KEY=your_key\nexport OPENALEX_API_KEY=your_key\n```\n\nStart searching:\n\n```bash\nopencite search \"transformer attention mechanism\"\nopencite lookup 10.1038/nature12345\nopencite canonical \"deep learning\" --min-citations 500\nopencite cite 10.1038/nature12345\nopencite pdf 10.1038/nature12345 -o paper.pdf --convert\n```\n\n> [!NOTE]\n> **Claude Code plugin:** Type `/plugin`, select \"Add marketplace\", enter `neuromechanist/opencite`, and restart. Then use `/opencite` or ask Claude directly.\n\n> [!TIP]\n> **PDF conversion:** Install with `uv pip install 'opencite[convert]'` for markitdown and markit-mistral support.\n\n## Commands\n\n### search - Find papers\n\n```bash\nopencite search \"query\" [--max N] [--source all|openalex|s2|pubmed]\n    [--year-from YYYY] [--year-to YYYY] [--oa-only]\n    [--sort relevance|citations|year] [-f text|json|bibtex|csv] [-o FILE] [-v]\n```\n\n### lookup - Look up papers by identifier\n\n```bash\nopencite lookup IDENTIFIER [IDENTIFIER ...] [--enrich] [--append-bib FILE]\n    [-f text|json|bibtex] [-o FILE] [-v]\n```\n\nAccepts DOI, `pmid:X`, `pmc:X`, `arxiv:X`, S2 ID, or OpenAlex ID. Supports multiple IDs.\n\n### cite - Citation graph\n\n```bash\nopencite cite IDENTIFIER [--direction citing|references|both] [--max N]\n    [--sort citations|year] [--min-citations N] [-f text|json|bibtex] [-o FILE]\n```\n\n### canonical - Most-cited papers in a field\n\n```bash\nopencite canonical \"topic\" [--max N] [--year-from YYYY] [--min-citations N]\n    [-f text|json|bibtex] [-o FILE]\n```\n\n### pdf - Download PDF\n\n```bash\nopencite pdf IDENTIFIER [-o PATH] [--filename NAME] [--convert]\n    [--converter auto|markitdown|mistral]\n```\n\n`-o` accepts a file path (e.g., `paper.pdf`) or directory. With `--convert`, also generates a markdown file alongside the PDF.\n\n### convert - PDF to markdown\n\n```bash\nopencite convert FILE.pdf [-o FILE] [--converter auto|markitdown|mistral]\n    [--extract-images] [--images-dir DIR]\n```\n\nAuto mode uses markit-mistral when `MISTRAL_API_KEY` is set (better for math and complex layouts), otherwise falls back to markitdown (free, local).\n\n### batch-fetch - Batch download PDFs\n\n```bash\nopencite batch-fetch FILE [-o DIR] [--convert] [--concurrency N] [--summary FILE]\nopencite batch-fetch --from-json FILE [options]\nopencite batch-fetch --from-stdin [options]\n```\n\nDownloads PDFs for multiple papers with controlled concurrency. Supports text files (one ID per line), JSON files (array of DOIs or opencite search results), and stdin.\n\nExample workflow:\n\n```bash\n# Search and save as JSON, then batch download with conversion\nopencite search \"tDCS motor cortex\" --max 30 -f json -o results.json\nopencite batch-fetch --from-json results.json --convert --summary report.json -o ./papers\n```\n\n### ids - Convert between identifiers\n\n```bash\nopencite ids IDENTIFIER [IDENTIFIER ...] [-f text|json]\n```\n\nConverts between DOI, PMID, and PMCID using the NCBI ID Converter API.\n\n### config - Manage configuration\n\n```bash\nopencite config init    # create ~/.opencite/config.toml template\nopencite config show    # display resolved config (keys masked)\nopencite config path    # show config file location\n```\n\n## Output Formats\n\nAll search/lookup/cite/canonical commands support `-f`/`--format`:\n\n- `text` (default) - human-readable output\n- `json` - structured JSON\n- `bibtex` - BibTeX entries for citation managers\n- `csv` - comma-separated values (search only)\n\nUse `-o`/`--output FILE` to write to a file instead of stdout.\n\n## Installation\n\n```bash\n# uv (recommended)\nuv pip install opencite\nuv pip install 'opencite[convert]'     # with PDF conversion (markitdown + markit-mistral)\n\n# pip\npip install opencite\npip install 'opencite[convert]'\n\n# uvx (no install needed, runs from cache)\nuvx opencite --version\n```\n\nFor development:\n\n```bash\ngit clone https://github.com/neuromechanist/opencite.git\ncd opencite\nuv sync --extra dev\n```\n\n## Configuration\n\nOpenCite supports TOML config, `.env` files, and environment variables.\n\n```bash\nopencite config init    # creates ~/.opencite/config.toml with template\nopencite config show    # display resolved config (keys masked)\nopencite config path    # show config file location\n```\n\n### Config loading priority\n\nLater sources override earlier ones:\n\n1. `~/.opencite/config.toml`\n2. `~/.opencite/.env`\n3. `.env` in working directory\n4. Environment variables\n\n### API keys\n\nRequired for academic database access:\n\n```bash\nexport SEMANTIC_SCHOLAR_API_KEY=your_key\nexport PUBMED_API_KEY=your_key\nexport OPENALEX_API_KEY=your_key\n```\n\nOptional:\n\n```bash\nexport MISTRAL_API_KEY=your_key        # for PDF-to-markdown via Mistral OCR\n```\n\n### Publisher tokens (optional)\n\nFor authenticated PDF downloads from paywalled publishers:\n\n```bash\nexport ELSEVIER_API_KEY=your_key       # Elsevier/ScienceDirect\nexport WILEY_TDM_TOKEN=your_token      # Wiley TDM\nexport SPRINGER_API_KEY=your_key       # Springer Nature\n```\n\nThese can also be set in `~/.opencite/config.toml`:\n\n```toml\n[publishers]\nelsevier = \"your_key\"\nwiley_tdm = \"your_token\"\nspringer = \"your_key\"\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "opencite",
+          "description": "Academic literature search, citation management, and PDF retrieval using the opencite CLI",
+          "version": "0.2.0",
+          "author": {
+            "name": "Seyed Yahya Shirazi",
+            "email": "shirazi@ieee.org"
+          },
+          "source": "./plugins/opencite",
+          "category": "development",
+          "homepage": "https://github.com/neuromechanist/opencite",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add neuromechanist/opencite",
+            "/plugin install opencite@neuromechanist-opencite"
+          ]
+        }
+      ]
+    }
+  ]
+}

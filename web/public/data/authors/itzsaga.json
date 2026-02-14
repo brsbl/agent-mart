@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "itzsaga",
+    "display_name": "Seth",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11750061?u=ee282a1f366610c99cd2fb8054860adc28475aa4&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-prd",
+      "version": "1.0.0",
+      "description": "Claude Code plugin marketplace for PRD workflow and utilities",
+      "repo_full_name": "itzsaga/cc-prd",
+      "repo_url": "https://github.com/itzsaga/cc-prd",
+      "repo_description": "A PRD workflow for Claude Code",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-05T20:13:21Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-prd\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude Code plugin marketplace for PRD workflow and utilities\",\n  \"owner\": {\n    \"name\": \"itzsaga\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"prd-workflow\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Full PRD (Product Requirements Document) workflow system with research, planning, and implementation capabilities\",\n      \"source\": \"./plugins/prd-workflow\",\n      \"tags\": [\"prd\", \"workflow\", \"research\", \"planning\", \"tasks\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugin Marketplace\n\nA portable plugin marketplace for Claude Code, featuring a comprehensive PRD (Product Requirements Document) workflow system.\n\n## Overview\n\nThis marketplace provides plugins that extend Claude Code with structured workflows, commands, and automation. The flagship plugin is `prd-workflow`, which offers a complete system for creating, planning, and implementing product requirements.\n\n## Installation\n\n### Prerequisites\n\nEnsure you have the required dependencies installed. See [DEPENDENCIES.md](DEPENDENCIES.md) for detailed installation instructions.\n\n**Required:**\n- `jq` - JSON parsing\n- `yq` - YAML parsing\n- `check-jsonschema` - Schema validation\n\n**Optional:**\n- `glow` - Markdown rendering\n- Exa MCP server - For research capabilities\n\n### Quick Install Dependencies\n\n**macOS (Homebrew):**\n```bash\nbrew install jq yq\npip install check-jsonschema\n```\n\n**Ubuntu/Debian:**\n```bash\napt install jq\nsnap install yq  # or: pip install yq\npip install check-jsonschema\n```\n\n**Arch Linux:**\n```bash\npacman -S jq yq\npip install check-jsonschema\n```\n\n### Installing the Plugin\n\nOnce Claude Code supports plugin marketplaces, you can install via:\n\n```bash\n/plugin marketplace add /path/to/jackbot-ai\n/plugin install prd-workflow\n```\n\nUntil then, you can manually symlink or copy the plugin contents to your Claude configuration.\n\n## Available Plugins\n\n### prd-workflow\n\nA complete PRD workflow system with three main phases:\n\n1. **Create** - Gather requirements and create structured PRD documents\n2. **Plan** - Analyze, research, and define detailed task specifications\n3. **Work** - Implement defined tasks with tracking and logging\n\n#### Features\n\n- **Agents**: Specialized subagents for research and implementation\n- **Commands**: Git rebase with intelligent conflict resolution\n- **Hooks**: Automatic validation of task and research YAML files\n- **Skills**: Full PRD workflow with routing logic\n- **Scripts**: CLI tools for task and research management\n\n#### Usage\n\n```bash\n# Create a new PRD\n/prd create my-feature\n\n# Plan an existing PRD (research and task definition)\n/prd plan my-feature\n\n# Work on a planned PRD (implementation)\n/prd work my-feature\n\n# Check PRD status\nclaude-PRD-list-prds\nclaude-PRD-task-status my-feature\n```\n\n## Directory Structure\n\n```\ncc-prd/\n├── .claude-plugin/\n│   └── marketplace.json       # Marketplace catalog\n├── plugins/\n│   └── prd-workflow/          # PRD workflow plugin\n│       ├── .claude-plugin/\n│       │   └── plugin.json    # Plugin configuration\n│       ├── agents/            # Subagent definitions\n│       ├── commands/          # Custom commands\n│       ├── hooks/             # Validation hooks\n│       ├── skills/            # Skill definitions\n│       ├── specs/             # JSON schemas\n│       └── scripts/           # Utility scripts\n├── README.md\n└── DEPENDENCIES.md\n```\n\n## Configuration\n\n### Exa MCP Server (Optional)\n\nThe `prd-researcher` agent uses Exa MCP tools for web research. To enable:\n\n1. Get an API key from [Exa AI](https://exa.ai)\n2. Configure the Exa MCP server in your Claude settings\n3. Set `EXA_API_KEY` environment variable\n\nWithout Exa, the research features will gracefully degrade with appropriate error messages.\n\n### Hooks\n\nHooks automatically validate `tasks.yaml` and `research.yaml` files when edited. They require `jq`, `yq`, and `check-jsonschema` to be installed.\n\nIf dependencies are missing, hooks will log a warning but won't block operations.\n\n## PRD File Structure\n\nPRDs are stored in `.claude/prds/<prd-name>/`:\n\n```\n.claude/prds/my-feature/\n├── PRD.md              # Main requirements document\n├── tasks.yaml          # Task definitions\n├── research.yaml       # Research questions (optional)\n├── log.md              # Implementation log\n└── specs/              # Task specification files\n    └── task-name.md\n```\n\n## CLI Tools\n\n| Command | Description |\n|---------|-------------|\n| `claude-PRD-list-prds` | List all PRDs with status |\n| `claude-PRD-task-status <prd>` | Get task counts by status |\n| `claude-PRD-get-task <prd> <task>` | Get full task details |\n| `claude-PRD-list-draft-tasks <prd>` | List tasks needing specs |\n| `claude-PRD-list-defined-tasks <prd>` | List tasks ready to implement |\n| `claude-PRD-update-task-status <prd> <task> <status>` | Update task status |\n| `claude-PRD-research-status <prd>` | Get research completion status |\n| `claude-PRD-get-unanswered-research <prd>` | Get pending research questions |\n\n## Credits\n\nAdapted from [fullykubed/nixos-config](https://github.com/fullykubed/nixos-config/tree/main/modules/common/claude) - converted from NixOS-specific configuration to a portable plugin format.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "prd-workflow",
+          "version": "1.0.0",
+          "description": "Full PRD (Product Requirements Document) workflow system with research, planning, and implementation capabilities",
+          "source": "./plugins/prd-workflow",
+          "tags": [
+            "prd",
+            "workflow",
+            "research",
+            "planning",
+            "tasks"
+          ],
+          "categories": [
+            "planning",
+            "prd",
+            "research",
+            "tasks",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add itzsaga/cc-prd",
+            "/plugin install prd-workflow@cc-prd"
+          ]
+        }
+      ]
+    }
+  ]
+}

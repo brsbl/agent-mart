@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "yvocilon",
+    "display_name": "Yvo Cilon",
+    "avatar_url": "https://avatars.githubusercontent.com/u/38035825?u=19b728a5ef57d15004872380a822cf167cbf46e4&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aintentfirst-marketplace",
+      "version": null,
+      "description": "AI Intent First plugins for Claude Code",
+      "repo_full_name": "yvocilon/aintentfirst-plugin",
+      "repo_url": "https://github.com/yvocilon/aintentfirst-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-21T10:47:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aintentfirst-marketplace\",\n  \"description\": \"AI Intent First plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"Yvo Cilon\",\n    \"email\": \"yvo.cilon@appcore.nl\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aintentfirst\",\n      \"description\": \"AI Intent First integration - ticket workflow for Claude Code\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Yvo Cilon\",\n        \"email\": \"yvo.cilon@appcore.nl\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"aintentfirst\",\n  \"version\": \"1.1.1\",\n  \"description\": \"AI Intent First integration - ticket workflow for Claude Code\",\n  \"author\": {\n    \"name\": \"Yvo Cilon\",\n    \"email\": \"yvo.cilon@appcore.nl\"\n  },\n  \"repository\": \"github:yvocilon/aintentfirst-plugin\"\n}\n",
+        "README.md": "# AI Intent First Plugin for Claude Code\n\nA Claude Code plugin that integrates with [AI Intent First](https://aintentfirst.com) - a ticket clarification system where stakeholders write tickets, an LLM asks clarifying questions, and developers implement approved tickets.\n\n## Installation\n\n```bash\nclaude plugin install github:yvocilon/aintentfirst-plugin\n```\n\n## Commands\n\n### `/init`\n\nConnect the current repository to an AI Intent First project.\n\n1. Configures the MCP server (prompts for API token if needed)\n2. Lists available projects\n3. Saves the project mapping for this repository\n4. **Offers to generate project documentation** (if none exists)\n\nWhen generating docs, Claude analyzes your codebase and creates:\n- `TERMINOLOGY.md` - Project-specific terms and concepts\n- `SCREENS.md` - UI screens and pages\n- `USER_FLOWS.md` - Key user journeys\n- `BUSINESS_RULES.md` - Domain constraints and rules\n\nThese docs help the LLM ask better clarifying questions when stakeholders create tickets.\n\n```bash\n# In your project directory\nclaude\n> /init\n```\n\n### `/pick-ticket`\n\nPick up a todo ticket and start working on it.\n\n1. Lists available \"todo\" tickets\n2. Lets you approve/skip tickets\n3. Creates a git worktree for isolated development\n4. Opens a new terminal tab with Claude ready to implement\n\n```bash\nclaude\n> /pick-ticket\n```\n\n### `/resume-ticket`\n\nResume work on a ticket (auto-runs in new worktrees).\n\n1. Detects ticket from branch name (`ticket/<id>`)\n2. Fetches full ticket context from AI Intent First\n3. Displays task summary and starts implementing\n\n```bash\n# In a ticket worktree\nclaude\n> /resume-ticket\n```\n\n### `/sync-docs`\n\nUpdate project documentation after making codebase changes.\n\n1. Checks existing docs in AI Intent First\n2. Re-analyzes the codebase for changes\n3. Updates existing docs with new content\n4. Offers to create any missing standard docs\n\nRun this after adding new features, screens, or business rules.\n\n```bash\nclaude\n> /sync-docs\n```\n\n## How It Works\n\n### Project Mapping\n\nThe plugin stores per-repo configuration at:\n```\n~/.claude/projects/<encoded-path>/.aintentfirst.json\n```\n\nThis maps repositories to AI Intent First projects without adding files to your repo.\n\n### Worktrees\n\nWhen you pick a ticket, the plugin creates a git worktree:\n- Branch: `ticket/<short-id>` (first 8 chars of ticket UUID)\n- Location: `../<repo-name>-worktrees/ticket-<short-id>/`\n- Automatically symlinks `.env` from main repo\n- Installs dependencies (auto-detects pnpm/npm/yarn/bun)\n\n### Terminal Integration\n\nOn macOS, `/pick-ticket` opens a new terminal tab (iTerm2 or Terminal.app) with Claude auto-running `/resume-ticket` to load context immediately.\n\n## Requirements\n\n- Claude Code CLI\n- Git (for worktrees)\n- An AI Intent First account and API token\n\n## Getting an API Token\n\n1. Go to https://aintentfirst.com/settings/tokens\n2. Create a new token\n3. Run `/init` and paste the token when prompted\n\n## Workflow\n\n1. Run `/init` once per repository to connect it to your AI Intent First project\n2. Generate initial docs when prompted (or run `/sync-docs` later)\n3. Run `/pick-ticket` to grab a ticket and start working\n4. New Claude instance automatically loads ticket context\n5. Implement the feature\n6. Commit, push, and create PR\n7. Use `complete_ticket` MCP tool to mark done\n8. Run `/sync-docs` if you added new features, screens, or terminology\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "aintentfirst",
+          "description": "AI Intent First integration - ticket workflow for Claude Code",
+          "version": "1.0.0",
+          "author": {
+            "name": "Yvo Cilon",
+            "email": "yvo.cilon@appcore.nl"
+          },
+          "source": "./",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add yvocilon/aintentfirst-plugin",
+            "/plugin install aintentfirst@aintentfirst-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

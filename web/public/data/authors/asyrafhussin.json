@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "AsyrafHussin",
+    "display_name": "Asyraf Hussin",
+    "avatar_url": "https://avatars.githubusercontent.com/u/10107885?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "memex",
+      "version": null,
+      "description": "Lightweight persistent memory plugin for Claude Code. Zero dependencies, just markdown.",
+      "repo_full_name": "AsyrafHussin/memex",
+      "repo_url": "https://github.com/AsyrafHussin/memex",
+      "repo_description": "Lightweight persistent memory plugin for Claude Code. Zero dependencies, just markdown.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T21:40:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"memex\",\n  \"owner\": {\n    \"name\": \"Asyraf Hussin\",\n    \"email\": \"asyrafhussin4@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Lightweight persistent memory plugin for Claude Code. Zero dependencies, just markdown.\",\n    \"homepage\": \"https://github.com/AsyrafHussin/memex\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"memex\",\n      \"source\": \"./plugin\",\n      \"description\": \"Lightweight persistent memory plugin for Claude Code. Zero dependencies, just markdown.\",\n      \"version\": \"0.2.5\"\n    }\n  ]\n}\n",
+        "README.md": "# memex\n\nLightweight persistent memory plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Zero dependencies, just markdown files.\n\n## The Problem\n\nClaude Code loses all context when the session resets or hits the context limit. You have to re-explain what you were working on every time.\n\n## The Solution\n\nTwo markdown files that persist your session state:\n\n- **`memory/latest.md`** — What was done, what's next (overwritten each session)\n- **`MEMORY.md ## NOW`** — 3-line status pointer (always loaded by Claude Code)\n\nTotal overhead: ~50 lines. No database. No dependencies. No runtime.\n\n## Install\n\n```\n/plugin marketplace add AsyrafHussin/memex\n/plugin install memex@memex\n```\n\nRestart Claude Code. The plugin auto-creates a `memory/` folder in your project on first save.\n\n## How It Works — Fully Automatic\n\nOnce installed, memex runs automatically with **no manual steps required**:\n\n| When | What Happens |\n|------|-------------|\n| Session starts | Reads `memory/latest.md` and restores context |\n| Before `git commit` | Reminds Claude to update memory before committing |\n| Before `git push` | Reminds Claude to ensure memory was committed |\n| Before `/clear` or auto-compact | Saves memory before context is wiped |\n| Session ends (Ctrl+C) | Extracts basic summary from transcript as fallback |\n\n### Commands\n\nYou can also save manually at any time:\n\n```\n/memex:save      Save current session state to memory\n/memex:status    Show what was done and what's next\n```\n\n## What Gets Saved\n\n```markdown\n## Session 2026-02-13\n\n### Completed\n- Added project description, location, date fields (823741f)\n- Added edit progress update feature\n\n### Next\n- KB permissions (per-user access restrictions)\n\n### Decisions\n- Used single pivot table with role column instead of 2 separate tables\n\n### Gotchas\n- Migration ordering: FK tables must be created before referencing tables\n```\n\n## File Structure\n\n```\nyour-project/\n  memory/\n    latest.md          <- overwritten each session (what happened, what's next)\n```\n\n## Update\n\n```\n/plugin marketplace update memex\n/plugin update memex@memex\n```\n\n### Uninstall\n\n```\n/plugin uninstall memex@memex\n/plugin marketplace remove memex\n```\n\n## Hooks\n\n| Hook | Trigger |\n|------|---------|\n| `SessionStart` | New session, resume, `/clear`, or auto-compact — loads previous memory |\n| `PreToolUse` (Bash) | Detects `git push` — reminds to save first |\n| `PreCompact` | Before `/clear` or auto-compaction — urgent save |\n| `SessionEnd` | Session exit — fallback transcript extraction |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "memex",
+          "source": "./plugin",
+          "description": "Lightweight persistent memory plugin for Claude Code. Zero dependencies, just markdown.",
+          "version": "0.2.5",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add AsyrafHussin/memex",
+            "/plugin install memex@memex"
+          ]
+        }
+      ]
+    }
+  ]
+}

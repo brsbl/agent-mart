@@ -6,6 +6,40 @@
   },
   "marketplaces": [
     {
+      "name": "cc-allow-dev",
+      "version": null,
+      "description": "Development marketplace for cc-allow bash permission control",
+      "repo_full_name": "dannycoates/cc-allow",
+      "repo_url": "https://github.com/dannycoates/cc-allow",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-14T01:01:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-allow-dev\",\n  \"description\": \"Development marketplace for cc-allow bash permission control\",\n  \"owner\": {\n    \"name\": \"Danny Coates\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-allow\",\n      \"description\": \"Bash command permission control for Claude Code\",\n      \"version\": \"1.7.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Danny Coates\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cc-allow\",\n  \"description\": \"Bash command permission control for Claude Code\",\n  \"version\": \"1.7.0\",\n  \"author\": {\n    \"name\": \"Danny Coates\"\n  },\n  \"repository\": \"https://github.com/dannycoates/cc-allow\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# cc-allow\n\nPermission control for Claude Code tools. Evaluates bash commands, file operations (Read/Write/Edit), search tools (Glob/Grep), and WebFetch URLs against configurable rules to allow, deny, or defer to Claude Code's permission system.\n\n## Features\n\n- **AST-based parsing** - Uses `mvdan.cc/sh/v3/syntax` for accurate bash parsing\n- **Tool-centric configuration** - TOML config organized by tool type (`[bash]`, `[read]`, `[write]`, `[edit]`, `[glob]`, `[grep]`, `[webfetch]`)\n- **Specificity-based matching** - More specific rules win, regardless of order\n- **Layered configs** - Global defaults with project-level overrides\n- **Pipe security** - Block dangerous patterns like `curl | bash`\n- **Redirect control** - Prevent writes to sensitive paths\n- **File rule integration** - Bash commands respect file access rules (e.g., `cat /etc/passwd` denied if `/etc/**` is in Read deny list)\n\n## Disclaimer\n\n**Bash is inherently dangerous.** This tool isn't a substitute for your human judgement. Whatever you let your LLM run is your responsibility.\n\n## Installation\n\n### As a Claude Code Plugin\n\n1. Add the marketplace:\n   ```\n   /plugin marketplace add dannycoates/cc-allow\n   ```\n\n2. Install the plugin:\n   ```\n   /plugin install cc-allow@dannycoates-cc-allow\n   ```\n\nThe plugin automatically downloads binaries on first session start.\n\n### Manual Installation\n\nDownload from [releases](https://github.com/dannycoates/cc-allow/releases) or build from source:\n\n```bash\ngo install github.com/dannycoates/cc-allow/cmd/cc-allow@latest\n```\n\n## Usage\n\n```bash\n# Evaluate a bash command (default)\necho 'rm -rf /' | cc-allow\n# Exit code: 2 (deny)\n\n# Evaluate file tool permissions\necho '/etc/passwd' | cc-allow --read\necho '/project/src/main.go' | cc-allow --write\necho '/home/user/.bashrc' | cc-allow --edit\n\n# Evaluate search tool permissions\necho '/etc' | cc-allow --glob\necho '/home/user/project' | cc-allow --grep\n\n# Evaluate WebFetch URL permissions\necho 'https://example.com' | cc-allow --fetch\n\n# With explicit config\necho 'ls -la' | cc-allow --config ./my-rules.toml\n\n# Hook mode for Claude Code (reads JSON from stdin)\ncc-allow --hook\n\n# Validate and inspect config\ncc-allow --fmt\n```\n\n### Managing Rules with `/allow-rules`\n\nThe `/allow-rules` slash command provides a conversational interface for managing cc-allow rules. Tell it what you want in plain English and it figures out the right config changes.\n\n#### Scope detection\n\nThe command determines where to write rules based on your phrasing:\n\n| Scope | Keywords | Config file |\n|-------|----------|-------------|\n| **Session** (default) | \"for now\", \"temporarily\", or no scope mentioned | `.config/cc-allow/sessions/<id>.toml` |\n| **Project** | \"always\", \"permanently\", \"this project\" | `.config/cc-allow.toml` |\n| **Global** | \"globally\", \"everywhere\", \"all projects\" | `~/.config/cc-allow.toml` |\n\n#### Examples\n\n```\n# Session-scoped (default) — allow docker for this session\n/allow-rules allow docker\n\n# Session-scoped — temporary override\n/allow-rules let me use curl for now\n\n# Project-scoped — permanent rule\n/allow-rules always allow npm install in this project\n\n# Global — applies everywhere\n/allow-rules globally deny rm -rf\n\n# Deny rules\n/allow-rules block curl | bash\n\n# File tool rules\n/allow-rules allow reading /var/log/**\n\n# Complex rules\n/allow-rules allow git push but ask for --force\n```\n\nThe command reads the appropriate config, makes the change, validates with `--fmt`, and tests with a matching command to confirm.\n\n### Exit Codes\n\n| Code | Action | Meaning |\n|------|--------|---------|\n| 0 | allow | Command explicitly allowed |\n| 1 | ask | Defer to Claude Code's permission system |\n| 2 | deny | Command explicitly denied |\n| 3 | error | Configuration or parse error |\n\n## Configuration\n\n### Config Locations\n\nConfigs are loaded from multiple locations (loosest to strictest):\n\n1. `~/.config/cc-allow.toml` - Global defaults\n2. `<project>/.config/cc-allow.toml` - Project rules (in source control)\n3. `<project>/.config/cc-allow.local.toml` - Local overrides (gitignored)\n4. `<project>/.config/cc-allow/sessions/<id>.toml` - Session-scoped (auto-cleaned)\n5. `--config <path>` - Explicit config\n\nRules are merged across configs: **deny always wins**, allow beats ask, ask means \"no opinion.\"\n\n### Quick Start\n\n```toml\nversion = \"2.0\"\n\n[bash]\ndefault = \"ask\"\ndynamic_commands = \"deny\"  # block $VAR or $(cmd) as command names\n\n[bash.allow]\ncommands = [\"ls\", \"cat\", \"grep\", \"git\", \"go\", \"npm\"]\n\n[bash.deny]\ncommands = [\"sudo\", \"rm\", \"dd\"]\nmessage = \"Dangerous command blocked\"\n```\n\n### Rules with Specificity\n\nMore specific rules win regardless of order:\n\n```toml\n# Allow rm in general (specificity: 100)\n[[bash.allow.rm]]\n\n# But deny rm -r (specificity: 105)\n[[bash.deny.rm]]\nmessage = \"Recursive rm not allowed\"\nargs.any = [\"flags:r\", \"--recursive\"]\n```\n\n### Pipe Security\n\nBlock dangerous pipe patterns:\n\n```toml\n# Deny bash receiving piped input from download commands\n[[bash.deny.bash]]\nmessage = \"Cannot pipe to bash from download commands\"\npipe.from = [\"curl\", \"wget\"]\n```\n\n### Redirect Control\n\nPrevent writes to sensitive paths:\n\n```toml\n[[bash.redirects.deny]]\nmessage = \"Cannot write to system directories\"\npaths = [\"path:/etc/**\", \"path:/usr/**\"]\n```\n\n### File Tool Permissions\n\nControl Claude Code's Read, Write, and Edit file tools:\n\n```toml\n[read]\ndefault = \"ask\"\n\n[read.allow]\npaths = [\"path:$PROJECT_ROOT/**\"]\n\n[read.deny]\npaths = [\"path:$HOME/.ssh/**\", \"path:**/*.key\"]\n\n[write.deny]\npaths = [\"path:/etc/**\", \"path:$HOME/.bashrc\"]\n```\n\nWith this config:\n- `cat ~/.ssh/id_rsa` → denied (Read command accessing denied path)\n- `echo \"x\" > ~/.bashrc` → denied (redirect to denied Write path)\n\nFor commands like `cp` and `mv` where arguments have different access types, use positional file rules:\n\n```toml\n[[bash.allow.cp]]\nargs.position = { \"0\" = \"ref:read.allow.paths\", \"1\" = \"ref:write.allow.paths\" }\n```\n\nThis checks the source against Read rules and destination against Write rules.\n\n### Search Tool Permissions\n\nControl Claude Code's Glob and Grep tools. These only have a search path — by default they delegate to Read rules:\n\n```toml\n[glob]\nrespect_file_rules = true\n\n[grep]\nrespect_file_rules = true\n```\n\nWith `respect_file_rules = true` (the default), the search path is checked against `[read]` rules. If Read allows a path, Glob/Grep allows it. If Read denies, searching is denied too.\n\n### WebFetch URL Permissions\n\nControl Claude Code's WebFetch tool with URL pattern matching:\n\n```toml\n[webfetch]\ndefault = \"allow\"\n\n[webfetch.deny]\npaths = [\"re:^https?://localhost\", \"re:^file://\"]\nmessage = \"Blocked URL: {{.FilePath}}\"\n\n[webfetch.safe_browsing]\nenabled = true\napi_key = \"AIza...\"\n```\n\nSee [docs/config.md](docs/config.md) for complete configuration reference.\n\n### Session-Scoped Configs\n\nSession configs let you temporarily adjust rules for the current Claude Code session. They live in `.config/cc-allow/sessions/<session-id>.toml` and are automatically cleaned up based on `session_max_age`.\n\n```toml\n# .config/cc-allow/sessions/<id>.toml\nversion = \"2.0\"\n\n[bash.allow]\ncommands = [\"docker\", \"curl\"]\n```\n\nSession configs are loaded after project and local configs but before explicit `--config` paths. The standard merge rules apply: deny always wins, so a session can add new allows for commands that were previously \"ask\" but cannot override explicit deny rules from project configs.\n\nSet cleanup in your global or project config:\n\n```toml\n[settings]\nsession_max_age = \"30d\"   # delete session configs older than 30 days\n```\n\n## CLI Reference\n\n```bash\n# Bash mode (default) - evaluate a bash command\necho 'some command' | cc-allow\necho 'some command' | cc-allow --bash\n\n# File modes - evaluate file tool permissions (stdin is file path)\necho '/path/to/file' | cc-allow --read\necho '/path/to/file' | cc-allow --write\necho '/path/to/file' | cc-allow --edit\n\n# Search modes - evaluate search tool permissions (stdin is search path)\necho '/path/to/search' | cc-allow --glob\necho '/path/to/search' | cc-allow --grep\n\n# WebFetch mode - evaluate URL permissions (stdin is URL)\necho 'https://example.com' | cc-allow --fetch\n\n# Hook mode - for Claude Code PreToolUse hooks (JSON input/output)\ncc-allow --hook < tool_input.json\n\n# Fmt mode - validate config and show rules by specificity\ncc-allow --fmt\ncc-allow --fmt --config ./my-rules.toml\n\n# Session mode - use session-scoped config\necho 'docker ps' | cc-allow --session <session-id>\n\n# Debug mode\ncc-allow --debug\n```\n\n## How It Works\n\n1. Tool request is identified (Bash, Read, Write, Edit, Glob, Grep, or WebFetch)\n2. For Bash: input is parsed into an AST; commands, arguments, pipes, and redirects are extracted\n3. For file/search/fetch tools: the path or URL is matched against tool-specific rules\n4. Rules from all config layers are evaluated; most specific matching rule wins\n5. For Bash and search tools: file rules may be checked (via `respect_file_rules`)\n6. Results are merged across configs (deny > allow > ask)\n7. Exit code indicates the final decision\n\n## Example Global Config\n\nSee [cc-allow.global-example.toml](cc-allow.global-example.toml) for a comprehensive example covering common coreutils and development tools.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cc-allow",
+          "description": "Bash command permission control for Claude Code",
+          "version": "1.7.0",
+          "source": "./",
+          "author": {
+            "name": "Danny Coates"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add dannycoates/cc-allow",
+            "/plugin install cc-allow@cc-allow-dev"
+          ]
+        }
+      ]
+    },
+    {
       "name": "cc-ar-dev",
       "version": null,
       "description": "Development marketplace for cc-ar agent resources",
@@ -34,6 +68,37 @@
           "install_commands": [
             "/plugin marketplace add dannycoates/cc-ar",
             "/plugin install cc-ar@cc-ar-dev"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "cc-hook-log-dev",
+      "version": null,
+      "description": "Marketplace for the cc-hook-log debugging plugin",
+      "repo_full_name": "dannycoates/cc-hook-log",
+      "repo_url": "https://github.com/dannycoates/cc-hook-log",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-09T15:44:25Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-hook-log-dev\",\n  \"owner\": {\n    \"name\": \"Danny Coates\"\n  },\n  \"metadata\": {\n    \"description\": \"Marketplace for the cc-hook-log debugging plugin\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-hook-log\",\n      \"source\": \"./\",\n      \"description\": \"Logs all Claude Code hook events to NDJSON files in /tmp/cc-hook-debug/\",\n      \"version\": \"1.0.2\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cc-hook-log\",\n  \"version\": \"1.0.2\",\n  \"description\": \"Logs all Claude Code hook events to NDJSON files in /tmp/cc-hook-debug/\"\n}\n",
+        "README.md": "# cc-hook-log\n\nA Claude Code plugin that logs every hook event to NDJSON files for debugging and observability.\n\nEach session writes to `/tmp/cc-hook-debug/<session_id>.jsonl` with one JSON object per line.\n\n## Hooks logged\n\nAll 14 hook events: `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `PostToolUseFailure`, `Notification`, `SubagentStart`, `SubagentStop`, `Stop`, `TeammateIdle`, `TaskCompleted`, `PreCompact`, `SessionEnd`\n\nAll hooks run async (non-blocking). No matchers — everything is captured.\n\n## Install\n\n### Option A — plugin-dir flag\n\n```sh\nclaude --plugin-dir /path/to/cc-hook-log\n```\n\n### Option B — marketplace\n\n```\n/plugin marketplace add https://github.com/dannycoates/cc-hook-log\n/plugin install cc-hook-log@cc-hook-log\n```\n\n## Verify\n\nAfter running a session with the plugin active:\n\n```sh\n# Check for log files\nls /tmp/cc-hook-debug/\n\n# View recent events\ncat /tmp/cc-hook-debug/*.jsonl | head -5 | jq .\n\n# List event types captured\ncat /tmp/cc-hook-debug/*.jsonl | jq -r '.hook_event_name' | sort -u\n```\n\n## How it works\n\nA single script (`log-hook.mjs`) handles all hook events. It reads the hook input JSON from stdin, extracts the `session_id`, and appends the JSON as a single line to the session's `.jsonl` file.\n\n- Node.js builtins only (no dependencies)\n- Async file I/O (`node:fs/promises`)\n- NDJSON format (one JSON object per line)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cc-hook-log",
+          "source": "./",
+          "description": "Logs all Claude Code hook events to NDJSON files in /tmp/cc-hook-debug/",
+          "version": "1.0.2",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add dannycoates/cc-hook-log",
+            "/plugin install cc-hook-log@cc-hook-log-dev"
           ]
         }
       ]

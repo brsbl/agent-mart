@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "jared-henry",
+    "display_name": "Jared Henry",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7153858?u=8602365cf0ca4b771cbe3cd1223f8b0fbcd00c4e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jared-henry-personal",
+      "version": null,
+      "description": "Jared Henry's personal Claude marketplace",
+      "repo_full_name": "jared-henry/claude-marketplace",
+      "repo_url": "https://github.com/jared-henry/claude-marketplace",
+      "repo_description": "This is my personal Claude marketplace. ",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-13T22:28:12Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jared-henry-personal\",\n  \"owner\": {\n    \"name\": \"Jared Henry\"\n  },\n  \"metadata\": {\n    \"description\": \"Jared Henry's personal Claude marketplace\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"experimental\",\n      \"source\": \"./experimental\",\n      \"description\": \"Plugins in development or testing phase\"\n    },\n    {\n      \"name\": \"secret-squirrel\",\n      \"source\": \"./secret-squirrel\",\n      \"description\": \"Security skills for secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, dotfiles doctor, and zero-trust skill encryption\"\n    },\n    {\n      \"name\": \"stable\",\n      \"source\": \"./stable\",\n      \"description\": \"Production-ready, fully tested plugins\"\n    }\n  ]\n}\n",
+        "README.md": "# Jared Henry's Plugin Marketplace\n\nA personal Claude Code plugin marketplace with three plugins: **experimental** (dev tools), **secret-squirrel** (security skills), and **stable** (production-ready).\n\n## Structure\n\n```\nclaude-marketplace/\n├── .claude-plugin/\n│   └── marketplace.json          # Marketplace manifest\n├── experimental/\n│   ├── .claude-plugin/\n│   │   └── plugin.json           # Experimental plugin manifest\n│   └── skills/\n│       ├── bootstrap-test/\n│       │   └── SKILL.md          # Skill: Docker bootstrap testing\n│       ├── claude-marketplace/\n│       │   └── SKILL.md          # Skill: documentation reference\n│       ├── diagnose/\n│       │   └── SKILL.md          # Skill: Claude Code diagnostics\n│       └── mcp-configuration/\n│           └── SKILL.md          # Skill: MCP server configuration\n├── secret-squirrel/\n│   ├── .claude-plugin/\n│   │   └── plugin.json           # Secret Squirrel plugin manifest\n│   ├── .gitignore                # Prevents committing decrypted skill plaintext\n│   ├── hooks/\n│   │   └── hooks.json            # SessionStart/End hooks for auto-decrypt/lock\n│   ├── scripts/\n│   │   └── zero-trust.sh         # Crypto operations (unlock/lock/status)\n│   └── skills/\n│       ├── dotfiles-doctor/\n│       │   └── SKILL.md          # Skill: dotfiles setup audit\n│       ├── opsec-review/\n│       │   └── SKILL.md          # Skill: operational security review\n│       ├── repo-hygiene/\n│       │   └── SKILL.md          # Skill: git history hygiene audit\n│       ├── secrets-scanner/\n│       │   └── SKILL.md          # Skill: secrets detection\n│       ├── supply-chain-audit/\n│       │   └── SKILL.md          # Skill: supply chain security audit\n│       ├── threat-model/\n│       │   └── SKILL.md          # Skill: STRIDE threat modeling\n│       ├── yubikey-setup/\n│       │   └── SKILL.md          # Skill: YubiKey registration wizard\n│       └── zero-trust/\n│           └── SKILL.md          # Skill: YubiKey-encrypted skill trees\n└── stable/\n    └── .claude-plugin/\n        └── plugin.json           # Stable plugin manifest (no skills yet)\n```\n\n- **`/experimental`** - Plugins under active development (v0.6.0)\n- **`/secret-squirrel`** - Security skills: scanning, OPSEC, threat modeling, supply chain, repo hygiene, dotfiles audit, YubiKey setup, zero-trust encryption (v0.3.0)\n- **`/stable`** - Production-ready, fully tested plugins (v0.1.0, no skills yet)\n\n## Plugins\n\n| Plugin | Version | Description | Contents |\n|--------|---------|-------------|----------|\n| experimental | 0.6.0 | Plugins in development or testing phase | **Skills:** `bootstrap-test` - Test bootstrap scripts in Docker for correctness and idempotency, `claude-marketplace` - References latest Anthropic docs when editing marketplace repos, `diagnose` - Diagnose Claude Code problems with root cause analysis, `mcp-configuration` - Configure MCP servers using official + provider docs |\n| secret-squirrel | 0.3.0 | Security skills — spy-themed security practices | **Skills:** `dotfiles-doctor` - Audit dotfiles for broken symlinks, permission issues, and config gotchas, `opsec-review` - Review code/configs for operational security issues, `repo-hygiene` - Audit git history for leaked secrets, unsigned commits, and large blobs, `secrets-scanner` - Scan repos for leaked credentials and sensitive data, `supply-chain-audit` - Audit scripts for unpinned downloads and unverified signatures, `threat-model` - STRIDE threat modeling walkthrough, `yubikey-setup` - YubiKey registration wizard for SSH auth and git signing, `zero-trust` - Encrypt skill trees using YubiKey HMAC-SHA1 + age. **Hooks:** SessionStart auto-decrypt, SessionEnd auto-lock |\n| stable | 0.1.0 | Production-ready, fully tested plugins | *(no skills yet)* |\n\n## Installation\n\nAdd this marketplace and install plugins via Claude Code:\n\n```shell\n/plugin marketplace add jared-henry/claude-marketplace\n```\n\nInstall an individual plugin:\n\n```shell\n/plugin install experimental@jared-henry-personal\n```\n\nOr browse available plugins:\n\n```shell\n/plugin > Discover\n```\n\n## Adding a New Skill\n\n1. Create the skill directory under the target plugin: `<plugin>/skills/<skill-name>/`\n2. Add a `SKILL.md` with YAML frontmatter (`description` is required)\n3. Bump the plugin version in `<plugin>/.claude-plugin/plugin.json`\n4. Validate: `claude plugin validate .` or `/plugin validate .`\n\n## Adding a New Plugin\n\n1. Create a directory at the repo root (e.g., `my-plugin/`)\n2. Add `.claude-plugin/plugin.json` with `name`, `description`, and `version`\n3. Register the plugin in `.claude-plugin/marketplace.json` under `plugins`\n4. Validate: `claude plugin validate .` or `/plugin validate .`\n\n## Documentation\n\n- [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)\n- [Plugin Authoring](https://code.claude.com/docs/en/plugins)\n- [Plugin Reference](https://code.claude.com/docs/en/plugins-reference)\n"
+      },
+      "plugins": [
+        {
+          "name": "experimental",
+          "source": "./experimental",
+          "description": "Plugins in development or testing phase",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jared-henry/claude-marketplace",
+            "/plugin install experimental@jared-henry-personal"
+          ]
+        },
+        {
+          "name": "secret-squirrel",
+          "source": "./secret-squirrel",
+          "description": "Security skills for secrets scanning, OPSEC review, threat modeling, YubiKey setup, supply chain audit, repo hygiene, dotfiles doctor, and zero-trust skill encryption",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jared-henry/claude-marketplace",
+            "/plugin install secret-squirrel@jared-henry-personal"
+          ]
+        },
+        {
+          "name": "stable",
+          "source": "./stable",
+          "description": "Production-ready, fully tested plugins",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jared-henry/claude-marketplace",
+            "/plugin install stable@jared-henry-personal"
+          ]
+        }
+      ]
+    }
+  ]
+}

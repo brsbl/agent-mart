@@ -1,0 +1,92 @@
+{
+  "author": {
+    "id": "meetocean-ai",
+    "display_name": "meetocean.ai",
+    "avatar_url": "https://avatars.githubusercontent.com/u/220621468?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "meetocean-voice",
+      "version": null,
+      "description": "Voice AI plugin for Claude Code — talk to Claude about your codebase through your mic or join conference calls as an AI assistant",
+      "repo_full_name": "meetocean-ai/codebase-voice-assistant",
+      "repo_url": "https://github.com/meetocean-ai/codebase-voice-assistant",
+      "repo_description": "Claude Code plugin — voice AI that joins dev calls and answers codebase questions in real-time",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T23:00:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"meetocean-voice\",\n  \"description\": \"Voice AI plugin for Claude Code — talk to Claude about your codebase through your mic or join conference calls as an AI assistant\",\n  \"owner\": {\n    \"name\": \"MeetOcean AI\",\n    \"email\": \"artem@meetocean.ai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"codebase-voice-assistant\",\n      \"source\": \"./\",\n      \"description\": \"Talk to Claude about your codebase using voice. Free local mode (mic + speakers) or Pro mode (dial into conference calls via SIP).\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Artem Ustimenko\",\n        \"email\": \"artem@meetocean.ai\"\n      },\n      \"homepage\": \"https://github.com/meetocean-ai/codebase-voice-assistant\",\n      \"repository\": \"https://github.com/meetocean-ai/codebase-voice-assistant\",\n      \"license\": \"MIT\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"voice\", \"codebase\", \"standup\", \"meetings\", \"conference-call\", \"speech\", \"hands-free\"],\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/voice-start\",\n        \"./skills/voice-join\",\n        \"./skills/voice-config\",\n        \"./skills/voice-status\"\n      ],\n      \"mcpServers\": {\n        \"codebase-voice\": {\n          \"type\": \"stdio\",\n          \"command\": \"${CLAUDE_PLUGIN_ROOT}/.venv/bin/python\",\n          \"args\": [\"-m\", \"src\"],\n          \"cwd\": \"${CLAUDE_PLUGIN_ROOT}\",\n          \"env\": {\n            \"DEEPGRAM_API_KEY\": \"${DEEPGRAM_API_KEY}\",\n            \"LIVEKIT_URL\": \"${LIVEKIT_URL:-}\",\n            \"LIVEKIT_API_KEY\": \"${LIVEKIT_API_KEY:-}\",\n            \"LIVEKIT_API_SECRET\": \"${LIVEKIT_API_SECRET:-}\",\n            \"TWILIO_ACCOUNT_SID\": \"${TWILIO_ACCOUNT_SID:-}\",\n            \"TWILIO_AUTH_TOKEN\": \"${TWILIO_AUTH_TOKEN:-}\"\n          }\n        }\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"codebase-voice-assistant\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Voice AI that joins your dev calls and answers questions about your codebase in real-time\",\n  \"author\": {\n    \"name\": \"Artem Ustimenko\",\n    \"email\": \"artem@meetocean.ai\"\n  },\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/meetocean-ai/codebase-voice-assistant\"\n}\n",
+        "README.md": "# Codebase Voice Assistant\n\nClaude Code plugin — talk to Claude about your codebase using voice. Ask questions through your mic and hear answers through your speakers, or join a conference call as an AI participant.\n\n## Two Modes\n\n### Local Voice (Free)\n\nTalk to Claude through your microphone. Only needs a Deepgram API key (free tier: 12,000 min/month).\n\n```\n/voice-config    # set your Deepgram API key\n/voice-start     # start talking\n```\n\nSay **\"Hey Claude\"** followed by your question. Claude searches the codebase and answers via voice.\n\n### Conference Call (Pro)\n\nDial into Zoom, Meet, or Teams as an AI participant. Everyone on the call can ask codebase questions. Requires LiveKit + Twilio.\n\n```\n/voice-config                         # set all API keys\n/voice-join +15551234567 12345#       # join with dial-in + PIN\n```\n\n## Quick Start\n\n```bash\n# Clone and install\ngit clone https://github.com/artemustimenko/codebase-voice-assistant.git\ncd codebase-voice-assistant\n./scripts/setup.sh\n\n# Use as a Claude Code plugin\nclaude --plugin-dir /path/to/codebase-voice-assistant\n```\n\n## How It Works\n\n1. You run `/voice-start` (local) or `/voice-join` (conference call)\n2. Say **\"Hey Claude\"** followed by a question about your codebase\n3. Claude searches the code using its built-in tools (Read, Grep, Glob)\n4. The answer is spoken aloud via text-to-speech\n5. Say **\"Claude, leave\"** to disconnect\n\n## Architecture\n\n```\nMic / Conference Call\n       |\n   Audio Capture\n       |\n   Deepgram STT (streaming)\n       |\n   Wake Word Detector (\"Hey Claude\")\n       |\n   Question Queue ──> Claude Code (searches codebase)\n       |                      |\n   Filler audio          Codebase answer\n       |                      |\n   Deepgram TTS <────────────┘\n       |\n   Speakers / Conference Call\n```\n\n## Requirements\n\n- Python 3.11+\n- Deepgram API key (free tier available)\n- For Pro mode: LiveKit Cloud + Twilio accounts\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/voice-start` | Start local voice session (free) |\n| `/voice-join <number> [pin]` | Join conference call (pro) |\n| `/voice-config` | Configure API keys |\n| `/voice-status` | Check session status |\n"
+      },
+      "plugins": [
+        {
+          "name": "codebase-voice-assistant",
+          "source": "./",
+          "description": "Talk to Claude about your codebase using voice. Free local mode (mic + speakers) or Pro mode (dial into conference calls via SIP).",
+          "version": "0.1.0",
+          "author": {
+            "name": "Artem Ustimenko",
+            "email": "artem@meetocean.ai"
+          },
+          "homepage": "https://github.com/meetocean-ai/codebase-voice-assistant",
+          "repository": "https://github.com/meetocean-ai/codebase-voice-assistant",
+          "license": "MIT",
+          "category": "productivity",
+          "keywords": [
+            "voice",
+            "codebase",
+            "standup",
+            "meetings",
+            "conference-call",
+            "speech",
+            "hands-free"
+          ],
+          "strict": false,
+          "skills": [
+            "./skills/voice-start",
+            "./skills/voice-join",
+            "./skills/voice-config",
+            "./skills/voice-status"
+          ],
+          "mcpServers": {
+            "codebase-voice": {
+              "type": "stdio",
+              "command": "${CLAUDE_PLUGIN_ROOT}/.venv/bin/python",
+              "args": [
+                "-m",
+                "src"
+              ],
+              "cwd": "${CLAUDE_PLUGIN_ROOT}",
+              "env": {
+                "DEEPGRAM_API_KEY": "${DEEPGRAM_API_KEY}",
+                "LIVEKIT_URL": "${LIVEKIT_URL:-}",
+                "LIVEKIT_API_KEY": "${LIVEKIT_API_KEY:-}",
+                "LIVEKIT_API_SECRET": "${LIVEKIT_API_SECRET:-}",
+                "TWILIO_ACCOUNT_SID": "${TWILIO_ACCOUNT_SID:-}",
+                "TWILIO_AUTH_TOKEN": "${TWILIO_AUTH_TOKEN:-}"
+              }
+            }
+          },
+          "categories": [
+            "codebase",
+            "conference-call",
+            "hands-free",
+            "meetings",
+            "productivity",
+            "speech",
+            "standup",
+            "voice"
+          ],
+          "install_commands": [
+            "/plugin marketplace add meetocean-ai/codebase-voice-assistant",
+            "/plugin install codebase-voice-assistant@meetocean-voice"
+          ]
+        }
+      ]
+    }
+  ]
+}
