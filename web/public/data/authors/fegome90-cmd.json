@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "fegome90-cmd",
+    "display_name": "Felipe",
+    "avatar_url": "https://avatars.githubusercontent.com/u/223925213?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "multi-review",
+      "version": null,
+      "description": null,
+      "repo_full_name": "fegome90-cmd/multi-review",
+      "repo_url": "https://github.com/fegome90-cmd/multi-review",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-09T18:57:51Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"multi-review\",\n  \"owner\": {\n    \"name\": \"Felipe Gonzalez\",\n    \"username\": \"felipe-gonzalez\"\n  },\n  \"plugins\": [{\n    \"name\": \"multi-review\",\n    \"source\": \"./\"\n  }]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"multi-review\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Multi-agent code review orchestration with smart agent selection. Detects repository context, suggests appropriate review agents, and runs parallel code reviews using feature-dev, pr-review-toolkit, and superpowers.\",\n  \"author\": {\n    \"name\": \"Felipe Gonzalez\",\n    \"email\": \"fegome.90@gmail.com\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"code-review\", \"multi-agent\", \"orchestration\", \"testing\", \"quality\"]\n}\n",
+        "README.md": "# multi-review\n\nMulti-agent code review orchestration with smart agent selection for Claude Code.\n\n## Overview\n\n`multi-review` is a standalone plugin that orchestrates code review agents from multiple plugins:\n\n- **feature-dev** (Official Anthropic) - General code review with confidence scoring\n- **pr-review-toolkit** (Official Anthropic) - Specialized PR review agents (7 agents)\n- **superpowers** (✅ MIT Licensed) - Framework-specific review guidance\n\nSee [DEPENDENCIES.md](DEPENDENCIES.md) for complete dependency and licensing information.\n\n\n## Installation\n\n```bash\n# Install from local marketplace\n/plugin marketplace add ~/.claude/plugins/multi-review\n/plugin install multi-review@local\n```\n\n## Quick Start\n\n```bash\n# Interactive mode (prompts for preset)\n/multi-review\n\n# Quick check - 2 agents\n/multi-review --agents quick\n\n# Thorough review - 4 agents\n/multi-review --agents thorough\n\n# Comprehensive review - 7 agents\n/multi-review --agents comprehensive\n\n# Framework-specific review\n/multi-review --agents framework\n\n# Custom agent selection\n/multi-review --agents custom\n```\n\n## Presets\n\n| Preset | Agents | Use Case |\n|--------|--------|----------|\n| quick | 1-2 | Fast check before commit |\n| thorough | 4 | Balanced review |\n| comprehensive | 7 | Complete review before PR |\n| framework | 1-2 | Framework-specific compliance |\n\n**All presets use open-source plugins!** See [DEPENDENCIES.md](DEPENDENCIES.md) for details.\n\n## Context Detection\n\nThe plugin automatically detects:\n\n- **Change size:** Lines modified (via git diff)\n- **File types:** Tests, type definitions, error handlers\n- **PR status:** Via gh CLI (optional)\n\n**Suggestions based on context:**\n\n| Context | Suggestion |\n|---------|------------|\n| < 50 lines | quick preset |\n| Has tests | Add test analyzer |\n| Has types | Add type analyzer |\n| > 500 lines | comprehensive preset |\n\n## Hooks\n\nThe plugin includes automated hooks (disabled by default):\n\n### Post-Write Hook\nRuns quick review after file writes.\n\n```bash\n# Enable in .claude/settings.local.json\n{\n  \"hooks\": {\n    \"PostToolUse\": [{\n      \"matcher\": \"Write|Edit\",\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"bash ${CLAUDE_PLUGIN_ROOT}/hooks/post-write.sh\",\n        \"enabled\": true\n      }]\n    }]\n  }\n}\n```\n\n### Pre-Commit Hook\nRuns review before git commit.\n\n```bash\n# Enable in .claude/settings.local.json\n{\n  \"hooks\": {\n    \"PreCommit\": [{\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"python3 ${CLAUDE_PLUGIN_ROOT}/scripts/pre_commit_check.py\",\n        \"enabled\": true\n      }]\n    }]\n  }\n}\n```\n\n### Session-End Hook\nRuns comprehensive review at session end.\n\n```bash\n# Enable in .claude/settings.local.json\n{\n  \"hooks\": {\n    \"Stop\": [{\n      \"hooks\": [{\n        \"type\": \"command\",\n        \"command\": \"python3 ${CLAUDE_PLUGIN_ROOT}/scripts/session_review.py\",\n        \"enabled\": true\n      }]\n    }]\n  }\n}\n```\n\n## Standalone Scripts\n\nAll scripts can be run independently:\n\n```bash\n# Context detection\npython3 ~/.claude/plugins/multi-review/scripts/context_detector.py --suggest\n\n# Post-Write review\npython3 ~/.claude/plugins/multi-review/scripts/auto_review.py --file path/to/file.py\n\n# Pre-Commit check\npython3 ~/.claude/plugins/multi-review/scripts/pre_commit_check.py --strict\n\n# Session review\npython3 ~/.claude/plugins/multi-review/scripts/session_review.py\n```\n\n## Reports\n\nReview reports are saved to `~/.claude/plugins/multi-review/reports/`:\n\n- `review_YYYYMMDD-HHMMSS.json` - Post-Write reports\n- `commit_YYYYMMDD-HHMMSS.json` - Pre-Commit reports\n- `session_YYYYMMDD-HHMMSS.json` - Session-End reports\n\n## Dependencies\n\nRequired plugins:\n- `feature-dev` - for `feature-dev:code-reviewer`\n- `pr-review-toolkit` - for all PR review agents\n\nOptional:\n- `superpowers` - for `superpowers:code-review-checklist`\n\n## Architecture\n\n```\nmulti-review/\n├── .claude-plugin/\n│   ├── plugin.json          # Plugin metadata\n│   ├── marketplace.json      # Marketplace config\n│   └── hooks.json           # Hook definitions (disabled by default)\n├── commands/\n│   └── multi-review.md      # Main slash command\n├── scripts/\n│   ├── context_detector.py   # Context detection & agent suggestions\n│   ├── auto_review.py        # Post-Write handler\n│   ├── pre_commit_check.py   # Pre-Commit handler\n│   └── session_review.py     # Session-End handler\n├── hooks/\n│   ├── post-write.sh         # Post-Write wrapper\n│   ├── pre-commit.sh         # Pre-Commit wrapper\n│   └── session-end.sh        # Session-End wrapper\n├── resources/\n│   ├── agent-catalog.md       # Available agents documentation\n│   ├── preset-definitions.md  # Preset configurations\n│   └── context-detection.md   # Detection logic documentation\n├── reports/                   # Review reports (gitignored)\n├── README.md                  # This file\n└── CLAUDE.md                  # Claude Code guidance\n```\n\n## License\n\nMIT - See [LICENSE](LICENSE) file.\n\n**Important:** This plugin orchestrates agents from external plugins with their own licensing terms. See [DEPENDENCIES.md](DEPENDENCIES.md) for details.\n\n## Author\n\nFelipe Gonzalez\n"
+      },
+      "plugins": [
+        {
+          "name": "multi-review",
+          "source": "./",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fegome90-cmd/multi-review",
+            "/plugin install multi-review@multi-review"
+          ]
+        }
+      ]
+    }
+  ]
+}

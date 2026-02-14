@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "aviator-co",
+    "display_name": "Aviator",
+    "avatar_url": "https://avatars.githubusercontent.com/u/78466937?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aviator-plugins",
+      "version": null,
+      "description": "Official Aviator plugins for Claude Code",
+      "repo_full_name": "aviator-co/agent-plugins",
+      "repo_url": "https://github.com/aviator-co/agent-plugins",
+      "repo_description": "Aviator plugins for coding agents",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-12T01:40:31Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aviator-plugins\",\n  \"owner\": {\n    \"name\": \"Aviator\",\n    \"email\": \"support@aviator.co\"\n  },\n  \"metadata\": {\n    \"description\": \"Official Aviator plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"av-cli\",\n      \"source\": \"./av-cli\",\n      \"description\": \"Stacked PR workflows with Aviator CLI\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Aviator Plugins for coding agents\n\nAgent plugins from [Aviator](https://aviator.co).\n\n## Plugins\n\n### av-cli\n\nTeaches Claude code or other coding agents how to use the [Aviator CLI](https://github.com/aviator-co/av) (`av`) for stacked PR workflows.\n\n**What is av?** The Aviator CLI is a command-line tool for managing stacked pull requests on GitHub. Stacked PRs let you break large features into small, reviewable chunks while maintaining dependencies between them. av automates the tedious parts: rebasing child branches when parents change, setting correct PR bases, and keeping everything in sync.\n\n**What this plugin does:**\n\n- Detects av-initialized repos automatically (checks for `.git/av/av.db`)\n- Uses av commands instead of raw git/gh for stacked PR workflows\n- Guides through common workflows (creating stacks, syncing, handling merges)\n- Handles conflicts with proper `--continue`, `--abort`, `--skip` flags\n- Collaborates on stacks using `av adopt --remote` to work on teammates' branches\n\n**Common use case:** Full-stack feature development with stacked PRs:\n\n```\nmain\n └── add-feature-db        (DB schema)\n      └── add-feature-service   (Backend logic)\n           └── add-feature-api       (API endpoints)\n                └── add-feature-ui        (Frontend)\n```\n\nEach layer gets a focused, reviewable PR. When you update the DB schema, `av sync` automatically rebases all dependent branches.\n\n**Usage:**\n\nWhen you're in an av-initialized repository, the agent will automatically use `av` commands for branch and PR operations. Just ask naturally:\n\n- \"Create a new branch for the login feature\"\n- \"Create PRs for my stack\"\n- \"Sync my branches\"\n- \"What does my stack look like?\"\n\nOr invoke the skill directly with `/av-cli`.\n\n**Requirements:**\n\n- [av CLI](https://github.com/aviator-co/av) installed (`brew install aviator-co/tap/av`)\n- Repository initialized with `av init`\n- GitHub CLI (`gh`) for authentication, or GitHub PAT configured\n\n**Example interaction:**\n\n```\nUser: Create a stack of branches for auth, login, and logout features\n\nClaude: I'll create a stack of three branches for you.\n\n[Creates feature-auth from main]\n[Creates feature-login from feature-auth]\n[Creates feature-logout from feature-login]\n\nHere's your stack:\n  main\n   └── feature-auth\n        └── feature-login\n             └── feature-logout\n\nYou can now make changes and commit to each branch. When ready,\nrun `av pr --all` to create PRs for the entire stack.\n```\n\n## Installation\n\n### From Marketplace (Recommended)\n\n```bash\n# Add the Aviator plugin marketplace\n/plugin marketplace add aviator-co/agent-plugins\n\n# Install plugins\n/plugin install av-cli\n```\n\n### Manual Installation\n\n```bash\n# Clone the repository\ngit clone https://github.com/aviator-co/agent-plugins.git\n\n# Use with Claude Code\nclaude --plugin-dir /path/to/claude-plugins\n```\n\n## Learn More\n\n- [Aviator](https://aviator.co)\n- [Aviator CLI Documentation](https://docs.aviator.co/aviator-cli)\n- [Stacked PRs Guide](https://docs.aviator.co/aviator-cli/concepts/stacked-prs)\n- [av GitHub Repository](https://github.com/aviator-co/av)\n\n## Contributing\n\nContributions welcome! Please open an issue or PR on [GitHub](https://github.com/aviator-co/agent-plugins).\n\n## License\n\nMIT - see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "av-cli",
+          "source": "./av-cli",
+          "description": "Stacked PR workflows with Aviator CLI",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add aviator-co/agent-plugins",
+            "/plugin install av-cli@aviator-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

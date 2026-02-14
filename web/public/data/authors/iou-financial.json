@@ -1,0 +1,77 @@
+{
+  "author": {
+    "id": "iou-financial",
+    "display_name": "IOU Financial",
+    "avatar_url": "https://avatars.githubusercontent.com/u/47645131?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nullstone-skill",
+      "version": null,
+      "description": "Nullstone infrastructure orchestration skill for Claude Code",
+      "repo_full_name": "iou-financial/nullstone-skill",
+      "repo_url": "https://github.com/iou-financial/nullstone-skill",
+      "repo_description": "Claude Code skill for Nullstone infrastructure orchestration - deploy apps to AWS ECS Fargate",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-02T01:45:33Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nullstone-skill\",\n  \"owner\": {\n    \"name\": \"iou-financial\",\n    \"email\": \"engineering@ioufinancial.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Nullstone infrastructure orchestration skill for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nullstone-skill\",\n      \"source\": \"./\",\n      \"description\": \"Claude Code Skill for Nullstone infrastructure orchestration. Deploy applications to AWS ECS Fargate, view logs, check status, and manage environments via Nullstone CLI.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"iou-financial\"\n      },\n      \"homepage\": \"https://github.com/iou-financial/nullstone-skill\",\n      \"repository\": \"https://github.com/iou-financial/nullstone-skill\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"claude-skill\",\n        \"claude-code\",\n        \"nullstone\",\n        \"aws\",\n        \"deployment\",\n        \"infrastructure\",\n        \"devops\",\n        \"ecs\",\n        \"fargate\",\n        \"model-invoked\"\n      ],\n      \"category\": \"devops\",\n      \"tags\": [\"deployment\", \"aws\", \"infrastructure\", \"nullstone\", \"devops\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"nullstone-skill\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude Code Skill for Nullstone infrastructure orchestration. Deploy, manage, and monitor applications on AWS via Nullstone CLI.\",\n  \"author\": {\n    \"name\": \"iou-financial\"\n  },\n  \"license\": \"MIT\",\n  \"repository\": \"https://github.com/iou-financial/nullstone-skill\",\n  \"keywords\": [\n    \"claude-skill\",\n    \"claude-code\",\n    \"nullstone\",\n    \"aws\",\n    \"deployment\",\n    \"infrastructure\",\n    \"devops\",\n    \"ecs\",\n    \"fargate\",\n    \"model-invoked\"\n  ]\n}\n",
+        "README.md": "# Nullstone Skill for Claude Code\n\nA Claude Code skill for deploying and managing applications on AWS via [Nullstone](https://nullstone.io) infrastructure orchestration platform.\n\n## Features\n\n- **Deploy Applications** - Push Docker images and deploy to AWS ECS Fargate\n- **View Logs** - Stream live application logs or view historical logs\n- **Check Status** - Monitor application health and deployment status\n- **Execute Commands** - SSH into running containers or run one-off commands\n- **Manage Environments** - Work with staging, production, and preview environments\n- **GitOps Support** - Understand and help configure `.nullstone/` configuration files\n\n## Installation\n\n### Via Claude Code Plugin System (Recommended)\n\n```bash\n# Install from marketplace (when published)\nclaude plugin install nullstone-skill\n```\n\n### Manual Installation\n\n1. Clone this repository:\n   ```bash\n   git clone https://github.com/iou-financial/nullstone-skill.git ~/.claude/plugins/nullstone-skill\n   ```\n\n2. The skill will be automatically available in Claude Code.\n\n## Prerequisites\n\n### 1. Install Nullstone CLI\n\n```bash\n# macOS\nbrew install nullstone-io/tap/nullstone\n\n# Linux\ncurl -sSL https://nullstone.io/install.sh | bash\n```\n\n### 2. Configure Nullstone CLI\n\n```bash\nnullstone configure\n```\n\nThis will prompt you to enter your Nullstone API key. Get your API key from your [Nullstone Profile](https://app.nullstone.io/profile).\n\n### 3. Set Organization (Optional)\n\n```bash\nnullstone set-org <your-org-name>\n```\n\n## Usage\n\nOnce installed, ask Claude to help with Nullstone operations:\n\n- \"Deploy proton to staging\"\n- \"Show me the logs for nucleus in production\"\n- \"Check the status of the zoltar app\"\n- \"SSH into the proton-worker container\"\n- \"What apps are deployed in the primary stack?\"\n\n## Configuration\n\n### Environment Variables\n\nFor CI/CD and automation, set these environment variables:\n\n| Variable | Description |\n|----------|-------------|\n| `NULLSTONE_ORG` | Your Nullstone organization name |\n| `NULLSTONE_API_KEY` | API key from your Nullstone profile |\n| `NULLSTONE_STACK` | Default stack name |\n| `NULLSTONE_ENV` | Default environment name |\n\n### GitOps Configuration\n\nPlace configuration files in your project's `.nullstone/` directory:\n\n```\n.nullstone/\n  config.yml      # Base configuration\n  staging.yml     # Staging overrides\n  production.yml  # Production overrides\n  previews.yml    # Preview environment config\n```\n\nSee the [SKILL.md](skills/nullstone-skill/SKILL.md) for detailed configuration examples.\n\n## Example Workflows\n\n### Deploy to Staging\n\n```bash\n# Build Docker image\ndocker build -t myapp:latest .\n\n# Push and deploy\nnullstone push --app=myapp --source=myapp:latest --stack=primary\nnullstone deploy --app=myapp --env=staging --stack=primary -w\n```\n\n### View Live Logs\n\n```bash\nnullstone logs --app=myapp --env=staging --stack=primary -t\n```\n\n### Run Database Migrations\n\n```bash\nnullstone exec --app=myapp --env=staging --stack=primary -- rails db:migrate\n```\n\n## GitHub Actions Integration\n\n```yaml\nname: Deploy\n\non:\n  push:\n    branches: [main]\n\nenv:\n  NULLSTONE_ORG: your-org\n  NULLSTONE_API_KEY: ${{ secrets.NULLSTONE_API_KEY }}\n\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n\n      - uses: nullstone-io/setup-nullstone-action@v0\n\n      - name: Build and Push\n        run: |\n          docker build -t myapp:latest .\n          nullstone push --app=myapp --source=myapp:latest\n          nullstone deploy --app=myapp --env=production --stack=primary -w\n```\n\n## Security\n\n**This skill contains NO secrets, API keys, or credentials.**\n\n- All authentication is handled via the Nullstone CLI which stores credentials securely in `~/.nullstone/`\n- API keys should ONLY be stored in:\n  - GitHub Secrets (for CI/CD)\n  - Environment variables (for local use)\n  - AWS Secrets Manager (for application runtime)\n- NEVER commit API keys, tokens, or credentials to this repository\n- The `nullstone configure` command handles secure credential storage locally\n\n## Contributing\n\nContributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n\n## Links\n\n- [Nullstone Documentation](https://docs.nullstone.io/)\n- [Nullstone CLI Reference](https://docs.nullstone.io/cli/)\n- [Claude Code Documentation](https://docs.anthropic.com/claude-code)\n"
+      },
+      "plugins": [
+        {
+          "name": "nullstone-skill",
+          "source": "./",
+          "description": "Claude Code Skill for Nullstone infrastructure orchestration. Deploy applications to AWS ECS Fargate, view logs, check status, and manage environments via Nullstone CLI.",
+          "version": "1.0.0",
+          "author": {
+            "name": "iou-financial"
+          },
+          "homepage": "https://github.com/iou-financial/nullstone-skill",
+          "repository": "https://github.com/iou-financial/nullstone-skill",
+          "license": "MIT",
+          "keywords": [
+            "claude-skill",
+            "claude-code",
+            "nullstone",
+            "aws",
+            "deployment",
+            "infrastructure",
+            "devops",
+            "ecs",
+            "fargate",
+            "model-invoked"
+          ],
+          "category": "devops",
+          "tags": [
+            "deployment",
+            "aws",
+            "infrastructure",
+            "nullstone",
+            "devops"
+          ],
+          "categories": [
+            "aws",
+            "claude-code",
+            "claude-skill",
+            "deployment",
+            "devops",
+            "ecs",
+            "fargate",
+            "infrastructure",
+            "model-invoked",
+            "nullstone"
+          ],
+          "install_commands": [
+            "/plugin marketplace add iou-financial/nullstone-skill",
+            "/plugin install nullstone-skill@nullstone-skill"
+          ]
+        }
+      ]
+    }
+  ]
+}

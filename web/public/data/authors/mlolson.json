@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "mlolson",
+    "display_name": "Matt Olson",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2831712?u=f2fa4757df5e07a189f8e093839f3f78db6f60a8&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-spp",
+      "version": null,
+      "description": "Simian Programmer Plugin",
+      "repo_full_name": "mlolson/claude-spp",
+      "repo_url": "https://github.com/mlolson/claude-spp",
+      "repo_description": "Pair programming with Claude code. Turns Claude into a pair-programmer/coach who partners with you and helps you learn programming and software engineering.",
+      "signals": {
+        "stars": 9,
+        "forks": 1,
+        "pushed_at": "2026-02-11T20:59:45Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"claude-spp\",\n    \"owner\": {\n      \"name\": \"Matt Olson\"\n    },\n    \"plugins\": [\n      {\n        \"name\": \"spp\",\n        \"source\": \"./\",\n        \"description\": \"Simian Programmer Plugin\"\n      }\n    ]\n  }",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"spp\",\n  \"description\": \"Maintain programming skills by ensuring humans write a minimum percentage of code\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"SPP\"\n  }\n}\n",
+        "README.md": "# Simian Programmer Plugin (SPP) for Claude Code\n\n**Pair programming with AI.**\n\nSPP is a Claude Code plugin that helps you learn how code, or to keep your skills sharp. It is useful for learning new languages, ramping up on code bases, or learning CS and engineering concepts.\n\n## Why?\n\nOver-reliance on AI coding tools leads to skill atrophy. [A study from Anthropic](https://www.anthropic.com/research/AI-assistance-coding-skills) found that:\n\n> AI use impairs conceptual understanding, code reading, and debugging abilities... Participants who fully delegated coding tasks showed some productivity improvements, but at the cost of learning.\n\nSPP lets you use AI as a collaborator rather than a crutch. It works two ways:\n\n1. **Drive mode** — Toggle `spp drive` to write code yourself while Claude coaches. In drive mode, Claude can't write code.\n\n2. **Coaching skill** - While in drive mode, SPP writes every file save and conversation exchange to a transcript file. When you're done, run `/coach` to get coaching and feedback on your session.\n\n3. **Human coding goal** — Set a goal for how much code you want to write per week. When you are under the goal, SPP blocks Claude from writing more until you catch up. Claude can stil give guidance, code pointers, and reviews your work.\n\n## Quick Start\n\n```bash\n# 1. Install the CLI\nnpm i -g claude-spp\n\n# 2. Initialize in your project\ncd /path/to/your/project\nspp init\n\n# 3. Add the plugin to Claude Code\nclaude\n> /plugin marketplace add mlolson/claude-spp\n> /plugin install spp@mlolson\n```\n\n## How It Works\n\n### Tracking\n\nSPP reads your commit history. Commits with `Co-Authored-By: Claude` in the message count as Claude commits; commits without it count as human commits.\n\n- Tracking starts from when you run `spp init` (previous commits are ignored)\n- By default, looks at the last 7 days of commits\n- Can optionally track by lines of code instead of commits\n\n### Enforcement\n\nWhen your human coding ratio drops below your target, Claude is **blocked** from writing code. Instead of writing code for you, Claude uses a \"help human code\" skill that provides:\n\n- A high-level overview of the task\n- Specific file and line number references\n- Step-by-step guidance\n- Code review after you write it\n\n### Modes\n\nSPP has two mode types:\n\n| # | Mode | Description |\n|---|------|-------------|\n| 1 | **Weekly Goal** | Set a weekly human coding target (% of code). Default. |\n| 2 | **Learning Project** | Coming soon. |\n\nChange modes anytime with `spp mode <1-2>`.\n\n#### Weekly Goal\n\nThe default mode. You set a target percentage of code you want to write yourself (10%, 25%, 50%, or 100%). SPP tracks commits (or lines of code) over a rolling window and blocks Claude from writing code when your ratio drops below the target.\n\n## Features\n\n### Status Line\n\nSee your current ratio at a glance in Claude Code's status line:\n\n```\n🟢 Claude can write 9 more commits 🤖 > 🐵 > 🤖 > 🐵 > 🐵 ...\n🔴 Human needs to write 2 more commits 🤖 > 🤖 > 🤖 > 🐵 ...\n🚙 Drive mode enabled. Claude cannot write code.                                                                                          \n```\n\nEnable by adding to `~/.claude/settings.json`:\n\n```json\n{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"spp hook:status-line\"\n  }\n}\n```\n\n### Drive Mode + Coaching\n\nDrive mode is the core hands-on coding experience. Toggle it on, write code, get coached afterward:\n\n```bash\nspp drive              # Toggle on — you code, Claude guides\n# ... write code, ask questions, Claude can't touch files ...\nspp drive              # Toggle off — transcript archived\n/spp:coach                 # Get coaching on your session\n```\n\nWhen drive mode is on:\n- Claude is **blocked** from writing code (except `.md` files)\n- A **file watcher** records every save as a diff in a transcript\n- **Conversation hooks** capture your questions and Claude's answers\n- Claude remains available for guidance, code review, and questions\n\nWhen you toggle off, the transcript is archived. Run `/coach` to get a review of your session — what went well, where you struggled, and what to try next.\n\n```bash\nspp transcript         # View live transcript (during) or list archives (after)\n```\n\n### Pause / Resume\n\nNeed Claude to write freely for a bit? Pause enforcement for 24 hours:\n\n```bash\nspp pause    # Pause for 24 hours\nspp resume   # Resume immediately\n```\n\n### Reset\n\nBehind on commits and want a fresh start? Reset tracking:\n\n```bash\nspp reset\n```\n\n## CLI Reference\n\n| Command | Description |\n|---------|-------------|\n| `spp init` | Initialize SPP in the current project |\n| `spp stats` | Show current ratio and statistics |\n| `spp mode [n]` | Show or change mode type (1-2) |\n| `spp modes` | List all available mode types |\n| `spp settings` | View and modify SPP settings |\n| `spp drive` | Toggle drive mode (watcher + transcript) |\n| `spp transcript` | Show live transcript or list archives |\n| `/coach` | Get coaching on your latest drive session |\n| `spp pause` | Pause enforcement for 24 hours |\n| `spp resume` | Resume enforcement |\n| `spp reset` | Reset tracking to current commit |\n\n## Configuration\n\nConfig is stored in `.claude-spp/config.json`:\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `modeType` | `\"weeklyGoal\"` | Mode type: `\"weeklyGoal\"`, `\"learningProject\"` |\n| `targetPercentage` | `25` | Human coding target for weekly goal mode: `10`, `25`, `50`, `100` |\n| `trackingMode` | `\"commits\"` | What to count: `\"commits\"` or `\"lines\"` |\n| `statsWindow` | `\"oneWeek\"` | Time window: `\"oneDay\"`, `\"oneWeek\"`, `\"allTime\"` |\n| `driveMode` | `false` | Block Claude regardless of ratio |\n| `enabled` | `true` | Whether enforcement is active |\n\nExample:\n\n```json\n{\n  \"enabled\": true,\n  \"modeType\": \"weeklyGoal\",\n  \"targetPercentage\": 25,\n  \"statsWindow\": \"oneWeek\",\n  \"trackingMode\": \"commits\",\n  \"vcsType\": \"git\"\n}\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "spp",
+          "source": "./",
+          "description": "Simian Programmer Plugin",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add mlolson/claude-spp",
+            "/plugin install spp@claude-spp"
+          ]
+        }
+      ]
+    }
+  ]
+}

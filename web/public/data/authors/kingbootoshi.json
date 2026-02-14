@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "kingbootoshi",
+    "display_name": "Bootoshi",
+    "avatar_url": "https://avatars.githubusercontent.com/u/127834715?u=ecc19782ed6b87d702d9e056a696a1090d29bab7&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cartographer-marketplace",
+      "version": null,
+      "description": "Maps and documents codebases of any size using parallel AI subagents",
+      "repo_full_name": "kingbootoshi/cartographer",
+      "repo_url": "https://github.com/kingbootoshi/cartographer",
+      "repo_description": "Claude Code plugin that maps and documents codebases of any size using parallel AI subagents",
+      "signals": {
+        "stars": 465,
+        "forks": 30,
+        "pushed_at": "2026-02-03T22:07:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cartographer-marketplace\",\n  \"owner\": {\n    \"name\": \"Bootoshi\",\n    \"url\": \"https://github.com/kingbootoshi\"\n  },\n  \"metadata\": {\n    \"description\": \"Maps and documents codebases of any size using parallel AI subagents\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cartographer\",\n      \"source\": \"./plugins/cartographer\",\n      \"description\": \"Maps and documents codebases of any size by orchestrating parallel subagents. Creates docs/CODEBASE_MAP.md with architecture, file purposes, dependencies, and navigation guides.\",\n      \"version\": \"1.4.0\",\n      \"category\": \"developer tools\",\n      \"keywords\": [\"codebase\", \"architecture\", \"documentation\", \"mapping\", \"onboarding\", \"subagents\"]\n    }\n  ]\n}\n",
+        "README.md": "# Cartographer\n\n<img width=\"640\" height=\"360\" alt=\"claudecartographer\" src=\"https://github.com/user-attachments/assets/542818c6-fc2b-41a6-915d-cf196447f346\" />\n\n\nA Claude Code plugin that maps and documents codebases of any size using parallel AI subagents.\n\n## Installation\n\n**Step 1:** Add the marketplace to Claude Code:\n\n```\n/plugin marketplace add kingbootoshi/cartographer\n```\n\n**Step 2:** Install the plugin:\n\n```\n/plugin install cartographer\n```\n\n**Step 3:** Restart Claude Code (may be required for the skill to load)\n\n**Step 4:** Use it:\n\n```\n/cartographer\n```\n\nOr just say \"map this codebase\" and it will trigger automatically.\n\n## What it Does\n\nCartographer orchestrates multiple Sonnet subagents to analyze your entire codebase in parallel, then synthesizes their findings into:\n\n- `docs/CODEBASE_MAP.md` - Detailed architecture map with file purposes, dependencies, data flows, and navigation guides\n- Updates `CLAUDE.md` with a summary pointing to the map\n\n## How it Works\n\n1. Runs a scanner script to get file tree with token counts (respects .gitignore)\n2. Plans how to split work across subagents based on token budgets\n3. Spawns Sonnet subagents in parallel - each analyzes a portion of the codebase\n4. Synthesizes all subagent reports into comprehensive documentation\n\n## Update Mode\n\nIf `docs/CODEBASE_MAP.md` already exists, Cartographer will:\n\n1. Check git history for changes since last mapping\n2. Only re-analyze changed modules\n3. Merge updates with existing documentation\n\nJust run `/cartographer` again to update.\n\n## Token Usage\n\n⚠️ **NOTE:** This skill spawns Sonnet subagents for accurate, reliable analysis. Depending on codebase size, this can use significant tokens. Be mindful of your usage.\n\nYou can ask Claude to use Haiku subagents instead for a cheaper run, but accuracy may suffer on complex codebases.\n\n## Requirements\n\n- tiktoken (for token counting): `pip install tiktoken` or `uv pip install tiktoken`\n\n## Full Documentation\n\nSee [plugins/cartographer/README.md](plugins/cartographer/README.md) for detailed documentation.\n\n## License\n\nMIT\n",
+        "plugins/cartographer/README.md": "# Cartographer\n\nA Claude Code plugin that maps and documents codebases of any size using parallel AI subagents.\n\n## What it does\n\nCartographer orchestrates multiple Sonnet subagents (with 1M token context windows) to analyze your entire codebase in parallel, then synthesizes their findings into comprehensive documentation:\n\n- `docs/CODEBASE_MAP.md` - Detailed architecture map with file purposes, dependencies, data flows, and navigation guides\n- Updates `CLAUDE.md` with a summary pointing to the map\n\n## Installation\n\n### Via Claude Code Plugins Registry\n\n```bash\nclaude plugins install cartographer\n```\n\n### Manual Installation\n\nClone to your Claude skills directory:\n\n```bash\ngit clone https://github.com/bootoshi/cartographer.git ~/.claude/skills/cartographer\n```\n\nOr for project-specific use:\n\n```bash\ngit clone https://github.com/bootoshi/cartographer.git .claude/skills/cartographer\n```\n\n### Dependencies\n\nThe scanner script requires tiktoken:\n\n```bash\nuv pip install tiktoken\n# or\npip install tiktoken\n```\n\n## Usage\n\nSimply invoke the skill:\n\n```\n/cartographer\n```\n\nOr say:\n- \"map this codebase\"\n- \"create codebase map\"\n- \"document the architecture\"\n- \"understand this codebase\"\n\n### Update Mode\n\nIf `docs/CODEBASE_MAP.md` already exists, Cartographer will:\n\n1. Check git history for changes since last mapping\n2. Only re-analyze changed modules\n3. Merge updates with existing documentation\n\nJust run `/cartographer` again to update.\n\n## How it Works\n\n```\n/cartographer invoked\n        |\n        v\n+---------------------------------------+\n|  1. Run scripts/scan-codebase.py      |\n|     - Recursive file tree             |\n|     - Token count per file            |\n|     - Respects .gitignore             |\n+---------------------------------------+\n        |\n        v\n+---------------------------------------+\n|  2. Plan subagent assignments         |\n|     - Group files by module           |\n|     - Balance token budgets           |\n|     - Target ~500k tokens per agent   |\n+---------------------------------------+\n        |\n        v\n+---------------------------------------+\n|  3. Spawn Sonnet subagents PARALLEL   |\n|     - Each reads assigned files       |\n|     - Analyzes purpose, dependencies  |\n|     - Returns structured summary      |\n+---------------------------------------+\n        |\n        v\n+---------------------------------------+\n|  4. Synthesize all reports            |\n|     - Merge subagent outputs          |\n|     - Build architecture diagram      |\n|     - Create navigation guides        |\n+---------------------------------------+\n        |\n        v\n+---------------------------------------+\n|  5. Write docs/CODEBASE_MAP.md        |\n|     Update CLAUDE.md with summary     |\n+---------------------------------------+\n```\n\n## Output Structure\n\nThe generated `docs/CODEBASE_MAP.md` includes:\n\n- **System Overview** - ASCII architecture diagram\n- **Directory Structure** - Annotated file tree\n- **Module Guide** - Per-module documentation with:\n  - Purpose and entry points\n  - Key files with token counts\n  - Exports and dependencies\n- **Data Flow** - Request flows, auth flows, etc.\n- **Conventions** - Naming, patterns, style\n- **Gotchas** - Non-obvious behaviors and warnings\n- **Navigation Guide** - How to add features, modify systems\n\n## Token Budgets\n\n| Model | Context Window | Budget per Subagent |\n|-------|---------------|---------------------|\n| Sonnet | 1,000,000 | 500,000 |\n| Opus | 200,000 | 100,000 |\n| Haiku | 200,000 | 100,000 |\n\nCartographer uses Sonnet subagents by default for maximum coverage.\n\n## Configuration\n\nThe scanner respects `.gitignore` and has sensible defaults for:\n- Ignoring `node_modules`, `dist`, `build`, etc.\n- Skipping binary files\n- Skipping files over 1MB or 50k tokens\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cartographer",
+          "source": "./plugins/cartographer",
+          "description": "Maps and documents codebases of any size by orchestrating parallel subagents. Creates docs/CODEBASE_MAP.md with architecture, file purposes, dependencies, and navigation guides.",
+          "version": "1.4.0",
+          "category": "developer tools",
+          "keywords": [
+            "codebase",
+            "architecture",
+            "documentation",
+            "mapping",
+            "onboarding",
+            "subagents"
+          ],
+          "categories": [
+            "architecture",
+            "codebase",
+            "developer-tools",
+            "documentation",
+            "mapping",
+            "onboarding",
+            "subagents"
+          ],
+          "install_commands": [
+            "/plugin marketplace add kingbootoshi/cartographer",
+            "/plugin install cartographer@cartographer-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

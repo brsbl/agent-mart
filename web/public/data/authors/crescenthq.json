@@ -1,0 +1,54 @@
+{
+  "author": {
+    "id": "crescenthq",
+    "display_name": "Crescent",
+    "avatar_url": "https://avatars.githubusercontent.com/u/256873520?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "moon-marketplace",
+      "version": null,
+      "description": "Plugin marketplace for Claude Code extensions",
+      "repo_full_name": "crescenthq/moon-cli",
+      "repo_url": "https://github.com/crescenthq/moon-cli",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T02:35:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"moon-marketplace\",\n  \"owner\": {\n    \"name\": \"Kamal\",\n    \"email\": \"kamalnrf@gmail.com\",\n    \"url\": \"https://github.com/Kamalnrf\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugin marketplace for Claude Code extensions\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"moon\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Share Claude Code sessions with Moon for live collaboration\",\n      \"author\": {\n        \"name\": \"Kamal\",\n        \"email\": \"kamalnrf@gmail.com\",\n        \"url\": \"https://github.com/Kamalnrf\"\n      },\n      \"homepage\": \"https://moon.page\",\n      \"license\": \"MIT\",\n      \"tags\": [\"session-sharing\", \"collaboration\"],\n      \"source\": \"./packages/claude-code-plugin\"\n    }\n  ]\n}\n",
+        "README.md": "# Moon\n\nShare your Claude Code sessions with a link.\n\nMoon syncs your Claude Code conversations and gives you a shareable URL. As you work, sessions stay in sync automatically.\n\n## Quick Start\n\n```bash\n# Install the CLI\nnpm install -g @crescenthq/moon\n\n# Share your most recent session\nmoon share\n```\n\nOr use directly with `npx`\n\n```bash\nnpx @crescenthq/moon share\n```\n\n## Packages\n\n| Package                                           | Description                              |\n| ------------------------------------------------- | ---------------------------------------- |\n| [@crescenthq/moon](packages/cli)                  | Command-line tool for sharing sessions   |\n| [plugin-claude-code](packages/claude-code-plugin) | Claude Code plugin for automatic syncing |\n\n## License\n\nMIT\n",
+        "packages/claude-code-plugin/README.md": "# @moon/plugin-claude-code\n\nClaude Code plugin for automatic session sharing with Moon.\n\n## Features\n\n- **Automatic syncing** via Claude Code hooks\n- **`/share` command** for manual sharing\n- **Configurable modes** (off, prompt, auto)\n\n## How It Works\n\nThe plugin registers three hooks:\n\n| Hook | When | Action |\n|------|------|--------|\n| `SessionStart` | Session begins | Start sharing (auto mode) or show hint (prompt mode) |\n| `UserPromptSubmit` | After each prompt | Sync latest changes |\n| `SessionEnd` | Session ends | Final sync |\n\nHooks call the Moon CLI to perform syncing in the background.\n\n## Configuration\n\nSet sharing mode via the CLI:\n\n```bash\n# Manual only\nmoon config set sharing.mode off\n\n# Show reminders to share\nmoon config set sharing.mode prompt\n\n# Auto-share all sessions\nmoon config set sharing.mode auto\n```\n\n## `/share` Command\n\nType `/share` in Claude Code to manually share the current session.\n\n## Development\n\n```bash\nclaude --plugin-dir ./packages/claude-code-plugin/\n```\n\nTest hooks:\n\n```bash\nbun test\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "moon",
+          "version": "1.0.0",
+          "description": "Share Claude Code sessions with Moon for live collaboration",
+          "author": {
+            "name": "Kamal",
+            "email": "kamalnrf@gmail.com",
+            "url": "https://github.com/Kamalnrf"
+          },
+          "homepage": "https://moon.page",
+          "license": "MIT",
+          "tags": [
+            "session-sharing",
+            "collaboration"
+          ],
+          "source": "./packages/claude-code-plugin",
+          "categories": [
+            "collaboration",
+            "session-sharing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add crescenthq/moon-cli",
+            "/plugin install moon@moon-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

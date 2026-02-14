@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "MuhammadTahaNaveed",
+    "display_name": "Muhammad Taha Naveed",
+    "avatar_url": "https://avatars.githubusercontent.com/u/85064039?u=4e12e549378ab4f9cd9d52d14f0bb3d965258e31&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-mob",
+      "version": null,
+      "description": "Control Claude Code from your phone - approve permissions and answer questions remotely",
+      "repo_full_name": "MuhammadTahaNaveed/cc-mob",
+      "repo_url": "https://github.com/MuhammadTahaNaveed/cc-mob",
+      "repo_description": "Control Claude Code from your phone - approve permissions and answer questions remotely.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-04T10:55:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-mob\",\n  \"metadata\": {\n    \"description\": \"Control Claude Code from your phone - approve permissions and answer questions remotely\"\n  },\n  \"owner\": {\n    \"name\": \"MuhammadTahaNaveed\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-mob\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/MuhammadTahaNaveed/cc-mob.git\"\n      },\n      \"description\": \"Control Claude Code from your phone - approve permissions and answer questions remotely\",\n      \"version\": \"1.0.2\",\n      \"author\": {\n        \"name\": \"MuhammadTahaNaveed\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cc-mob\",\n  \"version\": \"1.0.2\",\n  \"description\": \"Control Claude Code from your phone - approve permissions and answer questions remotely\",\n  \"author\": {\n    \"name\": \"MuhammadTahaNaveed\"\n  }\n}\n",
+        "README.md": "# cc-mob\n\nControl Claude Code from your phone - approve permissions and answer questions remotely.\n\n## Installation\n\ncc-mob has two components:\n1. **Server** - runs on your machine, bridges Claude Code to your phone\n2. **Plugin** - hooks into Claude Code to intercept permissions/questions\n\n### Step 1: Install the server\n\n```bash\nnpm install -g cc-mob\n```\n\n### Step 2: Install the plugin\n\n```bash\nclaude plugin marketplace add MuhammadTahaNaveed/cc-mob\nclaude plugin install cc-mob\n```\n\n### Step 3: Start the server\n\n```bash\ncc-mob\n```\n\nScan the QR code with your phone to authenticate.\n\n### Step 4: Use Claude Code\n\n```bash\nclaude\n```\n\nPermissions and questions will now appear on your phone.\n\n## Development / Local Testing\n\nIf you're developing or testing locally:\n\n```bash\n# Clone and install\ngit clone https://github.com/MuhammadTahaNaveed/cc-mob.git\ncd cc-mob\nnpm install\n\n# Terminal 1: Start server\nnode server.js\n\n# Terminal 2: Run Claude with plugin\nclaude --plugin-dir /path/to/cc-mob\n```\n\n## How It Works\n\n```\n┌─────────────┐     hooks      ┌─────────────┐     http      ┌─────────────┐\n│ Claude Code │ ─────────────▶ │  cc-mob     │ ◀──────────▶  │   Phone     │\n│             │ ◀───────────── │  server     │   websocket   │   Browser   │\n└─────────────┘    response    └─────────────┘               └─────────────┘\n```\n\nWhen loaded as a plugin, cc-mob:\n- Registers hooks to intercept permission requests and questions\n- Provides an MCP tool (`mcp__cc-mob__ask_user`) for asking questions via phone\n- Routes all interactions to your phone when the server is running\n- Falls back to terminal prompts if the server is not running\n\n## Features\n\n- **Permission forwarding**: Approve/deny tool permissions from your phone\n- **Question answering**: Answer Claude's questions remotely\n- **Notifications**: Receive notifications on your phone\n- **Secure**: Token-based authentication with HttpOnly cookies\n- **Graceful fallback**: Falls back to terminal if server is not running\n\n## Configuration\n\nConfiguration is stored in `~/.cc-mob/.env` (auto-generated on first server run):\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `AUTH_TOKEN` | (generated) | Authentication token |\n| `PORT` | 3456 | Server port |\n| `SESSION_TTL` | 86400 | Session duration in seconds |\n\n## LAN Mode\n\nTo access from other devices on your local network:\n\n```bash\ncc-mob --lan\n```\n\n## Running as a Service\n\nTo have cc-mob start automatically:\n\n### Linux (systemd)\n\n```bash\n# Create service file\ncat > ~/.config/systemd/user/cc-mob.service << 'EOF'\n[Unit]\nDescription=cc-mob server\n\n[Service]\nExecStart=/usr/bin/cc-mob\nRestart=on-failure\n\n[Install]\nWantedBy=default.target\nEOF\n\n# Enable and start\nsystemctl --user enable cc-mob\nsystemctl --user start cc-mob\n```\n\n### macOS (launchd)\n\n```bash\n# Create plist file\ncat > ~/Library/LaunchAgents/com.cc-mob.server.plist << 'EOF'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n    <key>Label</key>\n    <string>com.cc-mob.server</string>\n    <key>ProgramArguments</key>\n    <array>\n        <string>/usr/local/bin/cc-mob</string>\n    </array>\n    <key>RunAtLoad</key>\n    <true/>\n    <key>KeepAlive</key>\n    <true/>\n</dict>\n</plist>\nEOF\n\n# Load the service\nlaunchctl load ~/Library/LaunchAgents/com.cc-mob.server.plist\n```\n\n## Troubleshooting\n\n**MCP server fails to connect**\n- Ensure the cc-mob server is running: `curl http://localhost:3456/api/health`\n- Check server logs for errors\n\n**Phone not receiving requests**\n- Verify the server is running\n- Re-scan the QR code if your session expired\n- Check that your phone can reach the server URL\n\n**Hooks not triggering**\n- Verify plugin is loaded: run `/hooks` in Claude Code\n- Check that the plugin is enabled: `claude plugin list`\n\n**Plugin install fails with EXDEV error (Linux)**\n\nThis is a [known Claude Code bug](https://github.com/anthropics/claude-code/issues/14799) on Linux when `/tmp` is on a different filesystem (tmpfs).\n\nWorkaround:\n```bash\nmkdir -p ~/.claude/tmp\nTMPDIR=~/.claude/tmp claude plugin install cc-mob\n```\n\nPermanent fix (add to `~/.bashrc` or `~/.zshrc`):\n```bash\nexport TMPDIR=\"$HOME/.claude/tmp\"\n```\n\n## License\n\nApache-2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "cc-mob",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/MuhammadTahaNaveed/cc-mob.git"
+          },
+          "description": "Control Claude Code from your phone - approve permissions and answer questions remotely",
+          "version": "1.0.2",
+          "author": {
+            "name": "MuhammadTahaNaveed"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add MuhammadTahaNaveed/cc-mob",
+            "/plugin install cc-mob@cc-mob"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "victor-qin",
+    "display_name": "Victor Qin",
+    "avatar_url": "https://avatars.githubusercontent.com/u/31549074?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "chrome-test-runner-marketplace",
+      "version": "1.0.0",
+      "description": "QA testing tools for Claude Code + Chrome",
+      "repo_full_name": "victor-qin/chrome-test-runner-plugin",
+      "repo_url": "https://github.com/victor-qin/chrome-test-runner-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-12T23:01:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"chrome-test-runner-marketplace\",\n  \"version\": \"1.0.0\",\n  \"description\": \"QA testing tools for Claude Code + Chrome\",\n  \"owner\": {\n    \"name\": \"victor-qin\",\n    \"email\": \"lingheng.qin@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"chrome-test-runner\",\n      \"description\": \"QA testing agent that drives Chrome, executes test scenarios, and produces unified diagnostic logs combining agent reasoning, browser actions, and full telemetry. Requires Claude in Chrome extension.\",\n      \"version\": \"0.2.0\",\n      \"source\": \"./plugin\"\n    }\n  ]\n}\n",
+        "README.md": "# Chrome Test Runner Plugin\n\nA Claude Code plugin that turns Claude into a QA testing agent. It drives your real Chrome browser, executes test scenarios, and produces unified diagnostic logs.\n\n**No custom MCP server needed** — this plugin uses the [Claude in Chrome](https://code.claude.com/docs/en/chrome) extension that's already built into Claude Code.\n\n## What it produces\n\nA unified markdown log that interleaves three layers for every test step:\n\n- **🧠 Reasoning** — what Claude is thinking, what it expects, what it's watching for\n- **🎯 Actions** — the browser interactions (click, type, navigate, scroll)\n- **📡 Telemetry** — network requests, console logs, JS errors, screenshots\n\nPlus a bug report and summary statistics.\n\n## Setup\n\n### Prerequisites\n\n1. Claude Code installed and up to date\n2. [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) installed in Chrome\n\n### Install the plugin\n\n**From local directory (development):**\n\n```bash\nclaude --plugin-dir /path/to/chrome-test-runner-plugin-v2\n```\n\n**From GitHub:**\n\n```bash\n# Inside Claude Code:\n/plugin add github:your-username/chrome-test-runner-plugin\n```\n\n### Start Claude Code with Chrome\n\n```bash\nclaude --chrome\n```\n\nOr enable it permanently: run `/chrome` inside Claude Code and select \"Enabled by default\".\n\n## Usage\n\n```\n/chrome-test-runner:test https://myapp.vercel.app — stress test the chat, send rapid messages, create child chats\n```\n\nOr just describe what you want in natural language — Claude will auto-delegate to the test-runner agent:\n\n```\nCan you click around my app at localhost:3000 and find bugs?\nSend several messages, try concurrent operations, and capture everything.\n```\n\n## What's in the box\n\n```\nchrome-test-runner-plugin-v2/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin metadata\n├── agents/\n│   └── test-runner.md       # The QA test execution agent\n├── skills/\n│   └── chrome-testing/\n│       └── SKILL.md         # Testing knowledge base (auto-loaded)\n├── commands/\n│   └── test.md              # /chrome-test-runner:test slash command\n└── README.md\n```\n\n| Component | Purpose |\n|-----------|---------|\n| **test-runner agent** | Plans test scenarios, executes them with the flush→act→capture cycle, writes reasoning, flags bugs, compiles the unified log |\n| **chrome-testing skill** | Auto-loaded knowledge about bug patterns, telemetry tools, console message triage, JS inspection snippets |\n| **test command** | `/chrome-test-runner:test` shortcut to trigger the agent |\n\n## How it works\n\nThe test-runner agent uses Claude in Chrome's built-in tools:\n\n| Tool | Purpose |\n|------|---------|\n| `navigate` | Go to URLs |\n| `computer` | Click, type, scroll, screenshot |\n| `find` | Locate elements by description |\n| `form_input` | Fill form fields |\n| `read_network_requests` | Capture HTTP traffic |\n| `read_console_messages` | Capture console output |\n| `javascript_tool` | Run JS for deep inspection |\n| `gif_creator` | Record interaction GIFs |\n\nThe key pattern is **flush → act → capture**: before each action, clear the telemetry buffers; after each action, read fresh telemetry. This gives you clean per-step data instead of one giant dump at the end.\n\n## Example output\n\nSee [EXAMPLE-LOG.md](./EXAMPLE-LOG.md) for a full sample of what the unified log looks like.\n"
+      },
+      "plugins": [
+        {
+          "name": "chrome-test-runner",
+          "description": "QA testing agent that drives Chrome, executes test scenarios, and produces unified diagnostic logs combining agent reasoning, browser actions, and full telemetry. Requires Claude in Chrome extension.",
+          "version": "0.2.0",
+          "source": "./plugin",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add victor-qin/chrome-test-runner-plugin",
+            "/plugin install chrome-test-runner@chrome-test-runner-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

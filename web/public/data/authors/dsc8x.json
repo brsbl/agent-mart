@@ -1,0 +1,41 @@
+{
+  "author": {
+    "id": "dsc8x",
+    "display_name": "Daniel Schäfer",
+    "avatar_url": "https://avatars.githubusercontent.com/u/770269?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agentio",
+      "version": null,
+      "description": "Agent notification hooks and output styles for Claude Code",
+      "repo_full_name": "dsc8x/agentio-claude-plugin",
+      "repo_url": "https://github.com/dsc8x/agentio-claude-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-22T06:44:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agentio\",\n  \"owner\": {\n    \"name\": \"Daniel Schaefer\",\n    \"email\": \"mail@dscx.io\"\n  },\n  \"metadata\": {\n    \"description\": \"Agent notification hooks and output styles for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agentio\",\n      \"source\": \"./\",\n      \"description\": \"Agent notification hooks and output styles. Sends webhook notifications when Claude needs input or completes tasks.\",\n      \"version\": \"1.0.1\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agentio\",\n  \"description\": \"Agent notification hooks and output styles for Claude Code. Sends webhook notifications when Claude needs input or completes tasks.\",\n  \"version\": \"1.1.0\",\n  \"author\": {\n    \"name\": \"Daniel Schaefer\",\n    \"email\": \"mail@dscx.io\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"hooks\",\n    \"notifications\",\n    \"webhooks\",\n    \"output-styles\"\n  ],\n  \"repository\": \"https://github.com/dsc8x/agentio-claude-plugin\",\n  \"outputStyles\": \"./styles/\"\n}\n",
+        "README.md": "# AgentIO Claude Plugin\n\nAgent notification system for Claude Code. Get notified via webhook when Claude needs input or completes tasks.\n\n## Installation\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add https://github.com/dsc8x/agentio-claude-plugin\n\n# Install the plugin\nclaude plugin install core@agentio\n```\n\nStart a new Claude Code session to activate the hooks and output styles.\n\n## Configuration\n\nSet the webhook URL in your environment:\n\n```bash\n# In ~/.claude/.env\nAGENTIO_EVENTS_WEBHOOK_URL=https://your-webhook-url/endpoint\n```\n\n## What's Included\n\n### Hooks (auto-registered)\n\n- `UserPromptSubmit` - Logs prompts, manages sessions, generates agent names\n- `PreToolUse` (AskUserQuestion) - Notifies when Claude asks a question\n- `PermissionRequest` - Notifies when Claude needs permission\n- `Stop` - Notifies when Claude completes or needs input\n\n### Output Styles\n\n- `agentio` - Sends task completion notifications via webhook\n\n## Webhook Payload\n\nNotifications are sent as JSON POST requests:\n\n```json\n{\n  \"event\": \"task_complete\",\n  \"message\": \"Brief summary of what was done\",\n  \"session_id\": \"abc123\",\n  \"session_name\": \"SwiftRaven\",\n  \"cwd\": \"/path/to/project\",\n  \"timestamp\": \"2024-01-01T12:00:00Z\",\n  \"hostname\": \"machine-name\",\n  \"user\": \"username\"\n}\n```\n\n### Event Types\n\n| Event | Description |\n|-------|-------------|\n| `task_complete` | Claude finished a substantive task |\n| `needs_input` | Claude is waiting for user input |\n| `ask_user` | Claude asked a question via AskUserQuestion |\n| `permission_request` | Claude needs permission approval |\n\n## Custom Status Line\n\nDisplay agent name, model, and current prompt in Claude Code's status line.\n\n### Installation\n\n```bash\n# Create symlink to the status line script\nln -sf ~/.claude/plugins/marketplaces/agentio/scripts/statusline.py ~/.claude/statusline.py\n\n# Make it executable\nchmod +x ~/.claude/statusline.py\n```\n\nAdd to `~/.claude/settings.json`:\n\n```json\n{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"python3 ~/.claude/statusline.py\",\n    \"padding\": 0\n  }\n}\n```\n\nThe symlink ensures you always get the latest version when the plugin updates.\n\n### What It Shows\n\n```\n[AgentName] | [Model] | 💡 Current prompt text...\n```\n\n- **Agent Name** - Generated session name (e.g., \"SwiftRaven\")\n- **Model** - Current model (e.g., \"Claude Sonnet 4\")\n- **Prompt Icon** - Context-aware icon based on prompt type:\n  - ⚡ Slash commands\n  - ❓ Questions\n  - 💡 Create/build tasks\n  - 🐛 Fix/debug tasks\n  - ♻️ Refactor tasks\n  - 💬 General prompts\n\n## Project Structure\n\n```\nagentio-claude-plugin/\n├── .claude-plugin/\n│   ├── marketplace.json\n│   └── plugin.json\n├── hooks/\n│   └── hooks.json\n├── scripts/\n│   ├── agentio-notify\n│   └── statusline.py\n├── styles/\n│   └── agentio.md\n└── README.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "agentio",
+          "source": "./",
+          "description": "Agent notification hooks and output styles. Sends webhook notifications when Claude needs input or completes tasks.",
+          "version": "1.0.1",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add dsc8x/agentio-claude-plugin",
+            "/plugin install agentio@agentio"
+          ]
+        }
+      ]
+    }
+  ]
+}

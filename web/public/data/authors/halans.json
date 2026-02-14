@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "halans",
+    "display_name": "Jean-Jacques Halans",
+    "avatar_url": "https://avatars.githubusercontent.com/u/21991?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-marketplace-boilerplate",
+      "version": null,
+      "description": "Boilerplate for Claude Code Marketplace for people building awesome stuff.",
+      "repo_full_name": "halans/cc-marketplace-boilerplate",
+      "repo_url": "https://github.com/halans/cc-marketplace-boilerplate",
+      "repo_description": "A Claude Code Marketplace Boilerplate template project, including a starter plugin with an agent, commands,  hooks and skills",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2025-10-29T20:19:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-marketplace-boilerplate\",\n  \"owner\": {\n    \"name\": \"Halans\",\n    \"email\": \"nowhere@halans.dev\",\n    \"url\": \"https://github.com/halans\"\n  },\n  \"metadata\": {\n    \"description\": \"Boilerplate for Claude Code Marketplace for people building awesome stuff.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"webapp-starter\",\n      \"source\": \"./plugins/webapp-starter\",\n      \"description\": \"Commands, Agents and Hooks for building Web Applications.\",\n      \"version\": \"1.0.0\",\n      \"category\": \"web application\",\n      \"keywords\": [\"web application\", \"frontend\", \"backend\", \"productivity\", \"starter\", \"boilerplate\"]\n    }\n  ]\n} ",
+        "README.md": "# Claude Code Marketplace Boilerplate\n\nA minimal boilerplate template for creating and distributing Claude Code plugins via the marketplace. This project provides a structured foundation for building custom commands, agents and hooks — tools that extend Claude Code's capabilities.\n\n## Overview\n\nThis boilerplate helps you create professional Claude Code plugins with:\n\n- **Custom Commands**: Slash commands for common workflows\n- **Specialized Agents**: AI agents optimized for specific tasks\n- **Skills**: Modular knowledge packages with workflows and bundled resources\n- **Event Hooks**: Automated responses to IDE events\n- **MCP Integration**: Model Context Protocol server configuration\n- **Marketplace Ready**: Pre-configured metadata for distribution\n\n## Project Structure\n\n```\n.\n├── .claude-plugin/\n│   └── marketplace.json          # Marketplace configuration\n├── plugins/\n│   └── webapp-starter/           # Example plugin\n│       ├── .claude-plugin/\n│       │   └── plugin.json       # Plugin metadata\n│       ├── agents/\n│       │   └── webapp-uidesigner.md\n│       ├── commands/\n│       │   ├── webapp-starter.md\n│       │   └── generate-random-personas.md\n│       ├── skills/\n│       │   └── skill-creator/\n│       │       └── SKILL.md      # Skill definition\n│       ├── hooks/\n│       │   └── hooks.json        # Event hooks configuration\n│       └── .mcp.json            # MCP servers configuration\n└── README.md\n```\n\n## Getting Started\n\n### 1. Clone the Repository\n\n```bash\ngit clone https://github.com/halans/cc-marketplace-boilerplate\ncd cc-marketplace-boilerplate\n```\n\n### 2. Configure Your Marketplace\n\nEdit [.claude-plugin/marketplace.json](.claude-plugin/marketplace.json):\n\n```json\n{\n  \"name\": \"your-marketplace-name\",\n  \"owner\": {\n    \"name\": \"Your Name\",\n    \"email\": \"your@email.com\",\n    \"url\": \"https://github.com/yourusername\"\n  },\n  \"metadata\": {\n    \"description\": \"Your marketplace description\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [...]\n}\n```\n\n### 3. Create Your Plugin\n\nUse the included `webapp-starter` plugin as a template:\n\n1. Copy the plugin directory structure\n2. Update plugin metadata in `.claude-plugin/plugin.json`\n3. Add your custom commands, agents, skills, and hooks\n4. Register the plugin in `marketplace.json`\n\n## Plugin Components\n\n### Commands\n\nCommands are slash commands that users can invoke in Claude Code. Create a markdown file in `commands/`:\n\n```markdown\n---\ndescription: Your command description\n---\n\nYour command prompt and instructions here.\n```\n\nUsage: `/your-command`\n\n### Agents\n\nAgents are specialized AI assistants for specific tasks. Create a markdown file in `agents/`:\n\n```markdown\n---\nname: agent-name\ndescription: Agent description\nmodel: sonnet\n---\n\nYour agent's system prompt and behavior instructions.\n```\n\n### Skills\n\nSkills are modular packages that extend Claude's capabilities with specialized knowledge, workflows, and tool integrations. They transform Claude into a domain-specific expert by providing procedural knowledge and reusable resources.\n\nCreate a skill directory with a `SKILL.md` file:\n\n```\nskills/\n└── skill-name/\n    ├── SKILL.md (required)\n    ├── scripts/ (optional)\n    ├── references/ (optional)\n    └── assets/ (optional)\n```\n\n**SKILL.md structure:**\n\n```markdown\n---\nname: skill-name\ndescription: When and why this skill should be used\n---\n\n# Skill Name\n\nInstructions and workflows for Claude to follow when using this skill.\n\n## Usage\n\nDetailed guidance on how to apply this skill.\n```\n\n**Optional bundled resources:**\n\n- **scripts/**: Executable code for deterministic tasks (Python, Bash, etc.)\n- **references/**: Documentation loaded as needed (schemas, API docs, policies)\n- **assets/**: Files used in output (templates, icons, boilerplate code)\n\n### Hooks\n\nHooks automate responses to events like tool usage. Configure in `hooks/hooks.json`:\n\n```json\n{\n  \"PostToolUse\": [\n    {\n      \"matcher\": \"Write|Edit\",\n      \"hooks\": [\n        {\n          \"type\": \"command\",\n          \"command\": \"echo 'Hook executed!'\"\n        }\n      ]\n    }\n  ]\n}\n```\n\n### MCP Servers\n\nIntegrate Model Context Protocol servers via `.mcp.json`:\n\nFor example on Linux/Mac, using npx to run a package:\n```json\n{\n  \"mcpServers\": {\n    \"[server-name]\": {\n      \"command\": \"npx\",\n      \"args\": [\"[package-name]\", \"args\"]\n    }\n  }\n}\n```\n\nOn Windows, using npx to run a package:\n```json\n{\n  \"mcpServers\": {\n    \"[server-name]\": {\n      \"command\": \"cmd\",\n      \"args\": [\"/c\", \"npx\",\"[package-name]\", \"args\"]\n    }\n  }\n}\n```\n\n## Example Plugin: webapp-starter\n\nThe included example plugin demonstrates:\n\n- **Commands**:\n  - `/webapp-starter` - Create a basic SPA website structure example command\n  - `/generate-random-personas` - Generate random user personas example command\n\n- **Agents**:\n  - `webapp-uidesigner` - UI design and styling specialist example agent\n\n- **Skills**:\n  - `skill-creator` - Anthropic's skill-creator skill as guide for creating effective skills with workflows and bundled resources, as example skill\n\n- **Hooks**:\n  - Post-edit confirmation messages example hook\n\n- **MCP Integration**:\n  - shadcn component library integration example MCP server configuration\n\n## Plugin Metadata\n\nEach plugin requires a `plugin.json` file:\n\n```json\n{\n  \"name\": \"plugin-name\",\n  \"description\": \"Plugin description\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Your Name\",\n    \"email\": \"your@email.com\"\n  }\n}\n```\nMake sure that the plugin here matches the entry in `marketplace.json`.\n\n## Best Practices\n\n1. **Clear Descriptions**: Write concise, actionable descriptions for commands and agents\n2. **Version Control**: Use semantic versioning (MAJOR.MINOR.PATCH)\n3. **Documentation**: Document each command's purpose and usage\n4. **Testing**: Test commands and agents thoroughly before publishing\n5. **Keywords**: Add relevant keywords for marketplace discoverability\n\n## Categories\n\nChoose appropriate categories for your plugins:\n- web application\n- frontend\n- backend\n- fullstack\n- developer tools\n- productivity\n- testing\n- documentation\n\n## Publishing\n\n1. Ensure all metadata is complete and accurate\n2. Test your plugin locally in Claude Code  \n  -- add local marketplace through /plugin > Add Marketplace > using ./    \n  -- exit and restart claude code for it to pick up the plugin and mcp \n3. Update version numbers appropriately\n4. Submit to the Claude Code Marketplace\n\n## Contributing\n\nContributions are welcome! Please:\n\n1. Fork the repository\n2. Create a feature branch\n3. Make your changes\n4. Submit a pull request\n\n## License\n\n[Add your license here]\n\n## Support\n\nFor issues or questions:\n- GitHub Issues: [Add your repository URL]\n\n## Resources\n\n- [Claude Code Documentation](https://docs.claude.com/claude-code)\n- [Claude Code Marketplace Guidelines](https://docs.claude.com/claude-code/marketplace)\n- [Model Context Protocol](https://modelcontextprotocol.io/)\n\n---\n\nBuilt with ❤️ for the Claude Code community\n"
+      },
+      "plugins": [
+        {
+          "name": "webapp-starter",
+          "source": "./plugins/webapp-starter",
+          "description": "Commands, Agents and Hooks for building Web Applications.",
+          "version": "1.0.0",
+          "category": "web application",
+          "keywords": [
+            "web application",
+            "frontend",
+            "backend",
+            "productivity",
+            "starter",
+            "boilerplate"
+          ],
+          "categories": [
+            "backend",
+            "boilerplate",
+            "frontend",
+            "productivity",
+            "starter",
+            "web-application"
+          ],
+          "install_commands": [
+            "/plugin marketplace add halans/cc-marketplace-boilerplate",
+            "/plugin install webapp-starter@cc-marketplace-boilerplate"
+          ]
+        }
+      ]
+    }
+  ]
+}

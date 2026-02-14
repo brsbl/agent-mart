@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "SuperScript",
+    "display_name": "SuperScript",
+    "avatar_url": "https://avatars.githubusercontent.com/u/465010?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "sst-scrip",
+      "version": null,
+      "description": "Shell scripts in SuperScript style",
+      "repo_full_name": "SuperScript/scrip",
+      "repo_url": "https://github.com/SuperScript/scrip",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-05T17:45:46Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"sst-scrip\",\n  \"description\": \"Shell scripts in SuperScript style\",\n  \"owner\": {\n    \"name\": \"SuperScript\",\n    \"email\": \"ai@superscript.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"scrip\",\n      \"description\": \"Shell scripting for Claude Code\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./ccode\"\n    }\n  ]\n}\n",
+        "README.md": "# scrip\n\nWARNING: This repo is experimental and not yet suited for production use. Interfaces may change without notice.\n\nThis repository contains scripts that have proven useful over time, and routines to construct programs from them. The goals is to facilitate easy and self-contained reuse of these routines in scripts, with a common source maintained in one place.\n\nScript inclusion is indicated by a line of the form `#include \"filename\"`. In the initial version this is the only form. In future versions additional comment conventions may be added.\n\n## Include Resolution\n\nThe scrip system provides a program that processes include statements recursively. When it encounters a line containing `#include \"filename\"`, it replaces that line with the entire contents of the specified file. If the included file itself contains include statements, those are resolved recursively as well.\n\nEach file is included only the first time an include statement for that file is encountered. Subsequent include statements for the same file are ignored.\n\nThe `SCRIP_PATH` environment variable holds a colon-separated list of directories to search for relative file paths. Absolute paths or relative paths starting with `./` do not use `SCRIP_PATH`.\n\n",
+        "ccode/README.md": "# scrip - Claude Code Plugin\n\nSuperScript shell scripting assistant for creating POSIX-compliant scripts with rigorous style, modular composition via `#include`, and automated validation.\n\n## Overview\n\nThis plugin provides comprehensive support for developing shell scripts in the **SuperScript** style:\n- **POSIX compliance**: Bourne shell (`#!/bin/sh`) + POSIX + `local` keyword only (never Bash)\n- **Rigorous quoting**: All variables quoted (`\"${var}\"`, `\"$@\"`)\n- **Standard structure**: Template functions → Program functions → Parameters → Main\n- **Modular design**: Reusable components via `#include` directives\n- **Self-documenting**: Help text with `#_#` prefix\n- **Atomic operations**: Safe file writes using temp files + mv\n\n## Features\n\n### Skills\n- **shell-scripting**: Comprehensive knowledge of SuperScript style, patterns, and standard library\n\n### Commands\n- `/scrip:init-script` - Create new SuperScript from template\n- `/scrip:validate-script` - Check script for SuperScript compliance\n- `/scrip:refactor-to-superscript` - Convert existing scripts to SuperScript style\n\n### Agents\n- **script-validator**: Proactively reviews shell scripts for compliance after creation/modification\n\n### Hooks\n- **PreToolUse validation**: *(Coming soon)* Will automatically check `.sh` files for common issues\n\n## Installation\n\n### Option 1: Use with Repository (Recommended for Contributors)\n\nWhen working in the scrip repository:\n\n```bash\ncd /path/to/scrip\nclaude-code --plugin-dir ./ccode\n```\n\nOr set it permanently in your shell:\n\n```bash\nexport CLAUDE_PLUGIN_DIR=\"/path/to/scrip/ccode\"\nclaude-code\n```\n\n### Option 2: Install to User Plugins Directory\n\nCopy the plugin to your Claude plugins directory:\n\n```bash\n# Create plugins directory if it doesn't exist\nmkdir -p ~/.claude/plugins\n\n# Copy plugin\ncp -r /path/to/scrip/ccode ~/.claude/plugins/scrip\n\n# Use Claude Code (plugin auto-loads)\nclaude-code\n```\n\n## Usage\n\n### Creating a New Script\n\n```bash\n# In Claude Code session\n/scrip:init-script\n```\n\nClaude will create a properly structured SuperScript with:\n- Standard template structure\n- Common includes (shout, barf, usage, do_help)\n- Placeholder functions\n- Main dispatcher\n\n### Validating Scripts\n\nThe plugin validates automatically, but you can also check manually:\n\n```bash\n/scrip:validate-script\n```\n\nChecks for:\n- Correct shebang (`#!/bin/sh`, not `#!/bin/bash`)\n- Proper variable quoting\n- Standard structure sections\n- Exit code conventions (0, 100, 111)\n- Include directive syntax\n\n### Automatic Validation\n\nThe plugin automatically validates when you:\n1. Write or edit `.sh` files\n2. Create new scripts\n\nThe **script-validator** agent will proactively review scripts and suggest improvements.\n\n## SuperScript Quick Reference\n\n### Basic Structure\n\n```sh\n#!/bin/sh\n\n#### template functions\n\n#include \"shout.sh\"\n#include \"barf.sh\"\n#include \"usage.sh\"\n#include \"do_help.sh\"\n\n#### program functions\n\n#_# command args...\n#_#   Description of command\n#_#\ndo_command() {\n  # implementation\n}\n\n#### parameters\n\n# Configuration variables here\n\n#### main\n\ntest $# -gt 0 || usage \"$0 command [args]\"\n\n\"do_$@\"\n```\n\n### Standard Error Functions\n\n```sh\nshout() { printf '%s\\n' \"$0: $*\" >&2; }        # Print to stderr\nbarf() { shout \"fatal: $*\"; exit 111; }        # Fatal error\nusage() { shout \"usage: $*\"; exit 100; }       # Usage error\n```\n\n### Variable Quoting\n\n```sh\n# Correct - always quote, use braces for multi-character names\nlocal filename=\"$1\"\ntest -f \"${filename}\"\n\"${command}\" \"${arg1}\" \"${arg2}\"\n\n# Single-digit positional parameters don't need braces\nshift_count=\"$1\"\nprocess \"$2\" \"$3\"\n```\n\n## Standard Library\n\nThe plugin includes a complete standard library in `skills/shell-scripting/assets/stdlib/`:\n\n- `shout.sh`, `barf.sh`, `usage.sh` - Error handling\n- `atomic_to.sh`, `atomic_to_mode.sh` - Safe file operations\n- `pipeline.sh`, `pipewith.sh` - Pipeline construction\n- `do_.sh`, `do_run.sh`, `do_xrun.sh` - Command dispatch\n- `safe.sh`, `catch.sh` - Safe execution\n- `have_args.sh` - Argument validation\n\n## Documentation\n\nFull documentation available in:\n- `skills/shell-scripting/SKILL.md` - Quick reference\n- `skills/shell-scripting/references/style-guide.md` - Complete style guide\n- `skills/shell-scripting/references/patterns.md` - Common patterns and examples\n\n## Exit Codes\n\n- **0** - Success (silent)\n- **100** - Usage error (wrong arguments)\n- **111** - Fatal error (runtime failure)\n\n## Contributing\n\nWhen contributing to this plugin:\n1. Follow the SuperScript style for any shell scripts\n2. Test with `make tests` in the repository root\n3. Update documentation as needed\n4. Validate plugin structure before committing\n\n## License\n\nBSD 3-Clause License - See repository LICENSE file\n"
+      },
+      "plugins": [
+        {
+          "name": "scrip",
+          "description": "Shell scripting for Claude Code",
+          "version": "1.0.0",
+          "source": "./ccode",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add SuperScript/scrip",
+            "/plugin install scrip@sst-scrip"
+          ]
+        }
+      ]
+    }
+  ]
+}

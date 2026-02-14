@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "patdhlk",
+    "display_name": "Patrick Dahlke",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9476466?u=7aee53fe1c8e41944e7e800539e595e378dced38&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "pharaoh-dev",
+      "version": null,
+      "description": "Development marketplace for Pharaoh sphinx-needs AI assistant",
+      "repo_full_name": "patdhlk/pharaoh",
+      "repo_url": "https://github.com/patdhlk/pharaoh",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-12T08:26:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pharaoh-dev\",\n  \"description\": \"Development marketplace for Pharaoh sphinx-needs AI assistant\",\n  \"owner\": {\n    \"name\": \"patdhlk\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pharaoh\",\n      \"description\": \"AI assistant framework for sphinx-needs projects\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"patdhlk\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"pharaoh\",\n  \"description\": \"AI assistant framework for sphinx-needs projects: change analysis, traceability, MECE, authoring, verification, and release management\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"patdhlk\"\n  },\n  \"repository\": \"https://github.com/patdhlk/pharaoh\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"sphinx-needs\", \"requirements\", \"traceability\", \"change-analysis\", \"mece\", \"safety-critical\", \"automotive\"]\n}\n",
+        "README.md": "# Pharaoh\n\nAI assistant framework for [sphinx-needs](https://sphinx-needs.readthedocs.io/) projects. Pharaoh combines structured development workflows with requirements engineering intelligence to help teams author, analyze, trace, and validate requirements using AI.\n\nPharaoh has no runtime binary or Python package. All analysis logic is encoded in skill/agent markdown instructions. The AI is the runtime.\n\n## Quick Start\n\n### Claude Code\n\n```bash\n# Install the plugin\n/plugin install pharaoh\n\n# Run setup to detect your project and generate pharaoh.toml\n/pharaoh:setup\n\n# Analyze the impact of a change\n/pharaoh:change REQ_001\n\n# Check for traceability gaps\n/pharaoh:mece\n```\n\n### GitHub Copilot\n\n```\n# Run setup to scaffold agents into your project\n@pharaoh.setup\n\n# Analyze the impact of a change\n@pharaoh.change REQ_001\n\n# Check for traceability gaps\n@pharaoh.mece\n```\n\n## Skills / Agents\n\n| Skill (Claude Code) | Agent (Copilot) | Purpose |\n|---------------------|-----------------|---------|\n| `pharaoh:setup` | `@pharaoh.setup` | Scaffold Pharaoh into a project -- detect structure, generate `pharaoh.toml`, install Copilot agents |\n| `pharaoh:change` | `@pharaoh.change` | Analyze impact of a change -- trace through needs links and codelinks, produce a Change Document |\n| `pharaoh:trace` | `@pharaoh.trace` | Navigate traceability in any direction -- show everything linked to a need across all levels |\n| `pharaoh:mece` | `@pharaoh.mece` | Gap and redundancy analysis -- find orphans, missing links, MECE violations |\n| `pharaoh:author` | `@pharaoh.author` | AI-assisted requirement authoring -- create/modify needs with proper IDs, types, and links |\n| `pharaoh:verify` | `@pharaoh.verify` | Validate implementations against requirements -- content-level satisfaction checks |\n| `pharaoh:release` | `@pharaoh.release` | Release management -- changelog from requirements, traceability coverage metrics |\n| `pharaoh:plan` | `@pharaoh.plan` | Structured implementation planning -- break changes into tasks with workflow enforcement |\n\n## Workflow\n\n```\npharaoh:change -> pharaoh:author -> pharaoh:verify -> pharaoh:release\n               -> pharaoh:mece   (optional, for gap analysis)\n               -> pharaoh:trace  (optional, for exploration)\n```\n\n## Experience Tiers\n\nPharaoh works with just the AI reading files. Install additional tools for a better experience.\n\n| Tier | What's installed | Experience |\n|------|-----------------|------------|\n| Basic | Pharaoh only | AI reads RST/MD files directly. Works everywhere, slower on large projects. |\n| Good | + [ubc CLI](https://ubcode.useblocks.com/ubc/installation.html) | Fast deterministic indexing, JSON output, CI/CD compatible. |\n| Best | + ubc CLI + [ubCode extension](https://ubcode.useblocks.com/) | Real-time indexing, MCP integration, live validation, full schema checks. |\n\n## Configuration\n\n### `pharaoh.toml`\n\nOptional. Controls Pharaoh's workflow behavior. Without this file, advisory mode applies with sensible defaults.\n\n```toml\n[pharaoh]\nstrictness = \"advisory\"  # \"advisory\" (default) | \"enforcing\"\n\n[pharaoh.id_scheme]\npattern = \"{TYPE}-{MODULE}-{NUMBER}\"\nauto_increment = true\n\n[pharaoh.workflow]\nrequire_change_analysis = true\nrequire_verification = true\nrequire_mece_on_release = false\n\n[pharaoh.traceability]\nrequired_links = [\n    \"req -> spec\",\n    \"spec -> impl\",\n    \"impl -> test\",\n]\n\n[pharaoh.codelinks]\nenabled = true\n```\n\nSee [`pharaoh.toml.example`](pharaoh.toml.example) for a fully commented template.\n\n### Advisory vs Enforcing Mode\n\n- **Advisory** (default): Skills suggest the recommended workflow but never block. Tips are shown for skipped steps.\n- **Enforcing**: Skills check prerequisites and block if not met. For example, `pharaoh:author` requires `pharaoh:change` to be run and acknowledged first.\n\n### Project Configuration\n\nPharaoh reads need types, link types, and ID settings from your existing sphinx-needs configuration:\n- `ubproject.toml` (preferred) -- the `[needs]` section\n- `conf.py` (fallback) -- `needs_types`, `needs_extra_links`, etc.\n\nPharaoh never re-defines these settings. `pharaoh.toml` only controls Pharaoh's own behavior on top.\n\n## sphinx-codelinks Support\n\nWhen a project uses [sphinx-codelinks](https://sphinx-codelinks.useblocks.com/), Pharaoh follows codelink references in change analysis and traceability. A change to a requirement surfaces affected code files, not just other requirements.\n\n## Design\n\nSee the [design document](docs/plans/2026-02-11-pharaoh-design.md) for architecture details, platform support, and the full data access model.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "pharaoh",
+          "description": "AI assistant framework for sphinx-needs projects",
+          "version": "0.1.0",
+          "source": "./",
+          "author": {
+            "name": "patdhlk"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add patdhlk/pharaoh",
+            "/plugin install pharaoh@pharaoh-dev"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "author": {
+    "id": "jeffh",
+    "display_name": "Jeff Hui",
+    "avatar_url": "https://avatars.githubusercontent.com/u/68616?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jeffh-claude-plugins",
+      "version": "1.0.0",
+      "description": "Various Plugins for Claude Code",
+      "repo_full_name": "jeffh/claude-plugins",
+      "repo_url": "https://github.com/jeffh/claude-plugins",
+      "repo_description": "Humanlayer + other productivity plugins",
+      "signals": {
+        "stars": 9,
+        "forks": 1,
+        "pushed_at": "2026-02-09T00:15:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"jeffh-claude-plugins\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Various Plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"Jeff Hui\",\n    \"email\": \"jeff@jeffhui.net\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"discuss\",\n      \"description\": \"Interactive discussion workflows for planning features, creating reference docs, and clarifying thoughts through iterative Q&A\",\n      \"source\": \"./discuss\",\n      \"category\": \"productivity\",\n      \"version\": \"2026-01-12\",\n      \"author\": {\n        \"name\": \"Jeff Hui\",\n        \"email\": \"jeff@jeffhui.net\"\n      }\n    },\n    {\n      \"name\": \"humanlayer\",\n      \"description\": \"Commands and agents from humanlayer, but without the thought syncing\",\n      \"source\": \"./humanlayer\",\n      \"category\": \"development\",\n      \"version\": \"2025-12-15\",\n      \"author\": {\n        \"name\": \"HumanLayer\"\n      }\n    },\n    {\n      \"name\": \"jj\",\n      \"description\": \"Jujutsu (jj) version control commands\",\n      \"source\": \"./jj\",\n      \"category\": \"development\",\n      \"version\": \"2025-12-15\",\n      \"author\": {\n        \"name\": \"Jeff Hui\",\n        \"email\": \"jeff@jeffhui.net\"\n      }\n    },\n    {\n      \"name\": \"gh\",\n      \"description\": \"GitHub CLI operations and repository management\",\n      \"source\": \"./gh\",\n      \"category\": \"development\",\n      \"version\": \"2025-12-15\",\n      \"author\": {\n        \"name\": \"Jeff Hui\",\n        \"email\": \"jeff@jeffhui.net\"\n      }\n    },\n    {\n      \"name\": \"pai\",\n      \"description\": \"Personal AI Infrastructure - 13 principles for deterministic, CLI-first AI with specialized agents and full history capture\",\n      \"source\": \"./pai\",\n      \"category\": \"productivity\",\n      \"version\": \"2025-12-26\",\n      \"author\": {\n        \"name\": \"Jeff Hui\",\n        \"email\": \"jeff@jeffhui.net\"\n      },\n      \"hooks\": {\n        \"SessionStart\": [\n          {\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/session-capture.ts\\\"\"\n              },\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ],\n        \"SessionEnd\": [\n          {\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/session-capture.ts\\\"\"\n              },\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ],\n        \"UserPromptSubmit\": [\n          {\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ],\n        \"PreToolUse\": [\n          {\n            \"matcher\": \"*\",\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ],\n        \"PostToolUse\": [\n          {\n            \"matcher\": \"*\",\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ],\n        \"Stop\": [\n          {\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ],\n        \"SubagentStop\": [\n          {\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ],\n        \"PreCompact\": [\n          {\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"bun run \\\"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\\\"\"\n              }\n            ]\n          }\n        ]\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nA collection of powerful plugins for [Claude Code](https://claude.ai/code) that enhance your development workflow with specialized commands and agents for codebase research, planning, and implementation.\n\n## Overview\n\nThis repository provides a plugin marketplace for Claude Code with multiple plugins to enhance your development workflow:\n\n- **humanlayer**: 6 core slash commands (with variants) and 6 specialized agents for codebase research, planning, and implementation workflows\n- **jj**: 3 slash commands for Jujutsu (jj) version control workflows\n\n## Installation\n\n### Add This Marketplace to Claude Code\n\nYou can install plugins from this marketplace using one of these methods:\n\n#### From GitHub (Recommended)\n\n```bash\n/plugin marketplace add jeffh/claude-plugins\n```\n\n#### From Local Directory\n\nIf you've cloned this repository locally:\n\n```bash\n/plugin marketplace add /path/to/claude-plugins\n```\n\n### Install the humanlayer Plugin\n\nAfter adding the marketplace, install the plugin:\n\n```bash\n# Interactive installation (browse all available plugins)\n/plugin\n\n# Direct installation\n/plugin install humanlayer@jeffh-claude-plugins\n```\n\n## Available Plugins\n\n### humanlayer\n\nCommands and agents from HumanLayer, optimized for Claude Code workflows. Provides 6 core slash commands (with additional variants) for complete development workflows and 6 specialized research agents.\n\n**[Full Documentation →](docs/humanlayer.md)**\n\n**Quick Overview:**\n- **Core Commands:** `/commit`, `/create_plan`, `/implement_plan`, `/validate_plan`, `/describe_pr`, `/research_codebase`\n- **Agents:** `codebase-analyzer`, `codebase-locator`, `codebase-pattern-finder`, `thoughts-analyzer`, `thoughts-locator`, `web-search-researcher`\n\n### jj\n\nJujutsu (jj) version control commands for streamlined workflows. Provides 3 slash commands specifically designed for developers using Jujutsu VCS.\n\n**[Full Documentation →](docs/jj.md)**\n\n**Quick Overview:**\n- **Commands:** `/commit`, `/rebase`, `/create_prs`\n- **Features:** Atomic commits, automatic rebasing, stack-aware PR creation with visualization\n\n## Workflow Examples\n\n### Complete Feature Development\n\n```bash\n# 1. Research and plan\n/create_plan\n\n# 2. Implement the plan\n/implement_plan thoughts/shared/plans/2025-10-09-my-feature.md\n\n# 3. Create commits\n/commit\n\n# 4. Validate implementation\n/validate_plan thoughts/shared/plans/2025-10-09-my-feature.md\n\n# 5. Generate PR description\n/describe_pr\n```\n\n### Codebase Investigation\n\n```bash\n# Comprehensive research\n/research_codebase\n# Provide: \"How does authentication work in this codebase?\"\n\n# Or spawn agents directly via Task tool for specific questions\n```\n\n## Requirements\n\nSome commands expect a `thoughts/` directory structure. See individual plugin documentation for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "discuss",
+          "description": "Interactive discussion workflows for planning features, creating reference docs, and clarifying thoughts through iterative Q&A",
+          "source": "./discuss",
+          "category": "productivity",
+          "version": "2026-01-12",
+          "author": {
+            "name": "Jeff Hui",
+            "email": "jeff@jeffhui.net"
+          },
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jeffh/claude-plugins",
+            "/plugin install discuss@jeffh-claude-plugins"
+          ]
+        },
+        {
+          "name": "humanlayer",
+          "description": "Commands and agents from humanlayer, but without the thought syncing",
+          "source": "./humanlayer",
+          "category": "development",
+          "version": "2025-12-15",
+          "author": {
+            "name": "HumanLayer"
+          },
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jeffh/claude-plugins",
+            "/plugin install humanlayer@jeffh-claude-plugins"
+          ]
+        },
+        {
+          "name": "jj",
+          "description": "Jujutsu (jj) version control commands",
+          "source": "./jj",
+          "category": "development",
+          "version": "2025-12-15",
+          "author": {
+            "name": "Jeff Hui",
+            "email": "jeff@jeffhui.net"
+          },
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jeffh/claude-plugins",
+            "/plugin install jj@jeffh-claude-plugins"
+          ]
+        },
+        {
+          "name": "gh",
+          "description": "GitHub CLI operations and repository management",
+          "source": "./gh",
+          "category": "development",
+          "version": "2025-12-15",
+          "author": {
+            "name": "Jeff Hui",
+            "email": "jeff@jeffhui.net"
+          },
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jeffh/claude-plugins",
+            "/plugin install gh@jeffh-claude-plugins"
+          ]
+        },
+        {
+          "name": "pai",
+          "description": "Personal AI Infrastructure - 13 principles for deterministic, CLI-first AI with specialized agents and full history capture",
+          "source": "./pai",
+          "category": "productivity",
+          "version": "2025-12-26",
+          "author": {
+            "name": "Jeff Hui",
+            "email": "jeff@jeffhui.net"
+          },
+          "hooks": {
+            "SessionStart": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/session-capture.ts\""
+                  },
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ],
+            "SessionEnd": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/session-capture.ts\""
+                  },
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ],
+            "UserPromptSubmit": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ],
+            "PreToolUse": [
+              {
+                "matcher": "*",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ],
+            "PostToolUse": [
+              {
+                "matcher": "*",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ],
+            "Stop": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ],
+            "SubagentStop": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ],
+            "PreCompact": [
+              {
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/hooks/event-capture.ts\""
+                  }
+                ]
+              }
+            ]
+          },
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jeffh/claude-plugins",
+            "/plugin install pai@jeffh-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

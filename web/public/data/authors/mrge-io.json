@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "mrge-io",
+    "display_name": "cubic.dev",
+    "avatar_url": "https://avatars.githubusercontent.com/u/189440881?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cubic",
+      "version": null,
+      "description": "AI code review insights from cubic, review issues, team wikis, codebase scans, and learnings directly in Claude Code",
+      "repo_full_name": "mrge-io/cubic-claude-plugin",
+      "repo_url": "https://github.com/mrge-io/cubic-claude-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T21:15:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cubic\",\n  \"owner\": {\n    \"name\": \"cubic\",\n    \"email\": \"contact@cubic.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"AI code review insights from cubic, review issues, team wikis, codebase scans, and learnings directly in Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cubic\",\n      \"source\": \"./\",\n      \"description\": \"AI code review insights from cubic, review issues, team wikis, codebase scans, and learnings directly in Claude Code\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"cubic\",\n        \"email\": \"contact@cubic.dev\"\n      },\n      \"homepage\": \"https://docs.cubic.dev/integrations/mcp-server#mcp-server\",\n      \"repository\": \"https://github.com/mrge-io/cubic-claude-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"code-review\",\n        \"ai-review\",\n        \"cubic\",\n        \"wiki\",\n        \"security\",\n        \"codebase-scan\",\n        \"learnings\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cubic\",\n  \"description\": \"AI code review insights from cubic, review issues, team wikis, codebase scans, and learnings directly in Claude Code\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"cubic\",\n    \"email\": \"contact@cubic.dev\",\n    \"url\": \"https://www.cubic.dev\"\n  },\n  \"homepage\": \"https://docs.cubic.dev/integrations/mcp-server#mcp-server\",\n  \"repository\": \"https://github.com/mrge-io/cubic-claude-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"code-review\",\n    \"ai-review\",\n    \"cubic\",\n    \"wiki\",\n    \"security\",\n    \"codebase-scan\",\n    \"learnings\"\n  ]\n}\n",
+        "README.md": "# cubic Plugin for Claude Code\n\nAccess cubic's AI code review insights directly from Claude Code. Get PR review issues, browse AI-generated wikis, check codebase scans, and apply team review learnings — all without leaving your editor.\n\n## Prerequisites\n\n- [Claude Code](https://code.claude.com) v1.0.33+\n- A [cubic](https://www.cubic.dev) account with an active installation\n- A cubic API key (`cbk_*`)\n- (Optional) [cubic CLI](https://cubic.dev/install) for `/cubic:run-review`\n\n## Installation\n\n### From GitHub (recommended)\n\n```bash\n# Step 1: Add the cubic marketplace\n/plugin marketplace add mrge-io/cubic-claude-plugin\n\n# Step 2: Install the plugin\n/plugin install cubic@cubic\n```\n\n> **Requires** [Claude Code](https://code.claude.com) v1.0.33+\n\n### Team Auto-Install\n\nTo make cubic automatically available for all team members in a repository, add this to your project's `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"cubic\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"mrge-io/cubic-claude-plugin\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"cubic@cubic\": true\n  }\n}\n```\n\nWhen team members open the project in Claude Code and trust the repository, they'll be prompted to install the plugin.\n\n## Setup\n\n1. Generate an API key from your [cubic dashboard](https://www.cubic.dev/settings?tab=integrations&integration=mcp)\n2. Set the environment variable:\n\n```bash\nexport CUBIC_API_KEY=cbk_your_api_key_here\n```\n\nAdd this to your shell profile (`.bashrc`, `.zshrc`, etc.) so it persists across sessions.\n\n> **Tip:** You can also just tell Claude Code \"set up my cubic key\" and paste your key — the `env-setup` skill will detect your OS and shell and save it automatically.\n\n## Commands\n\n| Command                          | Description                                                            |\n| -------------------------------- | ---------------------------------------------------------------------- |\n| `/cubic:comments [pr-number]`    | Show cubic's review comments on the current PR (auto-detects branch)   |\n| `/cubic:run-review [flags]`      | Run a local cubic AI code review on uncommitted changes or branch diff |\n| `/cubic:wiki [page-name]`        | Browse AI-generated codebase documentation                             |\n| `/cubic:scan [scan-id]`          | View codebase security scan results and issues                    |\n| `/cubic:learnings [learning-id]` | Show team code review patterns and preferences                         |\n\n## Skills (Auto-triggered)\n\nThese activate automatically based on what you're doing:\n\n| Skill                 | Triggers when                                  | What it does                                                       |\n| --------------------- | ---------------------------------------------- | ------------------------------------------------------------------ |\n| **review-issues** | Working on a PR branch, fixing review comments | Surfaces relevant cubic review issues for files you're editing |\n| **codebase-context**  | Asking about architecture or how things work   | Queries the cubic AI Wiki for architectural context                |\n| **review-patterns**   | Writing or reviewing code                      | Pulls team learnings to apply coding conventions                   |\n| **env-setup**         | Setting up cubic, pasting an API key           | Detects OS and shell, persists API key to shell config             |\n\n## MCP Tools\n\nThe plugin connects to cubic's MCP server, giving Claude access to 9 tools:\n\n**Wiki**: `list_wikis`, `list_wiki_pages`, `get_wiki_page`\n**Codebase Scans**: `list_scans`, `get_scan`, `get_issue`\n**Review Learnings**: `list_learnings`, `get_learning`\n**PR Reviews**: `get_pr_issues`\n\n## Plugin Structure\n\n```\ncubic-claude-plugin/\n├── .claude-plugin/\n│   ├── marketplace.json   # Marketplace catalog for distribution\n│   └── plugin.json        # Plugin metadata\n├── .mcp.json              # cubic MCP server configuration\n├── commands/\n│   ├── comments.md        # /cubic:comments command\n│   ├── run-review.md      # /cubic:run-review command (CLI)\n│   ├── wiki.md            # /cubic:wiki command\n│   ├── scan.md            # /cubic:scan command\n│   └── learnings.md       # /cubic:learnings command\n├── skills/\n│   ├── review-issues/     # Auto-surfaces PR review issues\n│   │   └── SKILL.md\n│   ├── codebase-context/  # Auto-queries wiki for architecture context\n│   │   └── SKILL.md\n│   ├── review-patterns/   # Auto-applies team review learnings\n│   │   └── SKILL.md\n│   └── env-setup/         # Auto-detects OS/shell and persists API key\n│       └── SKILL.md\n└── README.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cubic",
+          "source": "./",
+          "description": "AI code review insights from cubic, review issues, team wikis, codebase scans, and learnings directly in Claude Code",
+          "version": "1.0.0",
+          "author": {
+            "name": "cubic",
+            "email": "contact@cubic.dev"
+          },
+          "homepage": "https://docs.cubic.dev/integrations/mcp-server#mcp-server",
+          "repository": "https://github.com/mrge-io/cubic-claude-plugin",
+          "license": "MIT",
+          "keywords": [
+            "code-review",
+            "ai-review",
+            "cubic",
+            "wiki",
+            "security",
+            "codebase-scan",
+            "learnings"
+          ],
+          "categories": [
+            "ai-review",
+            "code-review",
+            "codebase-scan",
+            "cubic",
+            "learnings",
+            "security",
+            "wiki"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mrge-io/cubic-claude-plugin",
+            "/plugin install cubic@cubic"
+          ]
+        }
+      ]
+    }
+  ]
+}
