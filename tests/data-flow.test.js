@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 import { isAcceptableDrop } from '../src/lib/dropReasons.js';
+import { sanitizeFilename } from '../src/lib/utils.js';
 
 const DISCOVERED_PATH = './data/01-discovered.json';
 const REPOS_PATH = './data/02-repos.json';
@@ -135,25 +136,28 @@ describe('Data Flow: Marketplace Counts Consistency', () => {
   it('should have matching total marketplace counts', function() {
     if (!enrichedData || !marketplacesBrowseData) return this.skip();
 
-    // Count marketplaces in enriched data
-    let enrichedMarketplaceCount = 0;
+    // Count unique marketplaces in enriched data (output step deduplicates by repo_full_name)
+    const enrichedRepos = new Set();
     for (const author of Object.values(enrichedData.authors)) {
-      enrichedMarketplaceCount += author.marketplaces.length;
+      for (const m of author.marketplaces) {
+        enrichedRepos.add(m.repo_full_name);
+      }
     }
 
     const browseMarketplaceCount = marketplacesBrowseData.marketplaces.length;
 
     assert.strictEqual(
       browseMarketplaceCount,
-      enrichedMarketplaceCount,
-      `Marketplace count mismatch: enriched=${enrichedMarketplaceCount}, browse=${browseMarketplaceCount}`
+      enrichedRepos.size,
+      `Marketplace count mismatch: enriched unique=${enrichedRepos.size}, browse=${browseMarketplaceCount}`
     );
   });
 
   it('should have matching meta.total_marketplaces', function() {
     if (!enrichedData || !marketplacesBrowseData) return this.skip();
 
-    // Count marketplaces in enriched data
+    // meta.total_marketplaces is computed from author stats before dedup,
+    // so it reflects the raw enriched count (not the deduped browse count)
     let enrichedMarketplaceCount = 0;
     for (const author of Object.values(enrichedData.authors)) {
       enrichedMarketplaceCount += author.marketplaces.length;
@@ -162,7 +166,7 @@ describe('Data Flow: Marketplace Counts Consistency', () => {
     assert.strictEqual(
       marketplacesBrowseData.meta.total_marketplaces,
       enrichedMarketplaceCount,
-      `total_marketplaces mismatch`
+      `total_marketplaces mismatch: meta=${marketplacesBrowseData.meta.total_marketplaces}, enriched=${enrichedMarketplaceCount}`
     );
   });
 });
@@ -195,7 +199,8 @@ describe('Data Flow: Author File Existence', () => {
     const missingAuthors = [];
 
     for (const authorId of Object.keys(enrichedData.authors)) {
-      const authorFile = path.join(AUTHORS_DIR, `${authorId}.json`);
+      // Output step writes files as sanitizeFilename(author.id.toLowerCase()).json
+      const authorFile = path.join(AUTHORS_DIR, `${sanitizeFilename(authorId.toLowerCase())}.json`);
       if (!fs.existsSync(authorFile)) {
         missingAuthors.push(authorId);
       }
@@ -217,7 +222,7 @@ describe('Data Flow: Author File Existence', () => {
 
     for (let i = 0; i < sampleSize; i++) {
       const authorId = authorIds[i];
-      const authorFile = path.join(AUTHORS_DIR, `${authorId}.json`);
+      const authorFile = path.join(AUTHORS_DIR, `${sanitizeFilename(authorId.toLowerCase())}.json`);
 
       if (fs.existsSync(authorFile)) {
         const content = fs.readFileSync(authorFile, 'utf8');
@@ -231,16 +236,19 @@ describe('Data Flow: Author File Existence', () => {
 });
 
 describe('Data Flow: Every Enriched Author in Browse Data', () => {
-  it('should have a browse entry for every enriched author', function() {
+  it('should have a browse entry for every enriched author with marketplaces', function() {
     if (!enrichedData || !marketplacesBrowseData) return this.skip();
 
     const browseAuthorIds = new Set(
       marketplacesBrowseData.marketplaces.map(m => m.author_id)
     );
 
-    const missingAuthors = Object.keys(enrichedData.authors).filter(
-      authorId => !browseAuthorIds.has(authorId)
-    );
+    // Only check authors that have at least one marketplace in enriched data
+    // (authors with 0 marketplaces won't appear in browse output)
+    const missingAuthors = Object.entries(enrichedData.authors)
+      .filter(([, author]) => author.marketplaces.length > 0)
+      .map(([authorId]) => authorId)
+      .filter(authorId => !browseAuthorIds.has(authorId));
 
     assert.ok(
       missingAuthors.length === 0,
@@ -248,21 +256,22 @@ describe('Data Flow: Every Enriched Author in Browse Data', () => {
     );
   });
 
-  it('should have all enriched marketplaces in browse data', function() {
+  it('should have all unique enriched marketplaces in browse data', function() {
     if (!enrichedData || !marketplacesBrowseData) return this.skip();
 
     const browseRepos = new Set(
       marketplacesBrowseData.marketplaces.map(m => m.repo_full_name)
     );
 
-    const missing = [];
+    // Collect unique repo_full_names from enriched data (output deduplicates globally)
+    const enrichedRepos = new Set();
     for (const author of Object.values(enrichedData.authors)) {
       for (const marketplace of author.marketplaces) {
-        if (!browseRepos.has(marketplace.repo_full_name)) {
-          missing.push(marketplace.repo_full_name);
-        }
+        enrichedRepos.add(marketplace.repo_full_name);
       }
     }
+
+    const missing = [...enrichedRepos].filter(repo => !browseRepos.has(repo));
 
     assert.ok(
       missing.length === 0,
