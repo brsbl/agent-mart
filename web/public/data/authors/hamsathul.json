@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "hamsathul",
+    "display_name": "hamsathul haris",
+    "avatar_url": "https://avatars.githubusercontent.com/u/118459424?u=2945c47b6fd913969bcbfa06f20be503f3fa167b&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "proposal-estimator",
+      "version": null,
+      "description": "Analyze client RFP/BOQ packages, assess staffing gaps, and generate commercial proposals",
+      "repo_full_name": "hamsathul/claude_proposal_estimator",
+      "repo_url": "https://github.com/hamsathul/claude_proposal_estimator",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-12T12:59:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"proposal-estimator\",\n  \"owner\": {\n    \"name\": \"NCO\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Analyze client RFP/BOQ packages, assess staffing gaps, and generate commercial proposals\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"proposal-estimator\",\n      \"source\": \"./\",\n      \"description\": \"Analyze client RFP/BOQ packages, assess staffing gaps against company capabilities, and generate complete commercial proposals with pricing estimates\",\n      \"author\": {\n        \"name\": \"NCO\"\n      },\n      \"homepage\": \"https://github.com/hamsathul/claude_proposal_estimator\",\n      \"repository\": \"https://github.com/hamsathul/claude_proposal_estimator\",\n      \"keywords\": [\n        \"proposal\",\n        \"estimator\",\n        \"boq\",\n        \"rfp\",\n        \"consultancy\",\n        \"pricing\",\n        \"staffing\"\n      ],\n      \"category\": \"workflow\",\n      \"tags\": [\n        \"proposal\",\n        \"estimator\",\n        \"rfp\",\n        \"consultancy\",\n        \"pricing\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"proposal-estimator\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Analyze client RFP/BOQ packages, assess staffing gaps against company capabilities, and generate complete commercial proposals with pricing estimates\",\n  \"author\": {\n    \"name\": \"NCO\"\n  },\n  \"keywords\": [\"proposal\", \"estimator\", \"boq\", \"rfp\", \"consultancy\", \"pricing\", \"staffing\"],\n  \"skills\": [\"./skills/\", \"./commands/\"]\n}\n",
+        "README.md": "# Proposal Estimator\n\nAnalyze client RFP/BOQ packages, assess staffing gaps against company capabilities, and generate complete commercial proposals with pricing estimates for engineering consultancy services.\n\n## What It Does\n\nThis plugin automates the end-to-end proposal workflow for engineering consultancy firms bidding on infrastructure projects (water, power, roads, buildings) in the ~~region region.\n\n**Every extracted item is traced back to its source** — file name, page number, sheet, and row — so you can verify any finding against the original RFP documents.\n\n**Workflow:**\n\n1. **Analyze RFP** — Parse client documents (PDF, Excel, Word) and extract scope by discipline, staffing requirements, and commercial terms — **with source references for every item**\n2. **Gap Analysis** — Compare RFP requirements against your staff list to identify what's available in-house, what needs hiring, and what should be subcontracted — **with RFP source traceability**\n3. **Estimate Proposal** — Apply your rate card to calculate pricing with Excel formulas, grouped by consultancy stage — **with a Source Traceability sheet linking costs to RFP requirements**\n4. **Generate Proposal** — Create a complete proposal package: Excel pricing workbook, Word report, and PowerPoint presentation — **with source references in documents and speaker notes**\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/analyze-rfp` | Reads all client documents and produces a structured RFP Analysis Summary |\n| `/gap-analysis` | Compares RFP staffing needs vs. company capabilities |\n| `/estimate-proposal` | Calculates proposal pricing using your rate card |\n| `/generate-proposal` | Creates the full proposal package (Excel + Word + PowerPoint) |\n| `/portfolio-analysis` | Cross-references RFP scope against your project portfolio and proposal pipeline — win rates, financials, and profitability scenarios |\n\n## Setup\n\n**Every command will check for required setup data before starting and will ask you to provide any missing files.** Prepare your data in the `setup/` folder using the provided templates as a guide.\n\n### Required Setup Files\n\n| File to Create | Template Provided | Description |\n|---------------|-------------------|-------------|\n| `setup/org_capabilities.md` | `org_capabilities_template.md` | Copy the template, fill in your company profile, disciplines, certifications, project references, and differentiators |\n| `setup/rate_card.csv` | (includes sample rates) | Replace sample rates with your actual billing rates by staff category (hourly, ~~currency) |\n| `setup/staff_list.csv` | (includes sample staff) | Replace sample staff with your actual team — roles, disciplines, experience, availability |\n\n### Data Files (Provide Your Own Exports)\n\n| File to Provide | Template for Format | Description |\n|----------------|--------------------| -------------|\n| Projects export (`.xlsx`) | `projects_template.xlsx` | Export from your PM system — all current/past projects with contract values, actual costs, profit %, hours, and status |\n| Proposals export (`.xlsx`) | `proposals_template.xlsx` | Export from your BD system — all submitted proposals with estimated values, clients, win/loss status, and dates |\n\nPlace the projects and proposals export files in your working folder alongside the RFP documents. The plugin will prompt you for them when needed.\n\n### Setup Verification\n\nEach command runs a **Step 0: Verify Setup Data** check before doing any work. If a required file is missing or still contains only sample/template data, the command will stop and tell you exactly what's needed. You won't lose any progress — just provide the file and re-run the command.\n\n### Organization Capabilities Profile\n\nDrives the compliance check, company overview in proposals, and \"Why Choose Us\" content. Covers company profile, discipline capabilities (CORE / CAPABLE / PARTNER / NONE), sector experience, project references, certifications, software, subcontractor network, capacity, and differentiators.\n\n### Rate Card\n\nYour company billing rates. Example columns:\n\n| Category_Code | Category_Name | Department | Hourly_Rate_AED |\n|---------------|---------------|------------|-----------------|\n| PM-SE | PM Senior Engineer | Project Management | 750 |\n| PM-E | PM Engineer | Project Management | 400 |\n| ENG-SE | Senior Engineer | Engineering | 250 |\n| ENG-E | Engineer | Engineering | 200 |\n| ENG-JE | Junior Engineer | Engineering | 100 |\n| ENG-SD | Senior Designer | Engineering | 120 |\n| ENG-D | Designer | Engineering | 100 |\n\n### Staff List\n\nYour current team and availability. Example columns:\n\n| Name | Current_Role | Discipline | Experience_Years | Availability |\n|------|-------------|------------|-----------------|--------------|\n| Ahmed Khan | Senior PM | Project Management | 18 | Available Apr 2026 |\n| John Smith | Senior Civil Eng | Civil | 14 | Available |\n\n### Projects Export\n\nAn export of all your current and past projects. The file should have a header row containing \"Project Number\" as the first column (the header row can be preceded by a summary section). Required columns:\n\n| Column | Description |\n|--------|-------------|\n| Project Number | Unique project identifier |\n| Project Name | Full project name |\n| Client | Client company name |\n| Type | Contract type (LS = Lump Sum, RB = Rate-Based) |\n| Contract Value (AED) | Total contract value |\n| Actual Costs (AED) | Costs incurred to date |\n| Forecast Costs (AED) | Projected total costs |\n| Contract Hours | Budgeted hours |\n| Actual Hours | Hours worked to date |\n| Invoiced Amount (AED) | Amount billed to client |\n| Expected Result (AED) | Expected profit/loss |\n| Profit % | Profit as percentage of contract value |\n| Status | Project status (in-progress, completed, blocked, draft, cancelled) |\n| Project Manager | Name of PM |\n\n### Proposals Export\n\nAn export of all submitted and tracked proposals. Required columns:\n\n| Column | Description |\n|--------|-------------|\n| Proposal No | Unique proposal identifier |\n| Project Title | Full project/tender title |\n| Client | Client company name |\n| End User | Ultimate end user (if different from client) |\n| Type | Contract type (LS, RB, or RB and LS) |\n| Status | Proposal status (Submitted, Won, Lost, Cancelled, To Be Submitted, Resubmitted) |\n| Final Estimated Value | Estimated contract value in AED |\n| Currency | Currency code (default: AED) |\n| Received Date | Date RFP was received |\n| Submission Date | Date proposal was submitted |\n| Proposal Manager | Name of proposal lead |\n| Lead Discipline Engineer | Name of technical lead |\n\n## Typical Usage\n\n1. **Prepare setup data** — Fill in `setup/org_capabilities.md`, `setup/rate_card.csv`, and `setup/staff_list.csv` with your company's actual data (each command will verify these exist before starting)\n2. **Place RFP documents** — Put the client's RFP package (PDFs, Excel BOQs, Word files) in your working folder\n3. **Place data exports** — Add your projects and proposals Excel exports to the working folder (needed for `/portfolio-analysis`)\n4. Run `/analyze-rfp` to extract scope requirements\n5. Run `/gap-analysis` to check team coverage, compliance, and subcontractor strategy\n6. Run `/estimate-proposal` to calculate pricing\n7. Run `/generate-proposal` to create the full proposal package (Excel + Word + PowerPoint)\n8. Run `/portfolio-analysis` to see how this RFP aligns with your existing portfolio, check win rates, and model profitability scenarios\n\n## Rate Categories\n\nThe plugin maps positions to these standard rate categories:\n\n- **PM-SE**: Project Managers, Design Leads, PMC Directors\n- **PM-E**: Planning Engineers, Project Coordinators\n- **ENG-SE**: Senior discipline engineers (Civil, Structural, Mechanical, Electrical, I&C)\n- **ENG-E**: Resident Engineers, HSE Engineers, QA/QC Engineers, Quantity Surveyors\n- **ENG-JE**: Assistant Engineers, HSE Officers, Junior Inspectors\n- **ENG-SD**: Lead CAD/BIM Designers\n- **ENG-D**: CAD Operators, Draftsmen\n\n## Pricing Method\n\n- Monthly rate = Hourly rate x ~~working_hours_per_month hours (~~working_days_per_month days x 8 hours)\n- Rates are all-inclusive billing rates (no additional overhead/profit markup)\n- ~~tax_name at ~~tax_rate per ~~tax_authority\n- Third-party positions can include a ~~third_party_markup markup\n\n## Source Referencing\n\nAll outputs include full traceability back to the original RFP documents. The reference format is:\n\n- **PDFs**: `📄 [filename.pdf, p.12]`\n- **Excel**: `📄 [filename.xlsx, Sheet \"Staff\", Row 15]`\n- **Word**: `📄 [filename.docx, Section 3.2, p.8]`\n\nEvery analysis output includes a **Source Document Index** at the top, listing all files analyzed. Every table includes a **Source column**. The Excel pricing workbook includes a dedicated **Source Traceability** sheet. Word reports include a **Source Reference Index appendix**. PowerPoint presentations carry source references in **speaker notes**.\n\n## Author\n\nNCO\n"
+      },
+      "plugins": [
+        {
+          "name": "proposal-estimator",
+          "source": "./",
+          "description": "Analyze client RFP/BOQ packages, assess staffing gaps against company capabilities, and generate complete commercial proposals with pricing estimates",
+          "author": {
+            "name": "NCO"
+          },
+          "homepage": "https://github.com/hamsathul/claude_proposal_estimator",
+          "repository": "https://github.com/hamsathul/claude_proposal_estimator",
+          "keywords": [
+            "proposal",
+            "estimator",
+            "boq",
+            "rfp",
+            "consultancy",
+            "pricing",
+            "staffing"
+          ],
+          "category": "workflow",
+          "tags": [
+            "proposal",
+            "estimator",
+            "rfp",
+            "consultancy",
+            "pricing"
+          ],
+          "categories": [
+            "boq",
+            "consultancy",
+            "estimator",
+            "pricing",
+            "proposal",
+            "rfp",
+            "staffing",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add hamsathul/claude_proposal_estimator",
+            "/plugin install proposal-estimator@proposal-estimator"
+          ]
+        }
+      ]
+    }
+  ]
+}

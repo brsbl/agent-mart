@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "NiltonVolpato",
+    "display_name": "Nilton Volpato",
+    "avatar_url": "https://avatars.githubusercontent.com/u/761595?u=ab05f6651121353f5d6a86916f56177a9564e621&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nv-claude-plugins",
+      "version": null,
+      "description": "Directory of Claude Code plugins I created that I thought would be useful to others",
+      "repo_full_name": "NiltonVolpato/claude-plugins",
+      "repo_url": "https://github.com/NiltonVolpato/claude-plugins",
+      "repo_description": "A collection of my plugins for Claude Code.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-13T10:13:31Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"nv-claude-plugins\",\n  \"description\": \"Directory of Claude Code plugins I created that I thought would be useful to others\",\n  \"owner\": {\n    \"name\": \"Nilton Volpato\",\n    \"email\": \"nilton@volpa.to\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"master-programmer\",\n      \"description\": \"Seek advice from the Master Programmer when faced with a dilemma and be enlightened!\",\n      \"author\": {\n        \"name\": \"Nilton Volpato\",\n        \"email\": \"nilton@volpa.to\"\n      },\n      \"source\": \"./plugins/master-programmer\",\n      \"homepage\": \"https://github.com/NiltonVolpato/claude-code-plugins/tree/main/plugins/master-programmer\"\n    },\n    {\n      \"name\": \"statusline\",\n      \"description\": \"Event logging hooks for the statusline activity display\",\n      \"author\": {\n        \"name\": \"Nilton Volpato\",\n        \"email\": \"nilton@volpa.to\"\n      },\n      \"source\": \"./plugins/statusline\",\n      \"homepage\": \"https://github.com/NiltonVolpato/claude-plugins/tree/main/plugins/statusline\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugins\n\nA collection of plugins for [Claude Code](https://claude.ai/claude-code). For\nnow, there's only one but more will come. Check the\n[master-programmer](./plugins/master-programmer) plugin out!\n\n## Installation\n\nAdd this repository as a marketplace:\n\n```bash\n/plugin marketplace add NiltonVolpato/claude-plugins\n```\n\nThen browse and install plugins via `/plugin` or install directly:\n\n```bash\n/plugin install <plugin-name>@nv-claude-plugins\n```\n\n## Plugins\n\n### [master-programmer](./plugins/master-programmer)\n\nChannels ancient wisdom for modern programming dilemmas through parables and koans.\n\n![Master Programmer Plugin Demo](./plugins/master-programmer/assets/demo.gif)\n\n\n## Statusline\n\nA customizable status line for Claude Code with modular components.\n\n### Quickstart\n\n1. Install [uv](https://docs.astral.sh/uv/):\n   ```bash\n   curl -LsSf https://astral.sh/uv/install.sh | sh\n   ```\n\n2. Install and configure:\n   ```bash\n   uvx --from git+https://github.com/NiltonVolpato/claude-plugins statusline install\n   ```\n\n   This installs the `statusline` command via `uv tool install` and configures\n   Claude Code to use it. To update later:\n   ```bash\n   uv tool upgrade nv-claude-plugins\n   ```\n\n### Preview\n\nTest how the status line looks with sample data:\n```bash\nstatusline preview\n```\n\n### Available Modules\n\n| Module | Description | Example |\n|--------|-------------|---------|\n| `model` | Model display name | Opus 4.5 |\n| `workspace` | Current directory | my-project |\n| `git` | Git branch and status | main*↑2 |\n| `cost` | Session cost | $0.01 |\n| `context` | Context window usage | 42% |\n| `context_bar` | Context as progress bar | [████      ] 42% |\n| `version` | Claude Code version | v2.0.76 |\n\n### Themes\n\nThe statusline supports different themes:\n\n```bash\n# Nerd Font icons (default) - requires a Nerd Font\nstatusline preview --theme=nerd\n\n# ASCII labels (no special fonts needed)\nstatusline preview --theme=ascii\n# Output: Model: Opus 4.5 | Dir: my-project\n\n# Emoji icons\nstatusline preview --theme=emoji\n# Output: 🤖 Opus 4.5 | 📁 my-project\n\n# Minimal (no labels)\nstatusline preview --theme=minimal\n\n# Disable colors\nstatusline preview --no-color\n```\n\n### Configuration\n\nCreate a config file at `~/.claude/statusline.toml`:\n\n```bash\nstatusline config --init\n```\n\nExample configuration:\n\n```toml\n# Global defaults\ntheme = \"nerd\"      # nerd | ascii | emoji | minimal\ncolor = true\nenabled = [\"model\", \"workspace\"]\nseparator = \" | \"\n\n# Per-module overrides\n[modules.model]\ncolor = \"cyan\"\ntheme = \"ascii\"     # Override theme for this module only\n\n# Custom theme variables per module\n[modules.model.themes.nerd]\nlabel = \"\"\n\n[modules.model.themes.ascii]\nlabel = \"Model:\"\n```\n\n#### Module Aliases\n\nDisplay the same module multiple times with different configurations using aliases:\n\n```toml\nenabled = [\"model\", \"ctx_percent\", \"ctx_tokens\"]\n\n[modules.ctx_percent]\ntype = \"context\"  # Use the \"context\" module\nformat = \"[yellow]{{ context.used_percentage | format_percent }}[/yellow]\"\n\n[modules.ctx_tokens]\ntype = \"context\"  # Same module, different format\nformat = \"[dim]{{ context.total_input_tokens }}/{{ context.context_window_size }}[/dim]\"\n```\n\nThe `type` field specifies which module class to use. If omitted, the config key\nitself is treated as the module type (backward compatible).\n\n### Customization\n\n```bash\nstatusline render --modules=model,workspace,cost --separator=\" :: \"\n```\n\nFor more options: `statusline --help`\n\n\n## License\n\nMIT License - See [LICENSE](LICENSE) for details.\n",
+        "plugins/master-programmer/README.md": "# Master Programmer\n\nA Claude Code plugin that channels ancient wisdom for modern programming dilemmas.\n\n![Master Programmer Plugin Demo](./assets/demo.gif)\n\nWhen faced with eternal questions like \"tabs or spaces?\", \"why does my code only break in production?\", or \"how to debug a memory leak?\" the Master Programmer responds with parables, koans, and teachings in the style of classical Taoist and Zen texts.\n\n## Usage\n\nThe Master Programmer agent activates automatically when you ask philosophical programming questions or explicitly request wisdom:\n\n```\n> Should I use tabs or spaces?\n\n> Why does my code work on my machine but not in production?\n```\n\nYou can also invoke the agent directly by asking Claude to consult the Master Programmer.\n```\n> Can you ask the Master Programmer: How much should I document my code?\n\n> How do I become a programming guru?\n```\n\n## Example\n\n**You:** Why do bugs only appear on Fridays?\n\n**Master Programmer:**\n\n> **Book of Deployments, Verse 13**\n>\n> A novice once asked the Master, \"Why do the gravest bugs reveal themselves only when the weekend approaches?\"\n>\n> The Master replied, \"The bug does not choose Friday. Friday chooses the bug. For it is written: code that has slumbered peacefully through Monday's standup and Wednesday's review shall awaken only when the on-call engineer has made dinner reservations.\"\n>\n> The novice protested, \"But I tested thoroughly!\"\n>\n> \"So did all who came before you,\" said the Master. \"Yet the Way of Production is not the Way of Staging. They are as different as the sun and the fluorescent lights of the office.\"\n>\n> *Thus it is said: Deploy on Monday, debug in leisure. Deploy on Friday, debug in haste.*\n\n## Example\n\n**You:** Is premature optimization really the root of all evil?\n\n**Master Programmer:**\n\n> **The Book of Performance, Chapter 3: On Premature Optimization**\n>\n>  A young programmer came to the Master and said, \"I have heard it written in the ancient texts that premature optimization is the root of all evil. Yet my manager demands that my code run in constant time before I have written a single line. What is the truth?\"\n>\n>  The Master considered this and spoke: \"The sage Knuth did inscribe these words upon the sacred scrolls, yet foolish disciples recite only half the verse. The complete teaching reads: 'We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil. Yet we should not pass up our opportunities in that critical 3%.'\"\n>\n>  The novice was confused. \"But Master, how do I know which is the 3% and which is the 97%?\"\n>\n>  The Master replied, \"First make it work. Then make it right. Then, if you must, make it fast. The programmer who optimizes that which does not yet exist is like the farmer who polishes his plow while his fields lie fallow.\"\n>\n>  \"But what of my manager?\" asked the novice.\n>\n>  The Master closed his eyes. \"Your manager optimizes his own performance review. This is a different path entirely.\"\n>\n>  The novice bowed and departed, enlightened yet somehow more burdened than before.\n>\n>  *Thus it is written: Evil has many roots. Premature optimization is but one branch of the tree whose trunk is Ignorance, and whose leaves are Meetings.*\n\n## License\n\nMIT License - See [LICENSE](LICENSE) for details.\n",
+        "plugins/statusline/README.md": "# Statusline Event Logging Plugin\n\nThis plugin logs Claude Code activity events to enable the statusline's `events` module.\n\n## Requirements\n\n- [uv](https://docs.astral.sh/uv/) must be installed for the hooks to work\n\n## What it does\n\nCaptures tool usage, prompts, and agent lifecycle events to display a visual activity stream in the statusline.\n\n## Events captured\n\n- `PostToolUse` - After tool calls complete\n- `PostToolUseFailure` - After tool calls fail (including interrupts)\n- `UserPromptSubmit` - When user submits a prompt\n- `Stop` - When agent finishes responding\n- `SubagentStart` / `SubagentStop` - Subagent lifecycle\n\n## Installation\n\nInstall via Claude Code:\n\n```\n/plugin install statusline@nv-claude-plugins\n```\n\nOr for development:\n\n```bash\nstatusline install --local\n```\n\n## Migration from shell hook\n\nIf you previously used the shell hook (`~/.claude/hooks/statusline-events.sh`):\n\n1. Open `~/.claude/settings.json` and remove hook entries that reference `statusline-events.sh`:\n   ```json\n   \"hooks\": {\n     \"PostToolUse\": [{\"hooks\": [{\"command\": \"~/.claude/hooks/statusline-events.sh\", ...}]}],\n     \"Stop\": [{\"hooks\": [{\"command\": \"~/.claude/hooks/statusline-events.sh\", ...}]}],\n     ...\n   }\n   ```\n2. Delete `~/.claude/hooks/statusline-events.sh`\n3. Install this plugin: `/plugin install statusline@nv-claude-plugins`\n4. Restart Claude Code\n5. Your existing event database will continue to work (schema is compatible)\n"
+      },
+      "plugins": [
+        {
+          "name": "master-programmer",
+          "description": "Seek advice from the Master Programmer when faced with a dilemma and be enlightened!",
+          "author": {
+            "name": "Nilton Volpato",
+            "email": "nilton@volpa.to"
+          },
+          "source": "./plugins/master-programmer",
+          "homepage": "https://github.com/NiltonVolpato/claude-code-plugins/tree/main/plugins/master-programmer",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add NiltonVolpato/claude-plugins",
+            "/plugin install master-programmer@nv-claude-plugins"
+          ]
+        },
+        {
+          "name": "statusline",
+          "description": "Event logging hooks for the statusline activity display",
+          "author": {
+            "name": "Nilton Volpato",
+            "email": "nilton@volpa.to"
+          },
+          "source": "./plugins/statusline",
+          "homepage": "https://github.com/NiltonVolpato/claude-plugins/tree/main/plugins/statusline",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add NiltonVolpato/claude-plugins",
+            "/plugin install statusline@nv-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
