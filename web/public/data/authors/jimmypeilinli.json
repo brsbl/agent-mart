@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "JimmyPeilinLi",
+    "display_name": "Peilin Li",
+    "avatar_url": "https://avatars.githubusercontent.com/u/177450066?u=a924bfd3017bf5d95dcf049c14c17b05078df54b&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "training-profile-toolkit",
+      "version": null,
+      "description": "Top-down training performance profiling toolkit for PyTorch + DeepSpeed workloads",
+      "repo_full_name": "JimmyPeilinLi/profile_claude_skill",
+      "repo_url": "https://github.com/JimmyPeilinLi/profile_claude_skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-01-29T12:52:34Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"training-profile-toolkit\",\n  \"owner\": {\n    \"name\": \"lpl\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Top-down training performance profiling toolkit for PyTorch + DeepSpeed workloads\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"profile-training\",\n      \"description\": \"Complete top-down performance profiling pipeline: from nsys/torch.profiler/pyinstrument traces to hierarchical time attribution with source code mapping\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/profile-training\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Training Profile Toolkit\n\nPyTorch + DeepSpeed 训练性能 Top-Down 分析工具包。\n\n从三种 profile 数据（nsys、torch.profiler、pyinstrument）出发，完成完整的层次化时间归因分析，最终输出到具体代码和 aten 操作级别的性能分解。\n\n## 使用方式\n\n### 作为 Claude Code Skill\n\n```bash\n# 安装为 Claude Code plugin\nclaude plugin add /path/to/profile_toolkit\n\n# 使用 skill\n/profile-training\n```\n\n### 独立使用分析脚本\n\n```bash\ncd profile_toolkit/scripts\n\n# Step 1: 探索数据文件结构\npython 01_explore_data.py /path/to/profile_data\n\n# Step 2: 提取 NVTX 训练时间线\npython 02_nsys_nvtx_timeline.py /path/to/nsys.json\n\n# Step 3: GPU kernel 分类（nsys sqlite，避免 JSON 名称截断）\npython 03_nsys_gpu_kernels.py /path/to/nsys.sqlite time_ranges.json\n\n# Step 4: Memcpy + Sync 分析\npython 04_nsys_memcpy_sync.py /path/to/nsys.sqlite time_ranges.json\n\n# Step 5: CPU ops Total Time 聚合\npython 05_torch_cpu_ops.py /path/to/torch_trace.json <start_us> <end_us>\n\n# Step 6: Self Time 计算（核心算法）\npython 06_self_time.py /path/to/torch_trace.json <start_us> <end_us>\n\n# Step 7: CUDA Runtime 归因到关键 Op\npython 07_cuda_runtime_attribution.py /path/to/torch_trace.json <start_us> <end_us>\n\n# Step 8: Pyinstrument 代码路径分析\npython 08_pyinstrument_analysis.py /path/to/pyinstrument_trace.json\n```\n\n## 分析流水线\n\n```\n三种 Profile 输入\n├── nsys sqlite      → GPU kernel 分类 + Memcpy/Sync 统计\n├── nsys JSON        → NVTX 训练时间线（forward/backward wall time）\n├── torch.profiler   → cpu_op Total/Self Time + CUDA Runtime 归因\n└── pyinstrument     → Python 代码路径映射\n\n         ↓ 分析流水线\n\nStep 1: 数据探索 → 确认文件结构和可用字段\nStep 2: NVTX 时间线 → 识别稳态 step、提取时间范围\nStep 3: GPU kernel → 完整 demangled 名称分类（修正 JSON 截断问题）\nStep 4: Memcpy/Sync → HtoD 搬运量、带宽、同步等待时间\nStep 5: CPU ops → Total Time 聚合（含嵌套重复）\nStep 6: Self Time → Stack-based 去重算法（核心创新）\nStep 7: CUDA Runtime 归因 → 分解 self time 为 GPU sync vs Python dispatch\nStep 8: 代码路径 → 映射到 DeepSpeed/框架源码\n\n         ↓ 输出文档\n\n01. 训练整体流程时间分布\n02. Step 级 forward/backward wall time\n03. GPU kernel 分类统计\n04. 数据搬运深度分析\n05. CPU Self Time 层次化分解\n06. 完整时间归因大表（一级→二级→三级，到代码级）\n```\n\n## 核心算法\n\n### Self Time 计算（06_self_time.py）\n\ntorch.profiler 的 cpu_op 事件是嵌套的。使用 stack-based interval containment 算法：\n\n1. 按 `(ts, -dur)` 排序（相同起始时间，长事件先入栈成为父事件）\n2. 维护栈结构，栈顶是当前事件的父事件\n3. `child_dur[parent] += child.dur`\n4. `self_time = dur - child_dur`（自身独占 CPU 时间）\n\n### CUDA Runtime 归因（07_cuda_runtime_attribution.py）\n\n对每个关键 cpu_op，用 bisect 二分查找其时间范围内的 cuda_runtime 事件，\n分解 self time 为：\n- **GPU sync 等待**（cudaStreamSynchronize）\n- **Kernel launch**（cudaLaunchKernel）\n- **Memcpy dispatch**（cudaMemcpyAsync）\n- **Python/C++ 框架调度**（剩余部分）\n\n## 适用场景\n\n- PyTorch 训练性能分析\n- DeepSpeed ZeRO-3 + CPU Offload 瓶颈定位\n- MoE 模型参数搬运分析\n- Gradient Checkpointing 开销评估\n- 任何需要 top-down 层次化时间归因的训练调优\n\n## 依赖\n\n- Python 3.8+\n- 标准库：json, sqlite3, collections, bisect, sys, os\n- 无第三方依赖\n\n## License\n\nApache 2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "profile-training",
+          "description": "Complete top-down performance profiling pipeline: from nsys/torch.profiler/pyinstrument traces to hierarchical time attribution with source code mapping",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/profile-training"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JimmyPeilinLi/profile_claude_skill",
+            "/plugin install profile-training@training-profile-toolkit"
+          ]
+        }
+      ]
+    }
+  ]
+}

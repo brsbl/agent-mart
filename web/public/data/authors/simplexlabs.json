@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "simplexlabs",
+    "display_name": "Simplex",
+    "avatar_url": "https://avatars.githubusercontent.com/u/194271074?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cli-reference",
+      "version": null,
+      "description": "Simplex browser automation plugins for Claude Code",
+      "repo_full_name": "simplexlabs/simplex-python",
+      "repo_url": "https://github.com/simplexlabs/simplex-python",
+      "repo_description": "Official Python SDK and CLI for the Simplex browser automation platform",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-14T00:31:11Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cli-reference\",\n  \"description\": \"Simplex browser automation plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"Simplex\",\n    \"email\": \"support@simplex.sh\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"simplex\",\n      \"description\": \"Simplex browser automation — CLI reference and workflows for Claude Code\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugins/simplex\",\n      \"author\": {\n        \"name\": \"Simplex\",\n        \"email\": \"support@simplex.sh\"\n      },\n      \"category\": \"development\",\n      \"keywords\": [\"simplex\", \"browser\", \"automation\", \"workflow\", \"scraping\", \"cli\"]\n    }\n  ]\n}\n",
+        "README.md": "# Simplex Python SDK & CLI\n\nOfficial Python SDK and CLI for the [Simplex](https://simplex.sh) browser automation platform.\n\n[![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\n## Installation\n\n```bash\npip install simplex\n```\n\nThis installs both the Python SDK (`from simplex import SimplexClient`) and the CLI (`simplex` command).\n\n## Authentication\n\n```bash\n# Option 1: Environment variable\nexport SIMPLEX_API_KEY=\"your-api-key\"\n\n# Option 2: Login command (saves to ~/.simplex/credentials)\nsimplex login\n```\n\n## Claude Code Plugin\n\nGive Claude Code full knowledge of the Simplex CLI and SDK:\n\n```\n/plugin install simplexlabs/simplex-python\n```\n\nOnce installed, Claude Code automatically knows how to use `simplex editor`, `simplex connect`, `simplex run`, and the full Python SDK.\n\n## CLI\n\n### `simplex editor` — Create a workflow and start an interactive session\n\n```bash\nsimplex editor --name \"My Workflow\" --url \"https://example.com\"\nsimplex editor -n \"My Workflow\" -u \"https://example.com\" --var key=value\nsimplex editor -n \"Test\" -u \"https://example.com\" --json\n```\n\nCreates a workflow, starts a browser session, and streams live agent events. Prints session info (session_id, workflow_id, vnc_url) then streams SSE events until Ctrl+C.\n\n### `simplex connect` — Stream events from a running session\n\n```bash\nsimplex connect <session_id>\nsimplex connect \"https://host:port/stream\" --json\n```\n\n### `simplex run` — Run an existing workflow\n\n```bash\nsimplex run <workflow_id>\nsimplex run <workflow_id> --var email=test@test.com --watch\n```\n\n### `simplex send` — Send a message to a running session\n\n```bash\nsimplex send <session_id> \"Click the login button\"\n```\n\n### `simplex pause` / `simplex resume`\n\n```bash\nsimplex pause <session_id>\nsimplex resume <session_id>\n```\n\n### `simplex workflows list`\n\n```bash\nsimplex workflows list --name \"search term\"\n```\n\n### `simplex sessions`\n\n```bash\nsimplex sessions status <session_id>\nsimplex sessions logs <session_id>\nsimplex sessions download <session_id> --filename report.pdf --output ./report.pdf\nsimplex sessions replay <session_id> --output replay.mp4\n```\n\n### `simplex login` / `whoami` / `logout`\n\n```bash\nsimplex login       # Prompts for API key\nsimplex whoami      # Shows current auth status\nsimplex logout      # Removes saved credentials\n```\n\n## Python SDK\n\n### Quick Start\n\n```python\nfrom simplex import SimplexClient\n\nclient = SimplexClient(api_key=\"your-api-key\")\n\n# Start an interactive editor session\nresult = client.start_editor_session(\n    name=\"My Session\",\n    url=\"https://example.com\",\n    test_data={\"username\": \"test\"},\n)\nprint(f\"Session: {result['session_id']}\")\nprint(f\"VNC: {result['vnc_url']}\")\n\n# Stream live events\nfor event in client.stream_session(result[\"logs_url\"]):\n    print(event)\n\n# Send a message to the agent\nclient.send_message(result[\"message_url\"], \"Click the login button\")\n\n# Close the session\nclient.close_session(result[\"session_id\"])\n```\n\n### Client\n\n```python\nclient = SimplexClient(\n    api_key=\"your-api-key\",\n    base_url=\"https://api.simplex.sh\",  # Optional\n    timeout=30,                          # Request timeout in seconds\n    max_retries=3,                       # Retry attempts\n    retry_delay=1.0,                     # Delay between retries\n)\n```\n\n### Workflow Management\n\n```python\n# Create\nresult = client.create_workflow(name=\"My Workflow\", url=\"https://example.com\")\nworkflow_id = result[\"workflow\"][\"id\"]\n\n# Get\nworkflow = client.get_workflow(workflow_id)\n\n# Update\nclient.update_workflow(workflow_id, name=\"New Name\", url=\"https://new-url.com\")\n\n# Search\nresults = client.search_workflows(workflow_name=\"search term\")\n```\n\n### Editor Sessions\n\n```python\n# Start an editor session (creates workflow + browser session)\n# NOTE: Takes 10-15 seconds. Use timeout=120.\nresult = client.start_editor_session(\n    name=\"My Session\",\n    url=\"https://example.com\",\n    test_data={\"username\": \"test\"},\n)\n# Returns: succeeded, workflow_id, session_id, vnc_url, logs_url, message_url, filesystem_url\n\n# Stream live SSE events\nfor event in client.stream_session(result[\"logs_url\"]):\n    event_type = event.get(\"event\") or event.get(\"type\", \"\")\n    print(f\"[{event_type}] {event}\")\n\n# Send a message to the agent\nclient.send_message(result[\"message_url\"], \"Click the login button\")\n```\n\n### Run Workflows\n\n```python\nimport time\n\nresult = client.run_workflow(\"workflow-id\", variables={\"key\": \"value\"})\n\n# Poll for completion\nwhile True:\n    status = client.get_session_status(result[\"session_id\"])\n    if not status[\"in_progress\"]:\n        break\n    time.sleep(2)\n\nif status[\"success\"]:\n    print(status[\"scraper_outputs\"])\n    print(status[\"structured_output\"])\n```\n\n### Session Management\n\n```python\nclient.pause(session_id)\nclient.resume(session_id)\nclient.close_session(session_id)\nclient.get_session_status(session_id)\nclient.retrieve_session_logs(session_id)\nclient.download_session_files(session_id)\nclient.retrieve_session_replay(session_id)\n```\n\n## SSE Event Format\n\nEvents from `stream_session()` are dicts. The event type is in the `event` key:\n\n| Event | Description |\n|-------|-------------|\n| `RunContent` | Agent text output |\n| `ToolCallStarted` | Tool invocation started |\n| `ToolCallCompleted` | Tool result |\n| `FlowPaused` | Session paused |\n| `FlowResumed` | Session resumed |\n| `RunCompleted` | Agent finished |\n| `RunError` | Error occurred |\n\n## Error Handling\n\n```python\nfrom simplex import (\n    SimplexError,\n    AuthenticationError,\n    RateLimitError,\n    NetworkError,\n    ValidationError,\n    WorkflowError,\n)\n\ntry:\n    result = client.run_workflow(\"workflow-id\")\nexcept AuthenticationError:\n    print(\"Invalid API key\")\nexcept RateLimitError as e:\n    print(f\"Rate limited. Retry after {e.retry_after}s\")\nexcept WorkflowError as e:\n    print(f\"Workflow error: {e.message}, session: {e.session_id}\")\nexcept SimplexError as e:\n    print(f\"Error: {e.message}\")\n```\n\n## Requirements\n\n- Python 3.9+\n- `requests>=2.25.0`\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n\n## Links\n\n- [Simplex](https://simplex.sh)\n- [Documentation](https://docs.simplex.sh)\n- [Support](mailto:support@simplex.sh)\n"
+      },
+      "plugins": [
+        {
+          "name": "simplex",
+          "description": "Simplex browser automation — CLI reference and workflows for Claude Code",
+          "version": "1.0.0",
+          "source": "./plugins/simplex",
+          "author": {
+            "name": "Simplex",
+            "email": "support@simplex.sh"
+          },
+          "category": "development",
+          "keywords": [
+            "simplex",
+            "browser",
+            "automation",
+            "workflow",
+            "scraping",
+            "cli"
+          ],
+          "categories": [
+            "automation",
+            "browser",
+            "cli",
+            "development",
+            "scraping",
+            "simplex",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add simplexlabs/simplex-python",
+            "/plugin install simplex@cli-reference"
+          ]
+        }
+      ]
+    }
+  ]
+}
