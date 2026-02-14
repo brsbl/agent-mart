@@ -1,0 +1,153 @@
+{
+  "author": {
+    "id": "ken-cavanagh-glean",
+    "display_name": "ken-cavanagh-glean",
+    "avatar_url": "https://avatars.githubusercontent.com/u/247228607?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "fieldkit",
+      "version": null,
+      "description": "Agent skills toolkit for Glean field teams",
+      "repo_full_name": "ken-cavanagh-glean/fieldkit",
+      "repo_url": "https://github.com/ken-cavanagh-glean/fieldkit",
+      "repo_description": "empower your claude.",
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-01-17T05:09:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"fieldkit\",\n  \"description\": \"Agent skills toolkit for Glean field teams\",\n  \"owner\": {\n    \"name\": \"Glean Field Engineering\",\n    \"email\": \"kenneth.cavanagh@glean.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"glean-mcp\",\n      \"source\": \"./plugins/glean-mcp\",\n      \"description\": \"Your work knowledge agent. Use Glean chat to answer any question about the user's company, accounts, colleagues, meetings, documents, or work history.\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"glean\", \"enterprise-graph\", \"company-search\", \"people-search\", \"work-activity\", \"oracle\"]\n    },\n    {\n      \"name\": \"context-engineering\",\n      \"source\": \"./plugins/context-engineering\",\n      \"description\": \"Production-grade skills for context engineering and agent systems\",\n      \"category\": \"development\",\n      \"keywords\": [\"context-engineering\", \"agent-skills\", \"multi-agent\", \"memory-systems\"]\n    },\n    {\n      \"name\": \"browser-automation\",\n      \"source\": \"./plugins/browser-automation\",\n      \"description\": \"Guidance for effective browser automation with dev-browser plugin\",\n      \"category\": \"development\",\n      \"keywords\": [\"browser\", \"automation\", \"testing\", \"dev-browser\"]\n    },\n    {\n      \"name\": \"account-ops\",\n      \"source\": \"./plugins/account-ops\",\n      \"description\": \"Account operations for AIOMs. Quick status briefings, checklist tracking, and pre-meeting prep.\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"account\", \"briefing\", \"status\", \"aiom\", \"customer-success\"]\n    },\n    {\n      \"name\": \"agent-builder\",\n      \"source\": \"./plugins/agent-builder\",\n      \"description\": \"Design and generate Glean Agent specifications. Create agent specs, generate importable JSON, and document agent workflows.\",\n      \"category\": \"development\",\n      \"keywords\": [\"agent\", \"glean-agent\", \"agent-builder\", \"workflow\", \"automation\", \"spec-generator\"]\n    }\n  ]\n}\n",
+        "README.md": "# Fieldkit\n\nAgent skills toolkit for Glean field teams.\n\n**Current Version:** 0.4.0 (beta)\n\n> **Note:** This is pre-1.0 software. Expect breaking changes as we experiment with APIs and skill structures.\n\n## What Are Skills?\n\nSkills are instructions loaded into Claude's context that shape behavior. They're not code that runs—they're reference knowledge Claude consults when relevant tasks arise.\n\n## Installation\n\n```bash\n# 1. Add fieldkit as a marketplace source\n/plugin marketplace add ken-cavanagh-glean/fieldkit\n\n# 2. Install the skills you want\n/plugin install glean-mcp@fieldkit\n/plugin install account-ops@fieldkit\n/plugin install agent-builder@fieldkit\n/plugin install context-engineering@fieldkit\n/plugin install browser-automation@fieldkit\n\n# 3. Restart Claude Code to load new skills\n```\n\n**For browser-automation**, also install the dev-browser plugin:\n```bash\n/plugin marketplace add sawyerhood/dev-browser\n/plugin install dev-browser@sawyerhood/dev-browser\n```\n\n## Skills\n\n| Skill | Description | Credit |\n|-------|-------------|--------|\n| **glean-mcp** | Your work knowledge agent — ask Glean about company, accounts, colleagues, meetings, docs | Glean Field Engineering |\n| **account-ops** | AIOM account operations — `/brief {account}` for pre-meeting briefings combining local notes + Glean agent | Glean Field Engineering |\n| **agent-builder** | Design and generate Glean Agent specs — interview flow, JSON schema, 85+ actions catalog | Glean Field Engineering |\n| **context-engineering** | Educational skill for agent design, debugging, and context management | [Muratcan Koylan](https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering) |\n| **browser-automation** | Guidance for effective browser automation with dev-browser | Glean Field Engineering |\n\n## Adding Skills\n\n1. Create folder in `skills/` with a `SKILL.md`\n2. Add entry to `.claude-plugin/marketplace.json`\n3. Submit PR\n\n---\n\n## Changelog\n\n### v0.4.0 (2026-01-16)\n\n**New plugins: account-ops and agent-builder**\n\n- **account-ops:** AIOM account operations plugin\n  - `/brief {account}` — Pre-meeting briefing combining local entity notes + Glean Account Status Agent\n  - Calls Glean Agent API directly via Python script\n  - Auto-loads credentials from shared `.env` file\n\n- **agent-builder:** Glean Agent specification generator\n  - Interview-driven workflow to design agents\n  - Complete JSON schema documentation (reverse-engineered from 6 agents)\n  - 85+ actions catalog across Salesforce, Slack, Jira, Google Workspace, etc.\n  - Generates valid importable JSON + human-readable markdown specs\n\n**Infrastructure fixes:**\n- Fixed marketplace structure causing auto-install on marketplace add\n- Removed nested `plugin.json` files from plugin source directories\n- Documented plugin troubleshooting learnings\n\n**Version reset:** Moved from v3.0.0 to v0.4.0 to reflect beta status. Pre-1.0 = experimental.\n\n---\n\n### v0.3.0 (2026-01-09) — formerly v3.0.0\n\n**Breaking change: Chat-only oracle mode**\n\nThis release fundamentally reimagines glean-mcp as a \"Work Knowledge Agent\" — an oracle for enterprise knowledge. Instead of teaching Claude to route between 7+ specialized tools, we now focus entirely on `chat` as the single interface.\n\n**What changed:**\n- **Rewrote SKILL.md** from 450 → 240 lines, focused on chat-only usage\n- **New framing:** \"Ask Glean\" as a second-brain / oracle pattern (inspired by [steipete/oracle](https://github.com/steipete/oracle))\n- **Removed tool routing:** No more specialized tools (search, email, meetings, etc.) — Glean orchestrates those under the hood\n- **Removed hooks:** No longer enforcing chat-first routing (not needed when chat is the only tool)\n- **New command:** `/setup-glean-chat-mcp` helps users configure the chat-only MCP server\n- **Updated keywords:** `glean`, `enterprise-graph`, `company-search`, `people-search`, `work-activity`, `oracle`\n\n**Why v3.0:** This is a philosophical shift. Previous versions taught Claude to be a Glean power user (pick the right tool). v3 treats Glean as an intelligent agent you simply ask questions to. Simpler, more reliable, better aligned with how Glean chat actually works.\n\n**Migration:** If you have the full Glean MCP (with all tools), this skill still works — it just won't teach Claude about the specialized tools. For best results, switch to the chat-only MCP using `/setup-glean-chat-mcp`.\n\n---\n\n### v2.2.0 (2026-01-09)\n\n- Added PreToolUse hook to enforce chat-first routing\n- Hook intercepts specialized Glean tools (search, user_activity, meeting_lookup, etc.)\n- Uses prompt-based hook to check if chat was already called\n- Denies tool use if chat wasn't called first, with guidance to use chat as primary\n- Created plugin.json for proper plugin structure\n\n### v2.1.0 (2026-01-08)\n\n- Added \"Always start with chat\" behavioral instruction to description\n- Description now encodes routing behavior, not just activation triggers\n- Positions skill as router: \"Routes all Glean tool usage\"\n- Fixes issue where Claude skipped skill loading because MCP instructions felt sufficient\n\n### v2.0.0 (2026-01-08)\n\n**Breaking change: Skill trigger mechanism overhaul**\n\n- Rewrote skill description from procedural guidance to explicit trigger patterns\n- Skills are now opt-in: only `name` + `description` pre-loaded at startup; full SKILL.md loads when triggered\n- New description activates on: meeting prep, day reviews, people lookup, email search, document discovery, activity tracking, and work context questions\n- Reframed from \"enterprise search\" to \"enterprise knowledge\" — reflects inference over the graph, not just retrieval\n\n**Why v2.0:** This fundamentally changes how the skill gets invoked. Previous versions assumed the skill was always loaded; now we optimize for the progressive disclosure model.\n\n### v1.3.4 (2026-01-08)\n\n- Expanded routing examples to show full parallel tool combinations\n- Table format: \"Review my day\" → `chat` + `user_activity` + `meeting_lookup`\n\n### v1.3.3 (2026-01-08)\n\n- Replaced anti-patterns (❌) with positive routing examples (✅)\n- Semantic signals now reinforce chat association, not tool names\n\n### v1.3.2 (2026-01-08)\n\n- Added \"Review my day\" to anti-pattern examples\n- Added day review example in parallel pattern section\n\n### v1.3.1 (2026-01-08)\n\n- Refined chat-first guidance with clearer \"When to Use Specialized Tools\" section\n- Added critical syntax notes from AIOM playbook:\n  - `meeting_lookup` date math (`now-1w`) is unreliable—use explicit dates\n  - `user_activity` end_date is exclusive—add 1 day buffer\n  - For transcripts, use `search` with `app:gdrive in:\"Meet Recordings\"` or `app:gong`\n- Improved parallel pattern documentation\n- Updated descriptions (Option A pair)\n\n### v1.2.0 (2026-01-08)\n\n- **Chat-first enforcement:** Rewrote SKILL.md to make chat-first mandatory, not suggested\n- Added explicit \"do NOT pattern-match\" examples (e.g., \"meetings\" → meeting_lookup)\n- Clarified specialized tools for explicit user requests OR parallel supplementation\n- Updated Tool Selection flow to always start with chat\n\n### v1.1.2 (2026-01-08)\n\n- Improved marketplace.json description to clarify chat-first behavior and parallel tool usage\n\n### v1.1.1 (2026-01-08)\n\n- Fixed plugin isolation issue where skills cross-contaminated between plugins\n- Fixed YAML parsing error in glean-mcp description (unquoted colons)\n- Improved marketplace.json description to encourage frequent Glean usage\n\n### v1.1.0 (2026-01-07)\n\n**glean-mcp skill rewrite:**\n\n- **Chat First:** `chat` is now the default tool for almost everything. Previous versions treated `search` and `chat` as equals; now `chat` is the primary entry point.\n- **Parallel Pattern:** Added \"chat as meta-synthesizer\" pattern for parallel calls.\n- **employee_search clarification:** Explicitly documented as a lookup tool (exact names only), not a search engine. Natural language queries don't work.\n- **NOT for sections:** Added explicit \"NOT for\" guidance to each specialized tool.\n- **Removed Setup section:** Setup instructions moved elsewhere; skill now focuses on usage patterns.\n\n**Migration:** If you have workflows that default to `search`, they'll still work but may be suboptimal. Prefer `chat` for synthesis/analysis, use `search` only when you need to browse all matching documents.\n\n### v1.0.0 (2025-12-xx)\n\nInitial release with glean-mcp, context-engineering, and browser-automation skills.\n"
+      },
+      "plugins": [
+        {
+          "name": "glean-mcp",
+          "source": "./plugins/glean-mcp",
+          "description": "Your work knowledge agent. Use Glean chat to answer any question about the user's company, accounts, colleagues, meetings, documents, or work history.",
+          "category": "productivity",
+          "keywords": [
+            "glean",
+            "enterprise-graph",
+            "company-search",
+            "people-search",
+            "work-activity",
+            "oracle"
+          ],
+          "categories": [
+            "company-search",
+            "enterprise-graph",
+            "glean",
+            "oracle",
+            "people-search",
+            "productivity",
+            "work-activity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ken-cavanagh-glean/fieldkit",
+            "/plugin install glean-mcp@fieldkit"
+          ]
+        },
+        {
+          "name": "context-engineering",
+          "source": "./plugins/context-engineering",
+          "description": "Production-grade skills for context engineering and agent systems",
+          "category": "development",
+          "keywords": [
+            "context-engineering",
+            "agent-skills",
+            "multi-agent",
+            "memory-systems"
+          ],
+          "categories": [
+            "agent-skills",
+            "context-engineering",
+            "development",
+            "memory-systems",
+            "multi-agent"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ken-cavanagh-glean/fieldkit",
+            "/plugin install context-engineering@fieldkit"
+          ]
+        },
+        {
+          "name": "browser-automation",
+          "source": "./plugins/browser-automation",
+          "description": "Guidance for effective browser automation with dev-browser plugin",
+          "category": "development",
+          "keywords": [
+            "browser",
+            "automation",
+            "testing",
+            "dev-browser"
+          ],
+          "categories": [
+            "automation",
+            "browser",
+            "dev-browser",
+            "development",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ken-cavanagh-glean/fieldkit",
+            "/plugin install browser-automation@fieldkit"
+          ]
+        },
+        {
+          "name": "account-ops",
+          "source": "./plugins/account-ops",
+          "description": "Account operations for AIOMs. Quick status briefings, checklist tracking, and pre-meeting prep.",
+          "category": "productivity",
+          "keywords": [
+            "account",
+            "briefing",
+            "status",
+            "aiom",
+            "customer-success"
+          ],
+          "categories": [
+            "account",
+            "aiom",
+            "briefing",
+            "customer-success",
+            "productivity",
+            "status"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ken-cavanagh-glean/fieldkit",
+            "/plugin install account-ops@fieldkit"
+          ]
+        },
+        {
+          "name": "agent-builder",
+          "source": "./plugins/agent-builder",
+          "description": "Design and generate Glean Agent specifications. Create agent specs, generate importable JSON, and document agent workflows.",
+          "category": "development",
+          "keywords": [
+            "agent",
+            "glean-agent",
+            "agent-builder",
+            "workflow",
+            "automation",
+            "spec-generator"
+          ],
+          "categories": [
+            "agent",
+            "agent-builder",
+            "automation",
+            "development",
+            "glean-agent",
+            "spec-generator",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ken-cavanagh-glean/fieldkit",
+            "/plugin install agent-builder@fieldkit"
+          ]
+        }
+      ]
+    }
+  ]
+}

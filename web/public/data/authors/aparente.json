@@ -52,6 +52,37 @@
           ]
         }
       ]
+    },
+    {
+      "name": "ghostty-aura",
+      "version": null,
+      "description": "Theme-agnostic ambient terminal coloring for Claude Code in Ghostty",
+      "repo_full_name": "aparente/ghostty-aura",
+      "repo_url": "https://github.com/aparente/ghostty-aura",
+      "repo_description": "Claude Code plugin: dynamic Ghostty terminal colors driven by session state via OSC sequences",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-02T05:06:25Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ghostty-aura\",\n  \"owner\": {\n    \"name\": \"aparente\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ghostty-aura\",\n      \"source\": \"./\",\n      \"description\": \"Theme-agnostic ambient terminal coloring for Claude Code in Ghostty\",\n      \"version\": \"2.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ghostty-aura\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Theme-agnostic ambient terminal coloring for Claude Code in Ghostty\",\n  \"author\": { \"name\": \"aparente\" },\n  \"repository\": \"https://github.com/aparente/ghostty-aura\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# ghostty-aura\n\nA theme-agnostic Claude Code plugin that dynamically tints your Ghostty terminal based on what Claude is doing. Works with any Ghostty theme — no bundled colors, no theme switching.\n\n## How it works\n\n```\nSession start → query your current colors via OSC → blend tints at runtime → per-tab isolation\n```\n\nOn session start, the plugin queries your terminal's current background, foreground, and cursor colors. These become the \"base\" palette. When state changes occur, tint colors are blended into your base using HSL color math — preserving your theme's lightness while shifting hue and saturation.\n\nEach Claude Code session captures its own TTY, so multiple tabs maintain independent color states.\n\n### States\n\n| State | Trigger | Tint | Behavior |\n|-------|---------|------|----------|\n| **connected** | Session starts | Green | Animated fade, returns to base after 1.5s |\n| **working** | Tool use | Blue | Animated ping-pong |\n| **needs_input** | Permission request | Amber | Instant snap, holds until resolved |\n| **completed** | Claude stops | Gold | Animated fade, returns to base after 2s |\n| **error** | Tool error | Red | Instant snap |\n| **base** | Idle | — | Your original theme colors |\n\n## Install\n\n### As a Claude Code plugin (recommended)\n\n```bash\ngit clone https://github.com/aparente/ghostty-aura.git\n```\n\nAdd to `~/.claude/settings.json`:\n\n```json\n{\n  \"plugins\": [\"path/to/ghostty-aura\"]\n}\n```\n\nThe `hooks/hooks.json` registers all hooks automatically via `${CLAUDE_PLUGIN_ROOT}`.\n\n### First run\n\nOn first session start, a default config is created at `~/.claude/aura-config.json`. To customize interactively:\n\n```bash\ncd ghostty-aura\nnode lib/setup.js\n```\n\n## Configuration\n\nEdit `~/.claude/aura-config.json`. No absolute colors — only tints and intensity. Actual colors are computed at runtime from your queried base.\n\n```json\n{\n  \"states\": {\n    \"connected\":   { \"tint\": \"#4ade80\", \"intensity\": 0.15, \"transition\": \"animate\", \"auto_to\": \"base\", \"auto_ms\": 1500 },\n    \"working\":     { \"tint\": \"#38bdf8\", \"intensity\": 0.2,  \"transition\": \"animate\" },\n    \"needs_input\": { \"tint\": \"#fbbf24\", \"intensity\": 0.25, \"transition\": \"instant\" },\n    \"completed\":   { \"tint\": \"#facc15\", \"intensity\": 0.15, \"transition\": \"animate\", \"auto_to\": \"base\", \"auto_ms\": 2000 },\n    \"error\":       { \"tint\": \"#f87171\", \"intensity\": 0.3,  \"transition\": \"instant\" }\n  },\n  \"animation\": { \"steps\": 8, \"step_ms\": 120 }\n}\n```\n\n- **`tint`** — color to blend toward\n- **`intensity`** — 0..1, how far to shift from base\n- **`transition`** — `\"animate\"` (smooth fade) or `\"instant\"` (snap)\n- **`auto_to`** / **`auto_ms`** — auto-return to another state after delay\n\n## Manual testing\n\n```bash\n# Create a fake base file for testing\necho '{\"bg\":\"#1a1b26\",\"fg\":\"#c0caf5\",\"cursor\":\"#c0caf5\"}' > /tmp/aura-base-test.json\n\n# Test blending\nnode lib/color.js blend \"#1a1b26\" \"#38bdf8\" 0.2\n```\n\n## Requirements\n\n- [Ghostty](https://ghostty.org) terminal (OSC 10/11/12 support)\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with hooks/plugins support\n- Node.js >= 18\n- `jq` for JSON parsing\n\n## How per-tab isolation works\n\nWhen `SessionStart` fires, the hook captures the session's TTY path (e.g., `/dev/ttys003`) and saves it to `/tmp/aura-tty-{session_id}`. It also queries the terminal's current colors and saves them to `/tmp/aura-base-{session_id}.json`. Subsequent hooks look up these files to target the correct TTY with the correct base palette.\n"
+      },
+      "plugins": [
+        {
+          "name": "ghostty-aura",
+          "source": "./",
+          "description": "Theme-agnostic ambient terminal coloring for Claude Code in Ghostty",
+          "version": "2.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add aparente/ghostty-aura",
+            "/plugin install ghostty-aura@ghostty-aura"
+          ]
+        }
+      ]
     }
   ]
 }

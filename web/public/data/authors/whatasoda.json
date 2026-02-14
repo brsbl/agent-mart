@@ -15,18 +15,18 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-07T08:15:15Z"
+        "pushed_at": "2026-02-14T16:26:44Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"whatasoda-tools\",\n  \"owner\": {\n    \"name\": \"whatasoda\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code skills and plugins\",\n    \"version\": \"0.1.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dev-workflow\",\n      \"source\": \"./plugins/dev-workflow\",\n      \"description\": \"Development workflow skills: implementation planning, approach proposals, branch reviews, and plan tracking — with lightweight variants for reduced token usage\",\n      \"version\": \"0.2.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"whatasoda-tools\",\n  \"owner\": {\n    \"name\": \"whatasoda\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code skills and plugins\",\n    \"version\": \"0.1.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dev-workflow\",\n      \"source\": \"./plugins/dev-workflow\",\n      \"description\": \"Development workflow skills: implementation planning, approach proposals, branch reviews, plan tracking, vision definition, and autonomous loop orchestration — with lightweight variants for reduced token usage\",\n      \"version\": \"0.4.0\"\n    }\n  ]\n}\n",
         "README.md": "# agent-extensions\n\nPersonal Claude Code marketplace for managing custom skills and plugins.\n\n## Setup\n\nAdd this marketplace to Claude Code:\n\n```\n/plugin marketplace add whatasoda/agent-extensions\n```\n\nInstall a plugin:\n\n```\n/plugin install <plugin-name>@whatasoda-tools\n```\n\n## Development\n\n### Prerequisites\n\n- [Bun](https://bun.sh/)\n\n### Getting started\n\n```sh\nbun install\n```\n\n### Build\n\nBuild packages (sync exports + rslib) then plugins (bun build):\n\n```sh\nbun run build\n```\n\nOr build individually:\n\n```sh\nbun run build:packages   # sync exports + rslib build for packages/*\nbun run build:plugins    # bun build for plugins/*\n```\n\n### Type check\n\n```sh\nbun run typecheck\n```\n\n## Structure\n\n```\nagent-extensions/\n├── .claude-plugin/\n│   └── marketplace.json       # Marketplace manifest\n├── plugins/\n│   └── <plugin-name>/\n│       ├── .claude-plugin/\n│       │   └── plugin.json    # Plugin manifest\n│       ├── src/               # TypeScript source\n│       ├── dist/              # Bundled output (LFS, committed)\n│       ├── skills/            # Skill definitions\n│       ├── hooks/             # Hook definitions\n│       └── package.json\n├── packages/\n│   └── <package-name>/       # Shared libraries (workspace packages)\n│       ├── src/\n│       └── package.json       # @agent-extensions/<name>\n├── scripts/\n│   ├── build-packages.ts     # rslib build for packages\n│   └── build-plugins.ts      # bun build for plugins\n├── package.json               # Workspace root\n└── tsconfig.json\n```\n\n## Adding a Plugin\n\n1. Create `plugins/<plugin-name>/` with `.claude-plugin/plugin.json`\n2. Add TypeScript source in `src/`, skills in `skills/`\n3. Run `bun run build` to generate `dist/`\n4. Register in `.claude-plugin/marketplace.json` under `plugins`\n\n## Adding a Shared Package\n\n1. Create `packages/<package-name>/` with `package.json` (name: `@agent-extensions/<name>`)\n2. Add source in `src/` and create `@public-index.ts` as the entry point\n3. Add `rslib.config.ts` for building\n4. `bun run build` will auto-generate the `exports` field in `package.json` from `@public-*.ts` files\n5. Reference from plugins via `\"@agent-extensions/<name>\": \"workspace:*\"` in their `package.json`\n"
       },
       "plugins": [
         {
           "name": "dev-workflow",
           "source": "./plugins/dev-workflow",
-          "description": "Development workflow skills: implementation planning, approach proposals, branch reviews, and plan tracking — with lightweight variants for reduced token usage",
-          "version": "0.2.0",
+          "description": "Development workflow skills: implementation planning, approach proposals, branch reviews, plan tracking, vision definition, and autonomous loop orchestration — with lightweight variants for reduced token usage",
+          "version": "0.4.0",
           "categories": [],
           "install_commands": [
             "/plugin marketplace add whatasoda/agent-extensions",
