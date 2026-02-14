@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "SimoneAvogadro",
+    "display_name": "Simone Avogadro",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3911167?u=08d00e5eb94fc049d7d84f6abc5c62dfe63776b8&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "android-reverse-engineering-skill",
+      "version": null,
+      "description": "Claude Code plugins for Android reverse engineering",
+      "repo_full_name": "SimoneAvogadro/android-reverse-engineering-skill",
+      "repo_url": "https://github.com/SimoneAvogadro/android-reverse-engineering-skill",
+      "repo_description": "Claude Code skill to support Android app's reverse engineering",
+      "signals": {
+        "stars": 75,
+        "forks": 14,
+        "pushed_at": "2026-02-02T20:34:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"android-reverse-engineering-skill\",\n  \"owner\": {\n    \"name\": \"Simone Avogadro\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for Android reverse engineering\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"android-reverse-engineering\",\n      \"source\": \"./plugins/android-reverse-engineering\",\n      \"description\": \"Decompile Android APK/JAR/AAR with jadx, trace call flows through libraries, and document extracted APIs.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Simone Avogadro\"\n      },\n      \"repository\": \"https://github.com/SimoneAvogadro/android-reverse-engineering-skill\",\n      \"license\": \"Apache-2.0\",\n      \"keywords\": [\"android\", \"reverse-engineering\", \"apk\", \"jadx\", \"decompile\", \"api-extraction\"],\n      \"category\": \"security\"\n    }\n  ]\n}\n",
+        "README.md": "# Android Reverse Engineering & API Extraction — Claude Code skill\n\nA Claude Code skill that decompiles Android APK/XAPK/JAR/AAR files and **extracts the HTTP APIs** used by the app — Retrofit endpoints, OkHttp calls, hardcoded URLs, authentication patterns — so you can document and reproduce them without the original source code.\n\n## What it does\n\n- **Decompiles** APK, XAPK, JAR, and AAR files using jadx and Fernflower/Vineflower (single engine or side-by-side comparison)\n- **Extracts and documents APIs**: Retrofit endpoints, OkHttp calls, hardcoded URLs, auth headers and tokens\n- **Traces call flows** from Activities/Fragments through ViewModels and repositories down to HTTP calls\n- **Analyzes** app structure: manifest, packages, architecture patterns\n- **Handles obfuscated code**: strategies for navigating ProGuard/R8 output\n\n## Requirements\n\n**Required:**\n- Java JDK 17+\n- [jadx](https://github.com/skylot/jadx) (CLI)\n\n**Optional (recommended):**\n- [Vineflower](https://github.com/Vineflower/vineflower) or [Fernflower](https://github.com/JetBrains/fernflower) — better output on complex Java code\n- [dex2jar](https://github.com/pxb1988/dex2jar) — needed to use Fernflower on APK/DEX files\n\nSee `plugins/android-reverse-engineering/skills/android-reverse-engineering/references/setup-guide.md` for detailed installation instructions.\n\n## Installation\n\n### From GitHub (recommended)\n\nInside Claude Code, run:\n\n```\n/plugin marketplace add SimoneAvogadro/android-reverse-engineering-skill\n/plugin install android-reverse-engineering@android-reverse-engineering-skill\n```\n\nThe skill will be permanently available in all future sessions.\n\n### From a local clone\n\n```bash\ngit clone https://github.com/SimoneAvogadro/android-reverse-engineering-skill.git\n```\n\nThen in Claude Code:\n\n```\n/plugin marketplace add /path/to/android-reverse-engineering-skill\n/plugin install android-reverse-engineering@android-reverse-engineering-skill\n```\n\n## Usage\n\n### Slash command\n\n```\n/decompile path/to/app.apk\n```\n\nThis runs the full workflow: dependency check, decompilation, and initial structure analysis.\n\n### Natural language\n\nThe skill activates on phrases like:\n\n- \"Decompile this APK\"\n- \"Reverse engineer this Android app\"\n- \"Extract API endpoints from this app\"\n- \"Follow the call flow from LoginActivity\"\n- \"Analyze this AAR library\"\n\n### Manual scripts\n\nThe scripts can also be used standalone:\n\n```bash\n# Check dependencies\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/check-deps.sh\n\n# Install a missing dependency (auto-detects OS and package manager)\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/install-dep.sh jadx\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/install-dep.sh vineflower\n\n# Decompile APK with jadx (default)\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/decompile.sh app.apk\n\n# Decompile XAPK (auto-extracts and decompiles each APK inside)\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/decompile.sh app-bundle.xapk\n\n# Decompile with Fernflower\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/decompile.sh --engine fernflower library.jar\n\n# Run both engines and compare\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/decompile.sh --engine both --deobf app.apk\n\n# Find API calls\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/find-api-calls.sh output/sources/\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/find-api-calls.sh output/sources/ --retrofit\nbash plugins/android-reverse-engineering/skills/android-reverse-engineering/scripts/find-api-calls.sh output/sources/ --urls\n```\n\n## Repository Structure\n\n```\nandroid-reverse-engineering-skill/\n├── .claude-plugin/\n│   └── marketplace.json                    # Marketplace catalog\n├── plugins/\n│   └── android-reverse-engineering/\n│       ├── .claude-plugin/\n│       │   └── plugin.json                 # Plugin manifest\n│       ├── skills/\n│       │   └── android-reverse-engineering/\n│       │       ├── SKILL.md                # Core workflow (5 phases)\n│       │       ├── references/\n│       │       │   ├── setup-guide.md\n│       │       │   ├── jadx-usage.md\n│       │       │   ├── fernflower-usage.md\n│       │       │   ├── api-extraction-patterns.md\n│       │       │   └── call-flow-analysis.md\n│       │       └── scripts/\n│       │           ├── check-deps.sh\n│       │           ├── install-dep.sh\n│       │           ├── decompile.sh\n│       │           └── find-api-calls.sh\n│       └── commands/\n│           └── decompile.md                # /decompile slash command\n├── LICENSE\n└── README.md\n```\n\n## References\n\n- [jadx — Dex to Java decompiler](https://github.com/skylot/jadx)\n- [Fernflower — JetBrains analytical decompiler](https://github.com/JetBrains/fernflower)\n- [Vineflower — Fernflower community fork](https://github.com/Vineflower/vineflower)\n- [dex2jar — DEX to JAR converter](https://github.com/pxb1988/dex2jar)\n- [apktool — Android resource decoder](https://apktool.org/)\n\n## Disclaimer\n\nThis plugin is provided strictly for **lawful purposes**, including but not limited to:\n\n- Security research and authorized penetration testing\n- Interoperability analysis permitted under applicable law (e.g., EU Directive 2009/24/EC, US DMCA §1201(f))\n- Malware analysis and incident response\n- Educational use and CTF competitions\n\n**You are solely responsible** for ensuring that your use of this tool complies with all applicable laws, regulations, and terms of service. Unauthorized reverse engineering of software you do not own or do not have permission to analyze may violate intellectual property laws and computer fraud statutes in your jurisdiction.\n\nThe authors disclaim any liability for misuse of this tool.\n\n## License\n\nApache 2.0 — see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "android-reverse-engineering",
+          "source": "./plugins/android-reverse-engineering",
+          "description": "Decompile Android APK/JAR/AAR with jadx, trace call flows through libraries, and document extracted APIs.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Simone Avogadro"
+          },
+          "repository": "https://github.com/SimoneAvogadro/android-reverse-engineering-skill",
+          "license": "Apache-2.0",
+          "keywords": [
+            "android",
+            "reverse-engineering",
+            "apk",
+            "jadx",
+            "decompile",
+            "api-extraction"
+          ],
+          "category": "security",
+          "categories": [
+            "android",
+            "api-extraction",
+            "apk",
+            "decompile",
+            "jadx",
+            "reverse-engineering",
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add SimoneAvogadro/android-reverse-engineering-skill",
+            "/plugin install android-reverse-engineering@android-reverse-engineering-skill"
+          ]
+        }
+      ]
+    }
+  ]
+}

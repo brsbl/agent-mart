@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "SatGate-io",
+    "display_name": "SatGate",
+    "avatar_url": "https://avatars.githubusercontent.com/u/246859071?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "satgate",
+      "version": null,
+      "description": "Economic firewall CLI for AI agent traffic — the server-side counterpart to lnget",
+      "repo_full_name": "SatGate-io/satgate-cli",
+      "repo_url": "https://github.com/SatGate-io/satgate-cli",
+      "repo_description": "SatGate CLI — Manage your API's economic firewall from the terminal",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-12T13:23:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"satgate\",\n  \"owner\": {\n    \"name\": \"SatGate\",\n    \"email\": \"hello@satgate.io\"\n  },\n  \"metadata\": {\n    \"description\": \"Economic firewall CLI for AI agent traffic — the server-side counterpart to lnget\",\n    \"version\": \"0.1.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"satgate-cli\",\n      \"source\": \".\",\n      \"description\": \"Manage your API's economic firewall from the terminal. Mint tokens, track spend, revoke agents, enforce budgets.\",\n      \"version\": \"0.1.1\",\n      \"author\": {\n        \"name\": \"SatGate\"\n      },\n      \"category\": \"infrastructure\",\n      \"tags\": [\"api-gateway\", \"l402\", \"macaroons\", \"agent-economy\", \"budget-enforcement\", \"mcp\", \"economic-firewall\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"satgate-cli\",\n  \"description\": \"Manage your API's economic firewall from the terminal. Mint tokens, track spend, revoke agents, enforce budgets. The server-side counterpart to lnget.\",\n  \"version\": \"0.1.1\",\n  \"author\": {\n    \"name\": \"SatGate\",\n    \"email\": \"hello@satgate.io\"\n  },\n  \"homepage\": \"https://satgate.io\",\n  \"repository\": \"https://github.com/SatGate-io/satgate-cli\",\n  \"license\": \"Apache-2.0\"\n}\n",
+        "README.md": "# SatGate CLI\n\n**Manage your API's economic firewall from the terminal.**\n\nThe server-side counterpart to [lnget](https://github.com/lightninglabs/lightning-agent-tools). They give agents wallets; we give API owners the cash register.\n\n## Install\n\n### Claude Code Plugin\n```bash\nclaude plugin marketplace add satgate-io/satgate-cli\nclaude plugin install satgate-cli@satgate-io\n```\n\n### ClawHub\n```bash\nclawhub install satgate-io/satgate\n```\n\n### Shell Script\n```bash\ncurl -fsSL https://raw.githubusercontent.com/SatGate-io/satgate-cli/main/scripts/install.sh | bash\n```\n\n### From Source\n```bash\ngit clone https://github.com/SatGate-io/satgate-cli.git\ncd satgate-cli\nmake build\n./bin/satgate version\n```\n\n## Quick Start\n\n```bash\n# Configure (interactive)\n./scripts/configure.sh\n\n# Or set env vars\nexport SATGATE_GATEWAY=http://localhost:9090\nexport SATGATE_ADMIN_TOKEN=sgk_your_token\n\n# Check connection\nsatgate ping\nsatgate status\n\n# Mint a token for an agent\nsatgate mint --agent \"my-bot\" --budget 500 --expiry 30d --routes \"/api/openai/*\"\n\n# Check spend\nsatgate spend\n\n# List all tokens\nsatgate tokens\n\n# Revoke a compromised agent\nsatgate revoke <token-id>\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `satgate status` | Gateway health, version, uptime |\n| `satgate ping` | Liveness check (exit 0 = healthy) |\n| `satgate mint` | Mint a new capability token |\n| `satgate tokens` | List all tokens with spend/budget |\n| `satgate token <id>` | Token detail view |\n| `satgate revoke <id>` | Revoke a token (irreversible) |\n| `satgate spend` | Spend summary (org-wide or per-agent) |\n| `satgate report threats` | Security threat report |\n| `satgate mode` | Current policy mode per route |\n| `satgate version` | CLI version and build info |\n\n## Safety\n\n- **Target printing**: Every mutating command shows the gateway URL before executing\n- **Interactive confirmation**: Destructive ops require `y/N` confirmation\n- **`--dry-run`**: Preview what would happen without executing\n- **`--yes`**: Skip prompts (for CI/scripting — use with care)\n\n## Dual Surface Support\n\nThe CLI works with both self-hosted gateways and SatGate Cloud:\n\n| Surface | Auth | URL |\n|---------|------|-----|\n| `gateway` | `X-Admin-Token` | `http://localhost:9090` |\n| `cloud` | Session cookie | `https://cloud.satgate.io` |\n\nAuto-detected from the gateway URL, or set explicitly:\n```bash\nexport SATGATE_SURFACE=cloud\nexport SATGATE_SESSION_TOKEN=eyJ...\n```\n\n## SatGate + lnget\n\n**lnget** (Lightning Labs) handles the client side — agents paying for L402-gated APIs.\n**SatGate CLI** handles the server side — enforcement, attribution, governance.\n\nTogether: the complete agent commerce stack.\n\n```\nAgent + lnget  ──→  SatGate Gateway  ──→  Your API\n   (pays)           (enforces)            (serves)\n```\n\nSee [docs/guides/lnget-integration.md](https://github.com/SatGate-io/satgate/blob/main/docs/guides/lnget-integration.md) for the full integration guide.\n\n## Build\n\n```bash\nmake build          # Debug binary → bin/satgate\nmake release        # Stripped binaries for all platforms → bin/release/\nmake test           # Run tests\nmake clean          # Remove build artifacts\n```\n\n## License\n\nApache 2.0 — see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "satgate-cli",
+          "source": ".",
+          "description": "Manage your API's economic firewall from the terminal. Mint tokens, track spend, revoke agents, enforce budgets.",
+          "version": "0.1.1",
+          "author": {
+            "name": "SatGate"
+          },
+          "category": "infrastructure",
+          "tags": [
+            "api-gateway",
+            "l402",
+            "macaroons",
+            "agent-economy",
+            "budget-enforcement",
+            "mcp",
+            "economic-firewall"
+          ],
+          "categories": [
+            "agent-economy",
+            "api-gateway",
+            "budget-enforcement",
+            "economic-firewall",
+            "infrastructure",
+            "l402",
+            "macaroons",
+            "mcp"
+          ],
+          "install_commands": [
+            "/plugin marketplace add SatGate-io/satgate-cli",
+            "/plugin install satgate-cli@satgate"
+          ]
+        }
+      ]
+    }
+  ]
+}
