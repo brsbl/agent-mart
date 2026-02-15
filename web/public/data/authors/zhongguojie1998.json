@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "zhongguojie1998",
+    "display_name": "zhongguojie1998",
+    "avatar_url": "https://avatars.githubusercontent.com/u/34250709?u=aeaac947390ffbdf2d24e3c5c747cecab6350c5d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "zhongguojie1998",
+      "version": null,
+      "description": "Plugins by Guojie Zhong",
+      "repo_full_name": "zhongguojie1998/week-lit-review",
+      "repo_url": "https://github.com/zhongguojie1998/week-lit-review",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-15T01:59:26Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"zhongguojie1998\",\n  \"owner\": {\n    \"name\": \"Guojie Zhong\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugins by Guojie Zhong\",\n    \"homepage\": \"https://github.com/zhongguojie1998/weekly-lit-review\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"weekly-lit-review\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"description\": \"Weekly genomics literature review. Searches bioRxiv + 15 journals, downloads PDFs, Claude reads them and writes critical reviews with 0-10 scores.\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"weekly-lit-review\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Weekly genomics literature review. Searches bioRxiv + 15 journals, downloads PDFs, Claude reads them and writes critical reviews with 0-10 scores. No API key needed.\",\n  \"author\": {\n    \"name\": \"Guojie Zhong\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"genomics\", \"literature-review\", \"bioRxiv\", \"pdf-review\"],\n  \"repository\": \"https://github.com/zhongguojie1998/weekly-lit-review\"\n}\n",
+        "README.md": "# Weekly Genomics Literature Review — Claude Code Plugin\n\nAutomated pipeline that searches bioRxiv and top genomics journals, downloads full PDFs, and has Claude Code read them and produce critical reviewer-quality assessments with fine-grained scoring.\n\n**No API key needed** — works entirely within Claude Code. The Python script only handles search and PDF download; Claude Code itself reads the PDFs and writes reviews.\n\n## Installation\n\nInstall directly from Claude Code's interactive session:\n\n```\n/plugin marketplace add zhongguojie1998/weekly-lit-review\n/plugin install weekly-lit-review\n```\n\n## Usage\n\nOnce installed, trigger the pipeline in any Claude Code session:\n\n```\n/weekly-lit-review:weekly-lit-review --days 7\n/weekly-lit-review:weekly-lit-review --max-papers 10\n/weekly-lit-review:weekly-lit-review --days 3 --no-pdf\n```\n\nResults are saved to `~/Desktop/Claude/week-lit-review-results/`.\n\n### Non-interactive (from terminal)\n\nRun directly from the command line without entering an interactive session:\n\n```bash\n# Defaults: 7 days, 80 papers, sonnet model\nbash scripts/run_review.sh\n\n# Customize\nbash scripts/run_review.sh --days 3 --max-papers 10\nbash scripts/run_review.sh --days 7 --model opus\nbash scripts/run_review.sh --days 7 --no-pdf\n```\n\n## Pipeline Overview\n\n```\n┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐\n│  Read Config │────▶│ Search Papers│────▶│Download PDFs │────▶│Claude Reads  │────▶│ Write Report │\n│  (YAML)      │     │ bioRxiv+RSS  │     │ (full text)  │     │ PDFs & Review│     │  (.md files) │\n└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘\n```\n\n### Step 1: Read Configuration\n- Loads `config.yaml` (or `config.example.yaml` as fallback)\n- Configures search parameters: lookback days, max papers, categories, keywords\n- Sets up journal RSS feed list and bioRxiv categories\n\n### Step 2: Search for Papers\n- **bioRxiv**: Queries the bioRxiv content API for recent preprints in configured categories (genomics, genetics, bioinformatics)\n- **Journal RSS Feeds**: Parses RSS feeds from 15 journals across Nature, Science, and Cell series\n- Filters all papers through genomics keyword matching on title + abstract\n- Deduplicates by DOI\n- **Fallback**: If network is restricted (e.g., sandboxed environments), uses Claude's built-in WebSearch/WebFetch tools\n\n### Step 3: Download PDFs\n- Attempts to download the full PDF for each paper\n- bioRxiv: Uses the direct PDF URL pattern (`/content/{doi}v{version}.full.pdf`)\n- Journals: Attempts PDF via Unpaywall API (free/legal open-access PDFs) and direct links\n- Falls back to abstract-only review if PDF is unavailable\n\n### Step 4: Claude Reads PDFs and Reviews\n- Claude reads each PDF (or abstract if PDF unavailable) natively\n- Acts as a **critical reviewer** and assesses each paper on:\n  - **Novelty**: How original and new is the contribution?\n  - **Rigor**: Are the experiments well-designed and controls appropriate?\n  - **Methods**: Are the methods appropriate, well-described, and reproducible?\n  - **Main Results**: What are the key findings? Are they well-supported?\n  - **Limitations**: What are the weaknesses and caveats?\n  - **Inspiration for the Field**: What new directions does this work open?\n  - **Reviewer's Own Thoughts**: Additional perspective and commentary\n\n### Step 5: Score the Manuscript\nEach paper is scored on a 0-10 scale (with decimal precision, e.g., 5.1, 6.7):\n\n| Dimension | What it measures |\n|-----------|-----------------|\n| **Originality** | Novelty of the question, approach, or finding |\n| **Methodology** | Rigor, appropriateness, reproducibility of methods |\n| **Significance** | Impact on the field and broader implications |\n| **Overall** | Holistic assessment weighing all dimensions |\n\nScore guide:\n- 9.0-10.0: Exceptional / groundbreaking\n- 7.0-8.9: Strong contribution\n- 5.0-6.9: Adequate but incremental\n- 3.0-4.9: Significant concerns\n- 0.0-2.9: Major flaws\n\n### Step 6: Generate Report\n- Writes a detailed Markdown review per paper in `reviews/`\n- Writes a summary report ranking all papers by overall score\n\n## Prerequisites\n\n1. **Python 3.10+** installed\n2. **Internet access** (for bioRxiv API, RSS feeds, PDF downloads)\n3. Dependencies auto-install on first run: `requests`, `feedparser`, `pyyaml`\n\n## Configuration\n\nThe default config is in `assets/config.example.yaml`. Key settings:\n- **days_lookback**: How many days back to search (default: 7)\n- **max_papers_to_evaluate**: Max papers to review (default: 80)\n- **biorxiv_categories**: Which bioRxiv categories to search\n- **genomics_keywords**: Keywords for filtering journal papers\n- **journal_feeds**: RSS feed URLs for journals to monitor\n\n## Output\n\nAfter a run, you'll find in `~/Desktop/Claude/week-lit-review-results/`:\n\n```\nweek-lit-review-results/\n  manifest.json                    # Fetched paper metadata\n  summary_2026-02-14.md            # Ranked summary of all papers\n  reviews/\n    a1b2c3_Paper_Title.md          # Individual detailed review per paper\n  pdfs/\n    a1b2c3_Paper_Title.pdf         # Downloaded PDFs\n```\n\n## File Structure\n\n```\nweekly-lit-review/\n  .claude-plugin/\n    plugin.json                     # Plugin manifest\n    marketplace.json                # Marketplace registry\n  skills/\n    weekly-lit-review/\n      SKILL.md                      # Skill instructions\n  assets/\n    config.example.yaml             # Template configuration\n  scripts/\n    fetch_papers.py                 # Paper search & PDF download script\n    run_review.sh                   # Non-interactive bash wrapper\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "weekly-lit-review",
+          "version": "1.0.0",
+          "source": "./",
+          "description": "Weekly genomics literature review. Searches bioRxiv + 15 journals, downloads PDFs, Claude reads them and writes critical reviews with 0-10 scores.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add zhongguojie1998/week-lit-review",
+            "/plugin install weekly-lit-review@zhongguojie1998"
+          ]
+        }
+      ]
+    }
+  ]
+}

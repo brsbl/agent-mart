@@ -1,0 +1,82 @@
+{
+  "author": {
+    "id": "inkeep",
+    "display_name": "Inkeep",
+    "avatar_url": "https://avatars.githubusercontent.com/u/123133689?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "inkeep-team-skills",
+      "version": null,
+      "description": "Shared and team-specific skills for the Inkeep team",
+      "repo_full_name": "inkeep/team-skills",
+      "repo_url": "https://github.com/inkeep/team-skills",
+      "repo_description": "Shared Agent Skills for the Inkeep team",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-15T10:26:48Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"inkeep-team-skills\",\n  \"description\": \"Shared and team-specific skills for the Inkeep team\",\n  \"owner\": {\n    \"name\": \"Inkeep\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"eng\",\n      \"description\": \"Skills for the Inkeep engineering team\",\n      \"version\": \"1.1.2\",\n      \"author\": {\n        \"name\": \"Inkeep\"\n      },\n      \"source\": \"./plugins/eng\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"gtm\",\n      \"description\": \"Skills for the Inkeep GTM team\",\n      \"version\": \"1.1.2\",\n      \"author\": {\n        \"name\": \"Inkeep\"\n      },\n      \"source\": \"./plugins/gtm\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"shared\",\n      \"description\": \"Shared skills across all Inkeep teams\",\n      \"version\": \"1.1.2\",\n      \"author\": {\n        \"name\": \"Inkeep\"\n      },\n      \"source\": \"./plugins/shared\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"inkeep-team-skills\",\n  \"description\": \"Shared skills for the Inkeep team — research, skill authoring, and more\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Inkeep\"\n  },\n  \"repository\": \"https://github.com/inkeep/team-skills\"\n}\n",
+        "README.md": "# Inkeep Team Skills\n\nCollection of [Agent Skills](https://agentskills.io) for our internal teams.\n\n## Quick install\n\n```\nnpx skills add inkeep/team-skills/plugins/shared -y\n```\n\n### Use\n\nUse by typing e.g. `/skill-name` in Claude Code or Cursor, e.g. `/research`.\n\n**Shared** skills include:\n\n| Example | Description |\n|--------|-------------|\n| `/research <topic>` | Evidence-driven research with formal reports and evidence files collected from high authority web sources, **inspecting open source code repos**, docs, research articles, etc. |\n| `/write-skill <goal>` | Create or refine/revise Agent Skills (SKILL.md + references/scripts/assets) from existing knowledge or giving it iterative feedback. |\n| `/write-agent <goal>` | (advanced) Design and write Claude Code agents and prompts. |\n\n## Team-specific skills\n\nEach team plugin (`eng`, `gtm`) is a proper Claude Code plugin with its own `.claude-plugin/plugin.json` which contains all the `shared` skills in addition to team-specific skills.\n\n## Install\n\nTwo install methods. Choose based on your setup:\n\n| | Claude Code Plugin (recommended) | Skills CLI |\n|---|---|---|\n| **Auto-update** | Yes — skills update every session | No — manual `npx skills update` |\n| **Agent support** | Claude Code only | Claude Code, Cursor, Cline, Codex, etc. |\n| **Best for** | Claude Code-only users who want zero-maintenance updates | Multi-agent users (e.g., Cursor + Claude Code) |\n\n### Option A: Claude Code Plugin (recommended)\n\nAuto-updates on every session. Skills stay current without manual intervention.\n\n```bash\n# Add the marketplace with auto-update (one-time)\nclaude plugin marketplace add https://github.com/inkeep/team-skills.git && node -e \"const f=require('os').homedir()+'/.claude/plugins/known_marketplaces.json',d=require(f);d['inkeep-team-skills'].autoUpdate=true;require('fs').writeFileSync(f,JSON.stringify(d,null,2));console.log('Auto-update enabled for inkeep-team-skills')\"\n\n# Install your team's plugin\nclaude plugin install eng@inkeep-team-skills    # engineering\nclaude plugin install gtm@inkeep-team-skills    # GTM\n```\n\n### Option B: Skills CLI (cross-agent)\n\nWorks with any agent that supports the [Agent Skills](https://agentskills.io) standard. Updates are manual.\n\n```bash\n# Install a team's skills\nnpx skills add inkeep/team-skills/plugins/eng -y    # engineering\nnpx skills add inkeep/team-skills/plugins/gtm -y    # GTM\n\n# Or install shared skills only\nnpx skills add inkeep/team-skills/plugins/shared -y\n```\n\n## Update\n\n**Plugin users:** Skills auto-update on every Claude Code session — no action needed.\n\n**Skills CLI users:** Run manually when you want the latest:\n\n```bash\nnpx skills update\n```\n\n## `/research` + `/write-skill`\n\nThe two most powerful shared skills.\n\n```\n                            YOU\n                             |\n              ┌──────────────┴──────────────┐\n              |                             |\n      \"How does X work?\"          \"I need agents to be\n      \"How do others do Y?\"        great at doing X\"\n              |                             |\n              ▼                             ▼\n     ┌─────────────────┐          ┌─────────────────┐\n     │  /research       │          │  /research       │\n     │                  │          │                  │\n     │  Prior art &     │          │  Gather the best │\n     │  deep dives      │          │  human knowledge │\n     └────────┬─────────┘          └────────┬─────────┘\n              │                             │\n              ▼                             ▼\n     ┌─────────────────┐          ┌─────────────────┐\n     │  REPORT          │          │  REPORT          │\n     │  ├ REPORT.md     │          │  ├ REPORT.md     │\n     │  └ evidence/*.md │          │  └ evidence/*.md │\n     └────────┬─────────┘          └────────┬─────────┘\n              │                             │\n              ▼                             ▼\n     ┌─────────────────┐          ┌─────────────────┐\n     │  Read the report │          │  /write-skill    │\n     │  or ask Claude   │          │                  │\n     │  questions       │          │  Distill into a  │\n     │  about it        │          │  SKILL.md agents │\n     └────────┬─────────┘          │  can execute     │\n              │                    └────────┬─────────┘\n              ▼                             │\n     ┌─────────────────┐                    ▼\n     │  Want to go      │          ┌─────────────────┐\n     │  deeper?         │          │  SKILL           │\n     │                  │          │  ├ SKILL.md      │\n     │  /research ─────┐│          │  ├ references/   │\n     │  with follow-up ││          │  ├ scripts/      │\n     └─────────────────┘│          │  └ templates/    │\n              ▲          │          └────────┬─────────┘\n              └──────────┘                  │\n            report is refined               ▼\n            & expanded            ┌─────────────────┐\n                                  │  Use the skill   │\n                                  │  in a real       │\n                                  │  session         │\n                                  └────────┬─────────┘\n                                           │\n                                           ▼\n                                  ┌─────────────────┐\n                                  │  Notice a gap?   │\n                                  │                  │\n                                  │  /write-skill ──┐│\n                                  │  with feedback  ││\n                                  └─────────────────┘│\n                                           ▲          │\n                                           └──────────┘\n                                         refine until sharp\n```\n\n**Use case 1: Prior art research.** How does Stripe handle webhooks? How does Linear model project hierarchies? What retry strategies does our queue library actually support? `/research` digs through docs, **OSS code repos**, and articles so you get a sourced report instead of guessing or tab-hopping.\n\n**Use case 2: Skill generation.** Same `/research` step as above, but then `/write-skill` distills the findings into a SKILL.md that agents can execute. The report is raw analytical knowledge; the skill is the operationalized workflow from that knowledge.\n\n## Using Them\n\n## Using `research`\n\nInvoke by typing `/research <topic>` within Claude Code or Cursor.\n\n### Common examples\n\n```\n# New research (defaults to formal report)\n/research How does Temporal handle workflow versioning?\n\n# Quick answer (no report)\n/research Just tell me — does Better Auth support SCIM?\n\n# Extend an existing report\n/research Update the claude-plugins-architecture report with Cowork CLI parity findings\n\n# Compare systems\n/research Compare pg-boss vs BullMQ for job queues — focus on persistence, retry, and observability\n```\n\n### What it does\n\nConducts evidence-driven research and produces one of three outputs:\n\n- **Formal report** — persistent artifact in `~/.claude/reports/<name>/` with evidence files. **Default** for non-trivial research.\n- **Report update** — refinement or additions to an existing report. Triggered when you're iterating on an existing report or mention it e.g. `update X report with new research on XYZ`. Automatically figures out best way to update the report.\n- **Direct answer** — findings delivered in conversation. Used when you say \"just tell me\" or it's a quick question.\n\n### Report structure\n\nReports live in `~/.claude/reports/<name>/` with:\n- `REPORT.md` — synthesized findings with executive summary, rubric, detailed sections\n- `evidence/*.md` — primary-source proof files (one per dimension)\n- `meta/_changelog.md` — append-only history of updates\n\nTo open the directory of reports in Cursor:\n`cursor ~/.claude/reports` or simply navigate to it.\n\nIn MacOS, while in a Home directory (e.g. `nickgomez/`, click on `cmd + shift + . ` to see hidden `.claude` folder.)\n\n### Key behaviors\n\n- **Checks existing reports first.** Before starting new research, it scans `~/.claude/reports/` for overlap. If prior research covers a topic, it surfaces those findings and asks whether to reuse, extend, or start fresh.\n- **Scopes before researching.** It proposes a research rubric (dimensions, depth, stance) and waits for a confirmation before diving in. You can adjust scope, add/remove dimensions, or change the output format.\n- **Evidence-backed.** Every finding links to an evidence file with primary sources (code snippets for OSS repos, doc quotes, research studies, etc.). Claims are labeled CONFIRMED / INFERRED / UNCERTAIN / NOT FOUND. **Auto-prioritizes by time and authority**.\n- **Recaps and suggests follow-ups.** After delivering findings, it summarizes key results and offers 2-4 natural next directions.\n\n---\n\n## Using `write-skill`\n\n### Common interactions\n\n```\n# Create a new skill from scratch\n/write-skill Create a skill for writing cold outbound emails called 'write-email'\n\n# Create a new skill from a report\n/write-skill Create a skill for writing cold outbound emails by looking at the 'b2b-outbound-email' report and evidence. Help me turn that knowledge into a skill 'write-email'.\n```\n\nInvoke with `/write-skill <goal>` when you want to create or modify an Agent Skill.\n\n### What it does\n\nGuides you through authoring a SKILL.md (+ optional references/, scripts/, templates/) that works across Claude Code, Cursor, and other agents supporting the [Agent Skills standard](https://agentskills.io).\n\n### Key behaviors\n\n- **Asks clarifying questions first.** Captures intent, audience, constraints, and success criteria before drafting. For ambiguous requests, it offers 2-4 targeted questions with recommended defaults.\n- **Outputs the full skill.** Delivers folder tree + complete file contents. No partial stubs.\n- **Use to update a skill as well!** If you give it feedback on how a skill could behave better (e.g. after trying out a real skill elsewhere), it'll procedurally update the skill in a conservative way to align it with what you describe as the correct behavior.\n\n### Skill structure it produces\n\n```\nskill-name/\n├── SKILL.md              # Main skill (frontmatter + workflow)\n├── references/           # Deep-dive docs loaded on demand\n├── scripts/              # Executable utilities\n└── templates/            # Reusable output templates\n```\n\n### Auto-improving skills\n\n```\n# Update an existing skill (preserves intent)\n/write-skill The emails being produced by 'write-email' sound too abstract for the 'b2b-, help me update the skill so that the emails don't use abstract concepts.\n\n```\n\nNote: after using a skill in an interactive session, you can invoke /write-skill at the end of the session and give it feedback how that session could have gone better.\n\n---\n\n## Using `write-agent`\n\nClaude-code specific skill that creates or updates Claude Code agents (`.claude/agents/*.md`). Handles single-purpose subagents and multi-phase workflow orchestrators.\n\nUseful pattern:\n\n```bash\n/write-agent can you take skills /research-prospect and /write-email and help me write an agent that researches prospects and writes a sequenece of emails?\n```",
+        "plugins/eng/README.md": "# Inkeep Engineering Skills\n\nPlugin for the Inkeep engineering team. Includes all [shared skills](../shared/) plus eng-specific ones.\n\n## Install\n\n```bash\nclaude plugin install eng@inkeep-team-skills\n```\n\n## Skills\n\n**Shared:** `research`, `write-skill`, `write-agent`\n\nAdd eng-only skills by creating a folder in `plugins/eng/skills/`.\n",
+        "plugins/gtm/README.md": "# Inkeep GTM Skills\n\nPlugin for the Inkeep GTM team. Includes all [shared skills](../shared/) plus GTM-specific ones.\n\n## Install\n\n```bash\nclaude plugin install gtm@inkeep-team-skills\n```\n\n## Skills\n\n**Shared:** `research`, `write-skill`, `write-agent`\n\nAdd GTM-only skills by creating a folder in `plugins/gtm/skills/`.\n"
+      },
+      "plugins": [
+        {
+          "name": "eng",
+          "description": "Skills for the Inkeep engineering team",
+          "version": "1.1.2",
+          "author": {
+            "name": "Inkeep"
+          },
+          "source": "./plugins/eng",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add inkeep/team-skills",
+            "/plugin install eng@inkeep-team-skills"
+          ]
+        },
+        {
+          "name": "gtm",
+          "description": "Skills for the Inkeep GTM team",
+          "version": "1.1.2",
+          "author": {
+            "name": "Inkeep"
+          },
+          "source": "./plugins/gtm",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add inkeep/team-skills",
+            "/plugin install gtm@inkeep-team-skills"
+          ]
+        },
+        {
+          "name": "shared",
+          "description": "Shared skills across all Inkeep teams",
+          "version": "1.1.2",
+          "author": {
+            "name": "Inkeep"
+          },
+          "source": "./plugins/shared",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add inkeep/team-skills",
+            "/plugin install shared@inkeep-team-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
