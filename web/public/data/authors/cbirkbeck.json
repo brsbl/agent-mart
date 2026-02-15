@@ -1,0 +1,54 @@
+{
+  "author": {
+    "id": "CBirkbeck",
+    "display_name": "Chris Birkbeck",
+    "avatar_url": "https://avatars.githubusercontent.com/u/56166236?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mathlib-quality-plugins",
+      "version": null,
+      "description": "Clean up, golf, and bring Lean 4 code up to mathlib standards before PR submission",
+      "repo_full_name": "CBirkbeck/mathlib-quality",
+      "repo_url": "https://github.com/CBirkbeck/mathlib-quality",
+      "repo_description": "Claude Code skill plugin for cleaning up, golfing, and bringing Lean 4 code up to mathlib standards",
+      "signals": {
+        "stars": 6,
+        "forks": 0,
+        "pushed_at": "2026-02-11T10:16:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mathlib-quality-plugins\",\n  \"owner\": {\n    \"name\": \"CBirkbeck\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mathlib-quality\",\n      \"source\": \"./\",\n      \"description\": \"Clean up, golf, and bring Lean 4 code up to mathlib standards before PR submission\",\n      \"version\": \"0.1.0\",\n      \"repository\": \"https://github.com/CBirkbeck/mathlib-quality\",\n      \"keywords\": [\"lean4\", \"mathlib\", \"code-quality\", \"proof-golfing\", \"style\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mathlib-quality\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Clean up, golf, and bring Lean 4 code up to mathlib standards before PR submission\",\n  \"author\": {\n    \"name\": \"CBirkbeck\"\n  },\n  \"repository\": \"https://github.com/CBirkbeck/mathlib-quality\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"lean4\", \"mathlib\", \"code-quality\", \"proof-golfing\", \"style\"]\n}\n",
+        "README.md": "# mathlib-quality\n\nA [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill plugin for cleaning up, golfing, and bringing Lean 4 code up to [mathlib](https://github.com/leanprover-community/mathlib4) standards before PR submission.\n\nIncludes a RAG system built from **4,600+ real mathlib PR review comments** with before/after code examples, and specialized agents for proof golfing, decomposition, and style enforcement.\n\n## What It Does\n\nWhen working on Lean 4 files destined for mathlib, this plugin gives Claude Code deep knowledge of mathlib's conventions and common reviewer feedback. It can:\n\n- **Enforce style rules** -- line length, `by` placement, indentation, naming conventions, docstring format\n- **Golf proofs** -- shorten proofs using automation (`grind`, `fun_prop`, `omega`, `aesop`), term mode conversion, `have` inlining, and patterns learned from thousands of real PR reviews\n- **Decompose long proofs** -- break proofs >30 lines into focused helper lemmas with proper naming\n- **Check for mathlib duplication** -- search mathlib for existing lemmas before writing new ones\n- **Prepare PRs** -- run a comprehensive pre-submission checklist\n- **Fix reviewer feedback** -- parse and address PR review comments\n- **Split large files** -- break files >1500 lines into focused modules\n\n## Installation\n\n### Step 1: Add the Marketplace\n\nIn Claude Code, run:\n\n```\n/plugin marketplace add CBirkbeck/mathlib-quality\n```\n\nThen install the plugin from the **Discover** tab in the `/plugin` menu, or run:\n\n```\n/plugin install mathlib-quality\n```\n\n### Alternative: Local Installation\n\nClone the repo and install from a local path:\n\n```bash\ngit clone https://github.com/CBirkbeck/mathlib-quality.git\n```\n\nThen in Claude Code:\n\n```\n/plugin marketplace add /path/to/mathlib-quality\n```\n\n### Step 2: Set Up the RAG Server (Recommended)\n\nThe plugin includes a RAG (Retrieval Augmented Generation) system that lets Claude Code search 4,600+ PR review examples. To enable it, run the `/setup-rag` command inside Claude Code:\n\n```\n/setup-rag\n```\n\nThis will check dependencies, configure the MCP server in your project's `.mcp.json`, and verify everything works. You can also run the setup script directly:\n\n```bash\ncd /path/to/mathlib-quality\n./setup.sh\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/cleanup` | Full file cleanup to mathlib standards |\n| `/check-style` | Validate code against style rules (non-destructive) |\n| `/golf-proof` | Optimize and shorten proofs |\n| `/decompose-proof` | Break long proofs into helper lemmas |\n| `/split-file` | Split large files (>1500 lines) into focused modules |\n| `/check-mathlib` | Find mathlib equivalents to avoid duplication |\n| `/pre-submit` | Pre-PR submission checklist |\n| `/fix-pr-feedback` | Address PR reviewer comments |\n| `/setup-rag` | Configure the RAG MCP server |\n\n## Usage\n\n### Preparing Code for a PR\n\n```\n# 1. Check style issues (no changes made)\n/check-style MyFile.lean\n\n# 2. Apply automatic fixes\n/cleanup MyFile.lean\n\n# 3. Optimize proofs\n/golf-proof theorem_name\n\n# 4. Final verification before submitting\n/pre-submit MyFile.lean\n```\n\n### Handling PR Feedback\n\n```\n# Process feedback from a PR\n/fix-pr-feedback 1234\n\n# Or paste specific comments\n/fix-pr-feedback --comments \"Please shorten line 45...\"\n```\n\n### Breaking Up Long Proofs\n\n```\n# Decompose proofs >30 lines into helper lemmas\n/decompose-proof MyFile.lean\n```\n\n## RAG System\n\nThe plugin ships with a searchable index of **4,600+ PR review comments** scraped from merged mathlib4 PRs. This includes **2,588 before/after code suggestions** -- real examples of how reviewers asked contributors to improve their code.\n\n### With the MCP Server (after `/setup-rag`)\n\nOnce configured, the RAG tools are available automatically in Claude Code:\n\n- `search_golf_examples(code=\"have h := foo; simp [h]\")` -- find similar code and how reviewers improved it\n- `search_by_pattern(pattern=\"use_grind\")` -- find examples of specific transformations\n- `search_by_topic(topics=[\"continuity\"])` -- find topic-specific examples\n- `get_mathlib_quality_principles()` -- get synthesized quality rules\n\n### With the Query Script\n\n```bash\n# Find examples similar to your code\npython3 scripts/query_rag.py --code \"have h := foo; simp [h]\"\n\n# Find transformation pattern examples\npython3 scripts/query_rag.py --pattern use_grind\npython3 scripts/query_rag.py --pattern use_fun_prop\n\n# Search by tactic usage\npython3 scripts/query_rag.py --tactics simp have exact\n\n# Search by mathematical topic\npython3 scripts/query_rag.py --topic continuity\n```\n\nAvailable patterns: `simp_to_simpa`, `use_grind`, `use_fun_prop`, `use_aesop`, `use_omega`, `term_mode`, `remove_redundant`\n\n## Quick Reference\n\n### Key Style Rules\n\n- Line length: **100 chars max**\n- File length: **1500 lines max** (split if larger)\n- Proof length: **50 lines max** (target <15)\n- `by` always at **end of preceding line**, never on its own line\n- Use `fun x =>` not `λ x,`\n- Use `simp only [...]` for non-terminal simp\n- No comments inside proofs\n- No empty lines inside declarations\n\n### Naming Conventions\n\n**Different conventions for different declaration types:**\n\n| Declaration | Returns | Convention | Example |\n|-------------|---------|------------|---------|\n| `lemma`/`theorem` | `Prop` | `snake_case` | `continuous_of_bounded` |\n| `def` | Data | `lowerCamelCase` | `cauchyPrincipalValue` |\n| `structure` | Type | `UpperCamelCase` | `ModularForm` |\n\nLemma naming pattern: `conclusion_of_hypothesis` (e.g., `norm_le_of_mem_ball`)\n\n## Project Structure\n\n```\nmathlib-quality/\n├── commands/                    # Slash command implementations\n│   ├── cleanup.md\n│   ├── check-style.md\n│   ├── golf-proof.md\n│   ├── decompose-proof.md\n│   ├── split-file.md\n│   ├── check-mathlib.md\n│   ├── pre-submit.md\n│   ├── fix-pr-feedback.md\n│   └── setup-rag.md\n├── skills/mathlib-quality/\n│   ├── SKILL.md                 # Main skill definition\n│   ├── references/              # Style rules, naming, patterns\n│   ├── examples/                # Curated before/after examples\n│   └── agents/                  # Specialized agent prompts\n├── mcp_server/\n│   └── mathlib_rag.py           # MCP server for RAG queries\n├── scripts/                     # Build, query, and scraping tools\n├── data/pr_feedback/            # RAG indexes and curated examples\n└── setup.sh                     # One-step setup script\n```\n\n## Integration with Lean 4\n\nThis skill works alongside the [`lean4-theorem-proving`](https://github.com/cmu-l3/lean4-theorem-proving) Claude Code skill:\n\n- Uses Lean LSP tools to verify changes compile after each edit\n- Uses `lean_diagnostic_messages` to check for errors\n- Uses `lean_goal` to verify proof state during golfing\n\n## Acknowledgements\n\nThis plugin builds on work from several sources:\n\n- **[kim-em/botbaki](https://github.com/kim-em/botbaki)** -- Style conventions, naming rules, and formatting guidelines for mathlib contributions were incorporated from the botbaki repository.\n- **[Cameron Freer's proof golfing agent](https://github.com/cfreer/lean-golf)** -- The proof golfing methodology and agent design draws on Cameron Freer's work on automated proof optimization for Lean 4.\n- **[leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4)** -- The RAG system is built from public PR review comments on merged mathlib4 pull requests. Only technical content is collected; no personal information is scraped.\n\n## Contributing\n\n1. Fork the repository\n2. Make changes\n3. Test locally: `/plugin marketplace add /path/to/your/fork`\n4. Submit a PR\n\n## License\n\nMIT License -- see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "mathlib-quality",
+          "source": "./",
+          "description": "Clean up, golf, and bring Lean 4 code up to mathlib standards before PR submission",
+          "version": "0.1.0",
+          "repository": "https://github.com/CBirkbeck/mathlib-quality",
+          "keywords": [
+            "lean4",
+            "mathlib",
+            "code-quality",
+            "proof-golfing",
+            "style"
+          ],
+          "categories": [
+            "code-quality",
+            "lean4",
+            "mathlib",
+            "proof-golfing",
+            "style"
+          ],
+          "install_commands": [
+            "/plugin marketplace add CBirkbeck/mathlib-quality",
+            "/plugin install mathlib-quality@mathlib-quality-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
