@@ -34,6 +34,36 @@
           ]
         }
       ]
+    },
+    {
+      "name": "todoist-marketplace",
+      "version": null,
+      "description": "Token-efficient Todoist integration via official Doist MCP with subagent isolation",
+      "repo_full_name": "jackhutson/todoist-mcp-plugin",
+      "repo_url": "https://github.com/jackhutson/todoist-mcp-plugin",
+      "repo_description": "Token efficient plugin for using Todoist with Claude Code.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-15T03:05:51Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"todoist-marketplace\",\n  \"owner\": {\n    \"name\": \"Jack Hutson\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"todoist\",\n      \"source\": \"./\",\n      \"description\": \"Token-efficient Todoist integration via official Doist MCP with subagent isolation\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"todoist\",\n  \"description\": \"Token-efficient Todoist integration via official Doist MCP with subagent isolation\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Jack Hutson\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"todoist\", \"tasks\", \"productivity\", \"mcp\"]\n}\n",
+        "README.md": "# todoist-mcp-plugin\n\nEvery MCP server you enable in Claude Code injects tool definitions into your system prompt — consuming context in every message, even when idle. The official Todoist MCP adds ~8-10 tool schemas (~2,500 tokens). This plugin wraps it in a subagent so those definitions never touch your main conversation.\n\n## How It Works\n\n```\n┌─────────────────────────────────────────────────┐\n│  Main Claude Code Conversation                  │\n│                                                 │\n│  Skills loaded on demand:                       │\n│  ┌─────────────┐  ┌──────────────┐              │\n│  │todoist-tasks │  │ todoist-sync │  ~50-80 tok  │\n│  │  (metadata)  │  │  (metadata)  │  idle cost   │\n│  └──────┬──────┘  └──────┬───────┘              │\n│         │                │                      │\n│         └───────┬────────┘                      │\n│                 ▼                                │\n│  ┌──────────────────────────────┐               │\n│  │      todoist-agent           │               │\n│  │   (separate context window)  │               │\n│  │                              │               │\n│  │  MCP tool definitions live   │               │\n│  │  HERE, not in main context   │               │\n│  │                              │               │\n│  │  ┌────────────────────────┐  │               │\n│  │  │ Doist MCP (HTTP/OAuth) │  │               │\n│  │  │ ai.todoist.net/mcp     │  │               │\n│  │  └────────────────────────┘  │               │\n│  └──────────────────────────────┘               │\n└─────────────────────────────────────────────────┘\n```\n\nSkills expose only short metadata descriptions to the main context (~50-80 tokens). When triggered, the full skill body loads and delegates to a subagent that holds the MCP connection in its own context window. Tool schemas stay isolated.\n\n### Token Cost Comparison\n\n| Setup | Idle Context Cost | Per-Operation Cost |\n|-------|------------------|--------------------|\n| Raw MCP (always loaded) | ~2,500 tokens/message (tool schemas in every message) | Same + API response |\n| This plugin | ~50-80 tokens/message (skill metadata only) | ~900 tokens (skill body) + subagent |\n\nOver a 50-message coding session, raw MCP costs 100k-150k tokens on Todoist schemas you used twice. This plugin pays only when you use it.\n\n## Quick Start\n\n```bash\nclaude plugin install jackhutson/todoist-mcp-plugin\n```\n\nThen authenticate with the Todoist MCP server:\n\n1. Launch Claude Code\n2. Run `/mcp`\n3. Select the `todoist` server\n4. Complete the browser-based OAuth flow\n\nNo API keys to manage — the official Doist server uses OAuth.\n\n## Usage\n\nNatural language, delegated automatically:\n\n```\n\"Add a task 'Review PR #42' to Work with p2 priority due tomorrow\"\n\"What's due today?\"\n\"Mark the deploy task as done\"\n\"Refresh my Todoist projects\"\n```\n\n## Supported Operations\n\n- **Task CRUD** — create, complete, update, delete\n- **Queries** — by project, priority, due date, label, or Todoist filter strings\n- **Structure sync** — projects, sections, labels fetched and cached in-conversation\n- **Error recovery** — automatic re-sync on name resolution failures\n\n## Design Principles\n\n- **Subagent isolation** — MCP tool definitions never enter the main context window\n- **Progressive disclosure** — skill metadata always loaded; full instructions only when triggered\n- **Cache-first** — Todoist structure synced once per session, reused across operations\n- **Official MCP** — uses Doist's own server (`ai.todoist.net/mcp`) with fewer, workflow-oriented tools and OAuth auth\n\n## Requirements\n\n- Claude Code with plugin support\n- Todoist account (free or Pro)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "todoist",
+          "source": "./",
+          "description": "Token-efficient Todoist integration via official Doist MCP with subagent isolation",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jackhutson/todoist-mcp-plugin",
+            "/plugin install todoist@todoist-marketplace"
+          ]
+        }
+      ]
     }
   ]
 }
