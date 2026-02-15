@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "dansimau",
+    "display_name": "Daniel Simmons",
+    "avatar_url": "https://avatars.githubusercontent.com/u/203031?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agentstats",
+      "version": null,
+      "description": "Track how much time AI coding agents spend actively working on your projects.",
+      "repo_full_name": "dansimau/agentstats",
+      "repo_url": "https://github.com/dansimau/agentstats",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-15T07:30:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agentstats\",\n  \"description\": \"Track how much time AI coding agents spend actively working on your projects.\",\n  \"owner\": {\n    \"name\": \"Dan Simmons\",\n    \"homepage\": \"https://github.com/dansimau/agentstats\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agentstats\",\n      \"description\": \"Records AI coding agent prompt timing, session data, and git state. Provides stats and history CLI commands.\",\n      \"version\": \"1.0.0\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/dansimau/agentstats.git\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agentstats\",\n  \"description\": \"Records AI coding agent prompt timing, session data, and git state. Provides stats and history CLI commands.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Dan Simmons\",\n    \"homepage\": \"https://github.com/dansimau/agentstats\"\n  },\n  \"hooks\": \"./hooks/hooks.json\"\n}\n",
+        "README.md": "# agentstats\n\nTrack how much time AI coding agents spend actively working on your projects.\n\nRecords prompt timing, session data, and git state into a local SQLite database. Works as a Claude Code plugin (via hooks) and provides CLI commands to inspect the data.\n\n## How it works\n\n**Working time** = sum of `(completed_at - submitted_at)` for completed prompts.\nTime between prompts (reading output, thinking, approving plans) is never counted.\n\n## Installation\n\n### As a Claude Code plugin\n\n```\n/plugin marketplace add dansimau/agentstats\n```\n\nPre-compiled binaries for all platforms are included. No install step required.\n\n### Local development\n\n```bash\ngit clone https://github.com/dansimau/agentstats\ncd agentstats\nmake build\nbash scripts/install-local.sh\n```\n\nThen follow the instructions printed by `install-local.sh` to add the hooks to `~/.claude/settings.json`.\n\n## CLI Commands\n\n### `agentstats stats [--project <dir>]`\n\nShow AI working time statistics for a project. Defaults to the current directory.\n\n```\nProject:               myapp (github.com/user/myapp)\nGit origin:            git@github.com:user/myapp.git\nTotal prompts:         42\nTotal AI working time: 3h 24m 15s\nAverage per prompt:    4m 52s\nTime period:           2024-01-01 to 2024-02-15\n```\n\n### `agentstats history [--project <dir>] [--limit N]`\n\nShow recent prompt history. Defaults to current directory, limit 50.\n\n```\n#      Time                 Duration    Prompt\n-----  -------------------  ----------  -----------------------------------------------\n1      2024-02-15 10:23:01  4m 32s      Create a new Go web server with authentication...\n2      2024-02-15 10:27:45  -           Add middleware for rate limiting\n```\n\nA `-` duration means the prompt is still in flight.\n\n## Database\n\nData is stored at `~/.local/share/agentstats/agentstats.db` (XDG-aware).\n\nOverride with the `--db` flag on any command.\n\n## Smoke test\n\n```bash\n# Record a prompt start\necho '{\"session_id\":\"test-001\",\"cwd\":\"/tmp\",\"prompt\":\"hello world\",\"hook_event_name\":\"UserPromptSubmit\",\"transcript_path\":\"\",\"permission_mode\":\"default\"}' | \\\n  ./bin/agentstats hook prompt-start\n\n# Record the end\necho '{\"session_id\":\"test-001\",\"cwd\":\"/tmp\",\"hook_event_name\":\"Stop\",\"transcript_path\":\"\",\"permission_mode\":\"default\"}' | \\\n  ./bin/agentstats hook prompt-end\n\n# Inspect\n./bin/agentstats stats --project /tmp\n./bin/agentstats history --project /tmp\n```\n\n## Build\n\n```bash\nmake build        # current platform only\nmake build-all    # all platforms (darwin/linux × amd64/arm64)\nmake test         # run tests with race detector\n```\n\n## Adding support for other agents\n\n1. Implement `hook.Parser` in `internal/hook/youragent.go`\n2. Register it in `ParserForAgent()` in `internal/hook/interface.go`\n3. Add hooks for your agent in `hooks/hooks.json`\n"
+      },
+      "plugins": [
+        {
+          "name": "agentstats",
+          "description": "Records AI coding agent prompt timing, session data, and git state. Provides stats and history CLI commands.",
+          "version": "1.0.0",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/dansimau/agentstats.git"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add dansimau/agentstats",
+            "/plugin install agentstats@agentstats"
+          ]
+        }
+      ]
+    }
+  ]
+}
