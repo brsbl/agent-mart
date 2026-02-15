@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "christinoleo",
+    "display_name": "Leonardo Christino",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1745901?u=9599a70551092623b8ab3fe32e71de7115ea4b9f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aknakos-workflow",
+      "version": null,
+      "description": "Personal dev workflow toolkit — beads orchestration, code review, planning, and browser verification",
+      "repo_full_name": "christinoleo/aknakos-workflow",
+      "repo_url": "https://github.com/christinoleo/aknakos-workflow",
+      "repo_description": "Personal Claude Code plugin marketplace — dev workflow commands and hooks",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-14T19:09:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aknakos-workflow\",\n  \"description\": \"Personal dev workflow toolkit — beads orchestration, code review, planning, and browser verification\",\n  \"owner\": {\n    \"name\": \"aknakos\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aknakos\",\n      \"source\": \"./plugin\",\n      \"description\": \"Dev workflow commands: bcheck, linus, p1/p2 orchestration, replan, redelta, triage, verify, plan-to-beads\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# aknakos-workflow\n\nPersonal Claude Code plugin marketplace — dev workflow commands and hooks.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/bcheck` | Pick up a beads issue, assess context sufficiency, start coding or enter plan mode |\n| `/linus` | Linus Torvalds-style code review with sub-agent investigation |\n| `/triage` | Walk through review findings point-by-point, decide and execute fixes |\n| `/verify` | Browser-based verification of changes using Chrome DevTools |\n| `/replan` | Audit plan coverage against requirements, rewrite to 100% |\n| `/redelta` | Audit delivered work against requirements, produce delta to reach 100% |\n| `/plan-to-beads` | Convert approved plan into beads epic with tasks and dependencies |\n| `/p1` | Phase 1 orchestration: plan → replan → plan-to-beads (spawns trigger agent) |\n| `/p1-trigger` | Trigger loop for Phase 1 (called by /p1, do not run directly) |\n| `/p2` | Phase 2 orchestration: execute epic tasks with review between each (spawns trigger agent) |\n| `/p2-trigger` | Trigger loop for Phase 2 (called by /p2, do not run directly) |\n\n## Hooks\n\n**workflow-hints.sh** — PreToolUse hook that injects next-step context:\n- After `EnterPlanMode`: reminds to run `/replan` before exiting plan mode\n- After `/linus`: suggests `/triage`\n- After `/triage`: suggests `/verify`\n- After `/replan`: suggests `/plan-to-beads`\n\n## Install\n\n```bash\n/plugin marketplace add aknakos/aknakos-workflow\n/plugin install aknakos-workflow@aknakos-workflow\n```\n\n## Edit & Push\n\nEdit commands directly in `plugin/commands/`, then:\n\n```bash\ncd ~/Projects/aknakos-workflow\ngit add -A && git commit -m \"update: description\" && git push\n```\n\nOn other machines, the marketplace auto-updates on next Claude Code start (or run `/plugin marketplace update aknakos-workflow`).\n\n## Structure\n\n```\naknakos-workflow/\n├── .claude-plugin/\n│   └── marketplace.json       # Marketplace catalog\n├── plugin/\n│   ├── .claude-plugin/\n│   │   └── plugin.json        # Plugin manifest\n│   ├── commands/               # All slash commands\n│   │   ├── bcheck.md\n│   │   ├── linus.md\n│   │   ├── p1.md\n│   │   ├── p1-trigger.md\n│   │   ├── p2.md\n│   │   ├── p2-trigger.md\n│   │   ├── plan-to-beads.md\n│   │   ├── redelta.md\n│   │   ├── replan.md\n│   │   ├── triage.md\n│   │   └── verify.md\n│   └── hooks/\n│       ├── hooks.json          # Hook configuration\n│       └── workflow-hints.sh   # Workflow hint injection\n└── README.md\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "aknakos",
+          "source": "./plugin",
+          "description": "Dev workflow commands: bcheck, linus, p1/p2 orchestration, replan, redelta, triage, verify, plan-to-beads",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add christinoleo/aknakos-workflow",
+            "/plugin install aknakos@aknakos-workflow"
+          ]
+        }
+      ]
+    }
+  ]
+}
