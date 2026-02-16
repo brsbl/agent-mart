@@ -47,6 +47,40 @@
           ]
         }
       ]
+    },
+    {
+      "name": "xmlq",
+      "version": null,
+      "description": "Pipe-friendly CLI skill for exploring and querying XML files — stat, tree, select, text, json, and more via XPath",
+      "repo_full_name": "pvasek/xmlq",
+      "repo_url": "https://github.com/pvasek/xmlq",
+      "repo_description": "XML CLI tool and skills for AI agents",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-16T07:57:35Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"xmlq\",\n  \"owner\": {\n    \"name\": \"Pavel Vasek\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"xmlq\",\n      \"source\": \"./\",\n      \"description\": \"Pipe-friendly CLI skill for exploring and querying XML files — stat, tree, select, text, json, and more via XPath\",\n      \"author\": {\n        \"name\": \"Pavel Vasek\"\n      },\n      \"repository\": \"https://github.com/pvasek/xmlq\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"xmlq\",\n  \"description\": \"Pipe-friendly CLI skill for exploring and querying XML files — stat, tree, select, text, json, and more via XPath\",\n  \"version\": \"0.0.4\",\n  \"author\": {\n    \"name\": \"Pavel Vasek\"\n  },\n  \"repository\": \"https://github.com/pvasek/xmlq\"\n}",
+        "README.md": "# xmlq\n\n[![npm version](https://img.shields.io/npm/v/@pvasek/xmlq.svg)](https://www.npmjs.com/package/@pvasek/xmlq)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE.md)\n\nA pipe-friendly CLI for exploring and querying XML files. Built with Node.js/TypeScript.\n\nPublished on npm as [`@pvasek/xmlq`](https://www.npmjs.com/package/@pvasek/xmlq).\n\n## Installation\n\n```bash\nnpm install -g @pvasek/xmlq\n```\n\nOr run directly with npx:\n\n```bash\nnpx @pvasek/xmlq <command> [options] [file]\n```\n\n## Usage\n\nAll commands accept a file path or read from **stdin** when no file is given. Output goes to stdout, errors to stderr.\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `stat` | Quick overview of an XML file (size, root, element count, namespaces) |\n| `tags` | List all unique element names with occurrence counts |\n| `tree` | Show the structural skeleton of the document |\n| `select` | Query nodes using XPath expressions |\n| `first` | Select first N matching nodes (shorthand for `select --first`) |\n| `count` | Count matches for an XPath expression |\n| `text` | Extract text content of matched nodes |\n| `attrs` | List attributes of matched elements |\n| `fmt` | Pretty-print or reformat XML |\n| `json` | Convert XML to JSON |\n| `validate` | Check if the file is well-formed XML |\n| `ns` | List namespaces used in the document |\n| `schema` | Infer a rough schema from the document |\n\n### Global flags\n\n| Flag | Description |\n|------|-------------|\n| `--help`, `-h` | Show help |\n| `--version`, `-V` | Show version |\n| `--no-color` | Disable colored output |\n| `--ns PREFIX=URI` | Register namespace prefix for XPath queries |\n\n### Examples\n\n```bash\n# Get a quick overview of an XML file\nxmlq stat data.xml\n\n# See the structure\nxmlq tree data.xml\n\n# Find all unique element names\nxmlq tags data.xml\n\n# Query with XPath\nxmlq select '//product[price > 100]' data.xml\n\n# Peek at the first record\nxmlq first '//product' data.xml\n\n# Count matches\nxmlq count '//product' data.xml\n\n# Extract text values\nxmlq text '//product/name' data.xml\n\n# Convert to JSON and pipe to jq\nxmlq json data.xml | jq '.catalog.product[0]'\n\n# Pretty-print\nxmlq fmt --indent 4 data.xml\n\n# Validate\nxmlq validate data.xml\n\n# Pipe from stdin\ncurl -s https://example.com/feed.xml | xmlq first 3 '//item'\n```\n\n## AI Agent Integration (Claude Code)\n\nxmlq works with [Claude Code](https://claude.ai/code) — install the skill so Claude learns to use it automatically:\n\n```bash\n# 1. Install xmlq globally\nnpm install -g @pvasek/xmlq\n\n# 2. In your project, install the skill\nxmlq skill --install\n```\n\nThis creates `.claude/skills/xmlq/SKILL.md` in your project. Claude Code discovers it and can then use xmlq to explore XML files on your behalf.\n\nSee [SPEC.md](./SPEC.md) for the full specification.\n\n## Development\n\n### Prerequisites\n\n- Node.js >= 18\n- npm\n\n### Setup\n\n```bash\ngit clone https://github.com/pvasek/xmlq.git\ncd xmlq\nnpm install\n```\n\n### Build\n\n```bash\nnpm run build        # compile TypeScript to dist/\nnpm run dev          # watch mode — recompile on changes\n```\n\n### Run locally\n\n```bash\nnode dist/index.js stat data.xml\n\n# Or link globally for development\nnpm link\nxmlq stat data.xml\n```\n\n### Project structure\n\n```\nsrc/\n├── index.ts               Entry point — CLI setup with commander\n├── commands/\n│   ├── stat.ts            Quick file overview\n│   ├── tags.ts            List element names\n│   ├── tree.ts            Structural skeleton\n│   ├── select.ts          XPath query (core command)\n│   ├── first.ts           First N matches shorthand\n│   ├── count.ts           Count matches\n│   ├── text.ts            Extract text content\n│   ├── attrs.ts           List attributes\n│   ├── fmt.ts             Pretty-print / reformat\n│   ├── json.ts            XML to JSON conversion\n│   ├── validate.ts        Well-formedness check\n│   ├── ns.ts              List namespaces\n│   └── schema.ts          Infer schema\n└── utils/\n    ├── input.ts           Read from file or stdin\n    └── output.ts          TTY detection, output formatting\n```\n\nEach command file exports a `register(program: Command): void` function that adds its subcommand to the commander program.\n"
+      },
+      "plugins": [
+        {
+          "name": "xmlq",
+          "source": "./",
+          "description": "Pipe-friendly CLI skill for exploring and querying XML files — stat, tree, select, text, json, and more via XPath",
+          "author": {
+            "name": "Pavel Vasek"
+          },
+          "repository": "https://github.com/pvasek/xmlq",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add pvasek/xmlq",
+            "/plugin install xmlq@xmlq"
+          ]
+        }
+      ]
     }
   ]
 }
