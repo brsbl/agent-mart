@@ -1,0 +1,54 @@
+{
+  "author": {
+    "id": "jbdamask",
+    "display_name": "John Damask",
+    "avatar_url": "https://avatars.githubusercontent.com/u/4308115?u=f30b1d4aba51147f38e0513cd228df3dde46fba5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "john-claude-skills",
+      "version": null,
+      "description": "A collection of Claude Code skills for development workflows",
+      "repo_full_name": "jbdamask/john-claude-skills",
+      "repo_url": "https://github.com/jbdamask/john-claude-skills",
+      "repo_description": "Various Claude Skills created along the way",
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-02-15T18:30:12Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"john-claude-skills\",\n  \"owner\": {\n    \"name\": \"John Damask\",\n    \"email\": \"jbdamask@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of Claude Code skills for development workflows\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"john-skills\",\n      \"description\": \"Development workflow tools: skills for devlog, gitingest, mcp-scanner, venv-manager, and more; plus agents like session-recap for context recovery\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"agents\": [\"./agents/session-recap.md\"]\n    },\n    {\n      \"name\": \"context-analyzer\",\n      \"description\": \"Analyze Claude Code chat history to identify context window bloat sources and get optimization recommendations. Parses JSONL session files and reports on image usage, file re-reads, tool output volume, and more.\",\n      \"source\": \"./plugins/context-analyzer\",\n      \"strict\": true\n    }\n  ]\n}\n",
+        "README.md": "# John's Claude Code Skills\n\nA collection of Claude Code skills for development workflows.\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```shell\n/plugin marketplace add jbdamask/john-claude-skills\n```\n\nThen install the skills:\n\n```shell\n/plugin install john-skills@john-claude-skills\n```\n\n## Skills\n\nBrowse the `skills/` directory to see available skills. Each skill has a `SKILL.md` with its description and usage instructions.\n\n## Contributing\n\nTo add a new skill:\n\n1. Create a directory under `skills/<skill-name>/`\n2. Add a `SKILL.md` file with YAML frontmatter (`name`, `description`) and instructions\n3. Optionally add `references/`, `scripts/`, or `assets/` subdirectories\n",
+        "plugins/context-analyzer/README.md": "# context-analyzer\n\nA Claude Code plugin that analyzes chat history to identify what's consuming your context window and provides optimization recommendations.\n\n## Features\n\n- **Context breakdown** — Categorizes context consumption by type (images, file reads, bash output, screenshots, etc.)\n- **File re-read detection** — Identifies files that are read repeatedly across sessions, wasting context\n- **Largest session analysis** — Finds which sessions consumed the most context and why\n- **Actionable recommendations** — Provides prioritized suggestions to reduce context bloat\n- **Auto-detection** — Automatically finds the project history directory from your current working directory\n\n## Components\n\n| Component | Name | Description |\n|-----------|------|-------------|\n| Command | `/context-analyzer:analyze-context` | Run the full analysis and get a report |\n| Agent | `context-analyzer` | Subagent for autonomous context diagnostics |\n| Skill | Context Optimization | Knowledge about context optimization patterns |\n| Script | `analyze_context.py` | Python analysis engine (no dependencies beyond stdlib) |\n\n## Installation\n\n### From a marketplace\n\n```\n/plugin install context-analyzer@your-marketplace\n```\n\n### Local testing\n\n```bash\nclaude --plugin-dir /path/to/context-analyzer\n```\n\n## Usage\n\n### Slash command\n\n```\n/context-analyzer:analyze-context\n```\n\nRuns the analysis on the current project and presents a formatted report.\n\n### Agent (automatic)\n\nThe context-analyzer agent triggers when you ask questions like:\n- \"Why is my context filling up?\"\n- \"Analyze my context usage\"\n- \"What's consuming my context window?\"\n\n### Direct script execution\n\n```bash\n# Markdown report (default)\npython3 scripts/analyze_context.py ~/.claude/projects/-Your-Project-Path/\n\n# JSON output for programmatic use\npython3 scripts/analyze_context.py ~/.claude/projects/-Your-Project-Path/ --json\n```\n\n## Prerequisites\n\n- Python 3.8+ (uses only stdlib — no pip install needed)\n- Claude Code chat history in `~/.claude/projects/`\n\n## How It Works\n\nThe plugin parses JSONL chat history files that Claude Code stores in `~/.claude/projects/{encoded-project-path}/`. Each line is a JSON message representing a conversation event. The analyzer categorizes every message into context consumption buckets and tracks file read patterns across all sessions.\n\nSee `skills/context-optimization/references/analysis-methodology.md` for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "john-skills",
+          "description": "Development workflow tools: skills for devlog, gitingest, mcp-scanner, venv-manager, and more; plus agents like session-recap for context recovery",
+          "source": "./",
+          "strict": false,
+          "agents": [
+            "./agents/session-recap.md"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jbdamask/john-claude-skills",
+            "/plugin install john-skills@john-claude-skills"
+          ]
+        },
+        {
+          "name": "context-analyzer",
+          "description": "Analyze Claude Code chat history to identify context window bloat sources and get optimization recommendations. Parses JSONL session files and reports on image usage, file re-reads, tool output volume, and more.",
+          "source": "./plugins/context-analyzer",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jbdamask/john-claude-skills",
+            "/plugin install context-analyzer@john-claude-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

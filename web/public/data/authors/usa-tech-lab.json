@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "usa-tech-lab",
+    "display_name": "usa-tech-lab",
+    "avatar_url": "https://avatars.githubusercontent.com/u/189103881?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kakutey-marketplace",
+      "version": null,
+      "description": "個人事業主向け確定申告ワークフローの Claude Code プラグイン集",
+      "repo_full_name": "usa-tech-lab/kakutey-skills",
+      "repo_url": "https://github.com/usa-tech-lab/kakutey-skills",
+      "repo_description": "Claude Code skills for kakutey bookkeeping application",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-15T16:49:23Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kakutey-marketplace\",\n  \"owner\": {\n    \"name\": \"usa-tech-lab\"\n  },\n  \"metadata\": {\n    \"description\": \"個人事業主向け確定申告ワークフローの Claude Code プラグイン集\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"kakutey-skills\",\n      \"source\": \"./\",\n      \"description\": \"kakutey 記帳アプリと連携した確定申告ワークフロー支援プラグイン（19スキル）\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"usa-tech-lab\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"kakutey\", \"確定申告\", \"青色申告\", \"bookkeeping\", \"tax-return\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"kakutey-skills\",\n  \"description\": \"kakutey 記帳アプリと連携した確定申告ワークフロー支援プラグイン\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"usa-tech-lab\"\n  },\n  \"homepage\": \"https://github.com/usa-tech-lab/kakutey-skills\",\n  \"repository\": \"https://github.com/usa-tech-lab/kakutey-skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"kakutey\", \"確定申告\", \"青色申告\", \"bookkeeping\", \"tax-return\"]\n}\n",
+        "README.md": "# kakutey-skills\n\n個人事業主向け確定申告ワークフローの [Claude Code Skills](https://docs.anthropic.com/en/docs/claude-code/skills) 集です。\n[kakutey](https://github.com/usa-tech-lab/kakutey) 記帳アプリと連携し、証憑処理から青色申告書類の作成までをカバーします。\n\n## スキル一覧\n\n### アプリ管理\n\n| スキル | 説明 |\n|--------|------|\n| **kakutey-installer** | kakutey アプリを GitHub からダウンロード・セットアップする |\n| **kakutey-launcher** | kakutey アプリ（Electron + FastAPI）を起動する |\n| **kakutey-healthcheck** | バックエンド (port 8000) とフロントエンド (port 4200) の稼働確認 |\n| **kakutey-stopper** | kakutey アプリのプロセスを停止する |\n| **tax-workspace-setup** | 年度ごとの確定申告ワークスペース（証憑・処理・確定申告フォルダ）を作成 |\n\n### 記帳操作\n\n| スキル | 説明 |\n|--------|------|\n| **kakutey-bookkeeping** | 仕訳の登録（単発・一括）と一覧取得 |\n| **kakutey-evidence** | 証憑ファイル（領収書・請求書等）のアップロードと検索 |\n| **kakutey-corrections** | 既存仕訳の修正・削除・証憑紐付け |\n| **kakutey-reports** | 損益計算書・貸借対照表・固定資産データの取得 |\n\n### 証憑処理\n\n| スキル | 説明 |\n|--------|------|\n| **evidence-processing** | 証憑ファイルを構造化マークダウン・仕訳 JSON に変換 |\n| **image-describer** | Gemini 3 Flash を使った画像・PDF の内容分析 |\n\n### 確定申告（青色申告決算書）\n\n| スキル | 説明 |\n|--------|------|\n| **blue-return-income-statement** | 決算書（一般用）の入力値を算出 |\n| **blue-return-monthly-sales** | 月別売上・仕入金額の入力値を算出 |\n| **blue-return-sales-detail** | 売上先別の明細入力値を算出 |\n| **blue-return-depreciation** | 減価償却資産の入力値を算出 |\n| **blue-return-balance-sheet** | 貸借対照表の入力値を算出 |\n| **blue-return-consumption-tax** | 消費税の課税取引金額内訳を算出 |\n| **tax-return-prep** | 上記 blue-return-* スキルを統括し、e-Tax 用の全書類を一括生成 |\n\n## インストール\n\n### プラグインとしてインストール（推奨）\n\nClaude Code 内で以下を実行：\n\n```\n/plugin marketplace add usa-tech-lab/kakutey-skills\n/plugin install kakutey-skills@kakutey-marketplace\n```\n\nインストール後、スキルは `/kakutey-skills:スキル名` で呼び出せます（例: `/kakutey-skills:kakutey-bookkeeping`）。\n\n### 手動インストール\n\n```bash\n# リポジトリをクローン\ngit clone https://github.com/usa-tech-lab/kakutey-skills.git\n\n# 使いたいスキルをコピー（例: 全スキル）\ncp -R kakutey-skills/skills/* ~/.claude/skills/\n\n# または特定のスキルだけ\ncp -R kakutey-skills/skills/kakutey-bookkeeping ~/.claude/skills/\n```\n\n## 前提条件\n\n- **kakutey アプリ**: kakutey-* スキル群の利用に必要\n- **Python 3**: スクリプト実行用\n  - `requests` パッケージ（kakutey API 連携）\n  - `google-genai` パッケージ（image-describer 用）\n- **環境変数**:\n  - `GOOGLE_CLOUD_PROJECT` — image-describer で Vertex AI を使用する場合\n\n## カスタマイズ\n\n以下のリファレンスファイルにはサンプルデータが入っています。実際のデータに置き換えてください。\n\n| ファイル | 場所 | 内容 |\n|----------|------|------|\n| `customers.json` | `blue-return-sales-detail/references/` | 売上先の顧客情報（名前・住所・登録番号） |\n| `business_profile.json` | `kakutey-reports/references/` | 事業者情報（屋号・会計期間・勘定科目設定） |\n| `tax_classification.json` | `blue-return-consumption-tax/references/` | 勘定科目ごとの消費税区分 |\n\n## ライセンス\n\nMIT License\n"
+      },
+      "plugins": [
+        {
+          "name": "kakutey-skills",
+          "source": "./",
+          "description": "kakutey 記帳アプリと連携した確定申告ワークフロー支援プラグイン（19スキル）",
+          "version": "1.0.0",
+          "author": {
+            "name": "usa-tech-lab"
+          },
+          "license": "MIT",
+          "keywords": [
+            "kakutey",
+            "確定申告",
+            "青色申告",
+            "bookkeeping",
+            "tax-return"
+          ],
+          "category": "productivity",
+          "categories": [
+            "bookkeeping",
+            "kakutey",
+            "productivity",
+            "tax-return",
+            "確定申告",
+            "青色申告"
+          ],
+          "install_commands": [
+            "/plugin marketplace add usa-tech-lab/kakutey-skills",
+            "/plugin install kakutey-skills@kakutey-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
