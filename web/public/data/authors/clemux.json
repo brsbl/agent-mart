@@ -1,0 +1,213 @@
+{
+  "author": {
+    "id": "clemux",
+    "display_name": "Clément Schreiner",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1519153?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "clemux-claude-code-plugins",
+      "version": null,
+      "description": "Safety and observability plugins for Claude Code",
+      "repo_full_name": "clemux/claude-code-plugins",
+      "repo_url": "https://github.com/clemux/claude-code-plugins",
+      "repo_description": "Collection of claude code plugins for my personal use",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-16T09:41:16Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"clemux-claude-code-plugins\",\n  \"owner\": {\n    \"name\": \"Clément Schreiner\"\n  },\n  \"metadata\": {\n    \"description\": \"Safety and observability plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"safer-git\",\n      \"source\": \"./safer-git\",\n      \"description\": \"Blocks dangerous git commands (force-push, amend, reset --hard, etc.) for all agents\",\n      \"version\": \"1.1.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"git\",\n        \"safety\",\n        \"hooks\"\n      ],\n      \"category\": \"safety\",\n      \"tags\": [\n        \"PreToolUse\",\n        \"guard\"\n      ]\n    },\n    {\n      \"name\": \"subagent-metrics\",\n      \"source\": \"./subagent-metrics\",\n      \"description\": \"Logs token usage for every subagent (Task tool) call to ~/.claude/subagent-metrics.jsonl\",\n      \"version\": \"0.1.1\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"metrics\",\n        \"tokens\",\n        \"observability\"\n      ],\n      \"category\": \"observability\",\n      \"tags\": [\n        \"PostToolUse\",\n        \"logging\"\n      ]\n    },\n    {\n      \"name\": \"test-runner\",\n      \"description\": \"Run tests with coverage and baseline tracking (pytest, with JS/TS support planned)\",\n      \"version\": \"0.1.1\",\n      \"source\": \"./test-runner\",\n      \"category\": \"testing\",\n      \"keywords\": [\n        \"testing\",\n        \"pytest\"\n      ],\n      \"tags\": [\n        \"skill\"\n      ],\n      \"license\": \"MIT\"\n    },\n    {\n      \"name\": \"commit\",\n      \"source\": \"./commit\",\n      \"description\": \"Smart conventional commits with automatic change analysis and splitting\",\n      \"version\": \"0.1.3\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"git\",\n        \"commit\",\n        \"conventional-commits\"\n      ],\n      \"category\": \"workflow\",\n      \"tags\": [\n        \"skill\",\n        \"subagent\"\n      ]\n    },\n    {\n      \"name\": \"plan-guard\",\n      \"description\": \"Asks for confirmation when entering plan mode with a non-Opus model\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./plan-guard\",\n      \"category\": \"safety\",\n      \"license\": \"MIT\"\n    },\n    {\n      \"name\": \"worktree\",\n      \"source\": \"./worktree\",\n      \"description\": \"Manage git worktrees using git gtr (create, copy files, navigate)\",\n      \"version\": \"0.1.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"git\",\n        \"worktree\",\n        \"gtr\"\n      ],\n      \"category\": \"workflow\",\n      \"tags\": [\n        \"skill\"\n      ]\n    },\n    {\n      \"name\": \"pytest-profiling\",\n      \"source\": \"./pytest-profiling\",\n      \"description\": \"Diagnose slow pytest suites, profile with pyinstrument, apply targeted fixes, and produce a performance report\",\n      \"version\": \"0.1.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"testing\",\n        \"pytest\",\n        \"profiling\",\n        \"performance\"\n      ],\n      \"category\": \"testing\",\n      \"tags\": [\n        \"skill\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins Marketplace\n\n## Disclaimer\n\nThese plugins are just me playing around with Claude Code's plugin system, and have been iteratively developed by prompting Claude Code to improve them each time the behavior didn't match what I had in mind.\n\nThere are probably much better-designed plugins that do the same things with more features; if you know of any, please open an issue and I will happily mention them in this README as better alternatives:\n\n- In particular, the **safer-git** plugin should probably be more generic and not be limited to git commands. Hopefully Anthropic will eventually improve the permission system, but in the meantime, I hope there are better plugins than that one.\n- The **test-runner** plugin also seems like something interesting that has probably been done better by others -- I'd love to know of such alternatives!\n\nA collection of community plugins for [Claude Code](https://claude.ai/code) that enhance safety, monitoring, and developer experience.\n\n## Installation\n\n### Add this marketplace\n\n```bash\n/plugin marketplace add clemux/claude-code-plugins\n```\n\n### Install plugins\n\n```bash\n# Install the safer-git plugin\n/plugin install safer-git@clemux-claude-code-plugins\n\n# Install the subagent-metrics plugin\n/plugin install subagent-metrics@clemux-claude-code-plugins\n\n# Install the commit plugin\n/plugin install commit@clemux-claude-code-plugins\n\n# Install the test-runner plugin\n/plugin install test-runner@clemux-claude-code-plugins\n\n# Install the worktree plugin\n/plugin install worktree@clemux-claude-code-plugins\n```\n\n## Available Plugins\n\n### safer-git\n\nBlocks dangerous git commands for all agents (main + subagents), preventing accidental data loss and history rewrites. It's called \"safer\" rather than \"safe\" because it reduces risk but cannot guarantee complete protection — an LLM agent can find indirect execution paths (scripts, eval, non-Bash runtimes) that bypass command-level hooks. See [known bypass vectors and limitations](safer-git/README.md#agent-bypass-vectors-and-mitigations).\n\n**Protects against:**\n- Force pushes (`git push --force`, `--force-with-lease`)\n- History rewrites (`git commit --amend`, `git rebase -i`, `git filter-branch`)\n- Uncommitted work loss (`git reset --hard`, `git checkout .`, `git clean -f`)\n- Hook bypasses (`git commit --no-verify`)\n- Stash deletion (`git stash drop`, `git stash clear`)\n- Alias-based bypasses (`git config alias.*`)\n\n**How it works:** Registers a PreToolUse hook on the Bash tool that intercepts commands, splits compound statements, and regex-matches each segment against a blocklist. Denies execution with descriptive error messages when dangerous patterns are detected.\n\n**Dependencies:** `jq`, `grep -P` (PCRE support)\n\n[Read more →](safer-git/README.md)\n\n### subagent-metrics\n\nLogs token usage for every subagent (Task tool) call, enabling cost attribution and skill optimization.\n\n**Features:**\n- Automatic logging to `~/.claude/subagent-metrics.jsonl`\n- Per-skill cost attribution (when skills tag their Task descriptions)\n- Session-level profiling with loaded skill sets\n- Model usage breakdown (Haiku vs Sonnet)\n- Atomic append with `flock` for concurrency safety\n\n**Log fields:** timestamp, session ID, model, subagent type, triggering skill, description, total tokens, duration, loaded skills\n\n**How it works:** Registers a PostToolUse hook on the Task tool that extracts token usage from result text, parses skill tags from descriptions, and appends structured JSON logs.\n\n**Dependencies:** `jq`, `flock`\n\n[Read more →](subagent-metrics/README.md)\n\n### commit\n\nSmart conventional commits with automatic change analysis and splitting via the `/commit` command.\n\n**Features:**\n- Analyzes staged and unstaged changes, groups them into logical commits\n- Intent-based splitting heuristics with conventional commit messages\n- Interactive confirmation before executing (or `auto` mode to skip)\n- Pre-commit hook failure handling (fixes issues, creates new commits)\n- Optional push after committing\n\n**Usage:** `/commit`, `/commit push`, `/commit auto`\n\n**How it works:** Uses a heavy-skill/thin-subagent architecture — Opus does all analysis, splitting, and planning in the skill, while a dedicated Haiku subagent executes git commands. The custom `commit` subagent type enables proper attribution in subagent-metrics logs.\n\n[Read more →](commit/README.md)\n\n### test-runner\n\nRuns pytest with coverage and baseline tracking via the `/tests` command.\n\n**Features:**\n- Coverage table with deltas from previous runs\n- Coverage trend (last 5 runs)\n- Test summary with new failures, fixed tests, and pre-existing failures\n- Structured markdown report\n- Baseline history stored in `.tests-baseline.json`\n\n**Usage:** `/tests`, `/tests tests/test_auth.py`, `/tests -k \"test_login\"`\n\n**How it works:** The `/tests` skill dispatches a dedicated `test-runner` Haiku subagent that runs pytest via `mise exec` with coverage and JSON reporting plugins, then compares results against baseline history.\n\n**Dependencies:** `pytest`, `pytest-cov`, `pytest-json-report`, `mise`\n\n[Read more →](test-runner/README.md)\n\n### worktree\n\nManages git worktrees using [git gtr](https://github.com/coderabbitai/git-worktree-runner) via the `/worktree` command.\n\n**Features:**\n- Create worktrees from any branch, tag, or the current branch\n- Copy files (e.g. `.env*`) to worktrees with dry-run preview\n- List, remove, and navigate worktrees\n- Navigation guidance (terminal, editor, AI session)\n\n**Usage:** `/worktree my-feature`, `/worktree copy my-feature -- \".env*\"`, `/worktree list`, `/worktree rm my-feature`\n\n**How it works:** A skill that parses free-form input into intents (create, copy, list, remove, navigate) and runs the corresponding `git gtr` subcommands. Includes safety checks like dry-run previews before copies and confirmation before removal.\n\n**Dependencies:** [git gtr](https://github.com/coderabbitai/git-worktree-runner)\n\n[Read more →](worktree/README.md)\n\n## Marketplace CLI\n\nThe `scripts/marketplace.py` script provides a CLI for managing the plugin catalog. It runs as a standalone [uv script](https://docs.astral.sh/uv/guides/scripts/) (no install needed).\n\n```bash\n# List all plugins\n./scripts/marketplace.py list\n\n# Add a new plugin to the catalog\n./scripts/marketplace.py add <plugin-name> --category <category>\n\n# Update a plugin's version in the catalog\n./scripts/marketplace.py update-version <plugin-name>\n\n# Sync all marketplace entries with their plugin.json files\n./scripts/marketplace.py sync\n./scripts/marketplace.py sync --dry-run\n```\n\n**Commands:**\n- **list** — Display all plugins in a table (name, version, category, description)\n- **add** — Register a new plugin directory in the marketplace catalog\n- **update-version** — Bump a plugin's version (reads from `plugin.json` by default)\n- **sync** — Reconcile marketplace entries with each plugin's `plugin.json` (version, description, license)\n\n## Development\n\nEach plugin is an independent git repository in its own subdirectory. See [CLAUDE.md](CLAUDE.md) for development guidelines and code quality standards.\n\n## License\n\nEach plugin has its own license. See individual plugin directories for details.\n",
+        "safer-git/README.md": "# safer-git\n\nA Claude Code plugin that blocks dangerous git commands for all agents (main + subagents).\n\n## Installation\n\n### From the marketplace\n\n```\n/plugin marketplace add clemux/claude-code-plugins\n/plugin install safer-git@clemux-claude-code-plugins\n```\n\n### From a local clone\n\n```bash\nclaude --plugin-dir ~/dev/claude-code-plugins/safer-git\n```\n\n## What it blocks\n\n### Remote history rewrite\n| Command pattern | Description |\n|----------------|-------------|\n| `git push --force` / `-f` | Force push (rewrites remote history) |\n| `git push --force-with-lease` | Still rewrites remote history; blocks the common agent bypass |\n| `git push --delete` | Delete remote branch |\n| `git push origin :branch` | Delete remote branch (colon-refspec syntax) |\n\n### Commit / hook bypass\n| Command pattern | Description |\n|----------------|-------------|\n| `git commit --amend` | Amend commit (rewrites history) |\n| `git commit --no-verify` / `-n` | Skip pre-commit hooks |\n\n### Discard uncommitted work\n| Command pattern | Description |\n|----------------|-------------|\n| `git reset --hard` | Hard reset (discards uncommitted changes) |\n| `git checkout .` | Discard all working tree changes |\n| `git restore .` | Discard all working tree changes |\n| `git clean -f` | Delete untracked files |\n\n### Branch destruction\n| Command pattern | Description |\n|----------------|-------------|\n| `git branch -D` | Force-delete branch |\n\n### History rewrite tools\n| Command pattern | Description |\n|----------------|-------------|\n| `git rebase -i` / `--interactive` | Interactive rebase |\n| `git filter-branch` | Full history rewrite |\n\n### Irrecoverable data loss\n| Command pattern | Description |\n|----------------|-------------|\n| `git stash drop` | Permanently deletes a stash entry |\n| `git stash clear` | Permanently deletes all stashes |\n| `git reflog expire` | Removes the reflog (recovery safety net) |\n| `git gc --prune` | Makes unreachable objects unrecoverable |\n\n### Bypass prevention\n| Command pattern | Description |\n|----------------|-------------|\n| `git config alias.*` | Blocks alias creation (prevents `alias.yolo = push --force` bypass) |\n\n## How it works\n\nThe plugin registers a PreToolUse hook on the Bash tool. When any agent (including subagents like Haiku) attempts to run a Bash command:\n\n1. The hook extracts the command string from the tool input\n2. Splits compound commands (`&&`, `||`, `;`, `|`) into segments\n3. Checks each segment against the blocked pattern list using regex\n4. If a dangerous pattern is found: denies execution with a descriptive message\n5. If safe: allows execution silently\n\n## Dependencies\n\n- `jq` — for parsing hook input JSON\n- `grep -P` (PCRE) — for regex matching\n\n## Agent bypass vectors and mitigations\n\n| Vector | Mitigated? | Notes |\n|--------|-----------|-------|\n| Suggest alternative flag (`--force-with-lease`) | Yes | Blocked explicitly |\n| Create git alias (`git config alias.yolo \"push --force\"`) | Yes | `git config alias.*` is blocked |\n| Use colon-refspec (`git push origin :branch`) | Yes | Blocked explicitly |\n| Write dangerous command to a script file, then `bash script.sh` | No | Hook only sees `bash script.sh`, not file contents |\n| Use `eval \"git push --force\"` | No | Hook sees the eval string but regex may not parse it reliably |\n| Python/node subprocess (`subprocess.run([\"git\", \"push\", \"--force\"])`) | No | Entirely outside Bash tool |\n| Subshells: `$(git push --force)` inside a larger command | Partial | Depends on command splitting |\n\n### Remaining known limitations\n\n- **Pre-existing aliases**: If aliases were set up before the plugin was loaded, `git <alias>` will bypass detection since the alias is resolved by git, not the shell command string.\n- **Script execution**: If a dangerous command is written to a file via the Write tool and then executed (e.g., `bash script.sh`), the hook cannot inspect the file contents.\n- **Eval / indirect execution**: `eval`, `xargs`, or piping to `bash`/`sh` can obscure the actual command.\n- **Non-Bash tools**: Commands run via Python, Node, or other runtimes bypass the Bash tool hook entirely.\n",
+        "subagent-metrics/README.md": "# subagent-metrics\n\nA Claude Code plugin that logs token usage for every subagent (Task tool) call, enabling cost attribution and skill optimization.\n\n## Installation\n\n### From the marketplace\n\n```\n/plugin marketplace add clemux/claude-code-plugins\n/plugin install subagent-metrics@clemux-claude-code-plugins\n```\n\n### From a local clone\n\n```bash\nclaude --plugin-dir ~/dev/claude-code-plugins/subagent-metrics\n```\n\n## Log format\n\nEach subagent call appends a JSON line to `~/.claude/subagent-metrics.jsonl`:\n\n```json\n{\n  \"ts\": \"2026-02-07T12:00:00Z\",\n  \"session\": \"abc123\",\n  \"cwd\": \"/home/user/my-project\",\n  \"model\": \"haiku\",\n  \"subagent_type\": \"general-purpose\",\n  \"skill\": \"commit\",\n  \"description\": \"execute git add and commit\",\n  \"total_tokens\": 1523,\n  \"duration_ms\": 3200\n}\n```\n\n## Skill tagging convention\n\nSkills that dispatch subagents should tag the Task `description` with the skill name in brackets:\n\n```\ndescription: \"[commit] execute git add and commit\"\n```\n\nThe hook parses the `[...]` prefix as the triggering skill. Untagged calls get `skill: null`.\n\n## Supported analyses\n\n- **Cost attribution**: tokens grouped by triggering skill or project\n- **Session profiling**: per-session and per-project token usage\n- **Skill optimization**: per-call breakdown within a skill\n\n### Example queries\n\n```bash\n# Total tokens by skill\njq -s 'group_by(.skill) | map({skill: .[0].skill, total: map(.total_tokens // 0) | add})' ~/.claude/subagent-metrics.jsonl\n\n# Average tokens per model\njq -s 'group_by(.model) | map({model: .[0].model, avg: (map(.total_tokens // 0) | add / length)})' ~/.claude/subagent-metrics.jsonl\n```\n\n## How it works\n\nThe plugin registers a PostToolUse hook on the Task tool. After any subagent completes:\n\n1. Extracts `model`, `subagent_type`, `description` from tool input\n2. Extracts `cwd` (project path) from the hook event\n3. Parses token usage from tool response text (`total_tokens: N`, `duration_ms: N`)\n4. Extracts triggering skill from description tag (`[skill-name]` prefix)\n5. Atomically appends a JSON log line using `flock`\n\n## Dependencies\n\n- `jq` — for JSON parsing and construction\n- `flock` — for atomic file append (standard on Linux)\n\n## Concurrency safety\n\nUses `flock` for exclusive file locking when appending to the log file, preventing corruption from concurrent subagent completions.\n",
+        "test-runner/README.md": "# test-runner\n\nA Claude Code plugin that runs pytest with coverage and baseline tracking via the `/tests` command.\n\n## Installation\n\n### From the marketplace\n\n```\n/plugin marketplace add clemux/claude-code-plugins\n/plugin install test-runner@clemux-claude-code-plugins\n```\n\n### From a local clone\n\n```bash\nclaude --plugin-dir ~/dev/claude-code-plugins/test-runner\n```\n\n## Usage\n\n```\n/tests                    # Run full test suite\n/tests tests/test_auth.py # Run specific file\n/tests -k \"test_login\"   # Run matching tests\n```\n\nAny arguments after `/tests` are passed directly to pytest.\n\n## Example Output\n\n```\n❯ /tests\n\n● test-runner:test-runner(Run tests with coverage)\n  ⎿  Done (2 tool uses · 12.0k tokens · 47s)\n\n● Test Report\n\n  Coverage\n  ┌───────────────┬─────────┬───────┐\n  │    Metric     │ Current │ Delta │\n  ├───────────────┼─────────┼───────┤\n  │ Coverage      │ 94.0%   │ 0     │\n  ├───────────────┼─────────┼───────┤\n  │ Covered lines │ 3749    │ 0     │\n  ├───────────────┼─────────┼───────┤\n  │ Missing lines │ 240     │ 0     │\n  ├───────────────┼─────────┼───────┤\n  │ Statements    │ 3989    │ 0     │\n  └───────────────┴─────────┴───────┘\n  Coverage Trend (last 5 runs)\n\n  94.0% → 94.0% → 94.0% → 94.0% → 94.0%\n\n  Test Summary\n  ┌─────────┬───────┐\n  │ Status  │ Count │\n  ├─────────┼───────┤\n  │ Passed  │ 213   │\n  ├─────────┼───────┤\n  │ Failed  │ 1     │\n  ├─────────┼───────┤\n  │ Error   │ 0     │\n  ├─────────┼───────┤\n  │ Skipped │ 2     │\n  └─────────┴───────┘\n  New Failures\n\n  tests/unit/entrypoints/test_middleware.py::TestValidateRequestId::test_accepts_max_length\n\n  self = <tests.unit.entrypoints.test_middleware.TestValidateRequestId object at 0x708c99505450>\n\n      def test_accepts_max_length(self):\n          \"\"\"128-char string should be returned unchanged.\"\"\"\n          valid_id = \"a\" * 128\n  >       assert False\n  E       assert False\n\n  tests/unit/entrypoints/test_middleware.py:23: AssertionError\n\n  There's 1 new failure — looks like test_accepts_max_length has a placeholder assert False instead of\n  the actual assertion. Want me to look at and fix that test?\n```\n\n## What it does\n\n1. Runs `pytest --cov --cov-report=json --json-report` with any extra arguments\n2. Compares results against a local baseline history (`.tests-baseline.json`)\n3. Produces a structured markdown report with:\n   - Coverage table with deltas from the previous run\n   - Coverage trend (last 5 runs)\n   - Test summary (passed/failed/error/skipped)\n   - New failures with tracebacks\n   - Fixed tests\n   - Pre-existing failures\n\n## How it works\n\nThe `/tests` skill dispatches a dedicated `test-runner` haiku subagent that:\n\n1. Runs pytest via `mise exec` with coverage and JSON reporting plugins\n2. Runs `compare_results.py` to analyze results against history\n3. Relays the report back unmodified\n\nThe custom `test-runner` subagent type enables proper attribution in `subagent-metrics` logs (`\"subagent_type\": \"test-runner\"` instead of `\"general-purpose\"`).\n\n## Dependencies\n\n- `pytest` — test runner\n- `pytest-cov` — coverage reporting (`coverage.json`)\n- `pytest-json-report` — structured test results (`.pytest-report.json`)\n- `mise` — task runner for tool version management\n\n## Files\n\n| File                         | Purpose                                                 |\n|------------------------------|---------------------------------------------------------|\n| `agents/test-runner.md`      | Custom haiku subagent with Bash + Read tools            |\n| `skills/tests/SKILL.md`      | `/tests` slash command that dispatches the subagent     |\n| `scripts/compare_results.py` | Reads JSON outputs, compares to baseline, prints report |\n\n## Baseline history\n\nResults are stored in `.tests-baseline.json` (up to 10 runs). Add this file to your `.gitignore`.\n",
+        "commit/README.md": "# commit\n\nA Claude Code plugin for smart conventional commits with automatic change analysis and splitting via the `/commit` command.\n\n## Installation\n\n### From the marketplace\n\n```\n/plugin marketplace add clemux/claude-code-plugins\n/plugin install commit@clemux-claude-code-plugins\n```\n\n### From a local clone\n\n```bash\nclaude --plugin-dir ~/dev/claude-code-plugins/commit\n```\n\n## Usage\n\n```\n/commit          # Analyze changes, propose commits, execute after confirmation\n/commit push     # Same, then push to remote\n/commit auto     # Skip confirmation, auto-execute commits\n```\n\n## What it does\n\n1. Analyzes staged and unstaged changes (git status, diff, log)\n2. Groups changes into logical commits using intent-based splitting heuristics\n3. Proposes a commit plan with conventional commit messages\n4. Presents the plan for user confirmation (unless `auto` is used)\n5. Dispatches haiku subagents to execute git add + commit\n6. Handles pre-commit hook failures (fixes issues, creates new commits)\n7. Pushes if requested\n\n## How it works\n\nUnlike test-runner (thin skill, heavy subagent), commit inverts the pattern:\n\n- The `/commit` **skill** is heavy: Opus does all analysis, splitting heuristics, commit planning, and hook failure handling\n- The `commit` **subagent** is thin: Haiku just executes git commands and reports structured results (OK/HOOK_FAILED/ERROR)\n\nThe custom `commit` subagent type enables proper attribution in `subagent-metrics` logs.\n\n## Safety rules\n\n- Never force-push, amend, or skip hooks\n- Never push unless explicitly requested\n- Always uses specific file paths (never `git add .`)\n- Always uses conventional commit format\n- Always confirms with user before executing (unless `auto`)\n\n## Files\n\n| File | Purpose |\n|------|---------|\n| `agents/commit.md` | Custom haiku subagent (Bash only) for git execution |\n| `skills/commit/SKILL.md` | `/commit` slash command with multi-phase workflow |\n",
+        "plan-guard/README.md": "# plan-guard\n\n> **Status: Abandoned experiment.** This plugin was an attempt to warn users when entering plan mode with a non-Opus model. Due to Claude Code's plan mode being largely handled through internal UI flows (not hookable tool calls), the interception is unreliable — most plan mode entries and finalizations bypass the plugin entirely.\n>\n> A simpler alternative: configure the [status line](https://docs.anthropic.com/en/docs/claude-code) to display the current model. This makes it easy to glance at the model before planning, without needing a hook. Example status line config in `~/.claude/settings.json`:\n> ```json\n> \"statusLine\": {\n>   \"type\": \"command\",\n>   \"command\": \"echo $input | jq -r '.model.display_name // .model.id'\"\n> }\n> ```\n\nAsks for confirmation when entering plan mode with a non-Opus model. Planning works best with Opus — this plugin helps prevent accidentally generating plans with less capable models.\n\n## How it works\n\nThe plugin uses a combination of hooks to detect and warn about non-Opus plan mode usage:\n\n| Hook                  | Event                           | What it does                                                  |\n|-----------------------|---------------------------------|---------------------------------------------------------------|\n| `save-model.sh`       | `SessionStart`                  | Captures the current model and saves it to a temp file        |\n| `check-plan-model.sh` | `PreToolUse` on `EnterPlanMode` | Asks for confirmation if the model isn't Opus                 |\n| `check-plan-model.sh` | `PreToolUse` on `ExitPlanMode`  | Warns that the plan was generated by a non-Opus model         |\n| `tag-plan-file.sh`    | `PostToolUse` on `Write`        | Prepends a warning header to plan files in `~/.claude/plans/` |\n| `cleanup.sh`          | `SessionEnd`                    | Removes the temp file                                         |\n\n## Limitations\n\n**The plugin provides best-effort protection, not guaranteed interception.** Claude Code's plan mode can be entered and finalized through multiple paths, not all of which are hookable:\n\n- **Agent calls `EnterPlanMode`** — hooks fire reliably. This is the main case (agent autonomously decides to plan).\n- **Agent explicitly calls `Write` + `ExitPlanMode`** — both hooks fire. Plan files get the warning header, and the agent is told to warn the user.\n- **Built-in plan approval UI (\"Ready to code?\")** — hooks are **bypassed**. When Claude Code uses its internal plan finalization flow, neither `ExitPlanMode` nor `Write` go through hookable tool calls.\n- **`/plan` command** — enters plan mode immediately without triggering hooks. The subsequent prompt submission is not intercepted.\n- **`shift+tab` toggle** — a UI-level toggle that doesn't fire any hooks.\n\nIn practice, the plugin is most effective when the agent initiates plan mode on its own (which is the case most likely to catch you off guard). User-initiated plan mode (`/plan`, `shift+tab`) is harder to intercept because it bypasses the tool call layer.\n\n## Installation\n\n```bash\nclaude --plugin-dir ~/dev/cc-plugins/plan-guard\n```\n\n## Dependencies\n\n- `jq` — JSON parsing in hook scripts\n- `grep -P` — PCRE support for model name extraction\n",
+        "worktree/README.md": "# worktree\n\nSkill for managing git worktrees using [git gtr](https://github.com/coderabbitai/git-worktree-runner). Creates worktrees, copies files, and guides the user to navigate or start AI sessions in them.\n\n## Prerequisites\n\n- [git gtr](https://github.com/coderabbitai/git-worktree-runner) installed and available in PATH\n\n## Installation\n\n```bash\nclaude --plugin-dir path/to/worktree\n```\n\n## Usage\n\nInvoke via `/worktree` with a free-form description of what you want to do:\n\n```\n/worktree my-feature                        # Create a worktree\n/worktree new my-feature --from-current     # Create from current branch\n/worktree copy my-feature -- \".env*\"        # Copy files to a worktree\n/worktree list                              # List all worktrees\n/worktree rm my-feature                     # Remove a worktree\n/worktree go my-feature                     # Get navigation instructions\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "safer-git",
+          "source": "./safer-git",
+          "description": "Blocks dangerous git commands (force-push, amend, reset --hard, etc.) for all agents",
+          "version": "1.1.0",
+          "license": "MIT",
+          "keywords": [
+            "git",
+            "safety",
+            "hooks"
+          ],
+          "category": "safety",
+          "tags": [
+            "PreToolUse",
+            "guard"
+          ],
+          "categories": [
+            "git",
+            "guard",
+            "hooks",
+            "pretooluse",
+            "safety"
+          ],
+          "install_commands": [
+            "/plugin marketplace add clemux/claude-code-plugins",
+            "/plugin install safer-git@clemux-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "subagent-metrics",
+          "source": "./subagent-metrics",
+          "description": "Logs token usage for every subagent (Task tool) call to ~/.claude/subagent-metrics.jsonl",
+          "version": "0.1.1",
+          "license": "MIT",
+          "keywords": [
+            "metrics",
+            "tokens",
+            "observability"
+          ],
+          "category": "observability",
+          "tags": [
+            "PostToolUse",
+            "logging"
+          ],
+          "categories": [
+            "logging",
+            "metrics",
+            "observability",
+            "posttooluse",
+            "tokens"
+          ],
+          "install_commands": [
+            "/plugin marketplace add clemux/claude-code-plugins",
+            "/plugin install subagent-metrics@clemux-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "test-runner",
+          "description": "Run tests with coverage and baseline tracking (pytest, with JS/TS support planned)",
+          "version": "0.1.1",
+          "source": "./test-runner",
+          "category": "testing",
+          "keywords": [
+            "testing",
+            "pytest"
+          ],
+          "tags": [
+            "skill"
+          ],
+          "license": "MIT",
+          "categories": [
+            "pytest",
+            "skill",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add clemux/claude-code-plugins",
+            "/plugin install test-runner@clemux-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "commit",
+          "source": "./commit",
+          "description": "Smart conventional commits with automatic change analysis and splitting",
+          "version": "0.1.3",
+          "license": "MIT",
+          "keywords": [
+            "git",
+            "commit",
+            "conventional-commits"
+          ],
+          "category": "workflow",
+          "tags": [
+            "skill",
+            "subagent"
+          ],
+          "categories": [
+            "commit",
+            "conventional-commits",
+            "git",
+            "skill",
+            "subagent",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add clemux/claude-code-plugins",
+            "/plugin install commit@clemux-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "plan-guard",
+          "description": "Asks for confirmation when entering plan mode with a non-Opus model",
+          "version": "0.1.0",
+          "source": "./plan-guard",
+          "category": "safety",
+          "license": "MIT",
+          "categories": [
+            "safety"
+          ],
+          "install_commands": [
+            "/plugin marketplace add clemux/claude-code-plugins",
+            "/plugin install plan-guard@clemux-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "worktree",
+          "source": "./worktree",
+          "description": "Manage git worktrees using git gtr (create, copy files, navigate)",
+          "version": "0.1.0",
+          "license": "MIT",
+          "keywords": [
+            "git",
+            "worktree",
+            "gtr"
+          ],
+          "category": "workflow",
+          "tags": [
+            "skill"
+          ],
+          "categories": [
+            "git",
+            "gtr",
+            "skill",
+            "workflow",
+            "worktree"
+          ],
+          "install_commands": [
+            "/plugin marketplace add clemux/claude-code-plugins",
+            "/plugin install worktree@clemux-claude-code-plugins"
+          ]
+        },
+        {
+          "name": "pytest-profiling",
+          "source": "./pytest-profiling",
+          "description": "Diagnose slow pytest suites, profile with pyinstrument, apply targeted fixes, and produce a performance report",
+          "version": "0.1.0",
+          "license": "MIT",
+          "keywords": [
+            "testing",
+            "pytest",
+            "profiling",
+            "performance"
+          ],
+          "category": "testing",
+          "tags": [
+            "skill"
+          ],
+          "categories": [
+            "performance",
+            "profiling",
+            "pytest",
+            "skill",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add clemux/claude-code-plugins",
+            "/plugin install pytest-profiling@clemux-claude-code-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

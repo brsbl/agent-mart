@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "Connoropolous",
+    "display_name": "Connor Turland",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1409121?u=684a7852bedda0aa0cbbc94f5d1957013138f01f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-webhooks",
+      "version": null,
+      "description": null,
+      "repo_full_name": "Connoropolous/claude-notifications-for-agents",
+      "repo_url": "https://github.com/Connoropolous/claude-notifications-for-agents",
+      "repo_description": "Agent Subscriptions to Notifications for interactive Claude Code sessions",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-16T04:32:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-webhooks\",\n  \"owner\": {\n    \"name\": \"Connor Turland\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-webhooks\",\n      \"source\": \"./plugin\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Notifications for Agents\n\nReceive real-time webhooks from GitHub, Linear, Stripe, and other services directly in your Claude Code sessions.\n\n![ClaudeWebhooks menu bar app](screenshot.png)\n\n## How It Works\n\n1. A macOS menu bar app runs a local HTTP server\n2. A Cloudflare Tunnel exposes it to the internet\n3. External services send webhooks to your tunnel URL\n4. Signatures are verified (HMAC-SHA256) to ensure only authentic events are accepted\n5. Events are delivered into your Claude Code session as prompts — as if a user typed them\n\n## Quick Start\n\n### 1. Build the app\n\n```bash\ncd ClaudeWebhooks\nswift build -c release\nopen .build/*/release/ClaudeWebhooks\n```\n\n### 2. Install the plugin\n\n```bash\nclaude plugin marketplace add https://github.com/Connoropolous/claude-notifications-for-agents\nclaude plugin add claude-webhooks --scope user\n```\n\n### 3. Set up a tunnel\n\nIn Claude Code, run `/setup-tunnel` and follow the prompts. You'll need:\n- `cloudflared` installed (`brew install cloudflared`)\n- A Cloudflare account with a domain\n\n### 4. Subscribe to events\n\nIn Claude Code, run `/subscribe` and tell it what you want:\n\n```\n/subscribe github pushes on myorg/myrepo\n/subscribe linear issue updates\n/subscribe stripe payment events\n```\n\nThe skill handles everything: generates secrets, creates the subscription, registers the webhook on the service.\n\n## What Gets Delivered\n\nWhen a webhook fires, Claude sees something like:\n\n```xml\n<webhook-event service=\"github\" event-id=\"ABC123\">\nA push event was received on myorg/myrepo. Review the changes.\n<payload>\n{\"branch\":\"refs/heads/main\",\"pusher\":\"connor\",\"commits\":[{\"message\":\"fix bug\"}]}\n</payload>\n</webhook-event>\n```\n\nPayloads are summarized to save context window space. Claude can fetch the full payload with the `get_event_payload` tool.\n\n## Components\n\n| | |\n|---|---|\n| **ClaudeWebhooks/** | macOS menu bar app (Swift) |\n| **plugin/** | Claude Code plugin with `/subscribe` and `/setup-tunnel` skills |\n| **cli.js** | Socket patch for the `@anthropic-ai/claude-agent-sdk` npm package's `cli.js` ([view diff](https://github.com/Connoropolous/claude-notifications-for-agents/compare/03d21f1..b8e03d0)) |\n\n## Security\n\n- All incoming webhooks are verified via HMAC-SHA256 signature before being accepted\n- The `cli.js` file is a patched copy of `cli.js` from Claude Code v2.1.42 (bundled via `@anthropic-ai/claude-agent-sdk`). The [only change](https://github.com/Connoropolous/claude-notifications-for-agents/compare/03d21f1..b8e03d0) adds Unix socket support so external processes can deliver messages into a running session. No other modifications were made.\n\n## Requirements\n\n- macOS 14+\n- `cloudflared` for tunnel\n- `jq` for payload filtering\n- A domain on Cloudflare DNS\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-webhooks",
+          "source": "./plugin",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Connoropolous/claude-notifications-for-agents",
+            "/plugin install claude-webhooks@claude-webhooks"
+          ]
+        }
+      ]
+    }
+  ]
+}

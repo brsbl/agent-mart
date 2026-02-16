@@ -15,7 +15,7 @@
       "signals": {
         "stars": 7,
         "forks": 2,
-        "pushed_at": "2026-02-08T00:10:22Z"
+        "pushed_at": "2026-02-16T19:42:38Z"
       },
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"jwilger-claude-plugins\",\n  \"owner\": {\n    \"name\": \"John Wilger\",\n    \"email\": \"john@johnwilger.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for professional SDLC workflows and Marvin personality\",\n    \"version\": \"5.10.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"sdlc\",\n      \"source\": \"./sdlc\",\n      \"description\": \"Complete SDLC workflow with TDD, Event Modeling, architecture decisions, and GitHub integration (includes Marvin personality option)\",\n      \"version\": \"19.2.0\",\n      \"keywords\": [\n        \"sdlc\",\n        \"tdd\",\n        \"event-modeling\",\n        \"adr\",\n        \"github\",\n        \"workflow\",\n        \"domain-modeling\",\n        \"mutation-testing\",\n        \"code-review\",\n        \"debugging\",\n        \"worktrees\",\n        \"compile-time-enforcement\",\n        \"hooks\",\n        \"todo-enforcement\",\n        \"marvin\",\n        \"output-style\"\n      ]\n    },\n    {\n      \"name\": \"bootstrap\",\n      \"source\": \"./bootstrap\",\n      \"description\": \"Intelligent Nix devshell bootstrapper for any language or framework\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\n        \"bootstrap\",\n        \"scaffolding\",\n        \"nix\",\n        \"flake\",\n        \"devshell\",\n        \"development-environment\",\n        \"language-agnostic\"\n      ]\n    }\n  ]\n}\n",
@@ -95,6 +95,55 @@
           "install_commands": [
             "/plugin marketplace add jwilger/claude-code-plugins",
             "/plugin install bootstrap@jwilger-claude-plugins"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "jwilger-agent-skills",
+      "version": null,
+      "description": "Portable AI agent skills and Claude Code enforcement plugin for professional SDLC workflows",
+      "repo_full_name": "jwilger/agent-skills",
+      "repo_url": "https://github.com/jwilger/agent-skills",
+      "repo_description": "AI Agent Skills Repository",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-16T20:23:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jwilger-agent-skills\",\n  \"owner\": {\n    \"name\": \"John Wilger\",\n    \"email\": \"john@johnwilger.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Portable AI agent skills and Claude Code enforcement plugin for professional SDLC workflows\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"sdlc\",\n      \"source\": \"./plugins/claude-code\",\n      \"description\": \"Enforcement plugin for Agent Skills SDLC workflow. Adds mechanical guardrails (hooks, agents, skills) on top of portable skills.\",\n      \"version\": \"1.2.0\",\n      \"keywords\": [\n        \"sdlc\",\n        \"tdd\",\n        \"event-modeling\",\n        \"adr\",\n        \"domain-modeling\",\n        \"code-review\",\n        \"hooks\",\n        \"enforcement\"\n      ]\n    }\n  ]\n}",
+        "README.md": "# Agent Skills for Software Development\n\nPortable [Agent Skills](https://agentskills.io) that encode professional\nsoftware development practices -- TDD, domain modeling, event modeling,\ncode review, architecture decisions, and more. These skills teach any\nAI coding agent a disciplined SDLC process, regardless of which harness\nor editor you use.\n\n## Quick Start\n\nInstall all skills:\n\n```bash\nnpx skills add jwilger/agent-skills --all\n```\n\nOr install individual skills:\n\n```bash\nnpx skills add jwilger/agent-skills --skill tdd-cycle\nnpx skills add jwilger/agent-skills --skill domain-modeling\nnpx skills add jwilger/agent-skills --skill code-review\n```\n\n## Skill Inventory\n\n### Tier 0 -- Entry Point\n\n| Skill | Description | Phase |\n|-------|-------------|-------|\n| `bootstrap` | Zero-config onboarding, harness detection, skill recommendations | -- |\n\n### Tier 1 -- Core Process (universal, standalone)\n\n| Skill | Description | Phase |\n|-------|-------------|-------|\n| `tdd-cycle` | Red-green-domain TDD cycle with phase boundaries and domain review checkpoints | build |\n| `domain-modeling` | Parse-don't-validate, primitive obsession detection, type-driven design | decide |\n| `code-review` | Three-stage review protocol: spec compliance, code quality, domain integrity | ship |\n| `architecture-decisions` | ADR format, governance, and lightweight decision records | decide |\n| `event-modeling` | Discovery, swimlanes, GWT scenarios, model validation | understand |\n\n### Tier 2 -- Orchestration (need some harness support)\n\n| Skill | Description | Phase |\n|-------|-------------|-------|\n| `orchestration` | Multi-agent delegation patterns, workflow gates, conflict resolution | build |\n| `task-management` | Work breakdown, state tracking, dependency management | build |\n\n### Tier 3 -- Utility (universal, standalone)\n\n| Skill | Description | Phase |\n|-------|-------------|-------|\n| `debugging-protocol` | Systematic 4-phase investigation: root cause before fix | build |\n| `user-input-protocol` | Structured pause/resume pattern for agent-to-user questions | build |\n| `memory-protocol` | Recall-before-act knowledge accumulation and retrieval | build |\n\n### Advanced (optional)\n\n| Skill | Description | Phase |\n|-------|-------------|-------|\n| `mutation-testing` | Mutation testing as a test quality gate | ship |\n| `atomic-design` | UI component hierarchy (atoms, molecules, organisms) | build |\n\n## Architecture\n\n### Three Tiers\n\nThis system separates concerns into three layers:\n\n**Skills** are portable markdown documents (SKILL.md) that teach an agent\n*what to do*. They conform to the [Agent Skills specification](https://agentskills.io/specification)\nand work on any compatible harness. Skills are advisory -- they instruct\nthe agent on correct behavior through clear principles and practices.\n\n**Harness Plugins** add *mechanical enforcement* on harnesses that support\nit. Hooks that prevent editing the wrong file during the wrong TDD phase,\ngates that force domain review between red and green, skills that\nwire up multi-step workflows. Plugins make the experience better on\nspecific harnesses but are never required.\n\n**The Enforcement Gap.** Skills cannot mechanically prevent an agent from\nviolating a practice. They can describe the rules clearly and include\nself-verification checklists, but an agent may still rationalize skipping\nsteps. This is an honest limitation. On harnesses with plugin support\n(Claude Code hooks, OpenCode event hooks), enforcement plugins close\nthis gap. On harnesses without enforcement, the agent follows practices\nby convention. If you observe a violation, point it out. Skills are the\nconstitution; plugins are the police. You benefit from both, but the\nconstitution works across jurisdictions while the police are local.\n\n### Skill Structure\n\nEvery skill follows a canonical template (see `skills/.template/`):\n\n1. **Frontmatter** -- Agent Skills spec metadata plus project extensions\n2. **Value** -- Which XP value this skill serves (feedback, communication,\n   simplicity, courage, respect)\n3. **Purpose** -- What the skill teaches (2-3 sentences)\n4. **Practices** -- Concrete, actionable instructions (the main body)\n5. **Enforcement Note** -- Honest statement of what the skill can/cannot\n   guarantee without harness plugins\n6. **Verification** -- Self-check checklist with binary, observable criteria\n7. **Dependencies** -- Integration points and install commands for related skills\n\nToken budgets: Core skills stay under 3000 tokens, orchestration skills\nunder 4000 tokens, bootstrap under 1000 tokens. Detailed reference\nmaterial lives in `references/` directories, loaded on demand.\n\n### Cross-Skill Dependencies\n\nSkills declare dependencies in frontmatter (`metadata.requires`). When a\nskill activates and finds a dependency missing, it recommends installation\nwith the specific `npx skills add --skill` command. Dependencies are\nrecommendations, not hard requirements -- every skill degrades gracefully\nwhen used alone.\n\nThe dependency graph is a DAG (no circular dependencies). Skills reference\neach other by name but never assume internal structure.\n\n## Harness Plugin Availability\n\n| Harness | Skills | Plugin | Enforcement |\n|---------|--------|--------|-------------|\n| Claude Code | All 13 | Planned | Hooks, subagents, skills |\n| OpenCode | All 13 | Planned | JS/TS modules, event hooks |\n| Codex | All 13 | Planned | AGENTS.md, commands |\n| Cursor / Windsurf | All 13 | Planned | Rules files |\n| Goose | All 13 | Planned | Recipes (YAML) |\n| Amp | All 13 | None | MCP only |\n| Aider | All 13 | None | No plugin system |\n\nSkills work on every harness in the table. Plugins add ergonomics and\nenforcement on harnesses that support them.\n\n## Installing Individual Skills\n\nEach skill is a directory under `skills/`. Install individually with `--skill`:\n\n```bash\n# Core process skills\nnpx skills add jwilger/agent-skills --skill tdd-cycle\nnpx skills add jwilger/agent-skills --skill domain-modeling\nnpx skills add jwilger/agent-skills --skill code-review\nnpx skills add jwilger/agent-skills --skill architecture-decisions\nnpx skills add jwilger/agent-skills --skill event-modeling\n\n# Orchestration skills\nnpx skills add jwilger/agent-skills --skill orchestration\nnpx skills add jwilger/agent-skills --skill task-management\n\n# Utility skills\nnpx skills add jwilger/agent-skills --skill debugging-protocol\nnpx skills add jwilger/agent-skills --skill user-input-protocol\nnpx skills add jwilger/agent-skills --skill memory-protocol\n\n# Advanced skills\nnpx skills add jwilger/agent-skills --skill mutation-testing\nnpx skills add jwilger/agent-skills --skill atomic-design\n```\n\n## Contributing\n\n### Writing a New Skill\n\n1. Read the canonical template at `skills/.template/SKILL.md.example`\n2. Read the frontmatter reference at `skills/.template/FRONTMATTER.md`\n3. Follow the section order: Value, Purpose, Practices, Enforcement Note,\n   Verification, Dependencies\n4. Stay within token budgets (Core 3000, Orchestration 4000)\n5. Include an honest Enforcement Note -- do not overstate what the skill\n   can guarantee without harness plugins\n6. Include a Verification section with binary, observable criteria\n7. Keep the SKILL.md body under 500 lines; move detailed examples and\n   reference material to `references/`\n\n### Reviewing a Skill\n\nWhen reviewing skills, check for:\n\n- **Template conformance:** All six body sections present in the correct order\n- **Token budget:** Within the tier limit\n- **Enforcement honesty:** Does the Enforcement Note accurately describe\n  what the skill can and cannot guarantee?\n- **Verification quality:** Are the checklist items specific, observable,\n  and binary (yes/no)?\n- **Standalone usability:** Does the skill provide value when installed\n  alone?\n- **Security:** Do shell fragments in SKILL.md limit themselves to\n  read-only environment detection? No writes, no network calls, no\n  package installation.\n\n## License\n\nCC0 1.0 Universal. See [LICENSE](LICENSE).\n"
+      },
+      "plugins": [
+        {
+          "name": "sdlc",
+          "source": "./plugins/claude-code",
+          "description": "Enforcement plugin for Agent Skills SDLC workflow. Adds mechanical guardrails (hooks, agents, skills) on top of portable skills.",
+          "version": "1.2.0",
+          "keywords": [
+            "sdlc",
+            "tdd",
+            "event-modeling",
+            "adr",
+            "domain-modeling",
+            "code-review",
+            "hooks",
+            "enforcement"
+          ],
+          "categories": [
+            "adr",
+            "code-review",
+            "domain-modeling",
+            "enforcement",
+            "event-modeling",
+            "hooks",
+            "sdlc",
+            "tdd"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jwilger/agent-skills",
+            "/plugin install sdlc@jwilger-agent-skills"
           ]
         }
       ]
