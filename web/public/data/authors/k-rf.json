@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "k-rf",
+    "display_name": "Kawano Kenichi",
+    "avatar_url": "https://avatars.githubusercontent.com/u/101339810?u=cac27aa37fef7676f9fbe132d5507ba325223105&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "devstone-claude-plugins",
+      "version": null,
+      "description": null,
+      "repo_full_name": "k-rf/devstone",
+      "repo_url": "https://github.com/k-rf/devstone",
+      "repo_description": "自作のライブラリやツールを集めたモノレポ",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-16T09:34:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"devstone-claude-plugins\",\n  \"owner\": {\n    \"name\": \"Kawano Kenichi\",\n    \"email\": \"kenichi.k.820@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"commit\",\n      \"source\": \"./packages/plugins/claude/commit\"\n    }\n  ]\n}\n",
+        "README.md": "# devstone\n\n自作のライブラリやツールを集めたモノレポです。\n",
+        "packages/plugins/claude/commit/README.md": "# Commit Plugin\n\n差分の妥当性チェック・コミット計画・メッセージ生成・実行の一連のワークフローを提供する Claude Code プラグイン。\n\n## 機能\n\n- **差分レビュー**: 変更の妥当性を自動検証（セキュリティ・整合性・完全性）\n- **コミット計画**: 単一責任原則と依存関係順序に基づくコミット分割\n- **メッセージ生成**: gitmoji / Conventional Commits 対応、追加プレフィックス（チケットキー等）対応\n- **インタラクティブ実行**: ステップごとにユーザー確認を挟むインタラクティブ実行\n\n## 使い方\n\n```plaintext\n/commit\n```\n\n## 設定\n\nプロジェクトルートに `.claude/configs/commit.json` を作成して設定をカスタマイズできる。\n\nJSON Schema が `schemas/commit.schema.json` に提供されており、`$schema` フィールドで参照することで\nエディタの入力補完・バリデーションが有効になる。\n\n```json\n{\n  \"$schema\": \"../../packages/plugins/claude/commit/schemas/commit.schema.json\",\n  \"style\": \"gitmoji\",\n  \"language\": \"en\",\n  \"scope\": false\n}\n```\n\n> `$schema` のパスはプロジェクト構成に応じて調整する。\n> VS Code のワークスペース設定 `json.schemas` で一括設定することも可能。\n\n### フィールド\n\n| フィールド     | デフォルト | 説明                                                              |\n| -------------- | ---------- | ----------------------------------------------------------------- |\n| `style`        | `gitmoji`  | コミットメッセージのスタイル: `gitmoji`、`conventional`           |\n| `language`     | `en`       | メッセージの言語: `en`、`ja` 等                                   |\n| `scope`        | `false`    | スコープをメッセージに含めるか                                    |\n| `customPrefix` | —          | 追加プレフィックス（例: チケットキー `PROJ-123`）                 |\n\n## コンポーネント\n\n### スキル\n\n- **commit** (`/commit`) — ワークフローのエントリーポイント（差分レビュー → 計画 → 実行）\n- **commit-message** — コミットメッセージの規約・スタイルに関する知識を提供\n\n### エージェント\n\n- **diff-reviewer** — 差分の妥当性を検証し、問題点を報告する\n- **commit-planner** — 単一責任原則と依存関係を考慮してコミット計画を立案する\n"
+      },
+      "plugins": [
+        {
+          "name": "commit",
+          "source": "./packages/plugins/claude/commit",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add k-rf/devstone",
+            "/plugin install commit@devstone-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
