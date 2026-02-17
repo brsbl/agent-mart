@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "TheEmilz",
+    "display_name": "TheEmilz",
+    "avatar_url": "https://avatars.githubusercontent.com/u/159511509?u=e9c212ca8d245937fbc8249b44ac2a84da9a46f6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "camouf-marketplace",
+      "version": "0.9.0",
+      "description": "Architecture guardrails for AI-generated code",
+      "repo_full_name": "TheEmilz/camouf-claude-plugin",
+      "repo_url": "https://github.com/TheEmilz/camouf-claude-plugin",
+      "repo_description": "Claude Code plugin for Camouf — catches function name drift, phantom imports, field mismatches, and contract violations in AI-generated code",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T15:15:21Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"camouf-marketplace\",\n  \"version\": \"0.9.0\",\n  \"description\": \"Architecture guardrails for AI-generated code\",\n  \"metadata\": {\n    \"description\": \"Camouf plugin marketplace — catches function name drift, phantom imports, field mismatches, and contract violations in AI-generated code.\"\n  },\n  \"owner\": {\n    \"name\": \"TheEmilz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"camouf\",\n      \"source\": \"./plugins/camouf\",\n      \"description\": \"Catches function name drift, phantom imports, field mismatches, and contract violations in AI-generated code.\",\n      \"version\": \"0.9.0\",\n      \"author\": {\n        \"name\": \"TheEmilz\"\n      },\n      \"homepage\": \"https://github.com/TheEmilz/camouf\",\n      \"repository\": \"https://github.com/TheEmilz/camouf-claude-plugin\",\n      \"license\": \"Apache-2.0\",\n      \"keywords\": [\n        \"architecture\",\n        \"static-analysis\",\n        \"ai-generated-code\",\n        \"mismatch-detection\"\n      ],\n      \"category\": \"code-quality\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"camouf\",\n  \"description\": \"Architecture guardrails for AI-generated code. Catches function name drift, phantom imports, field mismatches, and contract violations that compile but fail at runtime.\",\n  \"version\": \"0.9.0\",\n  \"author\": {\n    \"name\": \"TheEmilz\",\n    \"url\": \"https://github.com/TheEmilz\"\n  },\n  \"homepage\": \"https://github.com/TheEmilz/camouf\",\n  \"repository\": \"https://github.com/TheEmilz/camouf\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\n    \"architecture\",\n    \"static-analysis\",\n    \"ai-generated-code\",\n    \"mismatch-detection\",\n    \"contract-validation\",\n    \"cross-file-analysis\",\n    \"typescript\",\n    \"javascript\",\n    \"python\",\n    \"multi-language\"\n  ]\n}\n",
+        "README.md": "# Camouf — Claude Code Plugin\n\n> **Catches the mistakes AI coding assistants make** — broken contracts, phantom imports, signature drift, and architectural violations that traditional linters miss entirely.\n\n## Install\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add TheEmilz/camouf-claude-plugin\n\n# Install the plugin\nclaude plugin install camouf@camouf-marketplace\n\n# Initialize camouf in your project\nnpx camouf init\n```\n\n## What it does\n\nCamouf detects the specific class of bugs that AI coding assistants create due to limited context windows:\n\n| Error Type | Example |\n|------------|--------|\n| Function name drift | `getUser()` vs `getUserById()` |\n| Phantom imports | `import { x } from './nonexistent'` |\n| Field mismatch | `user.userEmail` vs `user.email` |\n| Missing parameters | `cancelOrder(id)` vs `cancelOrder(id, reason)` |\n| Context drift | Same concept named differently across files |\n| Layer violations | Frontend importing from backend |\n\n## Plugin components\n\n- **3 Skills**: validate, fix-mismatches, analyze-architecture\n- **1 Agent**: mismatch-detector (5-phase validate→fix→revalidate workflow)\n- **2 Hooks**: PostToolUse (auto-validate after edits) + Stop (final validation reminder)\n- **MCP Server**: 3 tools (`camouf_validate`, `camouf_analyze`, `camouf_suggest_fix`)\n\n## Links\n\n- [Main Repository](https://github.com/TheEmilz/camouf)\n- [Documentation](https://github.com/TheEmilz/camouf#readme)\n- [Plugin details](plugins/camouf/README.md)\n",
+        "plugins/camouf/README.md": "# Camouf — Claude Code Plugin\n\n> **Catches the mistakes AI coding assistants make** — broken contracts, phantom imports, signature drift, and architectural violations that traditional linters miss entirely.\n\n## What is Camouf?\n\nWhen AI agents generate code, they work with limited context windows. This causes predictable problems:\n\n- **Function name drift** — the AI writes `getUser()` instead of the canonical `getUserById()`\n- **Parameter mismatches** — the AI omits required parameters\n- **Field name errors** — the AI writes `user.userEmail` instead of `user.email`\n- **Phantom imports** — the AI imports from files that don't exist\n\nThese errors compile fine but **break at runtime**. ESLint doesn't catch them. TypeScript passes. Camouf catches them by comparing generated code against your canonical type definitions across the entire codebase.\n\n## Plugin Components\n\n### Skills\n\n| Skill | Description |\n|-------|-------------|\n| `/camouf:validate` | Scan the project for AI-generated code mistakes and architectural violations |\n| `/camouf:fix-mismatches` | Detect and fix function name drift, field mismatches, and contract violations |\n| `/camouf:analyze-architecture` | Analyze project architecture before writing code to prevent mistakes |\n\n### Agent\n\n| Agent | Description |\n|-------|-------------|\n| `camouf:mismatch-detector` | Specialized agent that runs the full validate → fix → revalidate workflow |\n\n### Hooks\n\n| Event | Behavior |\n|-------|----------|\n| `PostToolUse` (Write/Edit) | Prompts Claude to validate after code changes that might introduce mismatches |\n| `Stop` | Reminds Claude to run a final validation before finishing multi-file sessions |\n\n### MCP Server\n\nThe plugin bundles the Camouf MCP server, which exposes three tools:\n\n| Tool | Description |\n|------|-------------|\n| `camouf_validate` | Scans the project for violations with file paths, line numbers, and fix suggestions |\n| `camouf_analyze` | Analyzes project structure, layers, dependencies, and naming conventions |\n| `camouf_suggest_fix` | Returns specific fix steps for a given violation |\n\n## Prerequisites\n\n- Node.js 18+\n- A project with `camouf.config.json` (run `npx camouf init` to create one)\n\n## Quick Start\n\n1. Add the marketplace:\n   ```bash\n   claude plugin marketplace add TheEmilz/camouf-claude-plugin\n   ```\n\n2. Install the plugin:\n   ```bash\n   claude plugin install camouf@camouf-marketplace\n   ```\n\n3. Initialize camouf in your project (if not already done):\n   ```bash\n   npx camouf init\n   ```\n\n4. Use the skills:\n   ```\n   /camouf:validate\n   /camouf:fix-mismatches\n   /camouf:analyze-architecture\n   ```\n\nOr just let Claude use camouf automatically — the hooks will prompt validation after relevant edits.\n\n## How It Works\n\n```\n  You write code with Claude\n           │\n           ▼\n  Claude edits files (Write/Edit)\n           │\n           ▼\n  PostToolUse hook fires\n           │\n           ▼\n  Claude calls camouf_validate\n           │\n           ▼\n  Camouf scans cross-file contracts\n           │\n      ┌────┴────┐\n      │         │\n   Clean    Violations found\n      │         │\n      ▼         ▼\n   Continue   Claude calls camouf_suggest_fix\n              │\n              ▼\n           Claude applies fixes\n              │\n              ▼\n           Revalidate (up to 3x)\n```\n\n## What Camouf Catches (that other tools miss)\n\n| Error Type | Example | ESLint | TypeScript | Camouf |\n|------------|---------|--------|------------|--------|\n| Function name drift | `getUser()` vs `getUserById()` | ❌ | ❌ | ✅ |\n| Phantom imports | `import { x } from './nonexistent'` | ❌ | ⚠️ | ✅ |\n| Field mismatch | `user.userEmail` vs `user.email` | ❌ | ❌* | ✅ |\n| Context drift | Same concept named differently across files | ❌ | ❌ | ✅ |\n| Missing parameters | `cancelOrder(id)` vs `cancelOrder(id, reason)` | ❌ | ❌* | ✅ |\n| Layer violations | Frontend importing from backend | ❌ | ❌ | ✅ |\n\n*TypeScript catches these only with strict typing and no `any` — which AI-generated code often lacks.\n\n## Configuration\n\nCamouf is configured via `camouf.config.json` in your project root. Minimal example:\n\n```json\n{\n  \"rules\": {\n    \"function-signature-matching\": \"error\",\n    \"ai-hallucinated-imports\": \"error\",\n    \"inconsistent-casing\": \"warning\"\n  },\n  \"layers\": [\n    { \"name\": \"shared\", \"path\": \"shared\" },\n    { \"name\": \"client\", \"path\": \"client\" },\n    { \"name\": \"server\", \"path\": \"server\" }\n  ]\n}\n```\n\nSee [configuring rules](https://github.com/TheEmilz/camouf/blob/master/docs/configuring-rules.md) for the full reference.\n\n## Supported Languages\n\nTypeScript, JavaScript, Python, Java, Go, Rust\n\n## Links\n\n- [GitHub Repository](https://github.com/TheEmilz/camouf)\n- [Documentation](https://github.com/TheEmilz/camouf#readme)\n- [MCP Agent Tutorial](https://github.com/TheEmilz/camouf/blob/master/docs/mcp-agent-tutorial.md)\n- [Creating Plugins](https://github.com/TheEmilz/camouf/blob/master/docs/creating-plugins.md)\n"
+      },
+      "plugins": [
+        {
+          "name": "camouf",
+          "source": "./plugins/camouf",
+          "description": "Catches function name drift, phantom imports, field mismatches, and contract violations in AI-generated code.",
+          "version": "0.9.0",
+          "author": {
+            "name": "TheEmilz"
+          },
+          "homepage": "https://github.com/TheEmilz/camouf",
+          "repository": "https://github.com/TheEmilz/camouf-claude-plugin",
+          "license": "Apache-2.0",
+          "keywords": [
+            "architecture",
+            "static-analysis",
+            "ai-generated-code",
+            "mismatch-detection"
+          ],
+          "category": "code-quality",
+          "categories": [
+            "ai-generated-code",
+            "architecture",
+            "code-quality",
+            "mismatch-detection",
+            "static-analysis"
+          ],
+          "install_commands": [
+            "/plugin marketplace add TheEmilz/camouf-claude-plugin",
+            "/plugin install camouf@camouf-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

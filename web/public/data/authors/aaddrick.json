@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "aaddrick",
+    "display_name": "Aaddrick",
+    "avatar_url": "https://avatars.githubusercontent.com/u/22264982?u=3e0e4c4dc9a335c8761d351aaf9f354d279c64e6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-ptt-marketplace",
+      "version": null,
+      "description": "Push-to-talk voice input for Claude Code. Hold Ctrl+Space to record, release to transcribe.",
+      "repo_full_name": "aaddrick/claude-ptt",
+      "repo_url": "https://github.com/aaddrick/claude-ptt",
+      "repo_description": "Push-to-talk voice input plugin for Claude Code using Whisper",
+      "signals": {
+        "stars": 1,
+        "forks": 1,
+        "pushed_at": "2025-12-10T17:13:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-ptt-marketplace\",\n  \"owner\": {\n    \"name\": \"Aaddrick Williams\",\n    \"email\": \"aaddrick@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ptt\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"aaddrick/claude-ptt\"\n      },\n      \"version\": \"1.0.0\",\n      \"description\": \"Push-to-talk voice input for Claude Code. Hold Ctrl+Space to record, release to transcribe.\",\n      \"author\": {\n        \"name\": \"Aaddrick Williams\",\n        \"email\": \"aaddrick@gmail.com\"\n      },\n      \"homepage\": \"https://github.com/aaddrick/claude-ptt\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"voice-input\", \"push-to-talk\", \"whisper\", \"accessibility\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ptt\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Push-to-talk voice input for Claude Code. Hold Ctrl+Space to record, release to transcribe and insert text.\",\n  \"author\": {\n    \"name\": \"Aaddrick Williams\",\n    \"email\": \"aaddrick@gmail.com\"\n  },\n  \"homepage\": \"https://github.com/aaddrick/claude-ptt\",\n  \"repository\": \"https://github.com/aaddrick/claude-ptt\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"voice-input\",\n    \"push-to-talk\",\n    \"speech-to-text\",\n    \"whisper\",\n    \"accessibility\",\n    \"hands-free\"\n  ],\n  \"commands\": \"./commands/\",\n  \"skills\": \"./skills/\",\n  \"mcpServers\": {\n    \"ptt\": {\n      \"command\": \"node\",\n      \"args\": [\"${CLAUDE_PLUGIN_ROOT}/dist/mcp-server.js\"],\n      \"env\": {\n        \"PLUGIN_ROOT\": \"${CLAUDE_PLUGIN_ROOT}\"\n      }\n    }\n  }\n}\n",
+        "README.md": "# Claude PTT - Push-to-Talk Voice Input for Claude Code\n\nA Claude Code plugin that enables voice input via push-to-talk. Hold a hotkey to record your voice, release to transcribe and insert text into Claude Code.\n\n## Features\n\n- **Push-to-talk**: Hold `Ctrl+Space` to record, release to transcribe\n- **Dual transcription backends**: OpenAI Whisper API and local whisper.cpp\n- **Cross-platform**: Windows, macOS, Linux (X11 and Wayland)\n- **Automatic fallback**: Falls back to alternative backend if preferred fails\n- **Visual feedback**: Shows recording/transcribing status\n\n## Installation\n\n### From Marketplace\n\n```bash\n/plugin marketplace add aaddrick/claude-ptt\n/plugin install ptt@claude-ptt-marketplace\n```\n\n### Manual Installation\n\n```bash\ngit clone https://github.com/aaddrick/claude-ptt.git\ncd claude-ptt\nnpm install\nnpm run build\n```\n\n## Configuration\n\nConfiguration is stored in `~/.claude/ptt-config.json`:\n\n```json\n{\n  \"hotkey\": \"Ctrl+Space\",\n  \"whisper\": {\n    \"openaiApiKey\": null,\n    \"localModelPath\": null,\n    \"preferredMode\": \"api\",\n    \"enableFallback\": true,\n    \"language\": \"en\"\n  },\n  \"audio\": {\n    \"sampleRate\": 16000,\n    \"silenceThreshold\": 0.5\n  },\n  \"keystroke\": {\n    \"waylandBackend\": \"wtype\"\n  },\n  \"feedback\": {\n    \"showRecordingIndicator\": true\n  }\n}\n```\n\n### Whisper Configuration\n\n**API Mode (Recommended for ease of use)**:\n- Set `OPENAI_API_KEY` environment variable, or\n- Set `openaiApiKey` in config\n\n**Local Mode (Recommended for privacy)**:\n- Install [whisper.cpp](https://github.com/ggerganov/whisper.cpp)\n- Set `localModelPath` to your model file\n\n### Setting Preferred Mode\n\nUse `preferredMode` to choose which backend to try first:\n- `\"api\"`: Try OpenAI API first\n- `\"local\"`: Try local whisper.cpp first\n\nEnable `enableFallback` to automatically try the other backend if the preferred one fails.\n\n## Platform Setup\n\n### Windows\n\nNo additional setup required. The plugin uses nut.js for keystroke simulation.\n\n### macOS\n\nGrant accessibility permissions to your terminal application:\n1. Open System Preferences > Security & Privacy > Privacy > Accessibility\n2. Add your terminal app (Terminal.app, iTerm2, etc.)\n\n### Linux (X11)\n\nInstall libxtst for keystroke simulation:\n\n```bash\nsudo apt install libxtst-dev\n```\n\n### Linux (Wayland)\n\nInstall one of the following for keystroke simulation:\n\n```bash\n# Option 1: wtype (recommended, no daemon required)\nsudo apt install wtype\n\n# Option 2: ydotool (requires daemon)\nsudo apt install ydotool\nsudo systemctl enable --now ydotool\n\n# Option 3: dotool\n# Build from source: https://sr.ht/~geb/dotool/\n```\n\n### Audio Recording\n\nThe plugin uses system audio tools:\n- **Linux**: `arecord` (ALSA, usually pre-installed)\n- **macOS/Windows**: `sox` (install via `brew install sox` or download from http://sox.sourceforge.net/)\n\n## Usage\n\n### Starting the Daemon\n\n```bash\n# Via npm\nnpm start\n\n# Or directly\nnode dist/daemon.js\n```\n\n### Using with Claude Code\n\n1. Start the daemon in a separate terminal\n2. In Claude Code, hold `Ctrl+Space` to record\n3. Speak your message\n4. Release `Ctrl+Space` to transcribe\n5. Text appears in your input for review\n6. Press Enter to submit\n\n### MCP Tools\n\nThe plugin provides MCP tools for configuration:\n\n- `ptt_get_config`: Get current configuration\n- `ptt_set_config`: Update configuration\n- `ptt_get_status`: Get daemon status\n- `ptt_get_platform_info`: Get platform info and setup instructions\n\n## Troubleshooting\n\n### Hotkey not detected\n\n- **Linux**: May need to run as root for global key capture\n- **macOS**: Ensure accessibility permissions are granted\n- **All platforms**: Check for conflicts with other applications\n\n### Keystroke simulation not working\n\n- **macOS**: Check accessibility permissions\n- **Linux Wayland**: Ensure wtype or ydotool is installed\n- **Linux X11**: Ensure libxtst-dev is installed\n\n### Transcription fails\n\n- **API mode**: Verify your OpenAI API key\n- **Local mode**: Verify whisper.cpp is installed and model path is correct\n- **All modes**: Check microphone permissions and audio recording\n\n### No audio recorded\n\n- Check microphone permissions in system settings\n- Verify audio recording tool is installed:\n  - Linux: `which arecord`\n  - macOS/Windows: `which sox`\n\n## Development\n\n```bash\n# Install dependencies\nnpm install\n\n# Build TypeScript\nnpm run build\n\n# Watch mode\nnpm run watch\n\n# Run daemon\nnpm start\n\n# Run MCP server\nnpm run mcp-server\n```\n\n## License\n\nMIT\n\n## Author\n\nAaddrick Williams <aaddrick@gmail.com>\n"
+      },
+      "plugins": [
+        {
+          "name": "ptt",
+          "source": {
+            "source": "github",
+            "repo": "aaddrick/claude-ptt"
+          },
+          "version": "1.0.0",
+          "description": "Push-to-talk voice input for Claude Code. Hold Ctrl+Space to record, release to transcribe.",
+          "author": {
+            "name": "Aaddrick Williams",
+            "email": "aaddrick@gmail.com"
+          },
+          "homepage": "https://github.com/aaddrick/claude-ptt",
+          "license": "MIT",
+          "keywords": [
+            "voice-input",
+            "push-to-talk",
+            "whisper",
+            "accessibility"
+          ],
+          "categories": [
+            "accessibility",
+            "push-to-talk",
+            "voice-input",
+            "whisper"
+          ],
+          "install_commands": [
+            "/plugin marketplace add aaddrick/claude-ptt",
+            "/plugin install ptt@claude-ptt-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

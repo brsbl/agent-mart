@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "futuretea",
+    "display_name": "Hang Yu",
+    "avatar_url": "https://avatars.githubusercontent.com/u/15064560?u=3e3e892a10ab18c1929ae8861b61652c19b4c306&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "code-assistant",
+      "version": null,
+      "description": "Code quality assistant for rebase analysis, code simplification, PR description generation, text humanization, readability improvement, and Go style review",
+      "repo_full_name": "futuretea/code-assistant",
+      "repo_url": "https://github.com/futuretea/code-assistant",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T18:08:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"code-assistant\",\n  \"owner\": {\n    \"name\": \"futuretea\"\n  },\n  \"metadata\": {\n    \"description\": \"Code quality assistant for rebase analysis, code simplification, PR description generation, text humanization, readability improvement, and Go style review\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"code-assistant\",\n      \"source\": \"./\",\n      \"description\": \"Code quality assistant for rebase analysis, code simplification, PR description generation, text humanization, readability improvement, and Go style review (Community)\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"code-quality\", \"refactoring\", \"go-style\", \"rebase\", \"pr-description\", \"readability\", \"humanizer\", \"code-review\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"code-assistant\",\n  \"description\": \"Code quality assistant for rebase analysis, code simplification, PR description generation, text humanization, readability improvement, and Go style review (Community)\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"futuretea\",\n    \"email\": \"futuretea1024@gmail.com\"\n  },\n  \"repository\": \"https://github.com/futuretea/code-assistant\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"code-quality\", \"refactoring\", \"go-style\", \"rebase\", \"pr-description\", \"readability\", \"humanizer\", \"code-review\"]\n}\n",
+        "README.md": "# Code Assistant for Claude Code\n\nClaude Code 插件，用于代码质量管理。采用 **Sub-Agent + Skill** 架构，Skill 负责意图识别，Agent 负责干活，各自独立上下文、支持并行。\n\n## 架构特点\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│  Skill Layer (触发器)                                         │\n│  - 识别用户意图                                               │\n│  - 决定调用哪个 Sub-Agent                                    │\n│  - 汇总结果                                                   │\n└─────────────────────────────────────────────────────────────┘\n                            │\n        ┌───────────────────┼───────────────────┐\n        ▼                   ▼                   ▼\n┌──────────────┐   ┌──────────────┐   ┌──────────────┐\n│  Sub-Agent 1 │   │  Sub-Agent 2 │   │  Sub-Agent N │\n│  (独立上下文) │   │  (独立上下文) │   │  (独立上下文) │\n└──────────────┘   └──────────────┘   └──────────────┘\n```\n\n### 为什么这样设计？\n\n- 每个 Sub-Agent 有独立上下文，不会互相干扰\n- 多个 Agent 可以并行跑，比如同时审查多个包或多个文件\n- Skill 只管「什么时候触发」，Agent 只管「怎么干活」，各司其职\n\n## 安装\n\n### 1. 添加插件市场\n\n```bash\n/plugin marketplace add futuretea/code-assistant\n```\n\n### 2. 安装插件\n\n```bash\n/plugin install code-assistant@code-assistant\n```\n\n### 3. 验证安装\n\n```bash\n/plugin list\n```\n\n安装成功后，你应该能看到 `code-assistant` 在已安装插件列表中。\n\n## 包含的技能\n\n### 1. Rebase Analysis（Rebase 影响分析）\n\n**触发词**: \"analyze rebase\", \"rebase risk\", \"rebase impact\", \"conflict prediction\", \"分析 rebase\", \"rebase 风险\", \"冲突预测\"\n\n**执行方式**:\n- 简单操作（查看 ahead/behind）直接执行\n- 分叉分支分析委托给 `code-rebase-analyzer`\n- 多分支分析可并行处理\n\n### 2. Code Simplification（代码简化）\n\n**触发词**: \"simplify code\", \"refactor\", \"clean up code\", \"optimize code\", \"简化代码\", \"重构\", \"代码优化\"\n\n**执行方式**:\n- 简单格式化直接执行\n- 系统化重构委托给 `code-optimizer`\n- 多目录优化可并行处理\n\n### 3. PR Description（PR 描述生成）\n\n**触发词**: \"generate PR description\", \"write PR\", \"PR description\", \"生成 PR 描述\", \"写 PR\"\n\n**执行方式**:\n- 查看变更统计直接执行\n- 生成完整 PR 描述委托给 `code-pr-writer`\n- 遵循 Problem/Solution/Test Plan 格式\n\n### 4. Text Humanization（文本人性化）\n\n**触发词**: \"humanize text\", \"remove AI writing\", \"make it sound natural\", \"消除 AI 痕迹\", \"让文字更自然\", \"去掉 AI 味\"\n\n**执行方式**:\n- 单个词汇替换直接执行\n- 整篇文档审查委托给 `code-text-humanizer`\n- 多文件处理可并行\n\n### 5. Readability Improvement（代码可读性改进）\n\n**触发词**: \"improve readability\", \"reduce abstraction\", \"inline functions\", \"提高可读性\", \"减少抽象\", \"代码可读性\"\n\n**执行方式**:\n- 单个函数内联直接执行\n- 系统化可读性分析委托给 `code-readability-improver`\n- 全面审查可并行启动 readability-improver + go-style-reviewer\n\n### 6. Go Style Review（Go 风格审查）\n\n**触发词**: \"review Go style\", \"Go code review\", \"Go best practices\", \"Go 风格审查\", \"Go 代码审查\", \"golangci-lint\"\n\n**执行方式**:\n- 运行 linter 直接执行\n- 系统化风格审查委托给 `code-go-style-reviewer`\n- 多包审查可并行处理\n\n## 项目结构\n\n```\ncode-assistant/\n├── .claude/\n│   └── settings.local.json              # 工具权限配置\n├── .claude-plugin/\n│   ├── marketplace.json                 # 插件市场元数据\n│   └── plugin.json                      # 插件元数据\n├── agents/                              # Sub-Agent 定义\n│   ├── rebase-analyzer/AGENT.md         # Rebase 影响分析 Agent\n│   ├── code-optimizer/AGENT.md          # 代码优化 Agent\n│   ├── pr-writer/AGENT.md               # PR 描述生成 Agent\n│   ├── text-humanizer/AGENT.md          # 文本人性化 Agent\n│   ├── readability-improver/AGENT.md    # 代码可读性改进 Agent\n│   └── go-style-reviewer/AGENT.md       # Go 风格审查 Agent\n├── skills/                              # Skill 触发器\n│   ├── rebase-analysis/SKILL.md\n│   ├── code-simplification/SKILL.md\n│   ├── pr-description/SKILL.md\n│   ├── text-humanization/SKILL.md\n│   ├── readability-improvement/SKILL.md\n│   └── go-style-review/SKILL.md\n├── .gitignore\n├── CLAUDE.md\n├── LICENSE\n└── README.md\n```\n\n## 使用示例\n\n### Rebase 分析\n\n```\n# 查看分叉状态\n\"当前分支和 main 的分叉情况\"\n\n# 完整 rebase 分析\n\"分析 rebase 到 main 的风险\"\n→ 启动 code-rebase-analyzer\n→ 分叉拓扑 + 冲突预测 + 影响评估\n→ 生成风险报告和执行建议\n\n# 多分支分析\n\"分析 feature-a 和 feature-b 的 rebase 风险\"\n→ 并行启动 2 个 code-rebase-analyzer\n→ 对比风险等级\n```\n\n### 代码简化\n\n```\n# 格式化代码\n\"格式化这个文件\"\n→ 直接调用 goimports\n\n# 重构文件\n\"简化 handler.go 的代码\"\n→ 启动 code-optimizer\n→ 分析 + 优化 + 验证\n→ 生成变更清单\n\n# 多目录优化\n\"简化 pkg/handler 和 pkg/service\"\n→ 并行启动 2 个 code-optimizer\n→ 汇总变更\n```\n\n### PR 描述生成\n\n```\n# 生成 PR 描述\n\"为当前变更生成 PR 描述\"\n→ 启动 code-pr-writer\n→ 分析 git diff\n→ 生成 Problem/Solution/Test Plan 格式描述\n```\n\n### 代码审查\n\n```\n# Go 风格审查\n\"审查 pkg/mcp 的 Go 风格\"\n→ 启动 code-go-style-reviewer\n→ 按规则逐项检查\n→ 生成分类问题报告\n\n# 全面审查\n\"全面审查 pkg/gateway 的代码质量\"\n→ 并行启动：\n  Agent 1: code-go-style-reviewer（风格）\n  Agent 2: code-readability-improver（可读性）\n→ 合并报告\n```\n\n### 文本人性化\n\n```\n# 消除 AI 痕迹\n\"humanize README.md\"\n→ 启动 code-text-humanizer\n→ 识别 AI 模式\n→ 改写为自然表达\n```\n\n## Sub-Agent 并行执行模式\n\n### 多文件并行分析\n\n```javascript\nUser: \"审查所有 handler 文件的 Go 风格\"\n→ Parallel:\n   Task({ agent: \"code-go-style-reviewer\", path: \"handler_a.go\" })\n   Task({ agent: \"code-go-style-reviewer\", path: \"handler_b.go\" })\n   Task({ agent: \"code-go-style-reviewer\", path: \"handler_c.go\" })\n→ 汇总审查报告\n```\n\n### 全面代码质量审查\n\n```javascript\nUser: \"全面审查代码质量\"\n→ Parallel:\n   Task({ agent: \"code-go-style-reviewer\", scope: \"package\" })\n   Task({ agent: \"code-readability-improver\", scope: \"module\" })\n→ 合并为统一报告\n```\n\n### 多目录并行重构\n\n```javascript\nUser: \"简化 pkg/handler 和 pkg/service\"\n→ Parallel:\n   Task({ agent: \"code-optimizer\", path: \"pkg/handler\" })\n   Task({ agent: \"code-optimizer\", path: \"pkg/service\" })\n→ 汇总变更清单\n```\n\n## 开发\n\n### 添加 Sub-Agent\n\n1. 创建 `agents/<agent-name>/AGENT.md`\n2. 定义 agent 名称、工具集、并行能力\n3. 说明输入输出格式\n4. 从 skill 中引用\n\n### 添加 Skill\n\n1. 创建 `skills/<skill-name>/SKILL.md`\n2. 定义触发条件（description）\n3. 说明何时调用哪个 sub-agent\n4. 提供并行执行模式示例\n\n添加新功能时，值得想一下：能不能跟多个文件并行跑？能不能复用已有 Agent？能不能减少重复操作？\n\n### Agent 文件格式\n\n```markdown\n---\nname: code-agent-name        # 统一 code- 前缀\ndescription: When to use this agent\ntools: [\"Bash\", \"Read\", ...]  # 需要的工具\nparallel: true                # 是否支持并行\n---\n\n# Agent Title\n\n## Responsibilities\nWhat this agent does\n\n## Input Format\nParameters it accepts\n\n## Output Format\nStructured response format\n\n## Execution Strategy\nHow to parallelize operations\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "code-assistant",
+          "source": "./",
+          "description": "Code quality assistant for rebase analysis, code simplification, PR description generation, text humanization, readability improvement, and Go style review (Community)",
+          "version": "1.0.0",
+          "keywords": [
+            "code-quality",
+            "refactoring",
+            "go-style",
+            "rebase",
+            "pr-description",
+            "readability",
+            "humanizer",
+            "code-review"
+          ],
+          "categories": [
+            "code-quality",
+            "code-review",
+            "go-style",
+            "humanizer",
+            "pr-description",
+            "readability",
+            "rebase",
+            "refactoring"
+          ],
+          "install_commands": [
+            "/plugin marketplace add futuretea/code-assistant",
+            "/plugin install code-assistant@code-assistant"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "author": {
+    "id": "birdcar",
+    "display_name": "Nick Cannariato",
+    "avatar_url": "https://avatars.githubusercontent.com/u/434063?u=46259e16237cc8670212e8f3ff62e087f96c554d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "birdcar-plugins",
+      "version": "0.1.0",
+      "description": "Personal Claude Code plugin marketplace",
+      "repo_full_name": "birdcar/claude-plugins",
+      "repo_url": "https://github.com/birdcar/claude-plugins",
+      "repo_description": "Personal Claude Code plugin marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T16:45:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"birdcar-plugins\",\n  \"owner\": {\n    \"name\": \"birdcar\"\n  },\n  \"version\": \"0.1.0\",\n  \"description\": \"Personal Claude Code plugin marketplace\",\n  \"plugins\": [\n    {\n      \"name\": \"creator\",\n      \"source\": \"./plugins/creator\",\n      \"description\": \"Commands for generating new Claude Code components from natural language\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"customer-voice\",\n      \"source\": \"./plugins/customer-voice\",\n      \"description\": \"Draft customer responses in Nick's voice with optional codebase and docs research\",\n      \"version\": \"0.7.0\"\n    },\n    {\n      \"name\": \"dev-commands\",\n      \"source\": \"./plugins/dev-commands\",\n      \"description\": \"Slash commands for common development workflows\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"github-actions-generator\",\n      \"source\": \"./plugins/github-actions-generator\",\n      \"description\": \"Generate TypeScript GitHub Actions with Bun workspaces\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"octoflow\",\n      \"source\": \"./plugins/octoflow\",\n      \"description\": \"Core Git workflow commands for commits and pull requests\",\n      \"version\": \"0.1.1\"\n    },\n    {\n      \"name\": \"plugin-tools\",\n      \"source\": \"./plugins/plugin-tools\",\n      \"description\": \"Commands for analyzing and enhancing Claude Code plugins\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"repo-structure\",\n      \"source\": \"./plugins/repo-structure\",\n      \"description\": \"Enforces ~/Code/ORG/REPO directory convention for cloned repos and new projects\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugins\n\nPersonal Claude Code plugin marketplace.\n\n## Installation\n\n1. Register marketplace:\n\n   ```\n   /plugin marketplace add birdcar/claude-plugins\n   ```\n\n2. Install plugins:\n   ```\n   /plugin install essentials@birdcar\n   /plugin install creator@birdcar\n   ```\n\n## Available Plugins\n\n| Plugin     | Description                          | Skills                           |\n| ---------- | ------------------------------------ | -------------------------------- |\n| essentials | Core Git workflow skills             | /commit, /pr                     |\n| creator    | Generate new skills from description | /create-skill                    |\n| meta       | Self-improvement and analysis        | /analyze-plugins, /improve-skill |\n\n## Development\n\n### Prerequisites\n\n- [Bun](https://bun.sh) v1.0+\n- Git\n\n### Setup\n\n```bash\ngit clone https://github.com/birdcar/claude-plugins\ncd claude-plugins\nbun install\n```\n\n### Commands\n\n```bash\nbun run build      # Build all plugins\nbun run typecheck  # Type check\nbun run sync       # Update marketplace metadata\nbun run format     # Format code\nbun run clean      # Remove build artifacts\nbun run bootstrap  # Set up local config for plugins that need it\n```\n\n### Local Configuration\n\nSome plugins require per-machine configuration (e.g., local filesystem paths) that shouldn't be committed to a public repo. These are stored in `*.local.md` files which are gitignored.\n\nPlugins that need local config will **automatically prompt on first use** and save the values for future sessions. No manual setup required.\n\nTo set up all plugins at once (or to reconfigure), you can optionally run:\n\n```bash\nbun run bootstrap\n```\n\nPlugins that use local config:\n\n| Plugin         | Config File     | Values                 |\n| -------------- | --------------- | ---------------------- |\n| customer-voice | config.local.md | `workos_monorepo_path` |\n\n### Adding a Plugin\n\n1. Create directory: `plugins/my-plugin/`\n2. Add `plugin.json`, `package.json`, `tsconfig.json`\n3. Create skills in `skills/` directory\n4. Add reference to root `tsconfig.json`\n5. Run `bun run sync` to register\n\n## License\n\nMIT\n",
+        "plugins/creator/README.md": "# creator\n\nGenerate new Claude Code plugin components from natural language descriptions.\n\n## Why\n\nScaffolding a new plugin or adding a skill/command involves creating multiple files with the right structure, naming conventions, and workspace configuration. This plugin automates that so you can go from idea to working component in one step.\n\n## Usage\n\n```\n/create-skill A command that formats JSON files with proper indentation\n```\n\nThe command will:\n\n1. Parse your description to determine what kind of component to create (command vs skill)\n2. Generate kebab-case names for the plugin and component\n3. Check for naming conflicts with existing plugins\n4. Scaffold the full directory structure (package.json, tsconfig.json, plugin.json, src/index.ts, and the command/skill file)\n5. Add the new workspace to root tsconfig.json\n6. Run `bun run sync` to update marketplace.json\n7. Validate with `bun run typecheck && bun run build`\n\nIf a suitable existing plugin already exists, it will offer to add the component there instead of creating a new plugin.\n\n## Components\n\n| Component       | Type    | Description                                                 |\n| --------------- | ------- | ----------------------------------------------------------- |\n| `/create-skill` | Command | Scaffold a new plugin or add a component to an existing one |\n",
+        "plugins/customer-voice/README.md": "# customer-voice\n\nResearch and draft customer responses in Nick's voice.\n\n## Why\n\nConsistency in customer-facing communication matters, especially in a pre-sales SE role where technical clarity directly affects the deal. This plugin encodes Nick's writing style (derived from real samples) so Claude can draft responses that sound like him, not like a chatbot.\n\nEvery customer reply goes through the same pipeline: research the question across the WorkOS codebase and public docs, then draft a response in voice with verified sources.\n\n## Architecture\n\n```\n/customer-reply (command)\n  └── invokes customer-reply (skill)\n        ├── Inlines voice rules as pre-draft constraint\n        ├── Reads shared/voice.md for full voice reference\n        └── Spawns customer-researcher (agent)\n              ├── Track 1: Codebase search (Explore sub-agent)\n              ├── Track 2: Docs verification (general-purpose sub-agent)\n              ├── Track 3: SDK examples (general-purpose sub-agent, when relevant)\n              └── Track 4: Blog search (general-purpose sub-agent, when relevant)\n```\n\nThe command is the entry point. It invokes the skill, which reads the voice guide, then spawns the research agent for parallel sub-agent research. Sub-agent results survive context compaction, so findings aren't lost during heavy research. Voice rules are inlined in the skill and applied before drafting, not as a post-draft checklist.\n\n## Usage\n\n| Component             | Type    | Description                                                         |\n| --------------------- | ------- | ------------------------------------------------------------------- |\n| `/customer-reply`     | Command | Entry point; invokes the customer-reply skill                       |\n| `customer-reply`      | Skill   | Voice-constrained workflow: research, draft in voice, review        |\n| `customer-researcher` | Agent   | Parallel research across codebase, docs, and SDKs; returns findings |\n\n### `/customer-reply`\n\nPaste the customer's message after invoking the command. It will research the question and draft a response in Nick's voice.\n\n```\n/customer-reply\n\nCustomer says: \"We're using Firebase for auth and want to add SSO. Do we need to migrate all our users to WorkOS?\"\n```\n\nAfter you approve the draft, it copies it to your clipboard.\n\n### First-time setup\n\nOn first use, the research agent will ask for the path to your local WorkOS monorepo checkout and save it for future sessions. No manual configuration needed.\n\n### Voice guide\n\nThe skill inlines critical voice rules (anti-patterns, formatting, tone) directly so they're always present. It also reads `shared/voice.md` at runtime for the full specification including real example responses. Edit `shared/voice.md` to refine the voice over time.\n\n### Source priority\n\nCodebase > API Reference > Public docs > SDKs > Blog. The agent never shares proprietary code with customers or fabricates URLs.\n",
+        "plugins/dev-commands/README.md": "# dev-commands\n\nSlash commands for common development workflows that auto-detect your project's tooling.\n\n## Why\n\nEvery project uses different build tools, test runners, and linters. Instead of remembering whether this project uses `bun test`, `pytest`, `cargo test`, or `go test`, these commands detect the right tool and run it. They work across Node/Bun, Python, Rust, and Go projects.\n\n## Usage\n\n| Command  | Description                                                             |\n| -------- | ----------------------------------------------------------------------- |\n| `/build` | Build the project using the detected build system                       |\n| `/check` | Run all checks in order: typecheck, lint, test (stops on first failure) |\n| `/deps`  | Install dependencies (`/deps`) or update them (`/deps update`)          |\n| `/lint`  | Run the project's linter with auto-fix                                  |\n| `/test`  | Run the test suite (supports filtering: `/test auth`)                   |\n\n## Detection\n\nEach command scans project files to determine the right tool:\n\n- **Node/Bun**: package.json scripts, bun.lock, pnpm-lock.yaml, package-lock.json\n- **Python**: pyproject.toml, pytest.ini, uv.lock, requirements.txt\n- **Rust**: Cargo.toml, Cargo.lock\n- **Go**: go.mod, go.sum, .golangci.yml\n",
+        "plugins/github-actions-generator/README.md": "# github-actions-generator\n\nScaffold and implement TypeScript GitHub Actions within Bun workspace monorepos.\n\n## Why\n\nCreating a GitHub Action in a Bun workspace involves a lot of boilerplate: package.json with catalog references, tsconfig, action.yml, entry point, tests, CI workflow, and release tagging. This skill handles the full lifecycle so you can focus on the action's logic.\n\n## Usage\n\nThe skill activates when you want to create or implement a GitHub Action. It walks you through the process interactively:\n\n1. **Scaffold** — Detects workspace structure, asks for action name/description, generates all files (package.json, tsconfig.json, action.yml, src/index.ts)\n2. **Implement** — Helps write the action logic using patterns for Octokit, error handling, and input/output management\n3. **Test** — Generates unit tests with bun:test, mocking @actions/core and @actions/github\n4. **Document** — Creates a README with usage examples, inputs/outputs tables, and real version tags\n5. **CI** — Generates per-action CI workflows with path filters\n6. **Release** — Guides through manual tagging or generates automated release workflows\n\n## Components\n\n| Component         | Type  | Description                                                |\n| ----------------- | ----- | ---------------------------------------------------------- |\n| `generate-action` | Skill | Full lifecycle GitHub Action generation and implementation |\n\n## Conventions\n\n- Uses Bun Catalog for shared dependency versions\n- All dependencies reference `catalog:` in action package.json\n- kebab-case for action names, package names, and directories\n- bun:test for testing (not Jest)\n- Real version tags in docs (never `@latest` or `@main`)\n",
+        "plugins/octoflow/README.md": "# octoflow\n\nGit workflow commands for well-structured commits and pull requests.\n\n## Why\n\nGood commits tell a story. Raw `git commit` makes it easy to create unfocused commits with vague messages. This plugin enforces a disciplined workflow: logical commit splitting, imperative messages following Chris Beams' seven rules, and structured PR descriptions that explain what changed and how to verify it.\n\nThe hook ensures this workflow is always used — even when Claude tries to run `git commit` directly, it gets intercepted and redirected to `/commit`.\n\n## Usage\n\n| Component              | Type    | Description                                                           |\n| ---------------------- | ------- | --------------------------------------------------------------------- |\n| `/commit`              | Command | Analyze changes, split into logical commits, generate proper messages |\n| `/pr`                  | Command | Create GitHub PRs with structured summary and test plan               |\n| `intercept-git-commit` | Hook    | Blocks raw `git commit` and redirects to `/commit`                    |\n\n### `/commit`\n\nAnalyzes staged and unstaged changes, determines if they should be split into multiple logical commits (e.g., bug fix + refactor = 2 commits), generates messages following conventional commit format, and asks for approval before committing.\n\nCommits are ordered logically: infrastructure first, core changes second, surface changes last, cleanup at the end.\n\n### `/pr`\n\nChecks you're on a feature branch, analyzes all commits since diverging from main, generates a PR description with a summary and test plan checklist, then creates the PR via `gh pr create`.\n\n### Hook: intercept-git-commit\n\nA `PreToolUse` hook on `Bash` commands matching `git commit`. Blocks the raw commit and instructs Claude to use `/commit` instead.\n",
+        "plugins/plugin-tools/README.md": "# plugin-tools\n\nCommands for analyzing and iteratively improving Claude Code plugins.\n\n## Why\n\nAs your plugin collection grows, it's easy for quality to drift — inconsistent naming, missing edge case handling, sparse documentation. These commands give you a way to audit your plugins and systematically improve them based on concrete feedback.\n\n## Usage\n\n| Command            | Description                                                   |\n| ------------------ | ------------------------------------------------------------- |\n| `/analyze-plugins` | Read-only audit of plugin quality, structure, and consistency |\n| `/improve-skill`   | Iteratively improve an existing skill or command              |\n\n### `/analyze-plugins`\n\nScans all plugins and generates a structured report with quality scores, specific issues, and prioritized improvement suggestions.\n\nSupports focus areas:\n\n- `/analyze-plugins structure` — Directory and file organization\n- `/analyze-plugins documentation` — Instruction quality and completeness\n- `/analyze-plugins consistency` — Pattern consistency across plugins\n- `/analyze-plugins {plugin-name}` — Deep dive into a specific plugin\n\n### `/improve-skill`\n\nTakes a skill or command name and optional feedback, analyzes the current instructions, proposes specific improvements (additional rules, better examples, edge case handling), and applies changes after approval.\n\n```\n/improve-skill commit\n/improve-skill commit \"needs guidance on merge commits\"\n```\n",
+        "plugins/repo-structure/README.md": "# repo-structure\n\nEnforces the `~/Code/ORG/REPO` directory convention for cloned repos and new projects.\n\n## Why\n\nWithout a consistent directory structure, repos end up scattered across Desktop, Downloads, random home directories. This plugin ensures every GitHub clone and every scaffolded project lands in the right place: `~/Code/{org}/{repo}`.\n\nIt works passively through hooks — no commands to remember. If Claude tries to clone a repo to the wrong directory or scaffold a project outside the convention, the hook blocks it and provides the corrected command.\n\n## How It Works\n\nThe plugin registers `PreToolUse` hooks on `Bash` commands that match cloning and scaffolding patterns. When triggered, the hook validates the target directory and blocks the command if it doesn't match the convention.\n\n### Cloning (`git clone`, `gh repo clone`)\n\nEnforces: `~/Code/{ORG}/{REPO}`\n\n- Parses GitHub URLs (HTTPS, SSH) and `gh` CLI syntax to extract org and repo\n- Blocks clones to wrong directories and provides corrected command with `mkdir -p`\n- Preserves original flags (`--depth 1`, `--branch main`, etc.)\n- Only applies to GitHub URLs — non-GitHub clones are allowed anywhere\n\n### Scaffolding (`bun init`, `npm init`, `uv init`, `cargo init`, `cargo new`, `pnpm init`)\n\nEnforces: `~/Code/{OWNER}/{PROJECT}` (defaults owner to `birdcar`)\n\n- Checks the target directory of the scaffolding command\n- Blocks if not under `~/Code/{owner}/{project}`\n- Provides corrected command with `mkdir -p` and `cd`\n\n### Exceptions\n\nThese paths are always allowed:\n\n- `~/Code/workos/sdk/*` — WorkOS SDK workspace\n- `~/Code/workos/demo` — WorkOS demo app\n- `~/Code/_*/` — Underscore directories for learning, experiments, etc.\n"
+      },
+      "plugins": [
+        {
+          "name": "creator",
+          "source": "./plugins/creator",
+          "description": "Commands for generating new Claude Code components from natural language",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add birdcar/claude-plugins",
+            "/plugin install creator@birdcar-plugins"
+          ]
+        },
+        {
+          "name": "customer-voice",
+          "source": "./plugins/customer-voice",
+          "description": "Draft customer responses in Nick's voice with optional codebase and docs research",
+          "version": "0.7.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add birdcar/claude-plugins",
+            "/plugin install customer-voice@birdcar-plugins"
+          ]
+        },
+        {
+          "name": "dev-commands",
+          "source": "./plugins/dev-commands",
+          "description": "Slash commands for common development workflows",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add birdcar/claude-plugins",
+            "/plugin install dev-commands@birdcar-plugins"
+          ]
+        },
+        {
+          "name": "github-actions-generator",
+          "source": "./plugins/github-actions-generator",
+          "description": "Generate TypeScript GitHub Actions with Bun workspaces",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add birdcar/claude-plugins",
+            "/plugin install github-actions-generator@birdcar-plugins"
+          ]
+        },
+        {
+          "name": "octoflow",
+          "source": "./plugins/octoflow",
+          "description": "Core Git workflow commands for commits and pull requests",
+          "version": "0.1.1",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add birdcar/claude-plugins",
+            "/plugin install octoflow@birdcar-plugins"
+          ]
+        },
+        {
+          "name": "plugin-tools",
+          "source": "./plugins/plugin-tools",
+          "description": "Commands for analyzing and enhancing Claude Code plugins",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add birdcar/claude-plugins",
+            "/plugin install plugin-tools@birdcar-plugins"
+          ]
+        },
+        {
+          "name": "repo-structure",
+          "source": "./plugins/repo-structure",
+          "description": "Enforces ~/Code/ORG/REPO directory convention for cloned repos and new projects",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add birdcar/claude-plugins",
+            "/plugin install repo-structure@birdcar-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
