@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "mainnebula",
+    "display_name": "Robert Keenan",
+    "avatar_url": "https://avatars.githubusercontent.com/u/51970406?u=09caef5423603265efd08e994a81b3f3ca235bae&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "token-steward",
+      "version": null,
+      "description": "Contribute to the open-source projects you care about, powered by Claude Code.",
+      "repo_full_name": "mainnebula/Token-Steward",
+      "repo_url": "https://github.com/mainnebula/Token-Steward",
+      "repo_description": "Discover and contribute to open-source projects with your unused Claude Code tokens",
+      "signals": {
+        "stars": 14,
+        "forks": 1,
+        "pushed_at": "2026-02-17T03:04:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"token-steward\",\n  \"metadata\": {\n    \"description\": \"Contribute to the open-source projects you care about, powered by Claude Code.\"\n  },\n  \"owner\": {\n    \"name\": \"mainnebula\",\n    \"url\": \"https://github.com/mainnebula\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"token-steward\",\n      \"description\": \"Contribute to the open-source projects you care about. Discover issues, get guided workflows, and submit quality PRs with Claude Code.\",\n      \"version\": \"0.1.0\",\n      \"author\": { \"name\": \"mainnebula\", \"url\": \"https://github.com/mainnebula\" },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/mainnebula/token-steward\",\n      \"tags\": [\"open-source\", \"contributions\", \"claude-code\", \"github\", \"automation\", \"cli\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"token-steward\",\n  \"description\": \"Contribute to the open-source projects you care about. Discover issues, get guided workflows, and submit quality PRs — all powered by Claude Code.\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"mainnebula\",\n    \"url\": \"https://github.com/mainnebula\"\n  },\n  \"homepage\": \"https://github.com/mainnebula/token-steward\",\n  \"repository\": \"https://github.com/mainnebula/token-steward\",\n  \"commands\": \"./.claude/commands\",\n  \"skills\": \"./.claude/skills\"\n}\n",
+        "README.md": "# Token Steward\n\nContribute to open-source projects you care about, powered by Claude Code.\n\nToken Steward finds real issues on projects that matter to you, sets up everything you need, and guides you through making quality contributions. Got unused Claude Code tokens each week? Put them to work on the open-source tools you depend on.\n\n## How it works\n\n**Discover.** Pick your path: find issues on projects you've starred and use, browse high-impact issues on well-known open-source projects, or name a specific repo. No profile analysis or broad searching — just a quick choice and filtered results.\n\n**Work.** Claude guides you through the fix, not the other way around. It explains what the bug is, what causes it, where it lives in the codebase, and walks through the fix approach — then asks if it makes sense before writing code. After implementing, it explains expected behavior and helps you test. You understand every change before it ships.\n\n**Propose.** For larger issues, Claude analyzes the codebase and drafts a proposal comment. It walks you through the reasoning so you can evaluate and adjust before posting. The maintainer can then approve, suggest changes, or decline.\n\n**Submit.** When you're satisfied with the fix and tests pass, Token Steward pushes your branch and opens a draft PR. Safe to run multiple times.\n\n## Claude Code Plugin\n\nUse Token Steward as slash commands directly in Claude Code. No npm install required — just `gh` CLI.\n\n### Install\n\n```bash\nnpx skills add mainnebula/token-steward\n```\n\nOr manually:\n\n```bash\ngit clone https://github.com/mainnebula/token-steward.git /tmp/token-steward\ncp -r /tmp/token-steward/.claude/* ~/.claude/\n```\n\nAfter installing, restart Claude Code for it to discover the new skill.\n\n### Commands\n\n| Command | What it does |\n|---------|-------------|\n| `/token-steward:discover` | Choose a path (your projects, important projects, or a specific repo) and find approachable issues |\n| `/token-steward:work owner/repo#123` | Set up a workspace and get guided through understanding, fixing, and testing the issue |\n| `/token-steward:submit` | Submit your contribution — PR, review, or proposal |\n| `/token-steward:status` | Show environment, open PRs, budget, and workspace info |\n| `/token-steward:stats` | Show contribution history and statistics |\n\n### Plugin + CLI\n\nThe plugin works standalone with just `gh` CLI. If you also install the full CLI, the plugin detects it and delegates discovery, scoring, and workspace setup locally — saving Claude Code tokens and adding persistent tracking.\n\n| Feature | Plugin only | Plugin + CLI |\n|---------|-----------|-------------|\n| Discover issues | Claude searches via `gh` | Runs locally, faster |\n| Workspace setup | Claude forks/branches via `gh` | Handled locally |\n| Contribution stats | Basic (from GitHub API) | Detailed per-run tracking |\n| Token budgets | None | Enforced per-run and weekly |\n| Run history | None | Persistent, queryable |\n| Scheduling | None | Automated contribution windows |\n\n## CLI\n\n```\nsteward discover          # Find issues on projects you care about\nsteward work cli/cli#9432 # Jump into a guided Claude Code session\nsteward submit            # Review your changes and open a draft PR\n```\n\n### Install\n\n```bash\nnpm install -g token-steward\nsteward init\n```\n\n`steward init` checks your environment, walks you through setup, and gets everything ready. After that, `steward discover` is all you need.\n\nAlready set up? Run `steward init --check` to verify prerequisites without changing anything.\n\n### Configuration\n\n**`config/policy.yaml`** controls how and when you contribute:\n\n```yaml\nweekly_target_tokens: 500000\nweekly_min_reserve_tokens: 25000\n\nschedule:\n  - day: FRI\n    start: \"18:00\"\n    end: \"23:59\"\n  - day: SAT\n    start: \"09:00\"\n    end: \"23:59\"\n\nfilters:\n  categories_allow: [developer-tools, documentation, security, ai-ml]\n  min_confidence: 0.40\n\nlimits:\n  max_concurrency: 2\n  max_tokens_per_run: 60000\n  max_runs_per_day: 6\n\n# auto = propose first for complex issues\n# always = always propose before coding\n# never = skip straight to implementation\npropose_first: auto\n```\n\n**`config/registry.yaml`** is your list of projects you want to contribute to. Each entry specifies which issue labels to look for:\n\n```yaml\nrepositories:\n  - slug: cli/cli\n    name: GitHub CLI\n    category: developer-tools\n    tags: [cli, go, github]\n    issue_labels: [good first issue, help wanted]\n```\n\n### Other commands\n\n```bash\nsteward init             # Setup wizard (prereqs, config, build)\nsteward init --check     # Verify prerequisites only\nsteward status           # Show current state\nsteward usage            # Check token budget\nsteward runs             # List recent contributions\nsteward stats            # Show contribution statistics\nsteward cancel <id>      # Cancel a run\nsteward clean            # Remove workspace clones to free disk space\nsteward export           # Export registry and scored issues as JSON\nsteward pause            # Pause autopilot\nsteward resume           # Resume autopilot\n```\n\n## How issues are scored\n\nToken Steward ranks issues so you spend time on the ones that matter. Each issue is scored across four dimensions:\n\n| Dimension   | Weight | What it looks at |\n|-------------|--------|------------------|\n| Reach       | 20%    | Reactions, comments, repo stars |\n| Impact      | 25%    | Bug vs feature, maintainer engagement, category |\n| Confidence  | 30%    | LLM receptivity, approachability labels, CI, CONTRIBUTING.md |\n| Effort      | 25%    | Issue age, complexity labels, token budget fit |\n\n## Roadmap\n\n- **Public leaderboard.** Track contributions across Token Steward users. Issues resolved, PRs merged, tokens invested. See who's making the biggest impact.\n- **Maintainer opt-in.** A `token-steward.yml` file maintainers drop in their repo to opt in and configure what issues are eligible for contributions.\n- **Shared registry.** A registry service that maintainers can submit their projects to directly, so contributors always have fresh work to pick from.\n- **PR outcome tracking.** Follow up on submitted PRs to measure merge rates and contribution quality over time.\n- **Team mode.** Coordinate across multiple contributors to avoid duplicate work on the same issues.\n\n## Development\n\n```bash\ngit clone https://github.com/mainnebula/token-steward.git && cd token-steward\nnpm install\nnpm run dev          # Run via tsx (no build step)\nnpm test             # Run all tests (vitest)\nnpm run build        # Compile TypeScript\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "token-steward",
+          "description": "Contribute to the open-source projects you care about. Discover issues, get guided workflows, and submit quality PRs with Claude Code.",
+          "version": "0.1.0",
+          "author": {
+            "name": "mainnebula",
+            "url": "https://github.com/mainnebula"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/mainnebula/token-steward",
+          "tags": [
+            "open-source",
+            "contributions",
+            "claude-code",
+            "github",
+            "automation",
+            "cli"
+          ],
+          "categories": [
+            "automation",
+            "claude-code",
+            "cli",
+            "contributions",
+            "github",
+            "open-source",
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mainnebula/Token-Steward",
+            "/plugin install token-steward@token-steward"
+          ]
+        }
+      ]
+    }
+  ]
+}

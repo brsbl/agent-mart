@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "yida29",
+    "display_name": "yida",
+    "avatar_url": "https://avatars.githubusercontent.com/u/26829774?u=74afbabc4064f223b868bb5f7add3fcfa32840df&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "archrips",
+      "version": null,
+      "description": "Architecture diagram generation tools",
+      "repo_full_name": "yida29/archrip",
+      "repo_url": "https://github.com/yida29/archrip",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T01:07:06Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"archrips\",\n  \"owner\": { \"name\": \"Yuto Ida\" },\n  \"metadata\": {\n    \"description\": \"Architecture diagram generation tools\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"archrips\",\n      \"source\": \"./\",\n      \"description\": \"Generate interactive architecture diagrams from your codebase\",\n      \"version\": \"0.1.0\",\n      \"author\": { \"name\": \"Yuto Ida\" },\n      \"homepage\": \"https://github.com/yida29/archrips\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"architecture\", \"diagrams\", \"visualization\"],\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"archrips\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Generate interactive architecture diagrams from your codebase\",\n  \"author\": { \"name\": \"Yuto Ida\" },\n  \"homepage\": \"https://github.com/yida29/archrips\",\n  \"repository\": \"https://github.com/yida29/archrips\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"architecture\", \"diagrams\", \"code-analysis\", \"visualization\"],\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# archrips\n\nGenerate interactive architecture diagrams from your codebase using AI agents.\n\narchrips lets AI agents (Claude Code, Gemini CLI, Codex) analyze your codebase and produce a self-contained, interactive architecture viewer as static HTML — deployable anywhere.\n\n## Quick Start\n\n```bash\n# 1. Initialize in your project\nnpx archrips init .\n\n# 2. Let your AI agent scan the codebase\n#    (Claude Code example — other agents work similarly)\n/archrips-scan\n\n# 3. Build static HTML\nnpx archrips build\n\n# 4. Preview\nnpx archrips serve\n```\n\n## How It Works\n\n1. **`archrips init`** sets up `.archrips/` in your project and installs slash commands for your AI agent\n2. **`/archrips-scan`** — the AI reads your codebase and generates `.archrips/architecture.json`\n3. **`archrips build`** — validates the JSON, computes layout with dagre, and builds a static React Flow viewer\n4. **`archrips serve`** — serves the built HTML locally for preview\n\nThe output is a standalone `dist/` folder you can deploy to GitHub Pages, Netlify, or share as a zip.\n\n## CLI Commands\n\n| Command | Description |\n|---------|-------------|\n| `archrips init [path]` | Initialize archrips in a project (default: `.`) |\n| `archrips build` | Build the architecture viewer to `.archrips/dist/` |\n| `archrips serve` | Preview the built viewer at `localhost:4173` |\n\n## Slash Commands (AI Agent Prompts)\n\n| Command | Description |\n|---------|-------------|\n| `/archrips-scan` | Full codebase scan → generate `architecture.json` |\n| `/archrips-update` | Incremental update based on `git diff` |\n| `/archrips-refine` | Interactive refinement (add/remove/modify nodes) |\n\nSupports: Claude Code (`.claude/commands/`), Gemini CLI (`.gemini/commands/`), Codex (`.codex/commands/`).\n\n## architecture.json Format\n\n```json\n{\n  \"version\": \"1.0\",\n  \"project\": {\n    \"name\": \"My App\",\n    \"language\": \"TypeScript\",\n    \"framework\": \"Next.js\",\n    \"sourceUrl\": \"https://github.com/org/repo/blob/main/{filePath}\"\n  },\n  \"nodes\": [\n    {\n      \"id\": \"ctrl-users\",\n      \"category\": \"controller\",\n      \"label\": \"UsersController\",\n      \"description\": \"User CRUD operations\",\n      \"filePath\": \"src/controllers/users.ts\",\n      \"layer\": 1,\n      \"methods\": [\"list\", \"create\", \"update\", \"delete\"],\n      \"routes\": [\"GET /api/users\", \"POST /api/users\"],\n      \"useCases\": [\"uc-user-mgmt\"]\n    }\n  ],\n  \"edges\": [\n    { \"source\": \"ctrl-users\", \"target\": \"svc-users\", \"type\": \"dependency\" }\n  ],\n  \"useCases\": [\n    {\n      \"id\": \"uc-user-mgmt\",\n      \"name\": \"User Management\",\n      \"description\": \"CRUD operations for users\",\n      \"nodeIds\": [\"ctrl-users\", \"svc-users\", \"model-user\"]\n    }\n  ],\n  \"schemas\": {\n    \"users\": {\n      \"tableName\": \"users\",\n      \"columns\": [\n        { \"name\": \"id\", \"type\": \"BIGINT\", \"nullable\": false, \"index\": \"primary\" },\n        { \"name\": \"email\", \"type\": \"VARCHAR(255)\", \"nullable\": false, \"index\": \"unique\" }\n      ]\n    }\n  }\n}\n```\n\n### Node Categories\n\n| Category | Color | Use For |\n|----------|-------|---------|\n| `controller` | Blue | HTTP entry points (Controller, Route Handler, Resolver) |\n| `service` | Green | Business logic (Service, UseCase) |\n| `port` | Purple | Abstractions (Interface, Contract, Port) |\n| `adapter` | Orange | Implementations (Repository impl, API client) |\n| `model` | Red | Data (Model, Entity, Schema) |\n| `external` | Gray | External services (API, DB, Queue) |\n| `job` | Yellow | Background (Job, Worker, Cron) |\n| `dto` | Cyan | Data transfer (DTO, Request, Response) |\n\nCustom categories are supported — they get a fallback color.\n\n### Layers\n\nThe `layer` field controls vertical positioning (dagre handles horizontal):\n\n| Layer | Typical Content |\n|-------|----------------|\n| 0 | External services |\n| 1 | Entry points (controllers, routes) |\n| 2 | Application logic (services, jobs, DTOs) |\n| 3 | Abstractions (ports, interfaces) |\n| 4 | Implementations (adapters) |\n| 5 | Data (models, entities) |\n\n### Edge Types\n\n| Type | Meaning |\n|------|---------|\n| `dependency` | Component A depends on B |\n| `implements` | Adapter implements Port/Interface |\n| `relation` | Data relationship (hasMany, belongsTo) |\n\n## Framework Support\n\narchrips is framework-agnostic. The AI agent adapts its analysis based on the detected framework:\n\n- **Laravel** — Controllers → Services → Ports → Adapters → Models\n- **Express/NestJS** — Routes/Controllers → Services → Repositories → Models\n- **Next.js** — Pages → Components → API Routes → Services\n- **Django** — Views → Serializers → Services → Models\n- **Spring Boot** — Controllers → Services → Repositories → Entities\n- **Go** — Handlers → Services → Repositories → Models\n- Any other — grouped by directory responsibility\n\n## Viewer Features\n\n- Interactive React Flow graph (drag, zoom, pan)\n- Use case filtering (highlight specific feature flows)\n- Detail panel (click nodes for full info: routes, methods, source links, DB schema)\n- Color-coded categories with legend\n- MiniMap navigation\n- Source code links (GitHub, GitLab, Backlog, or any hosting)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "archrips",
+          "source": "./",
+          "description": "Generate interactive architecture diagrams from your codebase",
+          "version": "0.1.0",
+          "author": {
+            "name": "Yuto Ida"
+          },
+          "homepage": "https://github.com/yida29/archrips",
+          "license": "MIT",
+          "keywords": [
+            "architecture",
+            "diagrams",
+            "visualization"
+          ],
+          "category": "development",
+          "categories": [
+            "architecture",
+            "development",
+            "diagrams",
+            "visualization"
+          ],
+          "install_commands": [
+            "/plugin marketplace add yida29/archrip",
+            "/plugin install archrips@archrips"
+          ]
+        }
+      ]
+    }
+  ]
+}
