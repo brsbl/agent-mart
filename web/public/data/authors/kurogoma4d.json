@@ -1,0 +1,96 @@
+{
+  "author": {
+    "id": "Kurogoma4D",
+    "display_name": "Kurogoma4D",
+    "avatar_url": "https://avatars.githubusercontent.com/u/13596653?u=2c211ec43d1cc23ef74baa16a98e34121eebcbba&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-tools",
+      "version": null,
+      "description": "Kurogoma4D作成のClaude Code用の便利なツール集及び実験場",
+      "repo_full_name": "Kurogoma4D/cc-tools",
+      "repo_url": "https://github.com/Kurogoma4D/cc-tools",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-17T09:44:00Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-tools\",\n  \"owner\": {\n    \"name\": \"Kurogoma4D\",\n    \"email\": \"contact@krgm4d.dev\"\n  },\n  \"metadata\": {\n    \"description\": \"Kurogoma4D作成のClaude Code用の便利なツール集及び実験場\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mermaid-escape-hook\",\n      \"source\": \"./hooks\",\n      \"description\": \"Markdown内のMermaid図表で特殊文字を自動エスケープするフック\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Kurogoma4D\",\n        \"email\": \"contact@krgm4d.dev\"\n      },\n      \"category\": \"formatting\",\n      \"keywords\": [\"mermaid\", \"markdown\", \"escape\", \"formatting\"],\n      \"hooks\": {\n        \"PostToolUse\": [\n          {\n            \"matcher\": \"Edit|MultiEdit|Write\",\n            \"hooks\": [\n              {\n                \"type\": \"command\",\n                \"command\": \"${CLAUDE_PLUGIN_ROOT}/escape_mermaid_hook.sh\"\n              }\n            ]\n          }\n        ]\n      }\n    },\n    {\n      \"name\": \"material-thinking\",\n      \"source\": \"./\",\n      \"description\": \"A methodology for building project-level design systems based on Material Design principles. Systematically covers design token architecture, component design principles, pattern organization, visual style definition, and expressive expression.\",\n      \"strict\": false,\n      \"skills\": [\"./skills/material-thinking\"]\n    },\n    {\n      \"name\": \"pr-review-check\",\n      \"source\": \"./\",\n      \"description\": \"Check Pull Request on current branch, and obtain unresolved review comments. `gh` command is required.\",\n      \"strict\": false,\n      \"skills\": [\"./skills/pr-review-check\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Tools\n\nこのリポジトリは、Claude Codeを利用しているユーザーのホームディレクトリ内にある `.claude` ディレクトリの構造から、公開可能なツールと設定を抜き出したものです。\n\n## 概要\n\nClaude Codeの設定ファイルと便利なフックスクリプトを含んでいます。これらのツールは、Claude Codeでの開発作業をより効率的にするために作成されています。\n\n## 使用方法\n\n### プラグインマーケットプレイスから利用（推奨）\n\n1. Claude Codeでマーケットプレイスを追加\n   ```bash\n   /plugin marketplace add kurogoma4d/cc-tools\n   ```\n\n2. プラグインをインストール\n   ```bash\n   /plugin install mermaid-escape-hook@cc-tools\n   ```\n\n### 手動インストール\n\n1. このリポジトリを `.claude` ディレクトリにコピー\n   1. settings.jsonはマージする形で、必要なツールの設定を抽出して自身のファイルに追記する\n2. Claude Codeが設定を自動読み込み\n\n## 含まれているツール\n\n### Skills\n\n#### material-thinking\nMaterial Design 3 (M3) および M3 Expressiveの包括的なガイダンスを提供するスキルです。\n- M3準拠のUIデザイン・実装支援\n- デザイントークン（カラースキーム、タイポグラフィ、シェイプ）の生成\n- 38種類のM3コンポーネントのガイダンス\n- アクセシビリティとレスポンシブデザインの確保\n\n#### pr-review-check\n現在のブランチのPRから未解決のレビューコメントを取得するスキルです。\n- `gh` コマンドが必要\n- GraphQL APIを使用してレビュースレッドを取得\n- 未解決のコメントのみをフィルタリング\n\n### Hooks\n\n#### Mermaidエスケープフック\n\nMarkdownファイル内のMermaid図表で特殊文字を自動エスケープするツールセットです。\n\n#### escape_mermaid_hook.sh\n- Claude CodeのPostToolUseフックとして動作\n- Markdownファイルが編集された際に自動実行\n- Mermaid図表内でgraph, flowchartがある場合にラベルに含まれる特殊文字を自動エスケープ\n- 以下の特殊文字をHTMLエンティティに変換：\n  - `(` → `&#40;`、`)` → `&#41;`\n  - `<` → `&lt;`、`>` → `&gt;`\n  - `\"` → `&quot;`\n  - `[` → `&#91;`、`]` → `&#93;`\n  - `{` → `&#123;`、`}` → `&#125;`\n- マルチスレッド処理による高速化\n- 単一ファイルまたは複数ファイルの一括処理に対応\n"
+      },
+      "plugins": [
+        {
+          "name": "mermaid-escape-hook",
+          "source": "./hooks",
+          "description": "Markdown内のMermaid図表で特殊文字を自動エスケープするフック",
+          "version": "1.0.0",
+          "author": {
+            "name": "Kurogoma4D",
+            "email": "contact@krgm4d.dev"
+          },
+          "category": "formatting",
+          "keywords": [
+            "mermaid",
+            "markdown",
+            "escape",
+            "formatting"
+          ],
+          "hooks": {
+            "PostToolUse": [
+              {
+                "matcher": "Edit|MultiEdit|Write",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "${CLAUDE_PLUGIN_ROOT}/escape_mermaid_hook.sh"
+                  }
+                ]
+              }
+            ]
+          },
+          "categories": [
+            "escape",
+            "formatting",
+            "markdown",
+            "mermaid"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Kurogoma4D/cc-tools",
+            "/plugin install mermaid-escape-hook@cc-tools"
+          ]
+        },
+        {
+          "name": "material-thinking",
+          "source": "./",
+          "description": "A methodology for building project-level design systems based on Material Design principles. Systematically covers design token architecture, component design principles, pattern organization, visual style definition, and expressive expression.",
+          "strict": false,
+          "skills": [
+            "./skills/material-thinking"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Kurogoma4D/cc-tools",
+            "/plugin install material-thinking@cc-tools"
+          ]
+        },
+        {
+          "name": "pr-review-check",
+          "source": "./",
+          "description": "Check Pull Request on current branch, and obtain unresolved review comments. `gh` command is required.",
+          "strict": false,
+          "skills": [
+            "./skills/pr-review-check"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Kurogoma4D/cc-tools",
+            "/plugin install pr-review-check@cc-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "MichaelAyles",
+    "display_name": "MichaelAyles",
+    "avatar_url": "https://avatars.githubusercontent.com/u/179212744?u=83e5ccb8da3a4aa65b5213ad6166911d13ab8eb5&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bitwise-mcp",
+      "version": null,
+      "description": "MCP tools for embedded systems development - search datasheets, registers, and memory maps",
+      "repo_full_name": "MichaelAyles/bitwise-mcp",
+      "repo_url": "https://github.com/MichaelAyles/bitwise-mcp",
+      "repo_description": "MCP documentation server for embedded developers. Ingests PDF reference manuals (1000+ pages), extracts register definitions, and provides fast semantic search with minimal token usage.",
+      "signals": {
+        "stars": 10,
+        "forks": 1,
+        "pushed_at": "2026-02-17T13:23:20Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"bitwise-mcp\",\n  \"owner\": {\n    \"name\": \"Bitwise\"\n  },\n  \"metadata\": {\n    \"description\": \"MCP tools for embedded systems development - search datasheets, registers, and memory maps\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"bitwise-embedded-docs\",\n      \"source\": \"./plugins/bitwise-embedded-docs\",\n      \"description\": \"Search embedded systems documentation, registers, and memory maps from PDF datasheets\",\n      \"version\": \"0.2.0\",\n      \"keywords\": [\"embedded\", \"registers\", \"datasheet\", \"mcp\", \"hardware\"],\n      \"category\": \"development\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        "README.md": "# bitwise-mcp\n\nMCP server for embedded developers. Ingests PDF reference manuals (1000+ pages), extracts register definitions, and provides fast semantic search. Built with [FastMCP](https://github.com/jlowin/fastmcp) and available as a Claude Code plugin.\n\n## Features\n\n- **PDF Ingestion** - Parses large reference manuals preserving structure\n- **Register Table Extraction** - Detects and converts register definitions to structured JSON\n- **Hybrid Search** - Combines keyword matching (SQLite FTS5) with semantic similarity (FAISS)\n- **Context-Aware Chunking** - Chunks include section hierarchy prefixes (e.g. `[Manual > FlexCAN > MCR Register]`) for better retrieval\n- **Sentence-Aware Splitting** - Text splits on sentence boundaries with 1-2 sentence overlap, never mid-word\n- **Compact Output** - Formats responses to minimize token usage\n\n## Installation\n\n### Option 1: Claude Code Plugin (Recommended)\n\nInstall directly from the Claude Code plugin marketplace:\n\n```bash\nclaude plugin add bitwise-embedded-docs\n```\n\nThis registers the MCP server and adds `/ingest-docs` and `/search-docs` slash commands.\n\n### Option 2: Global Install\n\nInstall once, use across all projects:\n\n```bash\n# From this repository directory\npip install -e .\n\n# Then in ANY project directory where you want to use it\nclaude mcp add --scope project embedded-docs python -m mcp_embedded_docs\n```\n\nEach project maintains its own isolated documentation index. When you run the server in a project, it only indexes and searches PDFs in that project's `docs/` directory.\n\n### Option 3: Poetry Install (Development)\n\n```bash\npoetry install\n\n# Add to Claude Code\nclaude mcp add embedded-docs --command poetry --args \"run\" \"mcp-embedded-docs\" \"serve\" --cwd \"<path-to-this-repo>\"\n```\n\nRestart Claude Code after adding the server.\n\n## Usage\n\nPlace PDFs in a `docs/` directory, then in Claude Code:\n\n```\nWhat PDFs are available?\nIngest any files that haven't been ingested yet\nWhat's the base address for FlexCAN0?\n```\n\n### Example: Checking Available PDFs\n\n![Listing available PDFs](images/Screenshot%20(10).PNG)\n\n### Example: Searching Documentation\n\nThe MCP server automatically queries the indexed documentation when you ask questions:\n\n![Documentation search in action](images/Screenshot%20(11).PNG)\n\n### CLI Usage\n\n```bash\npoetry run mcp-embedded-docs ingest docs/manual.pdf --title \"MCU Manual\"\npoetry run mcp-embedded-docs list  # View indexed documents\n```\n\n## MCP Tools\n\n| Tool | Description |\n|------|-------------|\n| `search_docs` | Search documentation with hybrid keyword + semantic retrieval |\n| `find_register` | Find specific register definitions by name |\n| `list_docs` | List all documentation files with status (indexed + available) |\n| `ingest_docs` | Ingest PDF documentation files into the search index |\n| `remove_docs` | Remove documents from the search index by ID |\n\n## Architecture\n\nBuilt on [FastMCP](https://github.com/jlowin/fastmcp) for the MCP server layer. The ingestion pipeline:\n\n1. **PDF Parsing** (PyMuPDF) - Extracts text with layout, TOC, and section hierarchy\n2. **Table Detection** (pdfplumber) - Identifies register maps, bitfield definitions, memory maps\n3. **Semantic Chunking** - Leaf-only section chunking with contextual hierarchy prefixes, sentence-aware splitting, and content-based deduplication\n4. **Embedding** (sentence-transformers, bge-small-en-v1.5) - Local embeddings, no API calls\n5. **Indexing** (FAISS + SQLite FTS5) - Hybrid vector + keyword search\n\n## Tech Stack\n\nPython 3.10+ | FastMCP | PyMuPDF | pdfplumber | sentence-transformers | FAISS | SQLite FTS5\n\n## Performance\n\n**Tested:** S32K144 Reference Manual (2,179 pages, 14MB)\n**Results:** 3min indexing, <500ms search, ~500MB memory\n\n## License\n\n[MIT](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "bitwise-embedded-docs",
+          "source": "./plugins/bitwise-embedded-docs",
+          "description": "Search embedded systems documentation, registers, and memory maps from PDF datasheets",
+          "version": "0.2.0",
+          "keywords": [
+            "embedded",
+            "registers",
+            "datasheet",
+            "mcp",
+            "hardware"
+          ],
+          "category": "development",
+          "license": "MIT",
+          "categories": [
+            "datasheet",
+            "development",
+            "embedded",
+            "hardware",
+            "mcp",
+            "registers"
+          ],
+          "install_commands": [
+            "/plugin marketplace add MichaelAyles/bitwise-mcp",
+            "/plugin install bitwise-embedded-docs@bitwise-mcp"
+          ]
+        }
+      ]
+    }
+  ]
+}

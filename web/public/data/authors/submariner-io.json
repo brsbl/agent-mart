@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "submariner-io",
+    "display_name": "Submariner",
+    "avatar_url": "https://avatars.githubusercontent.com/u/52503803?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "submariner",
+      "version": null,
+      "description": "Shared development tools and workflows for Submariner repositories",
+      "repo_full_name": "submariner-io/shipyard",
+      "repo_url": "https://github.com/submariner-io/shipyard",
+      "repo_description": "Framework and scripts to create multiple Kubernetes clusters with kind (K8s in Docker) for local E2E testing and development.",
+      "signals": {
+        "stars": 70,
+        "forks": 28,
+        "pushed_at": "2026-02-17T08:11:58Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"submariner\",\n  \"owner\": {\n    \"name\": \"Submariner Project\",\n    \"url\": \"https://submariner.io\"\n  },\n  \"metadata\": {\n    \"description\": \"Shared development tools and workflows for Submariner repositories\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"shipyard\",\n      \"description\": \"Shared development tools for Submariner repositories\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Submariner Contributors\",\n        \"url\": \"https://github.com/submariner-io\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://submariner.io\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"shipyard\",\n  \"description\": \"Shared development tools for Submariner repositories\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Submariner Contributors\",\n    \"url\": \"https://github.com/submariner-io\"\n  },\n  \"homepage\": \"https://submariner.io\",\n  \"repository\": \"https://github.com/submariner-io/shipyard\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\"submariner\", \"cve\", \"security\", \"go\", \"kubernetes\"]\n}\n",
+        "README.md": "# Shipyard\n\n<!-- markdownlint-disable line-length -->\n[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4865/badge)](https://bestpractices.coreinfrastructure.org/projects/4865)\n[![Release Images](https://github.com/submariner-io/shipyard/workflows/Release%20Images/badge.svg)](https://github.com/submariner-io/shipyard/actions?query=workflow%3A%22Release+Images%22)\n[![Periodic](https://github.com/submariner-io/shipyard/workflows/Periodic/badge.svg)](https://github.com/submariner-io/shipyard/actions?query=workflow%3APeriodic)\n<!-- markdownlint-enable line-length -->\n\nThe Shipyard project provides tooling for creating K8s clusters with [kind] and provides a Go framework for creating E2E tests.\n\n## Prerequisites\n\n- [go 1.12] with [$GOPATH configured]\n- [docker]\n\n## Usage\n\nTo use Shipyard for your project, it's easiest to use Dapper and Make.\nTo use Dapper, you'll need a specific Dockerfile that Dapper consumes to create a consistent environment based upon Shipyard's base image.\nTo use Make, you'll need some commands to enable Dapper and also include the targets which ship in the base image.\n\n### Dockerfile.dapper\n\nShipyard provides this file automatically for you. You can also define it explicitly to be more tailored to the specific project.\n\nThe Dockerfile should build upon `quay.io/submariner/shipyard-dapper-base`.\n\nFor example, this very basic file allows E2E testing:\n\n```Dockerfile\nFROM quay.io/submariner/shipyard-dapper-base:devel\n\nENV DAPPER_SOURCE=/go/src/github.com/submariner-io/submariner DAPPER_DOCKER_SOCKET=true\nENV DAPPER_OUTPUT=${DAPPER_SOURCE}/output\n\nWORKDIR ${DAPPER_SOURCE}\n\nENTRYPOINT [\"./scripts/entry\"]\nCMD [\"ci\"]\n```\n\nYou can also refer to the project's own [Dockerfile.dapper](Dockerfile.dapper) as an example.\n\n### Makefile\n\nThe Makefile should include targets to run everything in Dapper.\nThey're defined in [Makefile.dapper](Makefile.dapper) and can be copied as-is and included, but it's best to download and import it.\nTo use Shipyard's target, simply include the [Makefile.inc](Makefile.inc) file in your own Makefile.\n\nThe simplest Makefile would look like this:\n\n```Makefile\nBASE_BRANCH=devel\nPROJECT=shipyard\nSHIPYARD_URL=https://raw.githubusercontent.com/submariner-io/shipyard/$(BASE_BRANCH)\nexport BASE_BRANCH PROJECT SHIPYARD_URL\n\nifneq (,$(DAPPER_HOST_ARCH))\n\n# Running in Dapper\n\ninclude $(SHIPYARD_DIR)/Makefile.inc\n\nelse\n\n# Not running in Dapper\n\nMakefile.dapper:\n        @echo Downloading $@\n        @curl -sfLO $(SHIPYARD_URL)/$@\n\ninclude Makefile.dapper\n\nendif\n\n# Disable rebuilding Makefile\nMakefile Makefile.dapper Makefile.inc: ;\n```\n\nYou can also refer to the project's own [Makefile](Makefile) as an example.\n\n## Releases\n\nGet the latest version from the [Releases] page.\n\n<!--links-->\n[go 1.12]: https://blog.golang.org/go1.12\n[docker]: https://docs.docker.com/install/\n[$GOPATH configured]: https://github.com/golang/go/wiki/SettingGOPATH\n[Releases]: https://github.com/submariner-io/shipyard/releases/\n[kind]: https://github.com/kubernetes-sigs/kind\n"
+      },
+      "plugins": [
+        {
+          "name": "shipyard",
+          "description": "Shared development tools for Submariner repositories",
+          "version": "1.0.0",
+          "author": {
+            "name": "Submariner Contributors",
+            "url": "https://github.com/submariner-io"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://submariner.io",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add submariner-io/shipyard",
+            "/plugin install shipyard@submariner"
+          ]
+        }
+      ]
+    }
+  ]
+}

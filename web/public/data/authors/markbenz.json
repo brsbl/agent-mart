@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "MarkBenz",
+    "display_name": "Mark Benz",
+    "avatar_url": "https://avatars.githubusercontent.com/u/26956713?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-skills",
+      "version": null,
+      "description": "A collection of Claude Code skills for frontend development. Includes TailwindCSS UI/UX rules, design system analysis, design audit, component generator, and color palette tools.",
+      "repo_full_name": "MarkBenz/claude-code-skills",
+      "repo_url": "https://github.com/MarkBenz/claude-code-skills",
+      "repo_description": "Custom Claude Code skills for frontend development - TailwindCSS UI/UX rules, layout patterns, and more",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T10:13:19Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"claude-code-skills\",\n  \"description\": \"A collection of Claude Code skills for frontend development. Includes TailwindCSS UI/UX rules, design system analysis, design audit, component generator, and color palette tools.\",\n  \"owner\": {\n    \"name\": \"Mark Benz\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-code-skills\",\n      \"description\": \"Frontend development skills for TailwindCSS including UI/UX rules, design audit, component generation, and color palette tools.\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"Mark Benz\"\n      },\n      \"source\": \"./plugins/claude-code-skills\",\n      \"category\": \"frontend\",\n      \"keywords\": [\"tailwindcss\", \"frontend\", \"ui\", \"ux\", \"design\", \"components\", \"color-palette\"],\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Skills\n\nA collection of custom [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills that extend Claude's capabilities for frontend development.\n\n## Available Skills\n\n### tailwind-ui-rules\n\nConcrete TailwindCSS UI/UX implementation rules covering shadows, layout alignment, spacing systems, responsive patterns, and interactive states. Complements the official Anthropic `frontend-design` skill with actionable code-level guidance.\n\n**What the Anthropic `frontend-design` skill covers:** Aesthetic direction — tone, typography choices, color philosophy, motion, spatial composition.\n\n**What this skill covers:** Correct TailwindCSS implementation — shadow hierarchy, flush alignment, spacing consistency, responsive patterns, interactive states, and common AI-generated mistakes to avoid.\n\n#### Reference Files\n\n| File | Content |\n|------|---------|\n| `shadow-and-depth.md` | Shadow hierarchy, dark mode shadows, colored shadows, 3D hover effects, glassmorphism, neumorphism, modern gradients |\n| `layout-and-spacing.md` | Container patterns, flex/grid layouts, flush alignment, spacing scale, bento grids, container queries, overflow/shadow clipping |\n| `responsive-patterns.md` | Mobile-first patterns, responsive grids, typography scaling, fluid typography with clamp() |\n| `interactive-states.md` | Button/input/card/toggle state patterns, focus rings, transitions, skeleton loading, prefers-reduced-motion, advanced card variants |\n| `anti-patterns.md` | 12 common AI mistakes with wrong code → correct code examples, dark mode surfaces, motion accessibility |\n| `design-system-analysis.md` | Scanning procedure for auto-detecting project design patterns and persisting them to `design-system.md` |\n\n#### Design System Persistence\n\nOn first activation in a project, the skill automatically:\n1. Scans your codebase for existing TailwindCSS patterns (shadows, colors, spacing, layout, etc.)\n2. Generates a `design-system.md` file in the project root\n3. Uses those patterns as context in all future sessions\n\nTo re-analyze: ask Claude to *\"refresh design system\"*.\n\n---\n\n### audit-design\n\nA slash command (`/audit-design`) that audits your project's frontend code against the TailwindCSS best practice rules. Produces a structured report with:\n\n- **Critical** issues (accessibility violations)\n- **Major** issues (visual inconsistency, missing dark mode, shadow overuse)\n- **Minor** issues (missing transitions, suboptimal z-index)\n- **What's Good** (positive reinforcement)\n- **Suggested Fixes** with copy-pasteable code snippets\n\n```bash\n# Audit entire project\n/audit-design\n\n# Audit specific file or directory\n/audit-design src/components/\n```\n\nIf a `design-system.md` exists, the audit also checks for **drift** between documented patterns and actual code.\n\n---\n\n### generate-component\n\nA slash command (`/generate-component`) that scaffolds production-ready UI components matching your project's design system. Auto-detects the tech stack (React/TSX, Vue, Svelte, Astro, plain HTML) and applies all design rules.\n\n```bash\n/generate-component card                # Standard card with hover, dark mode, focus\n/generate-component modal confirmation  # Confirmation dialog variant\n/generate-component form horizontal     # Form with horizontal labels\n/generate-component table striped       # Data table with striped rows\n/generate-component hero                # Hero section\n/generate-component nav                 # Navigation bar with mobile menu\n```\n\nEvery generated component includes: dark mode, hover/focus/disabled states, transitions, responsive layout, accessibility, and motion safety — all matching the `design-system.md` if it exists.\n\n---\n\n### color-palette\n\nA slash command (`/color-palette`) that analyzes, generates, and optimizes your project's color palette with dark mode mapping and WCAG contrast checking.\n\n```bash\n/color-palette                    # Analyze current color usage\n/color-palette analyze            # Same as above\n/color-palette generate           # Generate a new SaaS palette\n/color-palette generate warm      # Warm-toned palette\n/color-palette generate brand #3B82F6  # Build around a brand color\n/color-palette harmonize          # Fix inconsistencies in existing colors\n/color-palette export             # Output as Tailwind config / CSS variables\n```\n\nFeatures:\n- Detects inconsistent primary colors (e.g., `blue-500` vs `blue-600` used interchangeably)\n- Checks all text/bg combos against **WCAG AA** contrast ratios\n- Generates complete light + dark mode color mapping\n- Exports as `tailwind.config.js` or CSS custom properties\n- Can update your `design-system.md` with the optimized palette\n\n## Installation\n\nThere are several ways to install these skills in Claude Code:\n\n### Option 1: Register as a Marketplace (recommended)\n\nAdd this repository as a plugin marketplace so Claude Code can discover and manage the skills:\n\n```bash\n# Inside Claude Code, run:\n/plugin marketplace add MarkBenz/claude-code-skills\n```\n\nThen install the skill:\n\n```bash\n/plugin install claude-code-skills@claude-code-skills\n```\n\nTo share with your team, install at project scope:\n\n```bash\n/plugin install claude-code-skills@claude-code-skills --scope project\n```\n\n### Option 2: Settings Configuration\n\nAdd the marketplace to your Claude Code settings file (`~/.claude/settings.json` for personal use, or `.claude/settings.json` in your project for team use):\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"MarkBenz-claude-code-skills\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"MarkBenz/claude-code-skills\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"claude-code-skills@claude-code-skills\": true\n  }\n}\n```\n\n### Option 3: Local Development / Testing\n\nFor temporary use in a single session (e.g., during development):\n\n```bash\n# Clone the repo\ngit clone https://github.com/MarkBenz/claude-code-skills.git\n\n# Run Claude Code with the plugin directory\nclaude --plugin-dir ./claude-code-skills\n```\n\n### Verification\n\nOnce installed, the `tailwind-ui-rules` skill activates automatically whenever you work on frontend/UI tasks. Test it by asking Claude Code something like:\n\n> \"Build a card component with TailwindCSS\"\n\nThe skill should load alongside the Anthropic `frontend-design` skill.\n\n## Contributing\n\nFeel free to open issues or PRs to suggest new rules, patterns, or additional skills.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-code-skills",
+          "description": "Frontend development skills for TailwindCSS including UI/UX rules, design audit, component generation, and color palette tools.",
+          "version": "1.2.0",
+          "author": {
+            "name": "Mark Benz"
+          },
+          "source": "./plugins/claude-code-skills",
+          "category": "frontend",
+          "keywords": [
+            "tailwindcss",
+            "frontend",
+            "ui",
+            "ux",
+            "design",
+            "components",
+            "color-palette"
+          ],
+          "license": "MIT",
+          "categories": [
+            "color-palette",
+            "components",
+            "design",
+            "frontend",
+            "tailwindcss",
+            "ui",
+            "ux"
+          ],
+          "install_commands": [
+            "/plugin marketplace add MarkBenz/claude-code-skills",
+            "/plugin install claude-code-skills@claude-code-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
