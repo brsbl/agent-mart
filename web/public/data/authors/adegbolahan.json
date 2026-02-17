@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "Adegbolahan",
+    "display_name": "Adegbolahan",
+    "avatar_url": "https://avatars.githubusercontent.com/u/87285138?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "getting-started-claude",
+      "version": "1.0.0",
+      "description": "A curated collection of Claude Code plugins for project scaffolding, documentation, and development workflows.",
+      "repo_full_name": "Adegbolahan/getting-started-claude",
+      "repo_url": "https://github.com/Adegbolahan/getting-started-claude",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T15:34:55Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": " {\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"getting-started-claude\",\n  \"version\": \"1.0.0\",\n  \"description\": \"A curated collection of Claude Code plugins for project scaffolding, documentation, and development workflows.\",\n  \"owner\": {\n    \"name\": \"Getting Started with Claude\",\n    \"url\": \"https://github.com/Adegbolahan/getting-started-claude\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"project-scaffolder\",\n      \"description\": \"Scaffold projects with CLAUDE.md documentation, workflow commands, skills, hooks, and project tracking. Includes /scaffold and /scaffold-minimal commands.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Getting Started with Claude\"\n      },\n      \"source\": \"./project-scaffolder\",\n      \"category\": \"development\",\n      \"keywords\": [\n        \"scaffolding\",\n        \"documentation\",\n        \"templates\",\n        \"project-setup\",\n        \"workflow\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Getting Started with Claude Code\n\nA plugin marketplace and collection of Claude Code plugins for project scaffolding, documentation, and development workflows.\n\n## Quick Start\n\n### Install the Marketplace\n\n```\n/plugin marketplace add https://github.com/Adegbolahan/getting-started-claude\n```\n\n### Install a Plugin\n\n```\n/plugin install project-scaffolder@getting-started-claude\n```\n\n### Create a New Project\n\n```\n/new\n```\n\nClaude will ask where to create it and set everything up.\n\n---\n\n## Available Plugins\n\n| Plugin                                     | Description                                                   |\n| ------------------------------------------ | ------------------------------------------------------------- |\n| [project-scaffolder](./project-scaffolder) | Scaffold projects with documentation, workflows, and tracking |\n\n---\n\n## Project Scaffolder\n\n### Commands\n\n| Command   | Description                               |\n| --------- | ----------------------------------------- |\n| `/new`    | Create a new project with Claude Code     |\n| `/update` | Update existing project to latest version |\n\nNo arguments needed - Claude asks what it needs.\n\n### What Gets Created\n\n```\nyour-project/\n├── CLAUDE.md                    # Project hub\n└── .claude/\n    ├── settings.json            # Hooks + version tracking\n    ├── commands/                # 6 workflow commands\n    ├── skills/                  # 3 interactive skills\n    └── project/                 # Feature tracking\n        ├── features/\n        ├── plans/\n        ├── high-level-user-stories.md\n        └── roadmap.md\n```\n\n### Features\n\n- **No arguments** - Claude asks what it needs\n- **Smart updates** - Preserves your customizations\n- **Version tracking** - Knows when updates available\n- **Non-blocking hooks** - Only trigger on project files\n\n### Customization\n\nAfter creating a project:\n\n> \"Help me customize for [your-tech-stack]\"\n\n---\n\n## Contributing\n\n### Add a Plugin\n\n1. Create plugin with `.claude-plugin/plugin.json`\n2. Add to this repository\n3. Update `.claude-plugin/marketplace.json`\n4. Submit PR\n\n---\n\n## Local Development\n\n```bash\nclaude --plugin-dir /path/to/project-scaffolder\n```\n\n---\n\n## Support\n\n- [GitHub Issues](https://github.com/Adegbolahan/getting-started-claude/issues)\n- [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code)\n\n## License\n\nMIT\n",
+        "project-scaffolder/README.md": "# Project Scaffolder\n\nClaude Code plugin that scaffolds projects with documentation, skills, commands, and project tracking.\n\n## Commands\n\n| Command   | Description                               |\n| --------- | ----------------------------------------- |\n| `/new`    | Create a new project with Claude Code     |\n| `/update` | Update existing project to latest version |\n\n## What Gets Created\n\n```\nproject/\n├── CLAUDE.md                    # Project hub\n└── .claude/\n    ├── settings.json            # Hooks for formatting, safety, workflow\n    ├── commands/                # 2 workflow commands\n    │   ├── implement.md         # Full 5-phase feature workflow\n    │   └── review.md            # Pre-commit review\n    ├── skills/\n    │   ├── development-workflow/\n    │   ├── project-standards/\n    │   └── exploration-helpers/\n    └── project/\n        ├── features/\n        ├── plans/\n        ├── workflow-state.sh    # Phase state machine\n        ├── high-level-user-stories.md\n        └── roadmap.md\n```\n\n## Usage\n\nJust run the command - Claude will ask what it needs:\n\n```\n/new\n```\n\nClaude will ask:\n\n- Where to create the project\n- How to handle existing files (if any)\n\n```\n/update\n```\n\nClaude will:\n\n- Detect the project in current directory\n- Show what's changed\n- Update files (preserving your customizations)\n\n## Features\n\n- **No arguments needed** - Claude asks what it needs\n- **Smart detection** - Finds existing Claude Code files\n- **Safe updates** - Preserves CLAUDE.md and project tracking\n- **Version tracking** - Knows when updates are available\n\n## Hooks\n\nScaffolded projects include a full hook suite:\n\n- **Safety guardrails** - Blocks force-push, --no-verify, git reset --hard, env file edits\n- **Workflow phase tracking** - Auto-advances through discovery → plan → approval → implementation → complete\n- **Auto-formatting** - Prettier/Black/Rustfmt after edits\n- **Type checking** - Runs tsc after TypeScript file edits\n- **Workflow gates** - Warns when editing source code before plan is approved\n\n## Skills\n\n| Skill                  | Purpose                        |\n| ---------------------- | ------------------------------ |\n| `development-workflow` | Feature process, git, planning |\n| `project-standards`    | User stories, documentation    |\n| `exploration-helpers`  | Database, codebase, types      |\n\n## Installation\n\n```bash\nclaude --plugin-dir /path/to/project-scaffolder\n```\n\nOr via marketplace:\n\n```\n/plugin install project-scaffolder@getting-started-claude\n```\n\n## Customization\n\nAfter creating a project:\n\n> \"Help me customize for [your-tech-stack]\"\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "project-scaffolder",
+          "description": "Scaffold projects with CLAUDE.md documentation, workflow commands, skills, hooks, and project tracking. Includes /scaffold and /scaffold-minimal commands.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Getting Started with Claude"
+          },
+          "source": "./project-scaffolder",
+          "category": "development",
+          "keywords": [
+            "scaffolding",
+            "documentation",
+            "templates",
+            "project-setup",
+            "workflow"
+          ],
+          "categories": [
+            "development",
+            "documentation",
+            "project-setup",
+            "scaffolding",
+            "templates",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Adegbolahan/getting-started-claude",
+            "/plugin install project-scaffolder@getting-started-claude"
+          ]
+        }
+      ]
+    }
+  ]
+}
