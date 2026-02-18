@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "bearded-giant",
+    "display_name": "Bryan Grimes",
+    "avatar_url": "https://avatars.githubusercontent.com/u/966532?u=5d9fe940c717b2643e39b901e236ae6220918fcc&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mdlive",
+      "version": "1.0.0",
+      "description": "Live markdown preview server for AI coding agents",
+      "repo_full_name": "bearded-giant/mdlive",
+      "repo_url": "https://github.com/bearded-giant/mdlive",
+      "repo_description": "Markdown workspace server for humans as well as AI coding agent output",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-18T12:12:47Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"mdlive\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Live markdown preview server for AI coding agents\",\n  \"owner\": {\n    \"name\": \"bearded-giant\",\n    \"email\": \"\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mdlive\",\n      \"description\": \"Serve markdown files as live-reloading HTML previews in the browser\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugin\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "![mdlive](static/img/md-hero.png)\n\n# mdlive\n\nA lightweight markdown editor and live preview server. Point it at a file or directory, get instant rendered output in the browser with live reload. Edit, create, rename, delete -- all from the browser. No config, no setup.\n\nI built this to sit next to AI coding agents. When an agent writes markdown -- plans, architecture docs, research -- I'd rather read it rendered than squint at raw text in a terminal. But it works just as well as a standalone markdown workspace.\n\nThis started as a fork of Jose Fernandez's [mdserve](https://github.com/jfernandez/mdserve). The original idea and core implementation are his. I've since taken it in a different direction: in-browser editing, file CRUD, version history, keyboard shortcuts, theming. Different enough to warrant its own repo.\n\nhttps://github.com/bearded-giant/mdlive/raw/main/docs/images/mdlive.mp4\n\n## Install\n\n```bash\ngit clone https://github.com/bearded-giant/mdlive.git\ncd mdlive\ncargo build --release\n# binary is at target/release/mdlive\n```\n\nSingle binary, no runtime dependencies. Everything (templates, JS libraries, images) is embedded at compile time.\n\n### Claude Code plugin\n\nmdlive is available as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin. Once installed, Claude will automatically use mdlive to preview markdown when it makes sense -- plans, architecture docs, tables, diagrams, and anything that reads better rendered than raw.\n\n```\n/plugin install mdlive@bearded-giant/mdlive\n```\n\n## Quick start\n\n```bash\nmdlive README.md         # single file, opens browser\nmdlive docs/             # directory mode with sidebar\n```\n\n#### Single file view\n![Single file view](docs/images/single-view.png)\n\n#### Directory view\n![Directory view](docs/images/dir-view.png)\n\nIt watches for changes and reloads instantly via WebSocket. New files in directory mode get picked up automatically. The browser opens on launch by default (pass `--no-open` to suppress).\n\n### Running alongside an AI agent\n\nPoint mdlive at whatever directory the agent writes to. As the agent creates or updates markdown files, the browser reflects changes in real time.\n\n```bash\nmdlive scratch/ &        # background it, work alongside your agent\n```\n\nThis is particularly useful for reviewing agent-generated plans, design docs, and research as they're being written.\n\n## Features\n\n### Viewing\n\nGFM rendering with tables, task lists, strikethrough, and fenced code blocks. Syntax highlighting via highlight.js. Mermaid diagram rendering. YAML and TOML frontmatter is stripped before rendering. Images referenced in markdown are served inline (png, jpg, gif, svg, webp).\n\n### Themes\n\nFive built-in themes: Catppuccin Mocha (default), Catppuccin Macchiato, Catppuccin Latte, Light, and Dark. Switch via the palette icon in the bottom-right corner. Selection is persisted to localStorage.\n\n### Editing\n\nEvery markdown file has a built-in editor accessible via the edit icon or the `e` shortcut. The editor is a split-pane view: raw markdown on the left, live preview on the right. The divider is draggable (persisted to localStorage). Scroll position syncs between panes. `Ctrl+S` saves, `Esc` closes. An unsaved-changes dot and `beforeunload` guard prevent accidental data loss.\n\n### File operations\n\nFull CRUD from the browser. Create new files, rename/move existing ones, delete with confirmation. All operations available from both the right-click context menu (on sidebar items) and from buttons in the editor header. In single-file mode, right-click the content area for the context menu.\n\n<img src=\"docs/images/context-menu.png\" alt=\"Context menu\" width=\"425\">\n\n### Revisions\n\nEvery save creates a timestamped snapshot in a `.mdlive/` directory next to your files. Open the revisions panel (`h` or `r` shortcut, or the Revisions button) to browse previous versions and restore any of them. You'll probably want to add `.mdlive` to your `.gitignore` unless you want revision history in your repo -- which can actually be handy for shared design docs or architecture decisions.\n\n<img src=\"docs/images/revision-sidebar.jpg\" alt=\"Revision history\" width=\"365\"> <img src=\"docs/images/revision-detail.png\" alt=\"Revision detail with diff\" width=\"500\">\n\n### Directory mode\n\nPass a directory and mdlive recursively finds all `.md` and `.markdown` files, builds a collapsible tree sidebar. Right-click folders to create files in specific subdirectories. The sidebar is resizable (drag the edge) and collapsible (`k` shortcut or the toggle button). Search the tree by pressing `s`.\n\n### Keyboard shortcuts\n\nPress `/` to see all available shortcuts. Shortcuts are suppressed when typing in inputs, when modifier keys are held, and when dialogs are open.\n\n\n| Key | Action |\n|-----|--------|\n| `/` | Show shortcuts |\n| `e` | Edit file |\n| `n` | New file |\n| `d` | Delete file |\n| `k` | Toggle sidebar |\n| `s` | Focus search |\n| `Ctrl+S` | Save |\n| `h` / `r` | Toggle revisions |\n| `Esc` | Close / cancel |\n\n## Usage\n\n```bash\nmdlive file.md                # serve a single file (port 3000)\nmdlive docs/                  # directory mode with sidebar\nmdlive docs/ -p 8080          # custom port\nmdlive file.md --no-open      # don't auto-open the browser\nmdlive file.md -H 0.0.0.0    # bind to all interfaces\n```\n\n## Development\n\nRust 1.82+, 2021 edition. Templates and static assets are embedded at compile time (`minijinja-embed`, `include_str!`, `include_bytes!`), so changes to `templates/` or `static/` need a rebuild.\n\n```bash\ncargo build --release\ncargo test                        # all tests (74 unit + integration)\ncargo test --test pages_test      # specific test file\ncargo test test_server_starts     # by name\n```\n\nSee [docs/architecture.md](docs/architecture.md) for internals.\n\n## License\n\nMIT. See [LICENSE](LICENSE).\n\n## Attribution\n\nBased on [mdserve](https://github.com/jfernandez/mdserve) by Jose Fernandez, MIT licensed. Original contributors are in the git history.\n"
+      },
+      "plugins": [
+        {
+          "name": "mdlive",
+          "description": "Serve markdown files as live-reloading HTML previews in the browser",
+          "version": "1.0.0",
+          "source": "./plugin",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bearded-giant/mdlive",
+            "/plugin install mdlive@mdlive"
+          ]
+        }
+      ]
+    }
+  ]
+}

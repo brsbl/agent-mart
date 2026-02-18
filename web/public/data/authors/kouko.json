@@ -15,19 +15,19 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-18T10:20:09Z"
+        "pushed_at": "2026-02-18T14:30:49Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"monkey-marketplace\",\n  \"owner\": {\n    \"name\": \"kouko\",\n    \"url\": \"https://github.com/kouko\"\n  },\n  \"metadata\": {\n    \"description\": \"YouTube video summarization skills for AI coding assistants\",\n    \"version\": \"1.0.3\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"youtube-summarizer\",\n      \"source\": \".\",\n      \"description\": \"Summarize YouTube videos from URL or transcript\",\n      \"version\": \"1.0.3\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"youtube\", \"video\", \"summarize\", \"transcript\"]\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"youtube-summarizer\",\n  \"version\": \"1.0.3\",\n  \"description\": \"Summarize YouTube videos from URL or transcript\",\n  \"author\": {\n    \"name\": \"kouko\",\n    \"url\": \"https://github.com/kouko\"\n  },\n  \"homepage\": \"https://github.com/kouko/monkey-knowledge-youtube-skills\",\n  \"repository\": \"https://github.com/kouko/monkey-knowledge-youtube-skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"youtube\", \"video\", \"summarize\", \"caption\"]\n}\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"monkey-marketplace\",\n  \"owner\": {\n    \"name\": \"kouko\",\n    \"url\": \"https://github.com/kouko\"\n  },\n  \"metadata\": {\n    \"description\": \"YouTube video summarization skills for AI coding assistants\",\n    \"version\": \"1.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"monkey-knowledge-youtube-skills\",\n      \"source\": \".\",\n      \"description\": \"Summarize YouTube videos from URL or transcript\",\n      \"version\": \"1.1.0\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"youtube\", \"video\", \"summarize\", \"transcript\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"monkey-knowledge-youtube-skills\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Summarize YouTube videos from URL or transcript\",\n  \"author\": {\n    \"name\": \"kouko\",\n    \"url\": \"https://github.com/kouko\"\n  },\n  \"homepage\": \"https://github.com/kouko/monkey-knowledge-youtube-skills\",\n  \"repository\": \"https://github.com/kouko/monkey-knowledge-youtube-skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"youtube\", \"video\", \"summarize\", \"caption\"]\n}\n",
         "README.md": "# YouTube Summarizer\n\nSummarize YouTube videos from URL or transcript. Follows the [Agent Skills](https://agentskills.io/) open standard for cross-platform compatibility.\n\n## Platform Compatibility\n\n| Platform | Support | Installation |\n|----------|---------|--------------|\n| Claude Code | ✅ | `/plugin install` or `/plugin marketplace add` |\n| Gemini CLI | ✅ | `gemini extensions install` |\n| OpenCode | ✅ | Native Agent Skills |\n| VS Code Copilot | ✅ | Native Agent Skills |\n\n## Installation\n\n### Claude Code\n\n**方式 1：直接安裝**\n```bash\n/plugin install https://github.com/kouko/monkey-knowledge-youtube-skills\n```\n\n**方式 2：透過 Marketplace 瀏覽安裝**\n```bash\n# 1. 加入 marketplace\n/plugin marketplace add kouko/monkey-knowledge-youtube-skills\n\n# 2. 開啟互動介面\n/plugin\n\n# 3. 進入 Discover 分頁，選擇 youtube-summarizer 安裝\n```\n\n### Gemini CLI\n\n```bash\ngemini extensions install https://github.com/kouko/monkey-knowledge-youtube-skills\n```\n\n### OpenCode\n\n```bash\ncurl -L https://github.com/kouko/monkey-knowledge-youtube-skills/archive/refs/heads/main.tar.gz | \\\n  tar -xz --strip-components=1 -C ~/.config/opencode/skills/ \\\n  \"monkey-knowledge-youtube-skills-main/skills/\"\n```\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| `mk-youtube-search` | Search YouTube videos |\n| `mk-youtube-get-info` | Get video metadata |\n| `mk-youtube-get-caption` | Download captions/subtitles |\n| `mk-youtube-get-audio` | Download audio track |\n| `mk-youtube-get-channel-latest` | Get latest videos from a channel |\n| `mk-youtube-audio-transcribe` | Transcribe audio using Whisper |\n| `mk-youtube-transcript-summarize` | Summarize transcript |\n| `mk-youtube-summarize` | End-to-end video summarization |\n\n## Usage\n\n```bash\n# Search for videos\n/mk-youtube-search \"AI tutorial\" 5\n\n# Get video info\n/mk-youtube-get-info https://www.youtube.com/watch?v=VIDEO_ID\n\n# Summarize a video\n/mk-youtube-summarize https://www.youtube.com/watch?v=VIDEO_ID\n```\n\n## Features\n\n- Extract video info (title, channel, duration)\n- Parse transcript/captions\n- Generate structured summary\n- Local audio transcription with Whisper.cpp (Metal GPU acceleration on macOS)\n- Support multilingual content (EN, JP, ZH-TW)\n- Auto-download for dependencies (yt-dlp, ffmpeg, whisper-cli, jq)\n\n## Development\n\n### Local Testing\n\n```bash\n# Test plugin locally\nclaude --plugin-dir .\n\n# Verify skills loaded\n/skills\n```\n\n### Validate Structure\n\n```bash\nclaude plugin validate .\n```\n\n## Structure\n\n```\nmonkey-knowledge-youtube-skills/\n├── .claude-plugin/\n│   ├── marketplace.json        # Claude Code marketplace (互動式瀏覽)\n│   └── plugin.json             # Claude Code manifest (直接安裝)\n├── gemini-extension.json       # Gemini CLI manifest\n├── skills/                     # Agent Skills (cross-platform)\n│   ├── mk-youtube-search/\n│   ├── mk-youtube-get-info/\n│   ├── mk-youtube-get-caption/\n│   ├── mk-youtube-get-audio/\n│   ├── mk-youtube-get-channel-latest/\n│   ├── mk-youtube-audio-transcribe/\n│   ├── mk-youtube-transcript-summarize/\n│   └── mk-youtube-summarize/\n├── CLAUDE.md\n├── LICENSE\n└── README.md\n```\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n"
       },
       "plugins": [
         {
-          "name": "youtube-summarizer",
+          "name": "monkey-knowledge-youtube-skills",
           "source": ".",
           "description": "Summarize YouTube videos from URL or transcript",
-          "version": "1.0.3",
+          "version": "1.1.0",
           "category": "productivity",
           "keywords": [
             "youtube",
@@ -44,7 +44,7 @@
           ],
           "install_commands": [
             "/plugin marketplace add kouko/monkey-knowledge-youtube-skills",
-            "/plugin install youtube-summarizer@monkey-marketplace"
+            "/plugin install monkey-knowledge-youtube-skills@monkey-marketplace"
           ]
         }
       ]
