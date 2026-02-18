@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "jcputney",
+    "display_name": "Jonathan Putney",
+    "avatar_url": "https://avatars.githubusercontent.com/u/42720634?u=0534ac3b2f169f8c5b4680c79ec8266e4a254d4f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-peer-review-marketplace",
+      "version": "1.0.12",
+      "description": "Marketplace for AI-to-AI peer review plugins. Multiple perspectives catch more issues than one.",
+      "repo_full_name": "jcputney/agent-peer-review",
+      "repo_url": "https://github.com/jcputney/agent-peer-review",
+      "repo_description": "A Claude Code plugin that validates Claude's work using OpenAI Codex CLI. Two AI perspectives catch more issues than one.",
+      "signals": {
+        "stars": 18,
+        "forks": 2,
+        "pushed_at": "2026-02-17T17:08:16Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agent-peer-review-marketplace\",\n  \"version\": \"1.0.12\",\n  \"description\": \"Marketplace for AI-to-AI peer review plugins. Multiple perspectives catch more issues than one.\",\n  \"owner\": {\n    \"name\": \"jcputney\",\n    \"url\": \"https://github.com/jcputney\"\n  },\n  \"repository\": \"https://github.com/jcputney/agent-peer-review\",\n  \"plugins\": [\n    {\n      \"name\": \"codex-peer-review\",\n      \"version\": \"1.0.11\",\n      \"description\": \"Peer validation system using OpenAI Codex CLI. Two AI perspectives catch more issues than one.\",\n      \"author\": {\n        \"name\": \"jcputney\",\n        \"url\": \"https://github.com/jcputney\"\n      },\n      \"source\": \"./plugins/codex-peer-review\",\n      \"category\": \"code-quality\",\n      \"tags\": [\"peer-review\", \"code-review\", \"validation\", \"codex\", \"ai-collaboration\"]\n    }\n  ]\n}\n",
+        "README.md": "# Agent Peer Review\n\nA Claude Code plugin marketplace for AI-to-AI peer validation. Multiple perspectives catch more issues than one.\n\n## Available Plugins\n\n### codex-peer-review\n\nPeer validation using OpenAI Codex CLI. Validates Claude's designs, code reviews, and recommendations by getting a second opinion before presenting them to users.\n\n## Installation\n\n```bash\n# Add this marketplace\n/plugin marketplace add jcputney/agent-peer-review\n\n# Install the Codex peer review plugin\n/plugin install codex-peer-review\n```\n\n### Prerequisites for codex-peer-review\n\n**Account Requirements:**\n- **Claude Code**: Requires a Claude Pro ($20/mo), Max, Team Premium, or Enterprise subscription\n- **OpenAI Codex CLI**: Included with ChatGPT Plus/Pro/Business/Edu/Enterprise plans, or use OpenAI API credits\n\n**Install Codex CLI:**\n\n```bash\n# Install Codex CLI\nnpm i -g @openai/codex\n\n# Authenticate (opens browser for OAuth or prompts for API key)\ncodex login\n```\n\n**Optional - Perplexity MCP (for escalation):**\n\nWhen Claude and Codex disagree and can't resolve through discussion, the plugin escalates to external research. If you have [Perplexity MCP](https://github.com/ppl-ai/modelcontextprotocol) configured, it will be used for expert arbitration. Otherwise, the plugin falls back to WebSearch.\n\n## How Peer Review Works\n\n1. **Claude Forms Opinion**: Claude analyzes the task and forms a recommendation\n2. **Dispatch to Reviewer**: A subagent runs the peer review agent to get a second opinion\n3. **Compare Findings**: Results are classified as agreement, disagreement, or complement\n4. **Resolution**:\n   - **Agreement**: Synthesize and present combined view\n   - **Disagreement**: Enter 2-round discussion protocol\n   - **Persistent Conflict**: Escalate to Perplexity (or WebSearch) for arbitration\n\n## codex-peer-review Features\n\n- **Automatic Reminders**: Reminds Claude to run peer review before presenting implementation plans, code reviews, or architecture recommendations\n- **Structured Disagreement Resolution**: 2-round discussion protocol with evidence-based arguments\n- **Expert Arbitration**: Escalates to Perplexity MCP (or WebSearch fallback) for unresolved disputes or security concerns\n- **Slash Command**: Explicit `/codex-peer-review` command for on-demand validation\n\n### Usage\n\n#### Automatic Mode\n\nThe plugin reminds Claude to trigger peer review when about to present:\n- Implementation plans or designs\n- Code review results\n- Architecture recommendations\n- Major refactoring proposals\n- Answers to broad technical questions\n\n#### Slash Command\n\n```bash\n# Review current changes against default branch\n/codex-peer-review\n\n# Review against specific branch\n/codex-peer-review --base develop\n\n# Validate answer to a broad question\n/codex-peer-review \"Should we use microservices or monolith for this project?\"\n```\n\n### Command Selection\n\n| Validation Type | Codex Command | Use When |\n|-----------------|---------------|----------|\n| Code Review | `codex review --base X` | Reviewing actual code changes (diffs) |\n| Design Validation | `codex exec \"...\"` | Validating proposals, plans, architecture |\n| Question Answering | `codex exec \"...\"` | Answering broad technical questions |\n\n## Permissions\n\nThe plugin uses heredoc stdin to minimize permission prompts. On first use, you'll be asked to approve:\n\n| Pattern | Purpose |\n|---------|---------|\n| `codex exec*` | Run focused peer review prompts |\n| `codex review*` | Review git diffs against branches |\n\n**Tip:** When prompted, select \"Always allow\" to avoid repeated prompts.\n\n## Marketplace Structure\n\n```\nagent-peer-review/\n├── .claude-plugin/\n│   └── marketplace.json           # Marketplace registry\n└── plugins/\n    └── codex-peer-review/         # Codex CLI peer review plugin\n        ├── .claude-plugin/\n        │   └── plugin.json        # Plugin metadata\n        ├── agents/\n        │   └── codex-peer-reviewer.md\n        ├── skills/\n        │   └── codex-peer-review/\n        │       ├── SKILL.md\n        │       ├── discussion-protocol.md\n        │       ├── escalation-criteria.md\n        │       └── common-mistakes.md\n        ├── commands/\n        │   └── codex-peer-review.md\n        └── hooks/\n            ├── hooks.json\n            ├── peer-review-reminder.sh\n            ├── stop-peer-review-check.sh\n            └── plan-peer-review-check.sh\n```\n\n## Architecture\n\n**Key Design:** All peer review work runs in a **subagent context** to keep the main conversation clean.\n\n```\nMain Conversation                    Subagent Context\n       │                                    │\n       │ 1. Claude forms opinion            │\n       │                                    │\n       ├──── dispatch to agent ────────────►│\n       │                                    │ 2. Run peer review\n       │                                    │ 3. Compare findings\n       │                                    │ 4. Discussion rounds (if needed)\n       │                                    │ 5. Escalate (if needed)\n       │◄──── return synthesized result ────┤\n       │                                    │\n       │ 6. Present to user                 │\n       ▼                                    ▼\n```\n\n## Adding Future Plugins\n\nThis marketplace is designed to host multiple peer review plugins. Future plugins could include:\n- `claude-peer-review` - Claude reviewing Claude (different model versions)\n- `gemini-peer-review` - Gemini as the peer reviewer\n\nTo add a new plugin, create a new directory under `plugins/` following the same structure.\n\n## Contributing\n\nContributions are welcome! Please ensure any changes maintain the language-agnostic nature of the prompts and examples.\n\n## License\n\nMIT\n\n## Related Resources\n\n- [Claude Code Documentation](https://code.claude.com/docs)\n- [OpenAI Codex CLI](https://github.com/openai/codex)\n- [Claude Code Plugins Guide](https://code.claude.com/docs/en/plugins)\n\n---\n\n**Why two AIs?** Every analysis has blind spots. A second perspective from a different AI model catches issues that a single model might normalize or overlook. This peer validation approach provides higher-quality recommendations to users.\n"
+      },
+      "plugins": [
+        {
+          "name": "codex-peer-review",
+          "version": "1.0.11",
+          "description": "Peer validation system using OpenAI Codex CLI. Two AI perspectives catch more issues than one.",
+          "author": {
+            "name": "jcputney",
+            "url": "https://github.com/jcputney"
+          },
+          "source": "./plugins/codex-peer-review",
+          "category": "code-quality",
+          "tags": [
+            "peer-review",
+            "code-review",
+            "validation",
+            "codex",
+            "ai-collaboration"
+          ],
+          "categories": [
+            "ai-collaboration",
+            "code-quality",
+            "code-review",
+            "codex",
+            "peer-review",
+            "validation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jcputney/agent-peer-review",
+            "/plugin install codex-peer-review@agent-peer-review-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
