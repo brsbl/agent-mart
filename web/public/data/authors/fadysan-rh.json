@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "fadysan-rh",
+    "display_name": "fadysan-rh",
+    "avatar_url": "https://avatars.githubusercontent.com/u/15155211?u=b0e9b538279caed07dd1d99fff834b82b4686ba4&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-slackhook-plugin",
+      "version": null,
+      "description": "Claude Code セッションの開始・終了を Slack に通知",
+      "repo_full_name": "fadysan-rh/cc-slackhook-plugin",
+      "repo_url": "https://github.com/fadysan-rh/cc-slackhook-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-18T14:29:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-slackhook-plugin\",\n  \"owner\": { \"name\": \"rh\" },\n  \"plugins\": [\n    {\n      \"name\": \"slackhook\",\n      \"description\": \"Claude Code セッションの開始・終了を Slack に通知\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cc-slackhook\",\n  \"description\": \"Claude Code セッションの開始・終了を Slack に通知。プロンプト、作業サマリー、変更ファイル、Git操作を自動的にSlackスレッドにまとめて投稿。\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"fadysan-rh\"\n  },\n  \"homepage\": \"https://github.com/fadysan-rh/cc-slackhook-plugin\"\n}\n",
+        "README.md": "# cc-slackhook\n\nClaude Code のセッション活動を Slack チャンネルに自動通知するプラグイン。\n\n## 機能\n\n- **プロンプト通知** (UserPromptSubmit hook): ユーザーがプロンプトを送信するたびに Slack に通知\n- **作業サマリー通知** (Stop hook): Claude の応答完了時に作業内容・変更ファイル・Git操作をまとめて通知\n- **スレッド管理**: 同一セッション内のメッセージは自動的に1つの Slack スレッドにまとまる\n- **プロジェクト情報**: Git リポジトリの `org:repo/branch` またはローカルパスを表示\n\n## インストール\n\n```bash\nclaude --plugin-dir /path/to/cc-slackhook-plugin\n```\n\n## 設定\n\n`settings.json` の `env` に以下の環境変数を設定してください:\n\n```json\n{\n  \"env\": {\n    \"SLACK_USER_TOKEN\": \"xoxp-...\",\n    \"SLACK_BOT_TOKEN\": \"xoxb-...\",\n    \"SLACK_CHANNEL\": \"C0XXXXXXX\"\n  }\n}\n```\n\n| 環境変数 | 必須 | 用途 |\n|----------|------|------|\n| `SLACK_USER_TOKEN` | Yes | プロンプト通知 (ユーザーとして投稿) |\n| `SLACK_BOT_TOKEN` | Yes | 作業サマリー通知 (Bot として投稿) |\n| `SLACK_CHANNEL` | Yes | 通知先の Slack チャンネル ID |\n\n## Slack App の準備\n\n1. [Slack API](https://api.slack.com/apps) で新しい App を作成\n2. OAuth & Permissions で以下のスコープを追加:\n   - **Bot Token Scopes**: `chat:write`\n   - **User Token Scopes**: `chat:write`\n3. ワークスペースにインストールし、トークンを取得\n4. 通知先チャンネルに App を招待\n\n## 通知の流れ\n\n```\nユーザーがプロンプト送信\n  ↓ UserPromptSubmit hook\n  → Slack: 作業開始メッセージ (org:repo/branch + プロンプト内容)\n\nClaude が応答完了\n  ↓ Stop hook\n  → Slack: スレッド返信 (作業サマリー + 変更ファイル + Git操作)\n\n同一セッションで再度プロンプト送信\n  ↓ UserPromptSubmit hook\n  → Slack: スレッド返信 (プロンプト内容)\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "slackhook",
+          "description": "Claude Code セッションの開始・終了を Slack に通知",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fadysan-rh/cc-slackhook-plugin",
+            "/plugin install slackhook@cc-slackhook-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

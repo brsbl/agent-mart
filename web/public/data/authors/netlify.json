@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "netlify",
+    "display_name": "Netlify",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7892489?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "netlify-context-and-tools",
+      "version": null,
+      "description": "Netlify platform skills for AI coding agents",
+      "repo_full_name": "netlify/context-and-tools",
+      "repo_url": "https://github.com/netlify/context-and-tools",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2026-02-18T19:20:30Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"netlify-context-and-tools\",\n  \"description\": \"Netlify platform skills for AI coding agents\",\n  \"owner\": {\n    \"name\": \"Netlify\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"netlify-skills\",\n      \"description\": \"Netlify platform skills — functions, edge functions, blobs, database, image CDN, forms, config, CLI, frameworks, caching, AI gateway, and deployment\",\n      \"version\": \"1.0.0\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"netlify/context-and-tools\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"netlify-skills\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Netlify platform skills for Claude Code\",\n  \"author\": {\n    \"name\": \"Netlify\"\n  },\n  \"repository\": \"https://github.com/netlify/context-and-tools\"\n}\n",
+        "README.md": "# Netlify Context and Tools\n\nPublic Netlify skills for AI coding agents. Each skill is a focused, factual reference for a Netlify platform primitive — designed to help agents build correctly on Netlify without needing to search docs.\n\n## Skills\n\n| Skill | What it covers |\n|---|---|\n| [netlify-functions](skills/netlify-functions/SKILL.md) | Serverless functions — modern syntax, routing, background/scheduled/streaming |\n| [netlify-edge-functions](skills/netlify-edge-functions/SKILL.md) | Edge compute — Deno runtime, middleware, geolocation |\n| [netlify-blobs](skills/netlify-blobs/SKILL.md) | Object storage — key-value and binary data |\n| [netlify-db](skills/netlify-db/SKILL.md) | Managed Postgres (Neon) with Drizzle ORM and migrations |\n| [netlify-image-cdn](skills/netlify-image-cdn/SKILL.md) | Image transformation and optimization via CDN |\n| [netlify-forms](skills/netlify-forms/SKILL.md) | HTML form handling, AJAX submissions, spam filtering |\n| [netlify-config](skills/netlify-config/SKILL.md) | `netlify.toml` — redirects, headers, build settings, deploy contexts |\n| [netlify-cli-and-deploy](skills/netlify-cli-and-deploy/SKILL.md) | CLI commands, Git vs manual deploys, environment variables |\n| [netlify-frameworks](skills/netlify-frameworks/SKILL.md) | Framework adapters for Vite, Astro, TanStack, and Next.js |\n| [netlify-caching](skills/netlify-caching/SKILL.md) | CDN cache control, cache tags, purge, stale-while-revalidate |\n| [netlify-ai-gateway](skills/netlify-ai-gateway/SKILL.md) | AI Gateway proxy for OpenAI, Anthropic, and Google SDKs |\n| [netlify-deploy](skills/netlify-deploy/SKILL.md) | Deployment workflow — auth, site linking, preview/production deploys |\n\n### References\n\nSome skills include `references/` subdirectories with deeper content:\n\n- [User-uploaded images pipeline](skills/netlify-image-cdn/references/user-uploads.md) — composing Functions + Blobs + Image CDN\n- [Vite on Netlify](skills/netlify-frameworks/references/vite.md)\n- [Astro on Netlify](skills/netlify-frameworks/references/astro.md)\n- [TanStack Start on Netlify](skills/netlify-frameworks/references/tanstack.md)\n- [Next.js on Netlify](skills/netlify-frameworks/references/nextjs.md)\n- [CLI commands reference](skills/netlify-deploy/references/cli-commands.md)\n- [Deployment patterns](skills/netlify-deploy/references/deployment-patterns.md)\n- [netlify.toml guide](skills/netlify-deploy/references/netlify-toml.md)\n\n## Installation\n\n### Claude Code\n\nAdd the marketplace and install the plugin:\n\n```\n/plugin marketplace add netlify/context-and-tools\n/plugin install netlify-skills@netlify-context-and-tools\n```\n\nThis installs all Netlify skills into Claude Code. The included `skills/CLAUDE.md` acts as a router — it tells the agent which skill to read based on what you're building.\n\n### Cursor\n\nAdd Netlify rules to your project:\n\n```bash\ngit clone --depth 1 https://github.com/netlify/context-and-tools.git /tmp/netlify-skills && \\\n  mkdir -p .cursor/rules && \\\n  cp /tmp/netlify-skills/cursor/rules/*.mdc .cursor/rules/ && \\\n  rm -rf /tmp/netlify-skills\n```\n\nThis copies pre-built `.mdc` rule files into `.cursor/rules/`, where Cursor automatically discovers them. A router rule (`netlify-skills-router.mdc`) is included to help the agent pick the right skill for the task.\n\n### Other AI agents\n\nEach `SKILL.md` file is a self-contained reference with YAML frontmatter (`name` and `description`) and markdown body. Feed them into any agent's context as needed.\n\n## Design Principles\n\n- **Factual, not opinionated** — platform behavior and API reference, not workflow preferences\n- **Composable** — skills cover individual primitives; agents combine them as needed\n- **Concise** — each SKILL.md stays under 500 lines; detailed content goes in `references/`\n- **Current** — covers modern Netlify patterns (v2 functions, Vite plugin, AI Gateway)\n\n## Contributing\n\nKeep skills focused on Netlify platform primitives. Each skill should answer \"how does this Netlify feature work?\" rather than \"how should I structure my project?\"\n\nFollow the existing format: YAML frontmatter with `name` and `description`, markdown body, code examples with TypeScript where applicable. Use `references/` subdirectories for content that would push a SKILL.md past 500 lines.\n\n### Cursor rules are generated — do not edit them directly\n\nThe `cursor/rules/` directory is auto-generated from `skills/` by a GitHub Actions workflow. Always edit the source files in `skills/` — the workflow rebuilds Cursor rules on every push to `main` that changes `skills/`. To test locally, run:\n\n```bash\nbash scripts/build-cursor-rules.sh\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "netlify-skills",
+          "description": "Netlify platform skills — functions, edge functions, blobs, database, image CDN, forms, config, CLI, frameworks, caching, AI gateway, and deployment",
+          "version": "1.0.0",
+          "source": {
+            "source": "github",
+            "repo": "netlify/context-and-tools"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add netlify/context-and-tools",
+            "/plugin install netlify-skills@netlify-context-and-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}
