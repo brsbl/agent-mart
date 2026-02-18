@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "FlorianBruniaux",
+    "display_name": "Florian BRUNIAUX",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3902606?u=18d9e8e656be5e38552a7b47e070587370cb5b81&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "florian-claude-tools",
+      "version": null,
+      "description": "Production-ready Claude Code plugins from the Ultimate Guide",
+      "repo_full_name": "FlorianBruniaux/claude-code-plugins",
+      "repo_url": "https://github.com/FlorianBruniaux/claude-code-plugins",
+      "repo_description": "Production-ready Claude Code plugins from the Ultimate Guide",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-16T10:50:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"florian-claude-tools\",\n  \"owner\": { \"name\": \"Florian Bruniaux\" },\n  \"metadata\": {\n    \"description\": \"Production-ready Claude Code plugins from the Ultimate Guide\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"session-summary\",\n      \"source\": \"./plugins/session-summary\",\n      \"description\": \"Session analytics dashboard — 15 configurable sections displayed at session end (models, cost, cache, tools, files, git diff, RTK savings...)\",\n      \"author\": { \"name\": \"Florian Bruniaux\" },\n      \"keywords\": [\"hooks\", \"analytics\", \"session\", \"cost-tracking\", \"dashboard\"],\n      \"category\": \"productivity\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nProduction-ready plugins for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) from the [Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide).\n\n## Available Plugins\n\n| Plugin | Description | Version |\n|--------|-------------|---------|\n| [session-summary](./plugins/session-summary/) | Session analytics dashboard with 15 configurable sections | 3.0.0 |\n\n## Quick Install\n\n```bash\n# 1. Add the marketplace\nclaude plugin marketplace add FlorianBruniaux/claude-code-plugins\n\n# 2. Install a plugin\nclaude plugin install session-summary@florian-claude-tools\n```\n\nThat's it. Hooks are auto-wired, no manual configuration needed.\n\n## Managing Plugins\n\n```bash\n# List installed plugins\nclaude plugin list\n\n# Check available plugins from this marketplace\nclaude plugin marketplace list florian-claude-tools\n\n# Uninstall\nclaude plugin uninstall session-summary\n\n# Remove marketplace\nclaude plugin marketplace remove florian-claude-tools\n```\n\n## Plugin Details\n\n### session-summary\n\nDisplays a comprehensive analytics dashboard when your Claude Code session ends.\n\n**15 configurable sections**: session metadata, duration, model usage, estimated cost, tool calls, error details, files touched, lines of code, features used, git diff, RTK savings, conversation ratio, thinking blocks, context window estimate, section order.\n\nSee [plugin README](./plugins/session-summary/README.md) for full documentation.\n\n## Requirements\n\n- Claude Code with plugin support\n- `jq` (required for JSON parsing)\n- `bc`, `ccusage`, `rtk`, `git` (optional, for enhanced sections)\n\n## Contributing\n\nSee [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on adding new plugins.\n\n## License\n\nMIT - See [LICENSE](./LICENSE)\n\n## Links\n\n- [Claude Code Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) - Comprehensive documentation\n- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code) - Official docs\n",
+        "plugins/session-summary/README.md": "# session-summary\n\nSession analytics dashboard for Claude Code. Displays a comprehensive summary with 15 configurable sections when your session ends.\n\n## What It Shows\n\n| Section | Default | Description |\n|---------|---------|-------------|\n| Meta | on | Session ID, name, git branch |\n| Duration | on | Wall time, active time, turns, exit reason |\n| Models | on | Requests per model, tokens in/out, cache hit rate |\n| Cost | on | Estimated cost (via ccusage or pricing table fallback) |\n| Tools | on | Tool calls breakdown with success/error rates |\n| Errors | on | Error details (tool name + truncated message) |\n| Files | on | Files read/edited/created, top edited files |\n| LOC | on | Lines of code written (via Edit/Write tools) |\n| Features | on | MCP servers, agents, skills, teams, plan mode |\n| Git | on | Diff summary (+/- lines, files changed) |\n| RTK | auto | RTK token savings delta (if RTK installed) |\n| Ratio | on | Interactive vs auto turns, avg time/turn |\n| Thinking | off | Thinking blocks count |\n| Context | off | Context window usage estimate |\n\n## Installation\n\n### Plugin System (Recommended)\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add FlorianBruniaux/claude-code-plugins\n\n# Install\nclaude plugin install session-summary@florian-claude-tools\n```\n\nDone. Hooks are auto-wired for `SessionStart` (RTK baseline) and `SessionEnd` (summary display).\n\n### Manual Installation\n\nSee the [Ultimate Guide hooks section](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/examples/hooks) for manual setup instructions.\n\n## Configuration\n\n### Via Environment Variables\n\nAll settings use the `SESSION_SUMMARY_` prefix:\n\n```bash\n# Disable a section\nexport SESSION_SUMMARY_GIT=0\n\n# Enable an off-by-default section\nexport SESSION_SUMMARY_THINKING=1\n\n# Skip summary entirely\nexport SESSION_SUMMARY_SKIP=1\n\n# Custom log directory\nexport SESSION_SUMMARY_LOG_DIR=~/my-logs\n\n# RTK: auto (default), 1 (force on), 0 (force off)\nexport SESSION_SUMMARY_RTK=auto\n```\n\n### Via Config CLI\n\nThe `session-summary-config.sh` script provides a CLI for persistent configuration:\n\n```bash\n# From the plugin scripts directory:\n./session-summary-config.sh show              # Show current config\n./session-summary-config.sh set git=0         # Disable git section\n./session-summary-config.sh set thinking=1    # Enable thinking section\n./session-summary-config.sh reset             # Reset to defaults\n./session-summary-config.sh sections          # Show section order\n./session-summary-config.sh sections \"meta,duration,tools,cost\"  # Minimal output\n./session-summary-config.sh preview           # Demo output\n./session-summary-config.sh log 10            # Last 10 session summaries\n```\n\nConfig file location: `~/.config/session-summary/config.sh`\n\n### Configuration Priority\n\n`env vars > config file > defaults`\n\n## Dependencies\n\n| Dependency | Required | Purpose |\n|------------|----------|---------|\n| `jq` | Yes | JSON parsing (session transcript) |\n| `bc` | No | Precise arithmetic for cost calculation |\n| `ccusage` | No | Accurate cost calculation (falls back to pricing table) |\n| `rtk` | No | Token savings tracking |\n| `git` | No | Git diff summary section |\n\n## Session Logs\n\nSummaries are logged as JSONL at `~/.claude/logs/session-summaries.jsonl` for historical analysis.\n\nView recent summaries:\n```bash\n./session-summary-config.sh log 5\n```\n\n## Links\n\n- [Claude Code Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) - Full documentation\n- [Hook Examples](https://github.com/FlorianBruniaux/claude-code-ultimate-guide/tree/main/examples/hooks) - All hook templates\n"
+      },
+      "plugins": [
+        {
+          "name": "session-summary",
+          "source": "./plugins/session-summary",
+          "description": "Session analytics dashboard — 15 configurable sections displayed at session end (models, cost, cache, tools, files, git diff, RTK savings...)",
+          "author": {
+            "name": "Florian Bruniaux"
+          },
+          "keywords": [
+            "hooks",
+            "analytics",
+            "session",
+            "cost-tracking",
+            "dashboard"
+          ],
+          "category": "productivity",
+          "license": "MIT",
+          "categories": [
+            "analytics",
+            "cost-tracking",
+            "dashboard",
+            "hooks",
+            "productivity",
+            "session"
+          ],
+          "install_commands": [
+            "/plugin marketplace add FlorianBruniaux/claude-code-plugins",
+            "/plugin install session-summary@florian-claude-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

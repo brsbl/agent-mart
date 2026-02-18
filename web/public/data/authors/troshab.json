@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "troshab",
+    "display_name": "Trokhym Babych",
+    "avatar_url": "https://avatars.githubusercontent.com/u/35739794?u=c686457f1986f9c0b4029ff3d1204eda4fbf3acb&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-dock",
+      "version": null,
+      "description": "Claude Code event dashboard and workspace manager for Tabby terminal",
+      "repo_full_name": "troshab/claude-dock",
+      "repo_url": "https://github.com/troshab/claude-dock",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-18T11:33:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"claude-dock\",\n  \"description\": \"Claude Code event dashboard and workspace manager for Tabby terminal\",\n  \"owner\": {\n    \"name\": \"trosha_b\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-dock\",\n      \"source\": \"./plugin\",\n      \"description\": \"Claude Code event logger - forwards hook events to Tabby dashboard via TCP transport\",\n      \"version\": \"1.0.0\",\n      \"author\": { \"name\": \"trosha_b\" },\n      \"category\": \"development\",\n      \"homepage\": \"https://github.com/troshab/claude-dock\",\n      \"repository\": \"https://github.com/troshab/claude-dock\",\n      \"license\": \"PolyForm-Noncommercial-1.0.0\",\n      \"keywords\": [\"dashboard\", \"hooks\", \"tabby\", \"monitoring\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Dock\n\n[Tabby](https://github.com/Eugeny/tabby) plugin that adds:\n\n- Pinned **Claude Dock Dashboard** tab (singleton).\n- **Workspace** tabs (one per project directory).\n- Per-workspace **terminal sub-tabs** (opened with `cwd = workspace.cwd`).\n- Claude Code **sessions list** (working/waiting) driven by Claude hooks (realtime via TCP).\n- Claude **usage** panel (reads `~/.claude/stats-cache.json`).\n\n![Dashboard](claude-dock-screenshot-1.jpg)\n\n![Workspace](claude-dock-screenshot-2.jpg)\n\n## Install\n\n1. Install [Tabby terminal](https://github.com/Eugeny/tabby/releases/latest)\n2. Install the plugin:\n\n```bash\nnpm i -g @troshab/claude-dock\n```\n\nThis builds the plugin, deploys Claude Code hooks, and links into Tabby.\n\n3. Restart Tabby to activate.\n\n## What the install does\n\n- Copies `bin/claude-dock-hook.js` to `~/.claude/plugins/cache/claude-dock/`\n- Patches `~/.claude/settings.json` (creates a timestamped `.bak-*` backup) with hooks:\n  - `SessionStart`, `PreToolUse`, `PostToolUse`, `Stop`, `Notification`, `SessionEnd`\n- Links the Tabby plugin into `<tabby-plugins>/node_modules/tabby-claude-dock`\n\nEvents are delivered in realtime via TCP to `127.0.0.1:19542`.\nDocker containers send events to `host.docker.internal:19542`.\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-dock",
+          "source": "./plugin",
+          "description": "Claude Code event logger - forwards hook events to Tabby dashboard via TCP transport",
+          "version": "1.0.0",
+          "author": {
+            "name": "trosha_b"
+          },
+          "category": "development",
+          "homepage": "https://github.com/troshab/claude-dock",
+          "repository": "https://github.com/troshab/claude-dock",
+          "license": "PolyForm-Noncommercial-1.0.0",
+          "keywords": [
+            "dashboard",
+            "hooks",
+            "tabby",
+            "monitoring"
+          ],
+          "categories": [
+            "dashboard",
+            "development",
+            "hooks",
+            "monitoring",
+            "tabby"
+          ],
+          "install_commands": [
+            "/plugin marketplace add troshab/claude-dock",
+            "/plugin install claude-dock@claude-dock"
+          ]
+        }
+      ]
+    }
+  ]
+}
