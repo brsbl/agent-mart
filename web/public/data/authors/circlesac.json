@@ -34,6 +34,36 @@
           ]
         }
       ]
+    },
+    {
+      "name": "notas",
+      "version": null,
+      "description": "Notion CLI reference for Claude Code — search, create, and manage Notion pages, databases, blocks, and more",
+      "repo_full_name": "circlesac/notas-cli",
+      "repo_url": "https://github.com/circlesac/notas-cli",
+      "repo_description": "Feature-complete Notion CLI with OAuth support",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-18T03:39:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n\t\"name\": \"notas\",\n\t\"owner\": { \"name\": \"Circles Inc\" },\n\t\"plugins\": [\n\t\t{\n\t\t\t\"name\": \"notas\",\n\t\t\t\"source\": \"./\",\n\t\t\t\"description\": \"Notion CLI reference for Claude Code — search, create, and manage Notion pages, databases, blocks, and more\"\n\t\t}\n\t]\n}\n",
+        ".claude-plugin/plugin.json": "{\n\t\"name\": \"notas\",\n\t\"description\": \"Notion CLI reference for Claude Code — search, create, and manage Notion pages, databases, blocks, and more\",\n\t\"author\": {\n\t\t\"name\": \"Circles Inc\"\n\t}\n}\n",
+        "README.md": "# notas\n\nMulti-provider notes & docs CLI. Notion is the first supported provider.\n\n## Install\n\n```bash\n# Homebrew\nbrew install circlesac/tap/notas\n\n# npm\nnpx @circlesac/notas\n\n# From source\nbun install\nbun run build\n```\n\n## Usage\n\n```bash\n# Authenticate (opens browser for OAuth)\nnotas notion auth login\n\n# Or use an integration token\nnotas notion auth login --token ntn_xxx\n\n# List databases\nnotas notion db list\n\n# Query a database\nnotas notion db query <database-id>\n\n# Search\nnotas notion search <query>\n\n# Output as JSON\nnotas notion db list --output json\n```\n\n### Commands\n\n```\nnotas notion auth      login, logout, status, refresh\nnotas notion databases list, get, query, create, update, delete\nnotas notion pages     get, create, update, archive, restore\nnotas notion blocks    list, get, append, update, delete\nnotas notion users     list, get, me\nnotas notion search    <query>\nnotas notion comments  list, create\nnotas notion api       <method> <endpoint> [--body json]\nnotas notion version\n```\n\n`db` is an alias for `databases`.\n\n## Development\n\n```bash\n# Run locally\nbun run dev -- notion db list\n\n# Lint (oxlint + eslint + prettier + biome + tsc)\nbun run lint\n\n# Type check\nbun run type-check\n\n# Test\nbun run test\n\n# Build native binary\nbun run build\n\n# Full pre-merge check\nbun run pre-merge\n```\n\n## Project Structure\n\n```\nsrc/\n  index.ts                  CLI entry point\n  lib/                      Shared utilities (credentials, output, errors)\n  platforms/notion/          Notion provider\n    auth/                   login, logout, status, refresh\n    databases/              CRUD + query\n    pages/                  CRUD + archive/restore\n    blocks/                 CRUD + append\n    users/                  list, get, me\n    search/                 full-text search\n    comments/               list, create\n    api.ts                  raw API passthrough\n    client.ts               Notion client factory\n    properties.ts           property formatting\n  types/                    shared types\nworker/                     Cloudflare Worker (OAuth callback relay at notas.circles.ac)\nnpm/                        npm distribution (shim + installer)\nhomebrew/                   Homebrew formula template\n```\n\n## Deploy\n\n```bash\n# Deploy OAuth callback worker\nbun run deploy:worker\n```\n\n## Release\n\nReleases are triggered via `workflow_dispatch` in GitHub Actions. The workflow runs tests, bumps the version (CalVer via `@circlesac/oneup`), builds native binaries for 4 platforms, creates a GitHub Release, publishes to npm, and updates the Homebrew formula.\n\n```bash\ngh workflow run release.yml\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "notas",
+          "source": "./",
+          "description": "Notion CLI reference for Claude Code — search, create, and manage Notion pages, databases, blocks, and more",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add circlesac/notas-cli",
+            "/plugin install notas@notas"
+          ]
+        }
+      ]
     }
   ]
 }

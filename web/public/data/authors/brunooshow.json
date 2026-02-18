@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "BrunooShow",
+    "display_name": "Show",
+    "avatar_url": "https://avatars.githubusercontent.com/u/35062952?u=0736b046836811fb82d7f7d4d064dd3bbcff8dc3&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "dd-bark",
+      "version": null,
+      "description": "Datadog observability toolkit for Claude Code — query logs, metrics, traces, monitors, incidents, and more directly from your editor.",
+      "repo_full_name": "BrunooShow/dd-bark",
+      "repo_url": "https://github.com/BrunooShow/dd-bark",
+      "repo_description": "Datadog CLI tool and Claude Code plugin for AI-powered observability — query logs, metrics, traces, monitors, incidents, and more from your editor.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T19:41:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"dd-bark\",\n  \"owner\": { \"name\": \"BrunooShow\" },\n  \"plugins\": [\n    {\n      \"name\": \"dd-bark\",\n      \"source\": \"./\",\n      \"description\": \"Datadog observability toolkit for Claude Code — query logs, metrics, traces, monitors, incidents, and more directly from your editor.\",\n      \"version\": \"1.0.0\",\n      \"author\": { \"name\": \"BrunooShow\" },\n      \"homepage\": \"https://github.com/BrunooShow/dd-bark\",\n      \"repository\": \"https://github.com/BrunooShow/dd-bark\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"datadog\", \"observability\", \"monitoring\", \"logs\", \"apm\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"dd-bark\",\n  \"description\": \"Datadog observability toolkit for Claude Code — query logs, metrics, traces, monitors, incidents, and more directly from your editor.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"BrunooShow\"\n  },\n  \"homepage\": \"https://github.com/BrunooShow/dd-bark\",\n  \"repository\": \"https://github.com/BrunooShow/dd-bark\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"datadog\", \"observability\", \"monitoring\", \"logs\", \"apm\"]\n}\n",
+        "README.md": "# dd-bark\n\nCLI tool for interacting with the Datadog API — designed for AI agent usage.\n\nAll output is JSON to stdout, making it easy to pipe into other tools or consume programmatically.\n\n## Claude Code Plugin\n\ndd-bark is available as a [Claude Code](https://claude.ai/code) plugin.\n\n### Install from GitHub\n\n```\n/plugin marketplace add BrunooShow/dd-bark\n/plugin install dd-bark\n```\n\n### Local development\n\n```bash\nclaude --plugin-dir /path/to/dd-bark\n```\n\n### What you get\n\n| Command | Description |\n|---|---|\n| `/dd <service>` | Quick health check — monitors, errors, incidents |\n| `/dd-investigate <service>` | Deep on-call investigation with root cause analysis |\n| `/dd-report <service>` | Structured observability report for standups/reviews |\n\nPlus an auto-triggered skill that activates whenever you mention Datadog, logs, monitors, traces, etc.\n\n## Install\n\n```bash\nnpm install -g dd-bark\n```\n\nOr run directly with npx:\n\n```bash\nnpx dd-bark <command> [--param=value ...]\n```\n\n## Setup\n\nSet your Datadog credentials as environment variables:\n\n```bash\nexport DATADOG_API_KEY=\"your-api-key\"\nexport DATADOG_APP_KEY=\"your-app-key\"\n```\n\nOptional environment variables:\n\n| Variable | Description |\n|---|---|\n| `DATADOG_SITE` | Datadog site (e.g. `datadoghq.eu`, `us5.datadoghq.com`) |\n| `DATADOG_SUBDOMAIN` | Subdomain for enterprise accounts |\n| `DATADOG_STORAGE_TIER` | Logs storage tier: `indexes`, `online-archives`, `flex` |\n\n## Usage\n\n```bash\ndd-bark <command> [--param=value ...]\ndd-bark --help\ndd-bark <command> --help\n```\n\nParameters are passed as `--key=value`. Arrays and objects are passed as JSON:\n\n```bash\ndd-bark get-monitors --groupStates='[\"alert\",\"warn\"]' --tags='[\"team:backend\"]'\n```\n\nTime parameters use **epoch seconds**. Most time-based commands default to the last 15 minutes.\n\n## Commands\n\n### Logs\n\n| Command | Description |\n|---|---|\n| `get-logs` | Search and retrieve logs |\n| `get-all-services` | Extract all unique service names from logs |\n\n```bash\ndd-bark get-logs --query=\"service:web status:error\" --limit=50\ndd-bark get-all-services --query=\"env:production\"\n```\n\n### Monitors\n\n| Command | Description |\n|---|---|\n| `get-monitors` | Get monitors status with summary counts |\n\n```bash\ndd-bark get-monitors --groupStates='[\"alert\",\"warn\"]'\ndd-bark get-monitors --name=\"CPU\" --tags='[\"team:infra\"]'\n```\n\n### Incidents\n\n| Command | Description |\n|---|---|\n| `list-incidents` | List incidents with pagination |\n| `get-incident` | Get a specific incident by ID |\n\n```bash\ndd-bark list-incidents --pageSize=20\ndd-bark get-incident --incidentId=\"abc123\"\n```\n\n### Metrics\n\n| Command | Description |\n|---|---|\n| `get-metrics` | Query timeseries metric points |\n\n```bash\ndd-bark get-metrics --query=\"avg:system.cpu.user{*}\"\ndd-bark get-metrics --query=\"sum:trace.http.request{service:api}\" --from=1700000000 --to=1700001000\n```\n\n### APM Traces\n\n| Command | Description |\n|---|---|\n| `list-traces` | Search APM traces/spans |\n\n```bash\ndd-bark list-traces --query=\"service:api\" --limit=50\ndd-bark list-traces --query=\"*\" --service=web --operation=http.request\n```\n\n### Dashboards\n\n| Command | Description |\n|---|---|\n| `list-dashboards` | List dashboards, optionally filtered by name/tags |\n| `get-dashboard` | Get full dashboard definition by ID |\n\n```bash\ndd-bark list-dashboards --name=\"production\"\ndd-bark get-dashboard --dashboardId=\"abc-def-ghi\"\n```\n\n### Hosts\n\n| Command | Description |\n|---|---|\n| `list-hosts` | List hosts with optional filtering and sorting |\n| `get-active-hosts-count` | Get total active and up host counts |\n| `mute-host` | Mute a host |\n| `unmute-host` | Unmute a host |\n\n```bash\ndd-bark list-hosts --filter=\"web\" --count=100\ndd-bark get-active-hosts-count\ndd-bark mute-host --hostname=\"web-01\" --message=\"maintenance\" --end=1700000000\ndd-bark unmute-host --hostname=\"web-01\"\n```\n\n### Downtimes\n\n| Command | Description |\n|---|---|\n| `list-downtimes` | List scheduled downtimes |\n| `schedule-downtime` | Schedule a new downtime |\n| `cancel-downtime` | Cancel a scheduled downtime |\n\n```bash\ndd-bark list-downtimes --currentOnly\ndd-bark schedule-downtime --scope=\"host:web-01\" --end=1700000000 --message=\"deploy\"\ndd-bark cancel-downtime --downtimeId=123456\n```\n\n### RUM (Real User Monitoring)\n\n| Command | Description |\n|---|---|\n| `get-rum-applications` | List all RUM applications |\n| `get-rum-events` | Search RUM events |\n| `get-rum-grouped-event-count` | Group and count RUM events by a dimension |\n| `get-rum-page-performance` | Get page load performance metrics |\n| `get-rum-page-waterfall` | Get page waterfall data for a session |\n\n```bash\ndd-bark get-rum-applications\ndd-bark get-rum-events --query=\"@type:error\" --limit=50\ndd-bark get-rum-grouped-event-count --groupBy=\"@browser.name\"\ndd-bark get-rum-page-performance --query=\"@application.name:myapp\"\ndd-bark get-rum-page-waterfall --applicationName=\"myapp\" --sessionId=\"sess-123\"\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "dd-bark",
+          "source": "./",
+          "description": "Datadog observability toolkit for Claude Code — query logs, metrics, traces, monitors, incidents, and more directly from your editor.",
+          "version": "1.0.0",
+          "author": {
+            "name": "BrunooShow"
+          },
+          "homepage": "https://github.com/BrunooShow/dd-bark",
+          "repository": "https://github.com/BrunooShow/dd-bark",
+          "license": "MIT",
+          "keywords": [
+            "datadog",
+            "observability",
+            "monitoring",
+            "logs",
+            "apm"
+          ],
+          "categories": [
+            "apm",
+            "datadog",
+            "logs",
+            "monitoring",
+            "observability"
+          ],
+          "install_commands": [
+            "/plugin marketplace add BrunooShow/dd-bark",
+            "/plugin install dd-bark@dd-bark"
+          ]
+        }
+      ]
+    }
+  ]
+}

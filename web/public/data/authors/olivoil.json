@@ -6,60 +6,55 @@
   },
   "marketplaces": [
     {
-      "name": "tt",
+      "name": "om",
       "version": null,
-      "description": "Time entry automation for Intervals and FreshBooks with Outlook calendar integration",
-      "repo_full_name": "olivoil/intervals-time-entry",
-      "repo_url": "https://github.com/olivoil/intervals-time-entry",
+      "description": "Personal Claude Code skills collection: Intervals time entries, FreshBooks sync, session summaries, and more",
+      "repo_full_name": "olivoil/om-skills",
+      "repo_url": "https://github.com/olivoil/om-skills",
       "repo_description": null,
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-16T18:07:54Z"
+        "pushed_at": "2026-02-18T04:42:05Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"tt\",\n  \"owner\": {\n    \"name\": \"olivoil\",\n    \"email\": \"olivoil@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Time entry automation for Intervals and FreshBooks with Outlook calendar integration\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tt\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"olivoil/intervals-time-entry\"\n      },\n      \"description\": \"Fill Intervals from daily notes with GitHub and Outlook calendar correlation, sync to FreshBooks\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"olivoil\"\n      },\n      \"homepage\": \"https://github.com/olivoil/intervals-time-entry\",\n      \"repository\": \"https://github.com/olivoil/intervals-time-entry\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"intervals\", \"freshbooks\", \"time-entry\", \"timesheet\", \"automation\", \"outlook\", \"calendar\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"tt\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Time entry automation: fill Intervals from daily notes with GitHub and Outlook calendar correlation, sync to FreshBooks\",\n  \"author\": {\n    \"name\": \"olivoil\"\n  },\n  \"repository\": \"https://github.com/olivoil/intervals-time-entry\",\n  \"keywords\": [\"intervals\", \"freshbooks\", \"time-entry\", \"timesheet\", \"automation\", \"browser\", \"outlook\", \"calendar\", \"microsoft-graph\"]\n}\n",
-        "README.md": "# Intervals Time Entry Plugin for Claude Code\n\nA Claude Code plugin that automates filling time entries in [Intervals Online](https://www.myintervals.com/) from daily work notes.\n\n## Features\n\n- **Smart caching**: Learns project→workType mappings to skip redundant browser inspection\n- **Batch execution**: Fills all entries in a single script (~30 seconds for a full day)\n- **Automatic fallbacks**: Handles project-specific work type limitations\n- **Minimal token usage**: 3-4 MCP calls total vs 50+ with click-by-click automation\n\n## Installation\n\n```bash\nclaude plugin marketplace add https://github.com/olivoil/intervals-time-entry\nclaude plugin install intervals-time-entry@olivoil\n```\n\nOr install directly:\n\n```bash\nclaude /plugin install https://github.com/olivoil/intervals-time-entry\n```\n\n## Prerequisites\n\n1. **Chrome with remote debugging**:\n   ```bash\n   chromium --remote-debugging-port=9222\n   # or\n   google-chrome --remote-debugging-port=9222\n   ```\n\n2. **chrome-devtools MCP server** configured in your Claude Code settings\n\n3. **Intervals page open** in Chrome at:\n   ```\n   https://bhi.intervalsonline.com/time/multiple/\n   ```\n\n4. **1Password CLI** (optional, for credentials):\n   ```bash\n   op signin\n   ```\n\n## Usage\n\n### Via slash command:\n```\n/intervals-time-entry\n```\n\n### Via natural language:\n```\nFill my time entries for January 20, 2026\n```\n\nClaude will:\n1. Read your daily notes\n2. Map activities to Intervals projects/work types\n3. Check cached mappings (skip inspection if all known)\n4. Generate and execute a fill script\n5. Screenshot to verify\n\n## Customization\n\nFork this repo to customize for your organization:\n\n### `references/project-mappings.md`\nMaps note terminology to Intervals project names + caches discovered work types:\n\n```markdown\n| Notes Term | Intervals Project |\n|------------|-------------------|\n| Technomic | Ignite Application Development & Support |\n| EWG | EWG Feature Enhancement Addendum (20250047) |\n```\n\n### `references/worktype-mappings.md`\nMaps activity descriptions to work types:\n\n```markdown\n| Notes Term | Work Type |\n|------------|-----------|\n| standup | Meeting: Internal Stand Up - US |\n| dev, coding | Development - US |\n```\n\n### `references/people-context.md`\nAssociates people with projects for smarter inference:\n\n```markdown\n| Person | Project | Typical Meeting Type |\n|--------|---------|---------------------|\n| Russell | Technomic | Meeting: Client Meeting - US |\n```\n\n## How It Works\n\nThe plugin uses an efficient batch-execution strategy with **auto-updating cache**:\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│  1. Check PROJECT cache (file read, no MCP)                 │\n│     → .claude/intervals-cache/project-mappings.md           │\n│     → Skip inspection for known projects                    │\n├─────────────────────────────────────────────────────────────┤\n│  2. Inspect page (1 MCP call)                               │\n│     → Get dates, day index mapping                          │\n├─────────────────────────────────────────────────────────────┤\n│  3. Discover unknowns (0-1 MCP call)                        │\n│     → Only for projects not in cache                        │\n├─────────────────────────────────────────────────────────────┤\n│  4. UPDATE PROJECT CACHE (file write)                       │\n│     → Save newly discovered mappings                        │\n│     → Future runs skip inspection for this project          │\n├─────────────────────────────────────────────────────────────┤\n│  5. Generate fill script (Claude reasoning, no MCP)         │\n│     → Create JS with all validated entries                  │\n├─────────────────────────────────────────────────────────────┤\n│  6. Execute script (1 MCP call)                             │\n│     → Fill all entries in ~30 seconds                       │\n├─────────────────────────────────────────────────────────────┤\n│  7. Screenshot (1 MCP call)                                 │\n│     → Verify before saving                                  │\n└─────────────────────────────────────────────────────────────┘\n\nTotal: 3-4 MCP calls, ~5 minutes for a full day\n```\n\n### Cache Architecture\n\nThe cache is stored **in your project**, not the plugin:\n\n```\nyour-project/\n├── .claude/\n│   └── intervals-cache/\n│       └── project-mappings.md   ← Auto-updated cache\n└── ...\n```\n\nThis means:\n- **Plugin is read-only** → Safe to share via GitHub\n- **Cache is project-local** → Each project has its own mappings\n- **Cache persists** → Only inspect each project ONCE ever\n- **Cache auto-updates** → New discoveries are saved automatically\n\n## Why Not Use Claude in Chrome Extension?\n\nThe Chrome extension uses click-by-click automation:\n- Each action requires Claude reasoning + LLM latency\n- 9 entries × 4 actions each = 36+ round trips\n- Much slower and more token-intensive\n\nThis plugin generates a single JavaScript that fills everything in one shot.\n\n## File Structure\n\n```\nintervals-time-entry/\n├── .claude-plugin/\n│   └── plugin.json           # Plugin manifest\n├── skills/\n│   └── intervals-time-entry/\n│       ├── SKILL.md          # Main instructions\n│       ├── references/\n│       │   ├── project-mappings.md\n│       │   ├── worktype-mappings.md\n│       │   └── people-context.md\n│       └── scripts/\n│           ├── inspect-basics.js\n│           ├── discover-worktypes.js\n│           └── fill-entries.js\n└── README.md\n```\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"om\",\n  \"owner\": {\n    \"name\": \"olivoil\",\n    \"email\": \"olivoil@users.noreply.github.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"om\",\n      \"source\": \"./\",\n      \"description\": \"Personal Claude Code skills collection: Intervals time entries, FreshBooks sync, session summaries, and more\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"olivoil\"\n      },\n      \"repository\": \"https://github.com/olivoil/om-skills\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"intervals\", \"freshbooks\", \"time-entry\", \"obsidian\", \"productivity\", \"automation\"],\n      \"skills\": [\"./skills/\"],\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Skills Collection\n\nA personal [Claude Code](https://claude.ai/code) plugin with productivity skills.\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `/intervals-time-entry [date]` | Fill Intervals Online time entries from daily notes with GitHub and Outlook calendar correlation |\n| `/intervals-to-freshbooks [week]` | Sync a week of Intervals entries to FreshBooks |\n| `/done` | Capture session summary (decisions, questions, follow-ups) into Obsidian vault |\n\n## Installation\n\n```bash\nclaude plugin install om-skills@olivoil\n```\n\n## Prerequisites\n\n- **Chrome with remote debugging** (`--remote-debugging-port=9222`) + chrome-devtools MCP server (for Intervals/FreshBooks skills)\n- **`gh` CLI** (authenticated) for GitHub activity correlation\n- **`curl` and `jq`** for FreshBooks API calls\n- **`OBSIDIAN_VAULT_PATH` env variable** set to your Obsidian vault root (for `/done`)\n- (Optional) `op` CLI for 1Password credential references\n- (Optional) Outlook Web logged in for calendar correlation\n\n## Local Development\n\n```bash\n# Disable installed version\nclaude plugin disable om\n\n# Run with local plugin source\nclaude --plugin-dir /path/to/skills/\n\n# Test skills as usual\n#   > /done\n#   > /intervals-time-entry 2026-02-04\n\n# Re-enable when done\nclaude plugin enable om\n```\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
-          "name": "tt",
-          "source": {
-            "source": "github",
-            "repo": "olivoil/intervals-time-entry"
-          },
-          "description": "Fill Intervals from daily notes with GitHub and Outlook calendar correlation, sync to FreshBooks",
-          "version": "1.2.0",
+          "name": "om",
+          "source": "./",
+          "description": "Personal Claude Code skills collection: Intervals time entries, FreshBooks sync, session summaries, and more",
+          "version": "2.0.0",
           "author": {
             "name": "olivoil"
           },
-          "homepage": "https://github.com/olivoil/intervals-time-entry",
-          "repository": "https://github.com/olivoil/intervals-time-entry",
+          "repository": "https://github.com/olivoil/om-skills",
           "license": "MIT",
           "keywords": [
             "intervals",
             "freshbooks",
             "time-entry",
-            "timesheet",
-            "automation",
-            "outlook",
-            "calendar"
+            "obsidian",
+            "productivity",
+            "automation"
           ],
-          "category": "productivity",
+          "skills": [
+            "./skills/"
+          ],
+          "strict": false,
           "categories": [
             "automation",
-            "calendar",
             "freshbooks",
             "intervals",
-            "outlook",
+            "obsidian",
             "productivity",
-            "time-entry",
-            "timesheet"
+            "time-entry"
           ],
           "install_commands": [
-            "/plugin marketplace add olivoil/intervals-time-entry",
-            "/plugin install tt@tt"
+            "/plugin marketplace add olivoil/om-skills",
+            "/plugin install om@om"
           ]
         }
       ]
