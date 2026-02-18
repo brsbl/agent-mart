@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "recursechat",
+    "display_name": "recursechat",
+    "avatar_url": "https://avatars.githubusercontent.com/u/158546902?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "recursechat-agent-workflow",
+      "version": null,
+      "description": "Claude Code plugins for agent workflows: Ghostty terminal notifications and permission auto-handling.",
+      "repo_full_name": "recursechat/agent-workflow",
+      "repo_url": "https://github.com/recursechat/agent-workflow",
+      "repo_description": "Claude Code plugins: Ghostty terminal notifications and permission auto-handling",
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-02-13T20:41:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"recursechat-agent-workflow\",\n  \"owner\": {\n    \"name\": \"recursechat\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for agent workflows: Ghostty terminal notifications and permission auto-handling.\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ghostty-notifications\",\n      \"source\": \"./plugins/ghostty-notifications\",\n      \"description\": \"Ghostty terminal notifications for Claude Code events (bell, OSC 777). Notifies on permission prompts, idle, auth, and elicitation dialogs.\",\n      \"keywords\": [\"ghostty\", \"notifications\", \"bell\", \"terminal\"]\n    },\n    {\n      \"name\": \"yolo\",\n      \"source\": \"./plugins/yolo\",\n      \"description\": \"Auto-handle Claude Code permission requests. Route to Claude for security review, auto-approve everything, or turn off.\",\n      \"keywords\": [\"permissions\", \"security\", \"auto-approve\", \"hooks\"]\n    }\n  ]\n}\n",
+        "README.md": "# agent-workflow\n\nClaude Code plugins for agent workflows.\n\n## Plugins\n\n### ghostty-notifications\n\nGhostty terminal notifications for Claude Code events. Sends a bell (dock bounce, tab indicator) and OSC 777 desktop notification when Claude needs attention.\n\nFires on: `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`.\n\nSee [ghostty-tab-notifications.md](ghostty-tab-notifications.md) for the full writeup on how this works and what was tried.\n\n### yolo\n\nAuto-handle Claude Code permission requests. Two modes:\n\n- **review** (default) — route each request to Claude Opus 4.5 for security evaluation. Safe operations get auto-approved, dangerous ones fall through to the permission dialog.\n- **approve-all** — auto-approve everything with zero latency.\n\nIncludes a `/yolo` skill for toggling modes.\n\n## Install as plugins\n\nAdd the marketplace and install:\n\n```\n/plugin marketplace add recursechat/agent-workflow\n/plugin install ghostty-notifications@recursechat-agent-workflow\n/plugin install yolo@recursechat-agent-workflow\n```\n\n## Install manually (without marketplace)\n\n### Ghostty notifications\n\nAdd to `~/.claude/settings.json`:\n\n```json\n{\n  \"hooks\": {\n    \"Notification\": [\n      {\n        \"matcher\": \"permission_prompt\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/ghostty-notify.sh 'Needs permission'\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"idle_prompt\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/ghostty-notify.sh 'Waiting for input'\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"auth_success\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/ghostty-notify.sh 'Auth successful'\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"elicitation_dialog\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/ghostty-notify.sh 'Asking a question'\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```\n\nCopy `plugins/ghostty-notifications/scripts/ghostty-notify.sh` to `~/.claude/hooks/` and make it executable.\n\n### Permission review\n\nCopy `plugins/yolo/scripts/permission-review.sh` and `ghostty-notify.sh` to `.claude/hooks/` in your project (or `~/.claude/hooks/` for global). Make executable.\n\nAdd to `.claude/settings.local.json` (or `~/.claude/settings.json` for global):\n\n```json\n{\n  \"hooks\": {\n    \"PermissionRequest\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"\\\"$CLAUDE_PROJECT_DIR\\\"/.claude/hooks/permission-review.sh\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n```\n\n## Notes\n\n- Restart your session after installing/editing hooks -- they're snapshotted at startup\n- `PermissionRequest` hooks don't fire in non-interactive mode (`-p`)\n- Use `claude --debug` and `Ctrl+O` (verbose mode) to see hook execution\n- Check `/hooks` in Claude Code to verify hooks are loaded\n- Only `type: \"command\"` hooks work with `PermissionRequest` (prompt hooks don't fire for this event)\n"
+      },
+      "plugins": [
+        {
+          "name": "ghostty-notifications",
+          "source": "./plugins/ghostty-notifications",
+          "description": "Ghostty terminal notifications for Claude Code events (bell, OSC 777). Notifies on permission prompts, idle, auth, and elicitation dialogs.",
+          "keywords": [
+            "ghostty",
+            "notifications",
+            "bell",
+            "terminal"
+          ],
+          "categories": [
+            "bell",
+            "ghostty",
+            "notifications",
+            "terminal"
+          ],
+          "install_commands": [
+            "/plugin marketplace add recursechat/agent-workflow",
+            "/plugin install ghostty-notifications@recursechat-agent-workflow"
+          ]
+        },
+        {
+          "name": "yolo",
+          "source": "./plugins/yolo",
+          "description": "Auto-handle Claude Code permission requests. Route to Claude for security review, auto-approve everything, or turn off.",
+          "keywords": [
+            "permissions",
+            "security",
+            "auto-approve",
+            "hooks"
+          ],
+          "categories": [
+            "auto-approve",
+            "hooks",
+            "permissions",
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add recursechat/agent-workflow",
+            "/plugin install yolo@recursechat-agent-workflow"
+          ]
+        }
+      ]
+    }
+  ]
+}

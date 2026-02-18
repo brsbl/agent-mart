@@ -93,6 +93,95 @@
           ]
         }
       ]
+    },
+    {
+      "name": "skills-for-ai",
+      "version": null,
+      "description": "Custom AI-agent skills: multi-AI orchestration, context handoffs, and session forking",
+      "repo_full_name": "choru-k/skills-for-ai",
+      "repo_url": "https://github.com/choru-k/skills-for-ai",
+      "repo_description": "Custom AI-agent skills: multi-AI orchestration, context handoffs, and session forking",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-17T14:35:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"skills-for-ai\",\n  \"owner\": \"choru-k\",\n  \"description\": \"Custom AI-agent skills: multi-AI orchestration, context handoffs, and session forking\",\n  \"plugins\": [\n    {\n      \"name\": \"call-ai\",\n      \"description\": \"Run prompts against external AIs (Codex, Gemini, Claude) with parallel execution, retries, and Zellij pane streaming\",\n      \"source\": \"plugins/call-ai\"\n    },\n    {\n      \"name\": \"complete-prompt\",\n      \"description\": \"Generate structured XML context prompts for AI-to-AI handoffs with 9 specialized modes\",\n      \"source\": \"plugins/complete-prompt\"\n    },\n    {\n      \"name\": \"context-fork\",\n      \"description\": \"Fork the current session to Haiku, Sonnet, or Opus with full conversation context preserved\",\n      \"source\": \"plugins/context-fork\"\n    },\n    {\n      \"name\": \"second-opinion\",\n      \"description\": \"Get second opinions from external AIs (Codex, Gemini, Claude) on programming questions with parallel execution and synthesis\",\n      \"source\": \"plugins/second-opinion\"\n    },\n    {\n      \"name\": \"cc-dev-skills\",\n      \"description\": \"Guide for creating effective Claude Code skills with SKILL.md templates, validation scripts, and best practices\",\n      \"source\": \"plugins/cc-dev-skills\"\n    },\n    {\n      \"name\": \"cc-dev-agents\",\n      \"description\": \"Comprehensive guide for creating Claude Code subagents with frontmatter, permissions, storage, and hooks\",\n      \"source\": \"plugins/cc-dev-agents\"\n    },\n    {\n      \"name\": \"cc-dev-hooks\",\n      \"description\": \"Comprehensive guide for creating Claude Code hooks with command, prompt, and agent hook types\",\n      \"source\": \"plugins/cc-dev-hooks\"\n    }\n  ]\n}\n",
+        "README.md": "# skills-for-ai\n\nCustom AI-agent skills with Claude plugin support — multi-AI orchestration, context handoffs, session forking, and development guides.\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| **call-ai** | Run prompts against external AIs (Codex, Gemini, Claude) with parallel execution, retries, and Zellij pane streaming |\n| **complete-prompt** | Generate structured XML context prompts for AI-to-AI handoffs (9 modes + `--refs`) |\n| **cc-context-fork** | Fork the current session to Haiku, Sonnet, or Opus with full conversation context preserved |\n| **second-opinion** | Get second opinions from external AIs on programming questions with parallel execution and synthesis |\n| **cc-dev-skills** | Guide for creating effective Claude Code skills with SKILL.md templates and validation scripts |\n| **cc-dev-agents** | Comprehensive guide for creating Claude Code subagents with frontmatter, permissions, and hooks |\n| **cc-dev-hooks** | Comprehensive guide for creating Claude Code hooks with command, prompt, and agent hook types |\n\n## Shared Skill Index\n\n- `skills/` provides a cross-harness shared skill index (Agent Skills style).\n- This is used by Pi via `~/.share-ai/skills` in your dotfiles setup.\n- During phase-1 migration, some shared entries are bridge symlinks back to dotfiles skill sources.\n\n## Installation\n\n### Plugin marketplace\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add choru-k/skills-for-ai\n\n# Install individual skills\nclaude plugin install call-ai\nclaude plugin install complete-prompt\nclaude plugin install context-fork   # provides /cc-context-fork\nclaude plugin install second-opinion\nclaude plugin install cc-dev-skills\nclaude plugin install cc-dev-agents\nclaude plugin install cc-dev-hooks\n```\n\n### Manual\n\n```bash\ngit clone https://github.com/choru-k/skills-for-ai.git /tmp/skills-for-ai\n\n# Copy whichever skills you want\ncp -r /tmp/skills-for-ai/plugins/call-ai/skills/call-ai ~/.claude/skills/call-ai\ncp -r /tmp/skills-for-ai/plugins/complete-prompt/skills/complete-prompt ~/.claude/skills/complete-prompt\ncp -r /tmp/skills-for-ai/plugins/context-fork/skills/context-fork ~/.claude/skills/cc-context-fork\ncp -r /tmp/skills-for-ai/plugins/second-opinion/skills/second-opinion ~/.claude/skills/second-opinion\ncp -r /tmp/skills-for-ai/plugins/cc-dev-skills/skills/cc-dev-skills ~/.claude/skills/cc-dev-skills\ncp -r /tmp/skills-for-ai/plugins/cc-dev-agents/skills/cc-dev-agents ~/.claude/skills/cc-dev-agents\ncp -r /tmp/skills-for-ai/plugins/cc-dev-hooks/skills/cc-dev-hooks ~/.claude/skills/cc-dev-hooks\n```\n\n## Usage\n\nAfter installation, skills appear as slash commands in Claude Code:\n\n```\n/call-ai \"What are the tradeoffs of REST vs GraphQL?\"\n/call-ai :all \"Review this architecture\"\n/cp debug\n/cp brief --refs\n/cc-context-fork haiku \"summarize our conversation\"\n/cc-context-fork opus \"deep analysis of this module\"\n/so \"Redis or Memcached for session storage?\"\n/so :all \"Review this architecture decision\"\n/cc-dev-skills\n/cc-dev-agents\n/cc-dev-hooks\n```\n\n## Prerequisites\n\n- **call-ai** requires CLI tools: `codex`, `gemini`, and/or `claude` (install whichever providers you want to use)\n- **complete-prompt** has no external dependencies\n- **cc-context-fork** requires `claude` CLI\n- **second-opinion** requires `call-ai` + `complete-prompt` (install all three)\n- **cc-dev-skills**, **cc-dev-agents**, **cc-dev-hooks** have no external dependencies\n\n## License\n\n[MIT](LICENSE)\n\n## Author\n\n[choru-k](https://github.com/choru-k)\n"
+      },
+      "plugins": [
+        {
+          "name": "call-ai",
+          "description": "Run prompts against external AIs (Codex, Gemini, Claude) with parallel execution, retries, and Zellij pane streaming",
+          "source": "plugins/call-ai",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add choru-k/skills-for-ai",
+            "/plugin install call-ai@skills-for-ai"
+          ]
+        },
+        {
+          "name": "complete-prompt",
+          "description": "Generate structured XML context prompts for AI-to-AI handoffs with 9 specialized modes",
+          "source": "plugins/complete-prompt",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add choru-k/skills-for-ai",
+            "/plugin install complete-prompt@skills-for-ai"
+          ]
+        },
+        {
+          "name": "context-fork",
+          "description": "Fork the current session to Haiku, Sonnet, or Opus with full conversation context preserved",
+          "source": "plugins/context-fork",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add choru-k/skills-for-ai",
+            "/plugin install context-fork@skills-for-ai"
+          ]
+        },
+        {
+          "name": "second-opinion",
+          "description": "Get second opinions from external AIs (Codex, Gemini, Claude) on programming questions with parallel execution and synthesis",
+          "source": "plugins/second-opinion",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add choru-k/skills-for-ai",
+            "/plugin install second-opinion@skills-for-ai"
+          ]
+        },
+        {
+          "name": "cc-dev-skills",
+          "description": "Guide for creating effective Claude Code skills with SKILL.md templates, validation scripts, and best practices",
+          "source": "plugins/cc-dev-skills",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add choru-k/skills-for-ai",
+            "/plugin install cc-dev-skills@skills-for-ai"
+          ]
+        },
+        {
+          "name": "cc-dev-agents",
+          "description": "Comprehensive guide for creating Claude Code subagents with frontmatter, permissions, storage, and hooks",
+          "source": "plugins/cc-dev-agents",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add choru-k/skills-for-ai",
+            "/plugin install cc-dev-agents@skills-for-ai"
+          ]
+        },
+        {
+          "name": "cc-dev-hooks",
+          "description": "Comprehensive guide for creating Claude Code hooks with command, prompt, and agent hook types",
+          "source": "plugins/cc-dev-hooks",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add choru-k/skills-for-ai",
+            "/plugin install cc-dev-hooks@skills-for-ai"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "anthosx",
+    "display_name": "anthosx",
+    "avatar_url": "https://avatars.githubusercontent.com/u/251410884?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "anthosx-collaborative-canvas",
+      "version": null,
+      "description": "AI-powered visual collaboration with Excalidraw for Claude Code",
+      "repo_full_name": "anthosx/collaborative-canvas",
+      "repo_url": "https://github.com/anthosx/collaborative-canvas",
+      "repo_description": "Freely collaborate with Claude Code on an infinite canvas.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-18T02:52:30Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"anthosx-collaborative-canvas\",\n  \"description\": \"AI-powered visual collaboration with Excalidraw for Claude Code\",\n  \"owner\": {\n    \"name\": \"Anthosx\",\n    \"email\": \"canvas@anthosx.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"collaborative-canvas\",\n      \"description\": \"Create diagrams, flowcharts, and architecture sketches with Claude on an infinite Excalidraw canvas.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Anthosx\",\n        \"email\": \"canvas@anthosx.com\"\n      },\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/anthosx/collaborative-canvas.git\"\n      },\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"collaborative-canvas\",\n  \"description\": \"AI-powered visual collaboration with Excalidraw. Create diagrams, flowcharts, and architecture sketches with Claude.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Collaborative Canvas by AnthosX\"\n  },\n  \"keywords\": [\"canvas\", \"excalidraw\", \"diagrams\", \"visual\", \"collaboration\", \"flowcharts\", \"architecture\"],\n  \"license\": \"AGPL-3.0-or-later\"\n}\n",
+        "README.md": "# Collaborative Canvas for Claude Code\n\n**Chat. Draw. Diagram. Claude.**\n\n**Freely collaborate with Claude Code on an infinite canvas.**\n\n**Powered by Excalidraw.**\n\n---\n\nThis tool was made for people who communicate visually. Flowcharts, graphs, and drawings can be more powerful that text alone. Want to sketch an idea for Claude instead of writing a prompt? Want Claude to draw you a rocket ship just for fun?\n\n**Collaborative Canvas** empowers you to share messages and drawings with Claude via an open Excalidraw canvas. Claude will listen for your work whenever you press **collaborate**, and then **write/draw you messages directly back on the canvas.**\n\nSimply ask Claude to start a new drawing and you'll get a blank Canvas. Alternatively, ask Claude to draw something for you or adapt a plan into a visual schema.\n\n---\n\n## Features\n\n- **Real-time collaboration** - Claude can see your drawings and provide feedback\n- **Visual feedback** - Claude adds elements, annotations, and suggestions directly to your canvas\n- **Native desktop app** - Electron-based Excalidraw canvas with native menus and export\n- **Auto-save** - Changes are automatically saved as you draw\n- **Multiple canvases** - Create and manage multiple drawings\n\n---\n\n## Installation\n\n### Prerequisites\n\n- Node.js 18+\n- Claude Code\n\n### Install from Marketplace\n\n```bash\nclaude plugin install anthosx/collaborative-canvas --scope user\n```\n\nRestart Claude Code, then just start drawing — the Electron app downloads automatically on first use.\n\n### Install from Source\n\n1. Clone the repo:\n   ```bash\n   git clone https://github.com/anthosx/collaborative-canvas.git\n   cd collaborative-canvas\n   ```\n\n2. Run setup to download the Electron app:\n   ```bash\n   ./scripts/setup.sh\n   ```\n\n3. Install the plugin:\n   ```bash\n   claude plugin install /path/to/collaborative-canvas --scope user\n   ```\n\n4. Restart Claude Code.\n\n---\n\n## Usage\n\n### Quick Start\n\n```\n\"Let's start a new drawing\"\n```\n\nThis opens a new canvas. The Excalidraw window will open automatically.\n\n### Workflow\n\n1. **Create a canvas**: Tell Claude to open a canvas\n2. **Draw your content**: Use Excalidraw tools to create your diagram\n3. **Click Collaborate**: When you want Claude's feedback\n4. **Review suggestions**: Claude analyzes your drawing and adds elements\n5. **Continue editing**: Make changes and collaborate again\n6. **Click Finish**: When done, to close the canvas\n\n### Commands\n\n- `/canvas <name>` - Create a new canvas with the given name\n- `/canvas --list` - List all saved canvases\n- `/canvas --open <id>` - Open an existing canvas by ID\n\n### Tools\n\nThe plugin provides these MCP tools:\n\n| Tool | Description |\n|------|-------------|\n| `open_canvas` | Create or open a drawing |\n| `listen` | Wait for user collaboration |\n| `save_canvas` | Save elements to canvas |\n| `get_canvas_state` | View current drawing state |\n| `add_to_canvas` | Add elements programmatically |\n| `close_widget` | Close the Excalidraw window |\n| `list_canvases` | List all saved drawings |\n| `delete_canvases` | Delete drawings |\n| `capture_screenshot` | Capture canvas as image |\n\n## Storage\n\nDrawings are stored in XDG-compliant location:\n\n```\n~/.local/share/collaborative-canvas/\n├── drawings/\n│   ├── {uuid}.excalidraw    # Drawing files\n│   └── {uuid}.meta.json     # Metadata\n├── hooks-queue.json         # Collaboration queue\n└── screenshots/             # Captured screenshots\n```\n\n## Architecture\n\n```\ncollaborative-canvas/\n├── .claude-plugin/          # Plugin manifest\n├── .mcp.json               # MCP server config\n├── hooks/                   # PostToolUse hooks\n│   ├── hooks.json          # Hook configuration\n│   └── scripts/            # Hook scripts\n├── skills/                  # Auto-activating skills\n├── commands/               # Slash commands\n├── mcp-server/             # MCP server (Node.js)\n└── electron-app/           # Electron app\n```\n\n## Development\n\n### Building\n\n```bash\n# Rebuild MCP server bundle (after changing server code)\ncd mcp-server && npm install && npm run bundle\n\n# Rebuild Electron app (after changing app code)\ncd electron-app && npm install && npm run build\n\n# Package Electron for release\ncd electron-app && npm run package:dir\n```\n\n### Development Mode\n\nSet `EXCALIDRAW_DEV=1` before starting Claude Code to enable hot reload:\n\n```bash\nexport EXCALIDRAW_DEV=1\nclaude\n```\n\nThen in a separate terminal, start the Vite dev server:\n\n```bash\ncd electron-app && npm run dev:renderer\n```\n\n## License\n\nThis project is dual-licensed:\n\n- **Open Source**: [AGPL-3.0](LICENSES/AGPL-3.0.txt) - Free for open source use\n- **Commercial**: [Contact for licensing](LICENSE-COMMERCIAL.md) - For proprietary use\n\nThis project uses [Excalidraw](https://github.com/excalidraw/excalidraw) (MIT License).\nSee [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for full attribution.\n"
+      },
+      "plugins": [
+        {
+          "name": "collaborative-canvas",
+          "description": "Create diagrams, flowcharts, and architecture sketches with Claude on an infinite Excalidraw canvas.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Anthosx",
+            "email": "canvas@anthosx.com"
+          },
+          "source": {
+            "source": "url",
+            "url": "https://github.com/anthosx/collaborative-canvas.git"
+          },
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add anthosx/collaborative-canvas",
+            "/plugin install collaborative-canvas@anthosx-collaborative-canvas"
+          ]
+        }
+      ]
+    }
+  ]
+}
