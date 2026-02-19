@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "tmaarcxs",
+    "display_name": "kur4i",
+    "avatar_url": "https://avatars.githubusercontent.com/u/83613548?u=46f890a5074d5056ba47538d076cf3ec21639221&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ctk-marketplace",
+      "version": null,
+      "description": "Claude Token Killer - Token-optimized CLI proxy for Claude Code",
+      "repo_full_name": "tmaarcxs/CTK",
+      "repo_url": "https://github.com/tmaarcxs/CTK",
+      "repo_description": "Claude Token Killer",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-18T16:27:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ctk-marketplace\",\n  \"description\": \"Claude Token Killer - Token-optimized CLI proxy for Claude Code\",\n  \"owner\": {\n    \"name\": \"tmaarcxs\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ctk\",\n      \"description\": \"Token-optimized CLI proxy that saves 60-90% tokens. Automatically rewrites docker, git, npm, pytest commands with compact output.\",\n      \"version\": \"1.4.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"tmaarcxs\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ctk\",\n  \"description\": \"Claude Token Killer - Token-optimized CLI proxy that automatically rewrites commands to save 60-90% tokens. Covers docker, git, npm, pytest, and more.\",\n  \"version\": \"1.4.0\",\n  \"author\": {\n    \"name\": \"tmaarcxs\"\n  },\n  \"homepage\": \"https://github.com/tmaarcxs/RTK\",\n  \"repository\": \"https://github.com/tmaarcxs/RTK\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"tokens\", \"optimization\", \"cli\", \"proxy\", \"docker\", \"git\"]\n}\n",
+        "README.md": "# CTK - Claude Token Killer\n\n**Token-optimized CLI proxy for Claude Code** - Save 60-90% on dev operations by automatically filtering and compacting command output.\n\n## Installation\n\n### As a Claude Code Plugin (Recommended)\n\n```bash\n# Install directly from GitHub\nclaude plugin install https://github.com/tmaarcxs/CTK.git\n```\n\nThat's it! The plugin will:\n- Auto-install on first session start\n- Register the command rewriting hook\n- Work transparently for all supported commands\n\n### Manual Installation\n\n```bash\n# Clone and run installer\ngit clone https://github.com/tmaarcxs/CTK.git\ncd CTK\n./bin/install-ctk.sh\n```\n\n## Usage\n\n### Meta Commands (always use ctk directly)\n\n```bash\nctk gain              # Show token savings analytics\nctk gain --history    # Show command usage history with savings\nctk gain --weekly     # Weekly statistics\nctk gain --export json # Export data to JSON\nctk discover          # Analyze Claude Code history for missed opportunities\nctk proxy <cmd>       # Execute raw command without filtering (for debugging)\n```\n\n### Automatic Command Rewriting\n\nAll supported commands are automatically rewritten by the hook:\n\n| Raw Command | Rewritten To |\n|-------------|--------------|\n| `git status` | `ctk git status` |\n| `docker compose ps` | `ctk docker compose ps` |\n| `ps aux` | `ctk ps` |\n| `npm test` | `ctk npm test` |\n\n## Supported Commands\n\n| Category | Commands |\n|----------|----------|\n| **Docker** | `compose ps/logs/up/down/exec`, `ps`, `images`, `logs`, `network`, `volume`, `system` |\n| **Git** | `status`, `diff`, `log`, `add`, `commit`, `push`, `pull`, `branch`, `remote`, `stash`, `tag` |\n| **System** | `ps aux`, `free`, `df`, `date`, `whoami`, `uname`, `hostname`, `uptime`, `env`, `which`, `history`, `id` |\n| **Files** | `ls`, `tree`, `cat`→`read`, `grep`, `find`, `du`, `tail`, `wc`, `stat`, `file` |\n| **Python** | `pytest`, `ruff`, `pip` |\n| **Node.js** | `npm`, `pnpm`, `vitest`, `tsc`, `eslint`→`lint`, `prettier` |\n| **Network** | `curl`, `wget`, `ip`, `ss`, `ping` |\n\n## How It Works\n\n1. **Hook intercepts Bash commands** before execution\n2. **Rewrites commands** to use CTK (e.g., `docker compose ps` -> `ctk docker compose ps`)\n3. **CTK runs the command** and filters output (removes boilerplate, progress bars, noise)\n4. **Token savings are tracked** in SQLite database\n\n## Token Savings\n\nCTK saves tokens by:\n\n1. **Filtering boilerplate**: Removes progress bars, timing info, warnings, deprecation notices\n2. **Category-specific patterns**: Docker headers, npm noise, pytest separators\n3. **No truncation of useful data**: Savings come from removing noise, not cutting results\n\nExample savings:\n- `docker logs`: ~2,440 tokens (39%)\n- `ps aux`: ~4,531 tokens (10%)\n\n## Configuration\n\nConfig file: `~/.config/ctk/config.yaml`\n\n```yaml\nversion: 1\nenabled: true\ncommands:\n  docker:\n    enabled: true\n    compose: true\n  git:\n    enabled: true\n```\n\n## Data Storage\n\n- **Metrics database**: `~/.local/share/ctk/metrics.db` (SQLite)\n- **Configuration**: `~/.config/ctk/config.yaml`\n- **Binary**: `~/.local/bin/ctk`\n\n## Requirements\n\n- Python 3.8+\n- click, rich, pyyaml (auto-installed)\n- jq (for the hook script)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "ctk",
+          "description": "Token-optimized CLI proxy that saves 60-90% tokens. Automatically rewrites docker, git, npm, pytest commands with compact output.",
+          "version": "1.4.0",
+          "source": "./",
+          "author": {
+            "name": "tmaarcxs"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tmaarcxs/CTK",
+            "/plugin install ctk@ctk-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

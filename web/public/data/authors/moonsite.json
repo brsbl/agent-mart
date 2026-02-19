@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "Moonsite",
+    "display_name": "Moonsite Software Ltd.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2419395?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "moonsite-claude-extensions",
+      "version": null,
+      "description": "Moonsite extensions for Claude Code — plugins, skills, and hooks",
+      "repo_full_name": "Moonsite/moonsite-claude-extensions",
+      "repo_url": "https://github.com/Moonsite/moonsite-claude-extensions",
+      "repo_description": "Claude Code plugin for automatic Jira issue tracking and time logging",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T12:01:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"moonsite-claude-extensions\",\n  \"owner\": {\n    \"name\": \"Moonsite\",\n    \"url\": \"https://github.com/Moonsite\"\n  },\n  \"metadata\": {\n    \"description\": \"Moonsite extensions for Claude Code \\u2014 plugins, skills, and hooks\",\n    \"version\": \"1.0.0\",\n    \"homepage\": \"https://github.com/Moonsite/moonsite-claude-extensions\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jira-autopilot\",\n      \"source\": \"./plugins/jira-autopilot\",\n      \"description\": \"Autonomous Jira work tracking, issue creation, and time logging for Claude Code sessions\",\n      \"version\": \"3.4.0\",\n      \"author\": {\n        \"name\": \"Boris Sigalov\"\n      },\n      \"category\": \"workflow\",\n      \"homepage\": \"https://github.com/Moonsite/moonsite-claude-extensions\",\n      \"keywords\": [\n        \"jira\",\n        \"tracking\",\n        \"time-logging\",\n        \"atlassian\",\n        \"productivity\",\n        \"autopilot\",\n        \"autonomous\"\n      ]\n    }\n  ]\n}",
+        "README.md": "# moonsite-claude-extensions\n\nA collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) extensions by [Moonsite](https://github.com/Moonsite) — plugins, skills, and hooks for supercharging your Claude Code workflow.\n\n## Extensions\n\n### Plugins\n\n| Plugin | Description | Version |\n|--------|-------------|---------|\n| [jira-autopilot](plugins/jira-autopilot/) | Autonomous Jira work tracking, issue creation, and time logging | 3.0.0 |\n\n### Skills\n\n_Coming soon._\n\n### Hooks\n\n_Coming soon._\n\n---\n\n## jira-autopilot\n\nAutomatically tracks, documents, and logs your work to Jira. Every task done in Claude Code gets captured — files changed, time spent, work summaries — and posted to your Jira board with minimal manual intervention.\n\n### Features\n\n- **5 lifecycle hooks** track your work in real-time (tool activity, time, file changes)\n- **6 slash commands** for setup, tracking, approvals, and daily summaries\n- **3 autonomy levels** (C: confirm, B: auto-proceed, A: fully silent)\n- **Accuracy parameter** (1-10) controlling time rounding and context switch sensitivity\n- **Multi-issue tracking** with automatic time allocation\n- **Auto-classification** of issue types (Bug vs Task) from summary text\n- **Parent issue selection** with contextual Jira search\n- **REST API fallback** when Atlassian MCP tools aren't available\n\n### Prerequisites\n\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed\n- A Jira Cloud project\n- Jira API token ([create one here](https://id.atlassian.com/manage-profile/security/api-tokens))\n- Optional: [Atlassian MCP server](https://www.npmjs.com/package/@anthropic/mcp-atlassian) for enhanced functionality\n\n### Installation\n\n```bash\ngit clone https://github.com/Moonsite/moonsite-claude-extensions.git ~/.claude/plugins/local/jira-autopilot\n```\n\nRegister in `~/.claude/plugins/installed_plugins.json`:\n\n```json\n\"jira-autopilot@local\": [\n  {\n    \"scope\": \"user\",\n    \"installPath\": \"/Users/<you>/.claude/plugins/local/jira-autopilot\",\n    \"version\": \"3.0.0\",\n    \"installedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastUpdated\": \"2026-01-01T00:00:00.000Z\"\n  }\n]\n```\n\nEnable in `~/.claude/settings.json`:\n\n```json\n\"jira-autopilot@local\": true\n```\n\n### Quick Start\n\n```\n/jira-setup                          # Configure Jira connection\n/jira-start PROJ-42                  # Track existing issue\n/jira-start Fix login redirect       # Create new issue + track\n/jira-status                         # Show active issues + time\n/jira-stop                           # Log time + work summary\n/jira-summary                        # Today's aggregate report\n```\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/jira-setup` | Configure Jira tracking with guided setup wizard |\n| `/jira-start <KEY-123>` | Link to existing issue and start timer |\n| `/jira-start <summary>` | Create new Jira issue and start timer |\n| `/jira-stop` | Log elapsed time and work summary to Jira |\n| `/jira-status` | Show all active issues with time breakdown |\n| `/jira-approve` | Review untracked work and create/link Jira issues |\n| `/jira-summary` | Show today's aggregated work summary |\n\n### Configuration\n\n**Project config** (committed): `.claude/jira-autopilot.json`\n\n| Field | Description | Default |\n|-------|-------------|---------|\n| `projectKey` | Jira project key (e.g., `MYPROJ`) | — |\n| `cloudId` | Atlassian Cloud ID (auto-fetched) | — |\n| `enabled` | Enable/disable tracking | `true` |\n| `autonomyLevel` | `C` (confirm), `B` (auto-proceed), `A` (silent) | `C` |\n| `accuracy` | 1-10 scale for time/context sensitivity | `5` |\n| `idleThreshold` | Minutes of inactivity before idle detection | `15` |\n| `branchPattern` | Regex to extract issue key from branch | `^(?:feature\\|fix\\|...)/{key}-\\\\d+` |\n| `commitPattern` | Expected pattern in commit messages | `{key}-\\\\d+:` |\n| `debugLog` | Enable debug logging to file | `false` |\n\n**Credentials** (gitignored): `.claude/jira-autopilot.local.json`\n\n```json\n{\n  \"email\": \"you@company.com\",\n  \"apiToken\": \"your-api-token\",\n  \"baseUrl\": \"https://company.atlassian.net\"\n}\n```\n\n**Global credentials** (optional): `~/.claude/jira-autopilot.global.json` — shared across all projects.\n\n### Documentation\n\n- [Design spec](docs/plans/2026-02-18-jira-autopilot-autonomous-logging-design.md)\n- [Implementation plan](docs/plans/2026-02-18-jira-autopilot-implementation.md)\n- [Manual test plan](docs/plans/2026-02-18-jira-autopilot-manual-test-plan.md)\n\n---\n\n## Repository Structure\n\n```\nmoonsite-claude-extensions/\n├── .claude-plugin/\n│   └── marketplace.json         # Marketplace manifest\n├── plugins/\n│   └── jira-autopilot/          # Jira autopilot plugin\n├── skills/                      # (future skills)\n├── hooks/                       # (future standalone hooks)\n├── docs/\n│   └── plans/                   # Design docs and test plans\n├── CLAUDE.md                    # Claude Code instructions\n└── README.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "jira-autopilot",
+          "source": "./plugins/jira-autopilot",
+          "description": "Autonomous Jira work tracking, issue creation, and time logging for Claude Code sessions",
+          "version": "3.4.0",
+          "author": {
+            "name": "Boris Sigalov"
+          },
+          "category": "workflow",
+          "homepage": "https://github.com/Moonsite/moonsite-claude-extensions",
+          "keywords": [
+            "jira",
+            "tracking",
+            "time-logging",
+            "atlassian",
+            "productivity",
+            "autopilot",
+            "autonomous"
+          ],
+          "categories": [
+            "atlassian",
+            "autonomous",
+            "autopilot",
+            "jira",
+            "productivity",
+            "time-logging",
+            "tracking",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Moonsite/moonsite-claude-extensions",
+            "/plugin install jira-autopilot@moonsite-claude-extensions"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "author": {
+    "id": "Qlerify",
+    "display_name": "Qlerify",
+    "avatar_url": "https://avatars.githubusercontent.com/u/153011755?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "qlerify-plugins",
+      "version": "1.0.0",
+      "description": "Official Qlerify plugins for AI coding assistants — domain model sync, data export, and more",
+      "repo_full_name": "Qlerify/qlerify-plugins",
+      "repo_url": "https://github.com/Qlerify/qlerify-plugins",
+      "repo_description": null,
+      "signals": {
+        "stars": 6,
+        "forks": 0,
+        "pushed_at": "2026-02-18T13:53:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"qlerify-plugins\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Official Qlerify plugins for AI coding assistants — domain model sync, data export, and more\",\n  \"owner\": {\n    \"name\": \"Qlerify\",\n    \"email\": \"support@qlerify.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mcp-companion\",\n      \"description\": \"Teaches AI agents how to effectively use Qlerify's MCP server — domain model sync, fast data export, and more\",\n      \"version\": \"0.2.0\",\n      \"author\": {\n        \"name\": \"Qlerify\",\n        \"email\": \"support@qlerify.com\"\n      },\n      \"source\": \"./plugins/mcp-companion\",\n      \"category\": \"development\",\n      \"homepage\": \"https://qlerify.com\"\n    }\n  ]\n}\n",
+        "README.md": "# Qlerify Plugins\n\nOfficial Qlerify plugins for AI coding assistants — domain model sync, data export, and more. Works with Claude Code,\nGemini CLI, and Cursor.\n\n## Prerequisites\n\n1. **Qlerify account** with a workflow created\n2. **Qlerify MCP server** configured with your API token (see setup per tool below)\n\n## Installation\n\n### Claude Code\n\nConfigure MCP server in `~/.claude/settings.local.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"qlerify\": {\n      \"type\": \"url\",\n      \"url\": \"https://mcp.qlerify.com\",\n      \"headers\": {\n        \"x-api-key\": \"YOUR_API_TOKEN\"\n      }\n    }\n  }\n}\n```\n\nInstall the plugin:\n\n```bash\n/plugin marketplace add qlerify/qlerify-plugins\n/plugin install mcp-companion@qlerify-plugins\n```\n\nAfter installation, skills are available as `/mcp-companion:sync` and `/mcp-companion:download`.\n\n### Gemini CLI\n\nInstall each skill using the `--path` flag:\n\n```bash\ngemini skills install https://github.com/qlerify/qlerify-plugins.git --path plugins/mcp-companion/skills/sync\ngemini skills install https://github.com/qlerify/qlerify-plugins.git --path plugins/mcp-companion/skills/download\n```\n\nConfigure the Qlerify MCP server in `~/.gemini/settings.json` per\n[Gemini CLI docs](https://geminicli.com/docs/cli/mcp/).\n\n### Cursor\n\n1. Open Cursor Settings (`Cmd+Shift+J`)\n2. Go to **Rules** > **Add Rule** > **Remote Rule (Github)**\n3. Enter: `https://github.com/qlerify/qlerify-plugins`\n\nConfigure the Qlerify MCP server in Cursor's MCP settings.\n\nGet your API token from the Qlerify UI.\n\n## Plugins\n\n### `mcp-companion`\n\nTeaches AI agents how to effectively use Qlerify's MCP server. Contains the following skills:\n\n#### `sync`\n\nSyncs your codebase's domain model with Qlerify. Detects entities, commands, and read models in your code and ensures\nthey match your Qlerify workflow.\n\n**Triggers:**\n\n- \"sync domain model\"\n- \"update Qlerify\"\n- \"sync entities\"\n- After implementing features that change domain objects\n\n**What it does:**\n\n1. Scans your codebase for domain objects (entities, commands, read models)\n2. Compares with Qlerify workflow\n3. Creates/updates/deletes to keep them in sync\n\n#### `download`\n\nFast download any Qlerify data directly to files. Uses `curl + jq` to bypass AI processing, making it ~100x faster than\nstandard MCP tools for large data.\n\n**Triggers:**\n\n- \"save to file\"\n- \"download workflow\"\n- \"export\"\n- Any request to save Qlerify data locally\n\n**What it does:**\n\n1. Fetches data directly via shell commands\n2. Pipes to file without AI processing\n3. ~1 second instead of 3-5 minutes for large workflows\n\n## Usage Examples\n\n```bash\n# Invoke skills directly\n/mcp-companion:sync\n/mcp-companion:download\n\n# Or just ask naturally - skills trigger automatically\n> sync my domain model with Qlerify\n> download the Cart Microservice workflow to workflow.json\n> save the swagger spec for my workflow to api.yaml\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "mcp-companion",
+          "description": "Teaches AI agents how to effectively use Qlerify's MCP server — domain model sync, fast data export, and more",
+          "version": "0.2.0",
+          "author": {
+            "name": "Qlerify",
+            "email": "support@qlerify.com"
+          },
+          "source": "./plugins/mcp-companion",
+          "category": "development",
+          "homepage": "https://qlerify.com",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Qlerify/qlerify-plugins",
+            "/plugin install mcp-companion@qlerify-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "author": {
+    "id": "greenative-ai",
+    "display_name": "greenative-ai",
+    "avatar_url": "https://avatars.githubusercontent.com/u/262308090?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "greenative",
+      "version": null,
+      "description": "Greenative Platform skills",
+      "repo_full_name": "greenative-ai/skills",
+      "repo_url": "https://github.com/greenative-ai/skills",
+      "repo_description": "Skills for Greenative Platform",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T05:25:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"greenative\",\n  \"owner\": {\n    \"name\": \"Greenative\",\n    \"email\": \"support@avgidea.io\"\n  },\n  \"metadata\": {\n    \"description\": \"Greenative Platform skills\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"greenative-skills\",\n      \"description\": \"Skills for Greenative Platform API - datasource, entity, function, KVS, and storage operations\",\n      \"source\": \"./\",\n      \"skills\": [\n        \"./skills/datasource\",\n        \"./skills/entity\",\n        \"./skills/function\",\n        \"./skills/kvs\",\n        \"./skills/storage\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Greenative Skills\n\nClaude Code skills for the [Greenative Platform](https://doc.avgidea.io) (a.k.a Avgidea Data Platform). These skills let you manage datasources, transfer data, run functions, persist state, and handle storage objects — all from Claude Code or Claude Desktop.\n\n## Skills Overview\n\n| Skill | Command | Description |\n|-------|---------|-------------|\n| Datasource | `/datasource` | List datasources, verify connections, and execute SQL |\n| Entity | `/entity` | Transfer data between storages and databases |\n| Function | `/function` | Execute platform functions and monitor their status |\n| KVS | `/kvs` | Read and write entries in the native key-value store |\n| Storage | `/storage` | Upload, download, list, and delete storage objects |\n\n## Skill Details\n\n### /datasource\n\nManage [datasources](https://doc.avgidea.io/data-exchange) (cloud storage, databases, etc.) and execute SQL statements against database datasources.\n\n**Capabilities:**\n- **list** — Discover available datasources, optionally filtered by name or type\n- **connect** — Verify that a datasource is reachable\n- **execute** — Run DDL/DML statements (`statement` field) or SELECT queries (`query` field), with optional bind variables (`:1`, `:2` style) and session parameters\n\n**Key details:**\n- SELECT uses the `query` parameter; INSERT/UPDATE/DELETE/DDL uses `statement` — they are different fields\n- Bind variable placeholders are `:1`, `:2`, etc. (not `?`)\n- Session parameters (e.g., `NLS_DATE_FORMAT`) can be set per request\n\n### /entity\n\nTransfer data between storages, load CSV files into databases, and export database tables to CSV.\n\n**Capabilities:**\n- **transfer** (single file) — Copy one object between storage datasources\n- **transfer** (bulk) — Copy multiple objects matching a `filter` pattern\n- **transfer** (CSV → DB) — Load a CSV from storage into a database table with parallel workers\n- **transfer** (DB → CSV) — Export a database table to CSV in storage\n\n**Key details:**\n- All operations use the same `transfer` action — the parameter combination determines behavior\n- CSV-to-DB loading supports a `worker` parameter for parallelism\n- Use `/datasource` first to discover and verify available datasources\n\n### /function\n\nExecute registered functions on the platform, monitor their execution, and retrieve logs.\n\n**Capabilities:**\n- **request** — Execute a function (standalone, file-based, or line-based)\n- **list** — List executions, optionally filtered by status (`starting`, `running`, `success`, `failed`, `timeout`, `terminated`)\n- **terminate** — Stop a running execution by its ID\n\n**Key details:**\n- `request` returns an execution ID for tracking and termination\n- Three function types: **Standalone** (no datasource needed), **File**, and **Line** (both require datasource and object)\n- Each execution produces timestamped log entries\n\n### /kvs\n\nPersist application state, metadata, and configurations in a native key-value store.\n\n**Capabilities:**\n- **stores** — List available KVS stores\n- **create** — Insert a new entry (fails if the key already exists)\n- **put** — Create or overwrite an entry (upsert)\n- **get** — Retrieve an entry by key\n- **delete** — Remove an entry\n- **keys** — List all keys in a store, with optional filtering\n\n**Key details:**\n- Values are JSON objects\n- `create` enforces insert-only semantics; `put` is upsert\n- Multi-store support; defaults to the `\"default\"` store\n\n### /storage\n\nUpload, download, list, and delete objects in storage datasources.\n\n**Capabilities:**\n- **putref** — Upload an object (two-step: get presigned URL, then PUT the file)\n- **getref** — Download an object (two-step: get presigned URL, then GET the file)\n- **list** — List all objects in a storage datasource with metadata (name, size, timestamps)\n- **delete** — Remove an object\n\n**Key details:**\n- Upload and download use presigned URLs — each is a two-step operation\n- Use `list` to discover exact object names before downloading or deleting\n\n## Setup\n\n### Account and Keys\n\n1. Register an account on the Greenative Platform\n   - https://adp.avgidea.io (use the appropriate URL for dedicated instances)\n   - [Account registration guide](https://doc.avgidea.io/account-registration)\n\n2. Issue a key file\n   - [API keys guide](https://doc.avgidea.io/application-integration/external-application-access)\n\n3. Set environment variables\n   ```\n   GN_KEY=<access key>\n   GN_SECRET=<secret key>\n   GN_ENDPOINT=<Greenative API Endpoint>\n   ```\n\n### Claude Code\n\nRegister this repository as a Claude Code plugin marketplace:\n```\n/plugin marketplace add greenative-ai/skills\n```\n\nThen install the skills and select the appropriate scope:\n```\n/plugin install greenative-skills\n```\n\n## License\n\nThis project is licensed under the [MIT License](LICENSE).\n"
+      },
+      "plugins": [
+        {
+          "name": "greenative-skills",
+          "description": "Skills for Greenative Platform API - datasource, entity, function, KVS, and storage operations",
+          "source": "./",
+          "skills": [
+            "./skills/datasource",
+            "./skills/entity",
+            "./skills/function",
+            "./skills/kvs",
+            "./skills/storage"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add greenative-ai/skills",
+            "/plugin install greenative-skills@greenative"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,30 +6,53 @@
   },
   "marketplaces": [
     {
-      "name": "igm-plugins",
+      "name": "igm-claude-plugins",
       "version": null,
-      "description": "Personal Claude Code plugin with coding agents and commands",
-      "repo_full_name": "macalinao/claude-plugin",
-      "repo_url": "https://github.com/macalinao/claude-plugin",
-      "repo_description": null,
+      "description": "A collection of Claude Code plugins for coding agents, documentation, and notifications",
+      "repo_full_name": "macalinao/claude-plugins",
+      "repo_url": "https://github.com/macalinao/claude-plugins",
+      "repo_description": "A collection of Claude Code plugins for coding agents, documentation, and notifications",
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-01-10T10:31:53Z"
+        "pushed_at": "2026-02-19T09:29:15Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"igm-plugins\",\n  \"owner\": {\n    \"name\": \"Ian Macalinao\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"igm\",\n      \"source\": \"./igm-plugin\",\n      \"description\": \"Personal Claude Code plugin with coding agents and commands\"\n    }\n  ]\n}\n",
-        "README.md": "# igm Claude Plugin\n\nPersonal Claude Code plugin with coding agents and commands.\n\n## Skills\n\n### react-stack-engineer\n\nExpert React agent for writing, reviewing, and refactoring React code with:\n\n- React + TypeScript + Vite\n- Tailwind CSS v4\n- React Query (TanStack Query)\n- ShadCN components\n- Zod validation\n- Bun package manager\n\n### typescript-stack-engineer\n\nExpert TypeScript agent for non-React code with:\n\n- TypeScript strict mode\n- Bun runtime and test runner\n- Zod validation\n- One function per file pattern\n- Kebab-case file naming\n\n### check-and-fix\n\nRuns TypeScript checks and linting, automatically fixing all errors:\n\n- Runs `bun run typecheck` and `bun run lint:fix`\n- Fixes remaining errors manually\n- Verifies all tests pass\n\n## Commands\n\n### /commit-push-pr\n\nCommits all changes, pushes, and creates a pull request. Automatically:\n\n- Detects if on main/master branch\n- Creates feature branches when needed\n- Reuses existing PRs when possible\n\n### /check-and-fix\n\nRuns TypeScript and lint checks, fixing all errors automatically.\n\n## Installation\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add macalinao/claude-plugin\n\n# Install the plugin\nclaude plugin install igm@igm-plugins\n```\n\nThen restart Claude Code for changes to take effect.\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"igm-claude-plugins\",\n  \"description\": \"A collection of Claude Code plugins for coding agents, documentation, and notifications\",\n  \"owner\": {\n    \"name\": \"Ian Macalinao\",\n    \"email\": \"me@ianm.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"igm\",\n      \"source\": \"./plugins/igm\",\n      \"description\": \"Personal Claude Code plugin with coding agents and commands\"\n    },\n    {\n      \"name\": \"code-context\",\n      \"source\": \"./plugins/code-context\",\n      \"description\": \"MCP integrations for AI-powered code and repository documentation\"\n    },\n    {\n      \"name\": \"notifykit\",\n      \"source\": \"./plugins/notifykit\",\n      \"description\": \"macOS notifications for Claude Code using notifykit\"\n    }\n  ]\n}\n",
+        "README.md": "# macalinao/claude-plugins\n\nA collection of Claude Code plugins.\n\n## Plugins\n\n### igm\n\nPersonal Claude Code plugin with coding agents and commands.\n\n#### Skills\n\n- **react-stack-engineer** — Expert React agent (TypeScript, Vite, Tailwind v4, React Query, ShadCN, Zod, Bun)\n- **typescript-stack-engineer** — Expert TypeScript agent for non-React code (strict mode, Bun, Zod, one function per file, kebab-case)\n- **check-and-fix** — Runs TypeScript checks and linting, automatically fixing all errors\n\n#### Commands\n\n- **/commit-push-pr** — Commits all changes, pushes, and creates a pull request\n- **/check-and-fix** — Runs TypeScript and lint checks, fixing all errors automatically\n\n#### Installation\n\n```bash\nclaude plugin marketplace add macalinao/claude-plugins\nclaude plugin install igm@igm-claude-plugins\n```\n\n### deepwiki\n\nDeepWiki MCP integration for AI-powered GitHub repository documentation.\n\n#### Installation\n\n```bash\nclaude plugin marketplace add macalinao/claude-plugins\nclaude plugin install deepwiki@igm-claude-plugins\n```\n",
+        "plugins/igm/README.md": "# igm\n\nPersonal Claude Code plugin with coding agents and commands.\n\n## Skills\n\n### react-stack-engineer\n\nExpert React agent for writing, reviewing, and refactoring React code with:\n\n- React + TypeScript (strict) + Vite\n- Tailwind CSS v4\n- React Query (TanStack Query)\n- ShadCN components\n- Zod validation\n- Bun package manager\n- Turborepo monorepo support\n\n### typescript-stack-engineer\n\nExpert TypeScript agent for non-React code with:\n\n- TypeScript strict mode\n- Bun runtime and test runner\n- Zod validation\n- One function per file pattern\n- Kebab-case file naming\n- ESM exclusively\n\n### check-and-fix\n\nRuns TypeScript checks and linting, automatically fixing all errors:\n\n1. Runs `bun run typecheck` and `bun run lint:fix`\n2. Fixes remaining errors manually\n3. Repeats until all errors are resolved\n4. Verifies all tests pass\n\n## Commands\n\n### /commit-push-pr\n\nCommits all changes, pushes, and creates a pull request. Automatically creates feature branches when on main/master and reuses existing PRs.\n\n### /commit-push-yolo\n\nCommits all changes and pushes to the current branch without creating a PR.\n\n### /check-and-fix\n\nRuns TypeScript and lint checks, fixing all errors automatically.\n\n## Installation\n\n```bash\nclaude plugin marketplace add macalinao/claude-plugins\nclaude plugin install igm@igm-claude-plugins\n```\n",
+        "plugins/code-context/README.md": "# code-context\n\nMCP integrations for AI-powered code and repository documentation.\n\n## MCP Servers\n\n### DeepWiki\n\nProvides access to [DeepWiki](https://deepwiki.com) tools for exploring and querying documentation about any GitHub repository.\n\n- **read_wiki_structure** — Get a list of documentation topics for a repository\n- **read_wiki_contents** — View full documentation about a repository\n- **ask_question** — Ask any question about a repository and get an AI-powered answer\n\n### Context7\n\nProvides access to [Context7](https://context7.com) for retrieving up-to-date documentation and code examples for any library.\n\n- **resolve-library-id** — Resolve a library name to a Context7-compatible library ID\n- **query-docs** — Query documentation and code examples for a library\n\n## Installation\n\n```bash\nclaude plugin marketplace add macalinao/claude-plugins\nclaude plugin install code-context@igm-claude-plugins\n```\n",
+        "plugins/notifykit/README.md": "# notifykit\n\nmacOS notifications for Claude Code using [notifykit](https://github.com/nichochar/notifykit).\n\nPlays sounds when Claude needs your attention:\n\n- **Glass** sound when Claude is idle and waiting for a prompt\n- **Funk** sound when Claude needs permission to proceed\n\n## Prerequisites\n\nInstall notifykit:\n\n```bash\nbrew install nichochar/tap/notifykit\n```\n\n## Installation\n\n```bash\nclaude plugin marketplace add macalinao/claude-plugins\nclaude plugin install notifykit@igm-claude-plugins\n```\n"
       },
       "plugins": [
         {
           "name": "igm",
-          "source": "./igm-plugin",
+          "source": "./plugins/igm",
           "description": "Personal Claude Code plugin with coding agents and commands",
           "categories": [],
           "install_commands": [
-            "/plugin marketplace add macalinao/claude-plugin",
-            "/plugin install igm@igm-plugins"
+            "/plugin marketplace add macalinao/claude-plugins",
+            "/plugin install igm@igm-claude-plugins"
+          ]
+        },
+        {
+          "name": "code-context",
+          "source": "./plugins/code-context",
+          "description": "MCP integrations for AI-powered code and repository documentation",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add macalinao/claude-plugins",
+            "/plugin install code-context@igm-claude-plugins"
+          ]
+        },
+        {
+          "name": "notifykit",
+          "source": "./plugins/notifykit",
+          "description": "macOS notifications for Claude Code using notifykit",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add macalinao/claude-plugins",
+            "/plugin install notifykit@igm-claude-plugins"
           ]
         }
       ]

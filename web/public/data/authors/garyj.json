@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "garyj",
+    "display_name": "Gary Jarrel",
+    "avatar_url": "https://avatars.githubusercontent.com/u/644451?u=d9ecf7039ec42c20818303143e504727024ecf76&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "airtable-marketplace",
+      "version": null,
+      "description": "Plugin marketplace for the Airtable Claude Code plugin",
+      "repo_full_name": "garyj/airtable-skill",
+      "repo_url": "https://github.com/garyj/airtable-skill",
+      "repo_description": "Claude Code Airtable Skill",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-30T04:41:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"airtable-marketplace\",\n  \"owner\": {\n    \"name\": \"Gary Jarrel\",\n    \"url\": \"https://github.com/garyj\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugin marketplace for the Airtable Claude Code plugin\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"airtable\",\n      \"description\": \"Airtable integration for Claude Code. CLI scripts for bases, tables, records, batch operations, schema management, and webhooks.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Gary Jarrel\",\n        \"url\": \"https://github.com/garyj\"\n      },\n      \"homepage\": \"https://github.com/garyj/airtable-skill\",\n      \"tags\": [\"airtable\", \"database\", \"migration\", \"records\", \"batch-operations\", \"schema-management\", \"webhooks\"],\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"airtable\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Airtable integration for Claude Code. CLI scripts for bases, tables, records, batch operations, schema management, and webhooks.\",\n  \"author\": {\n    \"name\": \"Gary Jarrel\"\n  },\n  \"repository\": \"https://github.com/garyj/airtable-skill\",\n  \"license\": \"MIT\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# Airtable Plugin for Claude Code\n\nA Claude Code plugin that gives your agent full access to the Airtable API through Python CLI scripts. Connection testing, record CRUD, batch operations, schema management, and webhooks.\n\n## Why This Exists\n\nI needed to migrate hundreds of property compliance records between Airtable bases: inspections, certifications, linked properties, PDF attachments and doing it manually wasn't an option. So I built this plugin, pointed Claude at the source base, and let it handle the migration autonomously: creating tables, mapping fields, batch-transferring records (including attachments via URL), and verifying counts. The only gap was formula fields, which Airtable's API doesn't support creating programmatically, those had to be added manually after the migration.\n\n## What's Included\n\n| Script | Purpose |\n|--------|---------|\n| `connection.py` | Test API connection, list accessible bases |\n| `records.py` | Create, read, update, delete, query records; manage comments |\n| `batch.py` | Bulk create, update, upsert, delete (handles Airtable's 10-record batch limit) |\n| `schema.py` | List tables, describe fields, create tables and fields |\n| `webhooks.py` | Create, list, inspect, and delete webhooks |\n\nAll scripts support `--json` for machine-readable output and follow PII-safe practices (no token leaks, confirmation before writes, minimal data fetching).\n\n## Installation\n\n### Claude Code\n\nFrom inside Claude Code (interactive mode):\n\n```bash\n/plugin marketplace add https://github.com/garyj/airtable-skill\n/plugin install airtable\n```\n\nOr from your terminal (CLI):\n\n```bash\nclaude plugin marketplace add garyj/airtable-skill\nclaude plugin install airtable\n```\n\n### Updating\n\n```bash\n/plugin update airtable@airtable-marketplace\n```\n\nOr from terminal:\n\n```bash\nclaude plugin update airtable@airtable-marketplace\n```\n\n### Local Development\n\nClone the repo and validate the plugin structure:\n\n```bash\ngit clone https://github.com/garyj/airtable-skill.git\nclaude plugin validate /path/to/airtable-skill\n```\n\n### Prerequisites\n\n- Python 3.10+\n- [uv](https://docs.astral.sh/uv/) package manager\n- An [Airtable API token](https://airtable.com/create/tokens) with appropriate scopes\n\n### Set Up Your Token\n\nCreate a personal access token at <https://airtable.com/create/tokens> with these scopes:\n\n- `data.records:read`, read records\n- `data.records:write`, create, update, delete records\n- `schema.bases:read`, view base structure\n- `schema.bases:write`, create tables and fields\n- `webhook:manage`, webhook operations\n\nThen set the environment variable:\n\n```bash\nexport AIRTABLE_API_TOKEN=\"patXXXXXXXX.XXXXXXX\"\n```\n\n## Verify Installation\n\nAfter installing, test the connection:\n\n```\nTest my Airtable connection\n```\n\nClaude will run `connection.py test` and confirm whether your token is valid and which bases are accessible.\n\n## Usage\n\nThe plugin activates automatically when you mention Airtable, bases, tables, records, or structured data.\n\n**Explore a base:**\n> List the tables in my Airtable base appXXXXX\n\n**Query records:**\n> Find all contacts in the Contacts table where Status is Active\n\n**Bulk operations:**\n> Create 50 records in the Tasks table from this CSV data...\n\n**Schema management:**\n> Create a new table called Invoices with fields for amount, date, and status\n\nSee `skills/airtable/SKILL.md` for the full script reference, formula examples, and workflow guides.\n\n## Known Limitations\n\n- **Formula fields cannot be created via the API.** After migrations or table creation, formula fields must be added manually in the Airtable UI.\n- **Airtable rate limits apply.** The batch script handles the 10-record-per-request limit automatically, but high-volume operations may hit the 5 requests/second rate limit.\n- **Attachments are URL-based only.** Attachments can be added by providing URLs (Airtable downloads them), but direct file uploads from disk are not supported.\n\n## Running Tests\n\n```bash\n# All tests (unit tests run without a token)\nuv run pytest\n\n# Unit tests only (no Airtable access needed)\nuv run pytest -m \"not integration\"\n\n# Integration tests (requires AIRTABLE_API_TOKEN and AIRTABLE_TEST_BASE_ID)\nuv run pytest -m integration\n```\n\n## License\n\nMIT License, see LICENSE file for details.\n\n## Support\n\n- **Issues**: <https://github.com/garyj/airtable-skill/issues>\n"
+      },
+      "plugins": [
+        {
+          "name": "airtable",
+          "description": "Airtable integration for Claude Code. CLI scripts for bases, tables, records, batch operations, schema management, and webhooks.",
+          "version": "0.1.0",
+          "author": {
+            "name": "Gary Jarrel",
+            "url": "https://github.com/garyj"
+          },
+          "homepage": "https://github.com/garyj/airtable-skill",
+          "tags": [
+            "airtable",
+            "database",
+            "migration",
+            "records",
+            "batch-operations",
+            "schema-management",
+            "webhooks"
+          ],
+          "source": "./",
+          "categories": [
+            "airtable",
+            "batch-operations",
+            "database",
+            "migration",
+            "records",
+            "schema-management",
+            "webhooks"
+          ],
+          "install_commands": [
+            "/plugin marketplace add garyj/airtable-skill",
+            "/plugin install airtable@airtable-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
