@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "heyJordanParker",
+    "display_name": "Jordan Parker",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7506303?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "talent-tree",
+      "version": null,
+      "description": "Overpowered Claude Code talent tree.",
+      "repo_full_name": "heyJordanParker/dotfiles",
+      "repo_url": "https://github.com/heyJordanParker/dotfiles",
+      "repo_description": null,
+      "signals": {
+        "stars": 6,
+        "forks": 1,
+        "pushed_at": "2026-02-19T11:33:20Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"talent-tree\",\n  \"owner\": {\n    \"name\": \"Jordan Parker\",\n    \"email\": \"jordan@parkerlabs.co\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"talents\",\n      \"source\": \"./claude/.claude\",\n      \"description\": \"Overpowered Claude Code talents to power level your software architecture.\",\n      \"version\": \"1.0.0\",\n      \"strict\": false,\n      \"keywords\": [\n        \"architecture\",\n        \"debugging\",\n        \"testing\",\n        \"code-review\",\n        \"shaping\",\n        \"breadboarding\",\n        \"engineering-workflow\"\n      ],\n      \"skills\": [\"./skills/\"],\n      \"commands\": [\"./commands/\"],\n      \"agents\": []\n    }\n  ],\n  \"metadata\": {\n    \"description\": \"Overpowered Claude Code talent tree.\",\n    \"version\": \"1.0.0\"\n  }\n}\n",
+        "README.md": "# Talent Tree\n\nOverpowered Claude Code talents to power level your software architecture.\n\n## Install Talents\n\nRequires [Claude Code](https://docs.anthropic.com/en/docs/claude-code).\n\n```bash\n/plugin marketplace add heyJordanParker/dotfiles\n/plugin install talents@talent-tree\n```\n\n### Talents\n\nInvoked as `/talents:<name>`:\n\n- **agent-browser** — Automate browser interactions, web testing, screenshots, data extraction (requires [agent-browser](https://www.npmjs.com/package/agent-browser))\n- **architecture** — Present architectural options with tradeoffs\n- **breadboarding** — Map workflows into affordance tables\n- **breadboard-review** — Find design smells in breadboards\n- **claude-code** — Work with Claude Code skills, hooks, settings\n- **codebase-exploration** — Explore codebase structure and dependencies\n- **commit-message** — Structured commits with type prefix and file tree\n- **debug** — Systematic debugging with root cause tracing\n- **design** — UI components, styling, and interaction decisions\n- **diagram** — Generate Excalidraw diagrams on a live canvas (requires [drawbridge](https://github.com/alexknowshtml/drawbridge))\n- **naming** — Consistent naming for variables, files, classes, everything\n- **personas** — 5 parallel persona agents for diverse perspectives\n- **plan** — Plan features using structured format\n- **pragmatic-engineering** — KISS-driven planning and review\n- **review** — Parallel code reviewers on uncommitted changes\n- **shaping** — Collaborate on problem definition and solution options\n- **show-architecture** — Annotated file trees inline\n- **subagents** — Framework for dispatching and managing subagents\n- **using-git-worktrees** — Isolated git worktrees for feature work\n- **verification-before-completion** — Evidence before assertions\n- **working-with-markdown-files** — Rules for markdown editing\n- **writing-tests** — Behavior-driven tests, not implementation tests\n\n### Commands\n\nAlso invoked as `/talents:<name>`:\n\n- **ask** — Break complex scenarios into decision questions with 4+ options\n- **brainstorm** — Interactive design refinement using Socratic method\n- **bug-hunt** — Review code for bugs, logic errors, security vulnerabilities\n- **commit** — Validated commit with tests and comprehensive review\n- **docs-review** — Review Claude documentation with parallel subagents\n- **pcc** — Add pros/cons/confidence to any prompt\n- **plan** — Plan a feature using structured format\n- **q** — Answer questions only, no actions\n- **retro** — Analyze conversation history for patterns and improvements\n- **wtf** — Hard reset, redo the last task correctly\n\n### Hooks\n\nThe plugin includes hooks that run automatically to keep Claude disciplined:\n\n- **session-start** — Injects ground rules (no sycophancy, literal execution, read before acting)\n- **retro-reminder** — Nudges to run `/retro` if 3+ days since last one\n- **block-git-revert** — Blocks `git reset`, `git restore`, `git checkout -- <file>`. Forces manual execution.\n- **block-unsafe-delete** — Whitelists `rm` to specific directories only. Everything else blocked.\n- **pre-edit** — \"Did you read this file?\" checklist before any edit\n- **ask-user-question** — Enforces research-first, 4+ options, self-contained questions\n- **sync-shaping** — Ripple-check reminders when editing shaping documents\n- **user-prompt-submit** — Pre-response checklist (read the code, question vs instruction, test your changes)\n\n### Safe Delete\n\nClaude loves running `rm -rf`. Protect yourself by replacing `rm` with [trash](https://github.com/ali-rantakari/trash) so deleted files go to macOS Trash instead of being permanently destroyed:\n\n```bash\nbrew install trash\n```\n\nThen alias `rm` to `trash` in your shell profile:\n\n```bash\ncat >> ~/.zshenv << 'EOF'\n# Safe delete - moves to Trash instead of permanent deletion\nrm() {\n  local args=()\n  for arg in \"$@\"; do\n    [[ \"$arg\" =~ ^-[rRfidv]+$ ]] && continue\n    args+=(\"$arg\")\n  done\n  trash \"${args[@]}\"\n}\nEOF\n```\n\nThis silently strips `rm` flags (`-rf`, `-i`, etc.) and sends files to Trash. Claude thinks it's deleting; you can undo from Trash.\n\n---\n\n## Dotfiles\n\nmacOS dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).\n\n### New Machine Setup\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/heyJordanParker/dotfiles/master/setup.sh | bash\n```\n\nThis installs Xcode CLI tools, Homebrew, all packages from `Brewfile`, bun, and symlinks configs.\n\n### Manual Usage\n\n```bash\n# Add a new config\ncd ~/dotfiles\nmkdir -p newapp/.config/newapp\nmv ~/.config/newapp/config newapp/.config/newapp/\nstow newapp\n\n# Remove symlinks\nstow -D newapp\n\n# Re-link after changes\nstow -R newapp\n```\n\n### Structure\n\nEach top-level directory is a stow package. Files inside mirror their target location relative to `$HOME`.\n"
+      },
+      "plugins": [
+        {
+          "name": "talents",
+          "source": "./claude/.claude",
+          "description": "Overpowered Claude Code talents to power level your software architecture.",
+          "version": "1.0.0",
+          "strict": false,
+          "keywords": [
+            "architecture",
+            "debugging",
+            "testing",
+            "code-review",
+            "shaping",
+            "breadboarding",
+            "engineering-workflow"
+          ],
+          "skills": [
+            "./skills/"
+          ],
+          "commands": [
+            "./commands/"
+          ],
+          "agents": [],
+          "categories": [
+            "architecture",
+            "breadboarding",
+            "code-review",
+            "debugging",
+            "engineering-workflow",
+            "shaping",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add heyJordanParker/dotfiles",
+            "/plugin install talents@talent-tree"
+          ]
+        }
+      ]
+    }
+  ]
+}

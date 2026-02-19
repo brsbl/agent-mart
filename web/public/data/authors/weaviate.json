@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "weaviate",
+    "display_name": "Weaviate",
+    "avatar_url": "https://avatars.githubusercontent.com/u/37794290?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "weaviate-plugins",
+      "version": null,
+      "description": "Weaviate plugins for Claude Code",
+      "repo_full_name": "weaviate/agent-skills",
+      "repo_url": "https://github.com/weaviate/agent-skills",
+      "repo_description": "Agent Skills to empower developers building AI applications with Weaviate.",
+      "signals": {
+        "stars": 13,
+        "forks": 0,
+        "pushed_at": "2026-02-19T13:07:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"weaviate-plugins\",\n  \"owner\": {\n    \"name\": \"Weaviate\",\n    \"email\": \"grow@weaviate.io\"\n  },\n  \"metadata\": {\n    \"description\": \"Weaviate plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"weaviate\",\n      \"source\": \"./\",\n      \"description\": \"Search, query, and manage Weaviate vector databases. Includes database operations, cookbooks for building full-stack AI applications, and CLI commands.\",\n      \"version\": \"0.2.0\",\n      \"keywords\": [\"weaviate\", \"vector-database\", \"agents\", \"rag\", \"search\", \"retrieval\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"weaviate\",\n  \"description\": \"Weaviate plugin for Claude Coding\",\n  \"version\": \"0.2.0\",\n  \"author\": {\n    \"name\": \"Weaviate\"\n  }\n}\n",
+        "README.md": "![Weaviate Agent Skills](banner.jpg)\n\n# Weaviate Agent Skills\n\nAgent Skills to help developers build and use AI agents with Weaviate more effectively. Each skill is a  folder containing instructions, scripts, and resources that agents like Claude Code, Cursor, GitHub Copilot, and others can discover to work more accurately and efficiently\n\nWorks with any agent that supports the [Agent Skills](https://agentskills.io/home#adoption) format.\n\n## Installation\n\n### Using npx skills (Cursor, Claude Code, Gemini CLI, etc.)\n\n```bash\nnpx skills add weaviate/agent-skills\n```\n\n### Using Claude Code Plugin Manager\n\n```bash\n/plugin marketplace add weaviate/agent-skills\n/plugin install weaviate@weaviate-plugins\n```\n\n### Manual: clone and point your agent to the directory\n\n```bash\ngit clone https://github.com/weaviate/agent-skills.git\ncd agent-skills\nclaude --plugin-dir .\n```\n\n## Quickstart\n\nNew to Weaviate? Run the interactive onboarding to set up your environment variables, import your own or sample data, and explore the full functionality of the available skills/commands:\n\n```bash\n/weaviate:quickstart\n```\n\n## Configuration\n\n### Weaviate Cloud\n\nIt is recommended to create a free cluster in the [weaviate console](https://console.weaviate.cloud/signin?utm_source=github&utm_campaign=agent_skills).\n\n### Required Environment Variables\n\n```bash\nexport WEAVIATE_URL=\"https://your-cluster.weaviate.cloud\"\nexport WEAVIATE_API_KEY=\"your-api-key\"\n```\n\n### External Provider Keys (Auto-Detected)\n\nFor the complete env var list and header mapping, see:\n\n- [Environment Requirements](skills/weaviate/references/environment_requirements.md)\n\n## Available Skills\n\n<details>\n<summary><strong>Weaviate</strong></summary>\n\nUtility functions for the agent to directly interact with a Weaviate database.\n\n- Create Collections\n\n- Explore Collections (Aggregation, Metadata, Schema)\n\n- Query Collections (Keyword-, Vector-, Hybrid Search) (Support filters)\n\n- Import Data (supports multi-vector and PDF ingestion)\n\n- Query Agent\n</details>\n\n<details>\n<summary><strong>Cookbooks</strong></summary>\n\nBlueprints for complete end-to-end AI applications with state-of-the art guidelines for agentic infrastructure.\n\n- Multimodal PDF Ingestion\n\n- Data Explorer\n\n- Retrieval Augmented Generation (Basic, Advanced, Agentic)\n\n- Agents\n\n- Query Agent Chatbot\n\n- Frontend Interface (optional)\n\n</details>\n\n## Usage\n\n### Commands (Claude Code Plugin)\n\n```bash\n# Interactive onboarding\n/weaviate:quickstart\n\n# Ask a question and get an AI-generated answer with source citations\n/weaviate:ask query \"What are the benefits of vector databases?\" collections \"Documentation\"\n\n# Search collections and get raw results\n/weaviate:query query \"machine learning tutorials\" collections \"Articles,BlogPosts\" limit 5\n\n# Search with different search types\n/weaviate:search query \"product SKU-123\" collection \"Products\" type \"keyword\"\n/weaviate:search query \"similar items\" collection \"Products\" type \"semantic\"\n/weaviate:search query \"best laptops\" collection \"Products\" type \"hybrid\" alpha \"0.7\"\n\n# List collections or get a collection's schema\n/weaviate:collections\n/weaviate:collections name \"Articles\"\n\n# Explore data in a collection\n/weaviate:explore \"Products\" limit 10\n\n# Fetch objects by ID or with filters\n/weaviate:fetch collection \"Articles\" id \"UUID\"\n/weaviate:fetch collection \"Articles\" filters '{\"property\": \"category\", \"operator\": \"equal\", \"value\": \"Science\"}'\n```\n\n### Skills (Any Compatible Agent)\n\nThe skill is automatically discovered by compatible agents. Simply describe what you want:\n\n- \"Search my Weaviate documentation for information about HNSW indexing\"\n- \"List all my Weaviate collections\"\n- \"Find products similar to 'wireless headphones' in the Products collection\"\n- \"Build a chatbot using the Query Agent\"\n- \"Build a multimodal RAG app for my PDF documents\"\n- \"Build an agentic RAG app\"\n\n## Requirements\n\n- Python 3.11+\n- [uv](https://docs.astral.sh/uv/) (recommended) or pip\n- A [Weaviate Cloud](https://console.weaviate.cloud/signin?utm_source=github&utm_campaign=agent_skills) instance\n\n## Resources\n\n- eBooks\n    - [The Context Engineering Guide](https://weaviate.io/ebooks/the-context-engineering-guide?utm_source=github&utm_campaign=agent_skills)\n    - [Agentic Architecture Ebook](https://weaviate.io/ebooks/agentic-architectures?utm_source=github&utm_campaign=agent_skills)\n    - [Advanced RAG Techniques](https://weaviate.io/ebooks/advanced-rag-techniques?utm_source=github&utm_campaign=agent_skills)\n- [Weaviate Query Agent](https://docs.weaviate.io/agents/query)\n- [Weaviate Documentation](https://docs.weaviate.io/weaviate)\n- [Agent Skills Specification](https://agentskills.io/specification)\n- [Claude Code Plugins](https://code.claude.com/docs/en/plugins)\n"
+      },
+      "plugins": [
+        {
+          "name": "weaviate",
+          "source": "./",
+          "description": "Search, query, and manage Weaviate vector databases. Includes database operations, cookbooks for building full-stack AI applications, and CLI commands.",
+          "version": "0.2.0",
+          "keywords": [
+            "weaviate",
+            "vector-database",
+            "agents",
+            "rag",
+            "search",
+            "retrieval"
+          ],
+          "categories": [
+            "agents",
+            "rag",
+            "retrieval",
+            "search",
+            "vector-database",
+            "weaviate"
+          ],
+          "install_commands": [
+            "/plugin marketplace add weaviate/agent-skills",
+            "/plugin install weaviate@weaviate-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

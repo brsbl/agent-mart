@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "tmdry4530",
+    "display_name": "chamdom",
+    "avatar_url": "https://avatars.githubusercontent.com/u/67108705?u=80c1d61840d6dfb59bff2d746d338271cdace7f2&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-agent-tui",
+      "version": null,
+      "description": "Real-time TUI dashboard for monitoring AI agent orchestration events",
+      "repo_full_name": "tmdry4530/claude-agent-tui",
+      "repo_url": "https://github.com/tmdry4530/claude-agent-tui",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T20:39:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-agent-tui\",\n  \"owner\": {\n    \"name\": \"chamdom\"\n  },\n  \"metadata\": {\n    \"description\": \"Real-time TUI dashboard for monitoring AI agent orchestration events\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-agent-tui\",\n      \"source\": \"./\",\n      \"description\": \"Real-time TUI dashboard for monitoring AI agent orchestration events\",\n      \"version\": \"0.2.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-agent-tui\",\n  \"description\": \"Real-time TUI dashboard for monitoring AI agent orchestration events\",\n  \"version\": \"0.2.0\",\n  \"author\": {\n    \"name\": \"chamdom\"\n  },\n  \"license\": \"MIT\",\n  \"repository\": \"https://github.com/tmdry4530/omc-agent-tui\",\n  \"keywords\": [\"tui\", \"agent\", \"monitoring\", \"dashboard\", \"bubbletea\", \"claude-code\"]\n}\n",
+        "README.md": "# claude-agent-tui\n\nReal-time TUI dashboard for monitoring AI agent orchestration events.\n\nBuilt with Go and [Bubbletea](https://github.com/charmbracelet/bubbletea).\n\n## Demo\n\n```\n╭────────────────────────╮  ╭────────────────────────╮  ╭────────────────────────╮\n│         ▐▛███▜▌       │  │         ▐▛███▜▌      │  │         ▐▛███▜▌       │\n│       ▝▜█████▛▘      │  │       ▝▜█████▛▘    │  │       ▝▜█████▛▘      │\n│         ▘▘ ▝▝        │  │         ▘▘ ▝▝      │  │         ▘▘ ▝▝        │\n│  executor ●            │  │  planner ●             │  │  reviewer ○            │\n│  agent-exec-1          │  │  agent-plan-1          │  │  agent-rev-1           │\n│  running               │  │  running               │  │  waiting               │\n│  Recent activity       │  │  Recent activity       │  │  Recent activity       │\n│  task spawned          │  │  planning phase        │  │  awaiting review       │\n╰────────────────────────╯  ╰────────────────────────╯  ╰────────────────────────╯\n```\n\n## Features\n\n- 5-panel layout: Arena (agent cards), Timeline (event stream), Graph (task tree), Inspector (event details), Footer (metrics)\n- Live monitoring via fsnotify file watching\n- JSONL replay with original event timing\n- 12 agent role colors, 6 state indicators\n- Circuit breaker with exponential backoff\n- PII redaction (11 key + 8 regex patterns)\n- Ring buffer store (10K events)\n\n## Quick Start (1 minute)\n\n```bash\n# 1. Build\ngo build -o bin/omc-tui ./cmd/omc-tui\n\n# 2. Start monitor (in a separate terminal)\n./bin/omc-tui --watch .omc/events/\n\n# 3. Or replay a previous session\n./bin/omc-tui --convert .omc/state/subagent-tracking.json -o .omc/events/session.jsonl\n./bin/omc-tui --replay .omc/events/session.jsonl\n```\n\n### Claude Code Plugin Commands\n\n| Command | Description |\n|---------|-------------|\n| `/claude-agent-tui:install-bridge` | Build binary + set up hook bridge |\n| `/claude-agent-tui:monitor` | Start real-time agent monitoring |\n| `/claude-agent-tui:replay` | Replay latest agent session |\n| `/claude-agent-tui:doctor` | Run installation diagnostics |\n| `/claude-agent-tui:stop` | Stop running monitor |\n\n## Requirements\n\n- Go 1.24 or higher\n- Terminal with Unicode and 256-color support\n- `jq` (optional, for hook script)\n\n## Installation\n\n### As Claude Code plugin\n\n```bash\nclaude --plugin-dir /path/to/claude-agent-tui\n```\n\n### Build from source\n\n```bash\ngit clone https://github.com/tmdry4530/omc-agent-tui.git\ncd omc-agent-tui\ngo build -o bin/omc-tui ./cmd/omc-tui\n```\n\n## Usage\n\n### Demo mode (default)\n\n```bash\n./bin/omc-tui\n```\n\nShows sample agent events for testing the UI.\n\n### Live watch mode\n\n```bash\n./bin/omc-tui --watch /path/to/events/dir\n```\n\nMonitors a directory for JSONL event files in real-time using fsnotify.\n\n### Replay mode\n\n```bash\n./bin/omc-tui --replay /path/to/events.jsonl\n```\n\nReplays events from a JSONL file with original timing (capped at 2s between events).\n\n## Keyboard Shortcuts\n\n| Key | Action |\n|-----|--------|\n| `Tab` | Switch between panels |\n| `j` / `Down` | Scroll down |\n| `k` / `Up` | Scroll up |\n| `q` / `Ctrl+C` | Quit |\n\n## Event Format\n\nEvents are JSONL files with the following canonical structure:\n\n```json\n{\n  \"ts\": \"2026-02-18T12:00:00Z\",\n  \"run_id\": \"run-001\",\n  \"provider\": \"claude\",\n  \"agent_id\": \"agent-executor-1\",\n  \"role\": \"executor\",\n  \"state\": \"running\",\n  \"type\": \"task_spawn\",\n  \"task_id\": \"task-001\"\n}\n```\n\nSee `pkg/schema/` for full type definitions.\n\n## Project Structure\n\n```\ncmd/omc-tui/          CLI entrypoint (watch, replay, convert)\ninternal/\n  bridge/             OMC bridge (tracking converter + event emitter)\n  collector/          File-based event collector (fsnotify)\n  normalizer/         Event normalization + PII redaction\n  store/              Ring buffer event store\n  replay/             JSONL replay engine\n  tui/                Bubbletea TUI model\n    arena/            Agent card panel (CLCO mascot)\n    timeline/         Event stream panel\n    graph/            Task dependency tree\n    inspector/        Event detail viewer\n    footer/           Metrics footer bar\npkg/schema/           Canonical event types and enums\nscripts/              Hook bridge script\ncommands/             Plugin slash commands\nhooks/                Plugin hook configuration\n```\n\n## Testing\n\n```bash\ngo test ./... -race\n```\n\n182 tests across 12 packages. All pass with race detector enabled.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-agent-tui",
+          "source": "./",
+          "description": "Real-time TUI dashboard for monitoring AI agent orchestration events",
+          "version": "0.2.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add tmdry4530/claude-agent-tui",
+            "/plugin install claude-agent-tui@claude-agent-tui"
+          ]
+        }
+      ]
+    }
+  ]
+}
