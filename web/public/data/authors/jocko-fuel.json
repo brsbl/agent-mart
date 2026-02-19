@@ -1,0 +1,51 @@
+{
+  "author": {
+    "id": "Jocko-Fuel",
+    "display_name": "Jocko Fuel Internal",
+    "avatar_url": "https://avatars.githubusercontent.com/u/215614917?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jocko-fuel-plugins",
+      "version": null,
+      "description": "Internal Claude Code plugins for Jocko Fuel teams",
+      "repo_full_name": "Jocko-Fuel/cowork-plugins",
+      "repo_url": "https://github.com/Jocko-Fuel/cowork-plugins",
+      "repo_description": "Claude Desktop plugin catalog and review framework for Jocko Fuel",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T02:03:06Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jocko-fuel-plugins\",\n  \"description\": \"Internal Claude Code plugins for Jocko Fuel teams\",\n  \"plugins\": [\n    {\n      \"name\": \"jf-sales-command\",\n      \"description\": \"Sales team tools for promo orders, account lookup, and order management\",\n      \"source\": \"./jf-sales-command\",\n      \"version\": \"1.1.0\"\n    },\n    {\n      \"name\": \"jf-market-intel\",\n      \"description\": \"Market intelligence tools for Circana retail POS analytics, buyer presentations, and sales reporting (requires Snowflake)\",\n      \"source\": \"./jf-market-intel\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        "jf-sales-command/README.md": "# ABOUTME: Sales Command plugin for Jocko Fuel sales team promo order operations\n> Promo orders, batch processing, account management, and order fulfillment tools\n\n# jf-sales-command\n\nSales team tools for promo orders, account lookup, and order management.\n\n## Installation\n\n```bash\n# From the Jocko Fuel plugin marketplace:\n/plugin install jf-sales-command@jocko-fuel-plugins\n```\n\n## Prerequisites\n\n- **Claude Code** with plugin support enabled\n- **HORIZON_PROMO_TOKEN** environment variable set (Horizon OAuth token for the promo-order MCP server)\n\n## What's Included\n\n### Skills (Slash Commands)\n\n| Command | Description |\n|---------|-------------|\n| `/jf-sales-command:create-promo-order` | Guided promo/sample order creation with required tracking fields |\n| `/jf-sales-command:bulk-promo-order` | Batch order creation from spreadsheets using parse/review/confirm workflow |\n| `/jf-sales-command:account-lookup` | Customer search across promo + wholesale stores |\n| `/jf-sales-command:order-history` | Order history with 90-day recency analysis |\n| `/jf-sales-command:pending-orders` | List draft orders awaiting approval (all or MCP-created only) |\n| `/jf-sales-command:approve-orders` | Batch approve orders for 3PL fulfillment |\n| `/jf-sales-command:product-catalog` | Search products with inventory levels |\n\n### Bundled MCP Server\n\nThe **promo-order** MCP server auto-connects when the plugin is installed. It provides:\n- Customer search and lookup (promo + wholesale stores)\n- Product catalog with inventory\n- Draft order creation and management\n- Bulk order parsing, review, and execution\n- Batch order approval and fulfillment triggers\n- Product presets and metafield option management\n\nRequires `HORIZON_PROMO_TOKEN` environment variable.\n\n### Hooks\n\n- **PostToolUse**: Logs order events (create_promo_order, confirm_bulk_batch, complete_order, approve_orders) via `scripts/log-order.sh`\n\n## Directory Structure\n\n```\njf-sales-command/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin manifest\n├── .mcp.json                # Bundled promo-order MCP server\n├── skills/                  # 7 slash command skills\n│   ├── create-promo-order/\n│   ├── bulk-promo-order/\n│   ├── account-lookup/\n│   ├── order-history/\n│   ├── pending-orders/\n│   ├── approve-orders/\n│   └── product-catalog/\n├── hooks/\n│   └── hooks.json           # Post-order event hooks\n├── scripts/\n│   └── log-order.sh         # Order logging script\n└── README.md                # This file\n```\n\n## Data Sources\n\n| Source | Used By | Access |\n|--------|---------|--------|\n| Shopify Promo Store | Order skills, account-lookup | MCP promo-order (read/write) |\n| Shopify Wholesale Store | account-lookup, order-history | MCP promo-order (read-only) |\n\n## Related Plugins\n\n- **jf-market-intel** — Circana retail POS analytics, buyer presentations, and sales reporting (requires Snowflake, not yet operational)\n\n## Development\n\nThis plugin is part of the [Jocko Fuel Cowork Plugins](https://github.com/Jocko-Fuel/cowork-plugins) marketplace.\n\nTo test locally:\n```bash\nclaude --plugin-dir \"/full/path/to/jf-sales-command\"\n```\n",
+        "jf-market-intel/README.md": "# ABOUTME: Market intelligence plugin for Circana retail POS analytics and buyer presentations\n> Snowflake-dependent skills and agents for market share analysis, sales reporting, and buyer meeting prep\n\n# jf-market-intel\n\nMarket intelligence tools for the Jocko Fuel sales team. Provides Circana retail POS analytics, buyer presentation generation, and cross-channel sales reporting.\n\n## Status: Not Yet Operational\n\nThis plugin requires Snowflake infrastructure that is not yet configured as an MCP server. The skills and agents define the workflows but cannot execute queries until a Snowflake MCP server is available.\n\n### Prerequisites (not yet met)\n\n- **Snowflake MCP server** — needs to be built and deployed to Horizon\n- **Snowflake credentials** — access to `PROD_JOCKOFUEL_DWH.SIGMAWRITE`\n- **Circana data** — 324M+ retail POS records across 62 retailers\n\n### Path to Operational\n\n1. Build a Snowflake MCP server (read-only query execution)\n2. Deploy to Horizon with appropriate auth\n3. Update `.mcp.json` with the Horizon endpoint\n4. Update skills to use MCP tool names instead of direct Snowflake references\n\n## What's Included\n\n### Skills (Slash Commands)\n\n| Command | Description |\n|---------|-------------|\n| `/jf-market-intel:market-data` | Circana retail POS analytics |\n| `/jf-market-intel:buyer-presentation` | Generate buyer-ready sales collateral |\n| `/jf-market-intel:sales-report` | Revenue, units, margin by channel |\n\n### Agents\n\n| Agent | Purpose | Permission Mode |\n|-------|---------|-----------------|\n| `market-analyst` | Competitive intelligence and ad-hoc market analysis | auto-approve-tools |\n| `buyer-strategist` | Whitespace package enhancement and buyer meeting prep | auto-approve-tools |\n| `presentation-builder` | Retailer-specific sales presentation generation | auto-approve-tools |\n| `market-router` | Intent detection and routing for market requests | auto-approve-tools |\n| `freshness-monitor` | Data currency alerting (14-day threshold) | auto-approve-tools |\n| `data-validator` | Circana data quality checks | auto-approve-tools |\n| `segment-helper` | Product segmentation and UPC override management | ask-always |\n\n### Data Sources\n\n| Source | Used By | Access |\n|--------|---------|--------|\n| Circana / Snowflake | market-data, buyer-presentation, sales-report | Future Snowflake MCP (not yet available) |\n| Channel Hub | sales-report | Project data sources |\n\n## Directory Structure\n\n```\njf-market-intel/\n├── .claude-plugin/\n│   └── plugin.json          # Plugin manifest\n├── .mcp.json                # MCP config (empty until Snowflake MCP exists)\n├── skills/\n│   ├── market-data/\n│   ├── buyer-presentation/\n│   └── sales-report/\n├── agents/\n│   ├── market-analyst.md\n│   ├── buyer-strategist.md\n│   ├── presentation-builder.md\n│   ├── market-router.md\n│   ├── freshness-monitor.md\n│   ├── data-validator.md\n│   └── segment-helper.md\n└── README.md                # This file\n```\n\n## Development\n\nThis plugin is part of the [Jocko Fuel Cowork Plugins](https://github.com/Jocko-Fuel/cowork-plugins) marketplace.\n\nTo test locally (once Snowflake MCP is available):\n```bash\nclaude --plugin-dir \"/full/path/to/jf-market-intel\"\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "jf-sales-command",
+          "description": "Sales team tools for promo orders, account lookup, and order management",
+          "source": "./jf-sales-command",
+          "version": "1.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Jocko-Fuel/cowork-plugins",
+            "/plugin install jf-sales-command@jocko-fuel-plugins"
+          ]
+        },
+        {
+          "name": "jf-market-intel",
+          "description": "Market intelligence tools for Circana retail POS analytics, buyer presentations, and sales reporting (requires Snowflake)",
+          "source": "./jf-market-intel",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Jocko-Fuel/cowork-plugins",
+            "/plugin install jf-market-intel@jocko-fuel-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
