@@ -6,7 +6,7 @@
   },
   "marketplaces": [
     {
-      "name": "davidshaevel-claude-toolkit",
+      "name": "davidshaevel-marketplace",
       "version": null,
       "description": "Personal development conventions, skills, and project templates for Claude Code",
       "repo_full_name": "davidshaevel-dot-com/davidshaevel-claude-toolkit",
@@ -18,15 +18,15 @@
         "pushed_at": "2026-02-18T20:09:58Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"davidshaevel-claude-toolkit\",\n  \"description\": \"Personal development conventions, skills, and project templates for Claude Code\",\n  \"owner\": {\n    \"name\": \"David Shaevel\",\n    \"email\": \"david@davidshaevel.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"davidshaevel-claude-toolkit\",\n      \"description\": \"Personal development conventions, skills, and project templates for Claude Code\",\n      \"version\": \"1.2.5\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"David Shaevel\",\n        \"email\": \"david@davidshaevel.com\"\n      }\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"davidshaevel-claude-toolkit\",\n  \"description\": \"Personal development conventions, skills, and project templates for Claude Code\",\n  \"version\": \"1.2.5\",\n  \"author\": {\n    \"name\": \"David Shaevel\",\n    \"email\": \"david@davidshaevel.com\"\n  },\n  \"homepage\": \"https://github.com/davidshaevel-dot-com/davidshaevel-claude-toolkit\",\n  \"repository\": \"https://github.com/davidshaevel-dot-com/davidshaevel-claude-toolkit\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"conventions\", \"skills\", \"templates\", \"worktrees\", \"linear\"]\n}\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"davidshaevel-marketplace\",\n  \"description\": \"Personal development conventions, skills, and project templates for Claude Code\",\n  \"owner\": {\n    \"name\": \"David Shaevel\",\n    \"email\": \"david@davidshaevel.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"davidshaevel-claude-toolkit\",\n      \"description\": \"Personal development conventions, skills, and project templates for Claude Code\",\n      \"version\": \"1.2.6\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"David Shaevel\",\n        \"email\": \"david@davidshaevel.com\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"davidshaevel-claude-toolkit\",\n  \"description\": \"Personal development conventions, skills, and project templates for Claude Code\",\n  \"version\": \"1.2.6\",\n  \"author\": {\n    \"name\": \"David Shaevel\",\n    \"email\": \"david@davidshaevel.com\"\n  },\n  \"homepage\": \"https://github.com/davidshaevel-dot-com/davidshaevel-marketplace\",\n  \"repository\": \"https://github.com/davidshaevel-dot-com/davidshaevel-marketplace\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"conventions\", \"skills\", \"templates\", \"worktrees\", \"linear\"]\n}\n",
         "README.md": "# davidshaevel-claude-toolkit\n\nPersonal Claude Code plugin providing development conventions, skills, and project templates.\n\n## What This Plugin Provides\n\n- **Development conventions** injected automatically at session start via hook\n- **Skills** for code review resolution, session handoff (cross-agent memory), and project bootstrapping\n- **Templates** for initializing new projects with standard structure\n\n## Installation\n\n```bash\n# Add as a marketplace\n/plugin marketplace add davidshaevel-dot-com/davidshaevel-claude-toolkit\n\n# Install the plugin\n/plugin install davidshaevel-claude-toolkit@davidshaevel-claude-toolkit\n```\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `resolve-code-review` | Read PR feedback, fix or decline each item, reply in threads, post summary |\n| `session-handoff` | Read/write SESSION_LOG.md for cross-agent memory persistence |\n| `bootstrap-project` | Initialize new projects with CLAUDE.md, .cursorrules, CLAUDE.local.md, SESSION_LOG.md |\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/resolve-code-review` | Invoke the resolve-code-review skill |\n| `/bootstrap-project` | Invoke the bootstrap-project skill |\n\n## Updating the Plugin\n\nAfter pushing a new version to the repository, three locations must be updated for Claude Code to load the new version.\n\n### 1. Marketplace directory\n\nThe marketplace directory is a git clone that needs to be pulled:\n\n```bash\ngit -C ~/.claude/plugins/marketplaces/davidshaevel-claude-toolkit pull origin main\n```\n\n### 2. Plugin cache\n\nThe cache stores versioned clones at `~/.claude/plugins/cache/davidshaevel-claude-toolkit/davidshaevel-claude-toolkit/<version>/`. Create a new directory for the new version:\n\n```bash\n# Clone the new version tag into the cache\ngit clone --branch v<NEW_VERSION> --depth 1 \\\n  git@github.com:davidshaevel-dot-com/davidshaevel-claude-toolkit.git \\\n  ~/.claude/plugins/cache/davidshaevel-claude-toolkit/davidshaevel-claude-toolkit/<NEW_VERSION>\n\n# Optionally recreate the old version directory from its tag (keeps it clean)\nrm -rf ~/.claude/plugins/cache/davidshaevel-claude-toolkit/davidshaevel-claude-toolkit/<OLD_VERSION>\ngit clone --branch v<OLD_VERSION> --depth 1 \\\n  git@github.com:davidshaevel-dot-com/davidshaevel-claude-toolkit.git \\\n  ~/.claude/plugins/cache/davidshaevel-claude-toolkit/davidshaevel-claude-toolkit/<OLD_VERSION>\n```\n\n### 3. Installed plugins registry\n\nUpdate `~/.claude/plugins/installed_plugins.json` to point to the new version:\n\n- `installPath` → update the version in the path\n- `version` → new version string\n- `gitCommitSha` → commit SHA of the new version\n- `lastUpdated` → current ISO timestamp\n\n### 4. Restart Claude Code\n\nPermission changes and plugin updates require a session restart to take effect.\n\n## Convention Change Propagation\n\n- **Claude Code:** Follow the update steps above, then restart the session\n- **Cursor:** Re-run `/bootstrap-project` to regenerate `.cursorrules`\n\n## License\n\nMIT\n"
       },
       "plugins": [
         {
           "name": "davidshaevel-claude-toolkit",
           "description": "Personal development conventions, skills, and project templates for Claude Code",
-          "version": "1.2.5",
+          "version": "1.2.6",
           "source": "./",
           "author": {
             "name": "David Shaevel",
@@ -35,7 +35,7 @@
           "categories": [],
           "install_commands": [
             "/plugin marketplace add davidshaevel-dot-com/davidshaevel-claude-toolkit",
-            "/plugin install davidshaevel-claude-toolkit@davidshaevel-claude-toolkit"
+            "/plugin install davidshaevel-claude-toolkit@davidshaevel-marketplace"
           ]
         }
       ]

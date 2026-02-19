@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "AndersHalo",
+    "display_name": "AndersHalo",
+    "avatar_url": "https://avatars.githubusercontent.com/u/181982025?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "halo-ai-dev-tools",
+      "version": null,
+      "description": "toolset for task planning",
+      "repo_full_name": "AndersHalo/halo-ai-dev-tools",
+      "repo_url": "https://github.com/AndersHalo/halo-ai-dev-tools",
+      "repo_description": "Halo AI dev tools based on Claude marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T17:46:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"halo-ai-dev-tools\",\n  \"owner\": {\n    \"name\": \"DevTools Team\",\n    \"email\": \"anderson.monroy@halopowered.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"plan-refinement-plugin\",\n      \"description\": \"toolset for task planning\",\n      \"source\": \"./plugins/plan-refinement\"\n    },\n    {\n      \"name\": \"jira-tools\",\n      \"description\": \"Interact with Jira using Atlassian CLI: create, list, view, comment, and update tickets. Supports configurable default project.\",\n      \"source\": \"./plugins/jira-tools\"\n    },\n    {\n      \"name\": \"jira-mcp-setup\",\n      \"description\": \"Install and configure the Jira MCP server (mcp-atlassian) for Claude Code. Adds Jira integration via Model Context Protocol.\",\n      \"source\": \"./plugins/jira-mcp-setup\"\n    }\n  ]\n}\n",
+        "README.md": "# Halo Marketplace\n\n---\n\n## How to install it\n\n**1. add marketplace**\n\nAdd or update this marketplace, then install the plan-refinement plugin:\n\n```\n/plugin marketplace add https://github.com/AndersHalo/halo-ai-dev-tools\n```\n\n**2. add plugins**\n\nInstall plugins:\n\n```\n/plugin install plan-refinement-plugin@halo-ai-dev-tools\n/plugin install jira-mcp-setup@halo-ai-dev-tools\n```\n\n## Using the Plugins\n\n### Jira MCP Setup Plugin\n\nThis plugin installs and configures the `mcp-atlassian` MCP server, giving Claude Code direct access to Jira via the Model Context Protocol.\n\n**Prerequisites**\n\n- Python 3\n- [uv](https://docs.astral.sh/uv/) (`curl -LsSf https://astral.sh/uv/install.sh | sh`)\n- `jq` (`brew install jq`)\n- A Jira API token — generate one at https://id.atlassian.com/manage-profile/security/api-tokens\n\n**Setup**\n\n```\n/jira-mcp-setup\n```\n\nOr pass all values directly:\n\n```\n/jira-mcp-setup https://mycompany.atlassian.net user@example.com YOUR_API_TOKEN\n```\n\nThe skill will:\n1. Verify dependencies are installed\n2. Ask for Jira URL, email, and API token (if not provided)\n3. Create or update `.mcp.json` in the project root\n4. Ask if you want to add `.mcp.json` to `.gitignore` (recommended — the file contains your API token)\n5. After restarting Claude Code, the Jira MCP server will be available\n\n### Plan Refinement Plugin\n\nUse this plugin to refine implementation plans:\n\n```\n/plan-refinement\n```\n\nThis skill helps create detailed, well-structured plans for AI execution.\n\n## Adding plugin functionality\n\nTo add new plugins to this marketplace, follow **[PLUGINS.md](PLUGINS.md)**. It describes:\n\n- Directory structure (`.claude-plugin/`, `commands/`, `agents/`, `skills/`, `hooks/`, `.mcp.json`, `.lsp.json`)\n- How to create plugin manifests, commands, agents, skills, hooks, MCP and LSP configs\n- A quick checklist for new tools\n- Current contents and using `skills/plan-refinement/` as a template\n\nCreate each plugin under `plugins/<plugin-name>/` and, if you use a marketplace manifest (e.g. `.claude-plugin/marketplace.json`), add an entry there so the plugin is discovered.\n\n## Managing marketplaces/plugins (Claude Code)\n\nTo discover, add marketplaces, and manage plugins in Claude Code, see the official docs:\n\n- **[Discover and install plugins](https://code.claude.com/docs/en/discover-plugins)** — browse marketplaces and install plugins\n- **[Add marketplaces](https://code.claude.com/docs/en/discover-plugins#add-marketplaces)** — add from GitHub (`owner/repo`), Git URLs, local paths, or remote `marketplace.json` URLs\n"
+      },
+      "plugins": [
+        {
+          "name": "plan-refinement-plugin",
+          "description": "toolset for task planning",
+          "source": "./plugins/plan-refinement",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add AndersHalo/halo-ai-dev-tools",
+            "/plugin install plan-refinement-plugin@halo-ai-dev-tools"
+          ]
+        },
+        {
+          "name": "jira-tools",
+          "description": "Interact with Jira using Atlassian CLI: create, list, view, comment, and update tickets. Supports configurable default project.",
+          "source": "./plugins/jira-tools",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add AndersHalo/halo-ai-dev-tools",
+            "/plugin install jira-tools@halo-ai-dev-tools"
+          ]
+        },
+        {
+          "name": "jira-mcp-setup",
+          "description": "Install and configure the Jira MCP server (mcp-atlassian) for Claude Code. Adds Jira integration via Model Context Protocol.",
+          "source": "./plugins/jira-mcp-setup",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add AndersHalo/halo-ai-dev-tools",
+            "/plugin install jira-mcp-setup@halo-ai-dev-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

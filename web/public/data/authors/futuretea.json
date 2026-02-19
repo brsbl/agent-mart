@@ -61,7 +61,7 @@
       "description": "Rancher assistant for multi-cluster Kubernetes management, troubleshooting, capacity analysis, and resource discovery",
       "repo_full_name": "futuretea/rancher-assistant",
       "repo_url": "https://github.com/futuretea/rancher-assistant",
-      "repo_description": "Claude Code plugin for Rancher multi-cluster Kubernetes management — cluster inspection, capacity analysis, pod diagnostics, deployment tracking, and resource discovery with parallel Sub-Agent execution.",
+      "repo_description": "Claude Code plugin for Rancher with parallel Sub-Agent execution.",
       "signals": {
         "stars": 0,
         "forks": 0,
@@ -97,6 +97,56 @@
           "install_commands": [
             "/plugin marketplace add futuretea/rancher-assistant",
             "/plugin install rancher-assistant@rancher-assistant"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "alibabacloud-devops-assistant",
+      "version": null,
+      "description": "AlibabaCloud DevOps (Yunxiao) assistant for project management, code management, pipeline operations, and application delivery",
+      "repo_full_name": "futuretea/alibabacloud-devops-assistant",
+      "repo_url": "https://github.com/futuretea/alibabacloud-devops-assistant",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T15:25:11Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"alibabacloud-devops-assistant\",\n  \"owner\": {\n    \"name\": \"futuretea\"\n  },\n  \"metadata\": {\n    \"description\": \"AlibabaCloud DevOps (Yunxiao) assistant for project management, code management, pipeline operations, and application delivery\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"alibabacloud-devops-assistant\",\n      \"source\": \"github:futuretea/alibabacloud-devops-assistant\",\n      \"description\": \"AlibabaCloud DevOps (Yunxiao) assistant for project management, code management, pipeline operations, and application delivery (Community)\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"alibabacloud\", \"yunxiao\", \"devops\", \"project-management\", \"work-items\", \"pipeline\", \"code-review\", \"deployment\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"alibabacloud-devops-assistant\",\n  \"description\": \"AlibabaCloud DevOps (Yunxiao) assistant for project management, code management, pipeline operations, and application delivery (Community)\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"futuretea\",\n    \"email\": \"futuretea1024@gmail.com\"\n  },\n  \"repository\": \"https://github.com/futuretea/alibabacloud-devops-assistant\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"alibabacloud\", \"yunxiao\", \"devops\", \"project-management\", \"work-items\", \"sprints\", \"pipeline\", \"code-review\", \"deployment\", \"effort-tracking\"]\n}\n",
+        "README.md": "# Alibaba Cloud DevOps Assistant for Claude Code\n\nClaude Code 插件，用于阿里云云效（Yunxiao）DevOps 平台管理。采用 **Sub-Agent + Skill** 架构，Skill 负责意图识别，Agent 负责干活，各自独立上下文、支持并行。**项目管理是核心能力**。\n\n## 架构特点\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│  Skill Layer (触发器)                                         │\n│  - 识别用户意图                                               │\n│  - 决定调用哪个 Sub-Agent                                    │\n│  - 汇总结果                                                   │\n└─────────────────────────────────────────────────────────────┘\n                            │\n        ┌───────────────────┼───────────────────┐\n        ▼                   ▼                   ▼\n┌──────────────┐   ┌──────────────┐   ┌──────────────┐\n│  Sub-Agent 1 │   │  Sub-Agent 2 │   │  Sub-Agent N │\n│  (独立上下文) │   │  (独立上下文) │   │  (独立上下文) │\n└──────────────┘   └──────────────┘   └──────────────┘\n```\n\n### 为什么这样设计？\n\n- 每个 Sub-Agent 有独立上下文，不会互相干扰\n- 多个 Agent 可以并行跑，比如同时分析多个项目或多个迭代\n- Skill 只管「什么时候触发」，Agent 只管「怎么干活」，各司其职\n\n## 安装\n\n### 1. 添加插件市场\n\n```bash\n/plugin marketplace add futuretea/alibabacloud-devops-assistant\n```\n\n### 2. 安装插件\n\n```bash\n/plugin install alibabacloud-devops-assistant@alibabacloud-devops-assistant\n```\n\n### 3. 验证安装\n\n```bash\n/plugin list\n```\n\n## 包含的技能\n\n### 1. 项目管理（核心）\n\n**触发词**: \"工作项\"、\"创建需求\"、\"迭代进度\"、\"登记工时\"、\"工时报告\"\n\n**Sub-Agent**: `devops-workitem-tracker`、`devops-sprint-manager`、`devops-effort-analyst`\n\n- 工作项全生命周期管理（需求/缺陷/任务/风险/史诗）\n- 迭代管理与进度分析\n- 工时跟踪（实际 vs 预估）\n- 多项目并行统计\n- 多迭代对比\n\n### 2. 代码管理\n\n**触发词**: \"仓库列表\"、\"创建分支\"、\"合并请求\"、\"代码审查\"\n\n**Sub-Agent**: `devops-repo-navigator`、`devops-code-reviewer`\n\n### 3. 流水线管理\n\n**触发词**: \"运行流水线\"、\"构建状态\"、\"查看日志\"\n\n**Sub-Agent**: `devops-pipeline-operator`\n\n### 4. 应用交付\n\n**触发词**: \"部署\"、\"发布\"、\"部署单\"、\"变更请求\"\n\n**Sub-Agent**: `devops-deployment-manager`\n\n### 5. 组织管理\n\n**触发词**: \"组织信息\"、\"成员列表\"、\"部门\"、\"角色\"\n\n**Sub-Agent**: `devops-org-explorer`\n\n### 6. 项目巡检\n\n**触发词**: \"项目巡检\"、\"健康检查\"、\"项目体检\"\n\n**Sub-Agent**: `devops-project-inspector`（协调器）+ 4 个维度 Agent\n\n- 4 大维度：工作项健康、迭代健康、流水线健康、代码健康\n- 支持完整巡检（full）、快速巡检（quick）、专项巡检\n- 多项目并行巡检\n- 评分体系：A（优秀）→ B（良好）→ C（一般）→ D（较差）\n\n## 项目结构\n\n```\nalibabacloud-devops-assistant/\n├── agents/                    # 13 个 Sub-Agent 定义\n│   ├── workitem-tracker.md    # 工作项跟踪器（核心）\n│   ├── sprint-manager.md      # 迭代管理器（核心）\n│   ├── effort-analyst.md      # 工时分析器（核心）\n│   ├── org-explorer.md        # 组织探索器\n│   ├── repo-navigator.md      # 仓库导航器\n│   ├── code-reviewer.md       # 代码审查器\n│   ├── pipeline-operator.md   # 流水线操作器\n│   ├── deployment-manager.md  # 部署管理器\n│   ├── project-inspector.md   # 项目巡检协调器\n│   ├── workitem-health-inspector.md   # 巡检维度: 工作项健康\n│   ├── sprint-health-inspector.md     # 巡检维度: 迭代健康\n│   ├── pipeline-health-inspector.md   # 巡检维度: 流水线健康\n│   └── code-health-inspector.md       # 巡检维度: 代码健康\n├── skills/                    # 6 个 Skill 触发器\n│   ├── project-management/    # 项目管理（最丰富）\n│   ├── code-management/       # 代码管理\n│   ├── pipeline-management/   # 流水线管理\n│   ├── application-delivery/  # 应用交付\n│   ├── organization-management/ # 组织管理\n│   └── project-inspection/    # 项目巡检\n├── .claude/                   # 工具权限配置\n├── .claude-plugin/            # 插件元数据\n├── CLAUDE.md\n├── README.md\n├── LICENSE\n└── .gitignore\n```\n\n## 前置条件\n\n- 安装 [Claude Code](https://claude.ai/code)\n- 配置 [alibabacloud-devops-mcp-server](https://github.com/aliyun/alibabacloud-devops-mcp-server) 作为 MCP 服务器，名称为 `yunxiao`\n\n## 许可证\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "alibabacloud-devops-assistant",
+          "source": "github:futuretea/alibabacloud-devops-assistant",
+          "description": "AlibabaCloud DevOps (Yunxiao) assistant for project management, code management, pipeline operations, and application delivery (Community)",
+          "version": "1.0.0",
+          "keywords": [
+            "alibabacloud",
+            "yunxiao",
+            "devops",
+            "project-management",
+            "work-items",
+            "pipeline",
+            "code-review",
+            "deployment"
+          ],
+          "categories": [
+            "alibabacloud",
+            "code-review",
+            "deployment",
+            "devops",
+            "pipeline",
+            "project-management",
+            "work-items",
+            "yunxiao"
+          ],
+          "install_commands": [
+            "/plugin marketplace add futuretea/alibabacloud-devops-assistant",
+            "/plugin install alibabacloud-devops-assistant@alibabacloud-devops-assistant"
           ]
         }
       ]
