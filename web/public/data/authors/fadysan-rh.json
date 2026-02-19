@@ -2,35 +2,42 @@
   "author": {
     "id": "fadysan-rh",
     "display_name": "fadysan-rh",
-    "avatar_url": "https://avatars.githubusercontent.com/u/15155211?u=b0e9b538279caed07dd1d99fff834b82b4686ba4&v=4"
+    "avatar_url": "https://avatars.githubusercontent.com/u/15155211?u=f0aa8eecfd6f71852ffffd2e480fc19ce6b5b224&v=4"
   },
   "marketplaces": [
     {
-      "name": "cc-slackhook-plugin",
-      "version": null,
-      "description": "Claude Code セッションの開始・終了を Slack に通知",
+      "name": "cc-slackhook-marketplace",
+      "version": "1.1.2",
+      "description": "Marketplace for the cc-slackhook Claude Code plugin",
       "repo_full_name": "fadysan-rh/cc-slackhook-plugin",
       "repo_url": "https://github.com/fadysan-rh/cc-slackhook-plugin",
       "repo_description": null,
       "signals": {
         "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-02-18T14:29:54Z"
+        "forks": 1,
+        "pushed_at": "2026-02-19T04:29:04Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-slackhook-plugin\",\n  \"owner\": { \"name\": \"rh\" },\n  \"plugins\": [\n    {\n      \"name\": \"slackhook\",\n      \"description\": \"Claude Code セッションの開始・終了を Slack に通知\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"cc-slackhook\",\n  \"description\": \"Claude Code セッションの開始・終了を Slack に通知。プロンプト、作業サマリー、変更ファイル、Git操作を自動的にSlackスレッドにまとめて投稿。\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"fadysan-rh\"\n  },\n  \"homepage\": \"https://github.com/fadysan-rh/cc-slackhook-plugin\"\n}\n",
-        "README.md": "# cc-slackhook\n\nClaude Code のセッション活動を Slack チャンネルに自動通知するプラグイン。\n\n## 機能\n\n- **プロンプト通知** (UserPromptSubmit hook): ユーザーがプロンプトを送信するたびに Slack に通知\n- **作業サマリー通知** (Stop hook): Claude の応答完了時に作業内容・変更ファイル・Git操作をまとめて通知\n- **スレッド管理**: 同一セッション内のメッセージは自動的に1つの Slack スレッドにまとまる\n- **プロジェクト情報**: Git リポジトリの `org:repo/branch` またはローカルパスを表示\n\n## インストール\n\n```bash\nclaude --plugin-dir /path/to/cc-slackhook-plugin\n```\n\n## 設定\n\n`settings.json` の `env` に以下の環境変数を設定してください:\n\n```json\n{\n  \"env\": {\n    \"SLACK_USER_TOKEN\": \"xoxp-...\",\n    \"SLACK_BOT_TOKEN\": \"xoxb-...\",\n    \"SLACK_CHANNEL\": \"C0XXXXXXX\"\n  }\n}\n```\n\n| 環境変数 | 必須 | 用途 |\n|----------|------|------|\n| `SLACK_USER_TOKEN` | Yes | プロンプト通知 (ユーザーとして投稿) |\n| `SLACK_BOT_TOKEN` | Yes | 作業サマリー通知 (Bot として投稿) |\n| `SLACK_CHANNEL` | Yes | 通知先の Slack チャンネル ID |\n\n## Slack App の準備\n\n1. [Slack API](https://api.slack.com/apps) で新しい App を作成\n2. OAuth & Permissions で以下のスコープを追加:\n   - **Bot Token Scopes**: `chat:write`\n   - **User Token Scopes**: `chat:write`\n3. ワークスペースにインストールし、トークンを取得\n4. 通知先チャンネルに App を招待\n\n## 通知の流れ\n\n```\nユーザーがプロンプト送信\n  ↓ UserPromptSubmit hook\n  → Slack: 作業開始メッセージ (org:repo/branch + プロンプト内容)\n\nClaude が応答完了\n  ↓ Stop hook\n  → Slack: スレッド返信 (作業サマリー + 変更ファイル + Git操作)\n\n同一セッションで再度プロンプト送信\n  ↓ UserPromptSubmit hook\n  → Slack: スレッド返信 (プロンプト内容)\n```\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"cc-slackhook-marketplace\",\n  \"version\": \"1.1.2\",\n  \"description\": \"Marketplace for the cc-slackhook Claude Code plugin\",\n  \"metadata\": {\n    \"description\": \"Marketplace for the cc-slackhook Claude Code plugin\",\n    \"version\": \"1.1.2\"\n  },\n  \"owner\": {\n    \"name\": \"fadysan-rh\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-slackhook\",\n      \"description\": \"Real-time Slack notifications for Claude Code sessions\",\n      \"version\": \"1.1.2\",\n      \"author\": {\n        \"name\": \"fadysan-rh\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cc-slackhook\",\n  \"description\": \"Notify Slack when Claude Code sessions start and stop. Automatically posts prompts, work summaries, changed files, and Git operations to a Slack thread.\",\n  \"version\": \"1.1.2\",\n  \"author\": {\n    \"name\": \"fadysan-rh\"\n  },\n  \"homepage\": \"https://github.com/fadysan-rh/cc-slackhook-plugin\"\n}\n",
+        "README.md": "# cc-slackhook\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)\n[![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)\n[![Shell](https://img.shields.io/badge/Shell-Bash-green.svg)](hooks/)\n\n> Real-time Slack notifications for Claude Code session activity.\n> Prompt submissions, AskUserQuestion answers, and stop summaries are grouped into one thread.\n\nLanguage: English | [Japanese](docs/ja/README.md)\n\n---\n\n## Overview\n\nWhen teams use Claude Code, it can be hard to see what is currently in progress.\n**cc-slackhook** makes that visible in Slack.\n\n```\nYou: \"Implement authentication\"\n  ↓\nSlack:\n       *Claude Code Session Started*\n       *repo/dir:* org:repo/main\n\n       *Prompt*\n       Implement authentication\n         ├── Request: \"JWT or session?\"\n         ├── Answer: \"JWT\"\n         └── Work complete\n              Changed Files:\n              • M src/auth/jwt.ts (+48 -0)\n              • M src/middleware.ts (+12 -3)\n              Git:\n              • `a1b2c3d` feat: add JWT authentication\n```\n\n## Features\n\n| Hook | Trigger | What it does |\n|------|---------|-------------|\n| **Prompt** | `UserPromptSubmit` | Posts to Slack on user prompt submission. First post starts a new thread; later prompts continue in the thread. |\n| **Answer** | `PostToolUse` | Posts `AskUserQuestion` answers as thread replies. |\n| **Summary** | `Stop` | Posts work summary, changed files (with diff stats), and Git operation results. |\n\n### Smart Threading\n\n- One Slack thread per active session\n- Starts a new thread after 30 minutes of idle time or when the working directory changes\n- Timeout is configurable via `SLACK_THREAD_TIMEOUT`\n\n## Install\n\nFor end users:\n\n```bash\nclaude plugin marketplace add fadysan-rh/cc-slackhook-plugin\nclaude plugin install cc-slackhook@cc-slackhook-marketplace --scope user\n```\n\nFor local development only:\n\n```bash\nclaude --plugin-dir /path/to/cc-slackhook-plugin\n```\n\n## Configuration\n\nAdd these environment variables to `~/.claude/settings.json`:\n\n```jsonc\n{\n  \"env\": {\n    \"SLACK_USER_TOKEN\": \"xoxp-...\",   // Prompt/Answer posts (as user)\n    \"SLACK_BOT_TOKEN\": \"xoxb-...\",    // Summary posts (as bot)\n    \"SLACK_CHANNEL\": \"C0XXXXXXX\",     // Target channel ID\n    \"SLACK_LOCALE\": \"ja\",             // Message locale: ja / en (default: ja)\n    \"SLACK_HOOK_DEBUG\": \"0\",          // Optional: set 1 to enable debug logs\n    \"SLACK_HOOK_DEBUG_LOG\": \"\"        // Optional: custom debug log path\n  }\n}\n```\n\n| Variable | Required | Description |\n|----------|:--------:|-------------|\n| `SLACK_USER_TOKEN` | Yes | Token for prompt/answer notifications (posted as the user) |\n| `SLACK_BOT_TOKEN` | Yes | Token for stop summary notifications (posted as the bot) |\n| `SLACK_CHANNEL` | Yes | Target Slack channel ID |\n| `SLACK_THREAD_TIMEOUT` | No | Seconds before starting a new thread (default: `1800`) |\n| `SLACK_LOCALE` | No | Notification locale: `ja` or `en` (default: `ja`) |\n| `SLACK_HOOK_DEBUG` | No | Set `1` to enable hook debug logs (default: disabled) |\n| `SLACK_HOOK_DEBUG_LOG` | No | Debug log path (default: `$HOME/.claude/slack-times-debug.log`) |\n\n## Slack App Setup\n\n1. Create a new app in [Slack API](https://api.slack.com/apps).\n2. In **OAuth & Permissions**, add these scopes.\n\n   | Token | Scope |\n   |-------|-------|\n   | Bot Token | `chat:write` |\n   | User Token | `chat:write` |\n\n3. Install the app in your workspace and copy the tokens.\n4. Invite the app to the target channel (`/invite @your-app`).\n\n## Architecture\n\n```\nhooks/\n├── hooks.json                 # Hook definitions (event -> script)\n├── slack-times-prompt.sh      # UserPromptSubmit -> Slack post\n├── slack-times-answer.sh      # PostToolUse(AskUserQuestion) -> thread reply\n└── slack-times-response.sh    # Stop -> thread summary\n```\n\nPosting behavior:\n- Prompt / Answer: posted with `SLACK_USER_TOKEN` as the user\n- Summary: posted with `SLACK_BOT_TOKEN` as the bot\n\n## Development\n\n```bash\n# Run hook regression tests\ntests/run-hooks-tests.sh\n```\n\nDebug logs are disabled by default.  \nSet `SLACK_HOOK_DEBUG=1` to enable logging.  \nDefault log path is `$HOME/.claude/slack-times-debug.log` (mode `600`).\n\n## Release\n\n```bash\n# Validate plugin and marketplace manifests\nclaude plugin validate .claude-plugin/plugin.json\nclaude plugin validate .claude-plugin/marketplace.json\n\n# Run tests\ntests/run-hooks-tests.sh\n\n# Publish a release tag\ngit tag v1.1.0\ngit push origin v1.1.0\n```\n\n## License\n\n[MIT](LICENSE)\n"
       },
       "plugins": [
         {
-          "name": "slackhook",
-          "description": "Claude Code セッションの開始・終了を Slack に通知",
+          "name": "cc-slackhook",
+          "description": "Real-time Slack notifications for Claude Code sessions",
+          "version": "1.1.2",
+          "author": {
+            "name": "fadysan-rh"
+          },
           "source": "./",
-          "categories": [],
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
           "install_commands": [
             "/plugin marketplace add fadysan-rh/cc-slackhook-plugin",
-            "/plugin install slackhook@cc-slackhook-plugin"
+            "/plugin install cc-slackhook@cc-slackhook-marketplace"
           ]
         }
       ]
