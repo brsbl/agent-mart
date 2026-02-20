@@ -1,0 +1,41 @@
+{
+  "author": {
+    "id": "solofai",
+    "display_name": "SolOfAI",
+    "avatar_url": "https://avatars.githubusercontent.com/u/212048673?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "scribe",
+      "version": null,
+      "description": "Knowledge capture plugin. Turns unstructured input into structured, indexed, cross-referenced notes.",
+      "repo_full_name": "solofai/scribe",
+      "repo_url": "https://github.com/solofai/scribe",
+      "repo_description": "Knowledge capture plugin for Claude Code: dictation, document ingestion, and repo discovery",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T03:00:11Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"scribe\",\n  \"owner\": {\n    \"name\": \"SolofAI\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"scribe\",\n      \"source\": \"./\",\n      \"description\": \"Knowledge capture plugin. Turns unstructured input into structured, indexed, cross-referenced notes.\",\n      \"version\": \"0.1.0\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"scribe\",\n  \"description\": \"Knowledge capture plugin. Skills: scribe:dictation (organize raw ideas), scribe:ingest (bulk import docs), scribe:discover (scan repo for docs).\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"SolofAI\"\n  },\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# Scribe\n\nA [Claude Code](https://claude.ai/code) plugin for knowledge capture. Turns unstructured input — spoken or typed — along with existing documents and scattered repo files into structured, indexed, cross-referenced notes.\n\n## Skills\n\n| Skill | Command | What it does |\n|-------|---------|-------------|\n| **Dictation** | `/scribe:dictation` | Organize raw ideas (spoken or typed) into structured, indexed notes |\n| **Ingest** | `/scribe:ingest [path]` | Bulk import `.md`, `.docx`, `.txt`, `.pdf` files into structured notes |\n| **Discover** | `/scribe:discover` | Scan a repo for documents, present a summary, hand off to ingest |\n\n## Install\n\n```bash\n# Option 1: Load for a single session\nclaude --plugin-dir /path/to/scribe\n\n# Option 2: Add as a local marketplace, then install\n/plugin marketplace add /path/to/scribe\n/plugin install scribe@scribe\n```\n\n## How it works\n\nAll notes go into `claude-notes/` in your project directory to avoid colliding with existing files. Each note follows a consistent schema:\n\n```\nclaude-notes/\n|- INDEX.md          # Searchable table of all notes\n|- topic-one.md      # Structured note with Context, Idea, Impact, Related, Next Steps\n|- topic-two.md\n\\- ...\n```\n\nNotes are **additive** — new content gets timestamped and appended, never overwrites. Contradictions are preserved with timestamps so the thinking evolution is visible.\n\n### Merge heuristic\n\nWhen new content arrives, scribe checks the existing index and decides:\n- **Merge** when content extends, refines, or adds a dimension to an existing note\n- **Create new** when content is conceptually independent, even if it shares tags\n\n### User profile\n\nScribe learns your communication patterns over time. The runtime profile lives at `~/.scribe/user-profile.md` (private, never committed to project repos). The `references/user-profile.md` files in this repo are public examples showing the profile format.\n\n### Session tracking\n\nScribe tracks sessions to enable evidence-based profile learning. Each skill invocation writes a session record to `~/.scribe/sessions/` (one file per session, write-once, never modified). Session files use the naming format `{YYYYMMDDTHHMMSS}-{skill}-{5-random}.md`.\n\nEvidence counting works by grepping across session files for canonical pattern slugs. A candidate pattern is promoted to the main profile sections after appearing in 2+ sessions (or immediately if the user states it explicitly). A reconciliation pass at session start catches any promotions lost to concurrent writes or interrupted sessions.\n\nSee `skills/shared/references/session-tracking.md` for the full protocol.\n\n## Note schema\n\nEvery note uses this structure:\n\n```markdown\n# Topic Title\n\n**Created:** YYYY-MM-DD\n**Updated:** YYYY-MM-DD\n**Tags:** #tag1 #tag2\n**Source:** dictation | filename.ext | discovered\n\n## Context\n## Idea\n## Impact\n## Related\n## Next Steps\n## Source Log\n```\n\nSee `skills/dictation/references/note-schema.md` for the full specification.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "scribe",
+          "source": "./",
+          "description": "Knowledge capture plugin. Turns unstructured input into structured, indexed, cross-referenced notes.",
+          "version": "0.1.0",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add solofai/scribe",
+            "/plugin install scribe@scribe"
+          ]
+        }
+      ]
+    }
+  ]
+}

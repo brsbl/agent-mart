@@ -1,0 +1,44 @@
+{
+  "author": {
+    "id": "charliechan53",
+    "display_name": "charliechan53",
+    "avatar_url": "https://avatars.githubusercontent.com/u/78845385?u=7772b723d0016e0f6c99724842788d5085504dd6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "superpower-router",
+      "version": null,
+      "description": "All-in-one Claude Code plugin with multi-agent routing",
+      "repo_full_name": "charliechan53/superpower-router",
+      "repo_url": "https://github.com/charliechan53/superpower-router",
+      "repo_description": "All-in-one Claude Code plugin: superpowers + Codex CLI + Gemini CLI routing to minimize Claude token usage",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T11:15:32Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"superpower-router\",\n  \"description\": \"All-in-one Claude Code plugin with multi-agent routing\",\n  \"owner\": {\n    \"name\": \"charliechan53\",\n    \"url\": \"https://github.com/charliechan53\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"superpower-router\",\n      \"description\": \"All-in-one Claude Code plugin: superpowers + Codex CLI + Gemini CLI routing to minimize Claude token usage\",\n      \"version\": \"0.9.2\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"charliechan53\",\n        \"url\": \"https://github.com/charliechan53\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"superpower-router\",\n  \"description\": \"All-in-one Claude Code plugin: superpowers skills + multi-agent routing to Codex CLI, Gemini CLI, and Sonnet 4.6 for minimal Claude token usage\",\n  \"version\": \"0.9.2\",\n  \"author\": {\n    \"name\": \"charliechan53\",\n    \"url\": \"https://github.com/charliechan53\"\n  },\n  \"homepage\": \"https://github.com/charliechan53/superpower-router\",\n  \"repository\": \"https://github.com/charliechan53/superpower-router\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"skills\", \"codex\", \"gemini\", \"multi-agent\", \"token-optimization\", \"routing\", \"tdd\", \"debugging\", \"brainstorming\"]\n}\n",
+        "README.md": "# superpower-router\n\nAll-in-one Claude Code plugin that combines the **superpowers** skill suite, **Codex CLI delegation**, and **multi-agent routing** to reduce Claude token usage while keeping development workflows fast and structured.\n\n- Author: [charliechan53](https://github.com/charliechan53)\n- Repository: https://github.com/charliechan53/superpower-router\n- License: MIT\n\n## What It Includes\n\n1. Full superpowers skill set from `obra/superpowers` (brainstorming, TDD, debugging, code review, planning, and more).\n2. Codex CLI skill for delegating implementation-heavy work to OpenAI Codex.\n3. New multi-agent router that sends subagent work to:\n   - **Codex CLI** for code-centric tasks\n   - **Gemini CLI** for web research tasks\n   - **Codex + Gemini in parallel** for independent option gathering\n   - **Sonnet 4.6** as user-confirmed fallback when Codex fails\n\n## Prerequisites\n\n- Claude Code\n- Codex CLI (authenticated): `codex login`\n- Gemini CLI: `npm install -g @google/gemini-cli`\n\n## Installation\n\n### Option 1: Local plugin install\n\n```bash\nmkdir -p ~/.claude/plugins\ngit clone https://github.com/charliechan53/superpower-router ~/.claude/plugins/superpower-router\n```\n\n### Option 2: Claude Code Marketplace\n\nInstall `superpower-router` from the Claude Code plugin marketplace.\n\n## Skills (8 consolidated)\n\n| Skill | What it does |\n|-------|-------------|\n| `using-superpowers` | Entry point — teaches Claude how to find and use skills |\n| `brainstorming` | Collaborative design before implementation |\n| `test-driven-development` | TDD discipline: red-green-refactor |\n| `systematic-debugging` | Root-cause analysis, defense-in-depth |\n| `plan-and-execute` | Write plans + execute via Codex/Gemini routing with fail-closed Codex fallback confirmation |\n| `code-review` | Request and receive reviews (routes to Codex) |\n| `finishing-work` | Verify + integrate (merge, PR, squash) |\n| `writing-skills` | Create new skills with TDD methodology |\n\n## Slash Commands\n\nUse plugin-scoped slash commands (Claude UI may also show unscoped aliases):\nNote: the command namespace is `superpower-router:` (not `superpower:`).\n\n| Slash command | Purpose |\n| --- | --- |\n| `superpower-router:brainstorm` | Start design-first flow before implementation |\n| `superpower-router:brainstorming` | Alias of `brainstorm` |\n| `superpower-router:write-plan` | Create a routed implementation plan |\n| `superpower-router:execute-plan` | Execute an existing plan with routed batches |\n| `superpower-router:plan-and-execute` | Alias for combined routed planning/execution flow |\n| `superpower-router:research` | Gemini-first research-only flow (no coding unless asked) |\n\n## Routing Table\n\n| Task Type | Routed To | Why |\n| --- | --- | --- |\n| Code implementation, refactors, tests, debugging in repo context | Codex CLI | Offloads high-token coding loops from Claude |\n| Web research, docs lookup, external fact gathering | Gemini CLI | Keeps browsing/research outside Claude context window |\n| Independent option gathering / model comparison | Codex + Gemini parallel runner | Produces diverse options faster from two models in one pass |\n| Codex failure for code tasks | User-confirmed Claude/Sonnet fallback | Fail-closed by default to keep Codex priority and avoid silent fallback |\n\n## Environment Variables\n\n```bash\nexport CODEX_MODEL=gpt-5.3-codex\nexport CODEX_EFFORT=xhigh\nexport CODEX_TIMEOUT=120\nexport CODEX_FAIL_CLOSED=1\nexport GEMINI_TIMEOUT=60\n```\n\n## Deferred Token Indicator (ccstatusline)\n\n`superpower-router` now tracks per-session offload telemetry for Codex/Gemini and exposes a status command:\n\n```bash\n~/.claude/plugins/superpower-router/hooks/router-statusline.sh\n```\n\nIt renders:\n\n```text\nOffload C:<codex> G:<gemini> Σ:<total> | S/F C:<success>/<failure> G:<success>/<failure> | RL C:<remaining> G:<remaining|retry>\n```\n\nNotes:\n- `C/G/Σ` are deferred token totals.\n- `S/F` are backend success/failure counts for routed attempts.\n- `RL` is best-effort rate-limit state: Codex shows remaining percent (`@HH:MM` reset when available), Gemini shows retry hint (for example `~40s`) or `N/A`.\n\nConfigure it in ccstatusline as a **Custom Command** widget (command = script above).\n\nOptional metric file override:\n\n```bash\nexport ROUTER_METRICS_FILE=/tmp/superpower-router-metrics.json\n```\n\nMetrics reset at Claude SessionStart (startup/resume/clear/compact).\n\n## Deferred Token Indicator (native statusLine)\n\nIf you prefer Claude native status line command:\n\n```json\n{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"~/.claude/plugins/superpower-router/hooks/router-statusline.sh\"\n  }\n}\n```\n\n## Runner Compatibility Paths\n\nOn `SessionStart`, the plugin now auto-creates compatibility symlinks:\n\n```bash\n~/.claude/codex-runner.sh\n~/.claude/gemini-runner.sh\n~/.claude/parallel-runner.sh\n```\n\nBoth point to the currently installed plugin runners and are intended for tools/prompts\nthat call runner scripts from `~/.claude/*`.\n\nUse `/bin/bash` when invoking from hooks/prompts:\n\n```bash\n/bin/bash ~/.claude/codex-runner.sh \"Fix failing tests\" workspace-write \"/path/to/repo\"\n/bin/bash ~/.claude/codex-runner.sh \"Review recent changes\" read-only \"/path/to/repo\"\n/bin/bash ~/.claude/gemini-runner.sh \"Research latest SDK breaking changes\"\n/bin/bash ~/.claude/parallel-runner.sh \"Propose 3 implementation options with trade-offs\" \"/path/to/repo\" read-only\n```\n\n## How It Saves Tokens\n\n- Delegates large code-generation and code-edit loops to Codex CLI.\n- Routes research-heavy tasks to Gemini CLI instead of consuming Claude context.\n- Uses fail-closed Codex routing by default: asks user before any Claude/Sonnet fallback.\n- Preserves Claude context for orchestration, decisions, and final synthesis.\n\n## Credits\n\n- **superpowers** by Jesse Vincent (`obra/superpowers`)\n- **skill-codex** by `skills-directory`\n"
+      },
+      "plugins": [
+        {
+          "name": "superpower-router",
+          "description": "All-in-one Claude Code plugin: superpowers + Codex CLI + Gemini CLI routing to minimize Claude token usage",
+          "version": "0.9.2",
+          "source": "./",
+          "author": {
+            "name": "charliechan53",
+            "url": "https://github.com/charliechan53"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add charliechan53/superpower-router",
+            "/plugin install superpower-router@superpower-router"
+          ]
+        }
+      ]
+    }
+  ]
+}
