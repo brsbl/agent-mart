@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "dyeoh",
+    "display_name": "Darren Yeoh",
+    "avatar_url": "https://avatars.githubusercontent.com/u/18690223?u=d417763aa5a283183cbe7ee2ddcd7310dad88b7e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "dyeoh-plugins",
+      "version": null,
+      "description": "React SPA frontend development workflow with TDD enforcement, codebase memory cache, and feature branch pipeline.",
+      "repo_full_name": "dyeoh/claude-plugin-react-spa-fe-dev",
+      "repo_url": "https://github.com/dyeoh/claude-plugin-react-spa-fe-dev",
+      "repo_description": "Opinionated React SPA FE development plugin for Claude",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T13:27:48Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"dyeoh-plugins\",\n  \"owner\": {\n    \"name\": \"Darren Yeoh\",\n    \"url\": \"https://github.com/dyeoh\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"react-spa\",\n      \"source\": \"./\",\n      \"description\": \"React SPA frontend development workflow with TDD enforcement, codebase memory cache, and feature branch pipeline.\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"react-spa\",\n  \"description\": \"React SPA frontend development workflow with TDD enforcement, codebase memory cache, and feature branch pipeline. Supports any React + TypeScript project.\",\n  \"author\": {\n    \"name\": \"Darren Yeoh\",\n    \"url\": \"https://github.com/dyeoh\"\n  }\n}\n",
+        "README.md": "# react-spa — Claude Plugin\n\nA React SPA frontend development plugin for Claude Code. Provides a structured 7-phase workflow with TDD enforcement, codebase memory caching, and feature branch management.\n\nWorks with any React + TypeScript project. No project-specific configuration required — the plugin discovers your stack automatically.\n\n---\n\n## Install\n\n**Step 1** — Add this repo as a marketplace (one-time per machine):\n```\n/plugin marketplace add dyeoh/claude-plugin-react-spa-fe-dev\n```\n\n**Step 2** — Install the plugin:\n```\n/plugin install react-spa@dyeoh-claude-plugin-react-spa-fe-dev\n```\n\nBoth commands are typed directly into Claude Code (CLI or VS Code extension) — not in a terminal.\n\n---\n\n## Usage\n\n```\n/react-spa Add a positions table with live price updates\n/react-spa Refactor the order modal to use a Radix Dialog\n/react-spa          ← launches interactively, asks what to build\n```\n\n---\n\n## What It Does\n\n### 7-Phase Workflow\n\n| Phase | Goal |\n|-------|------|\n| **1. Cache & Orientation** | Read `.react-spa-cache.md` — understand existing components without re-scanning |\n| **2. Feature Scoping** | Clarify exactly what's being built before touching any file |\n| **3. Codebase Exploration** | Launch `component-explorer` agents to map existing patterns |\n| **4. Component Design** | Launch `component-architect` to design component tree + types + test scenarios |\n| **5. TDD Implementation** | Red-Green-Refactor per component — test first, always |\n| **6. Quality Review** | Launch `component-reviewer` agents for TypeScript, a11y, coverage, conventions |\n| **7. Commit & Summary** | Stage + commit on feature branch, update cache, document session |\n\n### Codebase Memory Cache\n\nThe plugin maintains `.react-spa-cache.md` in your project. On each invocation it checks the cache's `last_commit` header against the latest git commit to the source directory. If the commit matches, it skips re-scanning — saving significant token usage on repeat sessions.\n\nCache is updated automatically at the end of each session with new components, hooks, and API types added.\n\n### TDD Iron Law\n\n```\nNO PRODUCTION CODE WITHOUT A FAILING TEST FIRST\n```\n\nThe plugin enforces Red-Green-Refactor strictly:\n- Write one failing test\n- Watch it fail (mandatory)\n- Write minimal code to pass\n- Watch it pass\n- Refactor\n- Repeat\n\nRationales for skipping TDD are documented and rejected inline.\n\n### Feature Branches\n\nEvery feature gets its own branch:\n```\nfeature/<name>        ← standard feature work\nhotfix/<description>  ← bug fixes\n```\n\n---\n\n## Specialized Agents\n\nThe plugin ships with 3 agents that are invoked automatically within the workflow (they can also be used standalone):\n\n### `component-explorer`\nMaps the existing codebase: component structure, data-fetching patterns, state management, test conventions, TypeScript style, and UI library. Returns an inventory of what exists so new code follows established patterns.\n\nStandalone usage:\n```\n\"Launch component-explorer to map how authentication components are organised\"\n\"Launch component-explorer to understand the data-fetching patterns in this project\"\n```\n\n### `component-architect`\nDesigns a complete component blueprint given a feature request: component tree with file paths, props interfaces, state ownership decisions, required API types, and plain-English test scenarios. Output is ready to hand directly to TDD implementation.\n\nStandalone usage:\n```\n\"Launch component-architect to design a positions table with polling\"\n\"Launch component-architect to design the order confirmation flow\"\n```\n\n### `component-reviewer`\nReviews components for TypeScript correctness, accessibility, test coverage, and project conventions. Returns issues grouped by severity (Critical / Important / Minor) with confidence scores — only reports findings above 70% confidence.\n\nStandalone usage:\n```\n\"Launch component-reviewer on src/features/trading/components/\"\n\"Launch component-reviewer to check my recent changes for accessibility issues\"\n```\n\n---\n\n## Cache File Format\n\nThe plugin creates and maintains `.react-spa-cache.md` in your project root (or `cache/.react-spa-cache.md` if a `cache/` directory exists). Format:\n\n```markdown\n<!-- REACT SPA CACHE — AUTO-GENERATED BY react-spa PLUGIN -->\n<!-- cache_date: YYYY-MM-DD -->\n<!-- last_commit: abc1234 -->\n<!-- source_root: src/ -->\n\n## Stack\n...\n\n## Component Registry\n| Component | File | Status | Tests |\n...\n\n## Hook Registry\n| Hook | File | Status |\n...\n\n## API Types Coverage\n...\n```\n\nAdd `.react-spa-cache.md` to `.gitignore` if you don't want it committed, or commit it to share context across machines.\n\n---\n\n## Requirements\n\n- Claude Code installed\n- Git repository\n- React + TypeScript project\n- Node.js for running tests (`npx vitest` or `npx jest`)\n\n---\n\n## Works Best With\n\n- **Vitest** or **Jest** — for TDD verification steps\n- **React Testing Library** — for component testing\n- **msw** — for API mocking in tests (network-level interception)\n- **fishery** + **@faker-js/faker** — for typed test data factories (`src/test/factories/`)\n- **TanStack Query** or **SWR** — for server state (the plugin understands both)\n- **Zustand** or **Redux** — for client state (auto-detected)\n\nThe plugin adapts to whatever is already installed in your project.\n\n---\n\n## Project Structure\n\n```\nclaude-plugin-react-spa-fe-dev/\n├── .claude-plugin/\n│   └── plugin.json          ← plugin metadata\n├── agents/\n│   ├── component-explorer.md\n│   ├── component-architect.md\n│   └── component-reviewer.md\n├── commands/\n│   └── react-spa.md         ← /react-spa command\n└── README.md\n```\n\n---\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "react-spa",
+          "source": "./",
+          "description": "React SPA frontend development workflow with TDD enforcement, codebase memory cache, and feature branch pipeline.",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add dyeoh/claude-plugin-react-spa-fe-dev",
+            "/plugin install react-spa@dyeoh-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "author": {
+    "id": "steeef",
+    "display_name": "Stephen Price",
+    "avatar_url": "https://avatars.githubusercontent.com/u/77589?u=4589277ba9834a97f224357fc567516f29a96cc4&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-hooks",
+      "version": null,
+      "description": "Safety and automation hooks for Claude Code",
+      "repo_full_name": "steeef/claude-hooks",
+      "repo_url": "https://github.com/steeef/claude-hooks",
+      "repo_description": "Safety and automation hooks for Claude Code",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T22:06:35Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"claude-hooks\",\n  \"description\": \"Safety and automation hooks for Claude Code\",\n  \"owner\": {\n    \"name\": \"Stephen Price\",\n    \"email\": \"steeef@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"command-safety\",\n      \"description\": \"Blocks dangerous commands (rm, kubectl delete, terraform destroy)\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/command-safety\",\n      \"category\": \"security\"\n    },\n    {\n      \"name\": \"git-hooks\",\n      \"description\": \"Enforces safe git workflows (no commits to main, branch naming)\",\n      \"version\": \"1.0.3\",\n      \"source\": \"./plugins/git-hooks\",\n      \"category\": \"development\"\n    },\n    {\n      \"name\": \"file-protection\",\n      \"description\": \"Protects CLAUDE.md and warns on large files\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/file-protection\",\n      \"category\": \"security\"\n    },\n    {\n      \"name\": \"notifications\",\n      \"description\": \"Desktop notifications on macOS\",\n      \"version\": \"1.0.2\",\n      \"source\": \"./plugins/notifications\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"env-protection\",\n      \"description\": \"Blocks access to .env files, preventing accidental secret exposure\",\n      \"version\": \"1.0.1\",\n      \"source\": \"./plugins/env-protection\",\n      \"category\": \"security\"\n    }\n  ]\n}\n",
+        "README.md": "# claude-hooks\n\n[![CI](https://github.com/steeef/claude-hooks/actions/workflows/ci.yml/badge.svg)](https://github.com/steeef/claude-hooks/actions/workflows/ci.yml)\n\nSafety and automation hooks for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).\n\n## Plugins\n\n| Plugin | Type | Purpose |\n|--------|------|---------|\n| **command-safety** | PreToolUse | Blocks dangerous commands (`rm`, `kubectl delete`, `terraform destroy`) |\n| **git-hooks** | PreToolUse/PostToolUse | Enforces git safety (no commits to main, blocks dangerous checkout/add patterns) |\n| **file-protection** | PreToolUse | Blocks edits to `CLAUDE.md`, warns on very large files |\n| **notifications** | Stop/Notification | Desktop notifications on macOS |\n\n## Installation\n\n### Via Claude Code Plugin System (Recommended)\n\n1. Add this repository as a marketplace source:\n\n```text\n/plugin marketplace add steeef/claude-hooks\n```\n\n2. Install the plugins you want:\n\n```text\n/plugin install command-safety@steeef/claude-hooks\n/plugin install git-hooks@steeef/claude-hooks\n/plugin install file-protection@steeef/claude-hooks\n/plugin install notifications@steeef/claude-hooks\n```\n\n### Manual Installation\n\n<details>\n<summary>Click to expand manual installation instructions</summary>\n\n1. Clone the repository:\n\n```bash\ngit clone https://github.com/steeef/claude-hooks.git\ncd claude-hooks\n```\n\n2. Set the `CLAUDE_HOOKS_DIR` environment variable (add to your shell rc file):\n\n```bash\nexport CLAUDE_HOOKS_DIR=\"$HOME/code/claude-hooks\"\n```\n\n3. Configure hooks in `~/.claude/settings.json`:\n\n```json\n{\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"$CLAUDE_HOOKS_DIR/plugins/command-safety/hooks/command_hook.py\"\n          },\n          {\n            \"type\": \"command\",\n            \"command\": \"$CLAUDE_HOOKS_DIR/plugins/git-hooks/hooks/git_pre_hook.py\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Write|Edit|MultiEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"$CLAUDE_HOOKS_DIR/plugins/file-protection/hooks/file_hook.py\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"$CLAUDE_HOOKS_DIR/plugins/git-hooks/hooks/cleanup_hook.py\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"$CLAUDE_HOOKS_DIR/plugins/notifications/hooks/notification_hook.sh\"\n          }\n        ]\n      }\n    ],\n    \"Notification\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"$CLAUDE_HOOKS_DIR/plugins/notifications/hooks/notification_hook.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```\n\n</details>\n\n## Plugin Details\n\n### command-safety\n\nBlocks potentially destructive commands:\n\n- `rm` on git-tracked files (allows removal of ignored files like build artifacts)\n- `kubectl delete`, `kubectl scale --replicas=0`, `kubectl cordon`, `kubectl drain`\n- `terraform destroy`\n\n### git-hooks\n\nEnforces safe git workflows:\n\n- **Blocks commits to main/master** - forces feature branch workflow\n- **Blocks dangerous checkout** - prevents `git checkout main -- file` overwrites\n- **Blocks dangerous add patterns** - prevents `git add -A`, `--force` flags\n- **Suggests worktrees** - recommends git worktrees for feature branches\n- **Cleanup hook** - clears branch tracking state after commands\n\n### file-protection\n\nProtects important files:\n\n- **Blocks CLAUDE.md edits** - project instructions should be edited manually\n- **Large file warning** - warns before editing files over 10,000 lines (speed bump pattern with flag file)\n\n### notifications\n\nDesktop notifications on macOS using `osascript`:\n\n- Triggers on `Stop` events (task completion)\n- Triggers on `Notification` events\n\n## Development\n\nRequirements: Python 3.11+\n\n```bash\n# Install dependencies\nuv sync\n\n# Run tests\nuv run pytest -v\n\n# Run pre-commit hooks\nuvx --with pre-commit-uv pre-commit run --all-files\n```\n\n## Acknowledgments\n\nBased on [pchalasani/claude-code-tools](https://github.com/pchalasani/claude-code-tools).\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n",
+        "plugins/command-safety/README.md": "# command-safety\n\nCommand safety hooks for Claude Code that protect against accidental deletions\nand destructive infrastructure commands.\n\n## Hooks\n\n### PreToolUse: command_hook.py\n\nUnified entry point that runs all command safety checks:\n\n1. **rm_check** - Blocks rm for tracked files, allows git-ignored files\n2. **kubectl_check** - Blocks destructive kubectl commands (delete, apply, etc.)\n3. **terraform_check** - Blocks destructive terraform commands (apply, destroy)\n\n## rm Behavior\n\nThe rm hook has special handling for git repositories:\n\n- **Inside git repo**: rm is allowed ONLY for git-ignored files (e.g., .DS_Store,\n  node_modules/, *.tmp)\n- **Outside git repo**: rm is always blocked\n- **Mixed targets**: If any target is tracked/non-ignored, the entire command\n  is blocked\n\nFor tracked files, use `mv` to move to a TRASH/ directory instead.\n\n## Configuration\n\nNo configuration required. The hooks are automatically loaded by Claude Code\nwhen `CLAUDE_HOOKS_DIR` points to the parent claude-hooks directory.\n",
+        "plugins/git-hooks/README.md": "# git-hooks\n\nGit safety hooks for Claude Code that enforce branch workflow, block dangerous\ncommands, and suggest worktrees for feature work.\n\n## Hooks\n\n### PreToolUse: git_pre_hook.py\n\nUnified entry point that runs all git safety checks:\n\n1. **git_add_block** - Blocks dangerous git add patterns (wildcards, -A, .)\n2. **git_checkout_safety** - Warns about checkout commands that could lose work\n3. **git_branch_workflow** - Enforces Jira-prefixed branch naming and blocks\n   commits on main/master\n4. **worktree_suggestion** - Suggests using git worktrees for feature branches\n\n### PostToolUse: cleanup_hook.py\n\nDetects PR merges and provides worktree cleanup instructions.\n\n## Configuration\n\nNo configuration required. The hooks are automatically loaded by Claude Code\nwhen `CLAUDE_HOOKS_DIR` points to the parent claude-hooks directory.\n",
+        "plugins/file-protection/README.md": "# file-protection\n\nFile protection hooks for Claude Code that guard against accidental overwrites\nand encourage modular code.\n\n## Hooks\n\n### PreToolUse: file_hook.py\n\nUnified entry point that runs all file protection checks:\n\n1. **claude_md_check** - Blocks direct writes to CLAUDE.md, suggests AGENTS.md\n2. **file_length_check** - Warns when files exceed 10000 lines\n\n## CLAUDE.md Protection\n\nDirect writes to CLAUDE.md are blocked. Instead:\n\n1. Write content to AGENTS.md\n2. Create symlink: `ln -s AGENTS.md CLAUDE.md`\n\nThis ensures proper version control and agent-agnostic instructions.\n\n## File Length Limits\n\nUses a \"speed bump\" pattern:\n\n1. First attempt to write >10000 lines is blocked with a warning\n2. A flag file is created\n3. Second attempt proceeds (user has acknowledged the warning)\n4. Flag is cleared after use\n\n## Configuration\n\nNo configuration required. The hooks are automatically loaded by Claude Code\nwhen `CLAUDE_HOOKS_DIR` points to the parent claude-hooks directory.\n",
+        "plugins/notifications/README.md": "# notifications\n\nDesktop notification hooks for Claude Code using terminal-notifier.\n\n## Hooks\n\n### Stop: notification_hook.sh\n\nPlays the \"Hero\" sound and shows a \"Task Done\" notification when Claude\ncompletes a task.\n\n### Notification: notification_hook.sh\n\nPlays the \"Submarine\" sound and shows an \"Input Requested\" notification when\nClaude needs user input.\n\n## Requirements\n\nmacOS only. Requires:\n\n```bash\nbrew install jq terminal-notifier\n```\n\n- **jq** - Required for JSON parsing\n- **terminal-notifier** - Required for desktop notifications (hook silently succeeds if missing)\n",
+        "plugins/env-protection/README.md": "# env-protection\n\nBlocks access to `.env` files, preventing accidental exposure of sensitive environment variables.\n\n## Why This Exists\n\n`.env` files contain secrets like API keys, database credentials, and other sensitive configuration. AI coding assistants that read these files could:\n\n1. **Accidentally expose secrets** in responses or logs\n2. **Include secrets in generated code** or documentation\n3. **Leak credentials** through conversation history\n\nThis plugin prevents direct access to `.env` files while providing a safe alternative for inspecting environment configuration.\n\n## What Gets Blocked\n\n### Bash Commands\n\nCommands that would read `.env` file contents:\n\n```bash\ncat .env                    # Blocked\nless .env.local             # Blocked\ngrep API_KEY .env           # Blocked\nvim .env.production         # Blocked\nhead -n 5 .env              # Blocked\nsource .env                 # Blocked\n. .env                      # Blocked (dot sourcing)\n```\n\n### Read Tool\n\nDirect file reads of `.env` files:\n\n```text\nRead: .env                  # Blocked\nRead: /path/to/.env.local   # Blocked\nRead: .env.development      # Blocked\n```\n\n## What's Allowed\n\n### Safe Operations\n\n```bash\nls -la .env                 # Allowed (metadata only)\nmv .env .env.backup         # Allowed (doesn't read contents)\ncp .env .env.backup         # Allowed\ntouch .env                  # Allowed\ngit commit -m \"update .env\" # Allowed (just message text)\necho \"update .env file\"     # Allowed\n```\n\n### Template Files\n\nFiles meant to show the expected format without actual secrets:\n\n```text\n.env.example                # Allowed\n.env.template               # Allowed\n.env.sample                 # Allowed\n.env.dist                   # Allowed\n```\n\n## Safe Alternative: env-safe CLI\n\nInstead of reading `.env` files directly, use the `env-safe` CLI to inspect them safely.\n\n### CLI Installation\n\nThe CLI is included in the plugin at `scripts/env_safe.py`. Run it with `uv`:\n\n```bash\nuv run plugins/env-protection/scripts/env_safe.py <command>\n```\n\nOr make it executable and run directly:\n\n```bash\nchmod +x plugins/env-protection/scripts/env_safe.py\n./plugins/env-protection/scripts/env_safe.py <command>\n```\n\n### Commands\n\n#### list - Show variable names\n\n```bash\n# List all variable names (without values)\nenv-safe list\n\n# Show value status (set/empty)\nenv-safe list --status\n\n# Use specific file\nenv-safe list -f .env.local\n```\n\nExample output:\n\n```text\nAPI_KEY (set)\nDATABASE_URL (set)\nDEBUG (set)\nEMPTY_VAR (empty)\n```\n\n#### check - Verify variable exists\n\n```bash\n# Check if a variable exists\nenv-safe check API_KEY\n\n# Check in specific file\nenv-safe check DATABASE_URL -f .env.production\n```\n\nExample output:\n\n```text\nAPI_KEY: exists (set)\n```\n\n#### count - Count variables\n\n```bash\nenv-safe count\n```\n\nExample output:\n\n```text\nTotal: 4 variables\n  Set: 3\n  Empty: 1\n```\n\n#### validate - Check syntax\n\n```bash\nenv-safe validate\n```\n\nExample output (valid):\n\n```text\nValid: .env has no syntax issues\n```\n\nExample output (with issues):\n\n```text\nErrors:\n  Line 5: Invalid syntax\nWarnings:\n  Line 3: API_KEY has unquoted value with spaces\n```\n\n## Plugin Installation\n\nEnable the plugin in your Claude Code settings:\n\n```json\n{\n  \"plugins\": [\"env-protection\"]\n}\n```\n\nOr install from the marketplace:\n\n```bash\nclaude plugins install env-protection\n```\n\n## Configuration\n\nNo configuration needed. The plugin automatically blocks `.env` file access for Bash and Read tools.\n"
+      },
+      "plugins": [
+        {
+          "name": "command-safety",
+          "description": "Blocks dangerous commands (rm, kubectl delete, terraform destroy)",
+          "version": "1.0.2",
+          "source": "./plugins/command-safety",
+          "category": "security",
+          "categories": [
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add steeef/claude-hooks",
+            "/plugin install command-safety@claude-hooks"
+          ]
+        },
+        {
+          "name": "git-hooks",
+          "description": "Enforces safe git workflows (no commits to main, branch naming)",
+          "version": "1.0.3",
+          "source": "./plugins/git-hooks",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add steeef/claude-hooks",
+            "/plugin install git-hooks@claude-hooks"
+          ]
+        },
+        {
+          "name": "file-protection",
+          "description": "Protects CLAUDE.md and warns on large files",
+          "version": "1.0.2",
+          "source": "./plugins/file-protection",
+          "category": "security",
+          "categories": [
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add steeef/claude-hooks",
+            "/plugin install file-protection@claude-hooks"
+          ]
+        },
+        {
+          "name": "notifications",
+          "description": "Desktop notifications on macOS",
+          "version": "1.0.2",
+          "source": "./plugins/notifications",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add steeef/claude-hooks",
+            "/plugin install notifications@claude-hooks"
+          ]
+        },
+        {
+          "name": "env-protection",
+          "description": "Blocks access to .env files, preventing accidental secret exposure",
+          "version": "1.0.1",
+          "source": "./plugins/env-protection",
+          "category": "security",
+          "categories": [
+            "security"
+          ],
+          "install_commands": [
+            "/plugin marketplace add steeef/claude-hooks",
+            "/plugin install env-protection@claude-hooks"
+          ]
+        }
+      ]
+    }
+  ]
+}

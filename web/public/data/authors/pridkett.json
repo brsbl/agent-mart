@@ -1,0 +1,51 @@
+{
+  "author": {
+    "id": "pridkett",
+    "display_name": "Patrick Wagstrom",
+    "avatar_url": "https://avatars.githubusercontent.com/u/160672?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "wagstrom-plugins",
+      "version": null,
+      "description": "Ambient Weather station InfluxDB queries via MCP",
+      "repo_full_name": "pridkett/claude-plugins",
+      "repo_url": "https://github.com/pridkett/claude-plugins",
+      "repo_description": "A Claude CoWork plugin that integrates with the influx_weather_mcp_server project",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T04:40:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"wagstrom-plugins\",\n  \"owner\": { \"name\": \"Patrick Wagstrom\", \"url\": \"https://github.com/pridkett\" },\n  \"plugins\": [\n    {\n      \"name\": \"influx-weather\",\n      \"source\": \"./influx-weather\",\n      \"description\": \"Ambient Weather station InfluxDB queries via MCP\",\n      \"version\": \"1.0.0\",\n      \"category\": \"personal\",\n      \"tags\": [\"weather\", \"personal\", \"iot\", \"analytics\"]\n    }\n  ]\n}\n",
+        "README.md": "# Weather InfluxDB Claude Code Plugin\n\nA Claude Code plugin that connects to the Ambient Weather station MCP server and provides\npre-formatted InfluxQL query skills for each weather metric category.\n\n## Prerequisites\n\n- Claude Code CLI\n- Access to `https://wagstrom2022mba.pirate-walleye.ts.net/mcp` (OAuth 2.0 credentials required)\n\n## Setup\n\n### 1. Load the plugin\n\n```sh\nclaude --plugin-dir . --debug\n```\n\nOn first use, the MCP server will return a `401 WWW-Authenticate` challenge and Claude Code will\nperform the full OAuth 2.0 flow automatically via `.well-known` discovery — no credentials to\nconfigure in advance.\n\n### 3. Verify\n\n```\n/help\n```\n\nYou should see all 6 skills listed under the `weather-influx` namespace.\n\n## Available Skills\n\n| Skill | Trigger | Description |\n|---|---|---|\n| `search-temperature` | `/weather-influx:search-temperature` | Outdoor/indoor temps, highs/lows |\n| `search-precipitation` | `/weather-influx:search-precipitation` | Rainfall totals by period |\n| `search-humidity` | `/weather-influx:search-humidity` | Outdoor/indoor humidity |\n| `search-wind` | `/weather-influx:search-wind` | Wind speed, gusts, direction |\n| `search-pressure` | `/weather-influx:search-pressure` | Barometric pressure trends |\n| `search-summary` | `/weather-influx:search-summary` | Full weather report |\n\n## Example Usage\n\n```\n/weather-influx:search-temperature last 7 days\n/weather-influx:search-precipitation how much did it rain this month?\n/weather-influx:search-summary what was the weather like yesterday?\n```\n\n## InfluxDB Schema\n\n- **Measurement**: `weather`\n- **Tag**: `host=edgewater`\n- **Fields**: `tempf`, `tempinf`, `humidity`, `humidityin`, `baromabsin`, `baromrelin`,\n  `hourlyrainin`, `dailyrainin`, `eventrainin`, `weeklyrainin`, `monthlyrainin`, `totalrainin`,\n  `windspeedmph`, `windgustmph`, `maxdailygust`, `winddir`, `solarradiation`, `uv`, `batt_co2`\n\n## Team Marketplace Installation\n\nIf this repo is published to GitHub, teammates can install via:\n\n```\n/plugin marketplace add <your-org>/influx_weather_cowork_plugin\n/plugin install weather-influx@wagstrom-weather\n```\n\n## Pocket ID Configuration Notes\n\nGetting Claude Code's OAuth flow to work end-to-end with [Pocket ID](https://github.com/stonith404/pocket-id)\nrequired three non-obvious fixes. Documented here for anyone replicating this setup.\n\n### 1. Serve `/.well-known/oauth-authorization-server` via Caddy\n\nClaude Code discovers the authorization server via `/.well-known/oauth-authorization-server`,\n**not** `/.well-known/openid-configuration`. Pocket ID does not serve the former natively, so\nfront it with Caddy and serve a static file at that path.\n\n`/etc/caddy/oauth-authorization-server.json`:\n```json\n{\n  \"issuer\": \"https://YOUR_POCKET_ID_SERVER\",\n  \"authorization_endpoint\": \"https://YOUR_POCKET_ID_SERVER/authorize\",\n  \"token_endpoint\": \"https://YOUR_POCKET_ID_SERVER/api/oidc/token\",\n  \"jwks_uri\": \"https://YOUR_POCKET_ID_SERVER/.well-known/jwks.json\",\n  \"response_types_supported\": [\"code\"],\n  \"grant_types_supported\": [\"authorization_code\", \"refresh_token\"],\n  \"code_challenge_methods_supported\": [\"S256\"],\n  \"token_endpoint_auth_methods_supported\": [\"client_secret_post\", \"client_secret_basic\"]\n}\n```\n\nAdd a route in your Caddyfile to serve this file statically at\n`/.well-known/oauth-authorization-server` on the Pocket ID domain.\n\n### 2. Include `scopes_supported` in the MCP server's protected resource metadata\n\nClaude Code did not send scopes in its token requests until the MCP server's\n`/.well-known/oauth-protected-resource` response explicitly listed them. The working response\nfor this server at `https://wagstrom2022mba.pirate-walleye.ts.net/mcp`:\n\n```json\n{\n  \"resource\": \"https://wagstrom2022mba.pirate-walleye.ts.net/mcp\",\n  \"authorization_servers\": [\"https://YOUR_POCKET_ID_SERVER\"],\n  \"scopes_supported\": [\"openid\", \"profile\", \"email\", \"groups\"],\n  \"bearer_methods_supported\": [\"header\"]\n}\n```\n\n### 3. Configure the Pocket ID OIDC client correctly\n\nIn the Pocket ID admin UI for this MCP server's client application:\n\n- **Public Client**: must be checked — Claude Code plugins/CoWork require public clients\n- **PKCE**: must be enabled — provides security for public clients without a client secret\n- **Callback URLs**: add `http://localhost:*/callback` — Claude Code opens a local browser\n  redirect to complete the authorization code exchange\n\nThe `clientId` in `.mcp.json` comes from this Pocket ID client registration. No `clientSecret`\nis needed (or possible) for public clients.\n\n---\n\n## Notes\n\n- All queries use InfluxQL (v1), not Flux.\n- The MCP tool name is `query_weather` — accepts a single InfluxQL query string.\n- OAuth is handled automatically by Claude Code via `401 WWW-Authenticate` / `.well-known`\n  discovery. No credentials are stored in `.mcp.json` — Claude Code manages token storage.\n- Run with `--debug` on first launch to confirm OAuth handshake and tool discovery.\n"
+      },
+      "plugins": [
+        {
+          "name": "influx-weather",
+          "source": "./influx-weather",
+          "description": "Ambient Weather station InfluxDB queries via MCP",
+          "version": "1.0.0",
+          "category": "personal",
+          "tags": [
+            "weather",
+            "personal",
+            "iot",
+            "analytics"
+          ],
+          "categories": [
+            "analytics",
+            "iot",
+            "personal",
+            "weather"
+          ],
+          "install_commands": [
+            "/plugin marketplace add pridkett/claude-plugins",
+            "/plugin install influx-weather@wagstrom-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "onlydole",
+    "display_name": "Taylor Dolezal",
+    "avatar_url": "https://avatars.githubusercontent.com/u/117500?u=c51185b9c58396d22c9ab5cf1340c0854cec9873&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "onlydole-tailord",
+      "version": null,
+      "description": "Tailor your drafts to your voice. Custom Vale linting rules and a multi-agent editorial team that strips AI writing patterns from prose.",
+      "repo_full_name": "onlydole/tailord",
+      "repo_url": "https://github.com/onlydole/tailord",
+      "repo_description": "Tailor your drafts to your voice. A Claude Code skill with custom Vale linting rules and a multi-agent editorial team that strips AI writing patterns from prose.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T01:40:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"onlydole-tailord\",\n  \"description\": \"Tailor your drafts to your voice. Custom Vale linting rules and a multi-agent editorial team that strips AI writing patterns from prose.\",\n  \"owner\": { \"name\": \"Taylor Dolezal\" },\n  \"plugins\": [\n    {\n      \"name\": \"tailord\",\n      \"source\": \"./\",\n      \"description\": \"Tailor your drafts to your voice. Custom Vale linting rules and a multi-agent editorial team that strips AI writing patterns from prose.\",\n      \"version\": \"1.0.0\",\n      \"license\": \"Apache-2.0\",\n      \"category\": \"writing\",\n      \"tags\": [\"writing\", \"voice\", \"editorial\", \"vale\", \"blog\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"tailord\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Tailor your drafts to your voice. A Claude Code skill with custom Vale linting rules and a multi-agent editorial team that strips AI writing patterns from prose.\",\n  \"author\": {\n    \"name\": \"Taylor Dolezal\",\n    \"url\": \"https://github.com/onlydole\"\n  },\n  \"homepage\": \"https://github.com/onlydole/tailord\",\n  \"repository\": \"https://github.com/onlydole/tailord\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\"writing\", \"voice\", \"editorial\", \"vale\", \"blog\", \"newsletter\"],\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# tailord\n\nTailor your drafts to your voice. A Claude Code skill with custom Vale linting rules and a multi-agent editorial team that strips AI writing patterns from prose, so your drafts read like you wrote them on a good day.\n\n## What it does\n\nWhen you invoke `/tailord` or ask Claude Code to draft a piece, the skill:\n\n1. **Gathers context** via structured questions (format, depth, topic)\n2. **Researches** using Exa MCP or WebSearch (for longer pieces)\n3. **Loads your voice** from a personal voice profile and universal writing mechanics\n4. **Builds a section blueprint** with your approval\n5. **Drafts** with two candidate openings for you to choose\n6. **Lints** through vale with custom AuthenticVoice rules (hard gate: zero errors/warnings)\n7. **Reviews** via a multi-agent editorial team running in parallel\n8. **Revises** based on editorial triage with your input\n\nQuick pieces (Short take + Quick hit) skip the editorial team and research steps.\n\n## Requirements\n\n- [Claude Code](https://claude.com/claude-code) CLI\n- `vale` CLI (auto-installed on first run)\n- Optional: [Exa MCP server](https://docs.exa.ai/) for richer web research\n\n## Installation\n\nRequires Claude Code **1.0.33+**. Check with `claude --version`.\n\n### Option A: Plugin system (recommended)\n\nInside Claude Code, run two commands. The first registers the catalog, the second installs the skill.\n\nStep 1 — Register the catalog:\n```\n/plugin marketplace add onlydole/tailord\n```\n\nStep 2 — Install the skill:\n```\n/plugin install tailord@onlydole-tailord\n```\n\nYou can also browse available plugins interactively with `/plugin` and look under the **Discover** tab.\n\n### Option B: Manual clone\n\n```bash\ngit clone https://github.com/onlydole/tailord.git ~/.claude/plugins/tailord\n```\n\nThen register it in your Claude Code settings by adding the plugin path. Open `~/.claude/settings.json` and add:\n\n```json\n{\n  \"plugins\": [\"~/.claude/plugins/tailord\"]\n}\n```\n\n### Setup\n\nAfter installation, run the setup script to install prerequisites and create your personal files from templates:\n\n```bash\n# From the plugin directory\nskills/tailord/scripts/setup.sh\n```\n\nThis will:\n- Install `vale` CLI if missing\n- Sync the Google style package\n- Create system symlinks for bare `vale` invocations\n- Copy `voice.template.md` to `voice.md` for customization\n- Copy `reference-personal.template.md` to `reference-personal.md`\n- Create `accept.local.txt` for personal vocabulary\n\n## Customization\n\n### Voice profile\n\nThe most important customization. Edit `skills/tailord/references/voice.md` to define:\n\n- **Your identity**: who you are, what you write about\n- **Your audience**: who reads your work, the relationship\n- **Voice characteristics**: the traits that define your style\n\nThe template provides good defaults. Adjust them to match your natural writing style.\n\n### Personal reference material\n\nEdit `skills/tailord/references/reference-personal.md` to add:\n\n- Voice patterns with examples from your published work\n- Learnings from editorial sessions (mistakes to avoid)\n- Narrative flow patterns that work for your content\n- Content-type specific editorial learnings\n\n### Vocabulary\n\nAdd personal names and niche terms to `skills/tailord/vale/styles/config/vocabularies/AuthenticVoice/accept.local.txt` to suppress false spelling errors. The lint script merges this with the universal `accept.txt` before each run.\n\n### What stays private\n\nThese files are gitignored and never leave your machine:\n\n| File | Contains |\n|------|----------|\n| `references/voice.md` | Your identity, audience, voice characteristics |\n| `references/reference-personal.md` | Your editorial learnings and voice examples |\n| `accept.local.txt` | Personal names and terms |\n\n## Vale rules\n\nThe `vale/` directory contains three style packages:\n\n- **AuthenticVoice** (custom): Rules covering banned vocabulary, filler phrases, AI writing tells, fabricated experience, emotion directives, transition formulas, and more\n- **Google**: Standard Google developer documentation style\n- **Vale**: Built-in vale rules\n\nSee `skills/tailord/references/vale-rules.md` for per-rule fixing guidance.\n\n### Running vale manually\n\n```bash\nskills/tailord/scripts/lint.sh your-draft.md\n```\n\nThe script outputs JSON. Use `--skip-prereqs` for faster repeated runs.\n\n## The editorial team\n\nFor substantial pieces, the skill spins up a parallel editorial team:\n\n| Agent | Focus |\n|-------|-------|\n| Voice Auditor | Sentence-level voice authenticity |\n| Fact Checker | Verifiable claims and fabrication detection |\n| Anti-Slop Auditor | Contextual quality checklist |\n| Structural Editor | Arc, pacing, thesis, transitions |\n| Reader Proxy | Developer/leader perspective |\n| Manufactured Relatability Detector | Fabricated anecdotes |\n| Filler and Hype Stripper | Padding and hype reinforcement |\n| Section Value Auditor | Per-section information density |\n| Cynical Reader | Maximum suspicion AI detection |\n| Copy Editor | Mechanical compliance |\n| Narrative Arc Auditor | Cross-sectional coherence |\n\n## License\n\nApache-2.0. See [LICENSE](LICENSE).\n"
+      },
+      "plugins": [
+        {
+          "name": "tailord",
+          "source": "./",
+          "description": "Tailor your drafts to your voice. Custom Vale linting rules and a multi-agent editorial team that strips AI writing patterns from prose.",
+          "version": "1.0.0",
+          "license": "Apache-2.0",
+          "category": "writing",
+          "tags": [
+            "writing",
+            "voice",
+            "editorial",
+            "vale",
+            "blog"
+          ],
+          "categories": [
+            "blog",
+            "editorial",
+            "vale",
+            "voice",
+            "writing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add onlydole/tailord",
+            "/plugin install tailord@onlydole-tailord"
+          ]
+        }
+      ]
+    }
+  ]
+}
