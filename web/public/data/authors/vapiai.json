@@ -1,0 +1,49 @@
+{
+  "author": {
+    "id": "VapiAI",
+    "display_name": "Vapi",
+    "avatar_url": "https://avatars.githubusercontent.com/u/144965430?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "vapi-skills",
+      "version": null,
+      "description": "Skills for building voice AI agents with Vapi",
+      "repo_full_name": "VapiAI/skills",
+      "repo_url": "https://github.com/VapiAI/skills",
+      "repo_description": "A set of skills and MCP connector to allow agents to build Vapi AI agents, from creating tools and assistants to a phone call",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-19T04:49:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"vapi-skills\",\n  \"owner\": {\n    \"name\": \"Vapi\",\n    \"email\": \"support@vapi.ai\"\n  },\n  \"metadata\": {\n    \"description\": \"Skills for building voice AI agents with Vapi\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"vapi-voice-ai\",\n      \"description\": \"Complete skill set for building voice AI agents with Vapi — create assistants, tools, calls, squads, phone numbers, webhooks, and workflows\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./setup-api-key\",\n        \"./create-assistant\",\n        \"./create-tool\",\n        \"./create-call\",\n        \"./create-squad\",\n        \"./create-phone-number\",\n        \"./setup-webhook\",\n        \"./create-workflow\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Vapi Skills\n\nAgent skills for [Vapi](https://vapi.ai) — the developer platform for building voice AI agents. These skills follow the [Agent Skills specification](https://agentskills.io/specification) and can be used with any compatible AI coding assistant including Claude Code, Cursor, VS Code Copilot, Gemini CLI, and more.\n\n## Installation\n\n### Option 1: npx skills (works with all agents)\n\n```bash\nnpx skills add VapiAI/skills\n```\n\nInstall specific skills:\n\n```bash\nnpx skills add VapiAI/skills --skill create-assistant\nnpx skills add VapiAI/skills --skill create-tool\n```\n\nInstall for a specific agent:\n\n```bash\nnpx skills add VapiAI/skills -a claude-code\nnpx skills add VapiAI/skills -a cursor\n```\n\n### Option 2: Claude Code Plugin (native integration)\n\n```\n/plugin marketplace add VapiAI/skills\n/plugin install vapi-voice-ai@vapi-skills\n```\n\n### Option 3: Manual installation\n\nCopy any skill directory into your project's `.claude/skills/` (for Claude Code), `.cursor/skills/` (for Cursor), or the equivalent skills directory for your agent.\n\n## Vapi Documentation Server (MCP)\n\nThis repository includes configuration for the [Vapi documentation MCP server](https://docs.vapi.ai), which gives your AI agent access to the full Vapi knowledge base via RAG. It activates automatically in agents that support MCP.\n\nThe skills cover common workflows. The MCP docs server fills in the gaps — advanced configuration, troubleshooting, SDK details, and more.\n\n### Supported agents\n\n| Agent | Config File | Auto-detected |\n|-------|------------|---------------|\n| Claude Code | `.mcp.json` | Yes |\n| Cursor | `.cursor/mcp.json` | Yes |\n| VS Code Copilot | `.vscode/mcp.json` | Yes |\n\n**Requires:** Node.js (for `npx`). Uses [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) to bridge the remote server. No API key needed for the docs server.\n\n### Manual setup\n\nIf your agent doesn't auto-detect MCP configs:\n\n**Claude Code:**\n```bash\nclaude mcp add vapi-docs -- npx -y mcp-remote https://docs.vapi.ai/_mcp/server\n```\n\n**Any agent (JSON config):**\n```json\n{\n  \"mcpServers\": {\n    \"vapi-docs\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"mcp-remote\", \"https://docs.vapi.ai/_mcp/server\"]\n    }\n  }\n}\n```\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| [setup-api-key](./setup-api-key) | Guide through obtaining and configuring a Vapi API key |\n| [create-assistant](./create-assistant) | Create voice AI assistants with models, voices, transcribers, tools, and hooks |\n| [create-tool](./create-tool) | Build custom tools for assistants — function calls, transfers, integrations |\n| [create-call](./create-call) | Initiate outbound phone calls, web calls, and batch calls |\n| [create-squad](./create-squad) | Build multi-assistant squads with handoff workflows |\n| [create-phone-number](./create-phone-number) | Set up phone numbers from Twilio, Vonage, Telnyx, or Vapi |\n| [setup-webhook](./setup-webhook) | Configure server URLs to receive real-time call events |\n| [create-workflow](./create-workflow) | Build visual conversation workflows with branching logic |\n\n## Configuration\n\nAll skills require a Vapi API key. Set it as an environment variable:\n\n```bash\nexport VAPI_API_KEY=\"your-api-key\"\n```\n\nGet your API key from the [Vapi Dashboard](https://dashboard.vapi.ai/org/api-keys) or use the `setup-api-key` skill.\n\n## SDK Support\n\nSkills include examples for:\n\n- **cURL** — Direct REST API calls\n- **TypeScript** — `npm install @vapi-ai/server-sdk`\n- **Python** — `pip install requests` (direct API) or Vapi's Python SDK\n- **Web SDK** — `npm install @vapi-ai/web` (client-side, uses public API key)\n\n## Quick Start\n\n1. **Get an API key**: Use the `setup-api-key` skill or visit https://dashboard.vapi.ai/org/api-keys\n2. **Create an assistant**: Use the `create-assistant` skill to build a voice AI agent\n3. **Add a phone number**: Use `create-phone-number` to get a phone number\n4. **Make a call**: Use `create-call` to test your assistant\n\n## API Reference\n\n- **Base URL**: `https://api.vapi.ai`\n- **Authentication**: Bearer token via `Authorization: Bearer $VAPI_API_KEY`\n- **Full API Docs**: https://docs.vapi.ai\n- **MCP Docs Server**: `https://docs.vapi.ai/_mcp/server` (auto-configured via `.mcp.json`)\n- **API Swagger**: https://api.vapi.ai/api\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "vapi-voice-ai",
+          "description": "Complete skill set for building voice AI agents with Vapi — create assistants, tools, calls, squads, phone numbers, webhooks, and workflows",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./setup-api-key",
+            "./create-assistant",
+            "./create-tool",
+            "./create-call",
+            "./create-squad",
+            "./create-phone-number",
+            "./setup-webhook",
+            "./create-workflow"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add VapiAI/skills",
+            "/plugin install vapi-voice-ai@vapi-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
