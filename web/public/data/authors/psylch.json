@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "psylch",
+    "display_name": "Psylch",
+    "avatar_url": "https://avatars.githubusercontent.com/u/113290241?u=3ce018f5f3a79eb8c7781da560a8c765f7e8b3b2&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "psylch-hifi-download-skill",
+      "version": null,
+      "description": "Music discovery and Hi-Res audio downloads via Spotify, Last.fm, Qobuz, and TIDAL",
+      "repo_full_name": "psylch/hifi-download-skill",
+      "repo_url": "https://github.com/psylch/hifi-download-skill",
+      "repo_description": "Claude Code skill for music discovery and Hi-Res audio downloads (Spotify, Last.fm, Qobuz, TIDAL)",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T05:40:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"psylch-hifi-download-skill\",\n  \"owner\": {\n    \"name\": \"psylch\"\n  },\n  \"metadata\": {\n    \"description\": \"Music discovery and Hi-Res audio downloads via Spotify, Last.fm, Qobuz, and TIDAL\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"hifi-download\",\n      \"source\": \"./\",\n      \"description\": \"Discover music, get personalized recommendations, and download high-fidelity audio (FLAC/Hi-Res) from Qobuz or TIDAL\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"tags\": [\"music\", \"hifi\", \"flac\", \"qobuz\", \"tidal\", \"spotify\", \"lastfm\", \"lossless\"],\n      \"homepage\": \"https://github.com/psylch/hifi-download-skill\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"hifi-download\",\n  \"description\": \"Music discovery and Hi-Res audio downloads via Spotify, Last.fm, Qobuz, and TIDAL\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"psylch\"\n  },\n  \"homepage\": \"https://github.com/psylch/hifi-download-skill\",\n  \"repository\": \"https://github.com/psylch/hifi-download-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"music\", \"hifi\", \"flac\", \"hi-res\", \"qobuz\", \"tidal\", \"spotify\", \"lastfm\", \"download\", \"lossless\"]\n}\n",
+        "README.md": "# hifi-download-skill\n\n[中文文档](README.zh.md)\n\nA [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill for music discovery and high-quality audio downloads. Combines Spotify and Last.fm for discovery with Qobuz and TIDAL for lossless audio downloads.\n\n| Step | What Happens | Service Used |\n|------|-------------|--------------|\n| **Discover** | Search music, find similar artists/tracks | Spotify, Last.fm |\n| **Recommend** | Personalized recommendations from listening history | Spotify + Last.fm |\n| **Search** | Find albums/tracks on download platforms | Qobuz, TIDAL |\n| **Download** | Download in lossless quality (FLAC/Hi-Res) | Qobuz, TIDAL |\n\n## Installation\n\n### Install all media skills at once (recommended)\n\nThis skill is part of [media-master](https://github.com/psylch/media-master), which bundles music, cloud drive, and book download skills:\n\n```bash\nnpx skills add psylch/media-master -g -y\n```\n\n### Install this skill only\n\n```bash\nnpx skills add psylch/hifi-download-skill -g -y\n```\n\n### Via Claude Code Plugin Marketplace\n\n```shell\n/plugin marketplace add psylch/hifi-download-skill\n/plugin install hifi-download@psylch-hifi-download-skill\n```\n\nRestart Claude Code after installation.\n\n## Prerequisites\n\n- **Python 3** installed\n- **API credentials** for at least one discovery service:\n  - Spotify: Free account + API credentials ([developer.spotify.com](https://developer.spotify.com/dashboard))\n  - Last.fm: Free API key ([last.fm/api](https://www.last.fm/api/account/create))\n- **Subscription** for download services (optional):\n  - Qobuz: Studio or Sublime subscription\n  - TIDAL: HiFi+ subscription\n\n## Usage\n\nIn Claude Code, use any of these trigger phrases:\n\n```\nfind music like Radiohead\nrecommend songs based on my taste\ndownload album OK Computer in Hi-Res\nsearch for FLAC albums\nsetup music services\n```\n\n## How It Works\n\n1. **Setup** — installs dependencies, configures API credentials\n2. **Status check** — verifies which services are available\n3. **Discovery** — searches Spotify, finds similar artists/tracks via Last.fm\n4. **Recommendations** — combines Spotify listening history with Last.fm data\n5. **Download** — searches Qobuz/TIDAL catalog, downloads in configured quality\n\n## Supported Services\n\n| Service | Type | Requirements |\n|---------|------|--------------|\n| Spotify | Discovery | Free account + API credentials |\n| Last.fm | Discovery | Free API key |\n| Qobuz | Downloads | Studio/Sublime subscription |\n| TIDAL | Downloads | HiFi+ subscription |\n\n## File Structure\n\n```\nhifi-download-skill/\n├── .claude-plugin/\n│   ├── marketplace.json\n│   └── plugin.json\n├── skills/\n│   └── hifi-download/\n│       ├── SKILL.md              # Main skill definition\n│       ├── run.sh                # Venv-aware script runner\n│       ├── .env.example          # Credential template\n│       ├── references/\n│       │   ├── setup_guide.md    # Detailed setup instructions\n│       │   └── musicmaster.md    # Complete script reference\n│       └── scripts/\n│           ├── setup.sh          # Environment setup\n│           ├── setup_config.py   # Credential configuration\n│           ├── status.py         # Service status check\n│           ├── spotify_*.py      # Spotify scripts\n│           ├── lastfm_*.py       # Last.fm scripts\n│           ├── platform_*.py     # Qobuz/TIDAL scripts\n│           └── lib/              # Shared modules\n├── README.md\n└── LICENSE\n```\n\n## Acknowledgments\n\nThis project relies on the following open-source tools:\n\n- **[tiddl](https://github.com/oskvr37/tiddl)** - TIDAL downloader by [@oskvr37](https://github.com/oskvr37)\n- **[qobuz-dl](https://github.com/vitiko98/qobuz-dl)** - Qobuz downloader by [@vitiko98](https://github.com/vitiko98)\n\n## Disclaimer\n\nThis tool is intended for **personal use only** and was created for educational purposes.\n\n- This project is **not affiliated with** TIDAL, Qobuz, Spotify, or Last.fm\n- Users must ensure their use complies with the respective services' terms of use and local copyright laws\n- Downloaded content is for personal use and may not be shared or redistributed\n- The developer assumes **no responsibility** for any misuse of this tool\n\nBy using this software, you agree to these terms.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "hifi-download",
+          "source": "./",
+          "description": "Discover music, get personalized recommendations, and download high-fidelity audio (FLAC/Hi-Res) from Qobuz or TIDAL",
+          "version": "1.0.0",
+          "category": "productivity",
+          "tags": [
+            "music",
+            "hifi",
+            "flac",
+            "qobuz",
+            "tidal",
+            "spotify",
+            "lastfm",
+            "lossless"
+          ],
+          "homepage": "https://github.com/psylch/hifi-download-skill",
+          "categories": [
+            "flac",
+            "hifi",
+            "lastfm",
+            "lossless",
+            "music",
+            "productivity",
+            "qobuz",
+            "spotify",
+            "tidal"
+          ],
+          "install_commands": [
+            "/plugin marketplace add psylch/hifi-download-skill",
+            "/plugin install hifi-download@psylch-hifi-download-skill"
+          ]
+        }
+      ]
+    }
+  ]
+}

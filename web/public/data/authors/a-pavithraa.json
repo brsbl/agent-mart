@@ -63,6 +63,41 @@
           ]
         }
       ]
+    },
+    {
+      "name": "aws-serverless-skill",
+      "version": null,
+      "description": "Claude Code skills for AWS serverless and Terraform infrastructure-as-code patterns — non-obvious gotchas, decision frameworks, and CI/CD patterns.",
+      "repo_full_name": "a-pavithraa/aws-serverless-skill",
+      "repo_url": "https://github.com/a-pavithraa/aws-serverless-skill",
+      "repo_description": "Claude Code skills for AWS Serverless and Terraform best practices",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T11:09:25Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"aws-serverless-skill\",\n  \"owner\": { \"name\": \"Pavithra\" },\n  \"metadata\": {\n    \"description\": \"Claude Code skills for AWS serverless and Terraform infrastructure-as-code patterns — non-obvious gotchas, decision frameworks, and CI/CD patterns.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aws-infrastructure-skills\",\n      \"description\": \"AWS serverless, DynamoDB, and Terraform patterns for Claude Code — Lambda, API Gateway, DynamoDB single-table design, and Terraform IaC best practices.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/terraform-aws\",\n        \"./skills/aws-dynamodb\",\n        \"./skills/aws-serverless\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# AWS Serverless & Terraform — Knowledge Base\n\nA Claude Code skill library for AWS serverless and infrastructure-as-code patterns. Contains non-obvious gotchas and decision frameworks — not introductory content any model already knows.\n\n## Installation\n\n### Claude Code (Plugin Marketplace)\n\n```bash\n/plugin marketplace add a-pavithraa/aws-serverless-skill\n/plugin enable a-pavithraa/aws-serverless-skill\n```\n\n### Claude Code (Manual)\n\n```bash\ngit clone https://github.com/a-pavithraa/aws-serverless-skill.git\n\ncp -r aws-serverless-skill/skills/* ~/.claude/skills/\n```\n\n### Codex (Manual)\n\n```bash\ngit clone https://github.com/a-pavithraa/aws-serverless-skill.git\n\nmkdir -p ~/.codex/skills\ncp -r aws-serverless-skill/skills/* ~/.codex/skills/\n```\n\n## Usage\n\n### Claude Code\n\nSkills are automatically discovered and loaded when relevant:\n\n```\nYou: \"How should I structure my Terraform backend for multiple environments?\"\nClaude: [Automatically loads terraform-aws skill]\n\nYou: \"Design a DynamoDB table for a multi-tenant SaaS app\"\nClaude: [Automatically loads aws-dynamodb skill]\n```\n\n### Codex\n\nSkills must be explicitly invoked:\n\n```\nusing $terraform-aws set up a multi-environment CI/CD pipeline\nusing $aws-dynamodb design a single-table schema for orders and inventory\nusing $aws-serverless implement an SQS-triggered Lambda with DLQ\n```\n\n## Skills\n\n### `terraform-aws`\n\nPatterns for AWS infrastructure with Terraform.\n\n| Reference | Contents |\n|-----------|----------|\n| `references/terraform-structure.md` | Module design, state management, S3 backend bootstrap (KMS, bucket policy, migration), environment isolation strategy |\n| `references/security-iam.md` | Non-obvious IAM patterns: DynamoDB LeadingKeys, policy document composition, IAM Access Analyzer |\n| `references/cicd-patterns.md` | Multi-environment GitHub Actions pipeline, environment resolver, per-branch backend keys, resource naming, default_tags, pipeline quality gates, ephemeral environment cleanup, drift detection |\n\n**Triggers on:** Terraform, IaC, modules, tfstate, remote state, OIDC, IAM, GitHub Actions, CI/CD, infrastructure pipeline, AWS provider\n\n---\n\n### `aws-dynamodb`\n\nData modeling patterns for Amazon DynamoDB.\n\n| Reference | Contents |\n|-----------|----------|\n| `references/dynamodb-patterns.md` | Single-table design, access pattern modeling, GSI patterns, multi-attribute composite keys (provider v6.29.0+), one-to-many relationships, cost optimization |\n\n**Triggers on:** DynamoDB, single-table design, GSI, partition key, sort key, access patterns, filter expressions, composite keys\n\n---\n\n### `aws-serverless`\n\nPatterns for Lambda, API Gateway, and event-driven architecture on AWS.\n\n| Reference | Contents |\n|-----------|----------|\n| `references/lambda-patterns.md` | Cold starts, concurrency, memory tuning, Lambda Layers |\n| `references/lambda-powertools.md` | AWS Lambda Powertools — structured logging, tracing, metrics |\n| `references/api-gateway.md` | API Gateway v2 (HTTP API), authorizers, integrations |\n| `references/event-driven.md` | SQS, SNS, EventBridge patterns, DLQs |\n| `references/monitoring.md` | CloudWatch, X-Ray, alerting patterns |\n\n**Triggers on:** Lambda, API Gateway, SQS, SNS, EventBridge, cold start, concurrency, Powertools, serverless\n\n---\n\n## Design Principles\n\n- **No common knowledge.** Every section must contain something a model won't produce correctly unprompted.\n- **Load selectively.** Skills load only the reference file relevant to the question — never bulk-load all references.\n- **Cite sources.** Non-obvious patterns link to official docs, GitHub issues, or PRs that verify the claim.\n\n## Testing Skills\n\nWant to verify skills work as intended? See the `tests/` directory.\n\n```bash\n# Quick start\ncat tests/baseline-scenarios.md   # 8 scenarios, 3 skills\ncat tests/rationalizations.md     # known failure modes and counters\n```\n\nRED-GREEN-REFACTOR methodology: run each scenario without the skill loaded (RED), then with it loaded (GREEN), then pressure-test (REFACTOR). See `tests/README.md` for the full process.\n\n## Credits\n\n- DynamoDB modeling patterns: [Alex DeBrie](https://www.alexdebrie.com/) — author of [The DynamoDB Book](https://www.dynamodbbook.com/)\n- Serverless / Lambda patterns: [Yan Cui (theburningmonk)](https://theburningmonk.com/)\n\n## Prerequisites\n\n- Claude Code CLI or Codex CLI\n"
+      },
+      "plugins": [
+        {
+          "name": "aws-infrastructure-skills",
+          "description": "AWS serverless, DynamoDB, and Terraform patterns for Claude Code — Lambda, API Gateway, DynamoDB single-table design, and Terraform IaC best practices.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/terraform-aws",
+            "./skills/aws-dynamodb",
+            "./skills/aws-serverless"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add a-pavithraa/aws-serverless-skill",
+            "/plugin install aws-infrastructure-skills@aws-serverless-skill"
+          ]
+        }
+      ]
     }
   ]
 }

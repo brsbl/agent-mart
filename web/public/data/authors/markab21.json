@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "markab21",
+    "display_name": "Mark Berry",
+    "avatar_url": "https://avatars.githubusercontent.com/u/49798?u=e965f27e19ba043ec27e464ee6a8735f4f8e62a9&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "voluum-community-tools",
+      "version": null,
+      "description": "Community marketplace for voluum-cli helper plugins (unofficial, MIT).",
+      "repo_full_name": "markab21/voluum-cli",
+      "repo_url": "https://github.com/markab21/voluum-cli",
+      "repo_description": "Lightweight Bun/TypeScript CLI wrapper for Voluum REST admin and reporting operations",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T02:51:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"voluum-community-tools\",\n  \"owner\": {\n    \"name\": \"markab21\"\n  },\n  \"metadata\": {\n    \"description\": \"Community marketplace for voluum-cli helper plugins (unofficial, MIT).\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"voluum-cli-assistant\",\n      \"source\": \"./plugins/voluum-cli-assistant\",\n      \"description\": \"Community plugin with setup/install and command composition skills for voluum-cli.\",\n      \"version\": \"1.0.0\",\n      \"license\": \"MIT\",\n      \"author\": {\n        \"name\": \"markab21\"\n      },\n      \"tags\": [\"voluum\", \"cli\", \"reports\", \"setup\", \"agent\"]\n    }\n  ]\n}\n",
+        "README.md": "# voluum-cli\n\n`voluum-cli` is community-supported software released under the MIT License. It is not an official Voluum product and is not endorsed or supported by Voluum. It uses publicly documented Voluum APIs.\n\nLightweight Bun/TypeScript CLI for common Voluum admin and reporting operations.\n\n## Install\n\n```bash\nbun install\nbun run build\n```\n\nOptional local link:\n\n```bash\nbun link\n```\n\nThen use:\n\n```bash\nvoluum --help\n```\n\nOr run directly without linking:\n\n```bash\nnode dist/index.js --help\n```\n\n## Commands\n\nGlobal options (available for all commands):\n\n- `--baseUrl <url>` override API base URL\n- `--token <token>` override auth token\n- `--json` output as compact JSON (default is TOON — required when piping to `jq`)\n- `--pretty` output as pretty-printed JSON (implies `--json`)\n- `--silent` suppress stdout output\n- `--out <file>` write full JSON output to file\n\nDefault output format is **TOON** (Token-Oriented Object Notation), a compact human-readable format that is 30–60% smaller than JSON. Use `--json` or `--pretty` for JSON, or `--out` to save full JSON to a file.\n\n### Auth\n\nLogin with email/password:\n\n```bash\nvoluum auth login --email agent@example.com --password 'secret'\n```\n\nLogin with access keys:\n\n```bash\nvoluum auth login --accessKeyId '...' --accessKey '...'\n```\n\nWho am I:\n\n```bash\nvoluum auth whoami\n```\n\nLogout (clears local stored token):\n\n```bash\nvoluum auth logout\n```\n\n### Campaigns\n\nList campaigns:\n\n```bash\nvoluum campaigns list\n```\n\nGet campaign by id:\n\n```bash\nvoluum campaigns get --id 12345\n```\n\n### Reports\n\nSummary report:\n\n```bash\nvoluum reports summary \\\n  --from 2026-02-01T00:00:00Z \\\n  --to 2026-02-18T00:00:00Z \\\n  --groupBy campaign \\\n  --filters country=US,device=mobile\n```\n\nRaw report:\n\n```bash\nvoluum reports raw \\\n  --from 2026-02-01T00:00:00Z \\\n  --to 2026-02-18T00:00:00Z \\\n  --limit 100\n```\n\nFlexible query (sorting, pagination, custom columns):\n\n```bash\nvoluum reports query \\\n  --path /report/conversions \\\n  --query from=2026-02-01,to=2026-02-18,limit=100,offset=100,sort=visits,direction=desc\n```\n\nSchema introspection:\n\n```bash\nvoluum reports schema \\\n  --path /report/conversions \\\n  --query from=2026-02-01,to=2026-02-18 \\\n  --groupable \\\n  --type money\n```\n\nPredefined breakdowns:\n\n```bash\n# By offer\nvoluum reports breakdown \\\n  --by offer \\\n  --from 2026-02-11T22:00:00.000Z \\\n  --to 2026-02-18T22:00:00.000Z\n\n# Offer performance in campaign context\nvoluum reports breakdown \\\n  --by offer-by-campaign \\\n  --campaignId <campaign-id> \\\n  --from 2026-02-11T22:00:00.000Z \\\n  --to 2026-02-18T22:00:00.000Z\n```\n\n### Generic API passthrough\n\nGET:\n\n```bash\nvoluum api get /campaign --query status=active,limit=50\n```\n\nPOST:\n\n```bash\nvoluum api post /report --body '{\"from\":\"2026-02-01T00:00:00Z\",\"to\":\"2026-02-18T00:00:00Z\"}'\n```\n\n## Claude Plugin Marketplace\n\nThis repository includes a community marketplace and plugin for Claude Code.\n\n- Marketplace file: `.claude-plugin/marketplace.json`\n- Plugin: `plugins/voluum-cli-assistant`\n- Skills included:\n  - `voluum-command-composer`\n  - `voluum-setup-install`\n\nQuick install from Claude Code:\n\n```shell\n/plugin marketplace add markab21/voluum-cli\n/plugin install voluum-cli-assistant@voluum-community-tools\n```\n\nDetailed docs:\n\n- `docs/public/plugin-marketplace.md`\n- `docs/public/plugin-install.md`\n- `docs/public/voluum-api-notes.md`\n\n## Configuration\n\nConfig file: `~/.voluum-cli/config.json`\n\n```ts\nexport interface VoluumCliConfig {\n  baseUrl?: string;\n  token?: string;\n  tokenCreatedAt?: string;\n  tokenExpiresAt?: string;\n  lastLoginEmail?: string;\n}\n```\n\nOverride priority:\n\n1. CLI flags\n2. Environment variables (`VOLUUM_BASE_URL`, `VOLUUM_TOKEN`)\n3. Local config file\n\nThe CLI attempts to persist config with file mode `0600` on Unix-like systems.\n\n## Endpoint mapping\n\nEdit `src/endpoints.ts` to adjust routes, auth header name, and token extraction fields.\n\n## Live API Notes\n\nThese were validated against a real Voluum account:\n\n- `from`/`to` must be rounded to the nearest hour (`HH:00:00Z`), otherwise Voluum returns `400 BAD_REQUEST`.\n- Use `--query-json` when any value contains commas (for example `columns` lists), because `--query` parses comma-separated `k=v` pairs.\n- For large accounts, small `limit` values can produce partial views; raise `limit` for full-window analysis before ranking campaigns.\n- Sort requires **two separate params**: `sort=<field>` and `direction=asc|desc`. The combined `sort=field:desc` syntax causes a `400 INVALID_QUERY` error.\n\n## Development\n\n```bash\nbun run dev -- --help\nbun test\nbun run build\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "voluum-cli-assistant",
+          "source": "./plugins/voluum-cli-assistant",
+          "description": "Community plugin with setup/install and command composition skills for voluum-cli.",
+          "version": "1.0.0",
+          "license": "MIT",
+          "author": {
+            "name": "markab21"
+          },
+          "tags": [
+            "voluum",
+            "cli",
+            "reports",
+            "setup",
+            "agent"
+          ],
+          "categories": [
+            "agent",
+            "cli",
+            "reports",
+            "setup",
+            "voluum"
+          ],
+          "install_commands": [
+            "/plugin marketplace add markab21/voluum-cli",
+            "/plugin install voluum-cli-assistant@voluum-community-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

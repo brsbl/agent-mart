@@ -122,6 +122,35 @@
       ]
     },
     {
+      "name": "claudetasks-marketplace",
+      "version": null,
+      "description": "Claude Code plugins for task management",
+      "repo_full_name": "jongwony/ClaudePanel.spoon",
+      "repo_url": "https://github.com/jongwony/ClaudePanel.spoon",
+      "repo_description": "View and manage Claude Code tasks and memory in a floating Hammerspoon window with live updates.",
+      "signals": {
+        "stars": 25,
+        "forks": 3,
+        "pushed_at": "2026-02-20T00:44:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claudetasks-marketplace\",\n  \"description\": \"Claude Code plugins for task management\",\n  \"owner\": {\n    \"name\": \"jongwony\",\n    \"url\": \"https://github.com/jongwony\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"task-workflow\",\n      \"source\": \"./task-workflow\"\n    }\n  ]\n}\n",
+        "README.md": "# ClaudePanel.spoon\n\nHammerspoon Spoon for viewing Claude Code tasks in a floating window.\n\n## Demo\n\n![Clipboard-20260129-135743-665](https://github.com/user-attachments/assets/fab18506-2a2a-4fcc-adfc-f30a96ff31c3)\n\n## Features\n\n- Floating task viewer with WebView UI\n- **Vim-like keyboard navigation** (j/k or ↑/↓ to move, Space to view, Enter to launch)\n- **Customizable key bindings** - configure all keyboard shortcuts\n- **Task deletion** with keyboard shortcut (⌘⌫)\n- **Task search/filtering** with real-time results\n- Auto-refresh on file changes via pathwatcher\n- Session selector with datalist autocomplete\n- Quick TaskUpdate via dialog (⌘E)\n- Launch Claude session in terminal (▶ button)\n- Task detail view with metadata display\n- Keyboard shortcuts help popup (?)\n\n## Installation\n\n### Option 1: Clone and Symlink (Recommended for development)\n\n```bash\ngit clone https://github.com/jongwony/ClaudePanel.spoon.git\nln -sf $(pwd)/ClaudePanel.spoon ~/.hammerspoon/Spoons/ClaudePanel.spoon\n```\n\n### Option 2: Direct Download\n\nDownload and extract to `~/.hammerspoon/Spoons/ClaudePanel.spoon/`\n\n## Usage\n\nAdd to your `~/.hammerspoon/init.lua`:\n\n```lua\nhs.loadSpoon(\"ClaudePanel\")\nspoon.ClaudePanel:bindHotkeys(spoon.ClaudePanel.defaultHotkeys)\nspoon.ClaudePanel:start()\n```\n\n### Default Hotkeys\n\n| Hotkey | Action |\n|--------|--------|\n| `opt+.` | Toggle task viewer |\n| `cmd+alt+T` | Show task status summary |\n\n### In-App Keyboard Shortcuts\n\n| Key | Action |\n|-----|--------|\n| `j` / `k` / `↓` / `↑` | Navigate tasks |\n| `Space` | View task detail |\n| `Enter` | Launch Claude session |\n| `⌘⌫` | Delete selected task |\n| `/` | Search mode |\n| `=` | Session input mode |\n| `Escape` | Return to navigation |\n| `?` | Show shortcuts help |\n| `⌘E` | Quick Task dialog |\n| `⌘Enter` | Create task |\n\nAll keyboard shortcuts can be customized via `bindShortcuts()`.\n\n### Custom Configuration\n\n```lua\nhs.loadSpoon(\"ClaudePanel\")\nspoon.ClaudePanel:configure({\n    width = 500,\n    height = 700,\n    margin = 30,\n    debugMode = true,\n    -- Specify paths explicitly if auto-discovery fails\n    claudePath = \"/usr/local/bin/claude\",\n    terminalApp = \"/Applications/iTerm.app/Contents/MacOS/iTerm2\",\n    shell = \"/bin/bash\",\n})\nspoon.ClaudePanel:bindHotkeys({\n    toggle = {{\"cmd\", \"shift\"}, \"t\"},\n    status = {{\"cmd\", \"alt\"}, \"t\"}\n})\n-- You can customize all in-app keyboard shortcuts\nspoon.ClaudePanel:bindShortcuts({\n    navigateDown = {modifiers = {}, keys = {'j', 'ㅓ', 'ArrowDown'}},\n    navigateUp = {modifiers = {}, keys = {'k', 'ㅏ', 'ArrowUp'}},\n    deleteTask = {modifiers = {'cmd'}, keys = {'Backspace'}},\n    openTask = {modifiers = {}, keys = {' '}},\n    launchTask = {modifiers = {}, keys = {'Enter'}},\n})\nspoon.ClaudePanel:start()\n```\n\n## API\n\n### Methods\n\n- `obj:init()` - Initialize the Spoon (called automatically)\n- `obj:start()` - Start file watching and load saved state\n- `obj:stop()` - Stop file watching and cleanup\n- `obj:show()` - Show the task viewer\n- `obj:hide()` - Hide the task viewer\n- `obj:toggle()` - Toggle visibility\n- `obj:refresh()` - Manually refresh the task list\n- `obj:setTaskListId(id)` - Set the session ID filter\n- `obj:createTask(subject)` - Create a new task via Claude CLI\n- `obj:quickTaskUpdate(prompt)` - Run quick TaskUpdate via haiku model\n- `obj:launchClaudeWithTaskList()` - Launch Claude in terminal with current session\n- `obj:launchClaudeWithCwd(sessionId, cwd)` - Launch Claude with specific working directory\n- `obj:launchClaudeWithSession(sessionId)` - Launch Claude with session env var\n- `obj:showTaskDetailWindow(subject, description, metadata)` - Show task detail popup\n- `obj:deleteTask(taskId, sessionId)` - Delete a task by ID\n- `obj:status()` - Get current status info\n- `obj:configure(options)` - Update configuration\n- `obj:bindHotkeys(mapping)` - Bind hotkeys\n\n### Configuration Options\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `width` | 420 | Window width |\n| `height` | 580 | Window height |\n| `margin` | 20 | Screen edge margin |\n| `refreshDebounce` | 0.2 | Debounce delay for file changes (seconds) |\n| `debugMode` | false | Enable debug logging |\n| `taskListId` | `$CLAUDE_CODE_TASK_LIST_ID` | Session ID filter |\n| `claudePath` | nil | Path to claude CLI (auto-discovered if nil) |\n| `terminalApp` | nil | Path to terminal app (auto-discovered if nil) |\n| `shell` | nil | Shell to use (defaults to `$SHELL` or `/bin/zsh`) |\n| `keyBindings` | (see below) | Customizable keyboard shortcuts (use `bindShortcuts()`) |\n\n## Requirements\n\n- Hammerspoon\n- Claude Code CLI (`claude` command)\n- A supported terminal app (Ghostty, iTerm2, or Terminal.app)\n\n## License\n\nMIT License - see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "task-workflow",
+          "source": "./task-workflow",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jongwony/ClaudePanel.spoon",
+            "/plugin install task-workflow@claudetasks-marketplace"
+          ]
+        }
+      ]
+    },
+    {
       "name": "cc-plugin",
       "version": null,
       "description": "Deep web research agent powered by Tavily search API",
@@ -131,7 +160,7 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-20T04:23:47Z"
+        "pushed_at": "2026-02-20T05:33:23Z"
       },
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-plugin\",\n  \"owner\": {\n    \"name\": \"jongwony\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tavily\",\n      \"source\": \"./external-plugin/tavily\",\n      \"description\": \"Deep web research agent powered by Tavily search API\"\n    },\n    {\n      \"name\": \"bigquery\",\n      \"source\": \"./external-plugin/bigquery\",\n      \"description\": \"BigQuery data analysis agent with SQL generation and schema exploration\"\n    },\n    {\n      \"name\": \"google\",\n      \"source\": \"./google\",\n      \"description\": \"Google services: Gemini CLI, Veo, video understanding, image prompts, calendar sync\"\n    },\n    {\n      \"name\": \"session\",\n      \"source\": \"./session\",\n      \"description\": \"Session utilities: search history, git stash linking\"\n    },\n    {\n      \"name\": \"linear\",\n      \"source\": \"./linear\",\n      \"description\": \"Linear integration: activity reports, documents, milestones\"\n    },\n    {\n      \"name\": \"amplitude-user-lookup\",\n      \"source\": \"./amplitude-user-lookup\",\n      \"description\": \"Amplitude user behavior queries\"\n    },\n    {\n      \"name\": \"claude-code-internals\",\n      \"source\": \"./claude-code-internals\",\n      \"description\": \"Claude Code internals explorer\"\n    },\n    {\n      \"name\": \"codex\",\n      \"source\": \"./codex\",\n      \"description\": \"OpenAI Codex CLI integration\"\n    },\n    {\n      \"name\": \"fossil-ui\",\n      \"source\": \"./fossil-ui\",\n      \"description\": \"Git to Fossil export\"\n    },\n    {\n      \"name\": \"github-activity\",\n      \"source\": \"./github-activity\",\n      \"description\": \"GitHub activity reports\"\n    },\n    {\n      \"name\": \"pdf-split\",\n      \"source\": \"./pdf-split\",\n      \"description\": \"PDF chapter splitting\"\n    },\n    {\n      \"name\": \"activity-workflow\",\n      \"source\": \"./activity-workflow\",\n      \"description\": \"Orchestrates activity collection and Google Calendar sync\"\n    },\n    {\n      \"name\": \"slack\",\n      \"source\": \"./slack\",\n      \"description\": \"Slack utilities: search messages, fetch threads\"\n    },\n    {\n      \"name\": \"release\",\n      \"source\": \"./release\",\n      \"description\": \"Automated version bump, git tag, and GitHub release creation\"\n    }\n  ]\n}\n",

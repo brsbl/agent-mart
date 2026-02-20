@@ -77,43 +77,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "prompt-to-design",
-      "version": null,
-      "description": "Figma design automation plugins for Claude Code",
-      "repo_full_name": "Rylaa/prompt-to-design",
-      "repo_url": "https://github.com/Rylaa/prompt-to-design",
-      "repo_description": null,
-      "signals": {
-        "stars": 1,
-        "forks": 0,
-        "pushed_at": "2026-02-09T13:26:45Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"prompt-to-design\",\n  \"description\": \"Figma design automation plugins for Claude Code\",\n  \"owner\": {\n    \"name\": \"Rylaa\",\n    \"url\": \"https://github.com/Rylaa\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"prompt-to-design\",\n      \"description\": \"Figma design automation with MCP tools - includes figma-design-executor agent for pixel-perfect UI implementation\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Rylaa\",\n        \"url\": \"https://github.com/Rylaa\"\n      },\n      \"source\": \"./plugins/prompt-to-design\",\n      \"category\": \"design\"\n    }\n  ]\n}\n",
-        "README.md": "# Prompt-to-Design\n\n**Prompt-based design creation system for Figma via Claude Code CLI**\n\n```\n\"Create a login form with blue gradient\" → Design appears in Figma\n```\n\n---\n\n## Project Structure\n\n```\nprompt-to-design/\n├── websocket-server/     # WebSocket bridge server\n├── mcp-server/           # Claude Code MCP server\n├── figma-plugin/         # Figma plugin\n└── docs/                 # Documentation\n```\n\n## Quick Setup\n\n### 1. Install Dependencies\n\n```bash\n# WebSocket Server\ncd websocket-server\nnpm install\n\n# MCP Server\ncd ../mcp-server\nnpm install\n\n# Figma Plugin\ncd ../figma-plugin\nnpm install\n```\n\n### 2. Build Projects\n\n```bash\n# WebSocket Server\ncd websocket-server\nnpm run build\n\n# MCP Server\ncd ../mcp-server\nnpm run build\n\n# Figma Plugin\ncd ../figma-plugin\nnpm run build\n```\n\n### 3. Load Figma Plugin\n\n1. Open **Figma Desktop** app\n2. Open any file\n3. `Menu` → `Plugins` → `Development` → `Import plugin from manifest...`\n4. Select `figma-plugin/manifest.json`\n\n### 4. Add MCP Server to Claude Code\n\nEdit `~/.claude/mcp_settings.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"prompt-to-design\": {\n      \"command\": \"node\",\n      \"args\": [\"/FULL/PATH/TO/prompt-to-design/mcp-server/dist/index.js\"],\n      \"env\": {\n        \"WEBSOCKET_URL\": \"ws://localhost:9001\"\n      }\n    }\n  }\n}\n```\n\n## Starting\n\n### Terminal 1: WebSocket Server\n\n```bash\ncd websocket-server\nnpm start\n```\n\nOutput:\n```\nWebSocket Bridge Server running on ws://localhost:9001\n```\n\n### Terminal 2: Figma Plugin\n\n1. Open a file in Figma\n2. `Plugins` → `Development` → `AI Design Assistant`\n3. Plugin will automatically connect to WebSocket\n\n### Terminal 3: Claude Code\n\n```bash\nclaude\n```\n\n## Usage Examples\n\n### Basic Shapes\n\n```\n> Create a 200x100 blue rectangle in Figma\n> Make a red circle\n> Add \"Hello World\" text, 24px, bold\n```\n\n### Buttons\n\n```\n> Create a blue primary button\n> Green button with \"Sign Up\" text, 16px padding\n> Outline style secondary button\n```\n\n### Auto Layout\n\n```\n> Vertical auto layout frame, 16px spacing, 24px padding\n> Horizontal layout, space-between, center aligned\n```\n\n### Cards\n\n```\n> 320px wide card with shadow, 24px padding\n> Login card: email input, password input, submit button\n```\n\n### Gradients\n\n```\n> Button with blue to purple linear gradient\n> Frame with radial gradient background\n```\n\n### Complex Layout\n\n```\n> Create a login form:\n  - 400px width\n  - White background\n  - 32px padding\n  - Soft shadow\n  - \"Welcome Back\" title\n  - Email input\n  - Password input\n  - \"Sign In\" button (blue, full width)\n```\n\n## MCP Tools\n\n| Tool | Description |\n|------|-------------|\n| `figma_create_frame` | Create frame/container |\n| `figma_create_rectangle` | Create rectangle |\n| `figma_create_ellipse` | Create circle/ellipse |\n| `figma_create_text` | Create text element |\n| `figma_create_button` | Styled button |\n| `figma_create_input` | Input field |\n| `figma_create_card` | Card component |\n| `figma_set_autolayout` | Apply auto layout |\n| `figma_set_fill` | Set color/gradient |\n| `figma_set_effects` | Add shadow/blur |\n| `figma_modify_node` | Modify node |\n| `figma_create_component` | Create component |\n| `figma_get_selection` | Get selected nodes |\n| `figma_append_child` | Add child |\n| `figma_connection_status` | Connection status |\n\n## Supported Features\n\n| Feature | Status |\n|---------|--------|\n| Frame/Rectangle/Ellipse | ✅ |\n| Text (font, size, weight) | ✅ |\n| Auto Layout | ✅ |\n| Padding/Spacing | ✅ |\n| Solid Fill | ✅ |\n| Gradient Fill | ✅ |\n| Drop Shadow | ✅ |\n| Inner Shadow | ✅ |\n| Blur Effects | ✅ |\n| Border Radius | ✅ |\n| Stroke | ✅ |\n| Components | ✅ |\n| **Prototype Links** | ❌ (API limitation) |\n\n## Troubleshooting\n\n### \"WebSocket connection failed\"\n\n```bash\n# Check if WebSocket server is running\nlsof -i :9001\n\n# If not running, start it\ncd websocket-server && npm start\n```\n\n### \"Plugin not visible\"\n\n1. Close and reopen Figma\n2. `Plugins` → `Development` → `Import plugin from manifest...`\n3. Select `figma-plugin/manifest.json`\n\n### \"Font not found\"\n\n- Inter font must be installed in Figma\n- Or use a different font: `style: { fontFamily: \"Arial\" }`\n\n## License\n\nMIT\n\n---\n\n**Questions:** Use GitHub Issues\n"
-      },
-      "plugins": [
-        {
-          "name": "prompt-to-design",
-          "description": "Figma design automation with MCP tools - includes figma-design-executor agent for pixel-perfect UI implementation",
-          "version": "1.0.0",
-          "author": {
-            "name": "Rylaa",
-            "url": "https://github.com/Rylaa"
-          },
-          "source": "./plugins/prompt-to-design",
-          "category": "design",
-          "categories": [
-            "design"
-          ],
-          "install_commands": [
-            "/plugin marketplace add Rylaa/prompt-to-design",
-            "/plugin install prompt-to-design@prompt-to-design"
-          ]
-        }
-      ]
     }
   ]
 }
