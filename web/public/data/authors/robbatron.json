@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "Robbatron",
+    "display_name": "Robbie Delfs",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6432957?u=ec0714197880a8103e9d491c7a86dce28d6b1250&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "acutis-plugin",
+      "version": null,
+      "description": "Acutis — Zero Trust security verification for AI-generated code.",
+      "repo_full_name": "Robbatron/acutis-plugin",
+      "repo_url": "https://github.com/Robbatron/acutis-plugin",
+      "repo_description": "Acutis Claude Code Plugin — Zero Trust security verification for AI-generated code",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T17:40:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"acutis-plugin\",\n  \"owner\": {\n    \"name\": \"Robert Delfs\",\n    \"email\": \"robbatron@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Acutis — Zero Trust security verification for AI-generated code.\",\n    \"version\": \"1.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"acutis\",\n      \"source\": \"./\",\n      \"description\": \"Automatic security scanning for AI-generated code. Stop hook blocks completion until XSS and SQL Injection vulnerabilities are verified via mcp.acutis.dev.\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"Robert Delfs\"\n      },\n      \"homepage\": \"https://acutis.dev\",\n      \"repository\": \"https://github.com/Robbatron/acutis-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"security\", \"xss\", \"sql-injection\", \"verification\", \"mcp\", \"zero-trust\"],\n      \"category\": \"security\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"acutis\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Zero Trust security verification for AI-generated code. Formally verifies code for XSS (CWE-79) and SQL Injection (CWE-89) using property lattice verification — the AI declares security semantics, Acutis verifies them.\",\n  \"author\": {\n    \"name\": \"Robert Delfs\",\n    \"url\": \"https://github.com/Robbatron/Acutis\"\n  },\n  \"repository\": \"https://github.com/Robbatron/Acutis\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"security\",\n    \"xss\",\n    \"sql-injection\",\n    \"verification\",\n    \"mcp\",\n    \"zero-trust\"\n  ]\n}\n",
+        "README.md": "# Acutis — Claude Code Plugin\n\nZero Trust security verification for AI-generated code. Automatically verifies code for **XSS (CWE-79)** and **SQL Injection (CWE-89)** vulnerabilities using formal property lattice verification.\n\n## Install\n\n```\n/plugin marketplace add Robbatron/acutis-plugin\n/plugin install acutis@acutis-plugin\n```\n\nThat's it. The plugin connects to `mcp.acutis.dev` — no local dependencies beyond Python 3 (stdlib only, for the stop hook).\n\n## What You Get\n\n| Component | What it does |\n|-----------|-------------|\n| **MCP Server** | `scan_code` tool — takes code, language, and a PCST contract → returns ALLOW or BLOCK with proof artifacts |\n| **Stop Hook** | Safety net — blocks the agent from finishing if it wrote security-relevant code without a `scan_code` ALLOW |\n| **Scan Skill** | `/acutis:scan` — manual trigger with guided contract construction |\n\n## How It Works\n\nAcutis uses a **Type System Paradigm**: the AI declares security semantics (sources, sinks, transforms), and Acutis formally verifies them. No pattern databases, no heuristics — the AI provides all semantic information, Acutis provides formal verification.\n\n### The Stop Hook (safety net)\n\nThe stop hook reads the session transcript and tracks **ordering**:\n\n1. Walk transcript entries in order\n2. Note each security-relevant Write/Edit (`.py`, `.js`, `.ts`, `.php`, `.html`)\n3. Note each `scan_code` call that returned ALLOW\n4. If the last ALLOW comes **after** the last Write → **allow stop** (already verified, invisible)\n5. If the last Write comes **after** the last ALLOW → **block** (unverified code)\n\nThis means:\n- If the agent proactively scans → the hook never fires, zero extra tokens\n- If the agent forgets → the hook catches it with a short block message\n- No redundant scans\n\nThe hook is a plain Python script (stdlib only) that runs once when the agent tries to stop.\n\n### The scan_code Tool\n\n```\nscan_code(code: string, language: string, contract: PCST)\n```\n\n- `code` — the source code as a string\n- `language` — `\"python\"`, `\"javascript\"`, or `\"php\"`\n- `contract` — PCST contract declaring sources, sinks, and transforms\n\nReturns: `ALLOW` (safe), `BLOCK_VIOLATION` (vulnerability found, with remediation), or `BLOCK_INCOMPLETE` (contract incomplete).\n\n## Manage\n\n```bash\n# Disable without uninstalling\nclaude plugin disable acutis@acutis-plugin\n\n# Re-enable\nclaude plugin enable acutis@acutis-plugin\n\n# Update to latest\nclaude plugin update acutis@acutis-plugin\n\n# Completely remove\nclaude plugin uninstall acutis@acutis-plugin\n```\n\n## Updating\n\n### Version bumps\n\nWhen you release new plugin changes, **always bump the version** in both:\n- `.claude-plugin/plugin.json` → `\"version\"` field\n- `.claude-plugin/marketplace.json` → `\"metadata.version\"` and `\"plugins[0].version\"` fields\n\nClaude Code uses the version to decide whether an update is available. If you change files but don't bump the version, `claude plugin update` will report \"already at latest\".\n\n### If `plugin update` doesn't pick up changes\n\nClaude Code has **two layers of cache**:\n\n| Cache | Location | Purpose |\n|-------|----------|---------|\n| Marketplace cache | `~/.claude/plugins/marketplaces/acutis-plugin/` | Local clone of the GitHub repo |\n| Install cache | `~/.claude/plugins/cache/acutis-plugin/` | Versioned snapshot used at runtime |\n\n`plugin update` compares the version in the marketplace cache against the install cache. If the marketplace cache is stale, the update won't see the new version even though GitHub has it.\n\n**Fix: clear both caches and reinstall**\n```bash\n# 1. Clear both caches\nrm -rf ~/.claude/plugins/marketplaces/acutis-plugin\nrm -rf ~/.claude/plugins/cache/acutis-plugin\n\n# 2. Reinstall (fetches fresh from GitHub)\nclaude plugin uninstall acutis@acutis-plugin\nclaude plugin install acutis@acutis-plugin\n```\n\nYou can verify the installed version with:\n```bash\nclaude plugin list\n```\n\n## Requirements\n\n- **Claude Code v1.0.33+**\n- **Python 3** (stdlib only — for the stop hook script)\n- Internet connection (MCP server at `mcp.acutis.dev`)\n\n## Plugin Structure\n\n```\nacutis-plugin/\n├── .claude-plugin/\n│   ├── plugin.json          # Plugin manifest\n│   └── marketplace.json     # Marketplace catalog\n├── .mcp.json                # MCP server config (remote HTTP)\n├── hooks/\n│   └── hooks.json           # Stop hook configuration\n├── skills/\n│   └── scan/\n│       └── SKILL.md         # /acutis:scan skill\n├── scripts/\n│   ├── stop-hook.sh         # Stop hook wrapper\n│   └── stop-hook.py         # Stop hook implementation\n└── README.md\n```\n\n## How the Stop Hook Works\n\n```\nAgent writes/edits security-relevant code\n                │\n                ▼\nAgent tries to stop\n                │\n                ▼\nStop hook fires (reads transcript once)\n┌────────────────────────────────────┐\n│ Track ordering:                    │\n│  • last security-relevant Write    │\n│  • last scan_code ALLOW            │\n│                                    │\n│ ALLOW after Write? → allow stop    │\n│ Write after ALLOW? → block         │\n└────────────────────────────────────┘\n                │\n    ┌───────────┴───────────┐\n    │                       │\nAlready verified      Unverified code\n    │                       │\n ALLOW                   BLOCK\n(invisible)     (agent must call scan_code)\n```\n\n## Links\n\n- **Website**: [acutis.dev](https://acutis.dev)\n- **MCP Server**: [mcp.acutis.dev](https://mcp.acutis.dev)\n- **Main Repository**: [Robbatron/Acutis](https://github.com/Robbatron/Acutis)\n- **License**: MIT\n"
+      },
+      "plugins": [
+        {
+          "name": "acutis",
+          "source": "./",
+          "description": "Automatic security scanning for AI-generated code. Stop hook blocks completion until XSS and SQL Injection vulnerabilities are verified via mcp.acutis.dev.",
+          "version": "1.2.0",
+          "author": {
+            "name": "Robert Delfs"
+          },
+          "homepage": "https://acutis.dev",
+          "repository": "https://github.com/Robbatron/acutis-plugin",
+          "license": "MIT",
+          "keywords": [
+            "security",
+            "xss",
+            "sql-injection",
+            "verification",
+            "mcp",
+            "zero-trust"
+          ],
+          "category": "security",
+          "categories": [
+            "mcp",
+            "security",
+            "sql-injection",
+            "verification",
+            "xss",
+            "zero-trust"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Robbatron/acutis-plugin",
+            "/plugin install acutis@acutis-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "zjor",
+    "display_name": "Sergey Royz",
+    "avatar_url": "https://avatars.githubusercontent.com/u/695809?u=38b92028a96de08219cf582478643b30441507db&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "effective-claude",
+      "version": null,
+      "description": "A personal collection of Claude Code plugins for productivity — slash commands, skills, and agents.",
+      "repo_full_name": "zjor/effective-claude",
+      "repo_url": "https://github.com/zjor/effective-claude",
+      "repo_description": "Claude Code plugin marketplace for personal productivity — slash commands, skills, and agents.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T10:06:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"effective-claude\",\n  \"owner\": {\n    \"name\": \"zjor\"\n  },\n  \"metadata\": {\n    \"description\": \"A personal collection of Claude Code plugins for productivity — slash commands, skills, and agents.\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"file-indexer\",\n      \"source\": \"./file-indexer\",\n      \"description\": \"Indexes files by generating AI summaries and maintaining a lightweight catalog alongside your files. Supports Inbox-based filing workflows.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"zjor\"\n      },\n      \"keywords\": [\"indexing\", \"files\", \"summary\", \"productivity\", \"inbox\", \"catalog\"]\n    }\n  ]\n}\n",
+        "README.md": "# effective-claude\n\nA personal marketplace of Claude Code plugins — slash commands, skills, and agents for personal productivity.\n\nEach plugin lives in its own directory and can be installed independently by copying its `.claude/commands/` contents into your project or global `~/.claude/commands/` folder.\n\n## Plugins\n\n### [file-indexer](./file-indexer/README.md)\n\nIndexes files by generating AI summaries and maintaining a lightweight catalog alongside your files. Supports moving files out of an Inbox folder, creating `.index/<filename>.md` summaries, and keeping a `CLAUDE.md` snippet index in each folder.\n\n```\n/index-file path/to/file.pdf\n/index-file Inbox/report.pdf ~/Docs/\n```\n\n## Installation via marketplace\n\nThis repository is a Claude Code plugin marketplace. Add it once and install individual plugins on demand.\n\n**Step 1 — Add the marketplace** (requires Claude Code ≥ 1.0.33):\n\n```\n/plugin marketplace add zjor/effective-claude\n```\n\n**Step 2 — Install a plugin:**\n\n```\n/plugin install file-indexer@effective-claude\n```\n\nPlugin commands are namespaced by plugin name, so `file-indexer` provides `/file-indexer:index-file`.\n\n### Manual installation (alternative)\n\nIf you prefer to install without the marketplace system, copy the commands folder directly:\n\n```bash\n# For a single project\ncp -r file-indexer/.claude/commands/ .claude/commands/\n\n# Globally (available in all projects)\ncp -r file-indexer/.claude/commands/ ~/.claude/commands/\n```\n\nWith manual installation, commands are available without namespacing (e.g. `/index-file` instead of `/file-indexer:index-file`).\n",
+        "file-indexer/README.md": "# file-indexer\n\nA Claude Code plugin that indexes files by generating AI summaries and keeping a lightweight catalog alongside your files.\n\n## What it does\n\nWhen you run `/index-file`, Claude will:\n\n1. Read and understand the file\n2. Create a `.index/<filename>.md` with a structured summary\n3. Append a short snippet to `CLAUDE.md` in the same folder\n\nIf the file lives in an **Inbox** folder (case-insensitive), Claude will ask where to move it before indexing.\n\n## Installation\n\nCopy `.claude/commands/index-file.md` into your project's `.claude/commands/` folder, or place it in `~/.claude/commands/` to make it available globally.\n\n## Usage\n\n```\n/index-file                              # Claude asks which file to index\n/index-file path/to/file.pdf            # Index a specific file in place\n/index-file Inbox/report.pdf ~/Docs/    # Move from Inbox to destination, then index\n```\n\n## Artifacts created\n\nGiven a file at `~/Docs/report.pdf`:\n\n```\n~/Docs/\n  report.pdf\n  CLAUDE.md              ← short snippet appended here\n  .index/\n    report.pdf.md        ← full summary\n```\n\n### `.index/report.pdf.md` (summary)\n\n```markdown\n# report.pdf\n\n**Type:** Research report\n**Date indexed:** 2026-02-20\n\n## Summary\n\n...\n\n## Key Points\n\n- ...\n```\n\n### `CLAUDE.md` entry\n\n```markdown\n## report.pdf\n\nA Q4 2025 market research report covering competitor analysis and pricing trends.\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "file-indexer",
+          "source": "./file-indexer",
+          "description": "Indexes files by generating AI summaries and maintaining a lightweight catalog alongside your files. Supports Inbox-based filing workflows.",
+          "version": "1.0.0",
+          "author": {
+            "name": "zjor"
+          },
+          "keywords": [
+            "indexing",
+            "files",
+            "summary",
+            "productivity",
+            "inbox",
+            "catalog"
+          ],
+          "categories": [
+            "catalog",
+            "files",
+            "inbox",
+            "indexing",
+            "productivity",
+            "summary"
+          ],
+          "install_commands": [
+            "/plugin marketplace add zjor/effective-claude",
+            "/plugin install file-indexer@effective-claude"
+          ]
+        }
+      ]
+    }
+  ]
+}

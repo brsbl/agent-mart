@@ -1,0 +1,51 @@
+{
+  "author": {
+    "id": "Taehyeon-Kim",
+    "display_name": "Taehyeon Kim",
+    "avatar_url": "https://avatars.githubusercontent.com/u/61109660?u=5b386ed3a947635b2d5fe6a145e79dbc5f52c773&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-insights",
+      "version": "1.0.0",
+      "description": "cc-insights 로컬 marketplace",
+      "repo_full_name": "Taehyeon-Kim/cc-insights",
+      "repo_url": "https://github.com/Taehyeon-Kim/cc-insights",
+      "repo_description": "Claude Code 사용 패턴 분석 및 개인화된 피드백 제공 플러그인 (한국어 특화)",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-20T12:09:20Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-insights\",\n  \"owner\": {\n    \"name\": \"Tony\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"cc-insights 로컬 marketplace\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cc-insights\",\n      \"source\": \"./\",\n      \"description\": \"Claude Code 사용 패턴 분석 및 개인화된 피드백 제공 (한국어 특화)\",\n      \"category\": \"analytics\",\n      \"tags\": [\"analytics\", \"productivity\", \"korean\", \"insights\"]\n    }\n  ],\n  \"version\": \"1.0.0\"\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"cc-insights\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Claude Code 사용 패턴 분석 및 개인화된 피드백 제공 (한국어 특화)\",\n  \"author\": {\n    \"name\": \"Tony\"\n  },\n  \"repository\": \"https://github.com/Taehyeon-Kim/cc-insights\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"analytics\",\n    \"productivity\",\n    \"korean\",\n    \"prompt-quality\",\n    \"insights\"\n  ]\n}\n",
+        "README.md": "# cc-insights\n\nClaude Code 사용 패턴을 분석하여 **개인화된 인사이트와 구체적 액션**을 제안하는 Plugin\n\n## 특징\n\n- **프롬프트 분석** - `history.jsonl` 기반 품질 점수, 모호한 프롬프트 감지\n- **트랜스크립트 분석** - `transcripts/` 기반 도구 사용, 파일 활동, 에러/워크플로우 패턴\n- **개인화된 프로필** - 나의 개발 스타일, 강점/약점 분석\n- **baseline 비교** - 전체 히스토리 대비 최근 변화 추적\n- **skill 자동 생성** - 반복 패턴 감지 시 skill 코드 제안\n- **한국어 특화** - 한국어 프롬프트 패턴 감지, 한국어 피드백\n- **보안 설계** - 민감 정보 마스킹, 경로 제한, 외부 의존성 제로\n\n## 구조\n\n```mermaid\ngraph LR\n    A[\"~/.claude/history.jsonl\"] -->|read| B[\"analyzer.py\"]\n    T[\"~/.claude/transcripts/\"] -->|read| P[\"transcript_parser.py\"]\n    B --> C[\"patterns.py\"]\n    B --> D[\"baseline.json\"]\n    P --> X[\"transcript_index.json\"]\n    C -->|감지| F[\"모호한 프롬프트\"]\n    C -->|감지| G[\"반복 패턴\"]\n    P -->|분석| Y[\"도구/파일/에러/워크플로우\"]\n    G --> I[\"skill_generator.py\"]\n```\n\n## 설치\n\n```bash\n# 1. 마켓플레이스 등록\nclaude plugin marketplace add Taehyeon-Kim/cc-insights\n\n# 2. 플러그인 설치\nclaude plugin install cc-insights@cc-insights\n\n# 3. 초기 설정\n/cc-insights:setup\n```\n\n## 빠른 시작\n\n### 1. 초기 설정 (온보딩)\n\n```\n/cc-insights:setup\n```\n\n전체 히스토리를 분석하여 개인화된 프로필과 baseline을 생성합니다.\n\n**출력 예시:**\n\n```\ncc-insights 온보딩 분석 완료\n-----------------------------------------\n  분석 기간: 2025-11-11 ~ 2026-01-14 (65일)\n  총 프롬프트: 7,443개\n  하루 평균: 114.5개\n  종합 등급: A\n-----------------------------------------\n\n당신의 개발 프로필\n  - 작업 스타일: 나이트 아울 (저녁 집중형)\n  - 세션 스타일: 딥다이브 (긴 세션 선호)\n  - 프로젝트 스타일: 멀티태스커 (다중 프로젝트)\n  - 프롬프트 스타일: 적정파 (적절한 길이)\n```\n\n### 2. 일상적인 사용\n\n```bash\n/cc-insights:summary          # 빠른 현황 확인 (매일)\n/cc-insights:tips             # 개인화된 팁\n/cc-insights:trends           # 주간 트렌드\n/cc-insights:skills           # skill 추천 목록\n/cc-insights:analyze          # 상세 분석\n/cc-insights:transcript       # 트랜스크립트 분석\n/cc-insights:projects         # 프로젝트별 분석\n/cc-insights:stats            # 전체 사용 통계\n```\n\n## 명령어 상세\n\n### `/cc-insights:setup` - 초기 설정\n\n최초 설치 시 실행하여 전체 히스토리를 분석합니다.\n\n**제공 정보:**\n- 개발 프로필 (작업 스타일, 세션 스타일, 프로젝트 스타일)\n- 강점/약점 분석 및 종합 등급 (S/A/B/C/D)\n- Skill 자동화 추천 (신뢰도 포함)\n- 구체적인 액션 아이템\n- 주요 프로젝트 현황\n- 작업 시간 패턴\n\n---\n\n### `/cc-insights:summary` - 빠른 요약\n\n매일 확인하기 좋은 간단한 현황 요약입니다.\n\n```bash\n/cc-insights:summary              # 최근 7일\n/cc-insights:summary --days 14    # 최근 14일\n```\n\n**출력 예시:**\n\n```\ncc-insights 빠른 요약 (최근 7일)\n-----------------------------------------\n  오늘: 45개 (평균 대비 +32%)\n  총 프롬프트: 312개 | 품질: 8.2/10\n  모호한 프롬프트: 28개 (9.0%)\n-----------------------------------------\n  추천: /commit skill 생성 (23회 반복)\n```\n\n---\n\n### `/cc-insights:transcript` - 트랜스크립트 분석\n\n`~/.claude/transcripts/`의 전체 대화 기록을 분석하여 도구 사용 패턴, 파일 활동, 에러/워크플로우 패턴을 제공합니다.\n\n```bash\n/cc-insights:transcript                              # 종합 요약 (7일)\n/cc-insights:transcript --days 30                    # 30일 분석\n/cc-insights:transcript --transcript-sub tools       # 도구 분포 상세\n/cc-insights:transcript --transcript-sub files       # 파일 활동\n/cc-insights:transcript --transcript-sub errors      # 에러 패턴\n/cc-insights:transcript --transcript-sub efficiency  # 세션 효율성\n/cc-insights:transcript --transcript-sub workflows   # 워크플로우 패턴\n```\n\n**출력 예시:**\n\n```\ncc-insights 트랜스크립트 분석 (최근 30일)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  분석 대상: 824개 세션 / 21,756개 도구 호출\n\n  도구 사용 분포\n   1. read               [████████████████████] 5,897회 (27.1%)\n   2. bash               [███████████████████░] 5,793회 (26.6%)\n   3. edit               [██████░░░░░░░░░░░░░░] 2,059회 (9.5%)\n\n  자주 수정된 파일 (Top 5)\n  1. src/api/v1/__init__.py           12회 (edit)\n  2. src/services/trading.py           12회 (edit)\n\n  에러 패턴\n  총 에러: 618개 (에러율: 2.8%)\n  - bash (exit=1): 425건\n\n  워크플로우 패턴\n  1. bash → bash                     (256회) 연속 명령 실행\n  2. read → read                     (168회) 다중 파일 읽기\n\n  세션 효율성\n  평균 세션: 40.3분 | 도구 밀도: 7.8회/분 | 에러율: 3.0%\n```\n\n**캐시**: 최초 빌드 후 증분 업데이트로 수초 내 완료.\n\n---\n\n### `/cc-insights:tips` - 개인화된 팁\n\n사용 패턴을 분석하여 맞춤형 개선 팁을 제공합니다.\n\n**팁 생성 기준:**\n- 작업 스타일 (야간 작업 → handoff 권장)\n- 세션 스타일 (긴 세션 → /compact 권장)\n- 프롬프트 스타일 (짧은 프롬프트 → 구체화 권장)\n- 비효율 패턴 (/clear 과다 → claude --continue 권장)\n\n---\n\n### `/cc-insights:trends` - 트렌드 분석\n\n최근 N주간의 사용 패턴 변화를 분석합니다.\n\n```bash\n/cc-insights:trends              # 최근 4주\n/cc-insights:trends --weeks 8    # 최근 8주\n```\n\n---\n\n### `/cc-insights:skills` - Skill 관리\n\n반복 패턴을 분석하여 자동화할 skill을 추천합니다.\n\n```bash\n/cc-insights:skills                      # 추천 목록\n/cc-insights:skills generate commit      # skill 코드 생성\n```\n\n---\n\n### `/cc-insights:analyze` - 상세 분석\n\n전체적인 상세 분석 리포트를 생성합니다.\n\n```bash\n/cc-insights:analyze                # 요약 출력\n/cc-insights:analyze --days 30      # 30일 분석\n/cc-insights:analyze report         # 마크다운 파일 저장\n```\n\n**분석 항목:**\n1. 프롬프트 품질 점수 (0-10)\n2. 반복 패턴 → Skill 제안\n3. 비효율 패턴 감지\n4. 시간/프로젝트 패턴\n\n## 데이터 소스\n\n| 소스 | 파일 | 분석 내용 |\n|------|------|-----------|\n| 프롬프트 히스토리 | `~/.claude/history.jsonl` | 품질 점수, 모호한 프롬프트, 반복 패턴, 시간/프로젝트 패턴 |\n| 트랜스크립트 | `~/.claude/transcripts/*.jsonl` | 도구 사용 분포, 파일 활동, 에러 패턴, 워크플로우, 세션 효율성 |\n\n## 보안\n\n- **민감 정보 마스킹**: API키, JWT, URL 크레덴셜 자동 `[REDACTED]` 처리\n- **프롬프트 비저장**: baseline에 원문 대신 `sha256[:12]` 해시 저장\n- **경로 제한**: `--output`은 `reports/` 내부만 허용, path traversal 차단\n- **파일 권한**: 민감 파일 `0600` (소유자만 읽기/쓰기)\n- **외부 의존성 제로**: Python 표준 라이브러리만 사용\n- **네트워크 통신 없음**: 모든 데이터는 로컬에서만 처리\n\n## 파일 구조\n\n```\ncc-insights/\n├── .claude-plugin/\n│   ├── plugin.json\n│   └── marketplace.json\n├── commands/\n│   ├── cc-insights:setup.md        # 초기 설정\n│   ├── cc-insights:analyze.md      # 상세 분석\n│   ├── cc-insights:summary.md      # 빠른 요약\n│   ├── cc-insights:tips.md         # 개인화된 팁\n│   ├── cc-insights:trends.md       # 트렌드 분석\n│   ├── cc-insights:skills.md       # Skill 관리\n│   ├── cc-insights:projects.md     # 프로젝트별 분석\n│   ├── cc-insights:stats.md        # 전체 통계\n│   └── cc-insights:transcript.md   # 트랜스크립트 분석\n├── scripts/\n│   ├── analyzer.py                 # 메인 분석 엔진\n│   ├── transcript_parser.py        # 트랜스크립트 파서\n│   ├── patterns.py                 # 패턴 감지 모듈\n│   └── skill_generator.py          # Skill 코드 생성\n├── data/\n│   ├── baseline.json               # 히스토리 baseline (gitignored)\n│   └── transcript_index.json       # 트랜스크립트 인덱스 캐시 (gitignored)\n├── reports/                        # 저장된 리포트 (gitignored)\n└── generated_skills/               # 생성된 Skill 파일 (gitignored)\n```\n\n## 기술 스택\n\n- **언어**: Python 3 (표준 라이브러리만 사용)\n- **분석**: 정규식 기반 패턴 매칭, n-gram 워크플로우 감지\n- **캐시**: 증분 업데이트 인덱스 (mtime 기반)\n- **출력**: CLI, Markdown\n\n## 라이선스\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "cc-insights",
+          "source": "./",
+          "description": "Claude Code 사용 패턴 분석 및 개인화된 피드백 제공 (한국어 특화)",
+          "category": "analytics",
+          "tags": [
+            "analytics",
+            "productivity",
+            "korean",
+            "insights"
+          ],
+          "categories": [
+            "analytics",
+            "insights",
+            "korean",
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Taehyeon-Kim/cc-insights",
+            "/plugin install cc-insights@cc-insights"
+          ]
+        }
+      ]
+    }
+  ]
+}
