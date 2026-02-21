@@ -354,6 +354,36 @@
           ]
         }
       ]
+    },
+    {
+      "name": "obsidi-claude",
+      "version": null,
+      "description": "Obsidian plugin for chatting with Claude AI",
+      "repo_full_name": "cameronsjo/obsidi-claude",
+      "repo_url": "https://github.com/cameronsjo/obsidi-claude",
+      "repo_description": "Obsidian plugin for chatting with Claude using the Agent SDK",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-21T04:22:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"obsidi-claude\",\n  \"owner\": {\n    \"name\": \"Cameron Sjo\",\n    \"github\": \"cameronsjo\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"obsidi-claude\",\n      \"source\": \"./.claude-plugin\",\n      \"description\": \"Obsidian plugin for chatting with Claude AI\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"obsidi-claude\",\n  \"description\": \"Obsidian plugin for chatting with Claude AI\",\n  \"author\": {\n    \"name\": \"cameronsjo\"\n  }\n}\n",
+        "README.md": "# Obsidi-Claude\n\n![Obsidi-Claude Hero](hero.png)\n\nChat with Claude AI using the Agent SDK directly in Obsidian.\n\n## Features\n\n- **Full Agent SDK Integration** - Access Claude Code's capabilities directly in Obsidian\n- **Tool Usage** - Claude can read/write files, run commands, search the web\n- **Streaming Responses** - Real-time streaming of Claude's responses\n- **Session Management** - Conversations persist and can be resumed\n- **Configurable** - Control which tools Claude can use, permission modes, and more\n\n## Requirements\n\n- [Claude Code CLI](https://code.claude.com) installed and authenticated\n- Obsidian Desktop (not mobile - uses Node.js features)\n- Node.js 18+\n\n## Installation\n\n### Development\n\n```bash\n# Clone the repo\ngit clone <repo-url>\ncd obsidi-claude\n\n# Install dependencies\nnpm install\n\n# Build\nnpm run build\n\n# For development with auto-rebuild\nnpm run dev\n```\n\n### Linking to Obsidian\n\nCreate a symlink from your Obsidian vault's plugins folder:\n\n```bash\nln -sfn /path/to/obsidi-claude /path/to/vault/.obsidian/plugins/obsidi-claude\n```\n\n## Usage\n\n1. Enable the plugin in Obsidian Settings > Community Plugins\n2. Click the message icon in the ribbon, or run \"Open Claude Chat\" command\n3. Type your message and press Enter (or click Send)\n\n## Configuration\n\nOpen Settings > Obsidi-Claude to configure:\n\n- **Model**: Choose Claude Sonnet 4.5, Opus 4, or 3.5 Sonnet\n- **Working Directory**: Where Claude operates (defaults to vault root)\n- **Permission Mode**:\n  - Default: Ask for confirmation before sensitive operations\n  - Accept Edits: Auto-approve file changes\n  - Bypass: No confirmations (use with caution)\n- **Max Turns**: Limit conversation turns\n- **Show Tool Calls**: Display when Claude uses tools\n- **Allowed Tools**: Enable/disable specific tools\n\n## Tools Available\n\nWhen enabled, Claude can use:\n\n- **Read**: Read file contents\n- **Write**: Create new files\n- **Edit**: Modify existing files\n- **Glob**: Find files by pattern\n- **Grep**: Search file contents\n- **Bash**: Run shell commands\n- **WebFetch**: Fetch web pages\n- **WebSearch**: Search the web\n\n## Architecture\n\n```\nObsidian Plugin\n    └── @anthropic-ai/claude-agent-sdk\n            └── Claude Code CLI (subprocess)\n                    └── Claude API\n```\n\nThe plugin uses the official Claude Agent SDK which spawns Claude Code as a subprocess. This provides full access to Claude Code's capabilities including file operations, shell commands, and web access.\n\n### Backend Selection\n\nThe plugin supports two backends: **SDK** (full Claude Code features) and **API** (direct Anthropic API).\n\n```\n┌───────────────────┐\n│ preferredBackend? ├─────┬────────┐\n└─────────┬─────────┘     └────────┼──────────────────────┐\n          │                        │                      │\n          ▼                        ▼                      ▼\n┌───────────────────┐     ┌────────────────┐        ┌───────────┐\n│       'sdk'       │     │     'api'      │        │   'auto'  │\n└─────────┬─────────┘     └────────┬───────┘        └─────┬─────┘\n          │                        │                      │\n          ▼                        ▼                      ▼\n┌───────────────────┐     ┌────────────────┐        ┌───────────┐\n│   SDK available?  ├─no─►│  API Backend   │◄mobile─┤ Platform? │\n└─────────┬─────────┘     └────────────────┘        └─────┬─────┘\n          │                        ▲                      │\n         yes                      no                   desktop\n          │                        │                      │\n          ▼                        │                      ▼\n┌───────────────────┐     ┌────────┴───────┐              │\n│    SDK Backend    │◄yes─┤ SDK available? │◄─────────────┘\n└───────────────────┘     └────────────────┘\n```\n\n| Backend | Features | Platform |\n|---------|----------|----------|\n| **SDK** | Full Claude Code: tools, sessions, MCP servers | Desktop only |\n| **API** | Direct Anthropic API: lighter, mobile-compatible | All platforms |\n\n## Troubleshooting\n\n### \"Claude Code not found\"\n\nEnsure Claude Code CLI is installed and in your PATH:\n\n```bash\nclaude --version\n```\n\nIf not installed, visit [code.claude.com](https://code.claude.com) for installation instructions.\n\n### Plugin not loading\n\nCheck Obsidian's developer console (Cmd+Option+I) for errors. Common issues:\n\n- Node.js version too old (need 18+)\n- Claude Code not authenticated (run `claude login`)\n\n## License\n\nMIT\n\n\n"
+      },
+      "plugins": [
+        {
+          "name": "obsidi-claude",
+          "source": "./.claude-plugin",
+          "description": "Obsidian plugin for chatting with Claude AI",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cameronsjo/obsidi-claude",
+            "/plugin install obsidi-claude@obsidi-claude"
+          ]
+        }
+      ]
     }
   ]
 }

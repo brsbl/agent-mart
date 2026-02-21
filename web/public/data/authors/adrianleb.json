@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "adrianleb",
+    "display_name": "Adrian le Bas",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1190887?u=a1dd6e8031027bad8ef6dbdb25eebb207158eb9c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "codex-plan-critique",
+      "version": null,
+      "description": "Invoke Codex CLI as a peer reviewer during planning phases. Get architectural critique before presenting plans to users.",
+      "repo_full_name": "adrianleb/codex-plan-critique-skill",
+      "repo_url": "https://github.com/adrianleb/codex-plan-critique-skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-21T12:22:24Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"codex-plan-critique\",\n  \"owner\": {\n    \"name\": \"adrianleb\",\n    \"url\": \"https://github.com/adrianleb\"\n  },\n  \"metadata\": {\n    \"description\": \"Invoke Codex CLI as a peer reviewer during planning phases. Get architectural critique before presenting plans to users.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"codex-plan-critique\",\n      \"description\": \"Invoke Codex CLI as a peer reviewer during planning phases. Get architectural critique before presenting plans to users.\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"codex-plan-critique\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Invoke Codex CLI as a peer reviewer during planning phases. Get architectural critique before presenting plans to users.\",\n  \"author\": {\n    \"name\": \"adrianleb\",\n    \"url\": \"https://github.com/adrianleb\"\n  },\n  \"repository\": \"https://github.com/adrianleb/codex-plan-critique-skill\",\n  \"homepage\": \"https://github.com/adrianleb/codex-plan-critique-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"codex\",\n    \"planning\",\n    \"architecture\",\n    \"peer-review\",\n    \"critique\",\n    \"claude-code\",\n    \"agent-skills\"\n  ]\n}\n",
+        "README.md": "# Codex Plan Critique\n\nA coding agent skill that invokes [Codex CLI](https://openai.com/index/introducing-codex/) as a peer reviewer during planning phases. Get architectural critique on your implementation plans before committing to them.\n\nWorks with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Codex](https://openai.com/index/introducing-codex/) (or any coding agent that supports skills).\n\n## What It Does\n\nWhen you're planning an implementation, this skill runs Codex in your project directory to review the plan with full visibility into your codebase. Codex acts as a senior architect and evaluates:\n\n1. **Architecture** - Patterns, structure, separation of concerns\n2. **Edge Cases** - Security, error handling, missed scenarios\n3. **Simplicity** - Is anything overengineered? Are there simpler alternatives?\n4. **File Locations** - Do referenced files exist? Are there better locations?\n\nIt returns a structured critique with a verdict (APPROVE or CONCERNS), strengths, and actionable suggestions.\n\n## Install\n\n### As a plugin (recommended)\n\nIn Claude Code:\n\n```\nclaude plugin marketplace add adrianleb/codex-plan-critique-skill\nclaude plugin install codex-plan-critique\n```\n\n### Manual install\n\n```bash\ngit clone https://github.com/adrianleb/codex-plan-critique-skill.git\n\n# Copy into your global skills (available in all projects)\ncp -r codex-plan-critique-skill/skills/codex-plan-critique ~/.claude/skills/\n\n# Or copy into a specific project (available only in that project)\ncp -r codex-plan-critique-skill/skills/codex-plan-critique your-project/.claude/skills/\n```\n\n## Usage\n\nThe skill triggers automatically during planning phases. You can also invoke it explicitly:\n\n```\n> /codex-plan-critique\n> critique this plan\n> get a peer review\n```\n\n### How It Works\n\n1. Your agent writes the current plan to a temp file\n2. The critique script runs Codex in your project directory\n3. Codex reviews the plan with access to your actual codebase\n4. The critique is displayed and incorporated into the final plan\n\n### Output Format\n\n```\n★ Codex Peer Review ─────────────────────────\n## Verdict: APPROVE\n\n## Strengths\n- Clean separation between API and data layers\n- Good use of existing middleware patterns\n\n## Concerns\n- Missing error handling for the webhook endpoint\n- Consider using the existing EventBus instead of a new pub/sub\n──────────────────────────────────────────────\n```\n\nIf Codex is unavailable, the skill gracefully skips the review and continues without blocking.\n\n## Project Structure\n\n```\n.claude-plugin/\n  plugin.json                             # Plugin manifest\nskills/\n  codex-plan-critique/\n    SKILL.md                              # Skill definition\n    scripts/\n      codex-critique.sh                   # Codex invocation script\n```\n\n## Requirements\n\n- [Codex CLI](https://openai.com/index/introducing-codex/) installed and authenticated\n- `OPENAI_API_KEY` environment variable or `codex login`\n\n## Contributing\n\nIdeas for improvement:\n\n- Support for other review agents beyond Codex\n- Configurable review criteria and depth\n- Caching to avoid re-reviewing unchanged plans\n- Integration with CI for automated plan review\n\nPRs and ideas welcome. Open an issue to discuss before large changes.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "codex-plan-critique",
+          "description": "Invoke Codex CLI as a peer reviewer during planning phases. Get architectural critique before presenting plans to users.",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add adrianleb/codex-plan-critique-skill",
+            "/plugin install codex-plan-critique@codex-plan-critique"
+          ]
+        }
+      ]
+    }
+  ]
+}

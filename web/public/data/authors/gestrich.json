@@ -37,6 +37,39 @@
           ]
         }
       ]
+    },
+    {
+      "name": "gestrich-claude-tools-skills",
+      "version": "1.1.2",
+      "description": "Phased development workflow tools for Claude Code",
+      "repo_full_name": "gestrich/claude-tools-skills",
+      "repo_url": "https://github.com/gestrich/claude-tools-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 1,
+        "pushed_at": "2026-02-21T11:24:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"gestrich-claude-tools-skills\",\n  \"version\": \"1.1.2\",\n  \"description\": \"Phased development workflow tools for Claude Code\",\n  \"owner\": {\n    \"name\": \"Bill Gestrich\",\n    \"url\": \"https://github.com/gestrich\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-tools-skills\",\n      \"source\": \"./plugin\",\n      \"description\": \"Phased development workflow tools for Claude Code\",\n      \"version\": \"1.1.2\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Tools Skills Plugin\n\nA Claude Code plugin providing phased development workflow tools for structured planning, implementation, and code review.\n\n## Skills\n\n### `/gestrich-claude-tools-next-task`\nExecute phased work from planning documents with review and commit cycles. This skill:\n- Guides you through completing one phase at a time\n- Ensures proper review before committing\n- Tracks progress and automatically marks phases complete\n- Moves completed specs to `docs/completed/`\n\n### `/gestrich-claude-tools-plan`\nCreate structured planning documents with phased implementation approach. This skill:\n- Discovers and references project-specific skills from `CLAUDE.md`\n- Creates plans in `docs/proposed/` with proper naming conventions\n- Breaks work into discrete, reviewable phases\n- Always includes a validation phase\n\n### `/gestrich-claude-tools-review`\nCreate structured code review documents for changes. This skill:\n- Analyzes git changes (commits, diffs, or unstaged work)\n- Categorizes changes by type (architecture, bugs, features, refactoring, tests)\n- Provides rationale and impact analysis\n- Generates review documents in `docs/reviews/`\n\n## Installation\n\n### From Marketplace (Recommended)\n\n1. Add the marketplace (if not already added):\n```bash\nclaude plugin marketplace add https://github.com/gestrich/claude-tools-skills\n```\n\n2. Install the plugin with system-wide scope:\n```bash\nclaude plugin install claude-tools-skills@gestrich-claude-tools-skills --scope user\n```\n\nThe `--scope user` parameter enables system-wide installation for all projects.\n\n3. Restart Claude Code\n\n### From Local Directory (For Development)\n\n1. Clone this repository:\n```bash\ngit clone https://github.com/gestrich/claude-tools-skills.git\ncd claude-tools-skills\n```\n\n2. Run Claude with the plugin directory:\n```bash\nclaude --plugin-dir ~/path/to/claude-tools-skills/plugin\n```\n\n**Or** add to your `~/.claude/config.json`:\n```json\n{\n  \"plugins\": [\n    {\n      \"path\": \"/path/to/claude-tools-skills/plugin\"\n    }\n  ]\n}\n```\n\nThen restart Claude Code.\n\n## Usage\n\nInvoke skills using slash commands in Claude Code:\n\n```\n/gestrich-claude-tools-next-task\n/gestrich-claude-tools-plan\n/gestrich-claude-tools-review\n```\n\n**Note**: The VSCode extension provides the best experience with slash command discovery. In the terminal, slash commands may not appear in autocomplete but will still work when typed.\n\n## Troubleshooting\n\n### Plugin Not Appearing After Installation\n\nIf the plugin doesn't appear after marketplace installation:\n\n1. Manually enable it by editing `~/.claude/config.json`:\n```json\n{\n  \"enabledPlugins\": [\n    \"claude-tools-skills@gestrich-claude-tools-skills\"\n  ]\n}\n```\n\n2. Restart Claude Code\n\n### Updating the Plugin\n\nTo update to the latest version:\n\n1. Update the marketplace:\n```bash\nclaude plugin marketplace update\n```\n\n2. Uninstall and reinstall the plugin:\n```bash\nclaude plugin uninstall claude-tools-skills@gestrich-claude-tools-skills\nclaude plugin install claude-tools-skills@gestrich-claude-tools-skills --scope user\n```\n\n**Note**: Asking Claude to update via CLI doesn't work reliably — manual reinstallation is more dependable.\n\n### Slash Commands Not Working\n\n- Verify the plugin is installed: `claude plugin list`\n- Check that skills appear in the available skills list\n- Try restarting Claude Code\n- Use the VSCode extension for better slash command discovery\n\n## Project Structure\n\n```\nclaude-tools/\n├── .claude-plugin/\n│   └── marketplace.json     # Package registry entry\n├── plugin/                  # Main plugin directory\n│   ├── .claude-plugin/\n│   │   └── plugin.json     # Plugin metadata\n│   ├── skills/\n│   │   ├── gestrich-claude-tools-next-task/\n│   │   │   └── SKILL.md\n│   │   ├── gestrich-claude-tools-plan/\n│   │   │   └── SKILL.md\n│   │   └── gestrich-claude-tools-review/\n│   │       └── SKILL.md\n│   └── LICENSE\n└── docs/\n    ├── proposed/           # Work-in-progress planning docs\n    ├── completed/          # Finished planning docs\n    └── reviews/            # Code review documents\n```\n\n## Documentation Structure\n\nThe plugin expects the following directory structure in your projects:\n\n- `docs/proposed/` - Planning documents for active work\n- `docs/completed/` - Archive of completed planning documents\n- `docs/reviews/` - Code review documents\n\n## License\n\nMIT License - see [LICENSE](plugin/LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-tools-skills",
+          "source": "./plugin",
+          "description": "Phased development workflow tools for Claude Code",
+          "version": "1.1.2",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add gestrich/claude-tools-skills",
+            "/plugin install claude-tools-skills@gestrich-claude-tools-skills"
+          ]
+        }
+      ]
     }
   ]
 }
