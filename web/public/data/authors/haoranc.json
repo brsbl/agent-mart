@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "haoranc",
+    "display_name": "haoranc",
+    "avatar_url": "https://avatars.githubusercontent.com/u/17637795?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-estimate-marketplace",
+      "version": null,
+      "description": "Effort estimation plugin for AI coding agents",
+      "repo_full_name": "haoranc/agent-estimate",
+      "repo_url": "https://github.com/haoranc/agent-estimate",
+      "repo_description": "The first open-source effort estimation tool built for AI coding agents. PERT + METR + wave planning.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-21T08:27:04Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"agent-estimate-marketplace\",\n    \"owner\": {\n        \"name\": \"haoranc\"\n    },\n    \"metadata\": {\n        \"description\": \"Effort estimation plugin for AI coding agents\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"agent-estimate\",\n            \"source\": \"./\",\n            \"description\": \"PERT three-point estimation with METR reliability thresholds and wave planning\"\n        }\n    ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agent-estimate\",\n  \"description\": \"Effort estimation for AI coding agents — PERT three-point estimation with METR reliability thresholds and wave planning\",\n  \"version\": \"0.2.0\",\n  \"author\": {\n    \"name\": \"haoranc\"\n  },\n  \"repository\": \"https://github.com/haoranc/agent-estimate\",\n  \"homepage\": \"https://github.com/haoranc/agent-estimate\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"ai\", \"agents\", \"estimation\", \"pert\", \"planning\", \"wave-planning\", \"metr\"]\n}\n",
+        "README.md": "# agent-estimate\n\n[![PyPI Version](https://img.shields.io/pypi/v/agent-estimate)](https://pypi.org/project/agent-estimate/)\n[![Python Versions](https://img.shields.io/pypi/pyversions/agent-estimate)](https://pypi.org/project/agent-estimate/)\n[![License](https://img.shields.io/pypi/l/agent-estimate)](https://github.com/haoranc/agent-estimate/blob/main/LICENSE)\n[![CI](https://github.com/haoranc/agent-estimate/actions/workflows/ci.yml/badge.svg)](https://github.com/haoranc/agent-estimate/actions/workflows/ci.yml)\n\n`agent-estimate` is a CLI for estimating delivery time of AI-agent work using:\n\n- three-point PERT estimates\n- METR-style model reliability thresholds\n- dependency-aware wave planning\n- explicit review overhead modes (`none`, `standard`, `complex`)\n- non-coding task type estimation (brainstorm, research, config, docs)\n- multi-agent session estimation\n\n## Installation\n\nInstall from PyPI:\n\n```bash\npip install agent-estimate\n```\n\nInstall from source for development:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\npip install -e '.[dev]'\n```\n\n## Quick Start\n\nEstimate one task from the command line:\n\n```bash\nagent-estimate estimate \"Implement OAuth login flow\"\n```\n\nShow version:\n\n```bash\nagent-estimate --version\n```\n\n## Claude Code Plugin\n\n`agent-estimate` includes a Claude Code plugin for interactive estimation in Claude Code sessions.\n\n### Install\n\n**Option 1 — From marketplace:**\n\n```\n/plugin marketplace add haoranc/agent-estimate\n/plugin install agent-estimate@agent-estimate-marketplace\n```\n\n**Option 2 — Local development:**\n\n```bash\nclaude --plugin-dir /path/to/agent-estimate\n```\n\n**Prerequisite**: The CLI must be installed first: `pip install agent-estimate`\n\n### Plugin Usage\n\n```\n/estimate Add a login page with OAuth\n/estimate --file spec.md\n/estimate --issues 1,2,3 --repo myorg/myrepo\n/validate-estimate observation.yaml\n/calibrate\n```\n\n## Codex Skill Layout\n\nFor Codex-oriented tooling, this repo includes a Codex-specific skill at:\n\n- `.agent/skills/estimate/SKILL.md`\n\nThe Claude plugin skill remains at:\n\n- `skills/estimate/SKILL.md`\n\nBoth skills cover the same CLI capabilities (`estimate`, `validate`, `calibrate`) but are phrased for their respective ecosystems.\n\n## Usage Examples\n\nEstimate tasks from a text file:\n\n```bash\nagent-estimate estimate --file tests/fixtures/tasks_multi.txt\n```\n\nOutput JSON for downstream tooling:\n\n```bash\nagent-estimate estimate \"Refactor auth pipeline\" --format json\n```\n\nEstimate directly from GitHub issues:\n\n```bash\nagent-estimate estimate --repo haoranc/agent-estimate --issues 11,12,14\n```\n\nValidate estimate vs observed outcome and persist to calibration DB:\n\n```bash\nagent-estimate validate tests/fixtures/observation_valid.yaml --db ~/.agent-estimate/calibration.db\n```\n\n## TestPyPI Validation\n\nManual local publish (requires TestPyPI API token configured for `twine`):\n\n```bash\npython -m build\npython -m twine check dist/*\npython -m twine upload --repository testpypi dist/*\npip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple agent-estimate\n```\n\nOr run the GitHub Actions workflow `TestPyPI Dry Run` to publish and smoke-test install end-to-end.\n\n## Default METR Thresholds\n\nThe default model thresholds are defined in `src/agent_estimate/metr_thresholds.yaml`:\n\n| Model        | p80 threshold |\n| ------------ | ------------- |\n| Opus         | 90 minutes    |\n| GPT-5.3      | 60 minutes    |\n| GPT-5        | 50 minutes    |\n| GPT-5.2      | 55 minutes    |\n| Gemini 3 Pro | 45 minutes    |\n| Sonnet       | 30 minutes    |\n\n## Agent Config Example\n\nPass a custom config file with `--config`:\n\n```yaml\nagents:\n  - name: Claude\n    capabilities: [planning, implementation, review]\n    parallelism: 2\n    cost_per_turn: 0.12\n    model_tier: frontier\n  - name: Codex\n    capabilities: [implementation, debugging, testing]\n    parallelism: 3\n    cost_per_turn: 0.08\n    model_tier: production\nsettings:\n  friction_multiplier: 1.15\n  inter_wave_overhead: 0.25\n  review_overhead: 0.2\n  metr_fallback_threshold: 45.0\n```\n\nThen run:\n\n```bash\nagent-estimate estimate \"Ship packaging flow\" --config ./my_agents.yaml\n```\n\n## Contributing\n\n1. Fork and create a branch from `main`.\n2. Install dev dependencies:\n   ```bash\n   pip install -e '.[dev]'\n   ```\n3. Run checks:\n   ```bash\n   ruff check .\n   pytest -q\n   ```\n4. Open a pull request with a clear summary and test evidence.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "agent-estimate",
+          "source": "./",
+          "description": "PERT three-point estimation with METR reliability thresholds and wave planning",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add haoranc/agent-estimate",
+            "/plugin install agent-estimate@agent-estimate-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

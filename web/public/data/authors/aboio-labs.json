@@ -1,0 +1,58 @@
+{
+  "author": {
+    "id": "aboio-labs",
+    "display_name": "Aboio",
+    "avatar_url": "https://avatars.githubusercontent.com/u/187453272?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "aboio-agent-skills",
+      "version": null,
+      "description": "Official Aboio agent skills for Claude Code - Gleam, Postgres, and code quality tools",
+      "repo_full_name": "aboio-labs/aboio-skills",
+      "repo_url": "https://github.com/aboio-labs/aboio-skills",
+      "repo_description": "Agent skills to work in Gleam codebases. Not official package. Made by Aboio-Labs",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-21T19:32:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://code.claude.com/schemas/marketplace.json\",\n  \"name\": \"aboio-agent-skills\",\n  \"owner\": {\n    \"name\": \"Aboio\",\n    \"email\": \"aboio@aboio.com.br\"\n  },\n  \"metadata\": {\n    \"description\": \"Official Aboio agent skills for Claude Code - Gleam, Postgres, and code quality tools\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"gleam\",\n      \"description\": \"Comprehensive Gleam development skills and tools\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/gleam\",\n        \"./skills/pg-gleam\",\n        \"./skills/code-simplifier\",\n        \"./skills/observability-master\",\n        \"./skills/tdd\"\n      ]\n    },\n    {\n      \"name\": \"gleam-lsp\",\n      \"description\": \"Code Intelligence support for the Gleam language using the official gleam lsp server\",\n      \"source\": \"./plugins/gleam-lsp\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Aboio Agent Skills\n\nAgent Skills to help developers using AI agents with Gleam and Postgres. Agent Skills are folders of instructions, scripts, and resources that agents like Claude Code, Cursor, Github Copilot, etc. can discover and use to do things more accurately and efficiently.\n\nThe skills in this repo follow the [Agent Skills](https://agentskills.io/) format.\n\n## Disclaimer & Safety\n\n**Experimental Nature**: These skills are experimental and tailored to Aboio's specific software architecture and use cases. They do not aim to be exhaustive documentation for the entire Gleam language or Postgres ecosystem.\n\n**Review Before Use**: We strongly recommend reading all `.md` files within a skill before adding it to your environment. Understanding the instructions and context injected into your agent is crucial to prevent unintended behavior or prompt injection risks.\n\n**Contributions**: If you find anti-patterns, better approaches, or want to add support for libraries not currently covered, we welcome your contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for details.\n\n## Installation\n\n```bash\n# Example installation (if using a Claude Code)\n/plugin marketplace add aboio-labs/aboio-skills\n```\n\n## Available Skills\n\n### [gleam](./skills/gleam)\n\nComprehensive Gleam skill covering language fundamentals, backend (OTP, Squirrel, HTTP, auth), frontend (Lustre 5.x, rsvp, modem, plinth), and library design.\n\n### [pg-gleam](./skills/pg-gleam)\n\nPostgres performance optimization and best practices for a Gleam + Squirrel + POG + Cigogne stack.\n\n### [code-simplifier](./skills/code-simplifier)\n\nExpert Gleam code simplification specialist. Refines recently modified code for clarity, consistency, and maintainability without changing behavior.\n\n### [api-gleam](./skills/api-gleam)\n\nREST/JSON API design patterns for Gleam + Wisp + Mist. Covers route naming, error responses, pagination, serialization, request dispatch, SPA routing, and middleware composition.\n\n### [observability-master](./skills/observability-master)\n\nSenior observability engineer specializing in Gleam/Erlang/OTP logging. Finds unlogged error branches and adds structured logging with context.\n\n## Skill Structure\n\nEach skill follows the [Agent Skills Open Standard](https://agentskills.io/):\n\n- `SKILL.md` - Required skill manifest with frontmatter (name, description, metadata)\n- `references/` - Individual reference files\n\n## License\n\nMIT\n",
+        "plugins/gleam-lsp/README.md": "# Gleam LSP\n\nGleam language server for code intelligence in Claude Code.\n\n## What This Plugin Provides\n\nThis plugin enables Claude Code to use the official Gleam language server (`gleam lsp`), providing:\n\n- **Diagnostics:** Real-time error detection and warnings\n- **Go to Definition:** Navigate to function, type, and variable definitions\n- **Find References:** Locate all usages of a symbol\n- **Hover Information:** View type signatures and documentation\n- **Document Symbols:** Navigate file structure\n- **Code Formatting:** Format code using Gleam's official formatter\n- **Code Actions:** Quick fixes and refactorings\n- **Completion:** Type-aware code completion\n\n## Supported File Extensions\n\n- `.gleam`\n\n## Requirements\n\nThis plugin requires the Gleam binary to be installed and available in your PATH.\n\n### Installation\n\n**macOS:**\n```bash\nbrew install gleam\n```\n\n**Linux:**\n```bash\ncurl -sSfL https://gleam.run/install.sh | sh\n```\n\n**Windows:**\n```powershell\nscoop install gleam\n```\n\n**Verify:**\n```bash\ngleam --version\n```\n\n## How It Works\n\nThe plugin spawns the Gleam language server using the command:\n```bash\ngleam lsp\n```\n\nCommunication happens over stdio using the Language Server Protocol (LSP).\n\n## Configuration\n\nThe LSP server is configured with:\n\n```json\n{\n  \"command\": \"gleam\",\n  \"args\": [\"lsp\"],\n  \"extensionToLanguage\": {\n    \".gleam\": \"gleam\"\n  }\n}\n```\n\n## Installation in Claude Code\n\n### Option 1: Via Claude Code UI\n\n1. In Claude Code, run `/plugin install`\n2. Search for \"aboio\" or \"gleam-lsp\"\n3. Select `gleam-lsp` from the Aboio marketplace\n4. Install\n\n### Option 2: Add Marketplace Manually\n\n1. Add the Aboio marketplace to your Claude Code settings:\n   - Repository: `https://github.com/Aboio-Labs/agent-skills`\n   - Or: `git@github.com:Aboio-Labs/agent-skills.git`\n\n2. Then install the plugin via `/plugin install` and search for \"gleam-lsp\"\n\n## Usage in Claude Code\n\nOnce installed, the LSP automatically starts when Claude opens a `.gleam` file in a Gleam project (directory containing `gleam.toml`).\n\nClaude can then use LSP features like:\n\n```\nUser: \"Find where the User type is defined\"\nClaude: *uses lsp.goToDefinition*\n\nUser: \"Show me all places where parse_request is used\"\nClaude: *uses lsp.findReferences*\n\nUser: \"Are there any errors in this file?\"\nClaude: *uses lsp.diagnostics*\n```\n\n## Troubleshooting\n\n### LSP Server Not Starting\n\nEnsure you're in a Gleam project directory (contains `gleam.toml`):\n```bash\nls gleam.toml\n```\n\n### Command Not Found\n\nVerify Gleam is in your PATH:\n```bash\nwhich gleam\ngleam --version\n```\n\n### Test LSP Manually\n\n```bash\ncd your-gleam-project\ngleam lsp\n# Should output: Gleam Language Server listening on stdio\n```\n\n## Resources\n\n- [Gleam Language Server Documentation](https://gleam.run/language-server/)\n- [Gleam Official Site](https://gleam.run/)\n- [Language Server Protocol](https://microsoft.github.io/language-server-protocol/)\n- [Aboio Agent Skills Repository](https://github.com/aboio/agent-skills)\n"
+      },
+      "plugins": [
+        {
+          "name": "gleam",
+          "description": "Comprehensive Gleam development skills and tools",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/gleam",
+            "./skills/pg-gleam",
+            "./skills/code-simplifier",
+            "./skills/observability-master",
+            "./skills/tdd"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add aboio-labs/aboio-skills",
+            "/plugin install gleam@aboio-agent-skills"
+          ]
+        },
+        {
+          "name": "gleam-lsp",
+          "description": "Code Intelligence support for the Gleam language using the official gleam lsp server",
+          "source": "./plugins/gleam-lsp",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add aboio-labs/aboio-skills",
+            "/plugin install gleam-lsp@aboio-agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
