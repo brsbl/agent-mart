@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "KwCCCC",
+    "display_name": "KwCCCC",
+    "avatar_url": "https://avatars.githubusercontent.com/u/145317738?u=e2674d511d0a035be088b3693e0650e2b88f11ad&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-statusbar",
+      "version": null,
+      "description": "Compact statusline HUD for Claude Code — OMC-style ctx/usage, agent tree, profile, skill label",
+      "repo_full_name": "KwCCCC/claude-statusbar",
+      "repo_url": "https://github.com/KwCCCC/claude-statusbar",
+      "repo_description": "Compact statusline for Claude Code — OMC-style ctx/usage, agent tree, profile, skill label",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-21T19:36:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-statusbar\",\n  \"owner\": {\n    \"name\": \"KwCCCC\",\n    \"url\": \"https://github.com/KwCCCC\"\n  },\n  \"metadata\": {\n    \"description\": \"Compact statusline HUD for Claude Code — OMC-style ctx/usage, agent tree, profile, skill label\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-statusbar\",\n      \"source\": \"./\",\n      \"description\": \"OMC-style compact ctx/usage, multiline agent tree with model tier colors, account email, session name, skill label. Zero config required.\",\n      \"category\": \"monitoring\",\n      \"tags\": [\"statusline\", \"hud\", \"monitoring\", \"context\", \"agents\", \"usage\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-statusbar\",\n  \"description\": \"Compact statusline HUD for Claude Code — OMC-style ctx/usage, agent tree, profile, skill label\",\n  \"version\": \"1.0.28\",\n  \"author\": {\n    \"name\": \"KwCCCC\",\n    \"url\": \"https://github.com/KwCCCC\"\n  },\n  \"homepage\": \"https://github.com/KwCCCC/claude-statusbar\",\n  \"repository\": \"https://github.com/KwCCCC/claude-statusbar\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"statusline\", \"hud\", \"monitoring\", \"context\", \"agents\", \"usage\", \"claude-code\"]\n}\n",
+        "README.md": "# claude-statusbar\n\nCompact statusline plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Inspired by [OMC HUD](https://github.com/nicobailey/claude-code-hud).\n\n```\nrepo:(genlab-tools) git:(main) ↑2 ↓1 | ctx:25% | 5h:41%(3h14m) wk:11%(5d17h) @my-session\ndevelop@email.com | Opus 4.6 (Max) v2.1.50 | 1 CLAUDE.md | +15 -3 | skill:write-spec\nagents:3\n├─ A architect       2m  analyzing architecture patterns...\n├─ e explore        45s  searching for test files\n└─ x exec            1m  implementing validation logic\n```\n\n## Features\n\n**Line 1 — Repo & Usage**\n- `repo:(path)` project path (yellow) + `git:(branch)` (cyan) with `↑↓` ahead/behind\n- `ctx:XX%` — context window usage with color thresholds (green < 70%, yellow 70-84%, red >= 85%)\n- `5h:XX%(reset) wk:XX%(reset)` — 5-hour and 7-day rate limit usage with reset countdown\n- `COMPRESS?` warning at 80%+, `CRITICAL` at 85%+\n- Session name with hash-based random color (set via `/rename`)\n\n**Line 2 — Identity & Environment**\n- Account email (white, fetched from Anthropic OAuth / macOS Keychain, cached 1 hour)\n- Model name + billing plan (dim) + CLI version (dim)\n- CLAUDE.md / rules / MCPs / hooks counts\n- `+N -N` line diff (green/red)\n- Active skill label (auto-detected from transcript)\n\n**Agent Tree**\n- OMC-style multiline tree with box-drawing characters\n- Model tier colors: opus = magenta, sonnet = yellow, haiku = green\n- 1-2 char agent code with uppercase = opus tier\n- Right-aligned duration with color thresholds (green < 2m, yellow 2-5m, red >= 5m)\n- CJK-aware description truncation\n\n## Installation\n\n### 1. Add the marketplace\n\n```\n/plugin marketplace add KwCCCC/claude-statusbar\n```\n\n### 2. Install the plugin\n\n```\n/plugin install claude-statusbar@claude-statusbar\n```\n\n### 3. Activate the statusline\n\n```\n/claude-statusbar:setup\n```\n\n## Configuration\n\nOptional. Create `~/.claude/plugins/claude-statusbar/config.json` to customize:\n\n```json\n{\n  \"pathLevels\": 1,\n  \"gitStatus\": {\n    \"enabled\": true,\n    \"showDirty\": true,\n    \"showAheadBehind\": true,\n    \"showFileStats\": false\n  },\n  \"display\": {\n    \"showModel\": true,\n    \"showConfigCounts\": true,\n    \"showUsage\": true,\n    \"usageBarEnabled\": false,\n    \"showTools\": false,\n    \"showAgents\": true,\n    \"showTodos\": false,\n    \"showDuration\": true,\n    \"autocompactBuffer\": \"enabled\"\n  }\n}\n```\n\nAll fields are optional. Unset fields use defaults.\n\n### Display options\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `showModel` | `true` | Model name + plan bracket |\n| `showConfigCounts` | `true` | CLAUDE.md, rules, MCPs, hooks counts |\n| `showUsage` | `true` | 5h/weekly rate limit usage |\n| `usageBarEnabled` | `false` | Show usage as progress bar |\n| `showTools` | `false` | Tool call summary line |\n| `showAgents` | `true` | Agent tree |\n| `showTodos` | `false` | Todo progress line |\n| `showDuration` | `true` | Session duration |\n| `autocompactBuffer` | `enabled` | Show buffered context % |\n\n### Git options\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `enabled` | `true` | Show git info |\n| `showDirty` | `true` | `*` indicator for uncommitted changes |\n| `showAheadBehind` | `true` | `↑N ↓N` ahead/behind remote |\n| `showFileStats` | `false` | File-level change counts |\n\n### Other options\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `pathLevels` | `1` | Directory depth to show (1-3) |\n| `lineLayout` | `expanded` | `expanded` or `compact` |\n| `showSeparators` | `false` | Separator line between sections |\n| `extraCmd` | auto | External command for extra label (auto-resolves bundled `skill-label.sh`) |\n\n## Color Thresholds\n\n### Context window (`ctx:`)\n| Range | Color |\n|-------|-------|\n| 0-69% | Green |\n| 70-84% | Yellow |\n| 85-100% | Red |\n\n### Rate limit usage (`5h:` / `wk:`)\nSame thresholds as context window.\n\n### Agent duration\n| Range | Color |\n|-------|-------|\n| < 2 min | Green |\n| 2-5 min | Yellow |\n| >= 5 min | Red |\n\n### Model tier (agent tree)\n| Model | Color | Code case |\n|-------|-------|-----------|\n| Opus | Magenta | UPPERCASE |\n| Sonnet | Yellow | lowercase |\n| Haiku | Green | lowercase |\n\n## Requirements\n\n- Claude Code with plugin support\n- Node.js >= 18.0.0 or Bun\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-statusbar",
+          "source": "./",
+          "description": "OMC-style compact ctx/usage, multiline agent tree with model tier colors, account email, session name, skill label. Zero config required.",
+          "category": "monitoring",
+          "tags": [
+            "statusline",
+            "hud",
+            "monitoring",
+            "context",
+            "agents",
+            "usage"
+          ],
+          "categories": [
+            "agents",
+            "context",
+            "hud",
+            "monitoring",
+            "statusline",
+            "usage"
+          ],
+          "install_commands": [
+            "/plugin marketplace add KwCCCC/claude-statusbar",
+            "/plugin install claude-statusbar@claude-statusbar"
+          ]
+        }
+      ]
+    }
+  ]
+}
