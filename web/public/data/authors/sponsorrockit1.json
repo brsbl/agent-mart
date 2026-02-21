@@ -1,0 +1,44 @@
+{
+  "author": {
+    "id": "sponsorrockit1",
+    "display_name": "sponsorrockit1",
+    "avatar_url": "https://avatars.githubusercontent.com/u/100306656?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "askcosmosemu",
+      "version": null,
+      "description": "Marketplace for the askcosmosemu Claude Code plugin",
+      "repo_full_name": "sponsorrockit1/askcosmosemu",
+      "repo_url": "https://github.com/sponsorrockit1/askcosmosemu",
+      "repo_description": "Claude Code plugin: read-only skill for agents to verify and query a local Azure Cosmos DB emulator",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-21T04:06:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"askcosmosemu\",\n  \"description\": \"Marketplace for the askcosmosemu Claude Code plugin\",\n  \"owner\": {\n    \"name\": \"sponsorrockit1\",\n    \"email\": \"sponsorrockit@gmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"askcosmosemu\",\n      \"description\": \"Read-only skill for agents to verify and query a local Azure Cosmos DB emulator\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"sponsorrockit1\",\n        \"email\": \"sponsorrockit@gmail.com\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"askcosmosemu\",\n  \"description\": \"Read-only skill for agents to verify and query a local Azure Cosmos DB emulator\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Steve\",\n    \"email\": \"\"\n  },\n  \"homepage\": \"https://github.com/sponsorrockit1/askcosmosemu\",\n  \"repository\": \"https://github.com/sponsorrockit1/askcosmosemu\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"cosmos\", \"cosmosdb\", \"emulator\", \"verify\", \"query\", \"azure\"]\n}\n",
+        "README.md": "# askcosmosemu\n\nA Claude Code plugin that gives AI agents a read-only tool to verify and query a local [Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator).\n\nUse it to confirm databases, containers, and documents exist after agents write data — without risking any modifications.\n\n## Install\n\n```\n/plugin install https://github.com/sponsorrockit1/askcosmosemu\n```\n\n## Prerequisites\n\n- .NET 10 SDK — `dotnet --version` should show `10.x`\n- Azure Cosmos DB Emulator running on your network\n\n## Configuration\n\nSet one of the following in your project's `.env` or `.env.local` (gitignored):\n\n**Option A — Connection string:**\n```env\nCOSMOS_CONNECTION_STRING=AccountEndpoint=https://<host>:8081/;AccountKey=<key>\n```\n\n**Option B — Endpoint + key file:**\n```env\nCOSMOS_ENDPOINT=https://<host>:8081/\nCOSMOS_KEY_FILE=C:\\path\\to\\emulator.key\n```\n\n**Option C — Endpoint + inline key:**\n```env\nCOSMOS_ENDPOINT=https://<host>:8081/\nCOSMOS_KEY=<base64-encoded-key>\n```\n\nThe script reads `.env` and `.env.local` from the current working directory automatically — no need to export env vars manually.\n\n## Usage\n\nAsk your agent to run any of these:\n\n```\n/askcosmosemu verify\n/askcosmosemu verify db=mydb\n/askcosmosemu verify db=mydb cont=mycontainer\n/askcosmosemu query db=mydb cont=mycontainer sql=\"SELECT * FROM c\" limit=5\n```\n\nOr directly in bash:\n\n```bash\nSCRIPT=$(find \"$USERPROFILE/.claude\" -name \"askcosmosemu.cs\" | head -1)\n\ndotnet run \"$SCRIPT\" verify\ndotnet run \"$SCRIPT\" verify --db mydb\ndotnet run \"$SCRIPT\" verify --db mydb --cont mycontainer\ndotnet run \"$SCRIPT\" query --db mydb --cont mycontainer --sql \"SELECT * FROM c\" --limit 5\n```\n\n## Output\n\nAll output is JSON on stdout. Exit code `0` = success, non-zero = failure.\n\n```json\n// verify success\n{\"status\":\"ok\",\"endpoint\":\"https://localhost:8081/\",\"latency_ms\":42}\n\n// verify db+container success\n{\"status\":\"ok\",\"endpoint\":\"https://localhost:8081/\",\"database\":\"mydb\",\"container\":\"mycontainer\",\"latency_ms\":18}\n\n// any failure\n{\"status\":\"error\",\"message\":\"Database 'mydb' not found\"}\n\n// query results\n[{\"id\":\"1\",\"name\":\"foo\"},{\"id\":\"2\",\"name\":\"bar\"}]\n```\n\n## What it does NOT do\n\n- Create, update, or delete any data\n- Support Azure-hosted Cosmos DB (emulator only)\n- Modify emulator configuration\n- Retry on failure\n\n## Notes\n\n- The emulator uses a self-signed TLS certificate — the script bypasses cert validation intentionally. Only use this tool for local development.\n- NuGet packages are cached after first run — subsequent runs are fast.\n- The `.env` parser handles `KEY=value`, `KEY=\"value\"`, and `KEY='value'` but not multiline values or shell variable expansion.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "askcosmosemu",
+          "description": "Read-only skill for agents to verify and query a local Azure Cosmos DB emulator",
+          "version": "1.0.0",
+          "source": "./",
+          "author": {
+            "name": "sponsorrockit1",
+            "email": "sponsorrockit@gmail.com"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add sponsorrockit1/askcosmosemu",
+            "/plugin install askcosmosemu@askcosmosemu"
+          ]
+        }
+      ]
+    }
+  ]
+}
