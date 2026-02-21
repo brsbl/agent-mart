@@ -34,6 +34,60 @@
           ]
         }
       ]
+    },
+    {
+      "name": "xiaolai",
+      "version": null,
+      "description": "OpenAI Codex MCP integration for Claude Code",
+      "repo_full_name": "xiaolai/codex-toolkit-for-claude",
+      "repo_url": "https://github.com/xiaolai/codex-toolkit-for-claude",
+      "repo_description": "OpenAI Codex MCP integration for Claude Code — audit, implement, verify, and debug via Codex",
+      "signals": {
+        "stars": 4,
+        "forks": 0,
+        "pushed_at": "2026-02-21T04:57:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"xiaolai\",\n  \"owner\": {\n    \"name\": \"xiaolai\"\n  },\n  \"metadata\": {\n    \"description\": \"OpenAI Codex MCP integration for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"codex-toolkit\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"xiaolai/codex-toolkit-for-claude\"\n      },\n      \"description\": \"Audit, implement, verify, review, and debug via OpenAI Codex MCP\",\n      \"version\": \"0.3.0\",\n      \"author\": {\n        \"name\": \"xiaolai\"\n      },\n      \"repository\": \"https://github.com/xiaolai/codex-toolkit-for-claude\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"codex\", \"openai\", \"audit\", \"mcp\", \"code-review\"],\n      \"category\": \"developer-tools\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"codex-toolkit\",\n  \"version\": \"0.3.0\",\n  \"description\": \"OpenAI Codex MCP integration for Claude Code — audit, implement, verify, review, and debug via Codex\",\n  \"author\": {\n    \"name\": \"xiaolai\"\n  }\n}\n",
+        "README.md": "# codex-toolkit\n\nOpenAI Codex MCP integration for Claude Code.\n\nUse OpenAI's Codex models as an autonomous worker from within Claude Code — for code audits, implementation, verification, bug analysis, and plan review.\n\n## Installation\n\n### Prerequisites\n\n1. Install [Codex CLI](https://github.com/openai/codex) (v0.101.0 or later):\n\n```bash\nnpm install -g @openai/codex\n```\n\n2. Authenticate with OpenAI — we recommend using a subscription (ChatGPT Plus/Pro) rather than an API key:\n\n```bash\ncodex login\n```\n\nIf you prefer using an API key instead, set it in your environment:\n\n```bash\nexport OPENAI_API_KEY=\"your-key-here\"\n```\n\n### Install the plugin\n\nFirst, add the marketplace (once):\n\n```\n/plugin marketplace add xiaolai/codex-toolkit-for-claude\n```\n\nThen install:\n\n```\n/plugin install codex-toolkit@xiaolai\n```\n\nChoose an install scope based on your needs:\n\n| Scope | Command | Effect |\n|-------|---------|--------|\n| **User** (default) | `/plugin install codex-toolkit@xiaolai` | Available in all your projects |\n| **Project** | `/plugin install codex-toolkit@xiaolai --scope project` | Shared with team via `.claude/settings.json` (committed to repo) |\n| **Local** | `/plugin install codex-toolkit@xiaolai --scope local` | Only you, only this repo (gitignored) |\n\n### Configure for your project (optional)\n\nRun `/init` inside your project to generate a `.codex-toolkit.md` config file. This lets you set project-specific defaults:\n\n- Default model and reasoning effort\n- Audit focus (balanced, security-first, performance-first, quality-first)\n- File patterns to skip during audits\n- Project-specific instructions for Codex (your stack, conventions, constraints)\n\nIf no config file exists, commands use sensible built-in defaults.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/init` | Initialize project config — set default model, audit focus, skip patterns |\n| `/preflight` | Check Codex connectivity, auth status, and discover available models |\n| `/implement` | Delegate an implementation plan to Codex for autonomous execution |\n| `/audit` | Code audit — fast 5-dimension (`--mini`, default) or thorough 9-dimension (`--full`) |\n| `/verify` | Verify that issues from a previous audit have been fixed |\n| `/bug-analyze` | Root cause analysis for user-described bugs |\n| `/review-plan` | Architectural review of implementation plans |\n| `/audit-fix` | Full audit→fix→verify loop — runs until all issues are resolved or you stop |\n| `/continue` | Continue a previous Codex session — iterate on findings or request fixes |\n\n> When installed as a plugin, commands appear as `/codex-toolkit:<command>` (e.g. `/codex-toolkit:audit`).\n\n## How it works\n\nEach command follows the same pattern:\n\n1. **Choose model and settings** — pick a Codex model, reasoning effort, and sandbox level\n2. **Send to Codex** — the task is dispatched to `mcp__codex__codex` (Codex running as an MCP server) with `developer-instructions` to set the role persona and `config` for reasoning effort\n3. **Fallback** — if Codex is unavailable or returns empty, Claude performs the task manually\n4. **Report** — structured output with findings, verdicts, thread ID, and next steps\n\nEvery command output includes a **thread ID** that you can pass to `/continue` to iterate on findings, request fixes, or drill deeper — without re-sending the full context.\n\n## Audit→Fix→Verify workflow\n\nThe `/audit-fix` command runs the full cycle automatically:\n\n```\naudit → fix → verify → (issues remain?) → fix → verify → ... → ACCEPTED\n```\n\n1. Audits your code (mini or full — your choice)\n2. Sends findings to Claude or Codex to fix (your choice)\n3. Verifies each fix was actually resolved\n4. Repeats up to 3 rounds or until clean\n5. Reports final status: ACCEPTED / PARTIAL / UNCHANGED\n\nYou can also run each step manually:\n\n```\n/audit               # find issues (defaults to --mini)\n/audit --full        # thorough 9-dimension audit\n# fix them yourself\n/verify report.md    # check your fixes\n```\n\n## Available models\n\nModels are discovered dynamically at runtime. Each command runs `scripts/codex-preflight.sh`, which probes a list of candidate models in parallel. Invalid models fail fast; valid ones are kept. When multiple versions of the same model family are available (e.g. `gpt-5.3-codex` and `gpt-5.2-codex`), only the newest is shown.\n\nThe candidate list lives in `scripts/codex-preflight.sh` — add new model names there as OpenAI releases them. Stale entries are harmless; they simply probe as unavailable.\n\nTo check availability manually:\n\n```bash\nbash scripts/codex-preflight.sh    # JSON to stdout\n```\n\nOr run `/preflight` inside Claude Code for a human-friendly report.\n\n## MCP server\n\nThis plugin bundles a `.mcp.json` that registers the Codex MCP server. Codex authenticates via subscription (recommended, use `codex login`) or an `OPENAI_API_KEY` environment variable.\n\nIf you already have Codex configured in your `~/.claude/config.json`, the plugin's MCP config will coexist — but you may want to remove the duplicate from `config.json` to avoid running two Codex MCP servers.\n"
+      },
+      "plugins": [
+        {
+          "name": "codex-toolkit",
+          "source": {
+            "source": "github",
+            "repo": "xiaolai/codex-toolkit-for-claude"
+          },
+          "description": "Audit, implement, verify, review, and debug via OpenAI Codex MCP",
+          "version": "0.3.0",
+          "author": {
+            "name": "xiaolai"
+          },
+          "repository": "https://github.com/xiaolai/codex-toolkit-for-claude",
+          "license": "MIT",
+          "keywords": [
+            "codex",
+            "openai",
+            "audit",
+            "mcp",
+            "code-review"
+          ],
+          "category": "developer-tools",
+          "categories": [
+            "audit",
+            "code-review",
+            "codex",
+            "developer-tools",
+            "mcp",
+            "openai"
+          ],
+          "install_commands": [
+            "/plugin marketplace add xiaolai/codex-toolkit-for-claude",
+            "/plugin install codex-toolkit@xiaolai"
+          ]
+        }
+      ]
     }
   ]
 }

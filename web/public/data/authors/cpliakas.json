@@ -1,0 +1,72 @@
+{
+  "author": {
+    "id": "cpliakas",
+    "display_name": "Chris Pliakas",
+    "avatar_url": "https://avatars.githubusercontent.com/u/482722?u=8828c190d925adf543023254f0fc617932051578&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "digital-coworkers",
+      "version": null,
+      "description": "Security specialist agent and skills for vulnerability detection, dependency risk, and code security review",
+      "repo_full_name": "cpliakas/claude-code-digital-coworkers",
+      "repo_url": "https://github.com/cpliakas/claude-code-digital-coworkers",
+      "repo_description": "A Claude Code plugin marketplace of reusable digital coworkers — specialist agents and skills installable across projects",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-21T04:07:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"digital-coworkers\",\n  \"owner\": {\n    \"name\": \"cpliakas\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"security-engineer\",\n      \"source\": \"./plugins/security-engineer\",\n      \"description\": \"Security specialist agent and skills for vulnerability detection, dependency risk, and code security review\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"qa-lead\",\n      \"source\": \"./plugins/qa-lead\",\n      \"description\": \"QA lead agent for test strategy, fixture design, mocking, coverage analysis, and flakiness diagnosis\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"product-owner\",\n      \"source\": \"./plugins/product-owner\",\n      \"description\": \"Product owner agent and skills for roadmap planning, user stories, and epic creation\",\n      \"version\": \"0.2.0\"\n    },\n    {\n      \"name\": \"cloud-infra-aws\",\n      \"source\": \"./plugins/cloud-infra-aws\",\n      \"description\": \"AWS cloud infrastructure agents for DevOps strategy, solutions architecture, and CloudFormation\",\n      \"version\": \"0.2.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Digital Coworkers\n\n> **Hypothesis**: Similar to how public cloud redefined what one ops engineer could manage, AI agents may redefine what one IC can take on by delegating to digital specialists that learn on the job.\n\nA Claude Code plugin marketplace of reusable **digital coworkers**: specialist agents and skills that can be installed across projects. Each coworker brings generic domain expertise while accumulating project-specific memory on the job.\n\n## About This Project\n\nThis is a personal learning project. Building agents, wiring them together, and watching where they break is how I develop intuition for what works and what doesn't. The agents here are opinionated to a specific stack and working style and aren't designed for broad adoption.\n\nIf you're looking for well-maintained, general-purpose collections of Claude Code agents and skills, these are better starting points:\n\n- [wshobson/agents](https://github.com/wshobson/agents), a curated agent library\n- [affaan-m/everything-claude-code](https://github.com/AffaanM/everything-claude-code), a comprehensive Claude Code resource collection\n- [VoltAgent/awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents), a community-maintained subagent catalog\n\n## What I'm Testing\n\n### Team structure, not isolated specialists\n\nMost agent collections are flat lists where each agent is independent and self-contained. Here, agents are organized as a team with explicit roles, hierarchy, and delegation chains defined in their markdown files.\n\nThe `cloud-infra-aws` plugin illustrates this. `devops-lead` sets tool-agnostic principles (deployment strategies, observability requirements, IaC standards). `aws-solutions-architect` translates those principles into AWS-specific architecture decisions, consulting `devops-lead` to validate that its recommendations serve broader DevOps patterns. `cloudformation-specialist` implements what the architect specifies, consulting upstream when unsure whether a design choice (e.g., nested vs. separate stacks) is correct. Each agent's `Delegation` section names who it delegates to and who it consults, so the chain is explicit and inspectable.\n\nAcross plugins, the same pattern holds at different levels. `product-owner` advises on sequencing and priorities but never implements, acting as a consultative agent that checks proposed work against the roadmap. `qa-lead` owns the full test lifecycle and consults `security-engineer` for security-related tests. `security-engineer` doesn't delegate at all and exists as a leaf node consulted by others during review cycles.\n\n### Benchmark harness for measurable agent quality\n\nAgent definitions are easy to write and hard to evaluate. The benchmark harness (`benchmark/benchmark.py`) provides a structured way to test whether an agent's knowledge and reasoning actually hold up.\n\nThe approach is config-driven. Each benchmark is a **suite**: a `suite.yaml` that defines prompt templates, scoring criteria, and dataset field mappings, plus a dataset of question-answer pairs. The harness sends each scenario to the agent, then passes the agent's response to a separate LLM judge for scoring. Adding a new suite requires no harness code changes, just a config file and a dataset.\n\nTwo scoring modes exist today. **Binary** mode checks correctness: did the agent recommend the right AWS services for the scenario? **Dimensional** mode scores across multiple quality axes (answer accuracy, cost surfacing, specificity, pillar coverage, risk classification, structured format) on a 1-5 scale, with aggregate statistics and weakness keyword analysis.\n\nThe current suite tests `aws-solutions-architect` against 494 SAA-C03 exam scenarios. The intention is to make this generic so that any agent can take a suite of benchmarks, creating a real validation loop rather than undifferentiated agent definitions. See [`benchmark/README.md`](benchmark/README.md) for the full CLI reference and how to create new suites.\n\n## Quick Start\n\nAdd the marketplace to your Claude Code project, then install the plugins you need:\n\n```\n/plugin marketplace add cpliakas/claude-code-digital-coworkers\n/plugin install security-engineer@digital-coworkers\n/plugin install qa-lead@digital-coworkers\n/plugin install product-owner@digital-coworkers\n/plugin install cloud-infra-aws@digital-coworkers\n```\n\n## Plugins\n\n### security-engineer\n\nSecurity specialist for vulnerability detection and code security review.\n\n| Type | Name | Description |\n|------|------|-------------|\n| Agent | `security-engineer` | Catches vulnerabilities before they ship (OWASP Top 10, dependency risk, secret detection) |\n| Skill | `/security-scan` | Run a security checklist against staged changes, a branch diff, or a specific file |\n\n### qa-lead\n\nQA lead for test strategy and test lifecycle management.\n\n| Type | Name | Description |\n|------|------|-------------|\n| Agent | `qa-lead` | QA lead covering test strategy, fixture design, mocking, coverage analysis, and flakiness diagnosis |\n\n### product-owner\n\nProduct owner for roadmap planning and work sequencing.\n\n| Type | Name | Description |\n|------|------|-------------|\n| Agent | `product-owner` | Roadmap keeper that advises on sequencing, priorities, and phase transitions |\n| Skill | `/write-user-story` | Write a well-structured user story with acceptance criteria and INVEST validation |\n| Skill | `/create-epic` | Create an epic specification with scope, success criteria, and sequenced story breakdown |\n\n### cloud-infra-aws\n\nAWS cloud infrastructure agents covering DevOps strategy, solutions architecture, and CloudFormation implementation.\n\n| Type | Name | Description |\n|------|------|-------------|\n| Agent | `devops-lead` | Infrastructure team lead for CI/CD, deployment strategies, and environment management |\n| Agent | `aws-solutions-architect` | AWS Well-Architected Framework specialist for service selection, cost optimization, and security posture |\n| Agent | `cloudformation-specialist` | CF template authoring covering stack lifecycle, drift detection, and nested stacks |\n| Skill | `/lookup-aws-service` | Look up AWS service capability cards for service selection decisions |\n| Skill | `/cf-lint` | Validate a CloudFormation template against best practices and common errors |\n| Skill | `/well-architected-review` | Evaluate infrastructure changes against all 6 Well-Architected pillars |\n\n## Architecture\n\n### Agents vs Skills\n\n| | Agent | Skill |\n|---|---|---|\n| **What** | A specialist persona with domain expertise | A repeatable procedure / SOP |\n| **Memory** | Yes, learns across sessions | No, runs the same way each time |\n| **Judgment** | Yes, decides *how* to approach problems | No, follows a defined process |\n| **Think of it as** | An IC you hired | A runbook in a wiki |\n\n**Rule of thumb**: If it needs to *learn and decide*, it's an agent. If it needs to *execute a procedure*, it's a skill.\n\n### Agent Hierarchy\n\nAgents form teams with clear delegation chains:\n\n1. **Strategic lead** sets principles, tool-agnostic (e.g., `devops-lead`)\n2. **Domain specialist** applies a specific technology (e.g., `aws-solutions-architect`)\n3. **Implementation specialist** executes the solution (e.g., `cloudformation-specialist`)\n\n### Memory\n\nAll agents use `memory: project`. The agent definition is shared via the plugin, but each project maintains its own memory in `.claude/agent-memory/`. Generic learnings stay in the agent definition; project-specific learnings stay in project memory.\n\n## Benchmarking\n\nA generic test harness for evaluating agent quality against domain-specific datasets. Each benchmark is a **suite** consisting of a config file and a dataset, with no harness code changes needed.\n\n```bash\ncd benchmark\npip install -r requirements.txt\n\n# Dry run (no API calls)\npython3 benchmark.py suites/aws-solutions-architect --dry-run --sample 3\n\n# Run direct mode on 20 random questions\npython3 benchmark.py suites/aws-solutions-architect --mode direct --sample 20\n\n# Run with tool use enabled (agent can look up AWS service capabilities)\npython3 benchmark.py suites/aws-solutions-architect --mode reasoning --tools --sample 20\n```\n\n| Suite | Agent | Questions | Description |\n|-------|-------|-----------|-------------|\n| `aws-solutions-architect` | `aws-solutions-architect` | 494 | SAA-C03 exam scenarios |\n\nSee [`benchmark/README.md`](benchmark/README.md) for the full CLI reference and how to create new suites.\n\n## Repository Structure\n\n```\nclaude-code-digital-coworkers/\n├── .claude-plugin/\n│   └── marketplace.json\n├── README.md\n├── CLAUDE.md\n├── benchmark/\n│   ├── README.md\n│   ├── benchmark.py\n│   ├── requirements.txt\n│   ├── tools/\n│   │   └── parse_questions.py\n│   └── suites/\n│       └── aws-solutions-architect/\n│           ├── suite.yaml\n│           └── questions.json\n└── plugins/\n    ├── security-engineer/\n    │   ├── .claude-plugin/plugin.json\n    │   ├── agents/\n    │   │   └── security-engineer.md\n    │   └── skills/\n    │       └── security-scan/SKILL.md\n    ├── qa-lead/\n    │   ├── .claude-plugin/plugin.json\n    │   └── agents/\n    │       └── qa-lead.md\n    ├── product-owner/\n    │   ├── .claude-plugin/plugin.json\n    │   ├── agents/\n    │   │   └── product-owner.md\n    │   └── skills/\n    │       ├── write-user-story/SKILL.md\n    │       └── create-epic/SKILL.md\n    └── cloud-infra-aws/\n        ├── .claude-plugin/plugin.json\n        ├── agents/\n        │   ├── devops-lead.md\n        │   ├── aws-solutions-architect.md\n        │   └── cloudformation-specialist.md\n        └── skills/\n            ├── cf-lint/SKILL.md\n            ├── lookup-aws-service/\n            │   ├── SKILL.md\n            │   └── data/\n            │       ├── compute.json\n            │       ├── database.json\n            │       ├── storage.json\n            │       └── ... (10 category files)\n            └── well-architected-review/SKILL.md\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "security-engineer",
+          "source": "./plugins/security-engineer",
+          "description": "Security specialist agent and skills for vulnerability detection, dependency risk, and code security review",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cpliakas/claude-code-digital-coworkers",
+            "/plugin install security-engineer@digital-coworkers"
+          ]
+        },
+        {
+          "name": "qa-lead",
+          "source": "./plugins/qa-lead",
+          "description": "QA lead agent for test strategy, fixture design, mocking, coverage analysis, and flakiness diagnosis",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cpliakas/claude-code-digital-coworkers",
+            "/plugin install qa-lead@digital-coworkers"
+          ]
+        },
+        {
+          "name": "product-owner",
+          "source": "./plugins/product-owner",
+          "description": "Product owner agent and skills for roadmap planning, user stories, and epic creation",
+          "version": "0.2.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cpliakas/claude-code-digital-coworkers",
+            "/plugin install product-owner@digital-coworkers"
+          ]
+        },
+        {
+          "name": "cloud-infra-aws",
+          "source": "./plugins/cloud-infra-aws",
+          "description": "AWS cloud infrastructure agents for DevOps strategy, solutions architecture, and CloudFormation",
+          "version": "0.2.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cpliakas/claude-code-digital-coworkers",
+            "/plugin install cloud-infra-aws@digital-coworkers"
+          ]
+        }
+      ]
+    }
+  ]
+}

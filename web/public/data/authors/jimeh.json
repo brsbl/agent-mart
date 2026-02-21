@@ -1,0 +1,82 @@
+{
+  "author": {
+    "id": "jimeh",
+    "display_name": "Jim Myhrberg",
+    "avatar_url": "https://avatars.githubusercontent.com/u/39563?u=fe5fd1fd75e6a7236d808c1d35aff75b7b1882e1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jimeh-agentic",
+      "version": null,
+      "description": "Plugins for agentic things.",
+      "repo_full_name": "jimeh/agentic",
+      "repo_url": "https://github.com/jimeh/agentic",
+      "repo_description": "Shared configuration and rules for AI coding agents (Claude Code, Codex, etc.)",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-21T05:10:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jimeh-agentic\",\n  \"description\": \"Plugins for agentic things.\",\n  \"owner\": {\n    \"name\": \"jimeh\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"strip-git-cwd\",\n      \"description\": \"Strips redundant git -C flags when the path matches the current working directory\",\n      \"version\": \"0.1.1\",\n      \"author\": {\n        \"name\": \"jimeh\"\n      },\n      \"source\": \"./plugins/strip-git-cwd\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"git-commands\",\n      \"description\": \"Git workflow slash commands: commit, push, PR, rebase, and branch cleanup\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"jimeh\"\n      },\n      \"source\": \"./plugins/git-commands\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"agents-md\",\n      \"description\": \"AGENTS.md management: generate, refactor, and convert from CLAUDE.md\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"jimeh\"\n      },\n      \"source\": \"./plugins/agents-md\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "<div align=\"center\">\n\n# agentic\n\n</div>\n\nMy personal AI coding agent configuration, with any quirks, oddities,\nopinionated rules, and hallucination-inducing prompt fragments I live with\non a daily basis.\n\nOne repo, one set of rules, symlinked into every agent's config directory.\nSupports [Claude Code], [Codex], and any tool that reads `AGENTS.md`.\n\n> [!Warning]\n>\n> This is my personal config. It is not a starter kit, a\n> framework, or a best-practices guide. If you use it as-is, things will\n> probably work — but they'll work *my* way, which may not be *your* way.\n> Browse for ideas, steal what's useful, but don't say I didn't warn you.\n\n[Claude Code]: https://docs.anthropic.com/en/docs/claude-code\n[Codex]: https://github.com/openai/codex\n\n## Quick Start\n\n```bash\ngit clone https://github.com/jimeh/agentic.git ~/.config/agentic\ncd ~/.config/agentic\n./setup.sh            # create symlinks (skips existing)\n./setup.sh --force    # replace existing (backs up to .bak)\n```\n\nThis creates symlinks from the repo into `~/.claude/`, `~/.agents/`, and\n`~/.codex/`, and registers plugin marketplaces and installs plugins via\nthe Claude CLI. Run `./setup.sh --help` for details.\n\n## What's Inside\n\n- **`RULES.md`** — Single source of truth for all agent behavior rules.\n  Symlinked as the global rules file for each supported agent. Edit this\n  file directly — never edit the symlink targets.\n- **`claude/`** — Claude Code settings and statusline script.\n- **`codex/`** — OpenAI Codex config.\n- **`skills/`** — Custom skills (auto-discovered by `setup.sh`).\n- **`plugins/`** — Claude Code plugins, published via a local marketplace.\n- **`docs/references/`** — External articles and guides.\n\nSkills are auto-discovered — drop a directory in the right place, re-run\n`setup.sh`, done. Commands live in plugins. Plugins are registered and\ninstalled via the Claude CLI (`claude plugin marketplace add` /\n`claude plugin install`).\n\n## Plugins\n\n### strip-git-cwd\n\nA `PreToolUse` hook that strips redundant `git -C <cwd>` flags from Bash\ncommands when the path matches the current working directory. Claude Code\ntends to add these unnecessarily, and the `-C` flag changes the command\nstring enough that pre-approved git commands no longer match the allowlist\n— causing repeated permission prompts.\n\nHandles all `-C` syntax variants (space, `=`, bare, quoted) and compound\ncommands (`&&`, `;`).\n\n### git-commands\n\nSlash commands for common git workflows:\n\n- `/commit` — Stage changes, create a well-formed commit.\n- `/commit-push-pr` — Commit, push, and open a PR.\n- `/rebase` — Rebase onto upstream main/master.\n- `/clean-gone-branches` — Clean up branches deleted on remote.\n\nDerived from the official `commit-commands` plugin, heavily modified.\n\n### agents-md\n\nSlash commands for managing AGENTS.md files:\n\n- `/claude-md-to-agents-md` — Convert CLAUDE.md to AGENTS.md.\n- `/generate-agents-md` — Generate AGENTS.md from codebase analysis.\n- `/refactor-agents-md` — Refactor AGENTS.md for progressive disclosure.\n\n### Standalone Installation\n\nYou can install individual plugins directly without cloning the repo.\nFirst add the marketplace, then install whichever plugins you want:\n\n```bash\n# CLI\nclaude plugin marketplace add jimeh/agentic\n\n# Or from within Claude Code\n/plugin marketplace add jimeh/agentic\n```\n\nThen install plugins:\n\n```bash\n# CLI\nclaude plugin install git-commands@jimeh-agentic\n\n# Or from within Claude Code\n/plugin install git-commands@jimeh-agentic\n```\n\n### Installation via setup.sh\n\n`setup.sh` ensures both the official `claude-plugins-official` marketplace\nand this repo's local marketplace are registered, then installs plugins\nlisted in the `CLAUDE_PLUGINS` array at the top of the script. To add or\nremove auto-installed plugins, edit that array.\n\nRequires the `claude` CLI and `jq`. Skipped gracefully if either is\nmissing.\n\n## Requirements\n\n- Bash 3.2+ (macOS default works)\n- For symlink resolution, `setup.sh` tries `realpath` first, then\n  platform-specific fallbacks:\n  - **macOS**: `python3`, `python`, `perl`, or `readlink`\n  - **Linux**: `readlink -f` (part of coreutils)\n\n## License\n\nThis is a personal configuration repository. Feel free to use it as\ninspiration for your own setup, but there are no guarantees it won't teach\nyour agents some questionable habits.\n",
+        "plugins/strip-git-cwd/README.md": "# strip-git-cwd\n\nClaude Code plugin that strips redundant `git -C <path>` flags when the path\nmatches the current working directory.\n\n## Problem\n\nClaude Code frequently runs git commands like `git -C /current/dir status` even\nwhen already working in `/current/dir`. The `-C` flag is unnecessary and adds\nnoise to the command output.\n\n## What It Does\n\nA `PreToolUse` hook intercepts Bash tool calls and removes `-C <path>` from git\ncommands when the path matches the working directory. The cleaned command is\npassed back to Claude's normal permission flow.\n\n**Supported forms:**\n\n- `git -C /path ...` (space-separated)\n- `git -C=/path ...` (equals form)\n- `git -C/path ...` (no separator)\n- `git -C \"/path\" ...` / `git -C '/path' ...` (quoted)\n\nCompound commands (`&&`, `||`, `;`) are handled — all occurrences are replaced.\n\n## Install\n\n```bash\n# Add the marketplace (once)\nclaude plugin marketplace add jimeh/agentic\n\n# Install the plugin\nclaude plugin install strip-git-cwd@jimeh-agentic\n```\n\nOr from within Claude Code:\n\n```text\n/plugin marketplace add jimeh/agentic\n/plugin install strip-git-cwd@jimeh-agentic\n```\n",
+        "plugins/git-commands/README.md": "# git-commands\n\nClaude Code plugin providing git workflow slash commands.\n\n## Commands\n\n- `/commit` -- Create a git commit with conventional commit messages. Checks\n  agent docs for needed updates.\n- `/commit-push-pr` -- Commit, push to origin, and open a PR via `gh`. Handles\n  branch naming and PR templates.\n- `/rebase` -- Rebase the current branch onto upstream main/master, with\n  auto-stash and conflict resolution.\n- `/clean-gone-branches` -- Remove local branches marked [gone] (deleted on\n  remote), including associated worktrees.\n\n## Install\n\n```bash\n# Add the marketplace (once)\nclaude plugin marketplace add jimeh/agentic\n\n# Install the plugin\nclaude plugin install git-commands@jimeh-agentic\n```\n\nOr from within Claude Code:\n\n```text\n/plugin marketplace add jimeh/agentic\n/plugin install git-commands@jimeh-agentic\n```\n\n## Origins\n\n`commit`, `commit-push-pr`, and `clean-gone-branches` are derived from the\nofficial `commit-commands` plugin (anthropics/claude-plugins-official), heavily\nmodified.\n",
+        "plugins/agents-md/README.md": "# agents-md\n\nClaude Code plugin for managing AGENTS.md files.\n\n## Commands\n\n- `/claude-md-to-agents-md` -- Convert a project's CLAUDE.md into an\n  agent-agnostic AGENTS.md, leaving CLAUDE.md as a thin @-reference.\n- `/generate-agents-md` -- Analyze a codebase and generate a hierarchical\n  AGENTS.md with progressive disclosure.\n- `/refactor-agents-md` -- Refactor an existing AGENTS.md to follow\n  progressive disclosure principles.\n\n## Install\n\n```bash\n# Add the marketplace (once)\nclaude plugin marketplace add jimeh/agentic\n\n# Install the plugin\nclaude plugin install agents-md@jimeh-agentic\n```\n\nOr from within Claude Code:\n\n```text\n/plugin marketplace add jimeh/agentic\n/plugin install agents-md@jimeh-agentic\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "strip-git-cwd",
+          "description": "Strips redundant git -C flags when the path matches the current working directory",
+          "version": "0.1.1",
+          "author": {
+            "name": "jimeh"
+          },
+          "source": "./plugins/strip-git-cwd",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jimeh/agentic",
+            "/plugin install strip-git-cwd@jimeh-agentic"
+          ]
+        },
+        {
+          "name": "git-commands",
+          "description": "Git workflow slash commands: commit, push, PR, rebase, and branch cleanup",
+          "version": "0.1.0",
+          "author": {
+            "name": "jimeh"
+          },
+          "source": "./plugins/git-commands",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jimeh/agentic",
+            "/plugin install git-commands@jimeh-agentic"
+          ]
+        },
+        {
+          "name": "agents-md",
+          "description": "AGENTS.md management: generate, refactor, and convert from CLAUDE.md",
+          "version": "0.1.0",
+          "author": {
+            "name": "jimeh"
+          },
+          "source": "./plugins/agents-md",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jimeh/agentic",
+            "/plugin install agents-md@jimeh-agentic"
+          ]
+        }
+      ]
+    }
+  ]
+}
