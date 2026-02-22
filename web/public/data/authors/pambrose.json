@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "pambrose",
+    "display_name": "Paul Ambrose",
+    "avatar_url": "https://avatars.githubusercontent.com/u/42716?u=bd2fcc6c897571c31a7c41786d624fc82f0fc29c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "pambrose-plugins",
+      "version": null,
+      "description": "Claude Code plugins by pambrose",
+      "repo_full_name": "pambrose/pambrose-claude-plugins",
+      "repo_url": "https://github.com/pambrose/pambrose-claude-plugins",
+      "repo_description": "Personal Claude Code Plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-22T00:48:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pambrose-plugins\",\n  \"owner\": {\n    \"name\": \"pambrose\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by pambrose\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"linear-issue-integration\",\n      \"source\": \"./linear-issue-integration\",\n      \"description\": \"Linear integration: fix issues autonomously in worktrees and run systematic codebase reviews\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"pambrose\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# pambrose-claude-plugins\n\nPersonal [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin marketplace.\n\n## Installation\n\n1. Add the marketplace (one-time setup):\n\n    ```bash\n    /plugin marketplace add pambrose/pambrose-claude-plugins\n    ```\n\n2. Install the plugin you want:\n\n    ```bash\n    /plugin install linear-issue-integration@pambrose-plugins\n    ```\n\n3. To update plugins after new changes are pushed:\n\n    ```bash\n    /plugin marketplace update pambrose-plugins\n    ```\n\n## Plugins\n\n| Plugin                                                | Description                                                                                  |\n|-------------------------------------------------------|----------------------------------------------------------------------------------------------|\n| [linear-issue-integration](linear-issue-integration/) | Linear integration: fix issues autonomously in worktrees and run systematic codebase reviews |\n\n---\n\n### linear-issue-integration\n\nIntegrates Claude Code with [Linear](https://linear.app) for autonomous issue fixing and systematic codebase reviews\nthat file findings directly as Linear issues.\n\n**Requires:** Linear MCP integration configured in Claude Code.\n\n#### Command: `/show-linear-issues`\n\nDisplay all outstanding Linear issues for a selected project, sorted by priority.\n\n```\n/show-linear-issues\n```\n\n**What it does:**\n\n1. Fetches the list of Linear projects\n2. Asks which project to view\n3. Displays all open issues in a table sorted by priority (Urgent, High, Medium, Low), showing title and assignee\n\n#### Command: `/fix-linear-issue`\n\nFind a Linear issue and fix it autonomously in an isolated worktree.\n\n```\n/fix-linear-issue EO-42\n/fix-linear-issue login timeout bug\n```\n\n**What it does:**\n\n1. Looks up the issue by ID or searches Linear by text\n2. Shows the issue details and asks for confirmation\n3. Sets the Linear issue status to \"In Progress\"\n4. Spawns the `issue-fixer` agent in an isolated git worktree\n5. After the agent finishes, presents options to merge, create a PR, or clean up\n\n#### Agent: `issue-fixer`\n\nAutonomous agent that runs in an isolated git worktree to fix a single Linear issue. Spawned by\nthe `/fix-linear-issue` command — not invoked directly.\n\n**What it does:**\n\n1. Records the worktree branch name\n2. Reads and analyzes the issue\n3. Explores the codebase (CLAUDE.md, relevant files)\n4. Implements the fix with minimal, focused changes\n5. Auto-detects the build system (Gradle, npm, Cargo, Go, Python, Make) and runs tests and lint\n6. Asks whether to commit, commit and push, or skip\n7. Posts a summary comment on the Linear issue (files changed, root cause, test results, branch name)\n\n#### Skill: `create-linear-bug-issues`\n\nReviews the codebase for functional bugs and files each finding as a Linear issue.\n\n**Trigger phrases:** \"find bugs\", \"review for bugs\", \"find logic errors\", \"check for race conditions\", \"find resource\nleaks\", \"audit error handling\"\n\n**What it looks for:** logic errors, race conditions, resource leaks, null safety issues, error handling gaps, incorrect\nstate management.\n\n#### Skill: `create-linear-design-issues`\n\nReviews the codebase for design and architecture problems and files each finding as a Linear issue.\n\n**Trigger phrases:** \"review design\", \"find design problems\", \"check architecture\", \"find tight coupling\", \"find god\nclasses\", \"audit separation of concerns\"\n\n**What it looks for:** poor separation of concerns, tight coupling, missing abstractions, god classes, inappropriate\nresponsibility assignment, poor error propagation, concurrency model issues.\n\n#### Skill: `create-linear-idiom-issues`\n\nReviews the codebase for non-idiomatic language usage and files each finding as a Linear issue. Automatically detects\nthe project language — not limited to any specific language.\n\n**Trigger phrases:** \"check for non-idiomatic code\", \"review idioms\", \"find non-idiomatic patterns\", \"find unidiomatic\ncode\"\n\n**What it looks for:** code written in the style of a different language, missing use of language-specific features,\nimperative code that could be functional/declarative, verbose patterns where concise alternatives exist, underuse of\nthe type system, mutable state where immutable is idiomatic.\n\n#### How the review skills work\n\nAll three review skills follow the same workflow:\n\n1. **Gather Linear context** — fetch teams, projects, and users; ask which to use\n2. **Ensure the label exists** — creates `bug`, `design`, or `non-idiomatic` if missing\n3. **Dispatch a code explorer agent** for deep codebase analysis\n4. **Present findings** in a summary table for review\n5. **File approved findings** as Linear issues with structured descriptions, code snippets, and suggested fixes\n"
+      },
+      "plugins": [
+        {
+          "name": "linear-issue-integration",
+          "source": "./linear-issue-integration",
+          "description": "Linear integration: fix issues autonomously in worktrees and run systematic codebase reviews",
+          "version": "1.0.0",
+          "author": {
+            "name": "pambrose"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add pambrose/pambrose-claude-plugins",
+            "/plugin install linear-issue-integration@pambrose-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "author": {
+    "id": "JasonY199",
+    "display_name": "Jason Y",
+    "avatar_url": "https://avatars.githubusercontent.com/u/110353075?u=3f508a57809137ce140c906ba5dc571d83349189&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jason-claude-plugins",
+      "version": null,
+      "description": "Personal Claude Code plugin marketplace for Jason Y",
+      "repo_full_name": "JasonY199/jason-claude-plugins",
+      "repo_url": "https://github.com/JasonY199/jason-claude-plugins",
+      "repo_description": "Personal Claude Code plugin marketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-22T02:05:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jason-claude-plugins\",\n  \"description\": \"Personal Claude Code plugin marketplace for Jason Y\",\n  \"owner\": {\n    \"name\": \"Jason Y\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jason-handoff\",\n      \"description\": \"Session handoff skills and hooks for seamless context transfer between Claude Code sessions\",\n      \"version\": \"1.0.1\",\n      \"source\": \"./jason-handoff\",\n      \"author\": {\n        \"name\": \"Jason Y\"\n      }\n    },\n    {\n      \"name\": \"jason-design-system\",\n      \"description\": \"Design-system-first skill — discover existing tokens and components before writing UI code\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./jason-design-system\",\n      \"author\": {\n        \"name\": \"Jason Y\"\n      }\n    },\n    {\n      \"name\": \"jason-context-researcher\",\n      \"description\": \"Context researcher agent — searches project docs in its own context window, returns focused summaries. Protects the main conversation from doc-reading bloat.\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./jason-context-researcher\",\n      \"author\": {\n        \"name\": \"Jason Y\"\n      }\n    },\n    {\n      \"name\": \"jason-openspec\",\n      \"description\": \"OpenSpec skills for spec-driven development — explore, plan, implement, and archive changes with structured artifacts. Requires openspec CLI.\",\n      \"version\": \"1.1.2\",\n      \"source\": \"./jason-openspec\",\n      \"author\": {\n        \"name\": \"Jason Y\"\n      }\n    }\n  ]\n}\n",
+        "README.md": "# jason-claude-plugins\n\nPersonal Claude Code plugin marketplace.\n\n## Plugins\n\n| Plugin                   | Description                                                    |\n| ------------------------ | -------------------------------------------------------------- |\n| jason-handoff            | Session handoff skills and hooks for seamless context transfer |\n| jason-design-system      | Design-system-first skill for UI development                   |\n| jason-context-researcher | Standalone doc research agent for project architecture lookup  |\n\n## Install\n\nAdd the marketplace once, then install any plugin:\n\n```\n/plugin marketplace add JasonY199/jason-claude-plugins\n/plugin install jason-handoff@jason-claude-plugins\n/plugin install jason-design-system@jason-claude-plugins\n```\n\n## License\n\nMIT\n",
+        "jason-handoff/README.md": "# jason-handoff\n\nSession handoff skills and hooks for seamless context transfer between Claude Code sessions.\n\n## Overview\n\nCaptures active work state and learnings when you pause, so the next session can resume exactly where you left off — without re-explaining anything.\n\n## Skills\n\n### `/handoff-save`\n\nSaves your current session state. Use when running low on context, before clearing a session, or when pausing work.\n\n**What it captures:**\n- What you were working on and where you left off\n- Immediate next steps\n- Failed approaches (so the next session doesn't repeat them)\n- Key decisions and important context\n\n**Files written:**\n- `HANDOFF_STATE.md` — active task state (replaced each save)\n- `MEMORY.md` — persistent learnings (merged, not replaced)\n\n### `/handoff-resume`\n\nResumes from a previous handoff. Reads the saved state, cross-checks against current git state, and presents a summary before continuing.\n\n**What it does:**\n1. Reads HANDOFF_STATE.md and MEMORY.md\n2. Verifies current git branch and status\n3. Presents a summary of where you left off\n4. Waits for confirmation before continuing\n5. Deletes the consumed handoff file\n\n## Installation\n\n```\n/plugin install jason-handoff@jason-claude-plugins\n```\n\nRestart Claude Code after installing.\n\n## Author\n\nJason Y (https://github.com/JasonY199)\n\n## Version\n\n1.0.1\n",
+        "jason-design-system/README.md": "# jason-design-system\n\nDesign-system-first skill — discover existing tokens and components before writing UI code.\n\n## Overview\n\nBefore writing any UI code, this skill scans the project for existing design tokens (colors, spacing, typography) and reusable components. Use what exists. Only create new tokens or components when nothing suitable exists.\n\n## Skills\n\n### `/design-system-first`\n\nTriggers automatically when creating, editing, or improving any UI component, page, or layout.\n\n**What it does:**\n1. Scans for design tokens — CSS custom properties, Tailwind config, theme files\n2. Catalogs the component library — `components/ui/`, shared components, barrel files\n3. Reviews existing patterns in similar pages/components\n4. Summarizes relevant tokens, components, and gaps before you write code\n\n## Rules\n\n- **Use existing tokens** over raw values — never hardcode colors, spacing, or font sizes\n- **Use existing components** over creating new ones\n- **Extend before creating** — add a variant or prop before building from scratch\n- **Justify new additions** — explain why nothing existing works before creating something new\n\n## Installation\n\n```\n/plugin install jason-design-system@jason-claude-plugins\n```\n\nRestart Claude Code after installing.\n\n## Author\n\nJason Y (https://github.com/JasonY199)\n\n## Version\n\n1.0.0\n",
+        "jason-context-researcher/README.md": "# jason-context-researcher\n\nContext researcher agent for Claude Code. Searches project docs in its own context window and returns focused summaries — protects the main conversation from doc-reading bloat.\n\n## What It Does\n\n- `/research [topic]` — launches an agent that reads your `docs/`, `CLAUDE.md`, and README, then returns a structured summary\n- Zero dependencies, zero hooks, zero config\n- Uses Sonnet for strong synthesis and reasoning over unstructured docs\n\n## Why a Separate Agent?\n\nReading architecture docs directly pollutes the main context window with thousands of lines of content you only need a summary of. The context-researcher agent runs in its own window, does all the reading, and returns just what's relevant.\n\n## Install\n\nAvailable from the `jason-claude-plugins` marketplace.\n",
+        "jason-openspec/README.md": "# jason-openspec — OpenSpec Skills Plugin\n\nClaude Code skills for [OpenSpec](https://github.com/Fission-AI/OpenSpec) spec-driven development.\n\n## Prerequisites\n\nInstall the OpenSpec CLI globally:\n\n```bash\nnpm install -g @fission-ai/openspec@latest\n```\n\nInitialize OpenSpec in your project:\n\n```bash\nopenspec init\n```\n\n## Skills\n\n| Command | Description |\n|---------|-------------|\n| `/jason-openspec:openspec-explore` | Think through problems before/during work |\n| `/jason-openspec:openspec-new` | Start a new change, step through artifacts |\n| `/jason-openspec:openspec-ff` | Fast-forward: create all artifacts at once |\n| `/jason-openspec:openspec-continue` | Continue working on an existing change |\n| `/jason-openspec:openspec-apply` | Implement tasks from a change |\n| `/jason-openspec:openspec-verify` | Verify implementation matches artifacts |\n| `/jason-openspec:openspec-sync` | Sync delta specs to main specs |\n| `/jason-openspec:openspec-archive` | Archive a completed change |\n| `/jason-openspec:openspec-bulk-archive` | Archive multiple changes at once |\n| `/jason-openspec:openspec-onboard` | Guided tutorial through the full workflow |\n\n## Updating\n\nSkills are adapted from the official OpenSpec CLI. When the CLI updates:\n\n1. `npm update -g @fission-ai/openspec`\n2. Run `openspec init` in a temp directory to get updated skill content\n3. Diff against this plugin's skills and update as needed\n4. Bump version in `jason-openspec/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`\n5. Push and run `/plugin marketplace update jason-claude-plugins`\n"
+      },
+      "plugins": [
+        {
+          "name": "jason-handoff",
+          "description": "Session handoff skills and hooks for seamless context transfer between Claude Code sessions",
+          "version": "1.0.1",
+          "source": "./jason-handoff",
+          "author": {
+            "name": "Jason Y"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JasonY199/jason-claude-plugins",
+            "/plugin install jason-handoff@jason-claude-plugins"
+          ]
+        },
+        {
+          "name": "jason-design-system",
+          "description": "Design-system-first skill — discover existing tokens and components before writing UI code",
+          "version": "1.0.0",
+          "source": "./jason-design-system",
+          "author": {
+            "name": "Jason Y"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JasonY199/jason-claude-plugins",
+            "/plugin install jason-design-system@jason-claude-plugins"
+          ]
+        },
+        {
+          "name": "jason-context-researcher",
+          "description": "Context researcher agent — searches project docs in its own context window, returns focused summaries. Protects the main conversation from doc-reading bloat.",
+          "version": "1.0.0",
+          "source": "./jason-context-researcher",
+          "author": {
+            "name": "Jason Y"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JasonY199/jason-claude-plugins",
+            "/plugin install jason-context-researcher@jason-claude-plugins"
+          ]
+        },
+        {
+          "name": "jason-openspec",
+          "description": "OpenSpec skills for spec-driven development — explore, plan, implement, and archive changes with structured artifacts. Requires openspec CLI.",
+          "version": "1.1.2",
+          "source": "./jason-openspec",
+          "author": {
+            "name": "Jason Y"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add JasonY199/jason-claude-plugins",
+            "/plugin install jason-openspec@jason-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
