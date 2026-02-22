@@ -427,6 +427,36 @@
           ]
         }
       ]
+    },
+    {
+      "name": "mouse-mcp",
+      "version": null,
+      "description": "Disney parks data MCP server with attraction wait times and fuzzy search",
+      "repo_full_name": "cameronsjo/mouse-mcp",
+      "repo_url": "https://github.com/cameronsjo/mouse-mcp",
+      "repo_description": "MCP server providing Disney parks data to Claude - attractions, dining, height requirements, Lightning Lane status, and fuzzy search",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-21T04:21:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"mouse-mcp\",\n  \"owner\": {\n    \"name\": \"Cameron Sjo\",\n    \"github\": \"cameronsjo\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mouse-mcp\",\n      \"source\": \"./.claude-plugin\",\n      \"description\": \"Disney parks data MCP server with attraction wait times and fuzzy search\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mouse-mcp\",\n  \"description\": \"Disney parks data MCP server with attraction wait times and fuzzy search\",\n  \"author\": {\n    \"name\": \"cameronsjo\"\n  }\n}\n",
+        "README.md": "# Disney Parks MCP Server\n\nAn MCP (Model Context Protocol) server that provides Disney parks data to Claude Code. Returns structured data for attractions, dining, and other park entities.\n\n## Features\n\n- **Attraction data**: Height requirements, Lightning Lane status, thrill levels, single rider availability\n- **Dining data**: Service type, meal periods, cuisine, reservations, mobile ordering\n- **Fuzzy search**: Find entities by name with intelligent matching\n- **Auto-caching**: 24-hour cache with SQLite persistence\n- **Dual data sources**: Disney Finder API (primary) with ThemeParks.wiki fallback\n\n## Installation\n\n```bash\nnpm install\nnpm run build\n```\n\n## Usage\n\n### With Claude Code\n\nAdd to your Claude Code MCP configuration:\n\n```json\n{\n  \"mcpServers\": {\n    \"disney\": {\n      \"command\": \"node\",\n      \"args\": [\"/path/to/mouse-mcp/dist/index.js\"]\n    }\n  }\n}\n```\n\n### Development\n\n```bash\n# Run in development mode with auto-reload\nnpm run dev\n\n# Type check without building\nnpm run check\n\n# Test with MCP inspector\nnpm run inspector\n```\n\n## Tools\n\n### `disney_destinations`\n\nList all supported Disney destinations with their parks.\n\n```\nNo parameters required\n```\n\n### `disney_attractions`\n\nGet attractions for a destination or park.\n\n| Parameter | Type | Required | Description |\n|-----------|------|----------|-------------|\n| `destination` | string | Yes | `wdw` or `dlr` |\n| `parkId` | string | No | Filter to specific park |\n| `filters.hasLightningLane` | boolean | No | Only Lightning Lane attractions |\n| `filters.maxHeightRequirement` | number | No | Max height in inches |\n| `filters.thrillLevel` | string | No | `family`, `moderate`, or `thrill` |\n| `filters.hasSingleRider` | boolean | No | Only single rider attractions |\n\n### `disney_dining`\n\nGet dining locations for a destination or park.\n\n| Parameter | Type | Required | Description |\n|-----------|------|----------|-------------|\n| `destination` | string | Yes | `wdw` or `dlr` |\n| `parkId` | string | No | Filter to specific park |\n| `filters.serviceType` | string | No | `table-service`, `quick-service`, etc. |\n| `filters.mealPeriod` | string | No | `breakfast`, `lunch`, `dinner`, `snacks` |\n| `filters.reservationsAccepted` | boolean | No | Only reservation restaurants |\n| `filters.characterDining` | boolean | No | Only character dining |\n\n### `disney_entity`\n\nLook up a specific entity by ID or fuzzy name search.\n\n| Parameter | Type | Required | Description |\n|-----------|------|----------|-------------|\n| `id` | string | No* | Entity ID for exact lookup |\n| `name` | string | No* | Entity name for fuzzy search |\n| `destination` | string | No | Limit search to `wdw` or `dlr` |\n| `entityType` | string | No | `ATTRACTION` or `RESTAURANT` |\n\n*Either `id` or `name` is required.\n\n### `disney_status`\n\nGet server health and cache statistics.\n\n| Parameter | Type | Required | Description |\n|-----------|------|----------|-------------|\n| `includeDetails` | boolean | No | Include entity breakdown |\n\n## Configuration\n\nEnvironment variables (all prefixed with `MOUSE_MCP_`):\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `MOUSE_MCP_LOG_LEVEL` | `INFO` | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR` |\n| `MOUSE_MCP_DB_PATH` | `~/.cache/mouse-mcp/disney.db` | SQLite database path |\n| `MOUSE_MCP_TIMEOUT` | `30000` | Request timeout in ms |\n| `MOUSE_MCP_HEADLESS` | `true` | Run Playwright in headless mode |\n\n## Architecture\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│                     MCP Server                               │\n│  ┌─────────────────────────────────────────────────────┐   │\n│  │                    Tools                             │   │\n│  │  destinations | attractions | dining | entity | status │\n│  └─────────────────────────────────────────────────────┘   │\n│                           │                                  │\n│  ┌─────────────────────────────────────────────────────┐   │\n│  │                  API Clients                         │   │\n│  │  ┌─────────────────┐    ┌─────────────────┐        │   │\n│  │  │ Disney Finder   │───▶│ ThemeParks.wiki │        │   │\n│  │  │    (primary)    │    │   (fallback)    │        │   │\n│  │  └─────────────────┘    └─────────────────┘        │   │\n│  │           │                                          │   │\n│  │  ┌─────────────────┐                                │   │\n│  │  │ Session Manager │ (Playwright auth)              │   │\n│  │  └─────────────────┘                                │   │\n│  └─────────────────────────────────────────────────────┘   │\n│                           │                                  │\n│  ┌─────────────────────────────────────────────────────┐   │\n│  │                   SQLite Database                    │   │\n│  │  sessions | cache | entities (with FTS5)            │   │\n│  └─────────────────────────────────────────────────────┘   │\n└─────────────────────────────────────────────────────────────┘\n```\n\n## Supported Destinations\n\n### Walt Disney World Resort (wdw)\n\n- Magic Kingdom Park\n- EPCOT\n- Disney's Hollywood Studios\n- Disney's Animal Kingdom Theme Park\n\n### Disneyland Resort (dlr)\n\n- Disneyland Park\n- Disney California Adventure Park\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "mouse-mcp",
+          "source": "./.claude-plugin",
+          "description": "Disney parks data MCP server with attraction wait times and fuzzy search",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add cameronsjo/mouse-mcp",
+            "/plugin install mouse-mcp@mouse-mcp"
+          ]
+        }
+      ]
     }
   ]
 }

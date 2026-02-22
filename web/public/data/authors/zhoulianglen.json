@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "zhoulianglen",
+    "display_name": "Len",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3508855?u=a380cf45bbf4d9746d50fb47df1f851344e40b4c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "zhoulianglen-aidots",
+      "version": null,
+      "description": "AI Coding 工具个性化配置管理 - 扫描、备份、恢复、对比",
+      "repo_full_name": "zhoulianglen/Aidots",
+      "repo_url": "https://github.com/zhoulianglen/Aidots",
+      "repo_description": "Claude Code Skill：Manage personalized configurations across all your AI coding tools — scan, backup, restore, and diff.",
+      "signals": {
+        "stars": 3,
+        "forks": 1,
+        "pushed_at": "2026-02-18T11:20:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"zhoulianglen-aidots\",\n  \"owner\": {\n    \"name\": \"zhoulianglen\"\n  },\n  \"metadata\": {\n    \"description\": \"AI Coding 工具个性化配置管理 - 扫描、备份、恢复、对比\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"aidots\",\n      \"source\": \"./aidots\",\n      \"description\": \"Scan, backup, restore and diff all your AI coding tool configurations\"\n    }\n  ]\n}\n",
+        "README.md": "# aidots\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)\n[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](.claude-plugin/marketplace.json)\n[![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-blueviolet.svg)](https://code.claude.com/docs/en/plugins)\n\n[🇨🇳 中文](README.zh-CN.md)\n\n**Your dotfiles, but for AI.** Manage personalized configurations across all your AI coding tools — scan, backup, restore, and diff.\n\n## Why aidots?\n\nEvery AI coding tool stores its own config: Claude Code has `~/.claude/`, Cursor has `~/.cursor/`, Gemini CLI has `~/.gemini/`... When you set up a new machine or want to keep configs in sync, there's no unified way to manage them all.\n\naidots treats your AI tool configs like dotfiles — scan what you have, back it up to a Git repo, and restore it anywhere.\n\n## Quick Demo\n\n```\n$ /aidots scan\n\n🔍 AI Coding Tool Config Scan\n\n✅ Claude Code (~/.claude)\n   CLAUDE.md                          455 B\n   settings.json                      787 B\n   skills/ceo-skill/SKILL.md          51.0 KB\n   ...\n   12 files\n\n✅ Codex CLI (~/.codex)\n   config.toml                        84 B\n   skills/.system/skill-creator/...\n   8 files\n\n✅ Cursor (~/.cursor)\n   extensions/extensions.json         4.2 KB\n   3 files\n\n⏭️  GitHub Copilot — no custom config found\n❌ Windsurf — not installed\n\n────────────────────\nScan complete: found 4 tools, 23 config files\n```\n\n## Features\n\n- **Scan** — Auto-detect installed AI coding tools and list personalized config files\n- **Backup** — Back up configs to a Git repo with auto-generated README, commit and push\n- **Restore** — Restore configs from backup (supports new machine migration)\n- **Diff** — Compare local configs against backup to see what changed\n\n## Supported Tools\n\n| Tool | Config Path |\n|------|------------|\n| Claude Code | `~/.claude/` |\n| Codex CLI | `~/.codex/` |\n| Cursor | `~/.cursor/` |\n| Gemini CLI | `~/.gemini/` |\n| Antigravity | `~/.antigravity/` |\n| GitHub Copilot | `~/.copilot/` |\n| Windsurf | `~/.windsurf/` |\n| Aider | `~/.aider/` |\n\nTools not installed are automatically skipped. Adding a new tool takes one line in `tools.conf`.\n\n## Install\n\n```bash\n/plugins marketplace add zhoulianglen/Aidots\n/plugins install aidots\n```\n\n## Usage\n\n| Command | Description |\n|---------|-------------|\n| `/aidots` | Scan local AI tool configs |\n| `/aidots backup` | Back up configs to Git repo |\n| `/aidots diff` | Compare local vs backup |\n| `/aidots restore` | Restore configs from backup |\n\nOn first backup, you'll be prompted to set a backup directory (default `~/dotai`). The config is saved to `~/.aidots/config.json`.\n\nOutput language follows your system locale — English by default, Chinese for `zh_*` locales.\n\n## Security\n\naidots is designed to be safe by default:\n\n- **No network calls** — Scripts only operate on local files. The only network activity is your own `git push`.\n- **No secrets** — Credential files (`.env`, `auth.json`, `oauth_creds.json`, tokens, keys) are automatically excluded.\n- **No telemetry** — Nothing is collected or sent anywhere.\n- **Audit-friendly** — All logic is in plain bash scripts under `aidots/scripts/`. Read them yourself.\n\n## Adding New Tools\n\nEdit `aidots/scripts/tools.conf`, one line per tool:\n\n```\ntool_id|Display Name|config_dir|include_globs|exclude_globs\n```\n\nExample:\n```\nmytool|My Tool|~/.mytool|config.json,settings/**|cache/**,logs/**\n```\n\n## Requirements\n\n- Bash 3.2+ (macOS default)\n- `jq` (`brew install jq`)\n- `git`\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "aidots",
+          "source": "./aidots",
+          "description": "Scan, backup, restore and diff all your AI coding tool configurations",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add zhoulianglen/Aidots",
+            "/plugin install aidots@zhoulianglen-aidots"
+          ]
+        }
+      ]
+    }
+  ]
+}
