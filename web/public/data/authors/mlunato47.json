@@ -1,0 +1,75 @@
+{
+  "author": {
+    "id": "mlunato47",
+    "display_name": "Mario Lunato",
+    "avatar_url": "https://avatars.githubusercontent.com/u/99821377?u=a37033da4d4769c62b6b5de93434a3bd94209189&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mlunato47",
+      "version": null,
+      "description": "GRC (Governance, Risk, and Compliance) plugin for Claude Code",
+      "repo_full_name": "mlunato47/claude-grc-plugin",
+      "repo_url": "https://github.com/mlunato47/claude-grc-plugin",
+      "repo_description": "A Claude Code plugin that turns Claude into a senior GRC (Governance, Risk, and Compliance) analyst. 72+ reference files covering 15 frameworks, 24 slash commands, and deep domain knowledge for federal and commercial compliance work.",
+      "signals": {
+        "stars": 81,
+        "forks": 18,
+        "pushed_at": "2026-02-19T01:45:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mlunato47\",\n  \"owner\": {\n    \"name\": \"Mario Lunato\"\n  },\n  \"metadata\": {\n    \"description\": \"GRC (Governance, Risk, and Compliance) plugin for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"grc\",\n      \"source\": \"./grc\",\n      \"description\": \"GRC domain knowledge — 15 frameworks, 24 commands, cross-framework mapping, document review, and operational workflows. Cloud-agnostic.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Mario Lunato\",\n        \"url\": \"https://github.com/mlunato47\"\n      },\n      \"homepage\": \"https://github.com/mlunato47/claude-grc-plugin\",\n      \"repository\": \"https://github.com/mlunato47/claude-grc-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"grc\",\n        \"compliance\",\n        \"governance\",\n        \"risk-management\",\n        \"nist\",\n        \"fedramp\",\n        \"soc2\",\n        \"iso27001\",\n        \"pci-dss\",\n        \"hipaa\",\n        \"cmmc\",\n        \"audit\",\n        \"security\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# GRC Knowledge Plugin\n\nA plugin that turns your AI coding agent into a senior GRC (Governance, Risk, and Compliance) analyst. 72+ reference files covering 15 frameworks, 24 slash commands, and deep domain knowledge for federal and commercial compliance work.\n\n**Works with**: Claude Code, OpenCode\n\n## What It Does\n\nLoad this plugin and Claude gains expertise in:\n\n- **15 compliance frameworks** — NIST 800-53, FedRAMP, FISMA, CMMC, SOC 2, ISO 27001, PCI DSS, HIPAA, CIS Controls, COBIT, CSA CCM, GDPR, SLSA, OSCAL, and NIST Rev 4→5 transition\n- **Cross-framework mapping** — Map any control to any other framework through NIST 800-53 as the hub\n- **Document review** — Feed it SSP narratives, POA&Ms, policies, CRMs and get structural quality feedback with 0-5 maturity scoring\n- **Operational workflows** — Significant change analysis, inheritance modeling, SAR responses, compliance calendars, tabletop exercises\n\nIt cites specific control IDs, knows baseline assignments, understands assessment procedures, and speaks the language of auditors, ISSOs, and compliance engineers.\n\n## Install\n\n### From a Plugin Marketplace (Recommended)\n\nAdd the marketplace and install:\n\n```\n/plugin marketplace add mlunato47/claude-grc-plugin\n/plugin install grc@mlunato47\n```\n\nOr from the CLI:\n\n```bash\nclaude plugin install grc@mlunato47\n```\n\nYou can install at different scopes:\n\n```bash\nclaude plugin install grc@mlunato47                  # User scope (all projects)\nclaude plugin install grc@mlunato47 --scope project  # Project scope (shared via git)\nclaude plugin install grc@mlunato47 --scope local    # Local only\n```\n\n### From a Local Directory\n\nClone the repo and load directly:\n\n```bash\ngit clone https://github.com/mlunato47/claude-grc-plugin.git\nclaude --plugin-dir ./grc-plugin/grc\n```\n\nOr load alongside other plugins:\n\n```bash\nclaude --plugin-dir ./grc-plugin/grc --plugin-dir ./other-plugin\n```\n\nOnce loaded, type `/grc:` to see all available commands.\n\n### OpenCode\n\nYou can ask OpenCode to self-install by telling it:\n\n> Fetch and follow the instructions at https://raw.githubusercontent.com/mlunato47/claude-grc-plugin/main/.opencode/INSTALL.md\n\nOr install manually:\n\n```bash\n# Clone\ngit clone https://github.com/mlunato47/claude-grc-plugin.git ~/.config/opencode/grc\n\n# Symlink plugin, skills, and commands\nmkdir -p ~/.config/opencode/plugins ~/.config/opencode/skills ~/.config/opencode/commands\nln -s ~/.config/opencode/grc/.opencode/plugins/grc.js ~/.config/opencode/plugins/grc.js\nln -s ~/.config/opencode/grc/grc/skills/grc-knowledge ~/.config/opencode/skills/grc-knowledge\nfor cmd in ~/.config/opencode/grc/grc/commands/*.md; do\n  ln -s \"$cmd\" ~/.config/opencode/commands/$(basename \"$cmd\")\ndone\n```\n\nRestart OpenCode. Commands are available as `/grc-control-lookup`, `/grc-map-controls`, etc.\n\n## Commands\n\n> **Note**: In Claude Code, commands use `/grc:command-name`. In OpenCode, commands use `/grc-command-name`.\n\n### Framework & Controls\n\n| Command | Purpose |\n|---------|---------|\n| `/grc:control-lookup` | Look up controls by framework and ID or keyword |\n| `/grc:map-controls` | Map controls between any two frameworks |\n| `/grc:conmon-guide` | Continuous monitoring guidance by topic |\n| `/grc:audit-prep` | Audit preparation checklists by audit type |\n| `/grc:poam-help` | POA&M creation, templates, and metrics |\n| `/grc:gap-analysis` | Structured gap analysis worksheets |\n| `/grc:ssp-section` | Draft SSP narrative language by control family |\n| `/grc:deviation-request` | Draft deviation/risk acceptance documentation |\n\n### Document Review & Analysis\n\n| Command | Purpose |\n|---------|---------|\n| `/grc:review-narrative` | Review SSP control narratives — Five W's, ODPs, 0-5 maturity score |\n| `/grc:review-ssp` | Validate SSP structure against FedRAMP template |\n| `/grc:review-poam` | Check POA&M entries for field completeness and SLA compliance |\n| `/grc:review-policy` | Review policy structure, control coverage, and language quality |\n| `/grc:review-crm` | Review CRM coverage, responsibility clarity, and common gaps |\n| `/grc:score-maturity` | Score control implementation maturity 0-5 with next-level guidance |\n| `/grc:evidence-checklist` | Generate audit evidence prep checklists (no user content needed) |\n\n### Operational Workflows\n\n| Command | Purpose |\n|---------|---------|\n| `/grc:significant-change` | Analyze if a system change is \"significant\" per FedRAMP |\n| `/grc:inheritance` | Model control inheritance by service model (IaaS/PaaS/SaaS) |\n| `/grc:sar-response` | Draft structured responses to SAR findings |\n| `/grc:compliance-calendar` | Generate recurring compliance activity calendar |\n| `/grc:boundary-guidance` | Authorization boundary definition guidance |\n| `/grc:tabletop-scenario` | Generate IR/CP tabletop exercise scenarios |\n| `/grc:multi-framework` | Analyze overlap and gaps across multiple frameworks |\n| `/grc:oscal-guide` | OSCAL structure, readiness, and conversion guidance |\n| `/grc:rev5-transition` | NIST 800-53 Rev 4 to Rev 5 transition mapping |\n\nFor detailed usage, examples, and tips for every command, see the [Usage Guide](GUIDE.md).\n\n## Quick Examples\n\n**Look up a control:**\n```\n/grc:control-lookup fedramp ac-2\n```\n\n**Map between frameworks:**\n```\n/grc:map-controls soc2 CC6.1 to iso27001\n```\n\n**Review a control narrative** (paste your narrative after the command):\n```\n/grc:review-narrative fedramp ac-2 moderate\n```\n\n**Check if a change is significant:**\n```\n/grc:significant-change fedramp Migrating database from EC2 to RDS\n```\n\n**Generate a compliance calendar:**\n```\n/grc:compliance-calendar fedramp,soc2\n```\n\n**Generate a tabletop exercise:**\n```\n/grc:tabletop-scenario ir ransomware saas\n```\n\n## Data Sensitivity\n\nGRC artifacts often contain CUI, PII, system architecture, and vulnerability data. This plugin is designed to be useful **without requiring sensitive specifics**:\n\n- **Document review commands** display a redaction reminder before every response\n- **All feedback is structural** — \"your narrative is missing the frequency component\" not \"your system is insecure\"\n- **No security posture judgment** — the plugin assesses document quality, never system security\n- **Safe to use with placeholders** — replace real names/IPs/agencies with `[Agency Name]`, `[System Name]`, `10.x.x.x`\n\nReference-only commands (`evidence-checklist`, `compliance-calendar`, `tabletop-scenario`, `oscal-guide`, `rev5-transition`, `multi-framework`) don't process user content and skip the reminder.\n\n## Architecture\n\n```\n├── .claude-plugin/\n│   └── marketplace.json         # Claude Code marketplace catalog\n├── .opencode/\n│   ├── INSTALL.md               # OpenCode self-install instructions\n│   └── plugins/\n│       └── grc.js               # OpenCode plugin (injects skill context)\n├── grc/                         # Claude Code plugin\n│   ├── .claude-plugin/\n│   │   └── plugin.json          # Plugin metadata\n│   ├── agents/\n│   │   └── grc-researcher.md    # Read-only research agent\n│   ├── commands/                # 24 slash commands\n│   │   ├── control-lookup.md\n│   │   ├── map-controls.md\n│   │   └── ...\n│   └── skills/\n│       └── grc-knowledge/\n│           ├── SKILL.md         # Core skill definition (loaded into context)\n│           ├── audits/          # 14 reference files\n│           ├── conmon/          # 6 reference files\n│           ├── frameworks/      # 16 reference files\n│           ├── mappings/        # 9 reference files\n│           └── tooling/         # 1 reference file\n├── GUIDE.md                     # Usage guide\n├── LICENSE                      # MIT\n└── README.md\n```\n\n**How it works:**\n\n- `SKILL.md` is loaded into Claude's context and provides the core GRC analyst persona, framework quick reference, and response guidelines\n- Slash commands in `commands/` define the behavior, arguments, and output format for each command\n- Reference files in `skills/grc-knowledge/` contain deep domain knowledge that commands read on demand\n- The `grc-researcher` agent provides a read-only research interface for complex cross-reference queries\n- NIST 800-53 serves as the universal mapping hub — any framework maps to any other through NIST\n\n## Frameworks Covered\n\n| Framework | Version | Reference File |\n|-----------|---------|---------------|\n| NIST 800-53 | Rev 5 | `frameworks/nist-800-53.md` |\n| FedRAMP | Rev 5 | `frameworks/fedramp.md` |\n| FISMA | Current | `frameworks/fisma.md` |\n| CMMC | 2.0 | `frameworks/cmmc.md` |\n| SOC 2 | Current | `frameworks/soc2.md` |\n| ISO 27001 | 2022 | `frameworks/iso-27001-27002.md` |\n| PCI DSS | v4.0.1 | `frameworks/pci-dss-v4.md` |\n| HIPAA | Current | `frameworks/hipaa.md` |\n| CIS Controls | v8.1 | `frameworks/cis-controls-v8.md` |\n| COBIT | 2019 | `frameworks/cobit-2019.md` |\n| CSA CCM | v4 | `frameworks/csa-ccm-v4.md` |\n| GDPR | Current | `frameworks/gdpr.md` |\n| SLSA | v1.2 | `frameworks/slsa.md` |\n| OSCAL | 1.1.2 | `frameworks/oscal-reference.md` |\n| NIST Rev 4→5 | Transition | `frameworks/nist-rev4-to-rev5.md` |\n| Supply Chain (SR) | Rev 5 | `frameworks/supply-chain-srm.md` |\n\n## Contributing\n\nContributions welcome. The main areas where help is needed:\n\n- **Framework updates** — Control catalogs change. If a framework publishes a new version, the corresponding reference file needs updating.\n- **New framework mappings** — Adding mappings for frameworks not yet covered.\n- **Command improvements** — Better output formats, additional review criteria, new operational workflows.\n- **Reference accuracy** — If you spot an incorrect control ID, wrong baseline assignment, or outdated parameter value, please open an issue or PR.\n\n### Adding a new command\n\n1. Create `commands/your-command.md` following the pattern of existing commands\n2. If the command needs reference data, create a file in the appropriate `skills/grc-knowledge/` subdirectory\n3. Update `skills/grc-knowledge/SKILL.md` — add reference navigation entry\n4. Update `agents/grc-researcher.md` — add new reference files to the available list\n\n### Adding a new framework\n\n1. Create `skills/grc-knowledge/frameworks/your-framework.md`\n2. Create `skills/grc-knowledge/mappings/nist-to-your-framework.md` (map through NIST hub)\n3. Update the Framework Quick Reference table in `SKILL.md`\n4. Update framework aliases in `commands/control-lookup.md` and `commands/map-controls.md`\n\n## License\n\nMIT — see [LICENSE](LICENSE).\n\n## Disclaimer\n\nThis plugin provides GRC domain knowledge for documentation and compliance workflow assistance. It does not constitute legal, security, or compliance advice. The plugin assesses document structure and completeness — it does not evaluate whether a system is actually secure or compliant. Always consult qualified GRC professionals and your authorizing official for authorization decisions.\n"
+      },
+      "plugins": [
+        {
+          "name": "grc",
+          "source": "./grc",
+          "description": "GRC domain knowledge — 15 frameworks, 24 commands, cross-framework mapping, document review, and operational workflows. Cloud-agnostic.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Mario Lunato",
+            "url": "https://github.com/mlunato47"
+          },
+          "homepage": "https://github.com/mlunato47/claude-grc-plugin",
+          "repository": "https://github.com/mlunato47/claude-grc-plugin",
+          "license": "MIT",
+          "keywords": [
+            "grc",
+            "compliance",
+            "governance",
+            "risk-management",
+            "nist",
+            "fedramp",
+            "soc2",
+            "iso27001",
+            "pci-dss",
+            "hipaa",
+            "cmmc",
+            "audit",
+            "security"
+          ],
+          "categories": [
+            "audit",
+            "cmmc",
+            "compliance",
+            "fedramp",
+            "governance",
+            "grc",
+            "hipaa",
+            "iso27001",
+            "nist",
+            "pci-dss",
+            "risk-management",
+            "security",
+            "soc2"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mlunato47/claude-grc-plugin",
+            "/plugin install grc@mlunato47"
+          ]
+        }
+      ]
+    }
+  ]
+}

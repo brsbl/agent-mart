@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "0235-jp",
+    "display_name": "株式会社0235",
+    "avatar_url": "https://avatars.githubusercontent.com/u/147239090?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "health-manager-plugins",
+      "version": null,
+      "description": "Health Manager Agent の MCP 連携プラグイン",
+      "repo_full_name": "0235-jp/health-manager-agent",
+      "repo_url": "https://github.com/0235-jp/health-manager-agent",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-22T16:02:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"health-manager-plugins\",\n  \"owner\": { \"name\": \"Health Manager\" },\n  \"metadata\": {\n    \"description\": \"Health Manager Agent の MCP 連携プラグイン\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"health-manager-mcp\",\n      \"source\": \"./claude-code-plugin\",\n      \"description\": \"Health Manager の MCP サーバーに接続し、健康データを Claude Code から直接参照\"\n    }\n  ]\n}\n",
+        "README.md": "# Health Manager Agent\n\nヘルスデータを収集・管理し、AIエージェントによる分析とレポート生成を行うアプリケーション。\n\n## 概要\n\nHealth Manager Agent は、様々なヘルスデバイス（Oura Ring、Huawei Health など）からデータを収集し、AI を活用してヘルスデータの分析・レポート生成を行うモノレポプロジェクトです。\n\n### 主な機能\n\n- 複数のヘルスデータソースからのデータ収集（プラグイン方式）\n- AI エージェントによるヘルスデータ分析\n- 日次レポート・取得時レポートの自動生成\n- リアルタイムチャットによる健康相談\n- Webhook 通知によるレポート配信\n\n## 技術スタック\n\n| 層 | 技術 |\n|---|---|\n| **フロントエンド** | React 18, Vite, TailwindCSS, React Query |\n| **バックエンド** | Express, TypeScript, SQLite (better-sqlite3) |\n| **AI統合** | Claude Agent SDK, OpenAI互換API |\n| **スケジューリング** | node-cron |\n\n## セットアップ\n\n### 必要条件\n\n- Node.js 20+\n- pnpm\n\n### インストール\n\n```bash\n# 依存関係のインストール\npnpm install\n\n# 全パッケージのビルド\npnpm build\n```\n\n### 環境変数\n\nプラグインごとに必要な環境変数が異なります。各プラグインの設定画面から API キーなどを設定してください。\n\n#### 認証（任意）\n\n公開環境で利用する場合、`/mcp` と `/api` エンドポイントに認証を設定できます。どちらも未設定の場合は認証なし（ローカル開発モード）で動作します。\n\n| 変数 | 説明 |\n|------|------|\n| `HEALTH_MANAGER_BEARER_TOKEN` | Bearer トークン認証用。設定すると `/mcp` と `/api` に認証が必要になる |\n| `CF_ACCESS_CLIENT_ID` | Cloudflare Access Service Token の Client ID |\n| `CF_ACCESS_CLIENT_SECRET` | Cloudflare Access Service Token の Client Secret |\n\n詳細は `.env.example` を参照してください。\n\n### 起動\n\n```bash\n# 開発サーバー起動（フロントエンド + バックエンド）\npnpm dev\n\n# バックグラウンドで起動\npnpm dev:bg\n\n# バックグラウンドプロセス停止\npnpm dev:stop\n\n# ログ確認\npnpm dev:logs\n```\n\n## スクリプト一覧\n\n### 開発\n\n| コマンド | 説明 |\n|---------|------|\n| `pnpm dev` | 開発サーバー起動（サーバー:3001, フロント:5173） |\n| `pnpm dev:bg` | バックグラウンドで起動 |\n| `pnpm dev:stop` | バックグラウンドプロセス停止 |\n| `pnpm dev:logs` | ログをtailで表示 |\n\n### プロダクション\n\n| コマンド | 説明 |\n|---------|------|\n| `pnpm prod` | プロダクションサーバー起動（サーバー:3001, フロント:4173） |\n| `pnpm prod:bg` | バックグラウンドで起動 |\n| `pnpm prod:stop` | バックグラウンドプロセス停止 |\n| `pnpm prod:logs` | ログをtailで表示 |\n| `pnpm prod:server` | サーバーのみ起動 |\n| `pnpm prod:frontend` | フロントエンドのみ起動 |\n\n### ビルド\n\n| コマンド | 説明 |\n|---------|------|\n| `pnpm build` | 全パッケージをビルド |\n| `pnpm plugins:install` | 全プラグインの依存関係をインストール |\n| `pnpm plugins:build` | 全プラグインをビルド |\n| `pnpm plugins:build:zip` | 全プラグインをzipでビルド |\n| `pnpm lint` | 全パッケージをリント |\n| `pnpm test` | 全パッケージのテスト実行 |\n\n## ディレクトリ構造\n\n```\nhealth-manager-agent/\n├── packages/\n│   ├── frontend/          # React フロントエンド\n│   └── server/            # Express バックエンド\n├── plugins/                       # プラグイン（別途インストール可能）\n│   ├── claude-agent-sdk-plugin/   # Claude Agent SDK プラグイン\n│   ├── openai-chat-plugin/        # OpenAI互換 プラグイン\n│   ├── huawei-health-plugin/      # Huawei Health プラグイン\n│   ├── oura-ring-plugin/          # Oura Ring プラグイン\n│   └── webhook-notification-plugin/ # Webhook通知プラグイン\n├── data/                  # データファイル（SQLite DB等）\n└── logs/                  # ログファイル\n```\n\n## プラグイン\n\n公式プラグインは [GitHub Releases](https://github.com/KoheiYamashita/health-manager-agent/releases) からダウンロードできます。\n\n| プラグイン | 説明 |\n|-----------|------|\n| claude-agent-sdk-plugin | Claude Agent SDK を使用した AI 分析 |\n| openai-chat-plugin | OpenAI 互換 API を使用した AI 分析 |\n| huawei-health-plugin | Huawei Health からデータ取得 |\n| oura-ring-plugin | Oura Ring からデータ取得 |\n| webhook-notification-plugin | Webhook 通知 |\n\nダウンロードした ZIP ファイルは管理画面からアップロードするか、`plugins/` ディレクトリに展開してください。\n"
+      },
+      "plugins": [
+        {
+          "name": "health-manager-mcp",
+          "source": "./claude-code-plugin",
+          "description": "Health Manager の MCP サーバーに接続し、健康データを Claude Code から直接参照",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add 0235-jp/health-manager-agent",
+            "/plugin install health-manager-mcp@health-manager-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

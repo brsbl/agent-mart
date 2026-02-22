@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "reach0908",
+    "display_name": "김진호",
+    "avatar_url": "https://avatars.githubusercontent.com/u/67333761?u=0d341b7d2f27f911bf346c3eddfec37b64df3ad6&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "open-rpg-player",
+      "version": null,
+      "description": "AI agent skill for playing Open RPG via MCP — autonomous gameplay with narrative storytelling and strategic decision-making.",
+      "repo_full_name": "reach0908/open-rpg-player",
+      "repo_url": "https://github.com/reach0908/open-rpg-player",
+      "repo_description": "Claude Code plugin for autonomous Open RPG gameplay via MCP",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-22T16:43:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"open-rpg-player\",\n  \"description\": \"AI agent skill for playing Open RPG via MCP — autonomous gameplay with narrative storytelling and strategic decision-making.\",\n  \"owner\": {\n    \"name\": \"reach0908\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"open-rpg-player\",\n      \"description\": \"AI agent skill for playing Open RPG via MCP. Provides autonomous gameplay with narrative storytelling, strategic decision-making, and structured turn reporting.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"reach0908\"\n      },\n      \"source\": \"./plugins/open-rpg-player\",\n      \"category\": \"gaming\"\n    }\n  ]\n}\n",
+        "README.md": "# Open RPG Player — Claude Code Plugin Marketplace\n\nAI 에이전트가 [Open RPG](https://github.com/reach0908/open-rpg) 서버에 접속해 자율적으로 게임을 플레이하는 Claude Code 플러그인입니다.\n\n## 설치\n\n**1단계: 마켓플레이스 추가**\n```bash\nclaude plugin marketplace add reach0908/open-rpg-player\n```\n\n**2단계: 플러그인 설치**\n```bash\nclaude plugin install open-rpg-player@open-rpg-player\n```\n\n## 사용법\n\n**1단계: `.mcp.json` 설정** (프로젝트 루트에 생성)\n```json\n{\n  \"mcpServers\": {\n    \"open-rpg\": {\n      \"type\": \"http\",\n      \"url\": \"https://open-rpg-production.up.railway.app/mcp\",\n      \"headers\": {\n        \"Authorization\": \"Bearer <your-token>\"\n      }\n    }\n  }\n}\n```\n\n**2단계: 토큰 발급** (OAuth PKCE 플로우)\n\n```bash\n# 1) 플레이어 등록\ncurl -s -X POST https://open-rpg-production.up.railway.app/auth/register \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"email\": \"you@example.com\", \"password\": \"your-password\", \"displayName\": \"YourName\"}'\n# → {\"id\": \"<player-id>\", ...}\n\n# 2) PKCE 코드 생성 + 인가 코드 요청\nCV=$(openssl rand -base64 32 | tr -d '=/+' | head -c 43)\nCC=$(printf '%s' \"$CV\" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')\nAUTH=$(curl -s \"https://open-rpg-production.up.railway.app/auth/authorize?client_id=claude-code&redirect_uri=http://localhost:3000/callback&code_challenge=$CC&code_challenge_method=S256&player_id=<player-id>&scope=game:play\")\nCODE=$(echo \"$AUTH\" | python3 -c \"import sys,json; print(json.load(sys.stdin)['code'])\")\n\n# 3) 토큰 교환\ncurl -s -X POST https://open-rpg-production.up.railway.app/auth/token \\\n  -H \"Content-Type: application/json\" \\\n  -d \"{\\\"grant_type\\\":\\\"authorization_code\\\",\\\"code\\\":\\\"$CODE\\\",\\\"code_verifier\\\":\\\"$CV\\\",\\\"client_id\\\":\\\"claude-code\\\"}\"\n# → {\"access_token\": \"...\", \"refresh_token\": \"...\", ...}\n# access_token을 위 .mcp.json의 Bearer <your-token>에 입력\n```\n\n**3단계: 게임 시작**\n```\n/play-rpg\n```\n\n## 포함 내용\n\n| 컴포넌트 | 설명 |\n|----------|------|\n| `play-open-rpg` 스킬 | 게임 루프, HP 기반 의사결정, 클래스별 전투 전략 |\n| `/play-rpg` 명령어 | 서버 상태 확인 + 게임 시작 진입점 |\n| `combat-strategy` 참조 | 8개 클래스 스킬 우선순위, 보스전 프로토콜 |\n| `exploration-guide` 참조 | 타일 탐험, 퀘스트, 팩션, 리프트 전략 |\n",
+        "plugins/open-rpg-player/README.md": "# Open RPG Player Plugin\n\nClaude Code 플러그인 — AI 에이전트가 [Open RPG](https://github.com/reach0908/open-rpg) 서버에 접속해 자율적으로 게임을 플레이합니다.\n\n## 설치\n\n```bash\nclaude plugin marketplace add reach0908/open-rpg-player\nclaude plugin install open-rpg-player@open-rpg-player\n```\n\n## 사용법\n\n**1단계: `.mcp.json` 설정** (프로젝트 루트에 생성)\n\n```json\n{\n  \"mcpServers\": {\n    \"open-rpg\": {\n      \"type\": \"http\",\n      \"url\": \"https://open-rpg-production.up.railway.app/mcp\",\n      \"headers\": {\n        \"Authorization\": \"Bearer <your-token>\"\n      }\n    }\n  }\n}\n```\n\n**2단계: 토큰 발급**\n\n```bash\ncurl -X POST https://open-rpg-production.up.railway.app/auth/register \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"username\": \"your-name\", \"password\": \"your-password\"}'\n```\n\n반환된 `accessToken`을 위 `<your-token>`에 입력하세요.\n\n**3단계: 게임 시작**\n\n```\n/play-rpg\n```\n\n## 포함 내용\n\n- `play-open-rpg` 스킬: 게임 루프, 의사결정 프레임워크, 서사 형식\n- `/play-rpg` 명령어: 서버 상태 확인 + 게임 시작 진입점\n"
+      },
+      "plugins": [
+        {
+          "name": "open-rpg-player",
+          "description": "AI agent skill for playing Open RPG via MCP. Provides autonomous gameplay with narrative storytelling, strategic decision-making, and structured turn reporting.",
+          "version": "1.0.0",
+          "author": {
+            "name": "reach0908"
+          },
+          "source": "./plugins/open-rpg-player",
+          "category": "gaming",
+          "categories": [
+            "gaming"
+          ],
+          "install_commands": [
+            "/plugin marketplace add reach0908/open-rpg-player",
+            "/plugin install open-rpg-player@open-rpg-player"
+          ]
+        }
+      ]
+    }
+  ]
+}
