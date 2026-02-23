@@ -1,0 +1,82 @@
+{
+  "author": {
+    "id": "flex-haegul",
+    "display_name": "Haegul Pyun",
+    "avatar_url": "https://avatars.githubusercontent.com/u/83200429?u=c835730b89006c3fd70c502f50ea3b288d0dd630&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "flex-haegul-plugins",
+      "version": null,
+      "description": "Personal Claude Code plugin marketplace by flex-haegul",
+      "repo_full_name": "flex-haegul/claude-code-marketplace",
+      "repo_url": "https://github.com/flex-haegul/claude-code-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-23T09:54:52Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"flex-haegul-plugins\",\n  \"owner\": {\n    \"name\": \"flex-haegul\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code plugin marketplace by flex-haegul\",\n    \"version\": \"2026.02\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"git\",\n      \"source\": \"./plugins/git\",\n      \"description\": \"git diff/log를 분석하여 conventional commit 형식의 한국어 커밋 메시지, GitHub PR 자동 생성, stacked PR rebase 정리\",\n      \"version\": \"2026.02.1\",\n      \"keywords\": [\"git\", \"commit\", \"pull-request\", \"conventional-commit\", \"korean\", \"rebase\", \"stacked-pr\"]\n    },\n    {\n      \"name\": \"plan\",\n      \"source\": \"./plugins/plan\",\n      \"description\": \"심층 인터뷰를 통해 프로젝트 스펙 문서를 자동 생성하고 Linear 티켓 정보를 채워줌\",\n      \"version\": \"2026.02\",\n      \"keywords\": [\"interview\", \"spec\", \"linear\", \"requirements\", \"planning\"]\n    }\n  ]\n}\n",
+        "README.md": "# flex-haegul-plugins\n\nPersonal Claude Code plugin marketplace.\n\n## Usage\n\n### Add marketplace\n\n```shell\n/plugin marketplace add flex-haegul/claude-code-marketplace\n```\n\n### Install a plugin\n\n```shell\n/plugin install <plugin-name>@flex-haegul-plugins\n```\n\n### Update marketplace\n\n```shell\n/plugin marketplace update\n```\n\n## Plugins\n\n- [git](plugins/git/README.md) - Git workflow automation (commit, PR, stacked PR rebase)\n- [plan](plugins/plan/README.md) - Project planning support (deep interview, Linear ticket)\n\nSee [SPEC.md](SPEC.md) for directory structure and design decisions.\n\n## Adding a Plugin\n\n1. Create `plugins/<plugin-name>/` directory\n2. Add `.claude-plugin/plugin.json` manifest\n3. Add plugin source files (commands/, hooks/, agents/, etc.)\n4. Add entry to `.claude-plugin/marketplace.json` `plugins` array\n5. Bump `version` in both `plugin.json` and `marketplace.json` (see [SPEC.md](SPEC.md#버전-관리-규칙))\n6. Validate with `claude plugin validate .` or `/plugin validate .`\n7. Commit and push\n\n## License\n\nMIT\n",
+        "plugins/git/README.md": "# git\n\nGit 워크플로우 자동화 플러그인. staged 변경사항의 diff를 분석하여 conventional commit 형식의 한국어 커밋 메시지를 자동 생성하고, PR 생성과 stacked PR rebase까지 처리한다.\n\n## 커맨드\n\n| 커맨드 | 설명 |\n|--------|------|\n| `git-commit` | git diff 분석 → conventional commit 형식 한국어 커밋 메시지 자동 생성 및 커밋 실행 |\n| `github-pr` | 현재 브랜치 변경사항 분석 → conventional commit 형식 한국어 제목으로 GitHub PR 자동 생성 |\n| `git-rebase-stack` | stacked PR의 `git rebase --onto --update-refs` 기반 스택 브랜치 자동 정리 |\n\n## 사용 예시\n\n### git-commit\n`/commit` — staged 변경사항이 없으면 자동으로 전체 staging 후, diff를 분석하여 커밋 메시지를 생성한다. 논리적으로 분리되어야 하는 변경사항이 있으면 커밋 분할을 제안한다.\n\n### github-pr\n`/pr` — 현재 브랜치의 커밋 히스토리와 diff를 분석하여 PR을 생성한다. 미푸시 브랜치는 자동으로 push하고, 브랜치명에서 issue 번호를 추출하여 연동한다.\n`/pr --draft` — draft PR로 생성한다.\n\n### git-rebase-stack\n`/rebase-stack` — 현재 브랜치 기준으로 스택을 자동 감지하여 rebase를 실행한다.\n`/rebase-stack step-1이 머지됐으니 정리해줘` — 자연어로 의도를 전달하면 스택 topology를 분석하여 적절한 rebase를 실행한다.\n",
+        "plugins/plan/README.md": "# plan\n\n프로젝트 기획 지원 플러그인. AskUserQuestion을 활용한 심층 인터뷰를 통해 스펙 문서를 자동 생성하거나, Linear 티켓의 누락된 정보를 채워준다.\n\n## 커맨드\n\n| 커맨드 | 설명 |\n|--------|------|\n| `deep-interview` | 심층 인터뷰 후 스펙 문서 자동 생성 |\n| `fill-linear-ticket` | Linear 티켓 분석 후 인터뷰를 통해 누락 정보 보완 |\n\n## 사용 예시\n\n### deep-interview\n`/plan:deep-interview <요청사항>` — 기술 구현, UI/UX, 우려사항, tradeoffs 등에 대해 심층 인터뷰를 진행한 후 스펙 문서를 자동 생성한다.\n\n### fill-linear-ticket\n`/plan:fill-linear-ticket <Linear 티켓 URL>` — 티켓의 title, description, comments, linked issue를 분석하고, 인터뷰를 통해 누락된 정보를 채운다.\n"
+      },
+      "plugins": [
+        {
+          "name": "git",
+          "source": "./plugins/git",
+          "description": "git diff/log를 분석하여 conventional commit 형식의 한국어 커밋 메시지, GitHub PR 자동 생성, stacked PR rebase 정리",
+          "version": "2026.02.1",
+          "keywords": [
+            "git",
+            "commit",
+            "pull-request",
+            "conventional-commit",
+            "korean",
+            "rebase",
+            "stacked-pr"
+          ],
+          "categories": [
+            "commit",
+            "conventional-commit",
+            "git",
+            "korean",
+            "pull-request",
+            "rebase",
+            "stacked-pr"
+          ],
+          "install_commands": [
+            "/plugin marketplace add flex-haegul/claude-code-marketplace",
+            "/plugin install git@flex-haegul-plugins"
+          ]
+        },
+        {
+          "name": "plan",
+          "source": "./plugins/plan",
+          "description": "심층 인터뷰를 통해 프로젝트 스펙 문서를 자동 생성하고 Linear 티켓 정보를 채워줌",
+          "version": "2026.02",
+          "keywords": [
+            "interview",
+            "spec",
+            "linear",
+            "requirements",
+            "planning"
+          ],
+          "categories": [
+            "interview",
+            "linear",
+            "planning",
+            "requirements",
+            "spec"
+          ],
+          "install_commands": [
+            "/plugin marketplace add flex-haegul/claude-code-marketplace",
+            "/plugin install plan@flex-haegul-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
