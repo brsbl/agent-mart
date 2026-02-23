@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "kio-rocks",
+    "display_name": "Stefanie",
+    "avatar_url": "https://avatars.githubusercontent.com/u/238649495?u=8b9a93637ce91354f626093e30b38cde4a54562e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kio-rocks",
+      "version": null,
+      "description": "KIO Plugins für Team-Automatisierung",
+      "repo_full_name": "kio-rocks/kio-aktivitaeten-plugin",
+      "repo_url": "https://github.com/kio-rocks/kio-aktivitaeten-plugin",
+      "repo_description": "KIO Aktivitäten-Plugin für Claude Desktop (Cowork): Erfasse Team-Aktivitäten, analysiere Zeitverteilung und entwickle konkrete Automatisierungen.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-23T11:17:21Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kio-rocks\",\n  \"owner\": {\n    \"name\": \"kio.rocks\",\n    \"email\": \"hey@kio.rocks\"\n  },\n  \"metadata\": {\n    \"description\": \"KIO Plugins für Team-Automatisierung\",\n    \"version\": \"1.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"KIO-Aktivitaeten\",\n      \"source\": \"./plugins/kio-aktivitaeten\",\n      \"description\": \"Erfasse Team-Aktivitäten, analysiere Zeitverteilung und Energie, und entwickle Schritt für Schritt konkrete Automatisierungen. Von der ersten Inventur bis zum fertigen Baustein.\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"kio.rocks\"\n      },\n      \"homepage\": \"https://kio.rocks\",\n      \"repository\": \"https://github.com/kio-rocks/kio-aktivitaeten-plugin\",\n      \"keywords\": [\"aktivitaeten\", \"automatisierung\", \"inventur\", \"prozesse\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "plugins/kio-aktivitaeten/README.md": "# KIO Aktivitäten-Plugin\n\nEin Cowork-Plugin für Claude Desktop, das die komplette Aktivitäten-Journey begleitet: Erfassen, Analysieren, Automatisierungen vorschlagen, konkrete Bausteine generieren. Standalone sofort einsatzbereit — mit Cowork-Connectors (Gmail, Calendar, CRM) deutlich mächtiger.\n\n## Überblick\n\nWo verbringt dein Team die meiste Zeit? Was kostet Energie? Was könnte automatisiert werden? Dieses Plugin hilft dir, Antworten zu finden und direkt in handlungsfertige Bausteine umzusetzen.\n\n```\nInventur → Analyse → Vorschläge → Bausteine\n```\n\n## Komponenten\n\n### Commands — Explizite Workflows per Slash-Befehl\n\n| Command | Beschreibung |\n|---------|-------------|\n| `/start` | Profil anlegen — Name, Rolle, Team, verwendete Systeme |\n| `/inventur` | Geführte 30-Min Aktivitäts-Erfassungs-Session (mit inventur-coach Agent) |\n| `/analyse` | Dashboard mit 7 Dimensionen: Zeitverteilung, Energie, Automatisierungspotenzial |\n| `/vorschlaege` | Top-5 Automatisierungsvorschläge mit Impact/Effort-Bewertung |\n| `/baustein` | Fertigen Baustein generieren: Apps Script, Skill-ZIP, Artifact oder Anleitung |\n| `/status` | Fortschritts-Überblick: Erfasst, Analysiert, Automatisiert |\n\n### Skills — Domänenwissen das automatisch greift\n\n| Skill | Beschreibung | Trigger-Beispiele |\n|-------|-------------|-------------------|\n| `aktivitaeten-erfassen` | Einzelne Aktivität im Dialog aufnehmen | \"Ich mache...\", \"Neue Aktivität\" |\n| `aktivitaeten-analyse` | 7-Dimensionen-Dashboard aus CSV-Daten | \"Analysiere meine Aktivitäten\" |\n| `prozess-beschreiben` | Prozess einer Aktivität strukturieren | \"Wie läuft das ab?\", \"Beschreib den Prozess\" |\n| `automatisierungs-bewertung` | Automatisierbarkeit einer Aktivität bewerten | \"Kann man das automatisieren?\" |\n| `vorschlags-engine` | Top-Automatisierungsvorschläge aus Inventur | \"Was kann ich automatisieren?\" |\n| `baustein-generator` | Fertigen Baustein in passendem Format erstellen | \"Bau mir das\", \"Erstelle den Baustein\" |\n| `wochen-review` | Wöchentlicher Fortschrittsbericht | \"Wie läuft's?\", \"Wochen-Update\" |\n\n### Agent — Dialoggeführte Erfassung\n\n| Agent | Beschreibung |\n|-------|-------------|\n| `inventur-coach` | Führt durch eine strukturierte 30-Min Aktivitäts-Inventur in 4 Phasen |\n\n## Setup\n\n### Schritt 1: Plugin in Claude Desktop öffnen\n\nÖffne den `kio-aktivitaeten` Ordner als Claude Desktop Projekt.\n\n### Schritt 2 (Optional): Cowork-Connectors verbinden\n\nFür die Supercharged-Funktionen verbinde deine Tools über die Cowork-Plattform. Empfohlener Start:\n\n1. **Gmail** — E-Mail-Aktivitäten erkennen und analysieren\n2. **Calendar** — Termin-basierte Aktivitäten erfassen\n\nWeitere Connectors (Sheets, CRM, Chat) kannst du jederzeit hinzufügen. Alle verfügbaren Kategorien und Platzhalter sind in [CONNECTORS.md](CONNECTORS.md) dokumentiert.\n\n### Schritt 3: Profil anlegen\n\n```\n/start\n```\n\nLegt dein Profil an (Name, Rolle, Team, Systeme). Einmalig notwendig.\n\n## Nutzung\n\n### Erste Aktivitäts-Inventur\n\n```\n/inventur\n```\n\nDer `inventur-coach` Agent führt dich in ~30 Minuten durch eine strukturierte Erfassung aller Team-Aktivitäten. Ergebnis: `context/aktivitaeten.json` mit allen Aktivitäten.\n\n### Aktivitäten analysieren\n\n```\n/analyse\n```\n\nLäd deine Aktivitäten (aus `context/aktivitaeten.json` oder CSV-Upload) und erstellt ein Dashboard mit 7 Dimensionen: Zeitverteilung, Energie-Bilanz, Frequenz-Matrix, Wert-Aufwand-Verhältnis, Automatisierungs-Kandidaten, Bottlenecks, Empfehlungen.\n\n### Vorschläge generieren\n\n```\n/vorschlaege\n```\n\nNutzt deine Analyse um die Top-5 Automatisierungsvorschläge zu identifizieren — gerankt nach Impact/Effort-Verhältnis, mit Angabe des passenden Delivery-Formats.\n\n### Baustein erstellen\n\n```\n/baustein [Aktivität oder Vorschlags-ID]\n```\n\nGeneriert einen fertigen, einsatzbereiten Baustein im passenden Format:\n- **Apps Script**: Wenn Google Workspace-Automatisierung ohne MCP\n- **Claude Skill ZIP**: Wenn KI-gestützter Prozess mit Claude Desktop\n- **Artifact**: Wenn Template oder Dashboard\n- **Konfigurations-Anleitung**: Wenn MCP-gestützter Workflow\n\n### Fortschritt verfolgen\n\n```\n/status\n```\n\nZeigt Überblick: X Aktivitäten erfasst, Y analysiert, Z Vorschläge offen, A Bausteine erstellt.\n\n## Standalone + Supercharged\n\nJedes Command und jeder Skill funktioniert ohne MCP-Verbindungen:\n\n| Was du tun kannst | Standalone | Supercharged mit |\n|-------------------|-----------|------------------|\n| Aktivitäten erfassen | Dialog-basiert, manuelle Eingabe | `~~calendar` (Termine als Basis), `~~chat` (Team-Aktivitäten) |\n| Aktivitäten analysieren | CSV-Upload oder manuelle Liste | `~~sheets` (direkte Datenquelle) |\n| Vorschläge generieren | Basierend auf Aktivitätsliste | MCP-Capability-Matching (was ist wirklich umsetzbar?) |\n| Bausteine erstellen | Beschreibung + Anleitung | Code-Generierung wenn passender MCP verfügbar |\n| Fortschritt tracken | Lokale JSON-Dateien | `~~project-tracker` (Sync mit Aufgaben-Tool) |\n\n## Cowork-Connectors\n\nVerbinde deine Tools über die Cowork-Plattform für bessere Ergebnisse:\n\n| Kategorie | Beispiele | Was es ermöglicht |\n|-----------|-----------|-------------------|\n| **Email** | Gmail, Outlook | E-Mail-Aktivitäten erkennen, Kommunikations-Patterns analysieren |\n| **Calendar** | Google Calendar, Outlook Calendar | Termin-basierte Aktivitäten erfassen, Zeitverteilung analysieren |\n| **Sheets** | Google Sheets, Excel | Analyse in Tabellen speichern, CSV-Import/Export |\n| **CRM** | HubSpot, Pipedrive, Salesforce | Kundenbezogene Aktivitäten erkennen |\n| **Project Tracker** | Linear, Asana, Jira | Fortschritt synchronisieren |\n| **Chat** | Slack, Teams | Team-Aktivitäten aus Gesprächen ableiten |\n\nAlle Connector-Kategorien und `~~category` Platzhalter sind in [CONNECTORS.md](CONNECTORS.md) dokumentiert.\n"
+      },
+      "plugins": [
+        {
+          "name": "KIO-Aktivitaeten",
+          "source": "./plugins/kio-aktivitaeten",
+          "description": "Erfasse Team-Aktivitäten, analysiere Zeitverteilung und Energie, und entwickle Schritt für Schritt konkrete Automatisierungen. Von der ersten Inventur bis zum fertigen Baustein.",
+          "version": "1.1.0",
+          "author": {
+            "name": "kio.rocks"
+          },
+          "homepage": "https://kio.rocks",
+          "repository": "https://github.com/kio-rocks/kio-aktivitaeten-plugin",
+          "keywords": [
+            "aktivitaeten",
+            "automatisierung",
+            "inventur",
+            "prozesse"
+          ],
+          "category": "productivity",
+          "categories": [
+            "aktivitaeten",
+            "automatisierung",
+            "inventur",
+            "productivity",
+            "prozesse"
+          ],
+          "install_commands": [
+            "/plugin marketplace add kio-rocks/kio-aktivitaeten-plugin",
+            "/plugin install KIO-Aktivitaeten@kio-rocks"
+          ]
+        }
+      ]
+    }
+  ]
+}
