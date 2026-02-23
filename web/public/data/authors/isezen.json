@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "isezen",
+    "display_name": "Ismail SEZEN",
+    "avatar_url": "https://avatars.githubusercontent.com/u/613356?u=041f1a5097bdcbe0e23983efdcba23057305eb0f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "xbookmark-plugin",
+      "version": null,
+      "description": "Sync X/Twitter bookmarks to Obsidian vault with AI-powered digest",
+      "repo_full_name": "isezen/xbookmark",
+      "repo_url": "https://github.com/isezen/xbookmark",
+      "repo_description": "MCP server to sync X bookmarks to Obsidian vault",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-22T13:24:24Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"xbookmark-plugin\",\n  \"owner\": {\n    \"name\": \"isezen\",\n    \"email\": \"613356+isezen@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Sync X/Twitter bookmarks to Obsidian vault with AI-powered digest\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"xbookmark\",\n      \"source\": \"./plugins/xbookmark\",\n      \"description\": \"MCP server for X bookmark sync/search/delete and an AI digest command that analyzes, enriches, and saves bookmarks as organized Obsidian notes.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"isezen\"\n      },\n      \"homepage\": \"https://github.com/isezen/XBookmarks\",\n      \"repository\": \"https://github.com/isezen/XBookmarks\",\n      \"license\": \"MIT\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"x\", \"twitter\", \"bookmarks\", \"obsidian\", \"mcp\", \"digest\"]\n    }\n  ]\n}\n",
+        "README.md": "# XBookmark\n\nMCP server that syncs X (Twitter) bookmarks to an Obsidian vault.\nMulti-account support, OAuth 2.0 PKCE authentication, and structured JSON storage.\n\n## Features\n\n- **Multi-account support** — unlimited X accounts via profiles\n- **One-click OAuth login** — browser opens, callback captured, tokens saved automatically\n- **Centralized storage** — all bookmarks in a single `bookmarks.json` (atomic writes)\n- **Thread detection** — automatic thread fetching for multi-tweet threads\n- **Cross-account deduplication** — same tweet bookmarked from 2 accounts = 1 entry\n- **Rate limit handling** — sequential processing with automatic retry\n- **Two-step workflow** — sync first, delete later (safe for testing)\n- **AI-powered digest** — `/xbookmark-digest` Claude Code skill for analysis & categorization\n\n## Available Tools\n\n| Tool | Description |\n|------|-------------|\n| **Auth** | |\n| `xbookmark_auth_login(profile)` | One-click OAuth — browser + callback + token exchange |\n| `xbookmark_auth_url(profile)` | Get OAuth authorization URL (manual fallback) |\n| `xbookmark_auth_callback(code, state)` | Complete authorization (manual fallback) |\n| `xbookmark_auth_status(profile)` | Check auth status (None = all profiles) |\n| `xbookmark_auth_logout(profile)` | Clear stored tokens |\n| `xbookmark_list_profiles()` | List all profiles and auth status |\n| **Sync** | |\n| `xbookmark_sync(profile)` | Sync bookmarks to `bookmarks.json` |\n| `xbookmark_delete(profile, tweet_ids, limit)` | Delete synced bookmarks from X (selective or all) |\n| `xbookmark_list(profile)` | List bookmarks from X API |\n| `xbookmark_get_tweet(tweet, profile)` | Fetch single tweet by ID or URL (with thread) |\n| `xbookmark_sync_all()` | Sync ALL profiles with deduplication |\n\n## Quick Install (Claude Code Plugin)\n\nThe easiest way to use XBookmark with Claude Code:\n\n1. **Set X API credentials** (add to `~/.bashrc` or `~/.zshrc`):\n\n   ```bash\n   export X_CLIENT_ID=\"your_oauth2_client_id\"\n   export X_CLIENT_SECRET=\"your_client_secret\"          # optional\n   export X_REDIRECT_URI=\"http://localhost:8080/callback\" # optional\n   ```\n\n2. **Install the plugin** (in Claude Code):\n\n   ```\n   /plugin marketplace add isezen/XBookmarks\n   /plugin install xbookmark@XBookmarks\n   ```\n\n3. **Restart Claude Code.** The MCP server is auto-installed on first start.\n\n4. **Use it:**\n\n   ```\n   /xbookmark:digest                          # Analyze all bookmarks\n   /xbookmark:digest https://x.com/.../12345  # Process single tweet\n   ```\n\n## Developer Installation\n\n### Prerequisites\n\n- Python 3.10+\n- [uv](https://docs.astral.sh/uv/) package manager (recommended) or pip\n- X Developer Account with OAuth 2.0 enabled\n\n### Setup\n\n1. **Clone and install**\n\n   ```bash\n   git clone git@github-isezen:isezen/XBookmarks.git\n   cd XBookmarks\n   uv sync\n   ```\n\n2. **Set environment variables**\n\n   ```bash\n   cp .env.example .env\n   ```\n\n   Edit `.env` with your X API credentials:\n\n   ```bash\n   X_CLIENT_ID=\"your_client_id\"\n   X_CLIENT_SECRET=\"your_client_secret\"\n   X_REDIRECT_URI=\"http://localhost:8080/callback\"\n   ```\n\n3. **Create config** (optional — defaults work for most setups)\n\n   ```bash\n   mkdir -p ~/.config/XBookmark\n   cat > ~/.config/XBookmark/config.json << 'EOF'\n   {\n     \"obsidian_vault_path\": \"/path/to/your/obsidian/vault\",\n     \"xbookmarks_folder\": \"XBookmarks\"\n   }\n   EOF\n   ```\n\n   Or set `XBOOKMARK_HOME` env var to use a custom config directory.\n\n## X API Setup\n\n### Get OAuth 2.0 Credentials\n\n1. Go to [X Developer Portal](https://developer.x.com/en/portal/dashboard)\n2. Create a **Project** and an **App**\n3. Under App Settings, enable **OAuth 2.0** with:\n   - Type: **Confidential client** (or Public)\n   - Redirect URI: `http://localhost:8080/callback`\n4. Required scopes: `bookmark.read`, `bookmark.write`, `tweet.read`, `users.read`, `offline.access`\n5. Copy **Client ID** and **Client Secret** to your `.env` file\n\n> **Note**: Bookmark endpoints require **Basic tier** access or pay-per-usage credits.\n\n## Usage with MCP Clients\n\n### Claude Code / Claude Desktop\n\nAdd to your MCP settings:\n\n```json\n{\n  \"mcpServers\": {\n    \"xbookmark\": {\n      \"command\": \"/path/to/XBookmarks/.venv/bin/xbookmark-mcp\"\n    }\n  }\n}\n```\n\n### Workflow\n\n**Step 1: Authenticate**\n\n```\n> \"Login to my X account\"\n```\n\nThe agent calls `xbookmark_auth_login()` — browser opens, you authorize, tokens are saved.\n\nFor multiple accounts, use profiles:\n\n```\n> \"Login to my work X account as 'work'\"\n```\n\n**Step 2: Sync Bookmarks**\n\n```\n> \"Sync my X bookmarks\"\n```\n\nThe agent calls `xbookmark_sync_all()` which:\n- Downloads from all authenticated profiles\n- Deduplicates across accounts\n- Saves to `XBookmarks/bookmarks.json`\n- Does NOT delete from X\n\n**Step 3: Process & Categorize**\n\nUse the `/xbookmark-digest` skill (or manually):\n1. Read bookmark entries from `bookmarks.json`\n2. Analyze tweet content, fetch linked URLs\n3. Create enriched notes in Obsidian topic folders\n4. Track processed tweets in `index.json`\n\n**Step 4: Delete from X** (optional)\n\n```\n> \"Delete processed bookmarks from X\"\n```\n\nThe agent calls `xbookmark_delete()` (with no profile argument, which deletes\nfrom all profiles) and cleans up `bookmarks.json`.\n\n## Data Storage\n\n### bookmarks.json\n\nAll synced bookmarks are stored in `XBookmarks/bookmarks.json` as a flat JSON array.\nEach entry contains tweet text, author info, entities, media, thread replies,\nand source profiles. Writes use atomic tmp-then-rename for crash safety.\n\n### index.json\n\nTracks which tweets have been processed by the digest skill.\nMaps `tweet_id` to `{path, date, tags}` for Obsidian cross-references.\n\n## Development\n\n### Quick Commands\n\n```bash\n# Install with dev dependencies\nuv sync --extra dev\n\n# Run all tests\n.venv/bin/pytest\n\n# Run single test\n.venv/bin/pytest tests/test_config.py::TestLoadConfig -v\n\n# Coverage report\n.venv/bin/pytest --cov=src/xbookmark\n\n# Lint & format\n.venv/bin/ruff check . && .venv/bin/ruff format .\n\n# Run MCP server\n.venv/bin/xbookmark-mcp\n\n# Debug with MCP Inspector\nnpx @modelcontextprotocol/inspector .venv/bin/xbookmark-mcp\n```\n\n### Project Structure\n\n```\nXBookmarks/\n├── .claude-plugin/\n│   └── marketplace.json       # Claude Code plugin marketplace\n├── plugins/xbookmark/         # Claude Code plugin\n│   ├── .claude-plugin/plugin.json\n│   ├── .mcp.json              # MCP server config\n│   ├── commands/\n│   │   └── digest.md          # AI digest skill (source of truth)\n│   ├── hooks/hooks.json       # SessionStart auto-install hook\n│   └── scripts/ensure-installed.sh\n├── .claude/commands/\n│   └── xbookmark-digest.md    # Symlink → plugins/xbookmark/commands/digest.md\n├── src/xbookmark/\n│   ├── config.py              # Config loading, lazy singleton\n│   ├── mcp/\n│   │   ├── server.py          # FastMCP entry point\n│   │   ├── tools_auth.py      # 6 OAuth 2.0 PKCE auth tools\n│   │   └── tools_sync.py      # 6 sync/delete/list tools\n│   ├── x_api/\n│   │   ├── auth.py            # OAuth 2.0 PKCE flow, token storage\n│   │   ├── callback_server.py # Local HTTP server for one-click login\n│   │   ├── client.py          # Async HTTP client with retry\n│   │   ├── bookmarks.py       # Bookmark CRUD (X API v2)\n│   │   └── tweets.py          # Tweet/thread fetching\n│   └── obsidian/\n│       └── writer.py          # Markdown generation, JSON I/O\n├── tests/\n│   ├── conftest.py            # Shared fixtures\n│   ├── test_config.py\n│   ├── test_writer.py\n│   └── test_tools.py\n├── docs/                      # Architecture & API docs\n├── pyproject.toml\n├── CLAUDE.md                  # Claude Code guidance\n└── README.md\n```\n\n### Testing\n\n- Framework: pytest with `asyncio_mode = \"auto\"`\n- HTTP mocking: `respx` library\n- Fixtures: `tests/conftest.py` (mock_config, mock_oauth_manager, mock_tweet, etc.)\n- Tests organized as classes per module\n\n### Code Style\n\n- Python 3.10+, ruff rules: E/F/I/N/W/UP\n- Modern type hints: `str | None`, `list[str]`\n- Double quotes, trailing commas in multi-line structures\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "xbookmark",
+          "source": "./plugins/xbookmark",
+          "description": "MCP server for X bookmark sync/search/delete and an AI digest command that analyzes, enriches, and saves bookmarks as organized Obsidian notes.",
+          "version": "0.1.0",
+          "author": {
+            "name": "isezen"
+          },
+          "homepage": "https://github.com/isezen/XBookmarks",
+          "repository": "https://github.com/isezen/XBookmarks",
+          "license": "MIT",
+          "category": "productivity",
+          "keywords": [
+            "x",
+            "twitter",
+            "bookmarks",
+            "obsidian",
+            "mcp",
+            "digest"
+          ],
+          "categories": [
+            "bookmarks",
+            "digest",
+            "mcp",
+            "obsidian",
+            "productivity",
+            "twitter",
+            "x"
+          ],
+          "install_commands": [
+            "/plugin marketplace add isezen/xbookmark",
+            "/plugin install xbookmark@xbookmark-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}
