@@ -116,6 +116,57 @@
           ]
         }
       ]
+    },
+    {
+      "name": "eva-01",
+      "version": null,
+      "description": "EVA-01: Automated life testing platform with spec discussion, PRD generation, implementation, and observation commands",
+      "repo_full_name": "Devil-SX/EVA-01",
+      "repo_url": "https://github.com/Devil-SX/EVA-01",
+      "repo_description": "Python implementation of Ralph autonomous development loop",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-23T07:42:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"eva-01\",\n  \"owner\": {\n    \"name\": \"Devil-SX\",\n    \"email\": \"sduaf@connect.ust.hk\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"eva-01\",\n      \"source\": \"./\",\n      \"description\": \"EVA-01: Automated life testing platform with spec discussion, PRD generation, implementation, and observation commands\",\n      \"version\": \"0.4.0\",\n      \"author\": {\n        \"name\": \"Devil-SX\",\n        \"email\": \"sduaf@connect.ust.hk\"\n      },\n      \"homepage\": \"https://github.com/Devil-SX/EVA-01\",\n      \"repository\": \"https://github.com/Devil-SX/EVA-01\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"prd\",\n        \"spec\",\n        \"automation\",\n        \"workflow\"\n      ],\n      \"category\": \"development\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "<h1 align=\"center\">EVA-01</h1>\n\n<p align=\"center\">\n  <img src=\"https://img.shields.io/badge/version-0.4.0-blue\" alt=\"version\">\n  <img src=\"https://img.shields.io/badge/Python-1887_lines-3776AB?logo=python&logoColor=white\" alt=\"Python\">\n  <img src=\"https://img.shields.io/badge/Shell-248_lines-4EAA25?logo=gnubash&logoColor=white\" alt=\"Shell\">\n  <img src=\"https://img.shields.io/badge/Markdown-68_lines-000000?logo=markdown&logoColor=white\" alt=\"Markdown\">\n</p>\n\n<p align=\"center\">\n  <b><a href=\"./README.md\">中文</a></b> | <a href=\"./README_EN.md\">English</a>\n</p>\n\n<p align=\"center\">\n  <img src=\"./eva.jpg\" width=\"100%\" alt=\"EVA-01\">\n</p>\n\n自动化生活的测试平台原型机。目标是在 AI 快速发展的时代，探索人类与 AI 高效协作的方式。\n\n---\n\n## 设计哲学\n\n### 算力杠杆与人类瓶颈\n\n人可调度的 AI 算力越多，个人能力边界越大——这就是**算力杠杆**。但 AI 每次运行都需要人参与决策和审查，人的精力是有限的——这就是**人类瓶颈**。\n\n用三个变量描述：\n\n- $v$ — 单位 AI 运行时间的平均交互次数\n- $T$ — 一天的 AI 总运行时间（算力杠杆）\n- $X = vT$ — 一天的人机交互总次数，受上限 $X_{\\text{threshold}}$ 约束\n\n目标很明确：**最大化 $T$，最小化 $X$，核心是压低 $v$。**\n\n$v$ 的高低决定了两种截然不同的工作状态：\n\n| 模式 | 特征 | 每小时交互次数 $v$ | 算力杠杆 $T$（$X$=50） |\n|------|------|:---:|:---:|\n| 疲劳模式 | 交互次数逼近精力上限，人被 AI 绑架 | 10 | 5h |\n| | | 5 | 10h |\n| 舒适模式 | 交互远低于上限，人享受 AI 红利 | 1 | 50h |\n| | | 0.5 | 100h |\n\n**结论：$v$ 需要压到每小时 1 次以下，才能让算力杠杆足够大且人不疲劳。**\n\n### 降低 $v$ 的三条路径\n\n1. **更聪明（Smarter）** — 减少返工，降低交互次数\n   - 先验：规范化流程，每次改动必须过测试，AI 自检测试是否真正覆盖\n   - 后验：运行问题自动记录反馈，持续学习外部案例和框架\n\n2. **批处理（Batching）** — 集中交互，降低离散开销\n   - 大规模批量运行任务，统一审查结果\n   - 在 spec 阶段用 AI 辅助打磨需求，减少运行中的意外中断\n\n3. **降负担（Simplify）** — 让每次交互更轻松\n   - 自动生成结构化报告，清晰的入口和操作路径\n\n### 辐射效应\n\nEVA-01 是一个**实验平台**，而非封闭工具。这里沉淀的方法论——spec 驱动、自主循环、观测反馈——不局限于本仓库，可以辐射到任何需要 AI 自动化的项目中。EVA-01 验证 workflow，其他仓库复用 workflow。\n\n---\n\n## 工具总览\n\nEVA-01 提供两类工具：\n\n| 类型 | 运行方式 | 适用场景 | 安装方式 |\n|------|----------|----------|----------|\n| **Headless CLI** | 终端直接运行，无需人工介入 | 批量执行、CI/CD、无人值守 | `./install.sh` |\n| **Claude Code Plugin** | Claude Code 交互式会话中使用 | 需求讨论、spec 打磨、人机协作 | `claude plugin install eva-01` |\n\n### Headless CLI 工具\n\n通过 `./install.sh` 安装到 `~/.local/bin/`，可在任意项目中直接调用：\n\n| 命令 | 说明 |\n|------|------|\n| `spec-to-prd` | 将 spec 转换为 PRD JSON，自动分析项目结构 |\n| `impl-prd` | 自主循环实现 PRD 中的 user stories |\n| `observe-impl` | 分析执行日志，生成报告并推送 GitHub Issue |\n\n### Claude Code Plugin（交互式）\n\n通过 Claude Code plugin 系统安装，在会话中用 `/` 触发：\n\n| 命令 | 说明 |\n|------|------|\n| `/discuss_spec` | 通过辨析式提问挖掘用户真实意图，完善 spec 和 plan |\n\nPlugin 的核心价值：**在 spec 阶段把所有模糊点问清楚，让后续 headless 执行一次到位，避免反复交互。**\n\n---\n\n## 快速开始\n\n```bash\n# 安装 Headless CLI\n./install.sh\n\n# 安装 Claude Code Plugin\nclaude plugin marketplace add /path/to/my-ralph/.claude-plugin/marketplace.json\nclaude plugin install eva-01\n\n# 进入你的项目\ncd your-project\n\n# 先用交互式 plugin 打磨需求\n# （在 Claude Code 会话中）/discuss_spec my-feature.md\n\n# 再用 headless CLI 批量执行\nspec-to-prd my-feature.md\nimpl-prd\n```\n\n卸载：CLI 用 `./uninstall.sh`，Plugin 用 `claude plugin uninstall eva-01`\n\n---\n\n## 命令详解\n\n### spec-to-prd\n\n将 spec markdown 转换为 PRD JSON。会自动分析项目结构，生成与现有代码兼容的 PRD。\n\n```bash\nspec-to-prd <SPEC_FILE> [OPTIONS]\n```\n\n自动收集的项目上下文：\n\n| 内容 | 说明 |\n|------|------|\n| 目录结构 | 文件树（最深 4 层，排除 node_modules 等） |\n| 配置文件 | package.json, pyproject.toml, tsconfig.json 等 |\n| README | 项目文档 |\n| Git 信息 | 当前分支、提交数量 |\n\n生成的 PRD 会遵循现有代码风格，引用需修改的文件，考虑技术栈，增量开发而非重写。\n\n| 参数 | 简写 | 说明 |\n|------|------|------|\n| `SPEC_FILE` | - | Spec markdown 文件路径（必需） |\n| `--output FILE` | `-o` | 输出路径（默认: `.prd/prds/<name>.json`） |\n| `--project NAME` | `-p` | 项目名称（默认: 从文件名推断） |\n| `--model MODEL` | `-m` | Claude 模型: opus/sonnet/haiku（默认: sonnet） |\n| `--timeout MINUTES` | - | 超时分钟数（默认: 15） |\n\n```bash\nspec-to-prd my-feature.md              # 基本用法\nspec-to-prd my-feature.md -m opus      # 用 opus 模型\nspec-to-prd my-feature.md -o out.json  # 指定输出路径\n```\n\n---\n\n### impl-prd\n\n自主循环实现 PRD 中的 user stories。\n\n```bash\nimpl-prd [OPTIONS]\n```\n\n| 参数 | 说明 |\n|------|------|\n| `--prd FILE` | PRD 文件路径（默认: `.prd/prds/` 下最新） |\n| `--max-iterations N` | 最大迭代次数（默认: 50） |\n| `--timeout MINUTES` | 输出超时分钟数（默认: 15） |\n| `--model`, `-m` | Claude 模型（默认: sonnet） |\n| `--no-progress-threshold N` | 连续无进展阈值（默认: 3） |\n| `--resume` | 从上次状态恢复 |\n| `--status` | 显示当前状态后退出 |\n| `--reset` | 重置状态，重新开始 |\n| `--verbose` | 详细输出 |\n| `--no-observe` | 结束后不自动运行 observe-impl |\n\n> impl-prd 默认以 `--dangerously-skip-permissions` 运行，实现完全自主执行。结束时自动调用 `observe-impl`。\n\n```bash\nimpl-prd                          # 开始实现\nimpl-prd -m opus                  # 用 opus 模型\nimpl-prd --resume                 # 恢复上次进度\nimpl-prd --status                 # 查看当前状态\n```\n\n#### 退出机制\n\n| 机制 | 触发条件 | 默认值 |\n|------|----------|--------|\n| 完成退出 | 所有 stories 通过 | - |\n| 最大迭代 | 达到 `--max-iterations` | 50 次 |\n| 输出超时 | Claude 无输出超过 N 分钟 | 15 分钟 |\n| 无进展断路 | 连续 N 次无 story 完成 | 3 次 |\n| 速率限制 | 超过每小时调用上限 | 100 次/小时 |\n| 用户中断 | Ctrl+C | - |\n\n---\n\n### observe-impl\n\n分析 impl-prd 的执行日志，生成报告并可选推送 GitHub Issue。\n\n```bash\nobserve-impl [OPTIONS]\n```\n\n工作流程：读取 session 日志 -> Claude 分析 -> 保存报告 -> 按需创建 Issue\n\n| 参数 | 简写 | 说明 |\n|------|------|------|\n| `--session PATH` | `-s` | 指定 session 目录 |\n| `--latest` | `-l` | 分析最新 session |\n| `--no-issue` | - | 不创建 GitHub Issue |\n| `--model MODEL` | `-m` | Claude 模型（默认: haiku） |\n| `--timeout MINUTES` | - | 超时分钟数（默认: 10） |\n| `--verbose` | `-v` | 详细输出 |\n\n```bash\nobserve-impl --latest                # 分析最新 session\nobserve-impl --latest --no-issue     # 只生成报告\nobserve-impl --latest -m sonnet      # 用 sonnet 深入分析\n```\n\n---\n\n## 目录结构\n\n首次运行 `spec-to-prd` 时自动创建：\n\n```\nyour-project/\n└── .prd/\n    ├── specs/          # 原始 spec markdown\n    ├── prds/           # 生成的 PRD JSON\n    ├── logs/           # 执行日志\n    │   └── session_YYYYMMDD_HHMMSS/\n    │       ├── config.json           # 运行配置快照\n    │       ├── prd_snapshot.json     # PRD 快照\n    │       ├── args.json             # 命令行参数\n    │       ├── session.log           # 主日志\n    │       ├── loop_001.log          # 每次循环的输出\n    │       ├── summary.json          # 运行汇总\n    │       └── observation_report.md # 观测报告\n    ├── config.json     # 项目配置\n    └── state.json      # 运行状态（用于恢复）\n```\n\n### 配置项\n\n```json\n{\n  \"max_calls_per_hour\": 100,\n  \"max_iterations\": 50,\n  \"timeout_minutes\": 15,\n  \"output_format\": \"stream\",\n  \"allowed_tools\": [\"Write\", \"Read\", \"Edit\", \"Glob\", \"Bash(git *)\", \"Bash(npm *)\", \"Bash(npx *)\", \"Bash(pytest)\", \"Bash(python -m pytest *)\"],\n  \"session_expiry_hours\": 24,\n  \"max_consecutive_failures\": 3,\n  \"no_progress_threshold\": 3\n}\n```\n\n| 配置项 | 说明 | 默认值 |\n|--------|------|--------|\n| `max_calls_per_hour` | 每小时最大 API 调用次数 | 100 |\n| `max_iterations` | 最大迭代次数 | 50 |\n| `timeout_minutes` | Claude 超时（分钟） | 15 |\n| `output_format` | 输出格式: stream / json | stream |\n| `allowed_tools` | 允许的工具列表 | - |\n| `session_expiry_hours` | 会话过期时间（小时） | 24 |\n| `max_consecutive_failures` | 最大连续失败次数 | 3 |\n| `no_progress_threshold` | 无进展阈值 | 3 |\n\n---\n\n## 内部协议\n\n### PRD JSON 格式\n\n```json\n{\n  \"project\": \"ProjectName\",\n  \"branchName\": \"ralph/feature-name\",\n  \"description\": \"Feature description\",\n  \"source_spec\": \"specs/feature-name.md\",\n  \"created_at\": \"2026-02-02T10:30:00\",\n  \"updated_at\": \"2026-02-02T11:00:00\",\n  \"userStories\": [\n    {\n      \"id\": \"US-001\",\n      \"title\": \"Story title\",\n      \"description\": \"As a [user], I want [feature] so that [benefit]\",\n      \"acceptanceCriteria\": [\"Criterion 1\", \"Criterion 2\", \"All tests pass\"],\n      \"priority\": 1,\n      \"passes\": false,\n      \"notes\": \"\",\n      \"testPlan\": \"Unit test for ...; integration test for ...\",\n      \"completed_at\": null\n    }\n  ]\n}\n```\n\n### 完成信号\n\nClaude 完成 story 时输出：\n\n```\n---RALPH_STATUS---\nSTATUS: COMPLETE\nSTORY_ID: US-001\nSTORY_PASSED: true\nFILES_MODIFIED: [file1.py, file2.py]\nEXIT_SIGNAL: false\n---END_RALPH_STATUS---\n```\n\n所有 stories 完成时输出：\n\n```\n<promise>COMPLETE</promise>\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "eva-01",
+          "source": "./",
+          "description": "EVA-01: Automated life testing platform with spec discussion, PRD generation, implementation, and observation commands",
+          "version": "0.4.0",
+          "author": {
+            "name": "Devil-SX",
+            "email": "sduaf@connect.ust.hk"
+          },
+          "homepage": "https://github.com/Devil-SX/EVA-01",
+          "repository": "https://github.com/Devil-SX/EVA-01",
+          "license": "MIT",
+          "keywords": [
+            "prd",
+            "spec",
+            "automation",
+            "workflow"
+          ],
+          "category": "development",
+          "strict": false,
+          "categories": [
+            "automation",
+            "development",
+            "prd",
+            "spec",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Devil-SX/EVA-01",
+            "/plugin install eva-01@eva-01"
+          ]
+        }
+      ]
     }
   ]
 }
