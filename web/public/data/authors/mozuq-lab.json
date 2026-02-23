@@ -1,0 +1,63 @@
+{
+  "author": {
+    "id": "mozuq-lab",
+    "display_name": "mozuq-lab",
+    "avatar_url": "https://avatars.githubusercontent.com/u/18627531?u=eb26929a61eb6a32e77ca10bf7d165e9afbdfac1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "origami-lite",
+      "version": null,
+      "description": "AI-driven blackbox test documentation framework with confidence-level signal system",
+      "repo_full_name": "mozuq-lab/origami-lite",
+      "repo_url": "https://github.com/mozuq-lab/origami-lite",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-23T05:42:55Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"origami-lite\",\n  \"displayName\": \"Origami Lite\",\n  \"description\": \"AI-driven blackbox test documentation framework with confidence-level signal system\",\n  \"owner\": {\n    \"name\": \"mozuq\",\n    \"email\": \"hello@mozuq-lab.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"origami\",\n      \"source\": \"./\",\n      \"description\": \"AI-driven blackbox test documentation framework with signal system for confidence visualization\",\n      \"version\": \"3.2.0\",\n      \"author\": {\n        \"name\": \"mozuq\"\n      },\n      \"homepage\": \"https://github.com/mozuq-lab/origami-lite\",\n      \"repository\": \"https://github.com/mozuq-lab/origami-lite\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"testing\",\n        \"blackbox\",\n        \"test-design\",\n        \"test-case-generation\",\n        \"qa\",\n        \"documentation\",\n        \"given-when-then\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"origami\",\n  \"version\": \"3.2.0\",\n  \"description\": \"AI-driven blackbox test documentation framework with signal system for confidence visualization\",\n  \"author\": {\n    \"name\": \"mozuq\",\n    \"email\": \"hello@mozuq-lab.com\"\n  },\n  \"homepage\": \"https://github.com/mozuq-lab/origami-lite\",\n  \"repository\": \"https://github.com/mozuq-lab/origami-lite\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"testing\",\n    \"blackbox\",\n    \"test-design\",\n    \"test-case-generation\",\n    \"qa\",\n    \"documentation\",\n    \"given-when-then\"\n  ],\n  \"commands\": \"./commands/\"\n}\n",
+        "README.md": "# Origami Lite\n\nAI 駆動ブラックボックステストドキュメント生成フレームワーク\n\n## 概要\n\nOrigami Lite は、仕様書からテストドキュメントを自動生成する Claude Code Plugin です。信号機システム（🟢🟡🔴）により、AI 推論の確信度を可視化し、効率的なレビューを支援します。\n\n## 特徴\n\n- **5 段階のワークフロー**: 機能抽出 → 動作仕様整理 → 境界値分析 → テストケース生成 → 観点レビュー（オプション）\n- **観点レビュー**: 生成済みテストケースを 203 項目のテスト観点カタログと照合し、網羅性をレビュー\n- **信号機システム**: AI 推論の確信度を 3 段階で可視化\n  - 🟢 高確信度: 仕様書に明示的記載あり\n  - 🟡 中確信度: 業界標準・テスト技法から推測\n  - 🔴 要確認: 根拠の薄い推測（必ずレビュー）\n- **Given/When/Then 形式**: 実行可能なテストケースを自動生成\n- **柔軟な入力**: Markdown、テキスト、URL に対応\n- **追加ルール対応**: プロジェクト固有のルールを適用可能\n\n## 追加ルール\n\nプロジェクト固有のルールを追加することで、テストドキュメント生成をカスタマイズできます。\n\n### ルールの配置\n\n```text\ndocs/\n├── rule/                    # 汎用ルール（プロジェクト共通）\n│   └── *.md\n└── rule/origami/            # Origami 固有ルール\n    └── *.md\n```\n\n### 読み込み順序\n\n1. `docs/rule` ディレクトリ内のすべてのファイル\n2. `docs/rule/origami` ディレクトリ内のすべてのファイル\n\n各ディレクトリが存在する場合のみ読み込まれます。\n\n### ルールの例\n\n```markdown\n# プロジェクト固有ルール\n\n## テスト観点の追加\n- セキュリティテストを必ず含める\n- パフォーマンステストの閾値は 3 秒以内\n\n## 用語の統一\n- 「ユーザー」ではなく「会員」を使用\n- 「購入」ではなく「注文」を使用\n```\n\n## インストール\n\n```bash\n# 1. Marketplace を追加\n/plugin marketplace add https://github.com/mozuq-lab/origami-lite\n\n# 2. プラグインをインストール\n/plugin install origami@origami-lite\n```\n\n## コマンド一覧\n\n### 基本コマンド\n\n| コマンド                      | 説明                      | 出力ファイル            |\n| ----------------------------- | ------------------------- | ----------------------- |\n| `/origami:extract-features`   | 仕様書から機能一覧を抽出  | 01\\_機能一覧.md         |\n| `/origami:generate-checklist` | Must/Never 動作仕様を整理 | 02\\_動作仕様一覧.md     |\n| `/origami:analyze-boundaries` | 境界値分析表を作成        | 03\\_境界値分析表.md     |\n| `/origami:generate-cases`     | テストケース一覧を生成    | 04\\_テストケース一覧.md |\n| `/origami:review-viewpoints`  | テスト観点の網羅性をレビュー（オプション） | 05\\_観点レビュー一覧.md |\n\n### タスク分割コマンド\n\n大規模仕様書のコンテキスト肥大化を防ぐため、機能単位でタスクを分割して順次実行できます。\n**機能別ディレクトリ出力**: 各機能を独立したディレクトリに出力し、コンテキストサイズを一定に保ちます。\n\n| コマンド                | 説明                                   | 出力                                   |\n| ----------------------- | -------------------------------------- | -------------------------------------- |\n| `/origami:split-spec`   | 仕様書から機能を抽出しタスク一覧を生成 | {仕様書名}/tasks/task-list.md          |\n| `/origami:run-task`     | 指定タスクを実行（`--phase` でフェーズ指定可） | {仕様書名}/F-XXX_{機能名}/ に4-5ファイル |\n| `/origami:verify-tasks` | フェーズ単位の進捗状況を表示       | 進捗レポート                           |\n\n## 使い方\n\n### 推奨ワークフロー\n\n```bash\n# Step 1: 仕様書から機能を抽出\n/origami:extract-features docs/spec.md\n\n# Step 2: Must/Never動作仕様を整理\n/origami:generate-checklist\n\n# Step 3: 境界値を分析\n/origami:analyze-boundaries\n\n# Step 4: テストケースを生成\n/origami:generate-cases\n\n# Step 5 (オプション): テスト観点の網羅性をレビュー\n/origami:review-viewpoints\n```\n\n### タスク分割ワークフロー（大規模仕様書向け）\n\n```bash\n# Step 1: 仕様書からタスク一覧を生成\n# → docs/origami/large-spec/tasks/task-list.md が生成される\n/origami:split-spec docs/large-spec.md\n\n# Step 2: 各タスクを順次実行\n# → docs/origami/large-spec/F-001_{機能名}/ に4ファイル生成\n/origami:run-task TASK-001\n# → docs/origami/large-spec/F-002_{機能名}/ に4ファイル生成\n/origami:run-task TASK-002\n...\n\n# Step 3: 進捗を確認（仕様書名を指定）\n/origami:verify-tasks large-spec\n```\n\n### フェーズ単位実行（v3.1.0〜）\n\nコンテキスト分離を最大化するため、フェーズ単位で実行できます：\n\n```bash\n# Phase 1: 機能抽出のみ実行\n/origami:run-task TASK-001 --phase 1\n\n# Phase 2: 動作仕様整理のみ実行\n/origami:run-task TASK-001 --phase 2\n\n# Phase 3: 境界値分析のみ実行\n/origami:run-task TASK-001 --phase 3\n\n# Phase 4: テストケース生成のみ実行\n/origami:run-task TASK-001 --phase 4\n\n# Phase 5: テスト観点レビュー（オプション）\n/origami:run-task TASK-001 --phase 5\n\n# 全フェーズ実行（--phase 省略時、Phase 1-4のみ）\n/origami:run-task TASK-001\n```\n\n**フェーズ間入力制限**:\n- 各フェーズは前フェーズの出力のみを参照\n- 仕様書全体を毎回参照しないため、コンテキストサイズが一定\n\n| フェーズ | 入力 | 出力 |\n|---------|------|------|\n| Phase 1 | 仕様書（対象機能部分） | `01_機能詳細.md` |\n| Phase 2 | `01_機能詳細.md` のみ | `02_動作仕様.md` |\n| Phase 3 | `02_動作仕様.md` のみ | `03_境界値分析.md` |\n| Phase 4 | `01` + `02` + `03` | `04_テストケース.md` |\n| Phase 5 (任意) | `04` + `01` + カタログ | `05_観点レビュー.md` |\n\n### 単独実行\n\n各コマンドは単独でも実行可能です：\n\n```bash\n# 仕様書から直接テストケースを生成\n/origami:generate-cases docs/spec.md\n```\n\n## 出力例\n\n### 機能一覧（01\\_機能一覧.md）\n\n```markdown\n## 🟢 高確信度（入力ドキュメントに明記）\n\n| #     | 機能名       | 機能概要                 | 根拠                                    |\n| ----- | ------------ | ------------------------ | --------------------------------------- |\n| F-001 | ユーザー登録 | 新規アカウントを登録する | 「ユーザーは登録できる」(仕様書 1.1 節) |\n```\n\n### テストケース（04\\_テストケース一覧.md）\n\n```markdown\n#### TC-001-01: 正常なユーザー登録\n\n**Given（前提条件）:**\n\n- 未登録のメールアドレスを使用\n- ユーザー登録画面が表示されている\n\n**When（実行条件）:**\n\n1. メールアドレスを入力\n2. パスワードを入力\n3. 登録ボタンをクリック\n\n**Then（期待結果）:**\n\n- [ ] 登録成功メッセージが表示される\n- [ ] ユーザーアカウントが作成される\n```\n\n## 出力先\n\nすべての出力ファイルは `docs/origami/{仕様書名}/` ディレクトリに生成されます（仕様書ごとに独立）：\n\n### 単独実行時（従来形式）\n\n```text\ndocs/origami/ecommerce-spec/\n├── 01_機能一覧.md\n├── 02_動作仕様一覧.md\n├── 03_境界値分析表.md\n├── 04_テストケース一覧.md\n└── 05_観点レビュー一覧.md   # オプション（Phase 5）\n```\n\n### タスク分割経由時（機能別ディレクトリ）\n\n```text\ndocs/origami/ecommerce-spec/\n├── tasks/\n│   └── task-list.md\n├── F-001_ユーザー登録/\n│   ├── 01_機能詳細.md\n│   ├── 02_動作仕様.md\n│   ├── 03_境界値分析.md\n│   ├── 04_テストケース.md\n│   └── 05_観点レビュー.md   # オプション（Phase 5）\n├── F-002_ログイン/\n│   └── ...\n```\n\n**機能別ディレクトリのメリット**:\n\n- 各タスク実行時のコンテキストサイズが一定に保たれる\n- 機能間の出力が混在しない\n- 並列実行時のコンフリクト防止\n\n## 信号機システムの活用\n\n### レビュー優先度\n\n| 信号 | レビュー優先度 | 推奨アクション             |\n| ---- | -------------- | -------------------------- |\n| 🟢   | 低             | 確認程度で OK              |\n| 🟡   | 中             | 内容を確認                 |\n| 🔴   | 高             | 必ずステークホルダーに確認 |\n\n### 🔴 項目の対応\n\n🔴 項目は仕様書に明記されていない推測項目です。テスト実行前に必ずステークホルダーに確認してください。\n\n## 要件\n\n- Claude Code CLI\n- 入力ファイル（Markdown、テキスト、または URL）\n\n## 謝辞\n\nOrigami Lite は [Tsumiki](https://github.com/classmethod/tsumiki) にインスパイアされて開発されました。\n\nTsumiki は、AI 駆動開発のための Claude Code Plugin フレームワークであり、以下の点で Origami Lite の設計に大きな影響を与えています：\n\n- **コマンドテンプレート構造**: Tsumiki のプロンプトテンプレート設計パターン\n- **信号機システム**: AI 推論の確信度を可視化するアプローチ\n- **ワークフロー設計**: 段階的なドキュメント生成フロー\n\n## ライセンス\n\nMIT License - 詳細は [LICENSE](LICENSE) を参照してください。\n\n### テスト観点カタログのライセンス\n\n`data/viewpoint-catalog.md` に含まれるテスト観点データは、TIS株式会社の「テスト観点カタログ v1.6」から抽出・変換したものです。\n\n- **原典**: テスト観点カタログ v1.6（TIS株式会社）\n- **ライセンス**: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (Creative Commons Attribution-ShareAlike 4.0 International)\n\n## 変更履歴\n\n[CHANGELOG.md](CHANGELOG.md) を参照してください。\n\n## 貢献\n\nIssue、Pull Request を歓迎します。\n\n## 関連リンク\n\n- [Claude Code](https://claude.ai/code)\n- [Claude Code Plugins](https://docs.anthropic.com/claude-code/plugins)\n"
+      },
+      "plugins": [
+        {
+          "name": "origami",
+          "source": "./",
+          "description": "AI-driven blackbox test documentation framework with signal system for confidence visualization",
+          "version": "3.2.0",
+          "author": {
+            "name": "mozuq"
+          },
+          "homepage": "https://github.com/mozuq-lab/origami-lite",
+          "repository": "https://github.com/mozuq-lab/origami-lite",
+          "license": "MIT",
+          "keywords": [
+            "testing",
+            "blackbox",
+            "test-design",
+            "test-case-generation",
+            "qa",
+            "documentation",
+            "given-when-then"
+          ],
+          "categories": [
+            "blackbox",
+            "documentation",
+            "given-when-then",
+            "qa",
+            "test-case-generation",
+            "test-design",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mozuq-lab/origami-lite",
+            "/plugin install origami@origami-lite"
+          ]
+        }
+      ]
+    }
+  ]
+}
