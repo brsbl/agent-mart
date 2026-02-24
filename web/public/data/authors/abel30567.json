@@ -1,0 +1,46 @@
+{
+  "author": {
+    "id": "abel30567",
+    "display_name": "Claudio Atilano",
+    "avatar_url": "https://avatars.githubusercontent.com/u/26675088?u=f3377bca71ac1cbd040222d31f82b07c2046a9b0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "abel30567-skills",
+      "version": null,
+      "description": "Display Claude API usage limits (session 5hr and weekly) in your status line. Includes PTY-based scraper with cross-platform scheduler support.",
+      "repo_full_name": "abel30567/claude-code-skills",
+      "repo_url": "https://github.com/abel30567/claude-code-skills",
+      "repo_description": "A collection of Claude Code skills for extending Claude's capabilities",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-01-30T11:23:31Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"abel30567-skills\",\n    \"owner\": {\n          \"name\": \"abel30567\",\n          \"url\": \"https://github.com/abel30567\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"statusline-usage\",\n            \"source\": \"./skills/statusline-usage\",\n            \"description\": \"Display Claude API usage limits (session 5hr and weekly) in your status line. Includes PTY-based scraper with cross-platform scheduler support.\",\n            \"version\": \"1.0.0\",\n            \"author\": {\n                \"name\": \"abel30567\"\n            },\n            \"homepage\": \"https://github.com/abel30567/claude-code-skills\",\n            \"repository\": \"https://github.com/abel30567/claude-code-skills\",\n            \"license\": \"MIT\"\n        }\n    ]\n}\n",
+        "README.md": "# Claude Code Skills\n\nA collection of Claude Code skills by abel30567.\n\n## Installation\n\n```bash\n# Add the marketplace\n/plugin marketplace add abel30567/claude-code-skills\n\n# Install a specific skill\n/plugin install statusline-usage@abel30567-skills\n```\n\n## Available Skills\n\n### statusline-usage\n\nDisplay Claude API usage limits in your Claude Code status line. Shows session (5hr) and weekly usage percentages alongside context window usage and session cost.\n\n```\nCtx:45% | 5hr:30% | Wk:50% | $3.25\n```\n\n**How it works:**\n\n1. A Python scraper queries Claude CLI via PTY automation\n2. Results are cached and refreshed every 15 minutes via scheduler\n3. The status line script reads the cache and formats it for display\n\n**Commands:**\n- `/check-usage` - Check usage on-demand\n- `/setup-statusline` - Install status line and scheduler\n\n[Full documentation](skills/statusline-usage/README.md)\n\n## License\n\nMIT\n",
+        "skills/statusline-usage/README.md": "# statusline-usage\n\nDisplay Claude API usage limits (session 5hr and weekly percentages) in your Claude Code status line.\n\n## What it shows\n\n```\nCtx:45% | 5hr:30% | Wk:50% | $3.25\n```\n\n- **Ctx** - Context window usage (from Claude Code)\n- **5hr** - Rolling 5-hour session limit\n- **Wk** - Weekly quota across all models\n- **$** - Session cost\n\n## Installation\n\n```bash\n/plugin marketplace add abel30567/claude-code-skills\n/plugin install statusline-usage@abel30567-skills\n```\n\nThen run `/setup-statusline` to configure the status line and scheduler.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/check-usage` | Check current usage limits on-demand |\n| `/setup-statusline` | Install status line script and scheduler |\n\n## How it works\n\n1. A Python scraper spawns Claude CLI in a PTY, sends `/usage`, and parses the output\n2. Results are cached to `~/.claude-statusline-usage/cache.json`\n3. A scheduler (LaunchAgent/cron) refreshes the cache every 15 minutes\n4. The status line script reads the cache and formats it for display\n\n## Configuration\n\n| Environment Variable | Default | Description |\n|---------------------|---------|-------------|\n| `CLAUDE_USAGE_CACHE_DIR` | `~/.claude-statusline-usage` | Cache directory |\n| `CLAUDE_USAGE_CACHE_TTL` | `14400` (4 hours) | Cache validity in seconds |\n\n## Platform Support\n\n| Platform | Scraper | Scheduler |\n|----------|---------|-----------|\n| macOS | PTY automation | LaunchAgent |\n| Linux | PTY automation | cron |\n| Windows | Manual only | Task Scheduler (reminder) |\n\n## Troubleshooting\n\n- **No 5hr/Wk data**: Run `python3 ~/.claude-statusline-usage/scrape-usage.py --force`\n- **Debug logs**: `cat ~/.claude-statusline-usage/debug.log`\n- **Scheduler status (macOS)**: `launchctl list | grep claude`\n- **Scheduler status (Linux)**: `crontab -l | grep scrape`\n"
+      },
+      "plugins": [
+        {
+          "name": "statusline-usage",
+          "source": "./skills/statusline-usage",
+          "description": "Display Claude API usage limits (session 5hr and weekly) in your status line. Includes PTY-based scraper with cross-platform scheduler support.",
+          "version": "1.0.0",
+          "author": {
+            "name": "abel30567"
+          },
+          "homepage": "https://github.com/abel30567/claude-code-skills",
+          "repository": "https://github.com/abel30567/claude-code-skills",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add abel30567/claude-code-skills",
+            "/plugin install statusline-usage@abel30567-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

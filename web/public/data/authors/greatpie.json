@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "greatpie",
+    "display_name": "pppie",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8511143?u=f676b7930fc7e9a0517915e8c05d20a3f786892e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "smart-contract-audit-skills",
+      "version": null,
+      "description": "Smart contract security auditing skills for EVM repositories",
+      "repo_full_name": "greatpie/smart-contract-audit-skill",
+      "repo_url": "https://github.com/greatpie/smart-contract-audit-skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-21T19:28:25Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"smart-contract-audit-skills\",\n  \"owner\": {\n    \"name\": \"greatpie\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"Smart contract security auditing skills for EVM repositories\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"smart-contract-audit\",\n      \"description\": \"Script-backed, out-of-box auditing workflow for Solidity/EVM repositories. Covers environment bootstrap, vulnerability detection, patch validation, exploit scaffolding, and structured report generation based on EVMbench methodology.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/smart-contract-audit\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Agent Skills for Smart Contract Security Auditing\n\nA practical skill collection for production-grade smart contract security reviews, with workflows inspired by the EVMbench paper and benchmark harness.\n\nThis repository is designed for teams that want:\n- end-to-end audit workflows (detect, patch, exploit),\n- reproducible command-line execution,\n- artifacts that are easy to review (`audit.md`, `agent.diff`, `txs.json`),\n- stronger alignment with real-world loss-of-funds threat models.\n\n## Skills Overview\n\n| Skill | Description |\n|---|---|\n| [smart-contract-audit](skills/smart-contract-audit/) | Script-backed, out-of-box workflow for EVM repo setup, vulnerability discovery, patch validation, exploit scaffolding, and report generation |\n\n## Repository References\n\n- Repository: [greatpie/smart-contract-audit-skill](https://github.com/greatpie/smart-contract-audit-skill)\n- Skill directory: [skills/smart-contract-audit](https://github.com/greatpie/smart-contract-audit-skill/tree/main/skills/smart-contract-audit)\n- Script directory: [skills/smart-contract-audit/scripts](https://github.com/greatpie/smart-contract-audit-skill/tree/main/skills/smart-contract-audit/scripts)\n\n## Methodology\n\nThe skill is grounded in key EVMbench ideas:\n- **Comprehensive coverage over single wins**: keep searching after first finding.\n- **Mode separation**: Detect, Patch, and Exploit produce distinct outputs.\n- **Evidence-first grading mindset**: require concrete exploitability and impact.\n- **Deterministic execution bias**: prefer scripted, replayable steps over ad-hoc claims.\n\nSee:\n- [EVMbench core notes](skills/smart-contract-audit/references/evmbench-core.md)\n- [Benchmark reality checklist](skills/smart-contract-audit/references/benchmark-reality-checklist.md)\n\n## Usage\n\n### Codex / Claude / IDE agents\n\nInvoke the skill directly:\n\n```text\n$smart-contract-audit\n```\n\nThen run the pipeline:\n\n```bash\nbash skills/smart-contract-audit/scripts/audit.sh \\\n  --repo https://github.com/greatpie/smart-contract-audit-skill.git \\\n  --branch main \\\n  --modes detect,patch,exploit\n```\n\n### Phase-by-phase\n\n```bash\nbash skills/smart-contract-audit/scripts/bootstrap.sh --repo https://github.com/greatpie/smart-contract-audit-skill.git\nbash skills/smart-contract-audit/scripts/run_detect.sh --repo-dir /Users/pie/Projects/temp/smartcontract-audit-skill\nbash skills/smart-contract-audit/scripts/run_patch.sh --repo-dir /Users/pie/Projects/temp/smartcontract-audit-skill\nbash skills/smart-contract-audit/scripts/run_exploit.sh --repo-dir /Users/pie/Projects/temp/smartcontract-audit-skill --template foundry\n```\n\n## Output Contract\n\nThe skill standardizes outputs under the target repository `submission/` directory:\n- `audit.md` (detect findings)\n- `agent.diff` (patch output)\n- `patch-summary.md` (build/test/diff summary)\n- `exploit-env.sh` (local exploit runtime env)\n- `txs.md` and `txs.json` (exploit evidence + replay data)\n\n## Design Philosophy\n\n### Progressive Disclosure\n\nKeep the skill lean in `SKILL.md`, then load detailed references only when needed.\n\n### Script-First Reliability\n\nCore operations are implemented in Bash scripts so they run in minimal environments without a heavy runtime stack.\n\n### Realism With Explicit Gaps\n\nThe repository documents where it is intentionally lighter than full benchmark infra (e.g., no default isolated grader replay container).\n\n## Repository Structure\n\n```text\n.claude-plugin/\n  marketplace.json\nagents/\n  openai.yaml\nskills/\n  smart-contract-audit/\n    SKILL.md\n    scripts/\n    references/\n```\n\n## Notes\n\n- This repository is for defensive security auditing workflows.\n- Always ensure you have authorization before testing or exploiting any system.\n"
+      },
+      "plugins": [
+        {
+          "name": "smart-contract-audit",
+          "description": "Script-backed, out-of-box auditing workflow for Solidity/EVM repositories. Covers environment bootstrap, vulnerability detection, patch validation, exploit scaffolding, and structured report generation based on EVMbench methodology.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/smart-contract-audit"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add greatpie/smart-contract-audit-skill",
+            "/plugin install smart-contract-audit@smart-contract-audit-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
