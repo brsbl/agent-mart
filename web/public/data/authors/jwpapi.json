@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "JWPapi",
+    "display_name": "Julian M. Wagner",
+    "avatar_url": "https://avatars.githubusercontent.com/u/4718469?u=46fd9d326ff5cad17f00ae3066541a840ba0b8d0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jwpapi-plugins",
+      "version": null,
+      "description": "Julian Wagner's Claude Code plugins",
+      "repo_full_name": "JWPapi/claude-code-plugins",
+      "repo_url": "https://github.com/JWPapi/claude-code-plugins",
+      "repo_description": "Claude Code plugins — biome-lsp and more",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-23T22:23:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jwpapi-plugins\",\n  \"description\": \"Julian Wagner's Claude Code plugins\",\n  \"owner\": {\n    \"name\": \"Julian Wagner\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"biome-claude-code-plugin\",\n      \"description\": \"Biome LSP integration — instant lint diagnostics, format-on-stop\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"Julian Wagner\"\n      },\n      \"source\": \"./biome-lsp\",\n      \"category\": \"development\",\n      \"strict\": false,\n      \"lspServers\": {\n        \"biome\": {\n          \"command\": \"npx\",\n          \"args\": [\"biome\", \"lsp-proxy\"],\n          \"extensionToLanguage\": {\n            \".ts\": \"typescript\",\n            \".tsx\": \"typescriptreact\",\n            \".js\": \"javascript\",\n            \".jsx\": \"javascriptreact\",\n            \".mjs\": \"javascript\",\n            \".cjs\": \"javascript\",\n            \".mts\": \"typescript\",\n            \".cts\": \"typescript\",\n            \".json\": \"json\",\n            \".jsonc\": \"jsonc\",\n            \".css\": \"css\",\n            \".graphql\": \"graphql\"\n          }\n        }\n      }\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Plugins\n\nA collection of Claude Code plugins.\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [biome-lsp](./biome-lsp/) | Biome LSP integration — instant lint and format diagnostics after every edit |\n\n## Install\n\n```bash\nclaude plugin marketplace add https://github.com/JWPapi/claude-code-plugins\nclaude plugin install biome-lsp@jwpapi-plugins\n```\n",
+        "biome-lsp/README.md": "# biome-claude-code-plugin\n\nBiome LSP integration for Claude Code. Gives Claude instant lint diagnostics after every file edit — faster and more useful than ESLint or TypeScript LSP for catching mistakes mid-edit.\n\n## Why Biome over ESLint or TypeScript LSP?\n\n**Speed.** Biome is written in Rust and returns diagnostics in milliseconds. ESLint and `tsc` can take seconds to minutes on large codebases, which means Claude either waits or misses the feedback entirely. With Biome, Claude sees lint errors the moment it writes a file — no lag, no stale results.\n\n**Less noise, more signal.** TypeScript LSP is great for type errors but floods diagnostics with hundreds of issues across every open file. Biome focuses on what matters during editing: unused imports, restricted imports, suspicious patterns, and code style violations. Claude gets actionable feedback without drowning in noise.\n\n**Self-correcting edits.** Because diagnostics arrive instantly, Claude catches its own mistakes (unused variables, wrong import paths, banned patterns) on the very next turn — before they compound. With slower tools, Claude often finishes an entire task before discovering it introduced lint violations, then has to go back and fix them.\n\n**Format-on-stop.** The plugin auto-formats all files when Claude finishes responding via a `Stop` hook. No per-edit overhead, no format noise in diagnostics — just clean code when Claude is done.\n\n## What it does\n\n- Connects Claude Code to [Biome](https://biomejs.dev)'s Language Server Protocol\n- Claude sees lint errors and warnings immediately after each `Write`/`Edit`\n- Auto-formats the project when Claude stops responding — no format noise in diagnostics\n- Covers: TypeScript, JavaScript, JSX/TSX, JSON, CSS, GraphQL\n\n## Prerequisites\n\nBiome must be available via `npx` (installed as a project dependency or globally):\n\n```bash\n# Project-local (recommended)\nnpm install --save-dev @biomejs/biome\n\n# Or global\nnpm install -g @biomejs/biome\n```\n\n## Install\n\n```bash\n# Add the marketplace (one-time)\nclaude plugin marketplace add https://github.com/JWPapi/claude-code-plugins\n\n# Install the plugin\nclaude plugin install biome-claude-code-plugin@jwpapi-plugins\n```\n\nRestart Claude Code after installing.\n\n## How it works\n\n1. **LSP server** — `npx biome lsp-proxy` runs in the background, providing real-time lint diagnostics to Claude after every file edit. The LSP only reports lint issues, not formatting — so diagnostics stay clean.\n\n2. **Stop hook** — When Claude finishes responding, `biome check --fix --unsafe` runs once across the project, auto-fixing formatting and safe lint fixes. This replaces the per-edit formatting approach (which added ~2s per edit) with a single pass at the end.\n\n## Notes\n\n- Biome handles linting and formatting but **not type-checking**. For TypeScript type errors, pair this with the `typescript-lsp` plugin from the official marketplace.\n- The LSP uses `npx biome lsp-proxy` so it works with project-local Biome installations.\n- Biome reads your project's `biome.json` / `biome.jsonc` config automatically.\n- The format-on-stop hook uses `biome check --fix --unsafe` to apply formatting and import-organization fixes.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "biome-claude-code-plugin",
+          "description": "Biome LSP integration — instant lint diagnostics, format-on-stop",
+          "version": "1.2.0",
+          "author": {
+            "name": "Julian Wagner"
+          },
+          "source": "./biome-lsp",
+          "category": "development",
+          "strict": false,
+          "lspServers": {
+            "biome": {
+              "command": "npx",
+              "args": [
+                "biome",
+                "lsp-proxy"
+              ],
+              "extensionToLanguage": {
+                ".ts": "typescript",
+                ".tsx": "typescriptreact",
+                ".js": "javascript",
+                ".jsx": "javascriptreact",
+                ".mjs": "javascript",
+                ".cjs": "javascript",
+                ".mts": "typescript",
+                ".cts": "typescript",
+                ".json": "json",
+                ".jsonc": "jsonc",
+                ".css": "css",
+                ".graphql": "graphql"
+              }
+            }
+          },
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add JWPapi/claude-code-plugins",
+            "/plugin install biome-claude-code-plugin@jwpapi-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

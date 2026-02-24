@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "langify-org",
+    "display_name": "langify.org",
+    "avatar_url": "https://avatars.githubusercontent.com/u/261699302?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ws-tools",
+      "version": null,
+      "description": "Claude Code plugins for ws - git bare clone + worktree workflow manager",
+      "repo_full_name": "langify-org/ws-cli",
+      "repo_url": "https://github.com/langify-org/ws-cli",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-24T01:37:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ws-tools\",\n  \"owner\": {\n    \"name\": \"langify-org\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for ws - git bare clone + worktree workflow manager\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ws\",\n      \"source\": \"./plugin\",\n      \"description\": \"Workspace context awareness, branch management, store setup, and cross-worktree navigation for ws-managed repositories\",\n      \"version\": \"0.1.0\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# ws - workspace & repository manager\n\n> **[日本語版はこちら](README.ja.md)**\n\nA CLI tool that manages your system's repositories, worktrees, and shared configuration in one place.\n\n![demo](demo.gif)\n\n## Why ws?\n\nWorking across multiple repositories and branches involves persistent friction:\n\n- **Tedious bare clone initialization** — After `git clone --bare`, you need to manually add worktrees\n- **Managing gitignored files** — Files like `.env`, `.env.local`, and `.claude/settings.local.json` are outside git, so you must manually copy or link them every time you create a new worktree\n- **Scattered repository management** — Repositories live in different directories with no unified way to track or inspect them\n\nws solves these problems by providing a single CLI for repository registration, worktree management, and gitignored file sharing.\n\n## Features\n\n- **Repository registry** — Register and manage all your repositories with `ws repos` for system-wide visibility\n- **Bare clone + worktree management** — One-step setup with `ws repos clone` then `ws new`\n- **Shared store** — Automatically share gitignored files across worktrees (symlink / copy strategies)\n- **Quick open** — Open any registered repository's worktree in your editor with `ws open`\n- **Interactive mode** — Build and run commands interactively\n\n## Shared Store\n\nThe shared store centrally manages gitignored files across worktrees. Register files once, and they are automatically distributed when new worktrees are created with `ws new`.\n\n```bash\n# Register files to the store\nws store track -s symlink .claude/settings.local.json  # Shared via symlink (same content across all worktrees)\nws store track -s copy .env            # Copied (each worktree can customize independently)\nws store track -s copy .env.local\nws store track -s copy .env.development\n```\n\n| | symlink | copy |\n|---|---------|------|\n| Distribution method | Symbolic link | File copy |\n| Content sharing | Identical across all worktrees | Independent per worktree |\n| Update propagation | Instant (same link target) | Requires `push` / `pull` |\n| Use case | `.claude/settings.local.json`, etc. | `.env`, `.env.local`, `.env.development`, etc. |\n\n> [!TIP]\n> See [Shared Store](https://langify-org.github.io/ws-cli/concepts/shared-store.html) for the full workflow including `push`, `pull`, `status`, and `untrack`.\n\n## Quick Start\n\n### Already have a cloned repository?\n\n```bash\ncd my-project\nws new feature/awesome       # Create a worktree for a new branch\n```\n\n### Cloning a new repository?\n\n```bash\nws repos clone https://github.com/example/repo.git\nws new feature/awesome\n```\n\n### Starting a new project from scratch?\n\n```bash\nmkdir my-project && cd my-project\nws repos clone               # Create an empty bare repository\nws new main                  # Create a worktree with an orphan branch\n```\n\n> [!TIP]\n> See [Quick Start](https://langify-org.github.io/ws-cli/getting-started/quick-start.html) for more details.\n\n## Documentation\n\nSee the **[ws documentation](https://langify-org.github.io/ws-cli/)** for the full reference.\n\n## Installation\n\n### Shell installer (macOS / Linux)\n\n```bash\ncurl --proto '=https' --tlsv1.2 -LsSf https://github.com/langify-org/ws-cli/releases/latest/download/ws-installer.sh | sh\n```\n\n### Homebrew\n\n```bash\nbrew install langify-org/tap/ws\n```\n\n### Nix flake\n\nA binary cache is available via [Cachix](https://app.cachix.org/cache/langify-org) to avoid building from source:\n\n```bash\ncachix use langify-org\n```\n\n```bash\nnix run github:langify-org/ws-cli\n```\n\n### Home Manager (Nix)\n\n```nix\n# flake.nix の inputs に追加\ninputs.ws-cli.url = \"github:langify-org/ws-cli\";\n\n# home.nix\nimports = [ inputs.ws-cli.homeManagerModules.default ];\n\nprograms.ws = {\n  enable = true;\n  package = inputs.ws-cli.packages.${system}.default;\n  repos = {\n    my-repo = {\n      path = \"/Users/user/projects/my-repo\";\n      url = \"git@github.com:user/my-repo.git\";\n    };\n  };\n};\n```\n\n> [!TIP]\n> To use the binary cache with Home Manager, nix-darwin, or NixOS, add the Cachix substituter to your Nix configuration instead of running `cachix use`:\n>\n> ```nix\n> nix.settings = {\n>   substituters = [ \"https://langify-org.cachix.org\" ];\n>   trusted-public-keys = [ \"langify-org.cachix.org-1:zO6Hf3s6e3Ex7PDSazL1A7XwR/3Deui7G3LUrs4+nq4=\" ];\n> };\n> ```\n\n### cargo\n\n```bash\ncargo install --git https://github.com/langify-org/ws-cli.git\n```\n\n## Development\n\n### Regenerating demo GIFs\n\nThe demo GIFs are generated from [VHS](https://github.com/charmbracelet/vhs) tape files. No local build or tool installation is required — everything runs through Nix:\n\n```bash\n# English (demo.gif)\nnix run .#demo\n\n# Japanese (demo.ja.gif)\nnix run .#demo -- demo.ja.tape\n```\n\nThe tape files (`demo.tape`, `demo.ja.tape`) are self-contained scripts that create an isolated environment, so they don't affect your local configuration.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "ws",
+          "source": "./plugin",
+          "description": "Workspace context awareness, branch management, store setup, and cross-worktree navigation for ws-managed repositories",
+          "version": "0.1.0",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add langify-org/ws-cli",
+            "/plugin install ws@ws-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}
