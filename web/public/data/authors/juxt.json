@@ -15,10 +15,10 @@
       "signals": {
         "stars": 1,
         "forks": 2,
-        "pushed_at": "2026-02-23T14:10:45Z"
+        "pushed_at": "2026-02-24T18:07:14Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"juxt-plugins\",\n  \"owner\": {\n    \"name\": \"JUXT Ltd\",\n    \"email\": \"info@juxt.pro\"\n  },\n  \"metadata\": {\n    \"description\": \"JUXT plugin marketplace for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"allium\",\n      \"description\": \"An LLM-native language for sharpening intent alongside implementation. Velocity through clarity.\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"juxt/allium\",\n        \"sha\": \"0d6a513e84db57eb5cf01891ffed941c6278844f\"\n      },\n      \"skills\": [\n        \"./\",\n        \"./skills/distill\",\n        \"./skills/elicit\"\n      ],\n      \"agents\": [\n        \"./.claude/agents/tend.md\",\n        \"./.claude/agents/weed.md\"\n      ]\n    },\n    {\n      \"name\": \"chalk\",\n      \"description\": \"GitHub Issue-backed agent session memory. Like beads but uses GitHub Issues as the storage backend.\",\n      \"source\": \"./plugins/chalk\"\n    }\n  ]\n}\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"juxt-plugins\",\n  \"owner\": {\n    \"name\": \"JUXT Ltd\",\n    \"email\": \"info@juxt.pro\"\n  },\n  \"metadata\": {\n    \"description\": \"JUXT plugin marketplace for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"allium\",\n      \"description\": \"An LLM-native language for sharpening intent alongside implementation. Velocity through clarity.\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"juxt/allium\",\n        \"sha\": \"0d6a513e84db57eb5cf01891ffed941c6278844f\"\n      },\n      \"skills\": [\n        \"./\",\n        \"./skills/distill\",\n        \"./skills/elicit\"\n      ],\n      \"agents\": [\n        \"./.claude/agents/tend.md\",\n        \"./.claude/agents/weed.md\"\n      ]\n    },\n    {\n      \"name\": \"chalk\",\n      \"description\": \"GitHub Issue-backed agent session memory. Like beads but uses GitHub Issues as the storage backend.\",\n      \"source\": \"./plugins/chalk\"\n    },\n    {\n      \"name\": \"glance\",\n      \"description\": \"Pipe long command output through glance for token-efficient summaries instead of reading all tokens.\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"juxt/glance\",\n        \"sha\": \"1e485e9f250b020efabf69cbf4c8199429e841a1\"\n      },\n      \"skills\": [\n        \"./skills/glance\"\n      ]\n    }\n  ]\n}\n",
         "README.md": "# JUXT Claude Code Plugins\n\nA plugin marketplace for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).\n\n## Installation\n\n```\n/plugin marketplace add juxt/claude-plugins\n```\n\nThen install individual plugins:\n\n```\n/plugin install allium\n```\n\n## Available plugins\n\nOnce the marketplace is added, you can install any of the following:\n\n- **[Allium](https://juxt.github.io/allium/)**: an LLM-native language for sharpening intent alongside implementation.\n- **[Chalk](plugins/chalk/)**: GitHub Issue-backed agent session memory. Like [beads](https://github.com/steveyegge/beads) but uses GitHub Issues as the storage backend.\n\nEach plugin is open source. Visit the links above for documentation and examples.\n\n## Copyright & License\n\nThe MIT License (MIT)\n\nCopyright © 2026 JUXT Ltd.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n",
         "plugins/chalk/README.md": "# Chalk\n\nGitHub Issue-backed agent session memory.\n\nSimilar to [beads](https://github.com/steveyegge/beads) but uses GitHub Issues as the storage backend, for projects that already have their issue tracking in GitHub.\n\nChalk tracks your Claude Code session progress against a GitHub Issue.\nIt creates a single session comment and edits it in-place as work progresses, giving you a live log of decisions, progress, and blockers.\n\n## Conventions\n\n- **Issue description** = current state (mutable). The tl;dr of where things stand — status, open questions, key decisions. Updated in-place as the picture changes.\n- **Comments** = session log (append-only). One comment per session, edited in-place during the session, but never deleted. Each comment captures what was tried, decided, and learned.\n\nThe issue description is what you read to get up to speed quickly.\nThe comments are what you read when you need to understand *how* you got here — essential context for resuming after compaction or picking up someone else's work.\n\n## Installation\n\nAdd this plugin to your `.claude/settings.json`:\n\n```json\n{\n  \"plugins\": [\"path/to/chalk\"]\n}\n```\n\nRequires the `gh` CLI to be installed and authenticated (`gh auth login`).\n\n## Usage\n\n- `chalk #N` — track this session against issue N\n- `chalk new` — create a new issue and track against it\n- `chalk status` — show what you're tracking\n- `chalk off` — stop tracking\n\nChalk also auto-activates when you mention a GitHub issue number (e.g. \"#123\").\n\n## Components\n\n- **Skill** (`chalk`): The main user-facing skill for session tracking commands\n\n## Permissions\n\nChalk needs permission to run `gh issue` commands.\nAdd these permission rules to allow non-interactive use:\n\n```\nBash(gh issue view *)\nBash(gh issue comment *)\nBash(gh issue edit *)\nBash(gh issue create *)\n```\n"
       },
@@ -54,6 +54,53 @@
           "install_commands": [
             "/plugin marketplace add juxt/claude-plugins",
             "/plugin install chalk@juxt-plugins"
+          ]
+        },
+        {
+          "name": "glance",
+          "description": "Pipe long command output through glance for token-efficient summaries instead of reading all tokens.",
+          "source": {
+            "source": "github",
+            "repo": "juxt/glance",
+            "sha": "1e485e9f250b020efabf69cbf4c8199429e841a1"
+          },
+          "skills": [
+            "./skills/glance"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add juxt/claude-plugins",
+            "/plugin install glance@juxt-plugins"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "glance-marketplace",
+      "version": null,
+      "description": "glance plugin marketplace",
+      "repo_full_name": "juxt/glance",
+      "repo_url": "https://github.com/juxt/glance",
+      "repo_description": "Command output summariser with filters, built for LLMs",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T09:43:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"glance-marketplace\",\n  \"owner\": { \"name\": \"akeboshiwind\" },\n  \"metadata\": { \"description\": \"glance plugin marketplace\", \"version\": \"1.0.0\" },\n  \"plugins\": [\n    {\n      \"name\": \"glance\",\n      \"description\": \"Pipe long command output through glance for token-efficient summaries\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"glance\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Pipe long command output through glance for token-efficient summaries\",\n  \"author\": { \"name\": \"juxt\" },\n  \"repository\": \"https://github.com/juxt/glance\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# glance — LLM-optimized output summarizer\n\n[![PyPI](https://img.shields.io/pypi/v/glancecli?label=pypi)](https://pypi.org/project/glancecli/)\n[![Go tests](https://github.com/juxt/glance/actions/workflows/test.yml/badge.svg)](https://github.com/juxt/glance/actions/workflows/test.yml)\n[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)\n\nLLMs read every token of command output with equal attention, unlike humans who skim head/tail and scan for patterns. `glance` gives LLMs a human-like \"skim\" — pipe output in, get a token-efficient summary with head/tail + regex-matched lines, plus an ID to drill deeper.\n\n## Install\n\n```sh\n# Install permanently (puts `glance` on PATH)\nuv tool install glancecli\n\n# One-shot without installing\nuvx --from glancecli glance\n\n# Or with Go\ngo install github.com/juxt/glance@latest\n```\n\nClaude Code plugin:\n```\n/plugin marketplace add juxt/glance\n/plugin install glance\n```\n\n## What it does\n\n```\n$ seq 500 | glance -n 3\n  1: 1\n  2: 2\n  3: 3\n498: 498\n499: 499\n500: 500\n--- glance id=20260219-143022-a3f8b1c0 | 500 lines | showing 6 | sections: 1-3, 498-500 ---\n```\n\n```\n$ (seq 100; echo \"ERROR db connection refused\"; seq 200) | glance -n 3 -p errors\n  1: 1\n  2: 2\n  3: 3\n101: ERROR db connection refused\n299: 198\n300: 199\n301: 200\n--- glance id=20260219-143025-b7c2e4f1 | 301 lines | showing 7 | sections: 1-3, 101, 299-301 ---\n```\n\nThe stored capture can be drilled into:\n```\n$ glance show 20260219-143025-b7c2e4f1 -a 101 2\n 99: 99\n100: 100\n101: ERROR db connection refused\n102: 1\n103: 2\n--- glance show 20260219-143025-b7c2e4f1 | 301 lines | showing 5 | sections: 99-103 ---\n```\n\n## Design decisions\n\n- **Single static binary** — compiled Go, no runtime dependencies. Cross-compiled for Linux, macOS, and Windows (amd64 + arm64).\n- **OR semantics** — all matchers (filters + presets) OR together. Head/tail always shown. This is the most useful behavior for scanning output: \"show me the start, end, and anything interesting\".\n- **Persistent storage** — captures stored in `$XDG_CACHE_HOME/glance/captures/` with timestamp + hex IDs (e.g. `20260219-143022-a3f8b1c0`). Full ID required for `glance show` — use `glance list` to find IDs.\n- **No metadata files** — line count and age derived from the stored file itself (`wc -l`, `stat`).\n- **Built-in + user presets** — three hardcoded presets (errors, warnings, status) cover common patterns. User presets stored in `~/.config/glance/presets.csv` as CSV. Use `(?i)` prefix for case-insensitive matching.\n\n## Usage\n\nSee `glance help` for complete documentation. Key commands:\n\n| Command | Description |\n|---------|-------------|\n| `cmd \\| glance` | Head 10 + tail 10 |\n| `cmd \\| glance -n 5` | Head 5 + tail 5 |\n| `cmd \\| glance -f 'regex'` | + regex filter matches |\n| `cmd \\| glance -p errors` | + preset filter |\n| `glance show <id>` | Full stored output |\n| `glance show <id> -l 50-80` | Line range |\n| `glance show <id> -f 'regex'` | Filter stored output |\n| `glance show <id> -p errors` | Filter with preset |\n| `glance show <id> -a N C` | Context around line N |\n| `glance list` | List stored captures |\n| `glance clean` | Purge captures |\n| `glance presets list` | Show all presets |\n| `glance presets add <name> <re> [desc]` | Add user preset |\n| `glance presets remove <name>` | Remove user preset |\n\n\nPreset names must be alphanumeric (plus hyphens and underscores). Use `(?i)` prefix in regex for case-insensitive matching:\n\n```sh\nglance presets add deploys '(?i)deploy|release|rollout' 'Deployment events'\n```\n\n## Testing\n\n```\ngo test ./...\n```\n\n## Files\n\n- `main.go` — entry point and CLI\n- `*_test.go` — integration and unit tests\n- `.github/workflows/publish.yml` — PyPI release workflow\n- `README.md` — this file\n"
+      },
+      "plugins": [
+        {
+          "name": "glance",
+          "description": "Pipe long command output through glance for token-efficient summaries",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add juxt/glance",
+            "/plugin install glance@glance-marketplace"
           ]
         }
       ]

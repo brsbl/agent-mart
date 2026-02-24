@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "carlonlv",
+    "display_name": "Jialun Lyu",
+    "avatar_url": "https://avatars.githubusercontent.com/u/36804238?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "local-dx",
+      "version": null,
+      "description": "Local development marketplace for dx plugin",
+      "repo_full_name": "carlonlv/dx",
+      "repo_url": "https://github.com/carlonlv/dx",
+      "repo_description": "Claude Code plugin for documentation, testing, code review, and workflow automation",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T16:47:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"local-dx\",\n  \"description\": \"Local development marketplace for dx plugin\",\n  \"owner\": {\n    \"name\": \"Developer\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dx\",\n      \"description\": \"Developer experience toolkit: documentation, testing, code review, and workflow automation\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"dx\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Developer experience toolkit: documentation, testing, code review, and workflow automation\",\n  \"author\": {\n    \"name\": \"Developer\"\n  }\n}\n",
+        "README.md": "# DX - Developer Experience Toolkit\n\nA [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin for documentation, testing, code review, and workflow automation.\n\n## Installation\n\n### From local directory\n\n```bash\n# In Claude Code, run:\n/install-plugin /path/to/dx\n```\n\n### Development setup\n\n```bash\ngit clone https://github.com/carlonlv/dx.git\ncd dx\n./scripts/deploy.sh\n# Restart Claude Code\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/dx:help` | Show plugin documentation and available commands |\n| `/dx:lint-test` | Run language-aware linters and test suites, generate quality report |\n| `/dx:init-claude-md` | Initialize CLAUDE.md files recursively across a repo |\n| `/dx:pull-commit-pr` | Pull latest, update CLAUDE.md files, commit, and create PR |\n| `/dx:code-review-docs` | Generate comprehensive code review report |\n\n### `/dx:lint-test`\n\nDetects project type (Python, Rust, JavaScript, Go, etc.) and runs the appropriate linters and test suites.\n\n```bash\n/dx:lint-test                  # Run all checks and tests\n/dx:lint-test --check-only     # Linters only, skip tests\n/dx:lint-test --test-only      # Tests only, skip linters\n/dx:lint-test --fix            # Auto-fix lint issues\n/dx:lint-test --report         # Generate quality report\n```\n\n### `/dx:init-claude-md`\n\nRecursively creates CLAUDE.md documentation files for each directory in a repository.\n\n```bash\n/dx:init-claude-md                           # Initialize all directories\n/dx:init-claude-md --depth=2                 # Limit depth\n/dx:init-claude-md --exclude-folders=vendor  # Skip directories\n/dx:init-claude-md --existing=update         # Update existing files\n/dx:init-claude-md --dry-run                 # Preview without writing\n```\n\n### `/dx:pull-commit-pr`\n\nEnd-to-end workflow: pulls latest changes, updates all CLAUDE.md files with current project state, commits, and creates a pull request.\n\n```bash\n/dx:pull-commit-pr              # Auto-generate branch name\n/dx:pull-commit-pr my-branch    # Use custom branch name\n```\n\n### `/dx:code-review-docs`\n\nAnalyzes the codebase across multiple dimensions and generates a `CODE_REVIEW_REPORT.md`.\n\n```bash\n/dx:code-review-docs                                   # Full review\n/dx:code-review-docs --aspects=dead,gaps,simple         # Specific aspects\n/dx:code-review-docs --priority=P0,P1                   # Filter by priority\n/dx:code-review-docs --top=20                           # Limit findings\n```\n\nReview aspects: architecture, dead code, duplicates, DB queries, implementation gaps, simplifications, TODOs, magic values, deprecated code.\n\n## Project Structure\n\n```\ndx/\n├── .claude-plugin/          # Plugin configuration\n│   ├── plugin.json          # Plugin manifest\n│   └── marketplace.json     # Local marketplace config\n├── commands/                # Slash commands (/dx:*)\n├── agents/                  # Specialized sub-agents\n├── changelogs/              # Version history for incremental updates\n├── hooks/                   # Pre-commit hooks\n└── scripts/                 # Deployment and version management\n```\n\n## Development\n\n### Deployment\n\n```bash\n# Reinstall without version change\n./scripts/deploy.sh\n\n# Bump version and reinstall\n./scripts/deploy.sh patch\n./scripts/deploy.sh minor --commit\n\n# Test cache-based installation\n./scripts/deploy.sh --cache\n```\n\nSee [scripts/CLAUDE.md](scripts/CLAUDE.md) for details on version management and troubleshooting.\n\n### Adding a command\n\nCreate `commands/my-command.md`:\n\n```markdown\n---\ndescription: What this command does\nallowed-tools: [\"Bash\", \"Read\", \"Write\"]\n---\n\n# My Command\n\nInstructions for Claude...\n```\n\n### Adding an agent\n\nCreate `agents/my-agent.md`:\n\n```markdown\n---\ndescription: What this agent does\ntools: [\"Bash\", \"Read\", \"Glob\", \"Grep\"]\n---\n\n# My Agent\n\nSystem prompt and instructions...\n```\n\n## Requirements\n\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI\n- `jq` (for deployment scripts)\n- `git`, `gh` (for PR workflows)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "dx",
+          "description": "Developer experience toolkit: documentation, testing, code review, and workflow automation",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add carlonlv/dx",
+            "/plugin install dx@local-dx"
+          ]
+        }
+      ]
+    }
+  ]
+}
