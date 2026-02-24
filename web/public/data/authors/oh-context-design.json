@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "oh-context-design",
+    "display_name": "Oh! Context Design",
+    "avatar_url": "https://avatars.githubusercontent.com/u/260121504?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "workspace-company",
+      "version": null,
+      "description": "Executive suite - board orchestration, engineering lead (Addy), product engineer (Alara), sprint planning, Araba server assistant",
+      "repo_full_name": "oh-context-design/workspace-company-marketplace",
+      "repo_url": "https://github.com/oh-context-design/workspace-company-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T08:44:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"workspace-company\",\n  \"owner\": {\n    \"name\": \"cowork-codebendr\",\n    \"email\": \"ohcontextdesign@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Executive suite - board orchestration, engineering lead (Addy), product engineer (Alara), sprint planning, Araba server assistant\",\n    \"version\": \"1.0.0\",\n    \"category\": \"company\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"company\",\n      \"description\": \"Executive suite - design-first board, Addy (Engineering Lead), Alara (Product Engineer), Sprint Planning, Araba assistant\",\n      \"source\": \"./plugins/company\",\n      \"version\": \"3.0.0\",\n      \"strict\": false,\n      \"agents\": [\n        \"./agents/company-board.md\",\n        \"./agents/company-addy-engineering-lead.md\",\n        \"./agents/company-alara-product-engineer.md\",\n        \"./agents/company-sprint.md\",\n        \"./agents/company-assistant-araba.md\"\n      ],\n      \"commands\": [\n        \"./commands/board.md\",\n        \"./commands/addy.md\",\n        \"./commands/alara.md\",\n        \"./commands/sprint.md\",\n        \"./commands/araba.md\"\n      ],\n      \"skills\": [\n        \"./skills/strategic-framework\",\n        \"./skills/sprint-master\",\n        \"./skills/sprint-planning\",\n        \"./skills/worktree\",\n        \"./skills/araba-knowledge\"\n      ],\n      \"mcpServers\": {\n        \"linear-cycles\": {\n          \"command\": \"node\",\n          \"args\": [\"${CLAUDE_PLUGIN_ROOT}/skills/linear-cycles-mcp/dist/index.js\"]\n        }\n      }\n    }\n  ]\n}\n",
+        "README.md": "# workspace-company-marketplace\n\nExecutive suite marketplace for Claude Code. Provides board orchestration, engineering lead (Addy), product engineer (Alara), sprint planning, and Araba server assistant.\n\n## Plugin\n\n| Plugin | Commands | Description |\n|--------|----------|-------------|\n| company | `/company:board`, `/company:addy`, `/company:alara`, `/company:sprint`, `/company:araba` | Executive suite with strategic decision-making, sprint planning, and server operations |\n\n## Requirements\n\n- Claude Code CLI\n- Node.js (for Linear Cycles MCP server)\n- `LINEAR_API_KEY` in `~/.claude/plugins/.env` (for sprint/cycle features)\n\n## Cross-Marketplace Dependencies\n\nThis marketplace references agents from other marketplaces:\n\n- **workspace-development** - Swift, Python, TypeScript specialist agents (used by Addy for engineering routing)\n- **workspace-design** - UX/UI/Motion/System design reviewers (used by Alara for design review routing)\n- **workspace-life** - focus-linear agent (used by Sprint for current cycle data), life-calendar agent (used by Sprint + Alara for scheduling)\n\n## Installation\n\n```bash\n# Install from local path\nclaude plugin install /path/to/workspace-company-marketplace\n```\n",
+        "plugins/company/README.md": "# Company Plugin\n\n**Version:** 2.6.0\n**Description:** Executive suite for strategic decision-making with design-first board orchestration.\n\n## Team Structure\n\nSee `team-members.json` in the strategic-framework skill for complete team structure, executive sponsorship, peer relationships, and decision tree.\n\n**Location:** `${CLAUDE_PLUGIN_ROOT}/skills/strategic-framework/team-members.json`\n\n```\nBoard (cyan) - Design-First Executive Council\n├── CEO - Strategy (lens in Board)\n├── CTO - Technology (sponsors Addy)\n├── CFO - Finance (lens in Board)\n└── CDO - Design Excellence (sponsors Alara)\n\nExecution Leads (Equal Peers)\n├── Addy (blue) - Engineering Lead\n│   └── Manages: Swift, Python, TypeScript\n└── Alara (purple) - Product Engineer\n    └── Manages: Design reviewers\n\nCoordination\n└── Sprint (cyan) - Orchestrates Addy + Alara\n```\n\n## Commands\n\n1. **`/company:board`** - Design-first executive council. CDO perspective leads, CEO/CTO/CFO support. Routes strategic decisions through design lens.\n\n2. **`/company:addy`** - Engineering Lead and force multiplier. Partners with Alara. Sponsored by CTO. Coordinates Swift, Python, TypeScript specialists.\n\n3. **`/company:alara`** - Product Engineer applying Jobs/Ive/Rams principles. Partners with Addy. Sponsored by CDO. \"Should we build this?\"\n\n4. **`/company:sprint`** - Sprint planning orchestrator. Coordinates Addy + Alara for issue classification and calendar scheduling.\n\n## Agents\n\n### Board Agent (`company-board.md`)\nDesign-first executive council with CDO perspective leading every decision. Uses Rams' 10 principles, strategic reflection patterns, conflict resolution favoring design excellence.\n\n### Addy Agent (`company-addy-engineering-lead.md`)\nEngineering Lead and force multiplier. Blue color. Peer partnership with Alara. CTO sponsor. Manages Swift, Python, TypeScript teams.\n\n### Alara Agent (`company-alara-product-engineer.md`)\nProduct Engineer with Jobs/Ive/Rams principles. Purple color. Peer partnership with Addy. CDO sponsor. Manages design reviewers. Strategic product decisions.\n\n### Sprint Agent (`company-sprint.md`)\nSprint planning orchestrator. Cyan color. Coordinates Addy + Alara for parallel issue classification, calendar scheduling via Google Calendar MCP, Linear integration.\n\n## Skills\n\n### strategic-framework\nExecutive decision-making frameworks:\n- `references/ceo-leadership.md` - Leadership philosophies (Cook, Field, Bezos)\n- `references/cto-frameworks.md` - Technology decision frameworks\n- `references/cfo-financial.md` - Financial metrics and models (Deming + Parekh)\n- `references/cdo-design.md` - Design principles (Ive, Rams)\n- `references/decision-frameworks.md` - SWOT, OKRs, OODA Loop\n- `references/compounding-engineering.md` - AI-native engineering practices\n\n## Usage Examples\n\n```bash\n# Strategic decision through design lens\n/company:board Should we pivot to a new platform?\n\n# Engineering execution\n/company:addy Is the team ready to ship this feature?\n\n# Product strategy\n/company:alara Is this feature worth building?\n\n# Sprint planning\n/company:sprint Plan my sprint for next week\n/company:sprint status\n/company:sprint velocity\n```\n\n## Integration\n\n- **Board** → Escalation point for Addy and Alara disagreements\n- **Addy** → Routes to Swift/Python/TypeScript specialists\n- **Alara** → Routes to design plugin reviewers\n- **Sprint** → Uses Linear MCP, Google Calendar MCP, Notion MCP\n\n## Version History\n\n- **2.6.0** (2025-01-05): Consolidate Luna → Alara, team-members.json\n  - Renamed company-luna → company-alara-product-engineer\n  - Renamed company-addy → company-addy-engineering-lead\n  - Created team-members.json as single source of truth\n  - Formalized executive sponsorship (CTO→Addy, CDO→Alara)\n- **2.5.0** (2025-01-04): Sprint planning with cycle management\n  - Added custom Linear Cycles MCP integration\n  - Sprint operations: plan, friday, review, classify, status, velocity, new, update, cleanup, assign\n- **2.4.0** (2025-01-01): Strategic reflection patterns\n  - Added Regret Minimization, Energy vs Output Matrix\n  - Enhanced Board with AI-native operating rhythm\n- **1.2.0** (2024-12-25): Add Luna + Addy agents\n  - Luna (Design Lead) - now Alara (Product Engineer)\n  - Addy (Engineering Manager) - now Engineering Lead\n\n## License\n\nApache 2.0\n\n## Author\n\npixelbendr (Evans Attafuah)\n"
+      },
+      "plugins": [
+        {
+          "name": "company",
+          "description": "Executive suite - design-first board, Addy (Engineering Lead), Alara (Product Engineer), Sprint Planning, Araba assistant",
+          "source": "./plugins/company",
+          "version": "3.0.0",
+          "strict": false,
+          "agents": [
+            "./agents/company-board.md",
+            "./agents/company-addy-engineering-lead.md",
+            "./agents/company-alara-product-engineer.md",
+            "./agents/company-sprint.md",
+            "./agents/company-assistant-araba.md"
+          ],
+          "commands": [
+            "./commands/board.md",
+            "./commands/addy.md",
+            "./commands/alara.md",
+            "./commands/sprint.md",
+            "./commands/araba.md"
+          ],
+          "skills": [
+            "./skills/strategic-framework",
+            "./skills/sprint-master",
+            "./skills/sprint-planning",
+            "./skills/worktree",
+            "./skills/araba-knowledge"
+          ],
+          "mcpServers": {
+            "linear-cycles": {
+              "command": "node",
+              "args": [
+                "${CLAUDE_PLUGIN_ROOT}/skills/linear-cycles-mcp/dist/index.js"
+              ]
+            }
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add oh-context-design/workspace-company-marketplace",
+            "/plugin install company@workspace-company"
+          ]
+        }
+      ]
+    }
+  ]
+}

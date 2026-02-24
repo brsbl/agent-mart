@@ -43,6 +43,41 @@
           ]
         }
       ]
+    },
+    {
+      "name": "claude-plugin-template",
+      "version": null,
+      "description": "Template repository for creating high-quality Claude Code plugins with shared CI/CD and testing infrastructure",
+      "repo_full_name": "yu-iskw/claude-code-plugin-template",
+      "repo_url": "https://github.com/yu-iskw/claude-code-plugin-template",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T10:48:38Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-plugin-template\",\n  \"metadata\": {\n    \"description\": \"Template repository for creating high-quality Claude Code plugins with shared CI/CD and testing infrastructure\"\n  },\n  \"owner\": {\n    \"name\": \"yu-iskw\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"hello-world\",\n      \"description\": \"Comprehensive sample plugin demonstrating all Claude Code extension points\",\n      \"source\": \"./plugins/hello-world\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"yu-iskw\"\n      },\n      \"license\": \"Apache-2.0\",\n      \"repository\": \"https://github.com/yu-iskw/claude-code-plugin-template\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugin Monorepo Template\n\nTemplate repository for bootstrapping high-quality Claude Code plugins with shared CI/CD and testing infrastructure.\n\n## Key Features\n\n- **Standard Plugin Layout**: Follows best practices for Skills, Agents, Hooks, MCP, and LSP.\n- **Monorepo Ready**: Designed to host multiple plugins under the `plugins/` directory.\n- **Comprehensive Examples**: The `hello-world` plugin demonstrates every available extension point.\n- **Shared CI/CD**: Unified quality checks via `trunk` and GitHub Actions.\n- **Integration Tests**: Automated smoke tests that validate manifest schemas, component discovery, and **plugin installation** (marketplace add + install + list/validate) across all plugins.\n\n## Repository Layout\n\n```text\n.\n├── plugins/                     # Container for all plugins\n│   └── hello-world/             # Comprehensive sample plugin\n│       ├── .claude-plugin/      # Plugin metadata (plugin.json)\n│       ├── agents/              # Custom agent definitions\n│       ├── skills/              # Model-invoked skills (SKILL.md)\n│       ├── hooks/               # Event hook configurations\n│       ├── .mcp.json            # MCP server configuration\n│       └── .lsp.json            # LSP server configuration\n├── integration_tests/           # Shared testing harness\n│   ├── run.sh                   # Test orchestrator (scans plugins/)\n│   ├── validate-manifest.sh     # Manifest JSON schema validator\n│   └── ...\n├── .github/workflows/           # GitHub Actions (Lint, Integration Tests)\n├── Makefile                     # Task runner\n└── README.md\n```\n\n## Quickstart\n\n1.  **Create a new repository** from this template.\n2.  **Explore the sample plugin** in `plugins/hello-world/` to see how components are defined.\n3.  **Run local checks**:\n    ```bash\n    make lint\n    make test-integration-docker\n    ```\n\n## Development\n\n### Adding a New Plugin\n\nCreate a new directory in `plugins/` following the [Standard Plugin Layout](https://code.claude.com/docs/en/plugins-reference#standard-plugin-layout):\n\n- `plugins/<name>/.claude-plugin/plugin.json`: Required manifest.\n- `plugins/<name>/skills/`: Agent Skills folder.\n- `plugins/<name>/agents/`: Subagent markdown files.\n- `plugins/<name>/hooks/`: Event hook configurations.\n- `plugins/<name>/.mcp.json`: MCP configurations.\n- `plugins/<name>/.lsp.json`: LSP configurations.\n\n### Testing\n\nThe integration test runner (`./integration_tests/run.sh`) automatically discovers all directories in `plugins/` that contain a `.claude-plugin/plugin.json` file.\n\n- Run all tests: `./integration_tests/run.sh`\n- Verbose output: `./integration_tests/run.sh --verbose`\n- Skip loading tests (if Claude CLI is not installed): `./integration_tests/run.sh --skip-loading`\n\nDocker integration tests (`make test-integration-docker`) run the same suite inside a container and additionally run a **plugin install** test: they add the workspace as a marketplace, install each plugin with `claude plugin install`, and verify with `claude plugin list`. The same Docker flow runs in CI (job `plugin-install-docker`).\n\n## CI/CD\n\n- **Trunk Check**: Runs linters and static analysis on every PR.\n- **Integration Tests**: Automatically validates every plugin in the `plugins/` directory.\n\n## License\n\nApache License 2.0. See `LICENSE`.\n"
+      },
+      "plugins": [
+        {
+          "name": "hello-world",
+          "description": "Comprehensive sample plugin demonstrating all Claude Code extension points",
+          "source": "./plugins/hello-world",
+          "version": "1.0.0",
+          "author": {
+            "name": "yu-iskw"
+          },
+          "license": "Apache-2.0",
+          "repository": "https://github.com/yu-iskw/claude-code-plugin-template",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add yu-iskw/claude-code-plugin-template",
+            "/plugin install hello-world@claude-plugin-template"
+          ]
+        }
+      ]
     }
   ]
 }

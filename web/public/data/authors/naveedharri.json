@@ -1,0 +1,115 @@
+{
+  "author": {
+    "id": "naveedharri",
+    "display_name": "Naveed Harri",
+    "avatar_url": "https://avatars.githubusercontent.com/u/58967075?u=945b7068ae8602822ca620c2f79ab0976751abb8&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "benai-skills-internal",
+      "version": null,
+      "description": "Expert automation plugins that turn Claude into a specialist for your team.",
+      "repo_full_name": "naveedharri/benai-skills-internal",
+      "repo_url": "https://github.com/naveedharri/benai-skills-internal",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T13:24:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"benai-skills-internal\",\n  \"owner\": {\n    \"name\": \"naveedharri\",\n    \"email\": \"naveedharri@gmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Expert automation plugins that turn Claude into a specialist for your team.\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"youtube-strategy\",\n      \"source\": \"./plugins/youtube-strategy\",\n      \"description\": \"Research competitors, generate video ideas, build briefs, craft titles and thumbnails, and create detailed outlines for your YouTube content production workflow.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"BenAI\"\n      },\n      \"keywords\": [\n        \"youtube\",\n        \"content-strategy\",\n        \"video-production\",\n        \"ideation\",\n        \"research\"\n      ]\n    },\n    {\n      \"name\": \"cowork-tools\",\n      \"source\": \"./plugins/cowork-tools\",\n      \"description\": \"Export and import Claude Desktop Cowork sessions as portable archives. Transfer sessions between machines, share with teammates, or back up your work.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"BenAI\"\n      },\n      \"keywords\": [\n        \"cowork\",\n        \"export\",\n        \"import\",\n        \"session\",\n        \"backup\",\n        \"transfer\"\n      ]\n    },\n    {\n      \"name\": \"cowork-scheduler\",\n      \"source\": \"./plugins/cowork-scheduler\",\n      \"description\": \"Schedule automated recurring Cowork sessions that appear in your Desktop sidebar. Set up daily briefings, morning reports, or any recurring task powered by Claude Code headless mode.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"BenAI\"\n      },\n      \"keywords\": [\n        \"cowork\",\n        \"scheduler\",\n        \"cron\",\n        \"automation\",\n        \"recurring\",\n        \"headless\",\n        \"scheduled-tasks\"\n      ]\n    }\n  ]\n}",
+        "README.md": "# BenAI Skills\n\nExpert automation plugins for Claude Code.\n\n## Installation\n\n```bash\n# Install plugins\n/plugin install youtube-strategy@benai-skills-internal\n/plugin install cowork-tools@benai-skills-internal\n```\n\n## Setup\n\nThe YouTube Strategy plugin requires an Apify API token for channel scraping and video data extraction.\n\nCreate a `.env` file in your project directory:\n\n```bash\nAPIFY_TOKEN=your_token_here\n```\n\nGet your token at [Apify Console](https://console.apify.com).\n\n**Important:** Add `.env` to your `.gitignore` to keep your API keys secure.\n\n## Plugins\n\n### YouTube Strategy (5 skills)\n\nEnd-to-end YouTube content production workflow — from competitor research to final video outline.\n\n| Skill | Command | Purpose |\n|-------|---------|---------|\n| yt-research | `/yt-research` | Research competitor channels, niches, trending topics |\n| yt-ideation | `/yt-ideate` | Generate & validate video ideas within content pillars |\n| yt-brief | `/yt-brief` | Refine idea into structured production brief |\n| yt-packaging | `/yt-package` | Create optimized titles & thumbnail concepts |\n| yt-outline | `/yt-outline` | Build step-by-step outlines with demo prep |\n\n**Commands:** `/youtube-strategy` (skill overview), `/morning-routine` (daily content scan), `/yt-pipeline` (full Research → Ideate → Brief → Package → Outline workflow), plus per-skill commands above\n\n**Agents:** `yt-scraper`, `channel-analyzer`, `idea-validator`, `morning-scanner`\n\n#### Pipeline Flow\n\n```\n/yt-pipeline:\n  Phase 0: Context (niche focus, competitor channels)\n  Phase 1: Research (yt-scraper + channel-analyzer agents)\n  Phase 2: Ideate (generate 15-20 ideas + idea-validator agents)\n  Phase 3: Brief (define angle, key points, CTA asset)\n  Phase 4: Package (5-10 titles, 3-5 thumbnail concepts)\n  Phase 5: Outline (step-by-step outline + demo prep checklist)\n```\n\nEach phase has a mandatory human checkpoint before proceeding.\n\n### Cowork Tools (1 skill)\n\nExport and import Claude Desktop Cowork sessions as portable zip archives.\n\n| Skill | Commands | Purpose |\n|-------|----------|---------|\n| cowork-porter | `/cowork-export`, `/cowork-import` | Transfer sessions between machines, share with teammates, or back up work |\n\n## Project Structure\n\n```\nbenai-skills/\n├── .claude-plugin/\n│   ├── marketplace.json          # Plugin registry (names, versions, keywords)\n│   └── skills-map.json           # Maps skills, commands, connectors, agents to plugins\n├── shared-skills/                # Source of truth for all skills\n│   ├── cowork-porter/\n│   ├── yt-brief/\n│   ├── yt-ideation/\n│   ├── yt-outline/\n│   ├── yt-packaging/\n│   └── yt-research/\n├── commands/                     # Command .md files mapped in skills-map.json\n│   ├── cowork-export.md\n│   ├── cowork-import.md\n│   ├── morning-routine.md\n│   ├── youtube-strategy.md\n│   ├── yt-brief.md\n│   ├── yt-ideate.md\n│   ├── yt-outline.md\n│   ├── yt-package.md\n│   ├── yt-pipeline.md\n│   └── yt-research.md\n├── agents/                       # Sub-agent definitions for pipelines\n│   ├── channel-analyzer.md\n│   ├── idea-validator.md\n│   ├── morning-scanner.md\n│   └── yt-scraper.md\n├── connectors/                   # MCP server configs\n│   └── apify.json\n├── plugins/                      # Generated by sync-skills.sh — do not edit\n│   ├── cowork-tools/\n│   └── youtube-strategy/\n├── sync-skills.sh                # Generates plugins/ from shared-skills/ + skills-map.json\n├── build-zips.sh                 # Builds distributable zips (runs sync first)\n├── CLAUDE.md\n└── README.md\n```\n\n## Adding New Skills\n\n1. Create the skill directory in `shared-skills/` with `SKILL.md` and optional `references/`\n2. Add the skill to the relevant plugins in `.claude-plugin/skills-map.json`\n3. If needed, add command `.md` files in `commands/` and map them in `skills-map.json`\n4. Run `./sync-skills.sh` to generate plugin output\n\n## Editing Existing Skills\n\n1. Edit the skill in `shared-skills/<skill>/` (never in `plugins/*/skills/`)\n2. Run `./sync-skills.sh` to propagate changes\n\n**Before every push**, run `./sync-skills.sh` to ensure plugins are in sync.\n\n## Building Distributable Zips\n\nRun `./build-zips.sh` to generate downloadable zip files in `dist/`. The script runs `sync-skills.sh` first, then reads `marketplace.json` and creates:\n- One extension zip per plugin in `dist/extension/`\n- One desktop zip per plugin in `dist/desktop/`\n\n## License\n\nBenAI\n"
+      },
+      "plugins": [
+        {
+          "name": "youtube-strategy",
+          "source": "./plugins/youtube-strategy",
+          "description": "Research competitors, generate video ideas, build briefs, craft titles and thumbnails, and create detailed outlines for your YouTube content production workflow.",
+          "version": "1.0.0",
+          "author": {
+            "name": "BenAI"
+          },
+          "keywords": [
+            "youtube",
+            "content-strategy",
+            "video-production",
+            "ideation",
+            "research"
+          ],
+          "categories": [
+            "content-strategy",
+            "ideation",
+            "research",
+            "video-production",
+            "youtube"
+          ],
+          "install_commands": [
+            "/plugin marketplace add naveedharri/benai-skills-internal",
+            "/plugin install youtube-strategy@benai-skills-internal"
+          ]
+        },
+        {
+          "name": "cowork-tools",
+          "source": "./plugins/cowork-tools",
+          "description": "Export and import Claude Desktop Cowork sessions as portable archives. Transfer sessions between machines, share with teammates, or back up your work.",
+          "version": "1.0.0",
+          "author": {
+            "name": "BenAI"
+          },
+          "keywords": [
+            "cowork",
+            "export",
+            "import",
+            "session",
+            "backup",
+            "transfer"
+          ],
+          "categories": [
+            "backup",
+            "cowork",
+            "export",
+            "import",
+            "session",
+            "transfer"
+          ],
+          "install_commands": [
+            "/plugin marketplace add naveedharri/benai-skills-internal",
+            "/plugin install cowork-tools@benai-skills-internal"
+          ]
+        },
+        {
+          "name": "cowork-scheduler",
+          "source": "./plugins/cowork-scheduler",
+          "description": "Schedule automated recurring Cowork sessions that appear in your Desktop sidebar. Set up daily briefings, morning reports, or any recurring task powered by Claude Code headless mode.",
+          "version": "1.0.0",
+          "author": {
+            "name": "BenAI"
+          },
+          "keywords": [
+            "cowork",
+            "scheduler",
+            "cron",
+            "automation",
+            "recurring",
+            "headless",
+            "scheduled-tasks"
+          ],
+          "categories": [
+            "automation",
+            "cowork",
+            "cron",
+            "headless",
+            "recurring",
+            "scheduled-tasks",
+            "scheduler"
+          ],
+          "install_commands": [
+            "/plugin marketplace add naveedharri/benai-skills-internal",
+            "/plugin install cowork-scheduler@benai-skills-internal"
+          ]
+        }
+      ]
+    }
+  ]
+}
