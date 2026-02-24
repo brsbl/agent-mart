@@ -1,0 +1,49 @@
+{
+  "author": {
+    "id": "xantygc",
+    "display_name": "Santy",
+    "avatar_url": "https://avatars.githubusercontent.com/u/783492?u=c9e2046f6d96ba6d3ea95bc9cea73707cc3bb56b&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "pecholata-marketplace",
+      "version": null,
+      "description": "Personal Claude Code marketplace with git workflow automation",
+      "repo_full_name": "xantygc/agent-code-marketplace",
+      "repo_url": "https://github.com/xantygc/agent-code-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T17:02:28Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pecholata-marketplace\",\n  \"owner\": {\n    \"name\": \"Santiago Gonzalez\",\n    \"email\": \"santiago.gonzalez.courel@gmail.com\",\n    \"url\": \"https://github.com/xantygc/agent-code-marketplace\"\n  },\n  \"metadata\": {\n    \"description\": \"Personal Claude Code marketplace with git workflow automation\",\n    \"version\": \"1.0.3\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"git-workflow\",\n      \"description\": \"Git workflow automation with Jira integration and Conventional Commits format\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/git-workflow\"\n      ],\n      \"commands\": [\n        \"./skills/git-workflow/commands/feature.md\",\n        \"./skills/git-workflow/commands/finish.md\",\n        \"./skills/git-workflow/commands/flow-status.md\",\n        \"./skills/git-workflow/commands/hotfix.md\",\n        \"./skills/git-workflow/commands/release.md\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Pecholata Marketplace\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n[![GitHub](https://img.shields.io/badge/GitHub-agent--code--marketplace-blue?logo=github)](https://github.com/xantygc/agent-code-marketplace)\n\n**Personal marketplace for Claude Code skills and automations.** Custom skills for development workflows, including Git automation with Jira integration and GitLab-compatible commit formats.\n\n## 🚀 Quick Start\n\n### Installation\n\nAdd the marketplace to Claude Code using one of these methods:\n\n#### Method 1: Remote Installation (Recommended)\n\n```bash\n/plugin marketplace add https://github.com/xantygc/agent-code-marketplace.git\n```\n\n#### Method 2: Local Installation (For Development)\n\n1. Clone the repository:\n```bash\ngit clone https://github.com/xantygc/agent-code-marketplace.git\ncd agent-code-marketplace\n```\n\n2. Add to Claude Code:\n```bash\n/plugin marketplace add /path/to/agent-code-marketplace\n```\n\nOn Windows:\n```cmd\n/plugin marketplace add C:\\projects\\agent-code-marketplace\n```\n\n### After Installation\n\n1. **Restart Claude Code** to load the marketplace\n2. Verify installation by running `/plugin` - you should see \"pecholata-marketplace\"\n3. Skills are now available for use\n\n### Using the Skills\n\nThe skills are automatically invoked by Claude Code when relevant. For example:\n\n```\n# Git workflow skill activates automatically when you:\n- \"Create a commit with these changes\"\n- \"Create a merge request\"\n- \"Validate my commit messages\"\n\n# Or explicitly invoke it:\n/git-workflow\n```\n\n## 📦 Available Skills\n\n### git-workflow\nGit workflow automation with Jira integration and GitLab-compatible commit format.\n\n**Features:**\n- Automatic Jira ID extraction from branch names\n- Conventional Commits format: `type(scope): JIRA-ID description`\n- GitLab commit message validation\n- Merge request creation with templates\n\n**Slash Commands:**\n- `/feature` - Create a new feature branch (`feature/JIRA-ID-description`)\n- `/release` - Create a release branch (`release/X.Y.Z`)\n- `/hotfix` - Create a hotfix branch (`hotfix/JIRA-ID-description`)\n- `/finish` - Complete and merge current branch (following Git Flow)\n- `/flow-status` - Show comprehensive Git Flow status and recommendations\n\nAll commands are available immediately after installation. See [git-workflow README](skills/git-workflow/README.md) for detailed usage.\n\n## 🔧 Development\n\n### Project Structure\n\n```\n.\n├── .claude-plugin/\n│   └── marketplace.json     # Marketplace configuration (REQUIRED)\n├── skills/\n│   └── git-workflow/        # Git workflow skill\n│       ├── .claude-plugin/\n│       │   └── plugin.json  # Plugin metadata\n│       ├── SKILL.md         # Main skill definition\n│       ├── README.md        # Skill documentation\n│       ├── commands/        # Slash commands\n│       │   ├── feature.md   # /feature command\n│       │   ├── release.md   # /release command\n│       │   ├── hotfix.md    # /hotfix command\n│       │   ├── finish.md    # /finish command\n│       │   └── flow-status.md # /flow-status command\n│       ├── scripts/         # Python validation scripts\n│       │   ├── extract_jira_id.py\n│       │   ├── validate_commit_message.py\n│       │   └── validate_branch_commits.sh\n│       ├── references/      # Documentation\n│       │   ├── conventional-commits-guide.md\n│       │   └── commit-examples.md\n│       └── assets/          # Templates\n│           └── mr-template.md\n├── MARKETPLACE_SETUP.md     # Setup guide\n└── README.md\n```\n\n**Important:** The `marketplace.json` file MUST be inside the `.claude-plugin/` directory. This is the standard location where Claude Code looks for marketplace configuration.\n\n### Adding New Skills\n\n1. Create a new directory under `skills/`\n2. Add a `SKILL.md` file with the skill definition\n3. Update `marketplace.json` to include the new skill\n4. Test locally before pushing\n\n### Commit Format\n\nThis repository uses GitLab-compatible conventional commits:\n\n```\ntype(scope): JIRA-ID description\n\nExamples:\n- feat(auth): AZ-123 add OAuth2 login support\n- fix(api): AZ-456 handle null response in user endpoint\n- docs(readme): AZ-789 add installation instructions\n```\n\n**Valid types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `revert`\n\n## 📖 Documentation\n\nFor more information about Claude Code and skill development:\n- [Claude Code Documentation](https://docs.anthropic.com/claude/docs/claude-code)\n- [Skill Development Guide](https://docs.anthropic.com/claude/docs/skills)\n\n\n## Attribution\n\nThis marketplace is maintained by Santiago Gonzalez (santiago.gonzalez.courel@gmail.com).\n\n**Original Project:**\n- Based on [claude-code-templates](https://github.com/davila7/claude-code-templates) by Daniel Avila - Licensed under MIT License\n- Agents Collection from [wshobson](https://github.com/wshobson/agents) - Licensed under MIT License\n- Commands from [awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) - Licensed under CC0 1.0 Universal\n\n## 📄 License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n\n## 🔗 Support\n\nFor issues or questions, contact Santiago Gonzalez at santiago.gonzalez.courel@gmail.com or create an issue in the [GitHub repository](https://github.com/xantygc/agent-code-marketplace/issues).\n"
+      },
+      "plugins": [
+        {
+          "name": "git-workflow",
+          "description": "Git workflow automation with Jira integration and Conventional Commits format",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/git-workflow"
+          ],
+          "commands": [
+            "./skills/git-workflow/commands/feature.md",
+            "./skills/git-workflow/commands/finish.md",
+            "./skills/git-workflow/commands/flow-status.md",
+            "./skills/git-workflow/commands/hotfix.md",
+            "./skills/git-workflow/commands/release.md"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add xantygc/agent-code-marketplace",
+            "/plugin install git-workflow@pecholata-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
