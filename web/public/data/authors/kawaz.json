@@ -95,6 +95,46 @@
           ]
         }
       ]
+    },
+    {
+      "name": "claude-plugin-jj",
+      "version": null,
+      "description": "jj (Jujutsu VCS) support for Claude Code: git misuse prevention, daily operation guide, and expert agent",
+      "repo_full_name": "kawaz/claude-plugin-jj",
+      "repo_url": "https://github.com/kawaz/claude-plugin-jj",
+      "repo_description": "Claude Code plugin for jj (Jujutsu VCS)",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T02:45:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-plugin-jj\",\n  \"owner\": {\n    \"name\": \"kawaz\"\n  },\n  \"metadata\": {\n    \"description\": \"jj (Jujutsu VCS) support for Claude Code: git misuse prevention, daily operation guide, and expert agent\",\n    \"version\": \"0.3.1\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jj\",\n      \"description\": \"jj (Jujutsu VCS) support: git misuse prevention hook, daily operation guide skill, and expert agent for advanced jj operations.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/jj-guide\"\n      ],\n      \"hooks\": [\n        \"./hooks\"\n      ],\n      \"agents\": [\n        \"./agents\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"jj\",\n  \"description\": \"jj (Jujutsu VCS) support: git misuse prevention, daily operation guide, and expert agent\",\n  \"version\": \"0.3.1\",\n  \"author\": {\n    \"name\": \"kawaz\"\n  },\n  \"homepage\": \"https://github.com/kawaz/claude-plugin-jj\",\n  \"repository\": \"https://github.com/kawaz/claude-plugin-jj\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# claude-plugin-jj\n\n[English](README.md) | [日本語](README.ja.md)\n\nA Claude Code plugin that helps users work with jj (Jujutsu VCS) managed projects.\n\n### Design Philosophy\n\n#### 3-Layer Architecture\n\nHook (Protection) → Skill (Guide) → Agent (Expert) provides progressive support.\n\n| Layer | Component | Role |\n|---|---|---|\n| Hook | jj-guard | Blocks Git command misuse before execution |\n| Skill | jj-guide | Basic knowledge and daily operation reference |\n| Agent | jj-expert | Agent with comprehensive advanced knowledge |\n\n#### Benefits of Integrated Plugin\n\nThe hook, skill, and agent are designed to work together, enabling each component to rely on the others.\n\n- **jj-guard deny messages are minimal** — Instead of cramming command-specific alternatives into messages, it simply guides users to the skill. This centralizes information and reduces maintenance costs.\n- **jj-expert is an agent with more comprehensive jj knowledge** — Provides expert assistance for advanced operations and troubleshooting.\n\n### Components\n\n#### jj-guard Hook (PreToolUse)\n\nDetects and blocks git command execution in jj-managed projects (where `.jj` directory exists). **It's a guard for awareness, not absolute prohibition.**\n\n- Allows jj-mediated git operations like `jj git push`\n- On denial, directs users to the skill for specific guidance\n- Operations that can only be done with git (submodule, lfs, etc.) can be easily bypassed with `:;git` (intentional design)\n\n#### jj-guide Skill\n\nProvides basic jj concepts, Git→jj mapping table, and daily operation reference. Also serves as knowledge supplement when commands are denied.\n\n#### jj-expert Agent\n\nAn agent with more comprehensive jj knowledge. Activated for complex inquiries and troubleshooting.\n\n### Installation\n\n```bash\nclaude plugin marketplace add kawaz/claude-plugin-jj\nclaude plugin install jj@claude-plugin-jj\n```\n\n### Usage\n\nOnce installed, the plugin automatically:\n1. Prevents accidental git commands in jj repositories (via jj-guard hook)\n2. Provides jj command references when needed (via jj-guide skill)\n3. Offers expert assistance for advanced jj operations (via jj-expert agent)\n\n### Troubleshooting\n\n#### When you need to run git commands\n\nIf you need to use Git features not yet supported by jj (submodules, lfs, etc.), use the `:;git` prefix:\n\n```bash\n:;git submodule update --init\n:;git lfs pull\n```\n\n#### jj-guide skill not found\n\nYou can explicitly invoke the skill in Claude Code by typing `jj:jj-guide`.\n\n### License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "jj",
+          "description": "jj (Jujutsu VCS) support: git misuse prevention hook, daily operation guide skill, and expert agent for advanced jj operations.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/jj-guide"
+          ],
+          "hooks": [
+            "./hooks"
+          ],
+          "agents": [
+            "./agents"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kawaz/claude-plugin-jj",
+            "/plugin install jj@claude-plugin-jj"
+          ]
+        }
+      ]
     }
   ]
 }

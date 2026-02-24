@@ -15,48 +15,50 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-23T02:32:29Z"
+        "pushed_at": "2026-02-24T00:30:31Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"techops-plugins\",\n  \"owner\": {\n    \"name\": \"TechOps Services\",\n    \"email\": \"simon@techops.services\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by TechOps Services\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"share\",\n      \"source\": \"./plugins/share\",\n      \"description\": \"Upload HTML and get a short URL. Includes /share command and auto-share skill.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"TechOps Services\"\n      },\n      \"homepage\": \"https://github.com/techops-services/share\",\n      \"repository\": \"https://github.com/techops-services/share\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"html\", \"share\", \"hosting\", \"url\"],\n      \"category\": \"utilities\"\n    },\n    {\n      \"name\": \"keeperhub\",\n      \"source\": \"./plugins/keeperhub\",\n      \"description\": \"Manage KeeperHub workflows, execute automations, and browse templates from Claude Code.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"TechOps Services\"\n      },\n      \"homepage\": \"https://app.keeperhub.com\",\n      \"repository\": \"https://github.com/techops-services/claude-plugins\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"keeperhub\", \"workflow\", \"automation\", \"web3\", \"blockchain\"],\n      \"category\": \"automation\"\n    }\n  ]\n}\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"techops-plugins\",\n  \"owner\": {\n    \"name\": \"TechOps Services\",\n    \"email\": \"simon@techops.services\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by TechOps Services\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"add-ui-feedback\",\n      \"source\": \"./plugins/add-ui-feedback\",\n      \"description\": \"Add a visual feedback/annotation overlay to any HTML page with bidirectional MCP bridge. Users annotate UI elements and send feedback directly to Claude, receiving responses in the browser.\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"TechOps Services\"\n      },\n      \"repository\": \"https://github.com/techops-services/claude-plugins\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"feedback\",\n        \"annotation\",\n        \"ui\",\n        \"html\",\n        \"review\"\n      ],\n      \"category\": \"utilities\"\n    },\n    {\n      \"name\": \"keeperhub\",\n      \"source\": \"./plugins/keeperhub\",\n      \"description\": \"Manage KeeperHub workflows, execute automations, and browse templates from Claude Code. Includes MCP server integration for full API access.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"TechOps Services\"\n      },\n      \"homepage\": \"https://app.keeperhub.com\",\n      \"repository\": \"https://github.com/techops-services/claude-plugins\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"keeperhub\",\n        \"workflow\",\n        \"automation\",\n        \"web3\",\n        \"blockchain\"\n      ],\n      \"category\": \"automation\"\n    },\n    {\n      \"name\": \"share\",\n      \"source\": \"./plugins/share\",\n      \"description\": \"Upload HTML and get a short URL. Includes /share command and auto-share skill.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"TechOps Services\"\n      },\n      \"homepage\": \"https://github.com/techops-services/share\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"html\",\n        \"share\",\n        \"hosting\",\n        \"url\"\n      ],\n      \"category\": \"utilities\"\n    }\n  ]\n}\n",
         "README.md": "# TechOps Claude Code Plugins\n\nClaude Code plugin marketplace by TechOps Services.\n\n## Install\n\n```\n/plugin marketplace add techops-services/claude-plugins\n```\n\n## Available Plugins\n\n### share\n\nUpload HTML and get a short URL.\n\n```\n/plugin install share@techops-plugins\n```\n\nThe `share` CLI binary is installed automatically on first use. Just run `/share` and it handles setup.\n\nAdds:\n- `/share` command -- share HTML files directly from Claude Code\n- Auto-share skill -- Claude detects when it writes HTML pages and offers to share them\n\n### keeperhub\n\nManage KeeperHub workflows, execute automations, and browse templates from Claude Code.\n\n```\n/plugin install keeperhub@techops-plugins\n```\n\nRun `/keeperhub:login` after install to set up your API key and MCP server.\n\nAdds:\n- `/keeperhub:login` command -- set up API key and install MCP server\n- `/keeperhub:status` command -- check auth and connectivity\n- 4 skills -- workflow-builder, template-browser, execution-monitor, plugin-explorer\n- 19 MCP tools via keeperhub-mcp server\n",
+        "plugins/add-ui-feedback/README.md": "# UI Feedback Plugin Setup\n\n## Prerequisites\n\n- Node.js 20 or later\n- Claude Code with plugin support\n\n## Installation\n\n1. Install the plugin in Claude Code:\n   ```\n   /install-plugin path/to/add-ui-feedback\n   ```\n\n2. Restart Claude Code to register the MCP bridge server.\n\n3. Verify the bridge is available:\n   ```\n   curl http://localhost:4243/health\n   ```\n   Expected response: `{\"status\":\"ok\",\"pending_feedback\":0,\"pending_responses\":0}`\n\n## Usage\n\n### Quick Start\n\n1. Create or open an HTML file in your project.\n2. Run `/add-feedback` to inject the annotation overlay.\n3. Open the HTML file in a browser.\n4. Click \"Feedback\" to enter annotation mode.\n5. Click on UI elements and type your feedback.\n6. Click \"Send to Claude\" to send annotations directly.\n7. Claude processes your feedback and responds in the browser panel.\n\n### Clipboard Fallback\n\nIf the MCP bridge is not running, the plugin works in clipboard mode:\n- The status dot in the toolbar appears gray instead of green.\n- The button reads \"Copy for Claude\" instead of \"Send to Claude\".\n- Click to copy structured feedback to clipboard, then paste to Claude.\n\n## Configuration\n\n### Custom Port\n\nThe bridge server defaults to port 4243. To change it:\n\nSet the `UI_FEEDBACK_PORT` environment variable before starting Claude Code:\n```bash\nexport UI_FEEDBACK_PORT=5000\n```\n\nOr set `data-bridge-port` on the script tag when using the overlay with a custom port.\n\n### Manual Server Start\n\nIf the MCP bridge doesn't start automatically:\n```bash\ncd /path/to/add-ui-feedback/server\nnode dist/cli.js --port 4243 --verbose\n```\n\n## Troubleshooting\n\n### Bridge not connecting (gray dot)\n\n1. Check if the server is running: `curl http://localhost:4243/health`\n2. Check for port conflicts: `lsof -i :4243`\n3. Try starting the server manually with `--verbose` flag\n4. Verify Claude Code restarted after plugin installation\n\n### Annotations not reaching Claude\n\n1. Confirm the green dot appears in the browser toolbar\n2. Check the browser console for network errors\n3. Verify the `feedback_watch` or `feedback_get` MCP tools are available in Claude Code\n\n### Port conflicts\n\nIf port 4243 is in use, set a different port via `UI_FEEDBACK_PORT` environment variable and restart Claude Code.\n",
         "plugins/keeperhub/README.md": "# KeeperHub Plugin for Claude Code\n\nManage KeeperHub workflows, execute automations, and browse templates directly from Claude Code.\n\n## Quick Start\n\n**1. Install the plugin**\n\n```\n/plugin marketplace add techops-services/claude-plugins\n/plugin install keeperhub@techops-plugins\n```\n\n**2. Run setup**\n\n```\n/keeperhub:login\n```\n\nThis walks you through:\n- Creating an organization API key (`kh_` prefix) at app.keeperhub.com\n- Auto-installing the keeperhub-mcp server\n- Saving config to `~/.claude/keeperhub/config.json`\n\n**3. Restart Claude Code** for the MCP tools to become available.\n\nThat's it. Try asking Claude to \"create a workflow that monitors a wallet\" or run `/keeperhub:status` to verify.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/keeperhub:login` | Set up API key and install MCP server |\n| `/keeperhub:status` | Check auth status, API connectivity, and MCP availability |\n\n## Skills\n\n- **workflow-builder** -- Create workflows from natural language. Triggered by \"create a workflow\", \"monitor contract\", \"set up automation\".\n- **template-browser** -- Browse and deploy pre-built workflow templates. Triggered by \"show templates\", \"find a workflow for\".\n- **execution-monitor** -- Monitor executions and debug failures. Triggered by \"check execution\", \"why did my workflow fail\".\n- **plugin-explorer** -- Discover available plugins and integrations. Triggered by \"what plugins are available\", \"show integrations\".\n\n## MCP Tools\n\nThis plugin configures the `keeperhub-mcp` server which provides 19 tools for full API access: workflow CRUD, execution management, template operations, plugin discovery, and integration queries. See the [keeperhub-mcp repository](https://github.com/techops-services/keeperhub-mcp) for tool documentation.\n\n## Requirements\n\n- A KeeperHub account at https://app.keeperhub.com\n- Node.js 20+\n- curl (pre-installed on macOS and most Linux)\n\nThe MCP server is auto-installed on first `/keeperhub:login`. No Docker or git required.\n"
       },
       "plugins": [
         {
-          "name": "share",
-          "source": "./plugins/share",
-          "description": "Upload HTML and get a short URL. Includes /share command and auto-share skill.",
-          "version": "1.0.0",
+          "name": "add-ui-feedback",
+          "source": "./plugins/add-ui-feedback",
+          "description": "Add a visual feedback/annotation overlay to any HTML page with bidirectional MCP bridge. Users annotate UI elements and send feedback directly to Claude, receiving responses in the browser.",
+          "version": "2.0.0",
           "author": {
             "name": "TechOps Services"
           },
-          "homepage": "https://github.com/techops-services/share",
-          "repository": "https://github.com/techops-services/share",
+          "repository": "https://github.com/techops-services/claude-plugins",
           "license": "MIT",
           "keywords": [
+            "feedback",
+            "annotation",
+            "ui",
             "html",
-            "share",
-            "hosting",
-            "url"
+            "review"
           ],
           "category": "utilities",
           "categories": [
-            "hosting",
+            "annotation",
+            "feedback",
             "html",
-            "share",
-            "url",
+            "review",
+            "ui",
             "utilities"
           ],
           "install_commands": [
             "/plugin marketplace add techops-services/claude-plugins",
-            "/plugin install share@techops-plugins"
+            "/plugin install add-ui-feedback@techops-plugins"
           ]
         },
         {
           "name": "keeperhub",
           "source": "./plugins/keeperhub",
-          "description": "Manage KeeperHub workflows, execute automations, and browse templates from Claude Code.",
+          "description": "Manage KeeperHub workflows, execute automations, and browse templates from Claude Code. Includes MCP server integration for full API access.",
           "version": "1.0.0",
           "author": {
             "name": "TechOps Services"
@@ -82,6 +84,35 @@
           "install_commands": [
             "/plugin marketplace add techops-services/claude-plugins",
             "/plugin install keeperhub@techops-plugins"
+          ]
+        },
+        {
+          "name": "share",
+          "source": "./plugins/share",
+          "description": "Upload HTML and get a short URL. Includes /share command and auto-share skill.",
+          "version": "1.0.0",
+          "author": {
+            "name": "TechOps Services"
+          },
+          "homepage": "https://github.com/techops-services/share",
+          "license": "MIT",
+          "keywords": [
+            "html",
+            "share",
+            "hosting",
+            "url"
+          ],
+          "category": "utilities",
+          "categories": [
+            "hosting",
+            "html",
+            "share",
+            "url",
+            "utilities"
+          ],
+          "install_commands": [
+            "/plugin marketplace add techops-services/claude-plugins",
+            "/plugin install share@techops-plugins"
           ]
         }
       ]
