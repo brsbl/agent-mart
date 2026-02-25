@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "ryosan-470",
+    "display_name": "Ryosuke Sato",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5006625?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ryosan-470-plugins",
+      "version": null,
+      "description": "Custom Claude Code plugins collection",
+      "repo_full_name": "ryosan-470/claude-plugins",
+      "repo_url": "https://github.com/ryosan-470/claude-plugins",
+      "repo_description": "Custom Claude Code plugins collection",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-25T05:19:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ryosan-470-plugins\",\n  \"owner\": {\n    \"name\": \"ryosan-470\"\n  },\n  \"metadata\": {\n    \"description\": \"Custom Claude Code plugins collection\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"confluence-to-notebooklm\",\n      \"source\": \"./plugins/confluence-to-notebooklm\",\n      \"description\": \"ConfluenceページをNotebookLMのソースとして差分同期する\",\n      \"version\": \"2.2.0\",\n      \"keywords\": [\"confluence\", \"notebooklm\", \"sync\", \"setup\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# claude-plugins\n\nCustom Claude Code plugin marketplace.\n\n## Installation\n\n```\n/plugin marketplace add ryosan-470/claude-plugins\n```\n\n## Plugins\n\n### confluence-to-notebooklm (v2.2.0)\n\nConfluence ページを NotebookLM のソースとして差分同期するスキル。\n\n#### Prerequisites\n\n- [Atlassian MCP](https://github.com/anthropics/claude-code) (Confluence API アクセス用)\n- [uv](https://docs.astral.sh/uv/) (スクリプト実行・依存解決に使用、`notebooklm-mcp-cli` は自動インストール)\n\n#### Setup\n\nClaude Code 上でプラグインをインストールします。\n\n```\n/plugin install confluence-to-notebooklm@ryosan-470-plugins\n```\n\n##### 対話的セットアップ（推奨）\n\nsetup スキルで Confluence ソースを対話的に選択し、設定ファイルを自動生成できます:\n\n```\n/confluence-to-notebooklm:setup \"設計資料\"\n```\n\nCloud ID の自動検出、スペース/ページのブラウズ、CQL クエリのプレビューに対応しています。\n\n##### 手動セットアップ\n\n手動で設定ファイルを作成する場合:\n\n```bash\nmkdir -p ~/.config/nlm-confluence-sync\n```\n\n`~/.config/nlm-confluence-sync/config.json`:\n\n```json\n{\n  \"version\": \"1\",\n  \"notebooks\": {\n    \"<NotebookLM上のノートブック名>\": {\n      \"confluence\": {\n        \"cloud_id\": \"<ConfluenceのCloud ID>\",\n        \"sources\": [\n          {\n            \"type\": \"pages\",\n            \"page_ids\": [\"<page_id_1>\", \"<page_id_2>\"]\n          }\n        ]\n      }\n    }\n  }\n}\n```\n\n##### Source types\n\n| type | description | required field |\n|------|-------------|---------------|\n| `pages` | 特定ページ ID のリストを直接指定 | `page_ids` |\n| `space` | スペース内の全ページ | `space_key` |\n| `page_tree` | 指定ページ以下のツリー全体 | `page_id` |\n| `cql` | CQL クエリで対象を絞る | `query` |\n\n##### How to find IDs\n\n- **Cloud ID**: Atlassian 管理コンソール (admin.atlassian.com) で確認\n- **Page ID**: ページ URL の末尾の数字 (例: `.../pages/4697849891`)\n\n#### Usage\n\n```\n/confluence-to-notebooklm 設計資料\n```\n\n差分検出により、前回同期以降に更新されたページのみが同期されます。\n"
+      },
+      "plugins": [
+        {
+          "name": "confluence-to-notebooklm",
+          "source": "./plugins/confluence-to-notebooklm",
+          "description": "ConfluenceページをNotebookLMのソースとして差分同期する",
+          "version": "2.2.0",
+          "keywords": [
+            "confluence",
+            "notebooklm",
+            "sync",
+            "setup"
+          ],
+          "category": "productivity",
+          "categories": [
+            "confluence",
+            "notebooklm",
+            "productivity",
+            "setup",
+            "sync"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ryosan-470/claude-plugins",
+            "/plugin install confluence-to-notebooklm@ryosan-470-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

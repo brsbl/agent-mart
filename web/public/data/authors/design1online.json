@@ -1,0 +1,44 @@
+{
+  "author": {
+    "id": "design1online",
+    "display_name": "Games for Girls",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5115671?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "author-it",
+      "version": null,
+      "description": "AI skills for authors that help plan, develop, and refine your book without writing it for you",
+      "repo_full_name": "design1online/author-it",
+      "repo_url": "https://github.com/design1online/author-it",
+      "repo_description": "AI skills for writers who don't want AI writing their novels for them...",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-25T06:13:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"author-it\",\n  \"owner\": {\n    \"name\": \"design1online\"\n  },\n  \"metadata\": {\n    \"description\": \"AI skills for authors that help plan, develop, and refine your book without writing it for you\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"author-it\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"design1online/author-it\"\n      },\n      \"description\": \"AI skills for authors that help plan, develop, and refine your book without writing it for you\",\n      \"homepage\": \"https://github.com/design1online/author-it\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"author-it\",\n  \"description\": \"AI skills for authors that help plan, develop, and refine your book without writing it for you\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"design1online\"\n  },\n  \"homepage\": \"https://github.com/design1online/author-it\",\n  \"repository\": \"https://github.com/design1online/author-it\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# Author It\nAI skills for writers who don't want AI writing their novels for them...\n\n## Overview\nThis repository contains Claude Code skills for authors. These skills help you plan, develop, and refine your book — but they never write your story for you. Using these skills will classify your work as **AI Assisted** because these are **NOT** generative AI skills.\n\n## Requirements\n\nClaude Code version 1.0.33 or later. Check your version with:\n\n```bash\nclaude --version\n```\n\nTo upgrade: `brew upgrade claude-code` (Homebrew) or `npm update -g @anthropic-ai/claude-code` (npm).\n\n---\n\n## Install as a Plugin (Recommended)\n\nInstalling as a plugin is the easiest way to use Author It. Skills are available across all your projects with a single install.\n\n**Step 1 — Add the marketplace:**\n\n```\n/plugin marketplace add design1online/author-it\n```\n\n**Step 2 — Install the plugin:**\n\n```\n/plugin install author-it@author-it\n```\n\nThat's it. Skills are immediately available.\n\n> **Note:** Plugin skills are namespaced to prevent conflicts with other plugins. Invoke them with the `author-it:` prefix (e.g., `/author-it:create-story-bible`).\n\n### Manage the plugin\n\n```\n/plugin disable author-it@author-it     # Disable without uninstalling\n/plugin enable author-it@author-it      # Re-enable\n/plugin uninstall author-it@author-it   # Remove completely\n```\n\n---\n\n## Manual Installation (Alternative)\n\nIf you prefer not to use the plugin system, you can copy the skills directly into any project.\n\n### Global (available in all projects)\n\n```bash\ncp -r skills/* ~/.claude/skills/\n```\n\n### Project-level (available in one project only)\n\n```bash\ncp -r skills/ /path/to/your/project/.claude/skills/\n```\n\n> **Note:** Manually installed skills use short names without a namespace prefix (e.g., `/create-story-bible` instead of `/author-it:create-story-bible`).\n\n---\n\n## Skills\n\n### `/author-it:create-story-bible`\n\n**Usage:** `/author-it:create-story-bible [book-title] [premise]`\n\nGuides you through a systematic, question-driven process to build a complete story bible for your book. It never writes your story — instead it asks targeted questions to help you clarify your premise, characters, world, and market positioning until everything is crystal clear.\n\nThe skill creates a structured set of files in a `story-bibles/[book-title]/` folder (or `story-bibles/[series-title]/[book-number]-[book-title]/` for series). Files created include:\n\n| Folder | Files |\n|---|---|\n| `story/` | premise, genre, tropes, recommendations |\n| `characters/` | protagonist, antagonist, relationship, distraction, emotion, reason, support, opposition |\n| `world-building/` | geography, flora-fauna, politics, religions, resources, culture-conflicts |\n| `outline/` | plot-centered, character-centered, romance, mystery, horror, or short-story beats |\n| `marketing/` | analysis, similar-books, ad-copy |\n\nThe skill works iteratively — it asks 1–3 targeted questions at a time, states its assumptions, and waits for your confirmation before moving forward. It will not generate final documents until all gaps and ambiguities are resolved.\n\n---\n\n### `/author-it:dev-editor-recommendations`\n\n**Usage:** `/author-it:dev-editor-recommendations [book-title]`\n\nPerforms a full developmental editor pass on the story bible files created by `create-story-bible`. It reads all existing story bible documents for the book (and series, if applicable) and compiles a prioritized recommendations report saved to `story/recommendations.md`.\n\nThe report includes:\n\n- **Plot Holes** — identified issues ranked by urgency with suggested fixes\n- **Story Inconsistencies** — contradictions across characters, world-building, and plot\n- **Character Development Issues** — passive or underdeveloped characters with fix recommendations\n- **Dev Editor Recommendations** — prioritized list (urgent, high, medium, low) with detailed feedback and a checkable suggestion list\n- **Overall Developmental Feedback** — strengths and weaknesses across all story elements with an overall rating\n- **Publishing Placement Recommendations** — whether the book is a fit for traditional, small press/indie, or self-publishing, including sample query letters\n- **Marketing Recommendations** — market fit analysis, niche vs. broad audience considerations\n\nIf a `recommendations.md` file already exists, the skill archives it with a date stamp before creating a new one.\n\n---\n\n### `/author-it:writing-coach`\n\n**Usage:** `/author-it:writing-coach`\n\nA step-by-step writing coach that evaluates the first paragraph or first chapter of your book (up to 5,000 words) and gives constructive criticism — without rewriting your content or training on your data.\n\nThe coach walks through seven evaluation stages:\n\n1. **Hook** — Analyzes your first sentence for reader assumptions, questions raised, clichés, and overall hook strength (rated 1–5). Offers targeted word-level suggestions to improve it without rewriting.\n2. **Main Character** — Evaluates whether the reader understands who the character is, what they want, their motivation, and what's standing in their way. Flags passive characters.\n3. **Setting** — Checks for white room syndrome and evaluates how well the setting grounds the reader.\n4. **Sensory Details** — Reviews all eight senses (sight, smell, sound, taste, touch, balance, external body awareness, internal body awareness) for presence and effectiveness.\n5. **Prose** — Evaluates purple prose, sentence flow, readability, repetition, strong writing habits (adverbs, passive voice, show vs. tell), and word choice.\n6. **Spelling & Grammar** — Lists all spelling and grammar issues with the sentence each is found in.\n7. **Overall Impression** — Provides a full reader synopsis, un-put-downable analysis, unanswered questions, plot holes, conflicts, inconsistencies, genre, tone, tropes, target reader, and a final rating.\n\nEach stage lets you dig deeper with clarifying questions or move on. At the end you can generate a downloadable summary of the full coaching session."
+      },
+      "plugins": [
+        {
+          "name": "author-it",
+          "source": {
+            "source": "github",
+            "repo": "design1online/author-it"
+          },
+          "description": "AI skills for authors that help plan, develop, and refine your book without writing it for you",
+          "homepage": "https://github.com/design1online/author-it",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add design1online/author-it",
+            "/plugin install author-it@author-it"
+          ]
+        }
+      ]
+    }
+  ]
+}

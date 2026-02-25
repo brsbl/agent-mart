@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "grootenberg",
+    "display_name": "grootenberg",
+    "avatar_url": "https://avatars.githubusercontent.com/u/238754664?u=2f62c03c3a3f3ec2209f542daf95a9974cd5c905&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "engram",
+      "version": null,
+      "description": "Portable memory graph for Claude Code interactions. Provides semantic search, observation ingestion, and episodic-to-semantic reflection via RAG-backed memory system.",
+      "repo_full_name": "grootenberg/engram",
+      "repo_url": "https://github.com/grootenberg/engram",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2025-12-24T18:36:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"engram\",\n  \"owner\": {\n    \"name\": \"Christopher Rock\"\n  },\n  \"metadata\": {\n    \"description\": \"Portable memory graph for Claude Code interactions. Provides semantic search, observation ingestion, and episodic-to-semantic reflection via RAG-backed memory system.\",\n    \"version\": \"0.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"engram\",\n      \"source\": \"./plugins/engram\"\n    }\n  ]\n}\n",
+        "README.md": "# engram\n\nA portable memory graph for Claude Code interactions. Engram provides semantic search, observation ingestion, and episodic-to-semantic reflection via a RAG-backed memory system.\n\n## Overview\n\nEngram enables Claude Code to maintain persistent memory across sessions through:\n\n- **Observation Ingestion** - Store valuable insights, decisions, errors, and patterns\n- **Semantic Retrieval** - Three-factor scoring combining recency, importance, and relevance\n- **Episodic-to-Semantic Reflection** - Synthesize raw observations into lasting insights\n- **Quality Curation** - Feedback loops to calibrate memory importance over time\n\n## Project Structure\n\n```\nengram/\n├── .claude-plugin/          # Plugin marketplace manifest\n│   └── marketplace.json\n├── mcp/                     # FastMCP server (memory backend)\n│   ├── app/                 # Application code\n│   ├── server.py            # MCP server entry point\n│   └── docker-compose.yml   # PostgreSQL + pgvector\n└── plugins/\n    └── engram/              # Claude Code plugin\n        ├── plugin.json      # Plugin manifest\n        ├── agents/          # Memory manager agent\n        ├── skills/          # Retrieval, reflection, curation skills\n        └── hooks/           # Automatic memory capture hooks\n```\n\n## Quick Start\n\n### 1. Start the Database\n\n```bash\ncd mcp\ndocker-compose up -d\n```\n\n### 2. Install Dependencies\n\n```bash\ncd mcp\nuv sync\n```\n\n### 3. Run Database Migrations\n\n```bash\ncd mcp\nuv run alembic upgrade head\n```\n\n### 4. Configure Environment\n\nCreate `mcp/.env` with your API keys:\n\n```env\nOPENAI_API_KEY=sk-...          # Required for embeddings\nANTHROPIC_API_KEY=sk-ant-...   # Required for reflection\nDATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5442/engram\n```\n\n### 5. Install the Plugin\n\nAdd this repository to your Claude Code plugins. The plugin will automatically start the MCP server when needed.\n\n## MCP Tools\n\n| Tool | Description |\n|------|-------------|\n| `observe` | Ingest observations with automatic deduplication |\n| `retrieve` | Search memories with three-factor scoring |\n| `feedback` | Provide helpful/harmful signals on memories |\n| `reflect` | Enqueue two-stage reflection (background) that synthesizes semantic insights and procedural workflows |\n| `reflect_status` | Poll the status/result of a queued reflection job |\n| `stats` | Get memory system statistics and health metrics |\n\n## Memory Types\n\n- **Episodic** - Raw observations from sessions\n- **Semantic** - Synthesized insights from reflection\n- **Procedural** - Workflow and how-to knowledge\n\n## Observation Types\n\n| Type | Default Importance |\n|------|-------------------|\n| instruction | 10 |\n| error | 9 |\n| decision | 8 |\n| code_change | 7 |\n| insight | 7 |\n| test_result | 6 |\n| general | 5 |\n| tool_output | 3 |\n\n## Documentation\n\n- [MCP Server Installation & Usage](mcp/README.md)\n- [Memory Manager Agent](plugins/engram/agents/memory-manager.md)\n- [Retrieval Skill](plugins/engram/skills/memory-retrieval/SKILL.md)\n- [Reflection Skill](plugins/engram/skills/memory-reflection/SKILL.md)\n- [Curation Skill](plugins/engram/skills/memory-curation/SKILL.md)\n\n## License\n\nSee [LICENSE](LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "engram",
+          "source": "./plugins/engram",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add grootenberg/engram",
+            "/plugin install engram@engram"
+          ]
+        }
+      ]
+    }
+  ]
+}
