@@ -1,0 +1,72 @@
+{
+  "author": {
+    "id": "mauhpr",
+    "display_name": "Mauricio Pérez Romero",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7750418?u=2de58a3d5fa42595445984e7f107d502d1a2c77d&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agentlint",
+      "version": null,
+      "description": "Real-time quality guardrails for AI coding agents",
+      "repo_full_name": "mauhpr/agentlint-plugin",
+      "repo_url": "https://github.com/mauhpr/agentlint-plugin",
+      "repo_description": "Claude Code plugin for AgentLint — real-time quality guardrails for AI coding agents",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-24T22:42:46Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agentlint\",\n  \"owner\": {\n    \"name\": \"mauhpr\",\n    \"email\": \"mauricio_perez_r@hotmail.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Real-time quality guardrails for AI coding agents\",\n    \"homepage\": \"https://github.com/mauhpr/agentlint-plugin\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agentlint\",\n      \"source\": \"./\",\n      \"description\": \"Real-time quality guardrails for AI coding agents. 42 rules across 7 packs covering all 17 Claude Code hook events — universal, quality, Python, frontend, React, SEO, and security (opt-in). Includes circuit breaker (Progressive Trust).\",\n      \"version\": \"0.6.0\",\n      \"author\": {\n        \"name\": \"mauhpr\",\n        \"email\": \"mauricio_perez_r@hotmail.com\"\n      },\n      \"homepage\": \"https://github.com/mauhpr/agentlint-plugin\",\n      \"repository\": \"https://github.com/mauhpr/agentlint-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"guardrails\", \"linting\", \"code-quality\", \"hooks\", \"agent-safety\", \"claude-code\"],\n      \"category\": \"code-quality\",\n      \"tags\": [\"guardrails\", \"linting\", \"secrets\", \"safety\", \"claude-code\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agentlint\",\n  \"description\": \"Real-time quality guardrails for AI coding agents. 42 rules across 7 packs covering all 17 Claude Code hook events — universal, quality, Python, frontend, React, SEO, and security (opt-in). Includes circuit breaker (Progressive Trust), AGENTS.md compatibility, and git safety checkpoints.\",\n  \"version\": \"0.6.0\",\n  \"author\": {\n    \"name\": \"mauhpr\",\n    \"email\": \"mauricio_perez_r@hotmail.com\"\n  },\n  \"homepage\": \"https://github.com/mauhpr/agentlint\",\n  \"repository\": \"https://github.com/mauhpr/agentlint-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"guardrails\", \"linting\", \"code-quality\", \"hooks\", \"agent-safety\", \"claude-code\"]\n}\n",
+        "README.md": "# agentlint — Claude Code Plugin\n\nReal-time quality guardrails for AI coding agents. 42 rules across 7 packs covering all 17 Claude Code hook events.\n\n## Prerequisites\n\nInstall the `agentlint` Python package:\n\n```bash\npip install agentlint\n```\n\n## Binary resolution\n\nThe plugin automatically resolves the `agentlint` binary at runtime — no PATH configuration needed. It probes, in order: PATH lookup, `~/.local/bin` (pipx), `uv tool` install location, and `python -m agentlint`. This works regardless of how you installed the package.\n\nIf auto-resolution still fails, run `agentlint setup` to register hooks with an absolute path instead.\n\n## Troubleshooting\n\n**Hooks not firing?** Verify the plugin is installed: `claude plugin list`\n\n**`agentlint: command not found`?** The binary resolver couldn't locate agentlint.\nInstall it (`pip install agentlint`) or run `agentlint setup` to embed an absolute\npath in your hooks.\n\n**Timeouts?** PreToolUse hooks have a 5s timeout. If your project is very large,\nconsider using `severity: relaxed` in `agentlint.yml`.\n\n## Install from GitHub\n\nAdd the marketplace and install:\n\n```bash\nclaude plugin marketplace add mauhpr/agentlint-plugin\nclaude plugin install agentlint@agentlint\n```\n\n## Install Locally\n\n```bash\nclaude --plugin-dir /path/to/agentlint-plugin\n```\n\n## What it does\n\nAgentLint hooks into all 17 Claude Code lifecycle events. The key events:\n\n- **PreToolUse** — Intercepts Bash, Edit, and Write calls. Blocks secrets, `.env` commits, force-pushes, destructive commands, unsafe shell execution, SQL injection, and more. Validates commit messages. With the security pack enabled, also blocks Bash file writes and network exfiltration.\n- **PostToolUse** — Checks written files for size limits, tracks edit drift, detects dead imports, warns on error handling removal, and flags unnecessary async. Tracks session token budget.\n- **UserPromptSubmit** / **SubagentStop** / **Notification** — Passthrough events for future rule expansion.\n- **Stop** — Generates an end-of-session quality report with debug artifact detection, TODO scanning, token budget summary, circuit breaker status, and adversarial self-review prompt.\n\n### Circuit Breaker (Progressive Trust)\n\nWhen a blocking rule fires repeatedly (3+ times), it automatically degrades from ERROR → WARNING → INFO → suppressed — preventing false-positive loops from blocking agents. Security-critical rules (`no-secrets`, `no-env-commit`) are exempt and always block. Auto-resets after 5 clean evaluations or 30 minutes. Fully configurable per-rule.\n\n## Rule packs\n\n| Pack | Rules | Auto-activates when |\n|------|-------|---------------------|\n| **universal** | 15 | Always active |\n| **quality** | 4 | Always active |\n| **python** | 6 | `pyproject.toml` or `setup.py` exists |\n| **frontend** | 8 | `package.json` exists |\n| **react** | 3 | `react` in package.json dependencies |\n| **seo** | 4 | SSR/SSG framework (Next.js, Nuxt, Gatsby, Astro, etc.) detected |\n| **security** | 2 | Opt-in (add `security` to packs) |\n\nSee [agentlint documentation](https://github.com/mauhpr/agentlint) for the full rule reference.\n\n## Configuration\n\nAfter installing, create `agentlint.yml` in your project:\n\n```bash\nagentlint init\n```\n\nSee [agentlint documentation](https://github.com/mauhpr/agentlint) for full configuration options.\n\n## Agents\n\nSpecialized agents for multi-step operations:\n\n- `/agentlint:security-audit` — Scan your codebase for security vulnerabilities, hardcoded secrets, and unsafe patterns\n- `/agentlint:doctor` — Diagnose configuration issues, verify hook installation, suggest optimal pack settings\n- `/agentlint:fix` — Auto-fix common violations (debug artifacts, accessibility, dead imports) with confirmation\n\n## Commands\n\n- `/agentlint:lint-status` — Show active rules and session violations\n- `/agentlint:lint-config` — Show or edit AgentLint configuration\n- `agentlint list-rules` — List all available rules (use `--pack security` to filter)\n- `agentlint status` — Show version, severity mode, active packs, rule count, and session activity\n- `agentlint doctor` — Diagnose common misconfigurations\n- `agentlint import-agents-md` — Import conventions from AGENTS.md into AgentLint config\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "agentlint",
+          "source": "./",
+          "description": "Real-time quality guardrails for AI coding agents. 42 rules across 7 packs covering all 17 Claude Code hook events — universal, quality, Python, frontend, React, SEO, and security (opt-in). Includes circuit breaker (Progressive Trust).",
+          "version": "0.6.0",
+          "author": {
+            "name": "mauhpr",
+            "email": "mauricio_perez_r@hotmail.com"
+          },
+          "homepage": "https://github.com/mauhpr/agentlint-plugin",
+          "repository": "https://github.com/mauhpr/agentlint-plugin",
+          "license": "MIT",
+          "keywords": [
+            "guardrails",
+            "linting",
+            "code-quality",
+            "hooks",
+            "agent-safety",
+            "claude-code"
+          ],
+          "category": "code-quality",
+          "tags": [
+            "guardrails",
+            "linting",
+            "secrets",
+            "safety",
+            "claude-code"
+          ],
+          "categories": [
+            "agent-safety",
+            "claude-code",
+            "code-quality",
+            "guardrails",
+            "hooks",
+            "linting",
+            "safety",
+            "secrets"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mauhpr/agentlint-plugin",
+            "/plugin install agentlint@agentlint"
+          ]
+        }
+      ]
+    }
+  ]
+}
