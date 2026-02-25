@@ -1,0 +1,49 @@
+{
+  "author": {
+    "id": "fadi-labib",
+    "display_name": "Fadi Labib",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6570012?u=d6d3b170ecd819118c42877d5ac3216be23753ce&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-skills",
+      "version": null,
+      "description": "Local plugin marketplace for Claude Code",
+      "repo_full_name": "fadi-labib/claude-skills",
+      "repo_url": "https://github.com/fadi-labib/claude-skills",
+      "repo_description": "Claude Code plugin for automatic permission management",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-24T18:32:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-skills\",\n  \"description\": \"Local plugin marketplace for Claude Code\",\n  \"owner\": {\n    \"name\": \"Fadi Labib\",\n    \"email\": \"github@fadilabib.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"permission-manager\",\n      \"description\": \"Automatically classifies and manages Claude Code permissions following a safe-by-default security policy\",\n      \"source\": \"./permission-manager\"\n    },\n    {\n      \"name\": \"natural-writing\",\n      \"description\": \"Write like a specific, opinionated human — bans AI-tell vocabulary and patterns, enforces concrete details over generic praise\",\n      \"source\": \"./natural-writing\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Skills — Local Plugin Marketplace\n\nA collection of Claude Code plugins loaded via a single local directory source.\n\n## Installation\n\nAdd to `~/.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"local\": {\n      \"source\": {\n        \"source\": \"directory\",\n        \"path\": \"/path/to/claude-skills\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"permission-manager@local\": true\n  }\n}\n```\n\nOr test all plugins directly:\n\n```bash\nclaude --plugin-dir /path/to/claude-skills\n```\n\n## Plugins\n\n| Plugin | Description |\n|---|---|\n| [permission-manager](permission-manager/) | Automatically classifies and manages Claude Code permissions following a safe-by-default security policy |\n",
+        "permission-manager/README.md": "# Permission Manager — Claude Code Plugin\n\nAutomatically classifies and manages Claude Code permissions following a safe-by-default security policy.\n\n## What it does\n\nInstead of manually editing `settings.local.json` every time Claude encounters a new command, this plugin:\n\n1. **Collects** permission prompts and denials silently during your session\n2. **Classifies** each command as safe (allow), destructive (deny), or needs-judgment (ask first)\n3. **Proposes** a batch update at the end of the session\n4. **Updates** your settings after you confirm\n\n## Components\n\n| Component | Purpose |\n|---|---|\n| `skills/manage-permissions/SKILL.md` | Classification rules and collection behavior |\n| `commands/update-permissions.md` | `/update-permissions` — manually trigger batch review |\n| `hooks/hooks.json` | SessionStart (prime policy) + Stop (remind about collected permissions) |\n\n## Classification Rules\n\n| Category | Action | Examples |\n|---|---|---|\n| **Safe/local/reversible** | Auto-allow | `git status`, `pnpm test`, `ls`, `tree` |\n| **Destructive/escape-hatch** | Auto-deny | `rm -rf`, `git push --force`, `node -e` |\n| **Shared state/judgment** | Keep as ask-first | `git push`, `gh pr create`, `curl` |\n\n## Usage\n\n- **Automatic**: Permission prompts are collected silently during the session\n- **Manual**: Run `/update-permissions` to review and apply\n- **End of session**: Stop hook reminds you if there are unapplied permissions\n"
+      },
+      "plugins": [
+        {
+          "name": "permission-manager",
+          "description": "Automatically classifies and manages Claude Code permissions following a safe-by-default security policy",
+          "source": "./permission-manager",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fadi-labib/claude-skills",
+            "/plugin install permission-manager@claude-skills"
+          ]
+        },
+        {
+          "name": "natural-writing",
+          "description": "Write like a specific, opinionated human — bans AI-tell vocabulary and patterns, enforces concrete details over generic praise",
+          "source": "./natural-writing",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fadi-labib/claude-skills",
+            "/plugin install natural-writing@claude-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
