@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "weihaog1",
+    "display_name": "Alan Guo",
+    "avatar_url": "https://avatars.githubusercontent.com/u/183901302?u=39fae645b1c93a3e70192a0faba36961d92bc74c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-statusline-alansauce",
+      "version": null,
+      "description": "Two-line statusline with context usage, API rate limits, session time, git status, and config counts.",
+      "repo_full_name": "weihaog1/claude-code-statusline-alansauce",
+      "repo_url": "https://github.com/weihaog1/claude-code-statusline-alansauce",
+      "repo_description": "Two-line statusline plugin for Claude Code - context, usage, session, git, config counts. Cross-platform.",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-26T18:55:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\r\n  \"name\": \"claude-code-statusline-alansauce\",\r\n  \"owner\": {\r\n    \"name\": \"Alan Guo\"\r\n  },\r\n  \"plugins\": [\r\n    {\r\n      \"name\": \"claude-code-statusline-alansauce\",\r\n      \"source\": \"./\",\r\n      \"description\": \"Two-line statusline with context usage, API rate limits, session time, git status, and config counts.\",\r\n      \"category\": \"monitoring\",\r\n      \"tags\": [\r\n        \"statusline\",\r\n        \"monitoring\",\r\n        \"context\",\r\n        \"usage\",\r\n        \"git\",\r\n        \"hud\"\r\n      ]\r\n    }\r\n  ]\r\n}\r\n",
+        ".claude-plugin/plugin.json": "{\r\n  \"name\": \"claude-code-statusline-alansauce\",\r\n  \"description\": \"Two-line statusline for Claude Code showing context usage, API rate limits, session time, git status, and config counts. Works on macOS, Linux, and Windows (Git Bash/WSL).\",\r\n  \"version\": \"0.1.0\",\r\n  \"author\": {\r\n    \"name\": \"Alan Guo\"\r\n  },\r\n  \"keywords\": [\r\n    \"statusline\",\r\n    \"monitoring\",\r\n    \"context\",\r\n    \"usage\",\r\n    \"git\",\r\n    \"hud\"\r\n  ]\r\n}\r\n",
+        "README.md": "# claude-code-statusline-alansauce\r\n\r\nA two-line statusline plugin for Claude Code that shows everything you need at a glance.\r\n\r\n![statusline screenshot](image.png)\r\n\r\n## What it shows\r\n\r\nThe statusline renders two lines below your Claude Code input. Here is a breakdown of every component:\r\n\r\n### Line 1 - Identity, Context, and Config\r\n\r\n```\r\nalanguo:/Users/alanguo/Codin/Tools [Opus 4.6] ctx:29% 60k/200k | 1 CLAUDE.md | 3 Rules | 0 MCPs | 1 Hooks\r\n```\r\n\r\n| Component | Example | Description |\r\n|-----------|---------|-------------|\r\n| **User** | `alanguo` | Your system username, pulled from `$USER`. Displayed in bold cyan. |\r\n| **Working directory** | `:/Users/alanguo/Codin/Tools` | The full path of the project Claude Code is operating in. |\r\n| **Model** | `[Opus 4.6]` | The active Claude model for the current session (e.g., Opus 4.6, Sonnet 4.6, Haiku 4.5). Displayed in yellow brackets. |\r\n| **Context usage %** | `ctx:29%` | How much of the context window has been consumed. Color-coded: green (<50%), yellow (50-79%), red (80%+). Uses the native `used_percentage` value from Claude Code for accuracy. |\r\n| **Context tokens** | `60k/200k` | Current token count vs. total context window size. Tokens include input, output, cache creation, and cache read tokens combined. Values are rounded up to the nearest thousand. |\r\n| **CLAUDE.md count** | `1 CLAUDE.md` | Number of CLAUDE.md files detected across all scopes: `~/.claude/CLAUDE.md` (global), `./CLAUDE.md`, `./CLAUDE.local.md`, `./.claude/CLAUDE.md`, `./.claude/CLAUDE.local.md` (project). |\r\n| **Rules count** | `3 Rules` | Total number of `.md` files in `~/.claude/rules/` (global) and `./.claude/rules/` (project). These are the rule files Claude Code loads into context. |\r\n| **MCPs count** | `0 MCPs` | Number of MCP servers configured. Counts keys in `mcpServers` from both `~/.claude/settings.json` (global) and `./.mcp.json` (project). |\r\n| **Hooks count** | `1 Hooks` | Number of hook event types configured. Counts keys in `hooks` from `~/.claude/settings.json` (global), `./.claude/settings.json` (project), and `./.claude/settings.local.json` (local). |\r\n\r\n### Line 2 - Usage Limits, Session, and Git\r\n\r\n```\r\n5hr: 34% (resets 3h 14m) | weekly: 31% (resets 4d 22h) | Session:0m0s | (main) [Edited:36]\r\n```\r\n\r\n| Component | Example | Description |\r\n|-----------|---------|-------------|\r\n| **5-hour usage** | `5hr: 34% (resets 3h 14m)` | Your current 5-hour rolling rate limit utilization as a percentage. Fetched live from the Anthropic OAuth API (`/api/oauth/usage`). The countdown shows time until this window resets. Displayed in blue. Shows \"N/A\" for API key users. |\r\n| **Weekly usage** | `weekly: 31% (resets 4d 22h)` | Your 7-day rolling rate limit utilization. Same API source as above. The countdown shows days and hours until reset. Displayed in magenta. Shows \"N/A\" for API key users. |\r\n| **Session duration** | `Session:0m0s` | How long the current Claude Code session has been running. Uses `total_duration_ms` from Claude Code's stdin data when available. Falls back to calculating elapsed time from the transcript file's creation timestamp. Format: `Xh Ym` for sessions over an hour, `XmYs` for shorter sessions. Displayed in green. |\r\n| **Git branch** | `(main)` | The current git branch name. Shows \"detached\" if in detached HEAD state, or \"(not a git repo)\" if the working directory is not a git repository. Displayed in yellow. |\r\n| **Git file status** | `[Committed:2,Staged:5,Edited:36]` | A bracketed summary of file changes in the working tree. Up to three categories are shown, separated by commas. Only categories with a non-zero count appear. If all counts are zero, the brackets are hidden entirely. All git commands use `--no-optional-locks` to avoid interfering with other git processes. |\r\n\r\n**Git status categories explained:**\r\n\r\n| Label | Git command | What it means |\r\n|-------|------------|---------------|\r\n| `Committed:N` | `git diff --cached --name-only` | Files staged in the index, ready to be included in the next commit. These have been `git add`-ed. |\r\n| `Staged:N` | `git diff --name-only` | Tracked files that have been modified in the working tree but not yet staged with `git add`. |\r\n| `Edited:N` | `git ls-files --others --exclude-standard` | New files in the working directory that are not tracked by git and not ignored by `.gitignore`. |\r\n\r\n### Color Coding\r\n\r\nThe statusline uses ANSI colors to make scanning fast:\r\n\r\n| Color | Used for |\r\n|-------|----------|\r\n| Bold cyan | Username |\r\n| Cyan | Working directory |\r\n| Yellow | Model name, git branch |\r\n| Green | Context usage under 50%, session duration |\r\n| Yellow | Context usage 50-79% |\r\n| Bold red | Context usage 80%+ (warning) |\r\n| Blue | 5-hour usage |\r\n| Magenta | Weekly usage |\r\n| Dim | Separators and config count labels |\r\n\r\n## Installation\r\n\r\n### Via Claude Code Plugin Marketplace\r\n\r\n```\r\n/plugin marketplace add weihaog1/claude-code-statusline-alansauce\r\n/plugin install claude-code-statusline-alansauce\r\n/claude-code-statusline-alansauce:setup\r\n```\r\n\r\n### Manual Installation\r\n\r\n1. Clone this repo:\r\n   ```bash\r\n   git clone https://github.com/weihaog1/claude-code-statusline-alansauce.git ~/.claude/plugins/claude-code-statusline-alansauce\r\n   ```\r\n\r\n2. Add to `~/.claude/settings.json`:\r\n   ```json\r\n   {\r\n     \"statusLine\": {\r\n       \"type\": \"command\",\r\n       \"command\": \"bash ~/.claude/plugins/claude-code-statusline-alansauce/statusline.sh\",\r\n       \"padding\": 0\r\n     }\r\n   }\r\n   ```\r\n\r\n3. Restart Claude Code.\r\n\r\n## Dependencies\r\n\r\n- `bash` (4.0+)\r\n- `jq` - JSON processor\r\n- `curl` - for API usage fetching\r\n- `git` - for branch/status display\r\n\r\n### Installing jq\r\n\r\n| Platform | Command |\r\n|----------|---------|\r\n| macOS | `brew install jq` |\r\n| Debian/Ubuntu | `sudo apt install jq` |\r\n| Fedora | `sudo dnf install jq` |\r\n| Arch | `sudo pacman -S jq` |\r\n| Windows (Chocolatey) | `choco install jq` |\r\n| Windows (Scoop) | `scoop install jq` |\r\n\r\n## Platform Support\r\n\r\n| Platform | Credentials Source | Status |\r\n|----------|-------------------|--------|\r\n| macOS | Keychain (`security` command) | Supported |\r\n| Linux | `~/.claude/.credentials.json` | Supported |\r\n| WSL | `~/.claude/.credentials.json` | Supported |\r\n| Git Bash (Windows) | `~/.claude/.credentials.json` | Supported |\r\n\r\n## API Usage Display\r\n\r\nThe statusline fetches rate limit data from the Anthropic API for Pro/Max/Team subscribers. This requires OAuth credentials (automatic if you're logged in via `claude` CLI). API key users will see \"N/A\" for usage fields.\r\n\r\n## License\r\n\r\nMIT\r\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-code-statusline-alansauce",
+          "source": "./",
+          "description": "Two-line statusline with context usage, API rate limits, session time, git status, and config counts.",
+          "category": "monitoring",
+          "tags": [
+            "statusline",
+            "monitoring",
+            "context",
+            "usage",
+            "git",
+            "hud"
+          ],
+          "categories": [
+            "context",
+            "git",
+            "hud",
+            "monitoring",
+            "statusline",
+            "usage"
+          ],
+          "install_commands": [
+            "/plugin marketplace add weihaog1/claude-code-statusline-alansauce",
+            "/plugin install claude-code-statusline-alansauce@claude-code-statusline-alansauce"
+          ]
+        }
+      ]
+    }
+  ]
+}
