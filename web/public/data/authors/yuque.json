@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "yuque",
+    "display_name": "语雀",
+    "avatar_url": "https://avatars.githubusercontent.com/u/34602419?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "yuque",
+      "version": "2.0.0",
+      "description": "语雀 AI 生态 — MCP Tools and Skills for Yuque",
+      "repo_full_name": "yuque/yuque-plugin",
+      "repo_url": "https://github.com/yuque/yuque-plugin",
+      "repo_description": "语雀 Claude Code Plugin — 一键集成语雀 AI 能力",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-26T05:08:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"yuque\",\n  \"version\": \"2.0.0\",\n  \"description\": \"语雀 AI 生态 — MCP Tools and Skills for Yuque\",\n  \"owner\": {\n    \"name\": \"yuque\",\n    \"email\": \"willchen.babydog@gmail.com\"\n  },\n  \"metadata\": {\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"yuque-personal\",\n      \"description\": \"语雀个人版 — 个人知识库 AI 集成，25 MCP Tools + 4 Skills\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"yuque\"\n      },\n      \"source\": \"yuque-personal\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"yuque-group\",\n      \"description\": \"语雀团队版 — 团队知识库 AI 集成，25 MCP Tools + 6 Skills\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"yuque\"\n      },\n      \"source\": \"yuque-group\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# 语雀 Claude Code Plugin / Yuque Claude Code Plugin\n\n语雀 AI 生态 Marketplace — 为 Claude Code 提供语雀知识库集成能力。\n\n## 📦 Plugins\n\n本仓库包含两个 Plugin，按使用场景选择安装：\n\n| Plugin | 描述 | Skills | 环境变量 |\n|--------|------|--------|----------|\n| `yuque-personal` | 个人版 — 个人知识库 AI 集成 | 4 个 | `YUQUE_PERSONAL_TOKEN` |\n| `yuque-group` | 团队版 — 团队知识库 AI 集成 | 6 个 | `YUQUE_GROUP_TOKEN` |\n\n两个 Plugin 都包含 25 个 MCP Tools（由 [yuque-mcp](https://github.com/yuque/yuque-mcp-server) 提供）。\n\n### 👤 yuque-personal — 个人版\n\n适合个人用户，操作个人知识库：\n\n| Skill | 描述 |\n|-------|------|\n| `smart-search` | 自然语言搜索个人文档，智能摘要回答 |\n| `meeting-notes` | 自动生成结构化会议纪要，保存到个人知识库 |\n| `weekly-report` | 汇总个人一周文档活动，生成周报 |\n| `tech-design` | 根据需求生成技术方案文档 |\n\n### 👥 yuque-group — 团队版\n\n适合团队使用，操作团队知识库（包含个人版全部能力 + 团队专属能力）：\n\n| Skill | 描述 |\n|-------|------|\n| `smart-search` | 自然语言搜索团队文档，智能摘要回答 |\n| `meeting-notes` | 自动生成结构化会议纪要，保存到团队知识库 |\n| `weekly-report` | 汇总团队一周文档活动，生成团队周报 |\n| `tech-design` | 根据需求生成技术方案文档，保存到团队知识库 |\n| `onboarding-guide` | 扫描团队知识库，为新成员生成入职阅读指南 |\n| `knowledge-report` | 分析团队知识库健康度，生成知识管理月报 |\n\n## 🚀 安装 / Installation\n\n### 1. 添加 Marketplace\n\n```bash\n# 终端\nclaude plugin marketplace add yuque/yuque-plugin\n\n# 或在 Claude Code 内部\n/plugin marketplace add yuque/yuque-plugin\n```\n\n### 2. 安装 Plugin\n\n```bash\n# 安装个人版\nclaude plugin install yuque-personal@yuque\n\n# 或安装团队版\nclaude plugin install yuque-group@yuque\n\n# 也可以两个都装（使用不同的 Token）\n```\n\n## ⚙️ 配置 / Configuration\n\n### 获取 Token\n\n1. 登录 [语雀](https://www.yuque.com)\n2. 进入 **个人设置** → **Token** → **新建**（或直接访问 [Token 设置页](https://www.yuque.com/settings/tokens)）\n3. 勾选需要的权限（建议全选读写权限）\n4. 复制生成的 Token\n\n### 设置环境变量\n\n根据安装的 Plugin 设置对应的环境变量：\n\n```bash\n# 个人版\necho 'export YUQUE_PERSONAL_TOKEN=\"your-personal-token\"' >> ~/.zshrc\n\n# 团队版\necho 'export YUQUE_GROUP_TOKEN=\"your-group-token\"' >> ~/.zshrc\n\nsource ~/.zshrc\n```\n\n> 💡 个人 Token 和团队 Token 可以是同一个，也可以是不同的。团队 Token 需要有团队级别的访问权限。\n\n## 🔄 更新 / Upgrade\n\n```bash\n# 更新个人版\nclaude plugin update yuque-personal@yuque\n\n# 更新团队版\nclaude plugin update yuque-group@yuque\n```\n\nMCP Server（yuque-mcp）通过 `npx -y yuque-mcp@latest` 运行，每次启动自动使用最新版本。\n\n## 🔗 相关项目 / Related Projects\n\n- [yuque-mcp-server](https://github.com/yuque/yuque-mcp-server) — 语雀 MCP Server（25 Tools）\n- [yuque-ecosystem](https://github.com/yuque/yuque-ecosystem) — 语雀 AI 生态主页\n\n## 📄 License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "yuque-personal",
+          "description": "语雀个人版 — 个人知识库 AI 集成，25 MCP Tools + 4 Skills",
+          "version": "1.0.0",
+          "author": {
+            "name": "yuque"
+          },
+          "source": "yuque-personal",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add yuque/yuque-plugin",
+            "/plugin install yuque-personal@yuque"
+          ]
+        },
+        {
+          "name": "yuque-group",
+          "description": "语雀团队版 — 团队知识库 AI 集成，25 MCP Tools + 6 Skills",
+          "version": "1.0.0",
+          "author": {
+            "name": "yuque"
+          },
+          "source": "yuque-group",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add yuque/yuque-plugin",
+            "/plugin install yuque-group@yuque"
+          ]
+        }
+      ]
+    }
+  ]
+}

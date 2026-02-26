@@ -1,0 +1,72 @@
+{
+  "author": {
+    "id": "opensourceways",
+    "display_name": "opensourceways",
+    "avatar_url": "https://avatars.githubusercontent.com/u/63335451?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "opensourceways-agent-skills",
+      "version": null,
+      "description": "Ascend Agent's custom skills for NPU development and more",
+      "repo_full_name": "opensourceways/agent-skills",
+      "repo_url": "https://github.com/opensourceways/agent-skills",
+      "repo_description": "Agent-Skills for open source team",
+      "signals": {
+        "stars": 0,
+        "forks": 6,
+        "pushed_at": "2026-02-26T01:54:24Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"opensourceways-agent-skills\",\n  \"owner\": {\n    \"name\": \"Zhenyu Zheng\",\n    \"email\": \"zheng.zhenyu@outlook.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Ascend Agent's custom skills for NPU development and more\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-skills-infrastructure\",\n      \"description\": \"Infrastructure team skills.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/infrastructure/docker-image-pr-fix\",\n        \"./skills/infrastructure/github-action-diagnose\"\n      ]\n    },\n    {\n      \"name\": \"agent-skills-operation\",\n      \"description\": \"Operation team skills.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/operation/content/release-vllm-reno-poster\"\n      ]\n    },\n    {\n      \"name\": \"agent-skills-upstream\",\n      \"description\": \"Upstream team skills.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/upstream/triton-upgrade\",\n        \"./skills/upstream/vllm-ascend-releasing-note\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Agent-Skills 仓库\n\n这是一个集中管理和共享 Claude Code Skills 的部门级仓库，支持多团队协作。\n\n## 📁 仓库结构\n\n```\nAgent-Skills/\n├── skills/\n│   ├── infrastructure/  # Infrastructure 团队（基础设施建设）专属skills\n│   ├── upstream/        # Upstream 团队（上游开发贡献）专属skills\n│   ├── operation/       # Operation 团队（社区运营）专属skills\n│   └── shared/          # 跨团队共享的skills\n├── templates/           # Skill模板\n└── docs/               # 文档和使用指南\n```\n\n## 🚀 快速开始\n\n### 1. 上传 Skills\n\n#### 方式一：直接上传到对应团队目录\n\n```bash\n# 克隆仓库\ngit clone <repository-url>\ncd Agent-Skills\n\n# 将你的skill文件放入对应的团队目录\n# 例如：将 my-skill.md 放入 team-a 目录\ncp /path/to/your/skill.md skills/infrastructure/\n\n# 提交更改\ngit add skills/infrastructure/my-skill.md\ngit commit -m \"Add my-skill for team-a\"\ngit push origin main\n```\n\n#### 方式二：使用 PR 流程（推荐）\n\n```bash\n# 创建新分支\ngit checkout -b feature/add-new-skill\n\n# 添加skill文件到对应目录\ncp /path/to/your/skill.md skills/infrastructure/\n\n# 提交并推送\ngit add skills/infrastructure/\ngit commit -m \"Add new skill: skill-name\"\ngit push origin feature/add-new-skill\n\n# 在 GitHub 上创建 Pull Request\n```\n\n### 2. 使用 Skills\n\n#### 在 Claude Code 中配置\n\n本指南将帮助你将此 marketplace 中的技能安装到你自己的 Claude Code 环境中。\n\n##### 方法一：在 Claude Code 客户端中添加（推荐）\n\n你可以在 Claude Code 客户端中直接添加此 marketplace 并安装技能。\n\n1. **添加 Marketplace**\n\n   在 Claude Code 中运行以下命令：\n\n   ```\n   /plugin marketplace add opensourceways/agent-skills\n   ```\n\n2. **浏览并安装skill**\n\n   添加 marketplace 后，你可以通过以下两种方式安装技能：\n\n   **方式 A：交互式安装**\n\n   在 Claude Code 中输入 `/plugin` 或点击插件图标，然后：\n   - 选择 `Browse and install plugins`（浏览并安装插件）\n  - 选择 `opensourceways-agent-skills` marketplace\n   - 选择你想要安装的技能（例如 `triton-upgrade`）\n   - 点击 `Install now`（立即安装）\n\n   **方式 B：命令行直接安装**\n\n   ```\n  /plugin install triton-upgrade@opensourceways-agent-skills\n   ```\n\n\n##### 方法二：手动编辑配置文件\n\n如果你更喜欢手动配置，可以按照以下步骤操作：\n\n1. **编辑 known_marketplaces.json**\n\n   打开或创建 `~/.claude/plugins/known_marketplaces.json` 文件，添加以下内容：\n\n   ```json\n   {\n     \"opensourceways-agent-skills\": {\n       \"source\": {\n         \"source\": \"github\",\n         \"repo\": \"opensourceways/agent-skills\"\n       },\n       \"installLocation\": \"~/.claude/plugins/marketplaces/opensourceways-agent-skills\",\n       \"lastUpdated\": \"2026-02-13T00:00:00.000Z\"\n     }\n   }\n   ```\n\n   > **注意**：如果你的 `known_marketplaces.json` 文件中已经有其他 marketplace，请确保添加逗号并保持 JSON 格式正确。\n\n2. **安装skill**\n\n   在终端中运行安装命令：\n\n   ```bash\n  claude plugin install triton-upgrade@opensourceways-agent-skills\n   ```\n\n\n##### 方式三：本地克隆使用\n\n```bash\n# 1. 克隆仓库到本地\ngit clone <repository-url> ~/agent-skills\n\n# 2. 在 Claude Code 配置文件中添加技能目录\n# 编辑 ~/.claude/config.json 或在项目的 .claude/config.json 中添加：\n{\n  \"skills\": {\n    \"directories\": [\n      \"~/agent-skills/skills/team-a\",\n      \"~/agent-skills/skills/shared\"\n    ]\n  }\n}\n\n# 3. 重启 Claude Code 或重新加载配置\n```\n\n##### 方式四：直接引用 GitHub 上的 Skills\n\n```bash\n# 在 Claude Code 配置中使用 Git URL\n# 编辑 ~/.claude/config.json：\n{\n  \"skills\": {\n    \"repositories\": [\n      {\n        \"url\": \"https://github.com/<org>/Agent-Skills.git\",\n        \"path\": \"skills/team-a\"\n      },\n      {\n        \"url\": \"https://github.com/<org>/Agent-Skills.git\",\n        \"path\": \"skills/shared\"\n      }\n    ]\n  }\n}\n```\n\n#### 验证 Skills 已加载\n\n在 Claude Code 中运行：\n```\n/help\n```\n你应该能看到仓库中的 skills 列在可用技能列表中。\n\n### 3. 更新 Skills\n\n```bash\n# 如果使用本地克隆方式\ncd ~/agent-skills\ngit pull origin main\n\n# Claude Code 会自动检测到更新，或手动重新加载\n```\n\n## 📝 Skill 开发规范\n\n### Skill 文件命名规范\n\n- 使用小写字母和连字符：`my-skill-name.md`\n- 名称要描述性强，简洁明了\n- 避免使用空格或特殊字符\n\n### Skill 文件结构\n\n每个 skill 应该包含以下部分：\n\n```markdown\n# Skill Name\n\n## 描述\n简要描述这个 skill 的功能和用途\n\n## 使用场景\n说明何时使用这个 skill\n\n## 参数（如果有）\n列出所有可用参数及其说明\n\n## 示例\n提供使用示例\n\n## 作者\n@your-github-username\n\n## 更新日期\nYYYY-MM-DD\n```\n\n### 目录选择指南\n\n- **infrastructure/**: Infrastructure 团队（技术设施建设）的专属 skills\n- **upstream/**: Upstream 团队（上游开发贡献）的专属 skills\n- **operation/**: Operation 团队（社区运营）的专属 skills\n- **shared/**: 放置所有团队都可能用到的通用 skills\n\n## 🔍 Skills 分类建议\n\n为了更好地组织，建议在各团队目录下按功能分类：\n\n**Infrastructure 团队示例**：\n```\nskills/infrastructure/\n├── devops/            # DevOps 相关\n├── monitoring/        # 监控和告警\n├── deployment/        # 部署相关\n└── automation/        # 自动化工具\n```\n\n**Upstream 团队示例**：\n```\nskills/upstream/\n├── contribution/      # 贡献相关\n├── code-review/       # 代码审查相关\n├── testing/          # 测试相关\n└── documentation/    # 文档相关\n```\n\n**Operation 团队示例**：\n```\nskills/operation/\n├── content/           # 内容创作相关\n├── events/            # 活动策划相关\n├── analytics/         # 数据分析相关\n└── automation/        # 运营自动化工具\n```\n\n## 🤝 贡献指南\n\n1. **创建 Skill 前**：检查是否已有类似功能的 skill\n2. **编写文档**：确保你的 skill 有清晰的使用说明\n3. **测试**：在提交前测试你的 skill\n4. **代码审查**：通过 PR 方式提交，至少需要一位团队成员审查\n5. **版本控制**：重大更新时在 skill 文件中注明版本号\n\n## 📋 常见问题\n\n### Q: 如何共享一个 skill 给其他团队？\nA: 将 skill 从团队目录移动到 `skills/shared/` 目录。\n\n### Q: 多个团队需要同一个 skill 的不同版本怎么办？\nA: 在各自团队目录下维护各自的版本，文件名可以加上版本后缀，如 `deploy-v1.md`, `deploy-v2.md`。\n\n### Q: 如何废弃一个 skill？\nA: 不要直接删除，而是在文件开头添加 `[DEPRECATED]` 标记，并说明替代方案，保留至少一个版本周期。\n\n### Q: 配置文件在哪里？\nA: Claude Code 的配置文件通常在：\n- 全局配置：`~/.claude/config.json`\n- 项目配置：`<project-root>/.claude/config.json`\n\n## 📞 联系方式\n\n如有问题或建议，请：\n- 提交 Issue\n- 在团队频道讨论\n- 联系仓库维护者\n\n## 📜 许可证\n\n[根据你的组织政策添加许可证信息]\n\n---\n\n**维护者**: [添加维护者信息]\n**最后更新**: 2026-02-03\n"
+      },
+      "plugins": [
+        {
+          "name": "agent-skills-infrastructure",
+          "description": "Infrastructure team skills.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/infrastructure/docker-image-pr-fix",
+            "./skills/infrastructure/github-action-diagnose"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add opensourceways/agent-skills",
+            "/plugin install agent-skills-infrastructure@opensourceways-agent-skills"
+          ]
+        },
+        {
+          "name": "agent-skills-operation",
+          "description": "Operation team skills.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/operation/content/release-vllm-reno-poster"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add opensourceways/agent-skills",
+            "/plugin install agent-skills-operation@opensourceways-agent-skills"
+          ]
+        },
+        {
+          "name": "agent-skills-upstream",
+          "description": "Upstream team skills.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/upstream/triton-upgrade",
+            "./skills/upstream/vllm-ascend-releasing-note"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add opensourceways/agent-skills",
+            "/plugin install agent-skills-upstream@opensourceways-agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
