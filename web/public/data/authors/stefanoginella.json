@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "stefanoginella",
+    "display_name": "Stefano Ginella",
+    "avatar_url": "https://avatars.githubusercontent.com/u/30054724?u=93d792cb03f96ef8156f076327b188262cbaec56&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "auto-bmad-marketplace",
+      "version": null,
+      "description": "Automated BMAD pipeline orchestration plugin for Claude Code",
+      "repo_full_name": "stefanoginella/auto-bmad",
+      "repo_url": "https://github.com/stefanoginella/auto-bmad",
+      "repo_description": "Automated (and opinionated) BMAD pipeline orchestration for Claude Code. ",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-25T23:22:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"auto-bmad-marketplace\",\n  \"description\": \"Automated BMAD pipeline orchestration plugin for Claude Code\",\n  \"owner\": {\n    \"name\": \"Stefano Ginella\",\n    \"email\": \"stefano@stefanoginella.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"auto-bmad\",\n      \"description\": \"Automated (and opinionated) BMAD pipeline orchestration: plan, epic-start, story, and epic-end workflows with configurable safe-bash auto-approval\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Stefano Ginella\"\n      },\n      \"source\": \"./\",\n      \"category\": \"development\",\n      \"homepage\": \"https://github.com/stefanoginella/auto-bmad\",\n      \"tags\": [\"bmad\", \"pipeline\", \"automation\", \"orchestration\", \"sdlc\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"auto-bmad\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Automated (and opinionated) BMAD pipeline orchestration: plan, epic-start, story, and epic-end workflows with configurable safe-bash auto-approval\",\n  \"author\": {\n    \"name\": \"Stefano Ginella\"\n  },\n  \"homepage\": \"https://github.com/stefanoginella/auto-bmad\",\n  \"repository\": \"https://github.com/stefanoginella/auto-bmad.git\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"bmad\", \"pipeline\", \"automation\", \"orchestration\", \"sdlc\"]\n}\n",
+        "README.md": "# auto-bmad: Automated (and opinionated) BMAD pipeline orchestration for Claude Code.\n\n`auto-bmad` provides four sequential pipeline commands that drive the full BMAD software development lifecycle — from planning through story delivery — plus a safe-bash auto-approval hook for frictionless autonomous execution.\n\nThe pipelines augment the core BMAD workflow with additional non-BMAD steps for a more thorough development process: frontend design polish, semgrep security scanning, CLAUDE.md maintenance, and various readiness checks.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/auto-bmad:plan` | Run the full pre-implementation pipeline: product brief, PRD, UX, architecture, test framework, CI, epics, test design, sprint planning |\n| `/auto-bmad:epic-start` | Start a new epic: resolve previous retro actions, establish green baseline, plan story order |\n| `/auto-bmad:story` | Develop a full story: create, validate, ATDD, develop, lint, test, code review, security scan, regression, E2E, trace |\n| `/auto-bmad:epic-end` | Close an epic: aggregate data, traceability gate, retrospective, next epic preview |\n\n## Prerequisites\n\n### BMAD Method \n\nThe whole pipeline is based on the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) workflow and relies on specific BMAD modules.\n\n#### Required BMAD Modules\n\n- **TEA** — Test Engineering Architect\n\n#### Optional BMAD Modules\n\n- **CIS** — Creative Intelligence Suite\n\n### Required Claude Code Plugins\n\nThese plugins provide the BMAD commands invoked by the pipelines:\n\n- **frontend-design** — `/frontend-design:frontend-design` (story UI polish step)\n- **commit-commands** — `/commit-commands:commit` (final commit in all pipelines)\n- **claude-md-management** — `/claude-md-management:claude-md-improver` (CLAUDE.md maintenance in plan and epic-end)\n\n### Optional (but recommended) Claude Code Plugins\n\n- **context7** (MCP server) — Live documentation lookups for library APIs. Used during architecture creation (plan) and story development (story). Without it, agents rely on training data instead of current docs.\n- **semgrep** (CLI tool) — Security scanning in the story pipeline. Without it, the security scan step is skipped.\n\n### Project Requirements\n\nThe pipelines expect BMAD configuration files in the project:\n\n- `_bmad/bmm/config.yaml` — BMM configuration (output folders, artifact paths)\n- `_bmad/tea/config.yaml` — TEA configuration (test artifact paths)\n\nThese files are normally created by the BMAD CLI when initializing BMAD in a project. The pipelines rely on the standard structure and paths defined by these configs, so custom configurations may require pipeline adjustments.\n\n## Hooks\n\n### Safe Bash Auto-Approval (PreToolUse)\n\nAuto-approves bash commands matching a known-safe prefix list to reduce false-positive sandbox prompts during autonomous pipeline execution. This is a lightweight heuristic, not a full sandbox bypass.\n\n**Default safe list:**\n\n**Exact matches** (bare commands, no arguments):\n\n`date` · `docker compose build` · `docker compose config` · `docker compose down` · `docker compose images` · `docker compose logs` · `docker compose ls` · `docker compose ps` · `docker compose pull` · `docker compose top` · `docker compose up` · `docker compose version` · `docker images` · `docker ps` · `docker version` · `git diff` · `git fetch` · `git log` · `git status` · `ls` · `pwd` · `tree` · `uname`\n\n**Prefix matches** (command + any arguments):\n\n`awk` · `basename` · `cat` · `chmod` · `cp` · `cut` · `date` · `diff` · `dirname` · `docker compose build` · `docker compose config` · `docker compose exec` · `docker compose logs` · `docker compose ps` · `docker compose pull` · `docker compose top` · `docker compose up` · `docker inspect` · `docker logs` · `docker ps` · `du` · `echo` · `file` · `find` · `git -C` · `git add` · `git commit` · `git diff` · `git diff-tree` · `git fetch` · `git log` · `git rev-parse` · `git show` · `git status` · `git tag` · `grep` · `head` · `jq` · `ls` · `mkdir` · `mv` · `realpath` · `sed` · `semgrep` · `sort` · `stat` · `tail` · `timeout` · `touch` · `tr` · `tree` · `uname` · `uniq` · `wc` · `which`\n\n**Customizing the safe list:** Create `.claude/auto-bmad-safe-prefixes.txt` in your project to add entries without modifying the plugin:\n\n```\n# Lines starting with \"= \" are exact matches (bare commands)\n# All other lines are prefix matches (must end with a trailing space)\n# Empty lines and comments (#) are ignored\n\n= docker compose restart\nnpm install\nnpx vitest\n```\n\n### Dependency Check (SessionStart)\n\nOutputs a system message at session start listing the required BMAD plugins, so Claude can warn early if a pipeline is invoked without the necessary dependencies.\n\n## Permissions\n\nThe pipelines run various bash commands (depending on the project), `WebSearch`, `WebFetch`, `Skill(commit-commands:commit)`, `mcp__plugin_context7_context7__resolve-library-id`, `mcp__plugin_context7_context7__query-docs` that Claude Code will prompt you to approve if they are not already approved. When prompted, you can choose to allow the command and add it to your project's allow list in `.claude/settings.json` or `.claude/settings.local.json`. For the first few runs in a new project, expect several approval prompts as the allow list builds up. After that, things stabilize and the pipelines run fully autonomously.\n\nAlternatively, you can run Claude Code in \"dangerously skip permissions\" mode (`--dangerously-skip-permissions`), but do so at your own risk — ideally in an isolated environment like a VM or container.\n\n## Installation\n\n### From marketplace (recommended)\n\n```\n/plugin marketplace add stefanoginella/auto-bmad\n```\n\nThen install the plugin from the **Discover** tab:\n\n```\n/plugin\n```\n\nOr install directly:\n\n```\n/plugin install auto-bmad@auto-bmad-marketplace\n```\n\n### As a local plugin (development)\n\n```bash\nclaude --plugin-dir /path/to/auto-bmad\n```\n\n## License\n\n[MIT](./LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "auto-bmad",
+          "description": "Automated (and opinionated) BMAD pipeline orchestration: plan, epic-start, story, and epic-end workflows with configurable safe-bash auto-approval",
+          "version": "0.1.0",
+          "author": {
+            "name": "Stefano Ginella"
+          },
+          "source": "./",
+          "category": "development",
+          "homepage": "https://github.com/stefanoginella/auto-bmad",
+          "tags": [
+            "bmad",
+            "pipeline",
+            "automation",
+            "orchestration",
+            "sdlc"
+          ],
+          "categories": [
+            "automation",
+            "bmad",
+            "development",
+            "orchestration",
+            "pipeline",
+            "sdlc"
+          ],
+          "install_commands": [
+            "/plugin marketplace add stefanoginella/auto-bmad",
+            "/plugin install auto-bmad@auto-bmad-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
