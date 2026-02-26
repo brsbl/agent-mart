@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "bestdan",
+    "display_name": "Daniel P. Egan",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2766380?u=87203fdeeb40477ea9b2ebc2b7f7bc33bc0f83d1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "finplan-plugin",
+      "version": null,
+      "description": "FinPlan personal finance projection engine",
+      "repo_full_name": "bestdan/finplan-plugin",
+      "repo_url": "https://github.com/bestdan/finplan-plugin",
+      "repo_description": "The public docs and plugin for FinPlan",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-26T01:50:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"finplan-plugin\",\n  \"description\": \"FinPlan personal finance projection engine\",\n  \"owner\": {\n    \"name\": \"Prethink\",\n    \"url\": \"https://prethink.io\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"finplan\",\n      \"description\": \"Personal finance projection engine — Monte Carlo projections, tax calculations, retirement planning, Social Security analysis, and interactive dashboards. Powered by 60+ MCP tools.\",\n      \"version\": \"1.0.0\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/bestdan/finplan-plugin.git\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"finplan\",\n  \"description\": \"Personal finance projection engine — Monte Carlo projections, tax calculations, retirement planning, Social Security analysis, and interactive dashboards. Powered by 60+ MCP tools.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Prethink\",\n    \"url\": \"https://prethink.io\"\n  },\n  \"homepage\": \"https://finplan.prethink.io\",\n  \"repository\": \"https://github.com/bestdan/finplan-plugin\",\n  \"license\": \"proprietary\",\n  \"keywords\": [\n    \"finance\",\n    \"projection\",\n    \"retirement\",\n    \"tax\",\n    \"monte-carlo\",\n    \"financial-planning\"\n  ],\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"mcp__finplan__.*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"${CLAUDE_PLUGIN_ROOT}/hooks/check-curl-allowlist.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+        "README.md": "# FinPlan — Claude Code Plugin\n\nPersonal finance projection engine powered by 60+ MCP tools. Monte Carlo projections, tax calculations, retirement planning, Social Security analysis, and interactive dashboards.\n\n## Install\n\nFrom the marketplace:\n\n```bash\nclaude plugin marketplace add bestdan/finplan-plugin\nclaude plugin install finplan@finplan-plugin\n```\n\nOr from a local clone:\n\n```bash\ngit clone https://github.com/bestdan/finplan-plugin.git\nclaude plugin install finplan --plugin-dir ./finplan-plugin\n```\n\nThis installs the skill, commands, MCP server connection, and a hook that prompts you to allowlist curl for file downloads.\n\n**Recommended**: Allowlist curl for the FinPlan file server to avoid repeated approval prompts:\n\n```bash\nclaude settings add allowedTools 'Bash(curl*mcp.finplan.prethink.io*)'\n```\n\n## What you get\n\n### Skill\n\nClaude automatically discovers and uses FinPlan tools when you ask about financial planning. 14 tool categories covering projections, tax, accounts, goals, Social Security, mortgage, employer match, charts, and more.\n\n### Commands\n\n| Command                         | Description                                    |\n| ------------------------------- | ---------------------------------------------- |\n| `/finplan:read-state`           | Read financial state from local JSON file      |\n| `/finplan:save-state`           | Save current state to local JSON file          |\n| `/finplan:projection-dashboard` | Generate interactive HTML projection dashboard |\n\n### MCP Server\n\nAuto-connects to the FinPlan MCP server at `https://mcp.finplan.prethink.io/mcp` — no manual configuration needed.\n\n### Hook\n\nOn first FinPlan tool use, prompts you to allowlist `curl` for the file server if you haven't already. This avoids repeated approval dialogs when tools download result files.\n\n## Example prompts\n\n- \"What would my 401(k) look like in 30 years if I contribute $500/month?\"\n- \"Calculate my federal income tax on $150,000 as married filing jointly\"\n- \"When should I claim Social Security if my salary is $95,000?\"\n- \"Compare a conservative vs aggressive portfolio over 20 years\"\n- \"Create a retirement projection with a fan chart showing percentile outcomes\"\n\n## Update\n\n```bash\nclaude plugin update finplan\n```\n\n## Testing locally\n\nAfter cloning this repo, test the plugin before making changes.\n\n### 1. Load the plugin from the local directory\n\n```bash\nclaude --plugin-dir .\n```\n\nThis starts Claude Code with the plugin loaded from your working copy instead of an installed version.\n\n### 2. Verify the plugin loaded\n\nIn the Claude Code session, run `/help` and confirm:\n\n- The FinPlan skill appears in the skills list\n- The namespaced commands appear: `/finplan:read-state`, `/finplan:save-state`, `/finplan:projection-dashboard`\n\n### 3. Verify MCP server auto-connects\n\nAsk Claude to list available tools or run a simple tool call:\n\n```\nSearch for FinPlan tools related to \"income tax\"\n```\n\nIf the MCP server connected via `.mcp.json`, Claude should find and call `search_finplan_tools` without any manual server configuration.\n\n### 4. Test commands\n\n```\n/finplan:read-state\n```\n\nIf no state file exists, the command should report that and suggest creating one — this confirms the command loaded and executed correctly.\n\n```\n/finplan:save-state\n```\n\nShould report nothing to save (expected if no state was created).\n\n### 5. Test skill trigger\n\nAsk a financial planning question without explicitly mentioning FinPlan:\n\n```\nWhat would a $500/month 401(k) contribution look like after 30 years?\n```\n\nClaude should automatically engage the FinPlan skill and call MCP tools.\n\n### 6. Test dashboard generation (optional, requires state)\n\nIf you have a `finplan_state.json` file in the working directory:\n\n```\n/finplan:projection-dashboard\n```\n\nThis should generate a self-contained HTML file and open it in the browser.\n\n### Checklist\n\n- [ ] `claude --plugin-dir .` starts without errors\n- [ ] `/help` shows finplan skill and `/finplan:*` commands\n- [ ] MCP tools are available (no manual `settings.json` needed)\n- [ ] `/finplan:read-state` executes (reports no file or reads existing state)\n- [ ] `/finplan:save-state` executes (reports nothing to save or saves state)\n- [ ] Skill triggers automatically on financial planning questions\n- [ ] `/finplan:projection-dashboard` generates HTML (if state file exists)\n\n## Other platforms\n\nClaude Desktop and Claude.ai users: see [SETUP.md](skills/finplan/SETUP.md) for ZIP-upload instructions. Those platforms don't support plugins — use the skill upload flow instead.\n\n## License\n\nProprietary. See [repository](https://github.com/bestdan/finplan-plugin) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "finplan",
+          "description": "Personal finance projection engine — Monte Carlo projections, tax calculations, retirement planning, Social Security analysis, and interactive dashboards. Powered by 60+ MCP tools.",
+          "version": "1.0.0",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/bestdan/finplan-plugin.git"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bestdan/finplan-plugin",
+            "/plugin install finplan@finplan-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}
