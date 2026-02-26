@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "jatuma",
+    "display_name": "Jaroslav Tuma",
+    "avatar_url": "https://avatars.githubusercontent.com/u/102375562?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "form-filler-plugin",
+      "version": null,
+      "description": "PDF form filling skill for Claude Code using stored personal and family data",
+      "repo_full_name": "jatuma/form-filler-plugin",
+      "repo_url": "https://github.com/jatuma/form-filler-plugin",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-25T11:11:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"form-filler-plugin\",\n  \"description\": \"PDF form filling skill for Claude Code using stored personal and family data\",\n  \"owner\": {\n    \"name\": \"Jaroslav Tuma\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pdf-form-filler\",\n      \"description\": \"Fill PDF forms automatically using stored personal and family information.\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Jaroslav Tuma\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"pdf-form-filler\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Fill PDF forms automatically using stored personal and family information.\"\n}\n",
+        "README.md": "# PDF Form Filler\n\nClaude Code plugin for filling PDF forms with stored personal/family data. Designed for Czech school forms but works with any PDF.\n\n## Install\n\nClone this repo and add it as a local plugin in Claude Code:\n\n```bash\ngit clone https://github.com/<your-username>/form-filler-plugin.git\n```\n\nThen add the cloned directory as a local plugin in **Claude Code Settings → Plugins → Add local plugin**.\n\nClaude Code will detect `.claude-plugin/plugin.json` and register the `pdf-form-filler` skill automatically.\n\n## Use\n\nDrop a PDF and say \"fill this for my son\" or \"fill with my info\". Claude asks for missing data once and remembers it.\n\n## Data\n\nStored at `~/.config/pdf-form-filler/personal_data.json` by default. To use a synced location (Dropbox, OneDrive, iCloud, etc.), set the `PDF_FORM_FILLER_DATA` environment variable — add it to your shell profile and Claude Code will pick it up automatically:\n\n```bash\nexport PDF_FORM_FILLER_DATA=\"$HOME/Dropbox/personal_data.json\"\n```\n\nManage data with (replace `$PLUGIN_ROOT` with the path to this directory):\n\n```bash\npython \"$PLUGIN_ROOT/skills/pdf-form-filler/scripts/manage_data.py\" show                    # view all\npython \"$PLUGIN_ROOT/skills/pdf-form-filler/scripts/manage_data.py\" show --member child_1   # view one member\npython \"$PLUGIN_ROOT/skills/pdf-form-filler/scripts/manage_data.py\" add-member --id child_2 --role child\npython \"$PLUGIN_ROOT/skills/pdf-form-filler/scripts/manage_data.py\" batch-update --member child_1 --updates '{\"first_name\":\"Jan\"}'\n```\n\n## Structure\n\n```text\nform-filler-plugin/\n├── .claude-plugin/\n│   └── plugin.json                  # Plugin manifest\n├── skills/\n│   └── pdf-form-filler/\n│       ├── SKILL.md                 # Skill instructions\n│       ├── scripts/\n│       │   └── manage_data.py       # Data management CLI\n│       └── references/\n│           └── personal_data_template.json\n└── README.md\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "pdf-form-filler",
+          "description": "Fill PDF forms automatically using stored personal and family information.",
+          "version": "1.0.0",
+          "source": "./",
+          "author": {
+            "name": "Jaroslav Tuma"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jatuma/form-filler-plugin",
+            "/plugin install pdf-form-filler@form-filler-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

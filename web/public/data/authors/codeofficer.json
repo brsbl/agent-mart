@@ -1,0 +1,92 @@
+{
+  "author": {
+    "id": "CodeOfficer",
+    "display_name": "Russell Jones",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3593?u=62e7c5279fbbf4f1f4bf818e41cb573e7d3f263a&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "codeofficer-marketplace",
+      "version": null,
+      "description": "Claude Code plugins for enhanced development workflows and git operations",
+      "repo_full_name": "CodeOfficer/codeofficer-marketplace",
+      "repo_url": "https://github.com/CodeOfficer/codeofficer-marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-26T17:56:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"codeofficer-marketplace\",\n  \"owner\": {\n    \"name\": \"rjones\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for enhanced development workflows and git operations\",\n    \"version\": \"1.0.2\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"git-commit-conversation-context\",\n      \"source\": \"./plugins/git-commit-conversation-context\",\n      \"description\": \"Enforce conversation context in git commits with automatic skill integration\",\n      \"version\": \"1.0.1\",\n      \"author\": {\n        \"name\": \"rjones\"\n      },\n      \"homepage\": \"https://github.com/codeofficer/codeofficer-marketplace\",\n      \"repository\": \"https://github.com/codeofficer/codeofficer-marketplace\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"git\", \"commits\", \"context\", \"documentation\", \"workflow\", \"hooks\"]\n    },\n    {\n      \"name\": \"session-rename\",\n      \"source\": \"./plugins/session-rename\",\n      \"description\": \"Suggest a descriptive session name before ending for easy session discovery\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"rjones\"\n      },\n      \"homepage\": \"https://github.com/codeofficer/codeofficer-marketplace\",\n      \"repository\": \"https://github.com/codeofficer/codeofficer-marketplace\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"session\", \"rename\", \"workflow\", \"organization\", \"hooks\"]\n    }\n  ]\n}\n",
+        "README.md": "# CodeOfficer Marketplace\n\nA Claude Code plugin marketplace featuring workflow enhancements and development tools.\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```bash\n/plugin marketplace add codeofficer/codeofficer-marketplace\n```\n\n## Available Plugins\n\n### git-commit-conversation-context\n\nAutomatically enforces conversation context in git commits, ensuring every commit documents not just *what* changed, but *why* it changed.\n\n**Features:**\n- `/git-commit-conversation-context` skill for adding context to commits\n- Automatic enforcement via PreToolUse hook\n- Works alongside existing commit workflows\n- Skip with `SKIP_COMMIT_HOOK=1` for special operations\n\n**Installation:**\n\n```bash\n/plugin install git-commit-conversation-context@codeofficer-marketplace\n```\n\n[View plugin documentation →](./plugins/git-commit-conversation-context/README.md)\n\n## Plugin Scopes\n\nWhen installing plugins, choose the appropriate scope:\n\n- `--scope user` (default): Personal plugins available across all projects\n- `--scope project`: Team plugins shared via git (in `.claude/settings.json`)\n- `--scope local`: Project-specific plugins, gitignored (in `.claude/settings.local.json`)\n\nExample:\n\n```bash\n/plugin install git-commit-conversation-context@codeofficer-marketplace --scope project\n```\n\n## Updating Plugins\n\nUpdate all plugins from this marketplace:\n\n```bash\n/plugin marketplace update codeofficer-marketplace\n```\n\nUpdate a specific plugin:\n\n```bash\n/plugin update git-commit-conversation-context@codeofficer-marketplace\n```\n\n## Contributing\n\nHave ideas for new plugins? Open an issue or submit a pull request!\n\n## License\n\nMIT License - see [LICENSE](./LICENSE) for details.\n\n## Learn More\n\n- [Claude Code Plugin Documentation](https://code.claude.com/docs/en/plugins)\n- [Creating Plugins](https://code.claude.com/docs/en/plugins)\n- [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)\n",
+        "plugins/git-commit-conversation-context/README.md": "# Git Commit Conversation Context Plugin\n\nEnsure every git commit includes conversation context that documents the \"why\" behind changes, not just the \"what\".\n\n## What It Does\n\nThis plugin adds two components that work together:\n\n1. **`/git-commit-conversation-context` skill**: Helps you add conversation context to commit messages\n2. **PreToolUse hook**: Automatically enforces that commits include context (when skill is installed)\n\n## Why Use This?\n\nGit commits typically describe *what* changed (\"fix login bug\", \"add feature X\"), but rarely capture *why* the change was needed or how the team arrived at this solution. Conversation context fills that gap by documenting:\n\n- What problem prompted the work\n- Key decisions made during implementation\n- Design trade-offs considered\n- Context that future maintainers will need\n\n## Installation\n\n```bash\n/plugin install git-commit-conversation-context@codeofficer-marketplace\n```\n\nChoose your scope:\n- `--scope user`: Just for you\n- `--scope project`: Share with your team (commits to `.claude/settings.json`)\n- `--scope local`: Project-specific, gitignored\n\n## Usage\n\n### Basic Workflow\n\n1. Make your code changes\n2. Use the skill when ready to commit:\n   ```bash\n   /git-commit-conversation-context\n   ```\n3. Claude will generate a commit with conversation context\n4. The commit is automatically created\n\n### Example Commit\n\n```\nfeat: add domain advocate skills and unignore .claude directory\n\nAdd Claude Code skills for SATL project domain advocacy:\n- satl-coordinator: orchestrates cross-domain work\n- satl-primitives: KB item authoring and schema validation\n- satl-core: business logic and domain model integrity\n\n---\n\nConversation Context:\n\nWe discussed creating domain advocate skills to help Claude understand and protect the constraints of different areas of the SATL codebase. The user wanted skills for each package (core, adapters, cli, mcp-server) plus a coordinator skill for cross-cutting work. We also created a meta-skill for the methodology itself, designed to be extractable to other projects. The skills follow a pattern of dynamic discovery rather than hard-coding knowledge.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\n```\n\n## How It Works\n\n### The Skill\n\nThe `/git-commit-conversation-context` skill guides Claude to:\n- Summarize the conversation that led to the commit\n- Write in the author's voice (not Claude describing itself)\n- Focus on the \"why\" and key decisions\n- Keep it concise (max 10 sentences)\n\n### The Hook\n\nThe PreToolUse hook intercepts `git commit` commands and:\n- Checks if the commit message includes \"Conversation Context:\"\n- Blocks commits missing context (with helpful error message)\n- Only enforces when the skill is installed\n- Can be disabled with `SKIP_COMMIT_HOOK=1`\n\n## Disabling the Hook\n\nFor operations like `git rebase` where you don't want enforcement:\n\n```bash\nSKIP_COMMIT_HOOK=1 /rebase\n```\n\nOr set it in your shell:\n\n```bash\nexport SKIP_COMMIT_HOOK=1\n```\n\n## Convention Format\n\nThe skill adds conversation context after your commit message:\n\n```\n<type>: <subject>\n\n<body>\n<body continued...>\n\n---\n\nConversation Context:\n\n<single paragraph, max 10 sentences, summarizing the conversation>\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\n```\n\n## Guidelines\n\n1. **Based on current conversation only**: Summarizes the actual requests and discussion in this session\n2. **Author's voice**: Written as if the author is explaining what happened\n3. **No invented details**: If prior work is relevant but happened outside this conversation, mention it only generally\n4. **Max 10 sentences**: Concise focus on the \"why\" and key decisions\n5. **Single paragraph**: No line breaks within the context section\n\n## Works With Other Commit Workflows\n\nThis plugin enhances your existing commit process:\n- Doesn't replace commit message generation\n- Doesn't override your commit style conventions\n- Doesn't interfere with Co-Authored-By lines\n- Doesn't change standard commit format (type: subject)\n\n## Troubleshooting\n\n### Hook not triggering\n\nCheck that the hook script is executable:\n\n```bash\nchmod +x ~/.claude/plugins/git-commit-conversation-context/hooks/check-git-commit.sh\n```\n\n### Want to debug the hook\n\nRun a quick test by piping simulated input:\n\n```bash\necho '{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"git commit -m \\\"test\\\"\"},\"cwd\":\"/tmp\"}' \\\n  | bash ~/.claude/plugins/git-commit-conversation-context/hooks/check-git-commit.sh\necho \"Exit code: $?\"\n```\n\nExit code 0 means the commit would be allowed; exit code 2 means it was blocked.\n\n### Commits still going through without context\n\n1. Verify the plugin is enabled: `/plugin list`\n2. Check that hooks are configured in plugin info\n3. Restart Claude Code to reload hooks\n\n## License\n\nMIT License - see [LICENSE](./LICENSE) for details.\n\n## Contributing\n\nFound a bug or have a feature request? Open an issue in the [marketplace repository](https://github.com/codeofficer/codeofficer-marketplace).\n",
+        "plugins/session-rename/README.md": "# Session Rename Plugin\n\nSuggest a descriptive session name before ending, so sessions are easy to find later.\n\n## What It Does\n\nThis plugin adds a **Stop hook** that fires when Claude is about to finish responding. If a session name hasn't been suggested yet, the hook blocks the stop and instructs Claude to suggest a descriptive kebab-case name. The user can then apply it with `/rename <name>`.\n\n## Why Use This?\n\nClaude Code sessions accumulate quickly and default names (timestamps or initial prompts) make them hard to find later. This plugin removes the cognitive effort of thinking up names — Claude suggests one based on the actual work done.\n\n## Installation\n\n```bash\n/plugin install session-rename@codeofficer-marketplace\n```\n\nChoose your scope:\n- `--scope user`: Just for you\n- `--scope project`: Share with your team (commits to `.claude/settings.json`)\n- `--scope local`: Project-specific, gitignored\n\n## How It Works\n\n### Runtime Flow\n\n```\nClaude finishes responding\n  → Stop hook fires\n  → Evaluator checks: stop_hook_active? rename already suggested?\n  → No → Block: \"Suggest a session name before finishing\"\n  → Claude suggests: \"Run /rename fix-auth-token-refresh\"\n  → Claude finishes again\n  → Stop hook fires again (stop_hook_active = true)\n  → Approve → Session ends\n```\n\n### Loop Prevention\n\nThe hook blocks **at most once** per stop cycle:\n\n1. If `stop_hook_active` is `true` (already blocked once) — approve stop\n2. If Claude's last message already mentions `/rename` — approve stop\n3. Otherwise — block and instruct Claude to suggest a name\n\n## Important Notes\n\n- `/rename` is a built-in CLI command that Claude cannot invoke programmatically\n- The plugin prompts Claude to **suggest** a name; the user applies it manually\n- Session names use kebab-case (e.g., `fix-auth-token-refresh`, `add-user-settings-page`)\n\n## Disabling the Hook\n\nTo temporarily disable, uninstall or disable the plugin:\n\n```bash\n/plugin list\n```\n\n## License\n\nMIT License - see [LICENSE](./LICENSE) for details.\n\n## Contributing\n\nFound a bug or have a feature request? Open an issue in the [marketplace repository](https://github.com/codeofficer/codeofficer-marketplace).\n"
+      },
+      "plugins": [
+        {
+          "name": "git-commit-conversation-context",
+          "source": "./plugins/git-commit-conversation-context",
+          "description": "Enforce conversation context in git commits with automatic skill integration",
+          "version": "1.0.1",
+          "author": {
+            "name": "rjones"
+          },
+          "homepage": "https://github.com/codeofficer/codeofficer-marketplace",
+          "repository": "https://github.com/codeofficer/codeofficer-marketplace",
+          "license": "MIT",
+          "keywords": [
+            "git",
+            "commits",
+            "context",
+            "documentation",
+            "workflow",
+            "hooks"
+          ],
+          "categories": [
+            "commits",
+            "context",
+            "documentation",
+            "git",
+            "hooks",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add CodeOfficer/codeofficer-marketplace",
+            "/plugin install git-commit-conversation-context@codeofficer-marketplace"
+          ]
+        },
+        {
+          "name": "session-rename",
+          "source": "./plugins/session-rename",
+          "description": "Suggest a descriptive session name before ending for easy session discovery",
+          "version": "1.0.0",
+          "author": {
+            "name": "rjones"
+          },
+          "homepage": "https://github.com/codeofficer/codeofficer-marketplace",
+          "repository": "https://github.com/codeofficer/codeofficer-marketplace",
+          "license": "MIT",
+          "keywords": [
+            "session",
+            "rename",
+            "workflow",
+            "organization",
+            "hooks"
+          ],
+          "categories": [
+            "hooks",
+            "organization",
+            "rename",
+            "session",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add CodeOfficer/codeofficer-marketplace",
+            "/plugin install session-rename@codeofficer-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
