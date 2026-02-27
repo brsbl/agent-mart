@@ -1,0 +1,54 @@
+{
+  "author": {
+    "id": "wcfcarolina13",
+    "display_name": "Bradley Stone",
+    "avatar_url": "https://avatars.githubusercontent.com/u/10968560?u=4f4c0ab3606c052589f059f8a092612a53a11e9f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "fxtwitter-marketplace",
+      "version": null,
+      "description": "X/Twitter tools for Claude Cowork and Claude Code",
+      "repo_full_name": "wcfcarolina13/X-Scraper-MCP",
+      "repo_url": "https://github.com/wcfcarolina13/X-Scraper-MCP",
+      "repo_description": "Scrape X posts, threads, and articles directly from Claude",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-27T18:13:29Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\r\n  \"name\": \"fxtwitter-marketplace\",\r\n  \"owner\": {\r\n    \"name\": \"wcfcarolina13\"\r\n  },\r\n  \"metadata\": {\r\n    \"description\": \"X/Twitter tools for Claude Cowork and Claude Code\"\r\n  },\r\n  \"plugins\": [\r\n    {\r\n      \"name\": \"fxtwitter\",\r\n      \"source\": \"./\",\r\n      \"description\": \"Read X/Twitter posts, unroll threads, fetch user profiles, download media, and OCR images.\",\r\n      \"version\": \"1.0.1\",\r\n      \"category\": \"social-media\",\r\n      \"tags\": [\"twitter\", \"x\", \"social-media\", \"threads\", \"ocr\"]\r\n    }\r\n  ]\r\n}\r\n",
+        ".claude-plugin/plugin.json": "{\r\n  \"name\": \"fxtwitter\",\r\n  \"description\": \"Read X/Twitter posts, unroll threads, fetch user profiles, download media, and extract text from images via OCR.\",\r\n  \"version\": \"1.0.1\",\r\n  \"author\": {\r\n    \"name\": \"wcfcarolina13\"\r\n  },\r\n  \"repository\": \"https://github.com/wcfcarolina13/X-Scraper-MCP\",\r\n  \"license\": \"MIT\",\r\n  \"keywords\": [\"twitter\", \"x\", \"social-media\", \"threads\", \"ocr\", \"media\"]\r\n}\r\n",
+        "README.md": "# X-Scraper-MCP\r\n\r\nAn MCP (Model Context Protocol) server that reads X/Twitter posts, threads, and user profiles — directly inside Claude Code, Cursor, or any MCP-compatible client.\r\n\r\nNo Twitter API key required. No third-party services. No ads.\r\n\r\nBuilt as a replacement for services like [Unrollnow](https://unrollnow.com/) — paste an X link, get clean readable content.\r\n\r\n## Tools\r\n\r\n| Tool | Description |\r\n|------|-------------|\r\n| `read_tweet` | Fetch a single tweet. Returns text, media, polls, quotes, engagement stats, community notes. |\r\n| `read_thread` | Unroll a full thread into readable markdown. Walks up to the root and discovers children via syndication. Supports multi-URL input. |\r\n| `read_user` | Fetch a user profile — bio, follower counts, join date, verification status. |\r\n| `download_media` | Download images/videos from a tweet to local filesystem. Returns file paths, dimensions, and sizes. |\r\n| `analyze_media` | Extract text from images using OCR (Tesseract.js). Accepts local files or URLs. |\r\n\r\n### URL Formats\r\n\r\nAll tools accept any X/Twitter URL format:\r\n- `https://x.com/user/status/123`\r\n- `https://twitter.com/user/status/123`\r\n- `https://fxtwitter.com/user/status/123`\r\n- `https://vxtwitter.com/user/status/123`\r\n- `@username` or bare `username` (for `read_user`)\r\n- Bare tweet ID: `123456789`\r\n\r\n## Setup\r\n\r\n### Prerequisites\r\n\r\n- Node.js 18+\r\n- npm\r\n\r\n### Install\r\n\r\n```bash\r\ngit clone https://github.com/wcfcarolina13/X-Scraper-MCP.git\r\ncd X-Scraper-MCP\r\nnpm install\r\n```\r\n\r\n### Configure in Claude Code\r\n\r\nAdd to your project's `.mcp.json` (or `~/.claude/settings.json` for global access):\r\n\r\n```json\r\n{\r\n  \"mcpServers\": {\r\n    \"fxtwitter\": {\r\n      \"command\": \"npx\",\r\n      \"args\": [\"tsx\", \"/path/to/X-Scraper-MCP/src/index.ts\"]\r\n    }\r\n  }\r\n}\r\n```\r\n\r\nReplace `/path/to/X-Scraper-MCP` with the actual path where you cloned the repo.\r\n\r\n### Configure in Claude Desktop\r\n\r\nAdd to `~/Library/Application Support/Claude/claude_desktop_config.json`:\r\n\r\n```json\r\n{\r\n  \"mcpServers\": {\r\n    \"fxtwitter\": {\r\n      \"command\": \"npx\",\r\n      \"args\": [\"tsx\", \"/path/to/X-Scraper-MCP/src/index.ts\"]\r\n    }\r\n  }\r\n}\r\n```\r\n\r\n## Usage\r\n\r\nOnce configured, the tools are available in any Claude conversation:\r\n\r\n**Read a single tweet:**\r\n> \"Read this tweet: https://x.com/jack/status/20\"\r\n\r\n**Unroll a thread:**\r\n> \"Unroll this thread: https://x.com/user/status/123456\"\r\n\r\n**Read a profile:**\r\n> \"Who is @elonmusk on X?\"\r\n\r\n**Download media from a tweet:**\r\n> \"Download the images from this tweet to /tmp/media: https://x.com/user/status/123\"\r\n\r\n**OCR an image:**\r\n> \"Analyze the text in /tmp/media/123_0.jpg\"\r\n\r\n### Thread Unrolling\r\n\r\n`read_thread` uses three strategies to assemble a complete thread:\r\n\r\n1. **Walk up** — From the given tweet, follows `replying_to_status` links to find the thread root.\r\n2. **Syndication discovery** — Scrapes Twitter's embed timeline to find child tweets by the same author.\r\n3. **Multi-URL input** — Accepts multiple URLs (comma or newline separated) and stitches them together.\r\n\r\n**Best practice:** If you have the *last* tweet in a thread, provide that URL — walking up is 100% reliable. If you only have the first tweet, syndication discovery handles it for recent threads.\r\n\r\n```\r\n# Single URL\r\nread_thread(\"https://x.com/user/status/111\")\r\n\r\n# Multiple URLs for guaranteed coverage\r\nread_thread(\"https://x.com/user/status/111, https://x.com/user/status/222, https://x.com/user/status/333\")\r\n```\r\n\r\n## How It Works\r\n\r\nUses the free [FxTwitter API](https://github.com/FixTweet/FxTwitter) — the same backend that powers fxtwitter.com embed links. No authentication needed, no rate limits enforced (just don't abuse it).\r\n\r\nFor thread child discovery, falls back to Twitter's [syndication timeline](https://syndication.twitter.com) which serves embedded tweet widgets and exposes recent tweet IDs for public accounts.\r\n\r\n### Output Format\r\n\r\nAll output is clean markdown:\r\n\r\n```markdown\r\n### Tweet by @user (Display Name)\r\n\r\nThe tweet text here...\r\n\r\n**Photos:** 2 image(s)\r\n  - https://pbs.twimg.com/media/xxx.jpg (1024x768)\r\n  - https://pbs.twimg.com/media/yyy.jpg (1024x768)\r\n\r\n*1.2K likes · 340 retweets · 56 replies · 45.2K views*\r\n*Wed Feb 19 04:17:27 +0000 2026*\r\n*Source: Twitter for iPhone*\r\n*URL: https://x.com/user/status/123*\r\n```\r\n\r\n## Optional: ScrapeBadger MCP\r\n\r\nFor richer Twitter data (search, trending, advanced thread traversal), you can add [ScrapeBadger MCP](https://github.com/scrape-badger/scrapebadger-mcp) alongside this server:\r\n\r\n```json\r\n{\r\n  \"mcpServers\": {\r\n    \"fxtwitter\": {\r\n      \"command\": \"npx\",\r\n      \"args\": [\"tsx\", \"/path/to/X-Scraper-MCP/src/index.ts\"]\r\n    },\r\n    \"scrapebadger\": {\r\n      \"command\": \"uvx\",\r\n      \"args\": [\"scrapebadger-mcp\"],\r\n      \"env\": {\r\n        \"SCRAPEBADGER_API_KEY\": \"your_key_here\"\r\n      }\r\n    }\r\n  }\r\n}\r\n```\r\n\r\nGet a free API key (1,000 credits) at [scrapebadger.com](https://scrapebadger.com).\r\n\r\n## Limitations\r\n\r\n- **Protected accounts** — Cannot access tweets from private/protected accounts (same as any logged-out view).\r\n- **Thread discovery** — Syndication timeline only contains recent tweets. For old threads, provide the last tweet URL or multiple URLs.\r\n- **No search** — FxTwitter API doesn't support tweet search. Use ScrapeBadger for that.\r\n- **Rate limits** — FxTwitter asks for respectful usage. No hard limits, but hammering the API may get you blocked.\r\n\r\n## License\r\n\r\nMIT\r\n"
+      },
+      "plugins": [
+        {
+          "name": "fxtwitter",
+          "source": "./",
+          "description": "Read X/Twitter posts, unroll threads, fetch user profiles, download media, and OCR images.",
+          "version": "1.0.1",
+          "category": "social-media",
+          "tags": [
+            "twitter",
+            "x",
+            "social-media",
+            "threads",
+            "ocr"
+          ],
+          "categories": [
+            "ocr",
+            "social-media",
+            "threads",
+            "twitter",
+            "x"
+          ],
+          "install_commands": [
+            "/plugin marketplace add wcfcarolina13/X-Scraper-MCP",
+            "/plugin install fxtwitter@fxtwitter-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

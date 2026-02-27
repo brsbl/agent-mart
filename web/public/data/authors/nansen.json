@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "nansen",
+    "display_name": "Nansen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/44303323?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nansen-cowork-plugins",
+      "version": null,
+      "description": "Shared intelligence foundation for the Nansen team. Extract, structure, and sync domain knowledge to Google Drive. Includes /setup, /onboarding, and Market Research skill.",
+      "repo_full_name": "nansen/nansen-cowork-plugins",
+      "repo_url": "https://github.com/nansen/nansen-cowork-plugins",
+      "repo_description": "Private Cowork plugin marketplace for the Nansen team. Shared intelligence infrastructure, market research extraction, industry research, and solutions positioning - built on Anthropic's Cowork platform.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-27T20:28:38Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nansen-cowork-plugins\",\n  \"owner\": {\n    \"name\": \"Nansen\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nansen-core\",\n      \"source\": \"./nansen-core\",\n      \"description\": \"Shared intelligence foundation for the Nansen team. Extract, structure, and sync domain knowledge to Google Drive. Includes /setup, /onboarding, and Market Research skill.\"\n    },\n    {\n      \"name\": \"nansen-growth\",\n      \"source\": \"./nansen-growth\",\n      \"description\": \"Growth domain plugin for business development. Proactive industry research and solutions positioning that maps client needs to Nansen capabilities.\"\n    }\n  ]\n}\n",
+        "README.md": "# Nansen Plugins Marketplace\n\nPrivate Cowork plugin marketplace for the Nansen team. Contains domain-specific plugins built on the nansen-core intelligence infrastructure.\n\n## Plugins\n\n| Plugin | Description | Version |\n|--------|-------------|---------|\n| **nansen-core** | Shared intelligence foundation. Extract, structure, and sync domain knowledge. Includes /setup, /onboarding, and Market Research skill. | 0.1.0 |\n| **nansen-growth** | Growth domain plugin. Proactive industry research and solutions positioning for business development. | 0.1.0 |\n\n## Setup for Team Members\n\n1. Open Cowork settings\n2. Add this repository as a marketplace source\n3. Install the plugins you need (start with nansen-core)\n4. Run `/setup` to configure your local environment\n5. Run `/onboarding` for a guided walkthrough\n\n## For Developers\n\n### Validate plugins\n\n```bash\n./scripts/build.sh\n```\n\n### Release a new version\n\n```bash\n# Bump patch version (0.1.0 -> 0.1.1), add release notes\n./scripts/build.sh patch \"Fixed intelligence file naming\"\n\n# Bump minor version (0.1.0 -> 0.2.0)\n./scripts/build.sh minor \"Added competitive analysis skill\"\n\n# Then commit and push\ngit add -A\ngit commit -m \"Release $(date +%Y-%m-%d)\"\ngit push\n```\n\nThe build script validates all plugins, bumps versions across all plugin.json files, creates archived zips in `dist/`, and updates `CHANGELOG.md`.\n\n### Plugin Structure\n\nEach plugin follows the Cowork plugin pattern:\n\n```\nplugin-name/\n  .claude-plugin/\n    plugin.json          # name, version, description, keywords\n  skills/\n    skill-name/\n      SKILL.md           # skill instructions (YAML frontmatter + body)\n      references/        # supporting docs\n      templates/         # output templates\n  commands/              # slash commands (optional)\n    command-name.md\n```\n\n## Architecture\n\nThis marketplace is Tier 1 (nansen-core) and Tier 2 (domain plugins) of Nansen's three-tier plugin architecture. See the Architecture document for the full picture.\n\n```\nTier 1: nansen-core        - shared schema, extraction, /setup, /onboarding\nTier 2: nansen-growth      - industry research, solutions positioning\n        nansen-[domain]    - future domain plugins\nTier 3: nansen-arnold      - personal workflows (separate repo)\n```\n",
+        "nansen-core/README.md": "# nansen-core\n\nShared intelligence foundation for Nansen's AI plugin ecosystem. This plugin provides the core infrastructure that all domain plugins (growth, marketing, delivery, finance) build on.\n\n## What It Does\n\nnansen-core turns raw source material (meeting transcripts, documents, research) into structured intelligence files that sync to a shared Google Drive. Think of it as the foundation layer: it defines how intelligence is formatted, stored, and shared across the team.\n\n## Quick Start\n\n1. Run `/setup` to create your folder structure and connect Google Drive\n2. Run `/onboarding` for a guided tour of how everything works\n3. Drop a PDF or transcript into `sources/` and ask to extract intelligence\n\n## Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/setup` | Technical environment setup (folders, Drive, Fathom, Slack) |\n| `/onboarding` | Guided walkthrough for new team members (~25 min) |\n\n## Skills\n\n| Skill | Purpose |\n|-------|---------|\n| Market Research | Extract market trends, competitive signals, and client intelligence from source documents |\n\n## Folder Structure\n\n```\nnansen/\n  sources/        Raw input (transcripts, PDFs, notes) -- local only\n  intelligence/   Extracted knowledge -- syncs to Google Drive\n  outputs/        Generated deliverables -- local only\n```\n\n## Intelligence File Format\n\nAll intelligence files use YAML frontmatter + markdown body. See `schema/intelligence-schema.yaml` for the full specification. Files follow a deterministic naming pattern:\n\n```\nYYYY-MM-DD_client-slug_source-type_title-slug.intelligence.md\n```\n\n## Version\n\n0.1.0 (Phase 1 POC)\n\n## Architecture\n\nThis plugin is Tier 1 in Nansen's three-tier plugin hierarchy:\n- **Tier 1 (nansen-core)**: Shared utilities, schema, setup, onboarding\n- **Tier 2 (domain plugins)**: Growth, marketing, delivery, finance\n- **Tier 3 (personal plugins)**: Individual customizations (e.g., nansen-arnold)\n\nSee the full architecture document for details.\n",
+        "nansen-growth/README.md": "# nansen-growth\n\nGrowth domain plugin for Nansen's AI plugin ecosystem. Provides proactive industry research and solutions positioning capabilities for business development, account management, and marketing.\n\n## What It Does\n\nnansen-growth helps you research customer industries and position Nansen's services against identified needs. It's designed for three use cases: deepening understanding of existing accounts, fueling marketing content with industry insights, and researching prospects for net new sales.\n\n## Skills\n\n| Skill | Purpose |\n|-------|---------|\n| Industry Research | Research a customer's industry to identify needs, pain points, and opportunities |\n| Solutions Positioning | Map identified needs to Nansen's capabilities with positioning recommendations |\n\n## How the Skills Chain Together\n\n```\nIndustry Research                    Solutions Positioning\n(input: client or industry)    ->    (input: industry research output)\n(output: needs, pain points,         (output: which Nansen services\n opportunities, trends)               address which needs, proof points,\n                                      recommended approach)\n```\n\n## Two Modes\n\n**Existing client** - Enriches research with your team's existing intelligence about that client (past meeting insights, project history, relationship context from the intelligence/ folder).\n\n**Prospect / net new** - Pure industry research starting from scratch. Useful for preparing for a first meeting or building marketing content.\n\n## Prerequisites\n\nRequires nansen-core to be installed (provides the intelligence file schema, folder structure, and extraction foundation).\n\n## Architecture\n\nThis is a Tier 2 domain plugin in Nansen's three-tier hierarchy:\n- Tier 1: nansen-core (shared foundation)\n- **Tier 2: nansen-growth** (this plugin - growth and business development)\n- Tier 3: Personal plugins (individual customizations)\n"
+      },
+      "plugins": [
+        {
+          "name": "nansen-core",
+          "source": "./nansen-core",
+          "description": "Shared intelligence foundation for the Nansen team. Extract, structure, and sync domain knowledge to Google Drive. Includes /setup, /onboarding, and Market Research skill.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add nansen/nansen-cowork-plugins",
+            "/plugin install nansen-core@nansen-cowork-plugins"
+          ]
+        },
+        {
+          "name": "nansen-growth",
+          "source": "./nansen-growth",
+          "description": "Growth domain plugin for business development. Proactive industry research and solutions positioning that maps client needs to Nansen capabilities.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add nansen/nansen-cowork-plugins",
+            "/plugin install nansen-growth@nansen-cowork-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
