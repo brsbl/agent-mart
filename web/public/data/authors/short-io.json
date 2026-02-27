@@ -1,0 +1,69 @@
+{
+  "author": {
+    "id": "Short-io",
+    "display_name": "Short.io",
+    "avatar_url": "https://avatars.githubusercontent.com/u/38856994?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "shortio",
+      "version": null,
+      "description": "Claude Code plugin for Short.io URL shortening and link management",
+      "repo_full_name": "Short-io/shortio-cli",
+      "repo_url": "https://github.com/Short-io/shortio-cli",
+      "repo_description": null,
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-02-27T08:00:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"shortio\",\n  \"owner\": {\n    \"name\": \"Short-io\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugin for Short.io URL shortening and link management\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"shortio\",\n      \"source\": \"./\",\n      \"description\": \"Manage Short.io links, domains, QR codes, and geo targeting using natural language in Claude Code\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Short-io\"\n      },\n      \"homepage\": \"https://short.io\",\n      \"repository\": \"https://github.com/Short-io/shortio-cli\",\n      \"license\": \"ISC\",\n      \"keywords\": [\n        \"claude-skill\",\n        \"claude-code\",\n        \"short-io\",\n        \"url-shortener\",\n        \"links\",\n        \"qr-codes\"\n      ],\n      \"category\": \"productivity\",\n      \"tags\": [\"url-shortener\", \"links\", \"qr-codes\", \"short-io\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"shortio\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Claude Code plugin for managing Short.io links, domains, QR codes, and geo targeting via the shortio CLI\",\n  \"author\": {\n    \"name\": \"Short.io\",\n    \"url\": \"https://short.io\"\n  },\n  \"license\": \"ISC\",\n  \"repository\": \"https://github.com/Short-io/shortio-cli\",\n  \"keywords\": [\n    \"claude-skill\",\n    \"claude-code\",\n    \"short-io\",\n    \"url-shortener\",\n    \"links\",\n    \"qr-codes\"\n  ]\n}\n",
+        "README.md": "# @short.io/cli\n\nOfficial CLI for [Short.io](https://short.io) URL shortening and link management.\n\n## Installation\n\n```bash\nnpm install -g @short.io/cli\n```\n\nRequires Node.js >= 20.\n\n## Authentication\n\nSet your API key (get it from [Short.io dashboard](https://app.short.io/settings/integrations/api-key)):\n\n```bash\n# Save to ~/.shortio/config.json (persistent)\nshortio config set-api-key YOUR_API_KEY\n\n# Or use an environment variable\nexport SHORT_IO_API_KEY=\"YOUR_API_KEY\"\n\n# Or pass per-command\nshortio --api-key YOUR_API_KEY domain list\n```\n\nPriority: `--api-key` flag > `SHORT_IO_API_KEY` env > config file.\n\n## Usage\n\n### Links\n\n```bash\n# Create a short link\nshortio link create --domain example.com --url https://example.com/long-page\n\n# Create with custom path, title, and tags\nshortio link create --domain example.com --url https://example.com \\\n  --path my-link --title \"My Link\" --tags marketing,social\n\n# List links for a domain\nshortio link list --domain-id 12345\n\n# Get link details\nshortio link get --id lnk_abc123\n\n# Expand a link by domain and path\nshortio link expand --domain example.com --path my-link\n\n# Update a link\nshortio link update --id lnk_abc123 --url https://new-url.com --title \"New Title\"\n\n# Delete a link\nshortio link delete --id lnk_abc123\n```\n\n### Domains\n\n```bash\n# List all domains\nshortio domain list\n\n# Get domain details\nshortio domain get --id 12345\n```\n\n### Bulk Operations\n\n```bash\n# Create links from a CSV file\nshortio bulk create --domain example.com --file links.csv --url-column 0\n\n# With custom columns and options\nshortio bulk create --domain example.com --file links.csv \\\n  --url-column 0 --path-column 1 --title-column 2 \\\n  --delimiter \";\" --skip-lines 1 --allow-duplicates\n\n# Delete multiple links\nshortio bulk delete --ids lnk_abc,lnk_def,lnk_ghi\n\n# Archive multiple links\nshortio bulk archive --ids lnk_abc,lnk_def\n```\n\n### QR Codes\n\n```bash\n# Generate a QR code\nshortio qr generate --link-id lnk_abc123\n\n# Save QR code to file\nshortio qr generate --link-id lnk_abc123 --output qr.png\n\n# Bulk QR code generation\nshortio qr bulk --link-ids lnk_abc,lnk_def,lnk_ghi\n```\n\n### Geographic Targeting\n\n```bash\n# Set a country redirect\nshortio geo set --link-id lnk_abc123 --country US --url https://us.example.com\n\n# Set a region redirect\nshortio geo set --link-id lnk_abc123 --country US --region CA --url https://ca.example.com\n\n# Remove a country redirect\nshortio geo delete --link-id lnk_abc123 --country US\n\n# Remove a region redirect\nshortio geo delete --link-id lnk_abc123 --country US --region CA\n```\n\n### Configuration\n\n```bash\n# Save API key\nshortio config set-api-key YOUR_API_KEY\n\n# Show current config (key is masked)\nshortio config show\n```\n\n## Global Options\n\n| Option | Description |\n|--------|-------------|\n| `--api-key <key>` | Short.io API key |\n| `--json` | Output as JSON |\n| `-V, --version` | Show version |\n| `-h, --help` | Show help |\n\n## Claude Code Plugin\n\nThis project includes a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin that lets you manage Short.io links using natural language directly from your terminal.\n\n### Install from marketplace\n\n```bash\n# Add the marketplace (one-time)\nclaude /plugin marketplace add Short-io/shortio-cli\n\n# Install the plugin\nclaude /plugin install shortio\n```\n\n### Install locally\n\n```bash\n# Clone and set up the CLI\ngit clone https://github.com/Short-io/shortio-cli.git\ncd shortio-cli\nnpm install && npm run build && npm link\n\n# Test the plugin locally\nclaude --plugin-dir .\n```\n\n### Setup\n\nConfigure your API key (get it from [Short.io dashboard](https://app.short.io/settings/integrations/api-key)):\n\n```bash\nshortio config set-api-key YOUR_API_KEY\n```\n\n### Usage\n\nThe `/shortio` slash command accepts natural language:\n\n```\n/shortio list all my domains\n/shortio create a link for example.com pointing to https://google.com\n/shortio show links for domain 12345\n/shortio generate a QR code for link lnk_abc123 and save to qr.png\n/shortio set a US redirect for link lnk_abc123 to https://us.example.com\n/shortio delete links lnk_abc,lnk_def\n```\n\n### Plugin structure\n\n```\n.claude-plugin/\n  plugin.json            # Plugin manifest\n  marketplace.json       # Marketplace metadata\nskills/\n  shortio/\n    SKILL.md             # Skill definition\n```\n\n## Development\n\n```bash\nnpm install\nnpm run build\nnode dist/bin.js --help\n```\n\n## License\n\nISC\n"
+      },
+      "plugins": [
+        {
+          "name": "shortio",
+          "source": "./",
+          "description": "Manage Short.io links, domains, QR codes, and geo targeting using natural language in Claude Code",
+          "version": "1.0.0",
+          "author": {
+            "name": "Short-io"
+          },
+          "homepage": "https://short.io",
+          "repository": "https://github.com/Short-io/shortio-cli",
+          "license": "ISC",
+          "keywords": [
+            "claude-skill",
+            "claude-code",
+            "short-io",
+            "url-shortener",
+            "links",
+            "qr-codes"
+          ],
+          "category": "productivity",
+          "tags": [
+            "url-shortener",
+            "links",
+            "qr-codes",
+            "short-io"
+          ],
+          "categories": [
+            "claude-code",
+            "claude-skill",
+            "links",
+            "productivity",
+            "qr-codes",
+            "short-io",
+            "url-shortener"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Short-io/shortio-cli",
+            "/plugin install shortio@shortio"
+          ]
+        }
+      ]
+    }
+  ]
+}
