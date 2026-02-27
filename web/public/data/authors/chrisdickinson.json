@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "chrisdickinson",
+    "display_name": "Chris Dickinson",
+    "avatar_url": "https://avatars.githubusercontent.com/u/37303?u=05dae5e735ecb5e198328996db361672bcb15fcf&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "trivia",
+      "version": null,
+      "description": "Semantic memory for Claude Code — memorize and recall project context across sessions",
+      "repo_full_name": "chrisdickinson/trivia",
+      "repo_url": "https://github.com/chrisdickinson/trivia",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-27T06:46:31Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"trivia\",\n  \"description\": \"Semantic memory for Claude Code — memorize and recall project context across sessions\",\n  \"owner\": {\n    \"name\": \"Chris Dickinson\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"trivia\",\n      \"description\": \"Semantic memory for Claude Code — memorize and recall project context\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Chris Dickinson\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"trivia\",\n  \"description\": \"Semantic memory for Claude Code — memorize and recall project context\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Chris Dickinson\"\n  },\n  \"repository\": \"https://github.com/chrisdickinson/trivia\",\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# trivia\n\nSemantic memory for Claude Code. Memorize facts, recall them by meaning, and let connections form automatically.\n\n## Quick Start\n\n```bash\n# Install (from source for now)\ncargo install --path apps/cli\n\n# As a Claude Code plugin\nclaude plugin add chrisdickinson/trivia\nclaude plugin install trivia\n```\n\n### Basic Usage\n\n```bash\n# Store a fact\ntrivia memorize \"project architecture\" \"Three-layer: API, service, storage. Each layer in its own crate.\"\n\n# Recall by meaning\ntrivia recall \"how is the code organized\"\n\n# Tag for organization\ntrivia memorize \"auth flow\" \"OAuth2 PKCE with JWT refresh tokens\" --tag backend --tag auth\n```\n\n### As an MCP Tool\n\nWhen installed as a Claude Code plugin, trivia is available as an MCP server. Claude can `memorize` and `recall` facts during conversations.\n\n## Features\n\n- **Semantic search** via embeddings (AllMiniLM-L6-V2, 384-dim)\n- **Auto-linking** — similar memories are linked automatically\n- **Auto-merging** — very similar memories merge on creation\n- **Manual links** — `related`, `supersedes`, `derived_from`\n- **Composite scoring** — similarity + recency + frequency + link boost + ratings\n- **Tagging** — categorize and filter memories\n- **Rating feedback** — mark memories as useful/not to improve ranking\n- **Export/Import** — markdown files with YAML frontmatter\n- **Web UI** — browse, edit, search, graph visualization\n- **MCP server** — Claude Code integration via stdin/stdout JSON-RPC\n\n## CLI Reference\n\n```\ntrivia memorize <mnemonic> <content> [--tag <tag>...]\ntrivia recall <query> [--limit N] [--tag <tag>...] [--json]\ntrivia link <source> <target> [--link-type related|supersedes|derived_from]\ntrivia links <mnemonic>\ntrivia merge <keep> <discard>\ntrivia rate <mnemonic> --useful|--not-useful\ntrivia export <directory> [--tag <tag>...]\ntrivia import <directory>\ntrivia list-tags [--json]\ntrivia automerge [--threshold 0.25] [--dry-run]\ntrivia www [--port 3000]\ntrivia mcp\n```\n\n## MCP Tools\n\n| Tool | Description |\n|------|-------------|\n| `memorize` | Store a fact with mnemonic, content, and optional tags |\n| `recall` | Search by semantic similarity |\n| `rate` | Provide useful/not-useful feedback |\n| `link` | Create typed connections between memories |\n| `merge` | Consolidate duplicate memories |\n| `export` | Save memories to markdown files (optional tag filter) |\n| `import` | Load memories from markdown files |\n| `list-tags` | List all tags with counts |\n\n## Configuration\n\nCreate a `trivia.toml` in your project root:\n\n```toml\n# Auto-add these tags to every memorize call\n[memorize]\ntags = [\"my-project\", \"backend\"]\n\n# Boost these tags in recall scoring (not a filter — all memories still searchable)\n[recall]\ntags = [\"my-project\"]\n\n# Default tag filter for export\n[export]\ntags = [\"my-project\"]\n\n# Optional: override database path (default: ~/.claude/trivia.db)\n# database = \"/path/to/trivia.db\"\n```\n\nConfig discovery walks up from CWD (or `CLAUDE_PLUGIN_ROOT`) to find the nearest `trivia.toml`. CLI flags are additive with config tags.\n\n## Web UI\n\nStart with `trivia www` and open `http://localhost:3000`. Features:\n\n- Memory list with search and tag filtering\n- Memory detail view with inline editing (including mnemonic rename)\n- Link management\n- Interactive merge\n- Force-directed graph visualization\n\n## Architecture\n\n```\ncrates/core/     — MemoryStore, Embedder, config, export/import\napps/cli/        — CLI binary (`trivia`), web server, MCP server\napps/cli/www/    — React + TypeScript web UI (embedded at build time)\n```\n\nSQLite with [sqlite-vec](https://github.com/asg017/sqlite-vec) for vector search. Embeddings via [fastembed](https://github.com/Anush008/fastembed-rs) (AllMiniLM-L6-V2).\n\n## Environment Variables\n\n- `TRIVIA_DB` — database path (overrides config and default)\n- `CLAUDE_PLUGIN_ROOT` — plugin root for config discovery\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "trivia",
+          "description": "Semantic memory for Claude Code — memorize and recall project context",
+          "version": "0.1.0",
+          "source": "./",
+          "author": {
+            "name": "Chris Dickinson"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add chrisdickinson/trivia",
+            "/plugin install trivia@trivia"
+          ]
+        }
+      ]
+    }
+  ]
+}

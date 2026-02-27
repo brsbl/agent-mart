@@ -1,0 +1,138 @@
+{
+  "author": {
+    "id": "emiperez95",
+    "display_name": "emiperez95",
+    "avatar_url": "https://avatars.githubusercontent.com/u/31294319?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cc-toolkit",
+      "version": null,
+      "description": "Workflow automation agents, commands, and skills for Jira, GitHub, Notion, and Google Drive",
+      "repo_full_name": "emiperez95/cc-toolkit",
+      "repo_url": "https://github.com/emiperez95/cc-toolkit",
+      "repo_description": "Claude Code plugins: agents, commands, and skills for Jira, GitHub, Notion, and Google Drive workflows",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-27T12:26:38Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cc-toolkit\",\n  \"owner\": { \"name\": \"Emiliano Perez\", \"email\": \"emiliano@wyeworks.com\" },\n  \"description\": \"Workflow automation agents, commands, and skills for Jira, GitHub, Notion, and Google Drive\",\n  \"plugins\": [\n    {\n      \"name\": \"atlas-jira-analyst\",\n      \"source\": \"./agents/atlas-jira-analyst\",\n      \"description\": \"Agent: Fetches Jira issue information including tickets, epics, acceptance criteria, and comments\"\n    },\n    {\n      \"name\": \"apollo-jira-scribe\",\n      \"source\": \"./agents/apollo-jira-scribe\",\n      \"description\": \"Agent: Creates and updates Jira tickets including status transitions and sprint assignments\"\n    },\n    {\n      \"name\": \"clio-docs-oracle\",\n      \"source\": \"./agents/clio-docs-oracle\",\n      \"description\": \"Agent: Reads Google Drive files (Docs, Sheets, PDFs) and converts them to readable formats\"\n    },\n    {\n      \"name\": \"heimdall-pr-guardian\",\n      \"source\": \"./agents/heimdall-pr-guardian\",\n      \"description\": \"Agent: Monitors PR status including comments, CI/CD checks, approvals, and merge blockers\"\n    },\n    {\n      \"name\": \"hermes-pr-courier\",\n      \"source\": \"./agents/hermes-pr-courier\",\n      \"description\": \"Agent: Collects PR content including metadata, file changes, and commit history\"\n    },\n    {\n      \"name\": \"minerva-notion-oracle\",\n      \"source\": \"./agents/minerva-notion-oracle\",\n      \"description\": \"Agent: Searches and retrieves content from Notion workspaces\"\n    },\n    {\n      \"name\": \"gemini\",\n      \"source\": \"./commands/gemini\",\n      \"description\": \"Command: Leverage Gemini's massive context window for large codebase analysis\"\n    },\n    {\n      \"name\": \"athena-pr-reviewer\",\n      \"source\": \"./skills/athena-pr-reviewer\",\n      \"description\": \"Skill: Multi-LLM PR reviewer with 8 parallel reviewers (Gemini + Codex + 6 Claude specialists)\"\n    },\n    {\n      \"name\": \"harvest-timesheet\",\n      \"source\": \"./skills/harvest-timesheet\",\n      \"description\": \"Skill: Automate Harvest timesheet filling from Google Calendar meetings\"\n    },\n    {\n      \"name\": \"codex\",\n      \"source\": \"./commands/codex\",\n      \"description\": \"Command: OpenAI Codex CLI integration with local and cloud execution support\"\n    },\n    {\n      \"name\": \"memory-compact\",\n      \"source\": \"./commands/memory-compact\",\n      \"description\": \"Command: Compact and reorganize Claude Code auto-memory files\"\n    }\n  ]\n}\n",
+        "README.md": "# CC Toolkit\n\nClaude Code plugins for workflow automation with Jira, GitHub, Notion, and Google Drive.\n\n## Installation\n\nInstall all plugins from the marketplace:\n```bash\n/plugin marketplace add emiperez95/cc-toolkit\n```\n\nOr install individual plugins:\n```bash\n/plugin marketplace add emiperez95/cc-toolkit:atlas-jira-analyst\n/plugin marketplace add emiperez95/cc-toolkit:athena-pr-reviewer\n```\n\n## Available Plugins\n\n### Agents\n\n| Name | Description |\n|------|-------------|\n| **atlas-jira-analyst** | Fetches Jira issue information including tickets, epics, acceptance criteria, and comments |\n| **apollo-jira-scribe** | Creates and updates Jira tickets including status transitions and sprint assignments |\n| **clio-docs-oracle** | Reads Google Drive files (Docs, Sheets, PDFs) and converts them to readable formats |\n| **heimdall-pr-guardian** | Monitors PR status including comments, CI/CD checks, approvals, and merge blockers |\n| **hermes-pr-courier** | Collects PR content including metadata, file changes, and commit history |\n| **minerva-notion-oracle** | Searches and retrieves content from Notion workspaces |\n\n### Commands\n\n| Name | Description |\n|------|-------------|\n| **gemini** | Leverage Gemini's massive context window for large codebase analysis |\n| **codex** | OpenAI Codex CLI with local and cloud execution modes |\n| **memory-compact** | Compact and reorganize Claude Code auto-memory files |\n\n### Skills\n\n| Name | Description |\n|------|-------------|\n| **athena-pr-reviewer** | Multi-LLM PR reviewer with up to 8 parallel reviewers (auto-detects available LLM providers) |\n| **harvest-timesheet** | Automate Harvest timesheet filling from Google Calendar meetings |\n\n**Harvest Timesheet Features:**\n- Auto-discovers Harvest rows from previous month on first run\n- Reads Google Calendar meetings via Chrome DevTools MCP\n- Categorizes meetings into Harvest rows with growing memory\n- Fills Harvest weekly grid with calculated hours\n- Free-form config supports multi-project setups\n- Config stored at `~/.claude/harvest-timesheet.local.md`\n\n**Athena Features:**\n- 6 specialized Claude reviewers (comments, tests, errors, types, general, simplifier)\n- Optional Gemini and Codex reviewers (auto-detected, gracefully skipped if not installed)\n- Dynamic reviewer selection UI - choose which reviewers to run\n- Annotated diff with explicit line numbers for accurate references\n- Verification step to filter hallucinated findings\n- Consensus boosting for issues flagged by multiple reviewers\n\n**Athena Auto-Approved Permissions:**\n\nThis plugin includes a `PermissionRequest` hook that auto-approves specific operations to reduce permission prompts. You will still be asked to confirm:\n1. Skill invocation (\"Use skill athena-pr-reviewer?\")\n2. Reviewer selection (which reviewers to run)\n\nThe following are auto-approved with strict pattern matching:\n\n| Operation | Pattern | Security |\n|-----------|---------|----------|\n| Bash scripts | Exact paths: `~/.claude/skills/athena-pr-reviewer/scripts/*.sh` | Only skill's own scripts |\n| Review outputs | Regex: `/tmp/athena-review-[0-9]+/reviews/[a-z][a-z0-9-]*.md` | Only PR work directory |\n| Work files | Exact: `context.md`, `diff.patch`, `verified-findings.md`, `rejected.md` | Limited file set |\n\nTo disable auto-approval, remove the `hooks/` directory from the plugin.\n\n## Requirements\n\n- **GitHub CLI** (`gh`): Required for PR-related agents\n- **Atlassian CLI** (`acli`): Required for Jira agents\n- **rclone**: Required for Google Drive agent (clio-docs-oracle)\n- **Notion MCP**: Required for Notion agent (minerva-notion-oracle)\n- **Chrome DevTools MCP**: Required for harvest-timesheet (bundled with plugin)\n- **Gemini CLI**: Optional, enhances athena-pr-reviewer\n- **Codex CLI**: Optional, enhances athena-pr-reviewer\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "atlas-jira-analyst",
+          "source": "./agents/atlas-jira-analyst",
+          "description": "Agent: Fetches Jira issue information including tickets, epics, acceptance criteria, and comments",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install atlas-jira-analyst@cc-toolkit"
+          ]
+        },
+        {
+          "name": "apollo-jira-scribe",
+          "source": "./agents/apollo-jira-scribe",
+          "description": "Agent: Creates and updates Jira tickets including status transitions and sprint assignments",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install apollo-jira-scribe@cc-toolkit"
+          ]
+        },
+        {
+          "name": "clio-docs-oracle",
+          "source": "./agents/clio-docs-oracle",
+          "description": "Agent: Reads Google Drive files (Docs, Sheets, PDFs) and converts them to readable formats",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install clio-docs-oracle@cc-toolkit"
+          ]
+        },
+        {
+          "name": "heimdall-pr-guardian",
+          "source": "./agents/heimdall-pr-guardian",
+          "description": "Agent: Monitors PR status including comments, CI/CD checks, approvals, and merge blockers",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install heimdall-pr-guardian@cc-toolkit"
+          ]
+        },
+        {
+          "name": "hermes-pr-courier",
+          "source": "./agents/hermes-pr-courier",
+          "description": "Agent: Collects PR content including metadata, file changes, and commit history",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install hermes-pr-courier@cc-toolkit"
+          ]
+        },
+        {
+          "name": "minerva-notion-oracle",
+          "source": "./agents/minerva-notion-oracle",
+          "description": "Agent: Searches and retrieves content from Notion workspaces",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install minerva-notion-oracle@cc-toolkit"
+          ]
+        },
+        {
+          "name": "gemini",
+          "source": "./commands/gemini",
+          "description": "Command: Leverage Gemini's massive context window for large codebase analysis",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install gemini@cc-toolkit"
+          ]
+        },
+        {
+          "name": "athena-pr-reviewer",
+          "source": "./skills/athena-pr-reviewer",
+          "description": "Skill: Multi-LLM PR reviewer with 8 parallel reviewers (Gemini + Codex + 6 Claude specialists)",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install athena-pr-reviewer@cc-toolkit"
+          ]
+        },
+        {
+          "name": "harvest-timesheet",
+          "source": "./skills/harvest-timesheet",
+          "description": "Skill: Automate Harvest timesheet filling from Google Calendar meetings",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install harvest-timesheet@cc-toolkit"
+          ]
+        },
+        {
+          "name": "codex",
+          "source": "./commands/codex",
+          "description": "Command: OpenAI Codex CLI integration with local and cloud execution support",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install codex@cc-toolkit"
+          ]
+        },
+        {
+          "name": "memory-compact",
+          "source": "./commands/memory-compact",
+          "description": "Command: Compact and reorganize Claude Code auto-memory files",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add emiperez95/cc-toolkit",
+            "/plugin install memory-compact@cc-toolkit"
+          ]
+        }
+      ]
+    }
+  ]
+}

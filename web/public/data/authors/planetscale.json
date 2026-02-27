@@ -6,7 +6,7 @@
   },
   "marketplaces": [
     {
-      "name": "planetscale-plugins",
+      "name": "planetscale",
       "version": null,
       "description": "PlanetScale plugins for Claude Code",
       "repo_full_name": "planetscale/claude-plugin",
@@ -15,12 +15,12 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-26T09:37:21Z"
+        "pushed_at": "2026-02-27T09:14:04Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"planetscale-plugins\",\n  \"owner\": {\n    \"name\": \"PlanetScale\"\n  },\n  \"metadata\": {\n    \"description\": \"PlanetScale plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"planetscale\",\n      \"source\": \"./\",\n      \"description\": \"An authenticated hosted MCP server that accesses your PlanetScale organizations, databases, branches, schema, and Insights data.\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"planetscale\",\n  \"version\": \"1.0.0\",\n  \"description\": \"An authenticated hosted MCP server that accesses your PlanetScale organizations, databases, branches, schema, and Insights data.\",\n  \"mcpServers\": \"./.mcp.json\",\n  \"author\": {\n    \"name\": \"PlanetScale\"\n  }\n}\n",
-        "README.md": "# PlanetScale Claude Plugin\n\nPlanetScale plugin for installing the MCP server into Claude Code and Claude Cowork.\n\n## Install from GitHub\n\nIn Claude Code, add this GitHub repository as a marketplace, then install the plugin:\n\n```text\n/plugin marketplace add planetscale/claude-plugin\n/plugin install planetscale@planetscale-plugins\n```\n\n### Verify it loaded\n\nIn Claude Code, run `/mcp` to see the `planetscale` MCP server.\n\nIf it does not appear immediately after install, fully restart Claude Code and check `/mcp` again. Plugin-provided MCP server changes are applied on restart.\n\n### Alternative (development only)\n\nIf you are developing this plugin locally:\n\n```bash\nclaude --plugin-dir .\n```\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"planetscale\",\n  \"owner\": {\n    \"name\": \"PlanetScale\"\n  },\n  \"metadata\": {\n    \"description\": \"PlanetScale plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"planetscale\",\n      \"source\": \"./\",\n      \"description\": \"An authenticated hosted MCP server that accesses your PlanetScale organizations, databases, branches, schema, and Insights data.\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"planetscale\",\n  \"version\": \"1.0.0\",\n  \"description\": \"An authenticated hosted MCP server that accesses your PlanetScale organizations, databases, branches, schema, and Insights data.\",\n  \"mcpServers\": \"./.mcp.json\",\n  \"skills\": \"./database-skills/skills\",\n  \"author\": {\n    \"name\": \"PlanetScale\"\n  }\n}\n",
+        "README.md": "# PlanetScale Claude Plugin\n\nPlugin for installing the [PlanetScale MCP server](https://planetscale.com/docs/connect/mcp) and [Database Skills](https://db-skills.com/) into Claude Code.\n\n## Install from GitHub\n\nIn Claude Code, add this GitHub repository as a marketplace, then install the plugin:\n\n```text\n/plugin marketplace add planetscale/claude-plugin\n/plugin install planetscale@planetscale\n```\n\n### Verify it loaded\n\nIn Claude Code, run `/mcp` to see the `planetscale` MCP server.\n\nIf it does not appear immediately after install, fully restart Claude Code and check `/mcp` again. Plugin-provided MCP server changes are applied on restart.\n\n## Skills Source and Sync\n\nThis plugin pulls in skills from the upstream `planetscale/database-skills` repository via the `database-skills` Git submodule.\n\n- Source repo: `https://github.com/planetscale/database-skills`\n- Submodule path: `database-skills`\n- Tracked branch: `main`\n\n### Local bootstrap\n\nClone with submodules:\n\n```bash\ngit clone --recurse-submodules https://github.com/planetscale/claude-code-plugin.git\n```\n\nIf you already cloned without submodules:\n\n```bash\ngit submodule update --init --recursive\n```\n\n### Manual one-off update\n\nTo pull the latest upstream skills into this repository:\n\n```bash\ngit submodule sync --recursive\ngit submodule update --init --remote database-skills\n```\n\nCommit the resulting submodule pointer change in this repository.\n\n### Local testing\n\nTo test this plugin from your local working copy (before branching/PR):\n\n```bash\nclaude --plugin-dir .\n```\n\n1. Run `/mcp` to verify the `planetscale` MCP server is loaded (will require authentication).\n2. Run `/skills` to verify the `planetscale` skills are loaded.\n\n### Automated weekly updates\n\nGitHub Actions runs `.github/workflows/update-skills.yml` weekly and also supports manual runs (`workflow_dispatch`).\n\nWhen `database-skills` has new commits, the workflow opens or updates a PR that contains only:\n\n- The `database-skills` submodule pointer update\n- `.gitmodules` (if submodule metadata changed)\n\n### Alternative (development only)\n\nYou can also use this direct local plugin load command:\n\n```bash\nclaude --plugin-dir .\n```\n"
       },
       "plugins": [
         {
@@ -30,7 +30,7 @@
           "categories": [],
           "install_commands": [
             "/plugin marketplace add planetscale/claude-plugin",
-            "/plugin install planetscale@planetscale-plugins"
+            "/plugin install planetscale@planetscale"
           ]
         }
       ]
