@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "Soju06",
+    "display_name": "Soju06",
+    "avatar_url": "https://avatars.githubusercontent.com/u/34199905?u=ac9e343e4182b493c6d3e1e67c0d87c709685fc0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "knowpatch-marketplace",
+      "version": null,
+      "description": "LLM knowledge cutoff corrections for Claude Code",
+      "repo_full_name": "Soju06/knowpatch",
+      "repo_url": "https://github.com/Soju06/knowpatch",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-27T02:56:12Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"knowpatch-marketplace\",\n  \"owner\": { \"name\": \"Soju06\" },\n  \"metadata\": {\n    \"description\": \"LLM knowledge cutoff corrections for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"knowpatch\",\n      \"source\": \"./\",\n      \"description\": \"LLM knowledge cutoff compensator — corrects outdated versions and deprecated APIs\",\n      \"version\": \"0.1.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"version\", \"knowledge-cutoff\", \"llm\", \"corrections\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"knowpatch\",\n  \"description\": \"LLM knowledge cutoff compensator — corrects outdated versions and deprecated APIs\",\n  \"version\": \"0.1.0\",\n  \"author\": { \"name\": \"Soju06\" },\n  \"repository\": \"https://github.com/taehoon/knowpatch\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"version\", \"knowledge-cutoff\", \"llm\", \"corrections\"]\n}\n",
+        "README.md": "# Knowpatch\n\nLLM knowledge cutoff compensator for Claude Code. Corrects outdated versions, deprecated APIs, renamed packages, and removed CLI commands.\n\n## Why\n\nLLM training data lags 1-2 years behind reality. When Claude Code generates `package.json`, scaffolds a project, or suggests an install command, it confidently uses **outdated** version numbers and **deprecated** APIs.\n\nKnowpatch fixes this by providing **knowledge corrections** — pre-loaded fixes for breaking changes (`shadcn-ui` → `shadcn`, `z.string().email()` → `z.email()`, `.eslintrc` → `eslint.config.js`, etc.) while enforcing that version numbers are always verified via the package manager directly.\n\n## Install\n\n```bash\n# Install globally\nnpm install -g knowpatch\n\n# Or run directly\nnpx knowpatch\n```\n\n### Register as Claude Code skill\n\n```bash\nknowpatch install            # user-level (default)\nknowpatch install --scope project  # project-level\n```\n\nThis creates a symlink so Claude Code automatically loads the skill.\n\n## CLI Commands\n\n| Command | Description |\n|---------|-------------|\n| `knowpatch install` | Install the skill by creating a symlink |\n| `knowpatch uninstall` | Remove the skill symlink |\n\nRunning `knowpatch` with no arguments opens an interactive menu.\n\n## Corrections\n\nCorrections are organized by category in `skills/knowpatch/corrections/`:\n\n| File | Covers |\n|------|--------|\n| `ai-models.md` | Claude, GPT, Gemini model IDs and naming |\n| `cli-tools.md` | shadcn, tailwind, eslint, vite CLI changes |\n| `frameworks.md` | Next.js, Svelte, Nuxt, Django, FastAPI |\n| `javascript.md` | Zod, React, TypeScript API changes |\n| `platforms.md` | Supabase, Vercel, Cloudflare |\n| `python.md` | Pydantic, Ruff, uv, pip |\n| `runtimes.md` | Node.js, Bun, Deno, Python versions |\n\nEach entry follows a standard format:\n\n```markdown\n### {Topic} — {YYYY-MM}\n- **Wrong (training data)**: What the model would answer\n- **Correct (current)**: Actual current state\n- **Impact**: What goes wrong if outdated info is used\n- **Lookup**: Package manager verification command\n```\n\n## Development\n\n```bash\n# Install dependencies\nbun install\n\n# Run in dev mode\nbun run dev\n\n# Build\nbun run build\n\n# Run tests\nbun test\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "knowpatch",
+          "source": "./",
+          "description": "LLM knowledge cutoff compensator — corrects outdated versions and deprecated APIs",
+          "version": "0.1.0",
+          "license": "MIT",
+          "keywords": [
+            "version",
+            "knowledge-cutoff",
+            "llm",
+            "corrections"
+          ],
+          "categories": [
+            "corrections",
+            "knowledge-cutoff",
+            "llm",
+            "version"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Soju06/knowpatch",
+            "/plugin install knowpatch@knowpatch-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

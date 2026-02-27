@@ -13,7 +13,7 @@
       "repo_url": "https://github.com/kingbootoshi/cartographer",
       "repo_description": "Claude Code plugin that maps and documents codebases of any size using parallel AI subagents",
       "signals": {
-        "stars": 494,
+        "stars": 495,
         "forks": 34,
         "pushed_at": "2026-02-03T22:07:08Z"
       },
@@ -49,6 +49,57 @@
           "install_commands": [
             "/plugin marketplace add kingbootoshi/cartographer",
             "/plugin install cartographer@cartographer-marketplace"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "nano-banana-2-skill-marketplace",
+      "version": null,
+      "description": "AI image generation CLI powered by Gemini 3.1 Flash (default) and Gemini 3 Pro. Multi-resolution, aspect ratios, cost tracking, green screen transparency, reference images, style transfer.",
+      "repo_full_name": "kingbootoshi/nano-banana-2-skill",
+      "repo_url": "https://github.com/kingbootoshi/nano-banana-2-skill",
+      "repo_description": "AI image generation CLI powered by Gemini 3 Pro. Green screen transparency, reference images, style transfer. Also a Claude Code plugin.",
+      "signals": {
+        "stars": 20,
+        "forks": 1,
+        "pushed_at": "2026-02-26T22:01:58Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nano-banana-2-skill-marketplace\",\n  \"owner\": {\n    \"name\": \"Bootoshi\",\n    \"url\": \"https://github.com/kingbootoshi\"\n  },\n  \"metadata\": {\n    \"description\": \"AI image generation CLI powered by Gemini 3.1 Flash (default) and Gemini 3 Pro. Multi-resolution, aspect ratios, cost tracking, green screen transparency, reference images, style transfer.\",\n    \"version\": \"2.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nano-banana\",\n      \"source\": \"./plugins/nano-banana\",\n      \"description\": \"AI image generation with Gemini 3.1 Flash and Pro. Generates 512-4K images with aspect ratio control, cost tracking, reference image support, and broadcast-grade green screen transparency.\",\n      \"version\": \"2.0.0\",\n      \"category\": \"creative tools\",\n      \"keywords\": [\"image-generation\", \"ai\", \"gemini\", \"pixel-art\", \"green-screen\", \"chroma-key\", \"style-transfer\", \"nano-banana\"]\n    }\n  ]\n}\n",
+        "README.md": "# Nano Banana 2 Skill\n\nAI image generation CLI powered by Gemini 3.1 Flash Image Preview (default) with support for Gemini 3 Pro and any Gemini model. Multi-resolution (512-4K), aspect ratios, cost tracking, broadcast-grade green screen transparency, reference images, and style transfer.\n\nAlso ships as a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill for AI-assisted image generation workflows.\n\n## Install\n\n**Requirements:** [Bun](https://bun.sh), [FFmpeg](https://ffmpeg.org) + [ImageMagick](https://imagemagick.org) (for transparent mode)\n\n```bash\n# Clone the repo\ngit clone https://github.com/kingbootoshi/nano-banana-2-skill.git ~/tools/nano-banana-2\ncd ~/tools/nano-banana-2\n\n# Install dependencies\nbun install\n\n# Link globally (no sudo needed - uses Bun's global bin)\nbun link\n\n# Set up your API key\nmkdir -p ~/.nano-banana\necho \"GEMINI_API_KEY=your_key_here\" > ~/.nano-banana/.env\n```\n\nGet a Gemini API key at [Google AI Studio](https://aistudio.google.com/apikey).\n\nNow you can use `nano-banana` from anywhere.\n\n### As a Claude Code Skill\n\nWhen installed as a Claude Code skill, just say `/init` and Claude will clone the repo, install deps, and link the command for you. Then use it by saying \"generate an image of...\" and Claude handles the rest.\n\n### Fallback (if `bun link` doesn't work)\n\n```bash\nmkdir -p ~/.local/bin\nln -sf ~/tools/nano-banana-2/src/cli.ts ~/.local/bin/nano-banana\necho 'export PATH=\"$HOME/.local/bin:$PATH\"' >> ~/.zshrc\nsource ~/.zshrc\n```\n\n## Usage\n\n```bash\n# Basic - generates 1K image to current directory\nnano-banana \"minimal dashboard UI with dark theme\"\n\n# Custom output name\nnano-banana \"luxury product mockup\" -o product\n\n# Higher resolution\nnano-banana \"detailed landscape painting\" -s 2K\n\n# Ultra high res\nnano-banana \"cinematic widescreen scene\" -s 4K -a 16:9\n\n# Lower resolution (fast, cheap)\nnano-banana \"quick sketch concept\" -s 512\n\n# Custom output directory\nnano-banana \"UI screenshot\" -o dashboard -d ~/Pictures\n```\n\n### Models\n\n```bash\n# Default - Nano Banana 2 (Gemini 3.1 Flash, fast and cheap)\nnano-banana \"your prompt\"\n\n# Pro - highest quality, 2x cost\nnano-banana \"your prompt\" --model pro\n\n# Any model ID\nnano-banana \"your prompt\" --model gemini-2.5-flash-image\n```\n\n| Alias | Model | Best For |\n|-------|-------|----------|\n| `flash`, `nb2` | Gemini 3.1 Flash Image Preview | Speed, cost, high-volume |\n| `pro`, `nb-pro` | Gemini 3 Pro Image Preview | Highest quality, complex composition |\n\n### Aspect Ratios\n\n```bash\n# Widescreen\nnano-banana \"cinematic landscape\" -a 16:9\n\n# Portrait\nnano-banana \"mobile app screenshot\" -a 9:16\n\n# Ultra-wide\nnano-banana \"panoramic scene\" -a 21:9\n\n# Standard photo\nnano-banana \"product photo\" -a 4:3\n```\n\nSupported: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`, `4:5`, `5:4`, `21:9`\n\n### Reference Images\n\nEdit, transform, or combine existing images:\n\n```bash\n# Edit an existing image\nnano-banana \"change the background to pure white\" -r dark-ui.png -o light-ui\n\n# Style transfer - multiple references\nnano-banana \"combine these two UI styles into one\" -r style1.png -r style2.png -o combined\n\n# Color correction\nnano-banana \"make this image more vibrant and increase contrast\" -r photo.jpg\n```\n\n### Transparent Assets\n\nGenerate assets with transparent backgrounds using AI-powered background removal:\n\n```bash\n# Basic transparent asset\nnano-banana \"robot mascot character\" -t -o mascot\n\n# Logo with transparency\nnano-banana \"minimalist tech logo\" -t -o logo\n\n# Game asset\nnano-banana \"pixel art treasure chest\" -t -o chest\n```\n\nThe `-t` flag automatically prompts the AI to generate on a green screen, then uses FFmpeg `colorkey` + `despill` to key out the background and remove green spill from edge pixels. ImageMagick trims the result. Requires: `brew install ffmpeg imagemagick`\n\n### Exact Dimensions\n\nControl output dimensions by using a blank image as the last reference:\n\n```bash\n# First -r: your style reference\n# Last -r: blank image in target dimensions\nnano-banana \"pixel art character, 256x256\" -r style.png -r blank-256x256.png -o sprite\n```\n\n## Options\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `-o, --output` | `nano-gen-{timestamp}` | Output filename (no extension) |\n| `-s, --size` | `1K` | Image size: `512`, `1K`, `2K`, or `4K` |\n| `-a, --aspect` | model default | Aspect ratio: `1:1`, `16:9`, `9:16`, etc. |\n| `-m, --model` | `flash` | Model: `flash`/`nb2`, `pro`/`nb-pro`, or any model ID |\n| `-d, --dir` | current directory | Output directory |\n| `-r, --ref` | - | Reference image (can use multiple times) |\n| `-t, --transparent` | - | Generate on green screen, remove background (FFmpeg) |\n| `--api-key` | - | Gemini API key (overrides env/file) |\n| `--costs` | - | Show cost summary from generation history |\n| `-h, --help` | - | Show help |\n\n## Sizes and Costs\n\n| Size | Resolution | Flash Cost | Pro Cost |\n|------|-----------|------------|----------|\n| `512` | ~512x512 | ~$0.045 | N/A (Flash only) |\n| `1K` | ~1024x1024 | ~$0.067 | ~$0.134 |\n| `2K` | ~2048x2048 | ~$0.101 | ~$0.201 |\n| `4K` | ~4096x4096 | ~$0.151 | ~$0.302 |\n\n## Cost Tracking\n\nEvery generation logs its cost to `~/.nano-banana/costs.json`. View your spending:\n\n```bash\nnano-banana --costs\n```\n\nShows total generations, total spend, and per-model breakdown.\n\n## API Key Configuration\n\nThe CLI resolves the Gemini API key in priority order:\n\n1. `--api-key` flag on the command line\n2. `GEMINI_API_KEY` environment variable\n3. `.env` file in the current working directory\n4. `.env` file in the repo root (next to `src/`)\n5. `~/.nano-banana/.env`\n\nGet a free key at [Google AI Studio](https://aistudio.google.com/apikey).\n\n```bash\n# Option 1: Environment variable\nexport GEMINI_API_KEY=your_key_here\n\n# Option 2: .env file in current directory\necho \"GEMINI_API_KEY=your_key_here\" > .env\n\n# Option 3: Global config\nmkdir -p ~/.nano-banana\necho \"GEMINI_API_KEY=your_key_here\" > ~/.nano-banana/.env\n\n# Option 4: Pass directly\nnano-banana \"your prompt\" --api-key your_key_here\n```\n\n## How Transparent Mode Works\n\nThe `-t` flag uses a 3-step pipeline for pixel-perfect transparency:\n\n1. **Green screen prompt** - The CLI automatically appends green screen instructions to your prompt, so the AI generates on a solid green background\n2. **FFmpeg colorkey + despill** - `colorkey` removes the green background. `despill` reconstructs edge pixel colors by mathematically removing green contamination from the RGB channels - this is why edges are clean instead of having green fringe\n3. **Auto-crop** - ImageMagick trims transparent padding and resets canvas\n\nThe key color is auto-detected from corner pixels (the AI generates near-green like `#05F904`, not exact `#00FF00`). Requires FFmpeg and ImageMagick: `brew install ffmpeg imagemagick`\n\n## Use Cases\n\n- **Landing page assets** - product mockups, UI previews\n- **Image editing** - transform existing images with text prompts\n- **Style transfer** - combine multiple reference images\n- **Marketing materials** - hero images, feature illustrations\n- **UI iterations** - quickly generate design variations\n- **Transparent assets** - icons, logos, mascots with no background\n- **Game assets** - sprites, tilesets, characters\n- **Video production** - visual elements for Remotion/video compositions\n\n## Claude Code Skill\n\nWhen installed as a Claude Code plugin, the skill triggers on phrases like:\n- \"generate an image\"\n- \"create a sprite\"\n- \"make an asset\"\n- \"generate artwork\"\n\nClaude will construct the appropriate `nano-banana` command based on your request, handling model selection, resolution, aspect ratio, reference images, transparency, and output configuration automatically.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "nano-banana",
+          "source": "./plugins/nano-banana",
+          "description": "AI image generation with Gemini 3.1 Flash and Pro. Generates 512-4K images with aspect ratio control, cost tracking, reference image support, and broadcast-grade green screen transparency.",
+          "version": "2.0.0",
+          "category": "creative tools",
+          "keywords": [
+            "image-generation",
+            "ai",
+            "gemini",
+            "pixel-art",
+            "green-screen",
+            "chroma-key",
+            "style-transfer",
+            "nano-banana"
+          ],
+          "categories": [
+            "ai",
+            "chroma-key",
+            "creative-tools",
+            "gemini",
+            "green-screen",
+            "image-generation",
+            "nano-banana",
+            "pixel-art",
+            "style-transfer"
+          ],
+          "install_commands": [
+            "/plugin marketplace add kingbootoshi/nano-banana-2-skill",
+            "/plugin install nano-banana@nano-banana-2-skill-marketplace"
           ]
         }
       ]

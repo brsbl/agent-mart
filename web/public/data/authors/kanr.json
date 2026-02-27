@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "kanr",
+    "display_name": "Connor",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5797253?u=2334ab73adf161ec6974b16a3926680536bc1bcf&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kanr-plugins",
+      "version": null,
+      "description": "Kubernetes cluster awareness, diagnostics, and remediation via kubectl. 21 tools for pods, deployments, services, events, logs, and cluster operations.",
+      "repo_full_name": "kanr/claude-plugin-kubernetes",
+      "repo_url": "https://github.com/kanr/claude-plugin-kubernetes",
+      "repo_description": "Kubernetes MCP plugin for Claude Code — 21 kubectl-backed tools for cluster awareness, diagnostics, and remediation",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-27T05:05:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kanr-plugins\",\n  \"owner\": {\n    \"name\": \"Connor Aitken\",\n    \"email\": \"kanr@protonmail.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"kubernetes\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"kanr/claude-plugin-kubernetes\"\n      },\n      \"description\": \"Kubernetes cluster awareness, diagnostics, and remediation via kubectl. 21 tools for pods, deployments, services, events, logs, and cluster operations.\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"kubernetes\",\n  \"description\": \"Kubernetes cluster awareness, diagnostics, and remediation via kubectl. Adds 21 tools for inspecting pods, deployments, services, events, logs, and performing safe cluster operations.\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Connor Aitken\",\n    \"url\": \"https://github.com/kanr\"\n  },\n  \"repository\": \"https://github.com/kanr/claude-plugin-kubernetes\"\n}\n",
+        "README.md": "# Claude Plugin — Kubernetes\n\nAn MCP server that gives Claude deep Kubernetes cluster awareness, diagnostics, and remediation capabilities via `kubectl`.\n\n## Tools (21)\n\n### Awareness\n| Tool | Description |\n|---|---|\n| `k8s_cluster_info` | Current context, server version, API endpoint |\n| `k8s_get_contexts` | List all kubeconfig contexts |\n| `k8s_list_namespaces` | List namespaces with status |\n| `k8s_list_nodes` | Nodes with roles, status, OS, IP |\n| `k8s_list_pods` | Pods with status, restarts, node (filter by ns/label) |\n| `k8s_list_deployments` | Deployments with replica counts |\n| `k8s_list_services` | Services with type, IPs, ports |\n| `k8s_list_events` | Cluster events (filterable by Warning type) |\n\n### Diagnostics\n| Tool | Description |\n|---|---|\n| `k8s_describe` | `kubectl describe` any resource |\n| `k8s_logs` | Pod logs (tail, container, previous container) |\n| `k8s_top_pods` | Pod CPU/memory (requires metrics-server) |\n| `k8s_top_nodes` | Node CPU/memory (requires metrics-server) |\n| `k8s_find_issues` | Full cluster health scan — failing pods, node pressure, bad deployments, warning events |\n| `k8s_get_yaml` | Export any resource as YAML |\n\n### Remediation\n| Tool | Risk | Description |\n|---|---|---|\n| `k8s_restart_deployment` | Low | Rolling restart a deployment |\n| `k8s_scale` | Medium | Scale deployment/statefulset replicas |\n| `k8s_delete_pod` | Low-Med | Delete pod (triggers controller recreation) |\n| `k8s_rollback_deployment` | Medium | Rollback to previous or specific revision |\n| `k8s_apply_manifest` | Medium | Apply YAML/JSON manifest via stdin |\n| `k8s_patch_resource` | Medium | JSON merge patch any resource |\n| `k8s_node_operation` | High | Cordon / uncordon / drain a node |\n\n## Setup\n\n### Claude Desktop\n\nAdd the following to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\\Claude\\claude_desktop_config.json` (Windows):\n\n```json\n{\n  \"mcpServers\": {\n    \"kubernetes\": {\n      \"command\": \"uvx\",\n      \"args\": [\"--from\", \"git+https://github.com/kanr/claude-plugin-kubernetes\", \"k8s-mcp\"]\n    }\n  }\n}\n```\n\nRequires [`uv`](https://docs.astral.sh/uv/getting-started/installation/) to be installed. Once published to PyPI, the `git+https://...` can be replaced with simply `claude-plugin-kubernetes`.\n\n### Claude Code (CLI)\n\nThe `.mcp.json` in this repo is already configured. Clone the repo and open it in Claude Code — the server registers automatically.\n\nTo verify, run `/mcp` inside Claude Code. You should see `kubernetes` listed with 21 tools.\n\n### Local development\n\n```bash\ngit clone https://github.com/kanr/claude-plugin-kubernetes\ncd claude-plugin-kubernetes\npython3 -m venv .venv && .venv/bin/pip install -e .\n```\n\n## Requirements\n\n- `kubectl` installed and on `$PATH`\n- A valid `~/.kube/config` (or `$KUBECONFIG` set)\n- Python 3.11+\n- `metrics-server` installed in the cluster for `k8s_top_pods` / `k8s_top_nodes`\n\n## Security Notes\n\n- The kubectl wrapper uses `asyncio.create_subprocess_exec` — no shell, no injection risk.\n- All resource names are passed as discrete arguments, never interpolated into shell strings.\n- Remediation tools carry risk labels. Claude will warn you before applying destructive changes.\n"
+      },
+      "plugins": [
+        {
+          "name": "kubernetes",
+          "source": {
+            "source": "github",
+            "repo": "kanr/claude-plugin-kubernetes"
+          },
+          "description": "Kubernetes cluster awareness, diagnostics, and remediation via kubectl. 21 tools for pods, deployments, services, events, logs, and cluster operations.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kanr/claude-plugin-kubernetes",
+            "/plugin install kubernetes@kanr-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
