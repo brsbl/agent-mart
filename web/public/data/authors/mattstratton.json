@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "mattstratton",
+    "display_name": "Matty Stratton",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1280666?u=0b503875760ec8554d21686ddd5e1fc734f33b15&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "skills-poc",
+      "version": null,
+      "description": "Matty's TigerData content and marketing skills — weekly roundups, LinkedIn article drafts, and brand voice writing",
+      "repo_full_name": "mattstratton/skills-poc",
+      "repo_url": "https://github.com/mattstratton/skills-poc",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-01T18:14:53Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\r\n  \"name\": \"skills-poc\",\r\n  \"owner\": {\r\n    \"name\": \"Matty Stratton\"\r\n  },\r\n  \"plugins\": [\r\n    {\r\n      \"name\": \"matty-tiger-skills\",\r\n      \"source\": \"./plugins/matty-tiger-skills\",\r\n      \"description\": \"Matty's TigerData content and marketing skills — weekly roundups, LinkedIn article drafts, and brand voice writing\"\r\n    }\r\n  ]\r\n}\r\n",
+        "README.md": "# skills-poc\r\n\r\nMarketplace and plugin repository for Claude skills. Currently houses Matty's personal\r\nTigerData content and marketing skills. Also serves as a pattern reference for the\r\nteam-wide marketing skills plugin (coming later).\r\n\r\n## Repository layout\r\n\r\n```\r\n.claude-plugin/\r\n  marketplace.json          ← marketplace registry (lists all plugins)\r\n\r\nplugins/\r\n  matty-tiger-skills/\r\n    .claude-plugin/\r\n      plugin.json           ← plugin metadata and version\r\n    config.json             ← runtime config (Drive folder ID, Asana project ID, etc.)\r\n    REFERENCES.md           ← how to fetch reference docs from Google Drive\r\n    DRIVE-DOCS-NEEDED.md    ← documents which Drive docs must exist for skills to work\r\n    skills/\r\n      brand-voice-writer/   ← write marketing content in TigerData's brand voice\r\n      weekly-content/       ← generate weekly content roundup Slack posts\r\n      linkedin-articles/    ← find articles and draft LinkedIn posts\r\n```\r\n\r\n## How it works\r\n\r\nSkills are thin orchestration files. They define *what to do* and *which tools to call*,\r\nbut confidential context (brand voice details, sales frameworks, competitive positioning,\r\nvoice profiles) lives in Google Drive reference docs — not in this repo.\r\n\r\nEach skill declares its references in frontmatter. At runtime, the skill reads\r\n`REFERENCES.md` to learn how to fetch those docs from the shared Drive folder. This\r\nkeeps the repo public-safe while giving skills full context when they run.\r\n\r\n### Reference doc paths\r\n\r\nReferences can be simple names (`brand-voice-guide`) for docs at the root of the Drive\r\nfolder, or paths with subfolders (`matty/topic-buckets`) for user-specific docs. See\r\n`REFERENCES.md` for the full fetch protocol.\r\n\r\n### Config values\r\n\r\n`config.json` stores non-secret runtime identifiers (Asana project IDs, Slack user IDs,\r\nthe Drive folder ID). These are access-controlled by their respective services and are\r\nsafe to store in a public repo.\r\n\r\n## Current plugin\r\n\r\n**matty-tiger-skills** (v2.0.0)\r\n\r\nSkills:\r\n- **brand-voice-writer** — writes marketing content using TigerData brand voice docs\r\n- **weekly-content** — generates weekly #general and #sales-team Slack posts from the Asana content calendar\r\n- **linkedin-articles** — finds ICP-relevant articles and drafts LinkedIn posts with voice profiles\r\n\r\n## Setting up\r\n\r\n1. Ensure the Google Drive connector is enabled (Cowork) or `gdrive` CLI is installed (Claude Code)\r\n2. Ensure the reference docs exist in the shared Drive folder (see `DRIVE-DOCS-NEEDED.md`)\r\n3. Ensure the Asana, Tiger Den, and Slack connectors are available for skills that need them\r\n\r\n## Adding skills\r\n\r\n1. Create a new folder under `plugins/matty-tiger-skills/skills/`\r\n2. Add a `SKILL.md` with frontmatter (name, description, references)\r\n3. If the skill needs new reference docs, add them to Drive and document in `DRIVE-DOCS-NEEDED.md`\r\n4. If the skill needs new config values, add them to `config.json`\r\n5. Bump the version in `plugin.json`\r\n"
+      },
+      "plugins": [
+        {
+          "name": "matty-tiger-skills",
+          "source": "./plugins/matty-tiger-skills",
+          "description": "Matty's TigerData content and marketing skills — weekly roundups, LinkedIn article drafts, and brand voice writing",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add mattstratton/skills-poc",
+            "/plugin install matty-tiger-skills@skills-poc"
+          ]
+        }
+      ]
+    }
+  ]
+}

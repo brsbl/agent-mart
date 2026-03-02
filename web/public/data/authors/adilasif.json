@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "adilasif",
+    "display_name": "Adil Asif",
+    "avatar_url": "https://avatars.githubusercontent.com/u/29325796?u=bd54e11751a70403ea97f911ab70970c25046632&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "local-semantic-search",
+      "version": null,
+      "description": "Semantic code search for Claude Code using Qdrant and local embeddings",
+      "repo_full_name": "adilasif/local-semantic-search-claude-code-plugin",
+      "repo_url": "https://github.com/adilasif/local-semantic-search-claude-code-plugin",
+      "repo_description": "GPU-accelerated semantic code search for Claude Code. Self-hosted embedding, reranking, and vector search via Docker — accessible locally or remotely over Tailscale.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-02T05:30:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"local-semantic-search\",\n  \"description\": \"Semantic code search for Claude Code using Qdrant and local embeddings\",\n  \"owner\": {\n    \"name\": \"Local Development\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"local-semantic-search\",\n      \"version\": \"0.2.0\",\n      \"source\": \"./\",\n      \"description\": \"Semantic code search using Qdrant and local embeddings\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"local-semantic-search\",\n  \"version\": \"0.2.0\",\n  \"description\": \"Semantic code search using Qdrant and local embeddings\"\n}\n",
+        "README.md": "# Local Semantic Search\n\nA Claude Code plugin for GPU-accelerated semantic code search. Self-hosted embedding, reranking, and vector search — accessible locally or remotely over Tailscale.\n\n## Architecture\n\nThree containerized services work together:\n\n**Embedding Service** — [Jina Code Embeddings 0.5B](https://huggingface.co/jinaai/jina-code-embeddings-0.5b) running on HuggingFace's Text Embeddings Inference (TEI), with custom builds for SM 12.0 (Blackwell) and CUDA 13.1. Includes performance-optimized Flash Attention and link-time optimization (LTO).\n\n**Reranking Proxy** — [Jina Reranker v3](https://huggingface.co/jinaai/jina-reranker-v3) with a smart proxy layer that intercepts Qdrant search requests. Fetches top 100 vector results, then reranks with the cross-encoder before returning the top N. Uses TorchAO int4 quantization, Flash Attention 2, and listwise reranking architecture for throughput.\n\n**Vector Database** — Qdrant for persistent vector storage with incremental indexing support.\n\n## Optimizations\n\n### GPU & Inference\n- Custom TEI builds with patched Candle, Candle-Extensions, and candle-index-select-cu for SM 12.0 (Blackwell) kernel support and CUDA 13.1\n- Performance-optimized Flash Attention with link-time optimization (LTO) and CPU-side optimizations\n- Flash Attention 2 with custom FBGEMM tuning for the reranker\n- TorchAO Int4 weight-only quantization (group_size=128) on the reranker — cuts VRAM without quality loss\n- float16 dtype for embeddings, bfloat16 for reranking\n- Parallel tokenization (4 workers) on the embedding model for preprocessing throughput\n- Configurable batch sizes and token limits tuned per available VRAM\n\n### Container Tuning\n- CPU pinning via `cpuset` — embedding and reranking isolated to separate core groups to prevent contention\n- `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` for efficient CUDA memory allocation\n- Unlimited memlock (`ulimits.memlock: -1`) and 64MB stack for GPU workloads\n- `pid: host` and `ipc: host` for shared memory access between GPU processes\n- `OMP_NUM_THREADS` and `MKL_NUM_THREADS` pinned to match cpuset allocation\n\n### Reranking Pipeline\n- Query-passage asymmetric prefixing for better retrieval quality\n- LRU query cache (1000 entries, 60s TTL) correlates embedding vectors back to query text for reranking\n- Listwise batched reranking (batch size 64) with score threshold filtering\n- Selective filtering — narrow or empty results when relevance is low, forcing query refinement rather than polluting context with marginal matches\n- Graceful fallback to vector-only results if reranking fails\n\n### Indexing\n- Tree-sitter AST-aware chunking for Python, TypeScript, JavaScript, Go, Rust, Java, C/C++, Ruby, and more\n- Line-based fallback for unsupported languages (YAML, Markdown, SQL, etc.)\n- Deterministic UUID v5 point IDs for idempotent upserts\n- Incremental indexing via file hash comparison — only re-indexes changed files\n- Concurrent file processing (10 files) with batched embedding (60 segments per batch)\n\n### Reliability\n- Health checks that run actual inference requests (not just HTTP pings) every 30 seconds\n- `restart: unless-stopped` for automatic recovery from CUDA context corruption under WSL2\n- Health-gated service dependencies — the reranker waits for the embedding model to pass inference health checks before starting\n\n## Requirements\n\n- Docker with NVIDIA Container Toolkit\n- NVIDIA Blackwell GPU (SM 12.0) with 16GB+ VRAM\n- CUDA 13.1, drivers >= 590\n\n## Quick Start\n\n```bash\ndocker compose -f docker-compose.semantic-search.yaml --profile semantic-search up -d\n```\n\nThe plugin registers as a Claude Code MCP server, providing tools for semantic search, indexing, and collection management.\n\n## Remote Access\n\nInstall [Tailscale](https://tailscale.com) on the GPU host and any remote machines. Then set environment variables on remote machines:\n\n```bash\nexport QDRANT_URL=\"http://<tailscale-hostname>:6333\"\nexport EMBEDDING_URL=\"http://<tailscale-hostname>:1335\"\n```\n\nThe plugin reads these at startup, falling back to `localhost` when unset.\n\n## VRAM Usage\n\n| Component | VRAM |\n|-----------|------|\n| Jina Code Embeddings 0.5B (float16) | ~1 GB |\n| Jina Reranker v3 (int4 quantized) | ~6 GB |\n| **Total** | **~7-8 GB** |\n\nConfigurable via `MAX_CLIENT_BATCH_SIZE` and `MAX_BATCH_TOKENS` environment variables for constrained hardware.\n"
+      },
+      "plugins": [
+        {
+          "name": "local-semantic-search",
+          "version": "0.2.0",
+          "source": "./",
+          "description": "Semantic code search using Qdrant and local embeddings",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add adilasif/local-semantic-search-claude-code-plugin",
+            "/plugin install local-semantic-search@local-semantic-search"
+          ]
+        }
+      ]
+    }
+  ]
+}

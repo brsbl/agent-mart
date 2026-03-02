@@ -8,24 +8,657 @@
     {
       "name": "agent-skills-kit",
       "version": null,
-      "description": "Interactive assistant that scaffolds new Agent Skills.",
+      "description": "AI agent development workflow for building autonomous agents, multi-agent systems, and agent orchestration with CrewAI, LangGraph, and custom agents. Use when designing or implementing AI agents.",
       "repo_full_name": "bcastelino/agent-skills-kit",
       "repo_url": "https://github.com/bcastelino/agent-skills-kit",
       "repo_description": "Toolkit for authoring and packaging Agent Skills. Includes a meta skill, templates, a sample skill, and scripts for validation and packaging",
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-11T18:19:20Z"
+        "pushed_at": "2026-02-28T21:46:32Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n    \"name\": \"agent-skills-kit\",\n    \"owner\": {\n        \"name\": \"Brian Castelino\",\n        \"email\": \"briancastelino07@gmail.com\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"skill-creator\",\n            \"source\": \"./skills/skill-creator\",\n            \"description\": \"Interactive assistant that scaffolds new Agent Skills.\"\n        },\n        {\n            \"name\": \"test-skill\",\n            \"source\": \"./skills/test-skill\",\n            \"description\": \"Example/template skill demonstrating SKILL.md structure and resources.\"\n        }\n    ]\n}",
-        "README.md": "<div align=\"center\">\n\n  <h1>Agent Skills Kit</h1>\n\n  <img src=\"assets/images/agent-skills-banner.png\" alt=\"Agent Skills Kit Banner\" width=\"100%\" />\n\n  <p>\n    <b>Write Once, Run Anywhere.</b><br>\n    The universal standard for building, validating, and packaging AI Agent Skills.\n  </p>\n\n  <p>\n    <a href=\"https://opensource.org/licenses/MIT\">\n      <img src=\"https://img.shields.io/badge/License-MIT-blue.svg\" alt=\"License\">\n    </a>\n    <a href=\"#\">\n      <img src=\"https://img.shields.io/badge/Platform-VS%20Code%20%7C%20Cursor%20%7C%20Claude%20%7C%20Antigravity-blueviolet\" alt=\"Supported Platforms\">\n    </a>\n    <a href=\"#\">\n      <img src=\"https://img.shields.io/badge/PRs-Welcome-brightgreen.svg\" alt=\"PRs Welcome\">\n    </a>\n  </p>\n</div>\n\n---\n> Toolkit for authoring and packaging Agent Skills. Includes a meta skill, templates, a sample skill, and scripts for validation and packaging.\n\n---\n## Anatomy of a Skill\n\nEvery skill consists of a required SKILL.md file and optional bundled resources:\n\n```markdown\nskill-name/\n├── SKILL.md (required)\n│   ├── YAML frontmatter (required)\n│   │   ├── name: (required)\n│   │   └── description: (required)\n│   └── Markdown instructions (required)\n└── Bundled Resources (optional)\n    ├── scripts/          - Executable code (Python/Bash/etc.)\n    ├── references/       - Documentation intended to be loaded into context as needed\n    └── assets/           - Files used in output (templates, icons, fonts, etc.)\n```\n\n---\n## Quickstart\n\n1. Update owner metadata in .claude-plugin/marketplace.json.\n2. Use skill-creator or run the toolkit scripts to create new skills.\n3. Validate and package skills for distribution.\n\n### Toolkit Scripts\n\nToolkit scripts for creating and packaging skills.\n\n- init_skill.py: scaffold a new skill directory\n\n```bash\npython scripts/init_skill.py my-new-skill --path skills\n```\n\n- validate_skill.py: validate SKILL.md frontmatter and structure\n\n```bash\npython scripts/validate_skill.py skills/my-new-skill\n```\n\n- package_skill.py: validate and zip a skill for distribution\n\n```bash\npython scripts/package_skill.py skills/my-new-skill\n```\n\nThe initializer creates example files in scripts/, references/, and assets/ so you can customize or delete them.\n\n---\n## IDE Compatibility & Setup\n\nThis kit works in Claude Code, VS Code, Cursor, and other IDEs. The skill files are plain Markdown with optional scripts.\n\nThis kit is designed to be \"write once, run anywhere.\" Here is how to load these skills into your favorite AI-powered editor.\n\n### VS Code (GitHub Copilot)\n\nDocs: https://code.visualstudio.com/docs/copilot/customization/agent-skills\n\nVS Code looks for skills in `.github/skills` by default, but you can configure it to look in this repo's `skills/` directory.\n\n**Method A: Configuration (Recommended)**\n1. Open your workspace settings (`.vscode/settings.json`).\n2. Add the `chat.agentSkillsLocations` setting pointing to the skills directory:\n    ```json\n    {\n       \"chat.agentSkillsLocations\": [\n          \"./skills\": true\n       ]\n    }\n    ```\n3. Restart VS Code or reload the window. Copilot will now automatically discover all skills in the folder.\n\n**Method B: Standard Folder**\n\nCreate a symbolic link or copy the `skills/` folder to `.github/skills` in your workspace root.\n\n### Cursor\n\nDocs: https://cursor.com/docs/context/skills\n\nCursor automatically discovers skills in `.cursor/skills` or `.claude/skills`.\n\n**Method A: Symbolic Link (Recommended)**\n\nRun this command in your repository root to link the folder so Cursor can see it:\n\n```bash\n# MacOS / Linux\nln -s skills .cursor/skills\n\n# Windows (Command Prompt as Admin)\nmklink /D .cursor\\skills skills\n```\n\n**Method B: Import from GitHub**\n\n1. Open Cursor Settings > General > Rules.\n2. Under \"Agent Skills,\" click Add Request.\n3. Select Remote Rule (GitHub) and paste this repository's URL.\n\nUsage: Cursor will automatically use the skill when relevant. You can also manually trigger it by typing `/` followed by the skill name (e.g., `/skill-creator`) in the Chat (Cmd+L) or Composer (Cmd+I).\n\n### Google Antigravity\n\nDocs: https://antigravity.google/docs/skills\n\nAntigravity looks for workspace-specific skills in the `.agent/skills` directory.\n\nSetup: You must link or copy the skills to the expected directory structure.\n\n```bash\n# MacOS / Linux\nmkdir -p .agent\nln -s ../skills .agent/skills\n\n# Windows\nmkdir .agent\nmklink /D .agent\\skills ..\\skills\n```\n\nUsage: Antigravity automatically detects skills based on their description in SKILL.md. Ensure you are in \"Agent Mode\" (not just standard chat) for the model to execute scripts included in the skills.\n\n### Claude (CLI & Web)\n\nDocs: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview\n\nThis repository is configured as a Claude Plugin.\n\n**Method A: Claude Code (CLI)**\n\nIf you have the claude CLI installed, you can add this entire repository as a plugin source:\n\n```bash\n/plugin marketplace add https://github.com/bcastelino/agent-skills-kit.git\n```\n\nThis registers the skills defined in `.claude-plugin/marketplace.json`.\n\n**Method B: Manual Install**\n\nCopy the specific skill folder you want (e.g., `skills/skill-creator`) to your project's local config folder:\n\n- Project-level: `.claude/skills/`\n- Global: `~/.claude/skills/`\n\n---\n## Creating a Skill\n\n<img src=\"assets/images/ai-skill-factory.png\" alt=\"Agent Skills Kit Banner\" width=\"100%\" />\n\nUse the skill-creator or start from templates:\n\n- skills/skill-creator/templates/basic.md for instruction-only skills\n- skills/skill-creator/templates/advanced.md for skills with scripts\n\nAfter authoring:\n\n```bash\npython scripts/validate_skill.py skills/{skill-name}\npython scripts/package_skill.py skills/{skill-name}\n```\n\n---\n## Compatibility Notes\n\n- Keep descriptions specific; they are the primary trigger for skill activation.\n- Include usage triggers in the description (\"Use this when ...\").\n- Place large references in references/ to keep SKILL.md concise.\n- Prefer scripts for deterministic tasks.\n\n---\n## Validation Rules\n\nThe validator enforces Agent Skills best practices and the open spec:\n\n- Name must be kebab-case, 1-64 characters, and match the folder name\n- Description must be 1-1024 characters and include trigger keywords (use/when)\n- Avoid reserved words in name/description (claude, anthropic)\n- No XML/HTML tags in the description\n- Frontmatter supports flat key/value pairs with inline lists/maps only; nested YAML and multi-line values are not supported\n- Allowed frontmatter keys: name, description, license, compatibility, allowed-tools, metadata\n- SKILL.md should be 500 lines or fewer\n\n---\n## References\n\n- Agent Skills best practices: [platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)\n- Anthropic skills repo: [github.com/anthropics/skills](https://github.com/anthropics/skills)\n- Skill creator reference: [github.com/anthropics/skills/tree/main/skills/skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)\n- Awesome Claude Skills: [github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)\n- Open spec: [agentskills.io/home](https://agentskills.io/home)\n\n---\n## Author\n\n<table>\n   <tr>\n      <td>\n         <div style=\"flex-shrink: 0; order: 2;\">\n            <img src=\"https://raw.githubusercontent.com/bcastelino/brian-portfolio/refs/heads/main/public/personal/profile.jpg\" alt=\"Brian Denis Castelino\" style=\"border-radius: 50%; width: 180px; height: 180px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1);\">\n         </div>\n      </td>\n      <td>\n         <div align=\"left\" style=\"padding: 20px;\">\n            <div style=\"display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; max-width: 800px; gap: 40px; text-align: center;\">\n               <div style=\"flex: 1; min-width: 250px; order: 1;\">\n                  <h1 style=\"font-size: 2em; margin-bottom: 5px; color: #333;\">Brian Denis Castelino</h1>\n                  <p style=\"font-size: 1.2em; color: #555; margin-bottom: 10px;\">Data Analytics Engineer | AI Enthusiast</p>\n                  <p style=\"font-size: 1em; color: #777; margin-bottom: 20px;\">I turn vague ideas into clean, working systems, because someone’s got to 🤖</p>\n                  <div style=\"display: flex; justify-content: center; gap: 30px;\">\n                     <a href=\"https://github.com/bcastelino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494756.png\" alt=\"GitHub\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://linkedin.com/in/cas7elino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494498.png\" alt=\"LinkedIn\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://twitter.com/cas7elino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494481.png\" alt=\"Twitter\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://instagram.com/cas7elino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494489.png\" alt=\"Instagram\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://brianc.framer.website/\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494636.png\" alt=\"Website\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                  </div>\n               </div>\n      </td>\n      </div>\n      </div>\n   </tr>\n</table>\n"
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"agent-skills-kit\",\n    \"owner\": {\n        \"name\": \"Brian Castelino\",\n        \"email\": \"briancastelino07@gmail.com\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"ai-agent-development\",\n            \"source\": \"./skills/ai-agent-development\",\n            \"description\": \"AI agent development workflow for building autonomous agents, multi-agent systems, and agent orchestration with CrewAI, LangGraph, and custom agents. Use when designing or implementing AI agents.\"\n        },\n        {\n            \"name\": \"ai-agents-architect\",\n            \"source\": \"./skills/ai-agents-architect\",\n            \"description\": \"Expert in designing and building autonomous AI agents. Masters tool use, memory systems, planning strategies, and multi-agent orchestration. Use when: build agent, AI agent, autonomous agent, tool ...\"\n        },\n        {\n            \"name\": \"ai-engineer\",\n            \"source\": \"./skills/ai-engineer\",\n            \"description\": \"Production-grade AI engineering for LLM applications, RAG systems, and agent architectures. Use when building AI features, designing model integrations, or implementing AI safety and monitoring.\"\n        },\n        {\n            \"name\": \"ai-ml\",\n            \"source\": \"./skills/ai-ml\",\n            \"description\": \"AI and machine learning workflow covering LLM application development, RAG implementation, agent architecture, ML pipelines, and AI-powered features. Use when building AI or ML systems.\"\n        },\n        {\n            \"name\": \"ai-product\",\n            \"source\": \"./skills/ai-product\",\n            \"description\": \"AI product engineering covering LLM integration patterns, RAG architecture, prompt engineering, and production AI systems. Use when building AI-powered product features or shipping LLM applications.\"\n        },\n        {\n            \"name\": \"aws-skills\",\n            \"source\": \"./skills/aws-skills\",\n            \"description\": \"AWS development with infrastructure automation and cloud architecture patterns. Use when building or deploying services on Amazon Web Services.\"\n        },\n        {\n            \"name\": \"business-analyst\",\n            \"source\": \"./skills/business-analyst\",\n            \"description\": \"Data-driven business analysis with modern analytics, BI tools, and strategic insights. Use when analyzing business data, creating dashboards, running experiments, or generating data-driven recommendations.\"\n        },\n        {\n            \"name\": \"clean-code\",\n            \"source\": \"./skills/clean-code\",\n            \"description\": \"Applies principles from Robert C. Martin's 'Clean Code'. Use this skill when writing, reviewing, or refactoring code to ensure high quality, readability, and maintainability. Covers naming, functio...\"\n        },\n        {\n            \"name\": \"cloud-architect\",\n            \"source\": \"./skills/cloud-architect\",\n            \"description\": \"Multi-cloud infrastructure design with AWS, Azure, and GCP. Use when designing cloud architecture, implementing Infrastructure as Code, optimizing costs with FinOps, or building scalable cloud systems.\"\n        },\n        {\n            \"name\": \"cloud-devops\",\n            \"source\": \"./skills/cloud-devops\",\n            \"description\": \"Cloud infrastructure and DevOps workflow covering AWS, Azure, GCP, Kubernetes, Terraform, CI/CD, monitoring, and cloud-native development. Use when managing cloud infrastructure or CI/CD pipelines.\"\n        },\n        {\n            \"name\": \"code-documentation-code-explain\",\n            \"source\": \"./skills/code-documentation-code-explain\",\n            \"description\": \"Code education expert specializing in explaining complex code through clear narratives, visual diagrams, and step-by-step breakdowns. Use when you need to understand or explain unfamiliar code.\"\n        },\n        {\n            \"name\": \"code-documentation-doc-generate\",\n            \"source\": \"./skills/code-documentation-doc-generate\",\n            \"description\": \"You are a documentation expert specializing in creating comprehensive, maintainable documentation from code. Generate API docs, architecture diagrams, user guides, and technical references using AI...\"\n        },\n        {\n            \"name\": \"code-refactoring-context-restore\",\n            \"source\": \"./skills/code-refactoring-context-restore\",\n            \"description\": \"Use when working with code refactoring context restore\"\n        },\n        {\n            \"name\": \"code-refactoring-refactor-clean\",\n            \"source\": \"./skills/code-refactoring-refactor-clean\",\n            \"description\": \"Code refactoring expert specializing in clean code principles, SOLID design patterns, and modern software engineering best practices. Use when refactoring code for readability and maintainability.\"\n        },\n        {\n            \"name\": \"code-refactoring-tech-debt\",\n            \"source\": \"./skills/code-refactoring-tech-debt\",\n            \"description\": \"Technical debt expert specializing in identifying, quantifying, and prioritizing technical debt in software projects. Use when auditing a codebase for technical debt or planning remediation.\"\n        },\n        {\n            \"name\": \"code-review-excellence\",\n            \"source\": \"./skills/code-review-excellence\",\n            \"description\": \"Master effective code review practices to provide constructive feedback, catch bugs early, and foster knowledge sharing while maintaining team morale. Use when reviewing pull requests, establishing...\"\n        },\n        {\n            \"name\": \"code-reviewer\",\n            \"source\": \"./skills/code-reviewer\",\n            \"description\": \"Elite code review expert specializing in modern AI-powered code review. Use when reviewing pull requests or establishing code review standards.\"\n        },\n        {\n            \"name\": \"commit\",\n            \"source\": \"./skills/commit\",\n            \"description\": \"Create commit messages following Sentry conventions. Use when committing code changes, writing commit messages, or formatting git history. Follows conventional commits with Sentry-specific issue re...\"\n        },\n        {\n            \"name\": \"computer-vision-expert\",\n            \"source\": \"./skills/computer-vision-expert\",\n            \"description\": \"SOTA Computer Vision Expert. Specialized in YOLO, Segment Anything, Vision Language Models, and real-time spatial analysis. Use when building or optimizing computer vision systems.\"\n        },\n        {\n            \"name\": \"context-optimization\",\n            \"source\": \"./skills/context-optimization\",\n            \"description\": \"Apply compaction, masking, and caching strategies to optimize context windows. Use when reducing token usage or improving LLM context efficiency.\"\n        },\n        {\n            \"name\": \"crewai\",\n            \"source\": \"./skills/crewai\",\n            \"description\": \"Expert in CrewAI - the leading role-based multi-agent framework used by 60% of Fortune 500 companies. Covers agent design with roles and goals, task definition, crew orchestration, process types (s...\"\n        },\n        {\n            \"name\": \"data-engineer\",\n            \"source\": \"./skills/data-engineer\",\n            \"description\": \"Scalable data pipelines and modern data architecture. Use when designing batch or streaming pipelines, building data warehouses or lakehouses, or implementing data quality and governance.\"\n        },\n        {\n            \"name\": \"data-engineering-data-driven-feature\",\n            \"source\": \"./skills/data-engineering-data-driven-feature\",\n            \"description\": \"Build features guided by data insights, A/B testing, and continuous measurement. Use when implementing data-driven product features or running experiments.\"\n        },\n        {\n            \"name\": \"data-engineering-data-pipeline\",\n            \"source\": \"./skills/data-engineering-data-pipeline\",\n            \"description\": \"Data pipeline architecture for scalable, reliable, and cost-effective batch and streaming data processing. Use when designing or building data pipelines.\"\n        },\n        {\n            \"name\": \"data-scientist\",\n            \"source\": \"./skills/data-scientist\",\n            \"description\": \"Advanced analytics and machine learning for data-driven insights. Use when performing statistical analysis, building predictive models, designing experiments, or creating data visualizations.\"\n        },\n        {\n            \"name\": \"data-storytelling\",\n            \"source\": \"./skills/data-storytelling\",\n            \"description\": \"Transform data into compelling narratives using visualization, context, and persuasive structure. Use when presenting analytics to stakeholders, creating data reports, or building executive present...\"\n        },\n        {\n            \"name\": \"database-cloud-optimization-cost-optimize\",\n            \"source\": \"./skills/database-cloud-optimization-cost-optimize\",\n            \"description\": \"Cloud cost optimization expert specializing in reducing infrastructure expenses while maintaining performance. Use when analyzing cloud spending or identifying savings opportunities.\"\n        },\n        {\n            \"name\": \"database-design\",\n            \"source\": \"./skills/database-design\",\n            \"description\": \"Database design principles and decision-making covering schema design, indexing strategy, ORM selection, and serverless databases. Use when designing or evaluating database schemas.\"\n        },\n        {\n            \"name\": \"database-migration\",\n            \"source\": \"./skills/database-migration\",\n            \"description\": \"Execute database migrations across ORMs and platforms with zero-downtime strategies, data transformation, and rollback procedures. Use when migrating databases, changing schemas, performing data tr...\"\n        },\n        {\n            \"name\": \"database-optimizer\",\n            \"source\": \"./skills/database-optimizer\",\n            \"description\": \"Database performance tuning and query optimization across platforms. Use when analyzing slow queries, designing indexing strategies, tuning database configurations, or scaling database systems.\"\n        },\n        {\n            \"name\": \"embedding-strategies\",\n            \"source\": \"./skills/embedding-strategies\",\n            \"description\": \"Select and optimize embedding models for semantic search and RAG applications. Use when choosing embedding models, implementing chunking strategies, or optimizing embedding quality for specific dom...\"\n        },\n        {\n            \"name\": \"fastapi-pro\",\n            \"source\": \"./skills/fastapi-pro\",\n            \"description\": \"High-performance async API development with FastAPI. Use when building production FastAPI services, implementing async patterns, designing microservice architectures, or optimizing API performance.\"\n        },\n        {\n            \"name\": \"fastapi-router-py\",\n            \"source\": \"./skills/fastapi-router-py\",\n            \"description\": \"Create FastAPI routers with CRUD operations, authentication dependencies, and proper response models. Use when building REST API endpoints, creating new routes, implementing CRUD operations, or add...\"\n        },\n        {\n            \"name\": \"fastapi-templates\",\n            \"source\": \"./skills/fastapi-templates\",\n            \"description\": \"Create production-ready FastAPI projects with async patterns, dependency injection, and comprehensive error handling. Use when building new FastAPI applications or setting up backend API projects.\"\n        },\n        {\n            \"name\": \"full-stack-orchestration-full-stack-feature\",\n            \"source\": \"./skills/full-stack-orchestration-full-stack-feature\",\n            \"description\": \"Use when working with full stack orchestration full stack feature\"\n        },\n        {\n            \"name\": \"game-development\",\n            \"source\": \"./skills/game-development\",\n            \"description\": \"Game development orchestrator that routes to platform-specific skills based on project needs. Use when building games or game-related systems.\"\n        },\n        {\n            \"name\": \"gcp-cloud-run\",\n            \"source\": \"./skills/gcp-cloud-run\",\n            \"description\": \"Building production-ready serverless applications on GCP with Cloud Run services and Cloud Run Functions. Use when deploying containerized or event-driven applications on Google Cloud.\"\n        },\n        {\n            \"name\": \"git-advanced-workflows\",\n            \"source\": \"./skills/git-advanced-workflows\",\n            \"description\": \"Master advanced Git workflows including rebasing, cherry-picking, bisect, worktrees, and reflog to maintain clean history and recover from any situation. Use when managing complex Git histories, co...\"\n        },\n        {\n            \"name\": \"github-actions-templates\",\n            \"source\": \"./skills/github-actions-templates\",\n            \"description\": \"Create production-ready GitHub Actions workflows for automated testing, building, and deploying applications. Use when setting up CI/CD with GitHub Actions, automating development workflows, or cre...\"\n        },\n        {\n            \"name\": \"github-automation\",\n            \"source\": \"./skills/github-automation\",\n            \"description\": \"Automate GitHub repositories, issues, pull requests, branches, CI/CD, and permissions via MCP. Use when managing code workflows or automating GitHub operations programmatically.\"\n        },\n        {\n            \"name\": \"github-workflow-automation\",\n            \"source\": \"./skills/github-workflow-automation\",\n            \"description\": \"Automate GitHub workflows with AI assistance. Includes PR reviews, issue triage, CI/CD integration, and Git operations. Use when automating GitHub workflows, setting up PR review automation, creating CI/CD pipelines, or integrating AI into DevOps.\"\n        },\n        {\n            \"name\": \"hugging-face-cli\",\n            \"source\": \"./skills/hugging-face-cli\",\n            \"description\": \"Execute Hugging Face Hub operations using the `hf` CLI. Use when the user needs to download models/datasets/spaces, upload files to Hub repositories, create repos, manage local cache, or run comput...\"\n        },\n        {\n            \"name\": \"hugging-face-jobs\",\n            \"source\": \"./skills/hugging-face-jobs\",\n            \"description\": \"This skill should be used when users want to run any workload on Hugging Face Jobs infrastructure. Covers UV scripts, Docker-based jobs, hardware selection, cost estimation, authentication with tokens, scheduled jobs, and result persistence.\"\n        },\n        {\n            \"name\": \"langgraph\",\n            \"source\": \"./skills/langgraph\",\n            \"description\": \"Expert in LangGraph, the production-grade framework for building stateful, multi-actor AI applications. Use when building agent graphs, managing state, or implementing persistence with checkpoints.\"\n        },\n        {\n            \"name\": \"mcp-builder\",\n            \"source\": \"./skills/mcp-builder\",\n            \"description\": \"Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate exte...\"\n        },\n        {\n            \"name\": \"ml-engineer\",\n            \"source\": \"./skills/ml-engineer\",\n            \"description\": \"Production machine learning systems and model serving infrastructure. Use when building ML pipelines, deploying models to production, implementing feature stores, or optimizing inference performance.\"\n        },\n        {\n            \"name\": \"ml-pipeline-workflow\",\n            \"source\": \"./skills/ml-pipeline-workflow\",\n            \"description\": \"Build end-to-end MLOps pipelines from data preparation through model training, validation, and production deployment. Use when creating ML pipelines, implementing MLOps practices, or automating mod...\"\n        },\n        {\n            \"name\": \"mlops-engineer\",\n            \"source\": \"./skills/mlops-engineer\",\n            \"description\": \"ML infrastructure automation and production ML lifecycle management. Use when building ML pipelines, setting up experiment tracking, implementing CI/CD for models, or managing model deployments.\"\n        },\n        {\n            \"name\": \"nosql-expert\",\n            \"source\": \"./skills/nosql-expert\",\n            \"description\": \"Expert guidance for distributed NoSQL databases (Cassandra, DynamoDB). Focuses on mental models, query-first modeling, single-table design, and avoiding hot partitions in high-scale systems.\"\n        },\n        {\n            \"name\": \"notebooklm\",\n            \"source\": \"./skills/notebooklm\",\n            \"description\": \"Use this skill to query your Google NotebookLM notebooks for source-grounded, citation-backed answers from Gemini. Browser automation, library management, persistent auth.\"\n        },\n        {\n            \"name\": \"pdf-official\",\n            \"source\": \"./skills/pdf-official\",\n            \"description\": \"Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. Use when working with PDF files programmatically.\"\n        },\n        {\n            \"name\": \"postgres-best-practices\",\n            \"source\": \"./skills/postgres-best-practices\",\n            \"description\": \"Postgres performance optimization and best practices from Supabase. Use this skill when writing, reviewing, or optimizing Postgres queries, schema designs, or database configurations.\"\n        },\n        {\n            \"name\": \"postgresql\",\n            \"source\": \"./skills/postgresql\",\n            \"description\": \"Design PostgreSQL-specific schemas covering best practices, data types, indexing, constraints, performance patterns, and advanced features. Use when designing or optimizing PostgreSQL databases.\"\n        },\n        {\n            \"name\": \"pptx-official\",\n            \"source\": \"./skills/pptx-official\",\n            \"description\": \"Presentation creation, editing, and analysis. Use when working with presentations (.pptx files) for creating, modifying, or analyzing PowerPoint content and layouts.\"\n        },\n        {\n            \"name\": \"prometheus-configuration\",\n            \"source\": \"./skills/prometheus-configuration\",\n            \"description\": \"Set up Prometheus for comprehensive metric collection, storage, and monitoring of infrastructure and applications. Use when implementing metrics collection, setting up monitoring infrastructure, or...\"\n        },\n        {\n            \"name\": \"python-development-python-scaffold\",\n            \"source\": \"./skills/python-development-python-scaffold\",\n            \"description\": \"Python project architecture expert for scaffolding production-ready applications with modern tooling (uv, FastAPI, Django) and type hints. Use when creating new Python project structures.\"\n        },\n        {\n            \"name\": \"python-fastapi-development\",\n            \"source\": \"./skills/python-fastapi-development\",\n            \"description\": \"Python FastAPI backend development with async patterns, SQLAlchemy, Pydantic, authentication, and production API patterns. Use when building FastAPI backend services.\"\n        },\n        {\n            \"name\": \"python-pro\",\n            \"source\": \"./skills/python-pro\",\n            \"description\": \"Modern Python 3.12+ development with cutting-edge tools and practices. Use when writing production Python code, implementing async patterns, optimizing performance, or setting up modern Python tooling.\"\n        },\n        {\n            \"name\": \"python-testing-patterns\",\n            \"source\": \"./skills/python-testing-patterns\",\n            \"description\": \"Implement comprehensive testing strategies with pytest, fixtures, mocking, and test-driven development. Use when writing Python tests, setting up test suites, or implementing testing best practices.\"\n        },\n        {\n            \"name\": \"rag-engineer\",\n            \"source\": \"./skills/rag-engineer\",\n            \"description\": \"Expert in building Retrieval-Augmented Generation systems. Masters embedding models, vector databases, chunking strategies, and retrieval optimization for LLM applications. Use when: building RAG, ...\"\n        },\n        {\n            \"name\": \"rag-implementation\",\n            \"source\": \"./skills/rag-implementation\",\n            \"description\": \"RAG (Retrieval-Augmented Generation) implementation workflow covering embedding selection, vector database setup, chunking strategies, and retrieval optimization. Use when building RAG systems.\"\n        },\n        {\n            \"name\": \"requesting-code-review\",\n            \"source\": \"./skills/requesting-code-review\",\n            \"description\": \"Use when completing tasks, implementing major features, or before merging to verify work meets requirements\"\n        },\n        {\n            \"name\": \"scientific-skills\",\n            \"source\": \"./skills/scientific-skills\",\n            \"description\": \"Scientific research and analysis skills. Use when performing scientific analysis, literature review, or research methodology design.\"\n        },\n        {\n            \"name\": \"skill-creator\",\n            \"source\": \"./skills/skill-creator\",\n            \"description\": \"Interactive assistant that scaffolds new Agent Skills. Use this when the user wants to create, write, or generate a new skill.\"\n        },\n        {\n            \"name\": \"software-architecture\",\n            \"source\": \"./skills/software-architecture\",\n            \"description\": \"Guide for quality focused software architecture. This skill should be used when users want to write code, design architecture, analyze code, in any case that relates to software development.\"\n        },\n        {\n            \"name\": \"spark-optimization\",\n            \"source\": \"./skills/spark-optimization\",\n            \"description\": \"Optimize Apache Spark jobs with partitioning, caching, shuffle optimization, and memory tuning. Use when improving Spark performance, debugging slow jobs, or scaling data processing pipelines.\"\n        },\n        {\n            \"name\": \"sql-optimization-patterns\",\n            \"source\": \"./skills/sql-optimization-patterns\",\n            \"description\": \"Master SQL query optimization, indexing strategies, and EXPLAIN analysis to dramatically improve database performance and eliminate slow queries. Use when debugging slow queries, designing database...\"\n        },\n        {\n            \"name\": \"sql-pro\",\n            \"source\": \"./skills/sql-pro\",\n            \"description\": \"Advanced SQL across modern database systems and cloud platforms. Use when writing complex queries, optimizing SQL performance, designing analytical patterns, or working with cloud-native databases.\"\n        },\n        {\n            \"name\": \"temporal-python-pro\",\n            \"source\": \"./skills/temporal-python-pro\",\n            \"description\": \"Temporal workflow orchestration with the Python SDK. Use when building durable workflows, implementing distributed transactions, designing activity patterns, or deploying Temporal workers.\"\n        },\n        {\n            \"name\": \"unit-testing-test-generate\",\n            \"source\": \"./skills/unit-testing-test-generate\",\n            \"description\": \"Generate comprehensive, maintainable unit tests across languages with strong coverage and edge case focus. Use when writing test suites or improving test coverage.\"\n        },\n        {\n            \"name\": \"uv-package-manager\",\n            \"source\": \"./skills/uv-package-manager\",\n            \"description\": \"Master the uv package manager for fast Python dependency management, virtual environments, and modern Python project workflows. Use when setting up Python projects, managing dependencies, or optimi...\"\n        },\n        {\n            \"name\": \"vibe-code-auditor\",\n            \"source\": \"./skills/vibe-code-auditor\",\n            \"description\": \"Audit rapidly generated or AI-produced code for structural flaws, fragility, and production risks. Use when evaluating prototype or AI-generated code for production readiness.\"\n        },\n        {\n            \"name\": \"vulnerability-scanner\",\n            \"source\": \"./skills/vulnerability-scanner\",\n            \"description\": \"Advanced vulnerability analysis covering OWASP 2025, Supply Chain Security, attack surface mapping, risk prioritization. Use when auditing code or infrastructure for security vulnerabilities.\"\n        },\n        {\n            \"name\": \"youtube-summarizer\",\n            \"source\": \"./skills/youtube-summarizer\",\n            \"description\": \"Extract transcripts from YouTube videos and generate comprehensive, detailed summaries. Use when summarizing video content or extracting key insights from YouTube.\"\n        },\n        {\n            \"name\": \"tailored-resume-generator\",\n            \"source\": \"./skills/tailored-resume-generator\",\n            \"description\": \"Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements to maximize interview chances. Use when applying for jobs, customizing resumes for different roles, or optimizing for ATS systems.\"\n        },\n        {\n            \"name\": \"video-downloader\",\n            \"source\": \"./skills/video-downloader\",\n            \"description\": \"Download YouTube videos with customizable quality and format options. Use when the user asks to download, save, or grab YouTube videos. Supports various quality settings (best, 1080p, 720p, 480p, 360p), multiple formats (mp4, webm, mkv), and audio-only downloads as MP3.\"\n        }\n    ]\n}",
+        "README.md": "<div align=\"center\">\n\n  <h1>Agent Skills Kit</h1>\n\n  <img src=\"assets/images/agent-skills-banner.png\" alt=\"Agent Skills Kit Banner\" width=\"100%\" />\n\n  <p>\n    <b>Write Once, Run Anywhere.</b><br>\n    The universal standard for building, validating, and packaging AI Agent Skills.\n  </p>\n\n  <p>\n    <a href=\"https://opensource.org/licenses/MIT\">\n      <img src=\"https://img.shields.io/badge/License-MIT-blue.svg\" alt=\"License\">\n    </a>\n    <a href=\"#\">\n      <img src=\"https://img.shields.io/badge/Platform-VS%20Code%20%7C%20Cursor%20%7C%20Claude%20%7C%20Antigravity-blueviolet\" alt=\"Supported Platforms\">\n    </a>\n    <a href=\"#\">\n      <img src=\"https://img.shields.io/badge/PRs-Welcome-brightgreen.svg\" alt=\"PRs Welcome\">\n    </a>\n  </p>\n</div>\n\n---\n> Toolkit for authoring and packaging Agent Skills. Includes a meta skill, templates, a sample skill, and scripts for validation and packaging.\n\n---\n## Anatomy of a Skill\n\nEvery skill consists of a required SKILL.md file and optional bundled resources:\n\n```markdown\nskill-name/\n├── SKILL.md (required)\n│   ├── YAML frontmatter (required)\n│   │   ├── name: (required)\n│   │   └── description: (required)\n│   └── Markdown instructions (required)\n└── Bundled Resources (optional)\n    ├── scripts/          - Executable code (Python/Bash/etc.)\n    ├── references/       - Documentation intended to be loaded into context as needed\n    └── assets/           - Files used in output (templates, icons, fonts, etc.)\n```\n\n---\n## Quickstart\n\n1. Update owner metadata in .claude-plugin/marketplace.json.\n2. Use skill-creator or run the toolkit scripts to create new skills.\n3. Validate and package skills for distribution.\n\n### Toolkit Scripts\n\n| Script | Purpose | Command |\n|---|---|---|\n| `scripts/init_skill.py` | Scaffold a new skill directory with starter resources | `python scripts/init_skill.py my-new-skill --path skills` |\n| `scripts/validate_skill.py` | Validate `SKILL.md` frontmatter and structure | `python scripts/validate_skill.py skills/my-new-skill` |\n| `scripts/package_skill.py` | Validate and package a skill as a zip archive | `python scripts/package_skill.py skills/my-new-skill` |\n\nThe initializer creates example files in `scripts/`, `references/`, and `assets/` so you can customize or delete them.\n\n---\n## Skills Catalog\n\n| Category | Skills |\n|---|---|\n| Core Engineering & Quality | [skill-creator](skills/skill-creator) \\| [software-architecture](skills/software-architecture) \\| [clean-code](skills/clean-code) \\| [code-reviewer](skills/code-reviewer) \\| [code-review-excellence](skills/code-review-excellence) \\| [requesting-code-review](skills/requesting-code-review) \\| [commit](skills/commit) \\| [context-optimization](skills/context-optimization) \\| [vibe-code-auditor](skills/vibe-code-auditor) \\| [code-refactoring-context-restore](skills/code-refactoring-context-restore) \\| [code-refactoring-refactor-clean](skills/code-refactoring-refactor-clean) \\| [code-refactoring-tech-debt](skills/code-refactoring-tech-debt) |\n| AI, Agents & RAG | [ai-agent-development](skills/ai-agent-development) \\| [ai-agents-architect](skills/ai-agents-architect) \\| [ai-engineer](skills/ai-engineer) \\| [ai-ml](skills/ai-ml) \\| [ai-product](skills/ai-product) \\| [crewai](skills/crewai) \\| [langgraph](skills/langgraph) \\| [mcp-builder](skills/mcp-builder) \\| [embedding-strategies](skills/embedding-strategies) \\| [rag-engineer](skills/rag-engineer) \\| [rag-implementation](skills/rag-implementation) \\| [notebooklm](skills/notebooklm) |\n| Data Engineering & Analytics | [business-analyst](skills/business-analyst) \\| [data-engineer](skills/data-engineer) \\| [data-scientist](skills/data-scientist) \\| [data-storytelling](skills/data-storytelling) \\| [data-engineering-data-driven-feature](skills/data-engineering-data-driven-feature) \\| [data-engineering-data-pipeline](skills/data-engineering-data-pipeline) \\| [spark-optimization](skills/spark-optimization) \\| [ml-pipeline-workflow](skills/ml-pipeline-workflow) |\n| ML, MLOps & Training | [ml-engineer](skills/ml-engineer) \\| [mlops-engineer](skills/mlops-engineer) \\| [temporal-python-pro](skills/temporal-python-pro) \\| [python-pro](skills/python-pro) \\| [python-testing-patterns](skills/python-testing-patterns) \\| [unit-testing-test-generate](skills/unit-testing-test-generate) |\n| Python & API Development | [python-development-python-scaffold](skills/python-development-python-scaffold) \\| [python-fastapi-development](skills/python-fastapi-development) \\| [fastapi-pro](skills/fastapi-pro) \\| [fastapi-router-py](skills/fastapi-router-py) \\| [fastapi-templates](skills/fastapi-templates) \\| [uv-package-manager](skills/uv-package-manager) |\n| Databases & SQL | [database-design](skills/database-design) \\| [database-migration](skills/database-migration) \\| [database-optimizer](skills/database-optimizer) \\| [database-cloud-optimization-cost-optimize](skills/database-cloud-optimization-cost-optimize) \\| [nosql-expert](skills/nosql-expert) \\| [postgresql](skills/postgresql) \\| [postgres-best-practices](skills/postgres-best-practices) \\| [sql-pro](skills/sql-pro) \\| [sql-optimization-patterns](skills/sql-optimization-patterns) |\n| Cloud, DevOps & GitHub | [aws-skills](skills/aws-skills) \\| [cloud-architect](skills/cloud-architect) \\| [cloud-devops](skills/cloud-devops) \\| [gcp-cloud-run](skills/gcp-cloud-run) \\| [prometheus-configuration](skills/prometheus-configuration) \\| [git-advanced-workflows](skills/git-advanced-workflows) \\| [github-actions-templates](skills/github-actions-templates) \\| [github-automation](skills/github-automation) \\| [github-workflow-automation](skills/github-workflow-automation) |\n| Product, Automation & Domain Tools | [full-stack-orchestration-full-stack-feature](skills/full-stack-orchestration-full-stack-feature) \\| [game-development](skills/game-development) \\| [computer-vision-expert](skills/computer-vision-expert) \\| [scientific-skills](skills/scientific-skills) \\| [vulnerability-scanner](skills/vulnerability-scanner) \\| [code-documentation-code-explain](skills/code-documentation-code-explain) \\| [code-documentation-doc-generate](skills/code-documentation-doc-generate) \\| [pdf-official](skills/pdf-official) \\| [pptx-official](skills/pptx-official) \\| [youtube-summarizer](skills/youtube-summarizer) \\| [hugging-face-cli](skills/hugging-face-cli) \\| [hugging-face-jobs](skills/hugging-face-jobs) \\| [tailored-resume-generator](skills/tailored-resume-generator) \\| [video-downloader](skills/video-downloader) |\n\n---\n## IDE Compatibility & Setup\n\nThis kit works in VS Code, Cursor, Antigravity, Claude CLI/Web, and other IDEs because skills are plain Markdown folders.\n\n### Compatibility Summary\n\n| IDE / Platform | Default Skill Location | Quick Setup | Docs |\n|---|---|---|---|\n| VS Code (GitHub Copilot) | `.github/skills` | Set `chat.agentSkillsLocations` to include `./skills`, or symlink `skills` → `.github/skills` | https://code.visualstudio.com/docs/copilot/customization/agent-skills |\n| Cursor | `.cursor/skills` or `.claude/skills` | Symlink `skills` → `.cursor/skills`, or import as remote GitHub rule | https://cursor.com/docs/context/skills |\n| Google Antigravity | `.agent/skills` | Create `.agent/skills` and link/copy the repository `skills/` folder | https://antigravity.google/docs/skills |\n| Claude (CLI & Web) | `.claude/skills` (project or global) | Add plugin source with `/plugin marketplace add ...` or manually copy skill folders | https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview |\n\n### Quick Setup Commands\n\n| Platform | macOS / Linux | Windows |\n|---|---|---|\n| Cursor | `ln -s skills .cursor/skills` | `mklink /D .cursor\\skills skills` |\n| Antigravity | `mkdir -p .agent && ln -s ../skills .agent/skills` | `mkdir .agent` + `mklink /D .agent\\skills ..\\skills` |\n\nFor Claude CLI plugin registration:\n\n```bash\n/plugin marketplace add https://github.com/bcastelino/agent-skills-kit.git\n```\n\n---\n## Creating a Skill\n\n<img src=\"assets/images/ai-skill-factory.png\" alt=\"Agent Skills Kit Banner\" width=\"100%\" />\n\nUse the skill-creator or start from templates:\n\n- `skills/skill-creator/templates/basic.md` for instruction-only skills\n- `skills/skill-creator/templates/advanced.md` for skills with scripts\n\nAfter authoring:\n\n```bash\npython scripts/validate_skill.py skills/{skill-name}\npython scripts/package_skill.py skills/{skill-name}\n```\n\n---\n## Compatibility Notes\n\n- Keep descriptions specific; they are the primary trigger for skill activation.\n- Include usage triggers in the description (\"Use this when ...\").\n- Place large references in references/ to keep SKILL.md concise.\n- Prefer scripts for deterministic tasks.\n\n---\n## Validation Rules\n\nThe validator enforces Agent Skills best practices and the open spec:\n\n- Name must be kebab-case, 1-64 characters, and match the folder name\n- Description must be 1-1024 characters and include trigger keywords (use/when)\n- Avoid reserved words in name/description (claude, anthropic)\n- No XML/HTML tags in the description\n- Frontmatter supports flat key/value pairs with inline lists/maps only; nested YAML and multi-line values are not supported\n- Allowed frontmatter keys: name, description, license, compatibility, allowed-tools, metadata\n- SKILL.md should be 500 lines or fewer\n\n---\n## References\n\n- Agent Skills best practices: [platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)\n- Anthropic skills repo: [github.com/anthropics/skills](https://github.com/anthropics/skills)\n- Skill creator reference: [github.com/anthropics/skills/tree/main/skills/skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)\n- Awesome Claude Skills: [github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)\n- Open spec: [agentskills.io/home](https://agentskills.io/home)\n\n---\n## Author\n\n<table>\n   <tr>\n      <td>\n         <div style=\"flex-shrink: 0; order: 2;\">\n            <img src=\"https://raw.githubusercontent.com/bcastelino/brian-portfolio/refs/heads/main/public/personal/profile.jpg\" alt=\"Brian Denis Castelino\" style=\"border-radius: 50%; width: 180px; height: 180px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1);\">\n         </div>\n      </td>\n      <td>\n         <div align=\"left\" style=\"padding: 20px;\">\n            <div style=\"display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; max-width: 800px; gap: 40px; text-align: center;\">\n               <div style=\"flex: 1; min-width: 250px; order: 1;\">\n                  <h1 style=\"font-size: 2em; margin-bottom: 5px; color: #333;\">Brian Denis Castelino</h1>\n                  <p style=\"font-size: 1.2em; color: #555; margin-bottom: 10px;\">Data Analytics Engineer | AI Enthusiast</p>\n                  <p style=\"font-size: 1em; color: #777; margin-bottom: 20px;\">I turn vague ideas into clean, working systems, because someone’s got to 🤖</p>\n                  <div style=\"display: flex; justify-content: center; gap: 30px;\">\n                     <a href=\"https://github.com/bcastelino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494756.png\" alt=\"GitHub\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://linkedin.com/in/cas7elino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494498.png\" alt=\"LinkedIn\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://twitter.com/cas7elino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494481.png\" alt=\"Twitter\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://instagram.com/cas7elino\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494489.png\" alt=\"Instagram\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                   &nbsp; &nbsp; &nbsp;\n                     <a href=\"https://brianc.framer.website/\" target=\"_blank\" style=\"text-decoration: none;\">\n                     <img src=\"https://cdn-icons-png.flaticon.com/512/4494/4494636.png\" alt=\"Website\" width=\"30\" height=\"30\" style=\"width: 30px; height: 30px;\">\n                     </a>\n                  </div>\n               </div>\n      </td>\n      </div>\n      </div>\n   </tr>\n</table>\n",
+        "skills/notebooklm/README.md": "<div align=\"center\">\n\n# NotebookLM Claude Code Skill\n\n**Let [Claude Code](https://github.com/anthropics/claude-code) chat directly with NotebookLM for source-grounded answers based exclusively on your uploaded documents**\n\n[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)\n[![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-purple.svg)](https://www.anthropic.com/news/skills)\n[![Based on](https://img.shields.io/badge/Based%20on-NotebookLM%20MCP-green.svg)](https://github.com/PleasePrompto/notebooklm-mcp)\n[![GitHub](https://img.shields.io/github/stars/PleasePrompto/notebooklm-skill?style=social)](https://github.com/PleasePrompto/notebooklm-skill)\n\n> Use this skill to query your Google NotebookLM notebooks directly from Claude Code for source-grounded, citation-backed answers from Gemini. Browser automation, library management, persistent auth. Drastically reduced hallucinations - answers only from your uploaded documents.\n\n[Installation](#installation) • [Quick Start](#quick-start) • [Why NotebookLM](#why-notebooklm-not-local-rag) • [How It Works](#how-it-works) • [MCP Alternative](https://github.com/PleasePrompto/notebooklm-mcp)\n\n</div>\n\n---\n\n## ⚠️ Important: Local Claude Code Only\n\n**This skill works ONLY with local [Claude Code](https://github.com/anthropics/claude-code) installations, NOT in the web UI.**\n\nThe web UI runs skills in a sandbox without network access, which this skill requires for browser automation. You must use [Claude Code](https://github.com/anthropics/claude-code) locally on your machine.\n\n---\n\n## The Problem\n\nWhen you tell [Claude Code](https://github.com/anthropics/claude-code) to \"search through my local documentation\", here's what happens:\n- **Massive token consumption**: Searching through documentation means reading multiple files repeatedly\n- **Inaccurate retrieval**: Searches for keywords, misses context and connections between docs\n- **Hallucinations**: When it can't find something, it invents plausible-sounding APIs\n- **Manual copy-paste**: Switching between NotebookLM browser and your editor constantly\n\n## The Solution\n\nThis Claude Code Skill lets [Claude Code](https://github.com/anthropics/claude-code) chat directly with [**NotebookLM**](https://notebooklm.google/) — Google's **source-grounded knowledge base** powered by Gemini 2.5 that provides intelligent, synthesized answers exclusively from your uploaded documents.\n\n```\nYour Task → Claude asks NotebookLM → Gemini synthesizes answer → Claude writes correct code\n```\n\n**No more copy-paste dance**: Claude asks questions directly and gets answers straight back in the CLI. It builds deep understanding through automatic follow-ups, getting specific implementation details, edge cases, and best practices.\n\n---\n\n## Why NotebookLM, Not Local RAG?\n\n| Approach | Token Cost | Setup Time | Hallucinations | Answer Quality |\n|----------|------------|------------|----------------|----------------|\n| **Feed docs to Claude** | 🔴 Very high (multiple file reads) | Instant | Yes - fills gaps | Variable retrieval |\n| **Web search** | 🟡 Medium | Instant | High - unreliable sources | Hit or miss |\n| **Local RAG** | 🟡 Medium-High | Hours (embeddings, chunking) | Medium - retrieval gaps | Depends on setup |\n| **NotebookLM Skill** | 🟢 Minimal | 5 minutes | **Minimal** - source-grounded only | Expert synthesis |\n\n### What Makes NotebookLM Superior?\n\n1. **Pre-processed by Gemini**: Upload docs once, get instant expert knowledge\n2. **Natural language Q&A**: Not just retrieval — actual understanding and synthesis\n3. **Multi-source correlation**: Connects information across 50+ documents\n4. **Citation-backed**: Every answer includes source references\n5. **No infrastructure**: No vector DBs, embeddings, or chunking strategies needed\n\n---\n\n## Installation\n\n### The simplest installation ever:\n\n```bash\n# 1. Create skills directory (if it doesn't exist)\nmkdir -p ~/.claude/skills\n\n# 2. Clone this repository\ncd ~/.claude/skills\ngit clone https://github.com/PleasePrompto/notebooklm-skill notebooklm\n\n# 3. That's it! Open Claude Code and say:\n\"What are my skills?\"\n```\n\nWhen you first use the skill, it automatically:\n- Creates an isolated Python environment (`.venv`)\n- Installs all dependencies including **Google Chrome**\n- Sets up browser automation with Chrome (not Chromium) for maximum reliability\n- Everything stays contained in the skill folder\n\n**Note:** The setup uses real Chrome instead of Chromium for cross-platform reliability, consistent browser fingerprinting, and better anti-detection with Google services\n\n---\n\n## Quick Start\n\n### 1. Check your skills\n\nSay in Claude Code:\n```\n\"What skills do I have?\"\n```\n\nClaude will list your available skills including NotebookLM.\n\n### 2. Authenticate with Google (one-time)\n\n```\n\"Set up NotebookLM authentication\"\n```\n*A Chrome window opens → log in with your Google account*\n\n### 3. Create your knowledge base\n\nGo to [notebooklm.google.com](https://notebooklm.google.com) → Create notebook → Upload your docs:\n- 📄 PDFs, Google Docs, markdown files\n- 🔗 Websites, GitHub repos\n- 🎥 YouTube videos\n- 📚 Multiple sources per notebook\n\nShare: **⚙️ Share → Anyone with link → Copy**\n\n### 4. Add to your library\n\n**Option A: Let Claude figure it out (Smart Add)**\n```\n\"Query this notebook about its content and add it to my library: [your-link]\"\n```\nClaude will automatically query the notebook to discover its content, then add it with appropriate metadata.\n\n**Option B: Manual add**\n```\n\"Add this NotebookLM to my library: [your-link]\"\n```\nClaude will ask for a name and topics, then save it for future use.\n\n### 5. Start researching\n\n```\n\"What does my React docs say about hooks?\"\n```\n\nClaude automatically selects the right notebook and gets the answer directly from NotebookLM.\n\n---\n\n## How It Works\n\nThis is a **Claude Code Skill** - a local folder containing instructions and scripts that Claude Code can use when needed. Unlike the [MCP server version](https://github.com/PleasePrompto/notebooklm-mcp), this runs directly in Claude Code without needing a separate server.\n\n### Key Differences from MCP Server\n\n| Feature | This Skill | MCP Server |\n|---------|------------|------------|\n| **Protocol** | Claude Skills | Model Context Protocol |\n| **Installation** | Clone to `~/.claude/skills` | `claude mcp add ...` |\n| **Sessions** | Fresh browser each question | Persistent chat sessions |\n| **Compatibility** | Claude Code only (local) | Claude Code, Codex, Cursor, etc. |\n| **Language** | Python | TypeScript |\n| **Distribution** | Git clone | npm package |\n\n### Architecture\n\n```\n~/.claude/skills/notebooklm/\n├── SKILL.md              # Instructions for Claude\n├── scripts/              # Python automation scripts\n│   ├── ask_question.py   # Query NotebookLM\n│   ├── notebook_manager.py # Library management\n│   └── auth_manager.py   # Google authentication\n├── .venv/                # Isolated Python environment (auto-created)\n└── data/                 # Local notebook library\n```\n\nWhen you mention NotebookLM or send a notebook URL, Claude:\n1. Loads the skill instructions\n2. Runs the appropriate Python script\n3. Opens a browser, asks your question\n4. Returns the answer directly to you\n5. Uses that knowledge to help with your task\n\n---\n\n## Core Features\n\n### **Source-Grounded Responses**\nNotebookLM significantly reduces hallucinations by answering exclusively from your uploaded documents. If information isn't available, it indicates uncertainty rather than inventing content.\n\n### **Direct Integration**\nNo copy-paste between browser and editor. Claude asks and receives answers programmatically.\n\n### **Smart Library Management**\nSave NotebookLM links with tags and descriptions. Claude auto-selects the right notebook for your task.\n\n### **Automatic Authentication**\nOne-time Google login, then authentication persists across sessions.\n\n### **Self-Contained**\nEverything runs in the skill folder with an isolated Python environment. No global installations.\n\n### **Human-Like Automation**\nUses realistic typing speeds and interaction patterns to avoid detection.\n\n---\n\n## Common Commands\n\n| What you say | What happens |\n|--------------|--------------|\n| *\"Set up NotebookLM authentication\"* | Opens Chrome for Google login |\n| *\"Add [link] to my NotebookLM library\"* | Saves notebook with metadata |\n| *\"Show my NotebookLM notebooks\"* | Lists all saved notebooks |\n| *\"Ask my API docs about [topic]\"* | Queries the relevant notebook |\n| *\"Use the React notebook\"* | Sets active notebook |\n| *\"Clear NotebookLM data\"* | Fresh start (keeps library) |\n\n---\n\n## Real-World Examples\n\n### Example 1: Workshop Manual Query\n\n**User asks**: \"Check my Suzuki GSR 600 workshop manual for brake fluid type, engine oil specs, and rear axle torque.\"\n\n**Claude automatically**:\n- Authenticates with NotebookLM\n- Asks comprehensive questions about each specification\n- Follows up when prompted \"Is that ALL you need to know?\"\n- Provides accurate specifications: DOT 4 brake fluid, SAE 10W-40 oil, 100 N·m rear axle torque\n\n![NotebookLM Chat Example](images/example_notebookchat.png)\n\n### Example 2: Building Without Hallucinations\n\n**You**: \"I need to build an n8n workflow for Gmail spam filtering. Use my n8n notebook.\"\n\n**Claude's internal process:**\n```\n→ Loads NotebookLM skill\n→ Activates n8n notebook\n→ Asks comprehensive questions with follow-ups\n→ Synthesizes complete answer from multiple queries\n```\n\n**Result**: Working workflow on first try, no debugging hallucinated APIs.\n\n---\n\n## Technical Details\n\n### Core Technology\n- **Patchright**: Browser automation library (Playwright-based)\n- **Python**: Implementation language for this skill\n- **Stealth techniques**: Human-like typing and interaction patterns\n\nNote: The MCP server uses the same Patchright library but via TypeScript/npm ecosystem.\n\n### Dependencies\n- **patchright==1.55.2**: Browser automation\n- **python-dotenv==1.0.0**: Environment configuration\n- Automatically installed in `.venv` on first use\n\n### Data Storage\n\nAll data is stored locally within the skill directory:\n\n```\n~/.claude/skills/notebooklm/data/\n├── library.json       - Your notebook library with metadata\n├── auth_info.json     - Authentication status info\n└── browser_state/     - Browser cookies and session data\n```\n\n**Important Security Note:**\n- The `data/` directory contains sensitive authentication data and personal notebooks\n- It's automatically excluded from git via `.gitignore`\n- NEVER manually commit or share the contents of the `data/` directory\n\n### Session Model\n\nUnlike the MCP server, this skill uses a **stateless model**:\n- Each question opens a fresh browser\n- Asks the question, gets the answer\n- Adds a follow-up prompt to encourage Claude to ask more questions\n- Closes the browser immediately\n\nThis means:\n- No persistent chat context\n- Each question is independent\n- But your notebook library persists\n- **Follow-up mechanism**: Each answer includes \"Is that ALL you need to know?\" to prompt Claude to ask comprehensive follow-ups\n\nFor multi-step research, Claude automatically asks follow-up questions when needed.\n\n---\n\n## Limitations\n\n### Skill-Specific\n- **Local Claude Code only** - Does not work in web UI (sandbox restrictions)\n- **No session persistence** - Each question is independent\n- **No follow-up context** - Can't reference \"the previous answer\"\n\n### NotebookLM\n- **Rate limits** - Free tier has daily query limits\n- **Manual upload** - You must upload docs to NotebookLM first\n- **Share requirement** - Notebooks must be shared publicly\n\n---\n\n## FAQ\n\n**Why doesn't this work in the Claude web UI?**\nThe web UI runs skills in a sandbox without network access. Browser automation requires network access to reach NotebookLM.\n\n**How is this different from the MCP server?**\nThis is a simpler, Python-based implementation that runs directly as a Claude Skill. The MCP server is more feature-rich with persistent sessions and works with multiple tools (Codex, Cursor, etc.).\n\n**Can I use both this skill and the MCP server?**\nYes! They serve different purposes. Use the skill for quick Claude Code integration, use the MCP server for persistent sessions and multi-tool support.\n\n**What if Chrome crashes?**\nRun: `\"Clear NotebookLM browser data\"` and try again.\n\n**Is my Google account secure?**\nChrome runs locally on your machine. Your credentials never leave your computer. Use a dedicated Google account if you're concerned.\n\n---\n\n## Troubleshooting\n\n### Skill not found\n```bash\n# Make sure it's in the right location\nls ~/.claude/skills/notebooklm/\n# Should show: SKILL.md, scripts/, etc.\n```\n\n### Authentication issues\nSay: `\"Reset NotebookLM authentication\"`\n\n### Browser crashes\nSay: `\"Clear NotebookLM browser data\"`\n\n### Dependencies issues\n```bash\n# Manual reinstall if needed\ncd ~/.claude/skills/notebooklm\nrm -rf .venv\npython -m venv .venv\nsource .venv/bin/activate  # or .venv\\Scripts\\activate on Windows\npip install -r requirements.txt\n```\n\n---\n\n## Disclaimer\n\nThis tool automates browser interactions with NotebookLM to make your workflow more efficient. However, a few friendly reminders:\n\n**About browser automation:**\nWhile I've built in humanization features (realistic typing speeds, natural delays, mouse movements) to make the automation behave more naturally, I can't guarantee Google won't detect or flag automated usage. I recommend using a dedicated Google account for automation rather than your primary account—think of it like web scraping: probably fine, but better safe than sorry!\n\n**About CLI tools and AI agents:**\nCLI tools like Claude Code, Codex, and similar AI-powered assistants are incredibly powerful, but they can make mistakes. Please use them with care and awareness:\n- Always review changes before committing or deploying\n- Test in safe environments first\n- Keep backups of important work\n- Remember: AI agents are assistants, not infallible oracles\n\nI built this tool for myself because I was tired of the copy-paste dance between NotebookLM and my editor. I'm sharing it in the hope it helps others too, but I can't take responsibility for any issues, data loss, or account problems that might occur. Use at your own discretion and judgment.\n\nThat said, if you run into problems or have questions, feel free to open an issue on GitHub. I'm happy to help troubleshoot!\n\n---\n\n## Credits\n\nThis skill is inspired by my [**NotebookLM MCP Server**](https://github.com/PleasePrompto/notebooklm-mcp) and provides an alternative implementation as a Claude Code Skill:\n- Both use Patchright for browser automation (TypeScript for MCP, Python for Skill)\n- Skill version runs directly in Claude Code without MCP protocol\n- Stateless design optimized for skill architecture\n\nIf you need:\n- **Persistent sessions** → Use the [MCP Server](https://github.com/PleasePrompto/notebooklm-mcp)\n- **Multiple tool support** (Codex, Cursor) → Use the [MCP Server](https://github.com/PleasePrompto/notebooklm-mcp)\n- **Quick Claude Code integration** → Use this skill\n\n---\n\n## The Bottom Line\n\n**Without this skill**: NotebookLM in browser → Copy answer → Paste in Claude → Copy next question → Back to browser...\n\n**With this skill**: Claude researches directly → Gets answers instantly → Writes correct code\n\nStop the copy-paste dance. Start getting accurate, grounded answers directly in Claude Code.\n\n```bash\n# Get started in 30 seconds\ncd ~/.claude/skills\ngit clone https://github.com/PleasePrompto/notebooklm-skill notebooklm\n# Open Claude Code: \"What are my skills?\"\n```\n\n---\n\n<div align=\"center\">\n\nBuilt as a Claude Code Skill adaptation of my [NotebookLM MCP Server](https://github.com/PleasePrompto/notebooklm-mcp)\n\nFor source-grounded, document-based research directly in Claude Code\n\n</div>\n",
+        "skills/postgres-best-practices/README.md": "# Postgres Best Practices - Contributor Guide\n\nThis repository contains Postgres performance optimization rules optimized for\nAI agents and LLMs.\n\n## Quick Start\n\n```bash\n# Install dependencies\ncd packages/postgres-best-practices-build\nnpm install\n\n# Validate existing rules\nnpm run validate\n\n# Build AGENTS.md\nnpm run build\n```\n\n## Creating a New Rule\n\n1. **Choose a section prefix** based on the category:\n   - `query-` Query Performance (CRITICAL)\n   - `conn-` Connection Management (CRITICAL)\n   - `security-` Security & RLS (CRITICAL)\n   - `schema-` Schema Design (HIGH)\n   - `lock-` Concurrency & Locking (MEDIUM-HIGH)\n   - `data-` Data Access Patterns (MEDIUM)\n   - `monitor-` Monitoring & Diagnostics (LOW-MEDIUM)\n   - `advanced-` Advanced Features (LOW)\n\n2. **Copy the template**:\n   ```bash\n   cp rules/_template.md rules/query-your-rule-name.md\n   ```\n\n3. **Fill in the content** following the template structure\n\n4. **Validate and build**:\n   ```bash\n   npm run validate\n   npm run build\n   ```\n\n5. **Review** the generated `AGENTS.md`\n\n## Repository Structure\n\n```\nskills/postgres-best-practices/\n├── SKILL.md           # Agent-facing skill manifest\n├── AGENTS.md          # [GENERATED] Compiled rules document\n├── README.md          # This file\n├── metadata.json      # Version and metadata\n└── rules/\n    ├── _template.md      # Rule template\n    ├── _sections.md      # Section definitions\n    ├── _contributing.md  # Writing guidelines\n    └── *.md              # Individual rules\n\npackages/postgres-best-practices-build/\n├── src/               # Build system source\n├── package.json       # NPM scripts\n└── test-cases.json    # [GENERATED] Test artifacts\n```\n\n## Rule File Structure\n\nSee `rules/_template.md` for the complete template. Key elements:\n\n````markdown\n---\ntitle: Clear, Action-Oriented Title\nimpact: CRITICAL|HIGH|MEDIUM-HIGH|MEDIUM|LOW-MEDIUM|LOW\nimpactDescription: Quantified benefit (e.g., \"10-100x faster\")\ntags: relevant, keywords\n---\n\n## [Title]\n\n[1-2 sentence explanation]\n\n**Incorrect (description):**\n\n```sql\n-- Comment explaining what's wrong\n[Bad SQL example]\n```\n````\n\n**Correct (description):**\n\n```sql\n-- Comment explaining why this is better\n[Good SQL example]\n```\n\n```\n## Writing Guidelines\n\nSee `rules/_contributing.md` for detailed guidelines. Key principles:\n\n1. **Show concrete transformations** - \"Change X to Y\", not abstract advice\n2. **Error-first structure** - Show the problem before the solution\n3. **Quantify impact** - Include specific metrics (10x faster, 50% smaller)\n4. **Self-contained examples** - Complete, runnable SQL\n5. **Semantic naming** - Use meaningful names (users, email), not (table1, col1)\n\n## Impact Levels\n\n| Level | Improvement | Examples |\n|-------|-------------|----------|\n| CRITICAL | 10-100x | Missing indexes, connection exhaustion |\n| HIGH | 5-20x | Wrong index types, poor partitioning |\n| MEDIUM-HIGH | 2-5x | N+1 queries, RLS optimization |\n| MEDIUM | 1.5-3x | Redundant indexes, stale statistics |\n| LOW-MEDIUM | 1.2-2x | VACUUM tuning, config tweaks |\n| LOW | Incremental | Advanced patterns, edge cases |\n```\n",
+        "skills/youtube-summarizer/README.md": "# 🎥 youtube-summarizer\n\n> Extract transcripts from YouTube videos and generate comprehensive, detailed summaries\n\n**Version:** 1.2.0\n**Status:** ✨ Zero-Config | 🌍 Universal\n**Platforms:** GitHub Copilot CLI, Claude Code\n\n---\n\n## Overview\n\nThe **youtube-summarizer** skill automates the extraction of YouTube video transcripts and generates verbose, structured summaries using the STAR + R-I-S-E framework. Perfect for documenting educational content, lectures, tutorials, or any informational videos without rewatching them.\n\n---\n\n## Features\n\n- 🎯 **Automatic transcript extraction** using `youtube-transcript-api`\n- ✅ **Video validation** - Checks if video is accessible and has transcripts\n- 🌍 **Multi-language support** - Prefers Portuguese, falls back to English\n- 📊 **Comprehensive summaries** - Prioritizes detail and completeness\n- 📝 **Structured output** - Markdown with headers, sections, insights\n- 🔍 **Metadata included** - Video title, channel, duration, URL\n- ⚡ **Error handling** - Clear messages for all failure scenarios\n- 🛠️ **Dependency management** - Offers to install requirements automatically\n- 📊 **Progress gauge** - Visual processing tracker across all steps\n- 💾 **Flexible save options** - Summary-only, summary+transcript, or transcript-only (NEW v1.2.0)\n\n---\n\n## Quick Start\n\n### Triggers\n\nActivate this skill with any of these phrases:\n\n```bash\n# English\ncopilot> summarize this video: https://www.youtube.com/watch?v=VIDEO_ID\ncopilot> summarize youtube video https://youtu.be/VIDEO_ID\ncopilot> extract youtube transcript https://youtube.com/watch?v=VIDEO_ID\n\n# Portuguese (also supported)\ncopilot> resume este video: https://www.youtube.com/watch?v=VIDEO_ID\n```\n\n### First-Time Setup\n\nThe skill will automatically check for dependencies and offer to install them:\n\n```bash\n⚠️  youtube-transcript-api not installed\n\nWould you like me to install it now?\n- [x] Yes - Install with pip\n- [ ] No - I'll install manually\n```\n\nSelect \"Yes\" and the skill handles installation automatically.\n\n---\n\n## Use Cases\n\n### 1. **Educational Video Documentation**\n\n```bash\ncopilot> summarize this video: https://www.youtube.com/watch?v=abc123\n```\n\n**Output:**\n- Comprehensive summary of lecture content\n- Key concepts and terminology\n- Examples and practical applications\n- Resources mentioned in the video\n\n### 2. **Technical Tutorial Analysis**\n\n```bash\ncopilot> summarize youtube video https://youtu.be/xyz789\n```\n\n**Output:**\n- Step-by-step breakdown of tutorial\n- Code snippets and commands mentioned\n- Best practices highlighted\n- Troubleshooting tips documented\n\n### 3. **Conference Talk Reference**\n\n```bash\ncopilot> extract youtube transcript https://youtube.com/watch?v=def456\n```\n\n**Output:**\n- Speaker insights and arguments\n- Statistics and data points\n- Case studies and examples\n- Q&A session summary\n\n### 4. **Language Learning Content**\n\n```bash\ncopilot> summarize youtube video https://youtu.be/ghi789\n```\n\n**Output:**\n- Vocabulary and expressions used\n- Grammar points explained\n- Cultural references\n- Practice exercises mentioned\n\n### 5. **Research and Investigation**\n\n```bash\ncopilot> summarize youtube video https://www.youtube.com/watch?v=jkl012\n```\n\n**Output:**\n- Research findings presented\n- Methodology explained\n- Results and conclusions\n- Future work suggestions\n\n---\n\n## Output Structure\n\nEvery summary follows this comprehensive structure:\n\n```markdown\n# [Video Title]\n\n**Canal:** [Channel Name]\n**Duração:** [Duration]\n**URL:** [Video URL]\n**Data de Publicação:** [Date]\n\n---\n\n## 📊 Síntese Executiva\n[High-level overview, 2-3 paragraphs]\n\n---\n\n## 📝 Resumo Detalhado\n### [Topic 1]\n[Detailed analysis with examples, data, quotes]\n\n### [Topic 2]\n[Continued breakdown...]\n\n---\n\n## 💡 Principais Insights\n- **Insight 1:** [Explanation]\n- **Insight 2:** [Explanation]\n\n---\n\n## 📚 Conceitos e Terminologia\n- **Term 1:** [Definition]\n- **Term 2:** [Definition]\n\n---\n\n## 🔗 Recursos Mencionados\n- [Resource 1]\n- [Resource 2]\n\n---\n\n## 📌 Conclusão\n[Final synthesis and key takeaways]\n```\n\n---\n\n## Requirements\n\n- **Python 3.x** (usually pre-installed on macOS/Linux)\n- **pip** (Python package manager)\n- **[youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api)** by [Julien Depoix](https://github.com/jdepoix) (installed automatically by the skill)\n\n### Manual Installation (Optional)\n\nIf you prefer to install dependencies manually:\n\n```bash\npip install youtube-transcript-api\n```\n\n---\n\n## Supported URL Formats\n\nThe skill recognizes these YouTube URL formats:\n\n- `https://www.youtube.com/watch?v=VIDEO_ID`\n- `https://youtube.com/watch?v=VIDEO_ID`\n- `https://youtu.be/VIDEO_ID`\n- `https://m.youtube.com/watch?v=VIDEO_ID`\n\n---\n\n## Limitations\n\n### Videos That Work\n\n✅ Public videos with auto-generated captions  \n✅ Videos with manual subtitles/captions  \n✅ Videos with transcripts in any supported language\n\n### Videos That Don't Work\n\n❌ Private or unlisted videos  \n❌ Videos with transcripts disabled  \n❌ Age-restricted videos (may require authentication)  \n❌ Videos without any captions/subtitles\n\n---\n\n## Error Messages\n\n### No Transcript Available\n\n```\n❌ No transcript available for this video\n\nThis skill requires videos with auto-generated captions or manual subtitles.\nUnfortunately, transcripts are not enabled for this video.\n```\n\n**Solution:** Try a different video that has captions enabled.\n\n### Invalid URL\n\n```\n❌ Invalid YouTube URL format\n\nExpected format examples:\n- https://www.youtube.com/watch?v=VIDEO_ID\n- https://youtu.be/VIDEO_ID\n```\n\n**Solution:** Ensure you're providing a complete, valid YouTube URL.\n\n### Video Not Accessible\n\n```\n❌ Unable to access video\n\nPossible reasons:\n1. Video is private or unlisted\n2. Video has been removed\n3. Invalid video ID\n```\n\n**Solution:** Verify the URL and ensure the video is public.\n\n---\n\n## FAQ\n\n### Q: How long does it take to generate a summary?\n\n**A:** Depends on video length:\n- Short videos (5-10 min): 30-60 seconds\n- Medium videos (20-40 min): 1-2 minutes\n- Long videos (60+ min): 2-5 minutes\n\n### Q: Can I summarize videos in languages other than English/Portuguese?\n\n**A:** Yes! The skill attempts to extract transcripts in the video's original language. If unavailable, it falls back to English.\n\n### Q: Will this work with YouTube Music videos?\n\n**A:** Only if the music video has captions/transcripts enabled. Most music videos don't have transcripts.\n\n### Q: Can I customize the summary length?\n\n**A:** The skill prioritizes completeness by design (verbose summaries). If you need shorter summaries, you can ask the AI to condense the output afterward.\n\n### Q: Does this download the video?\n\n**A:** No. Only the text transcript is extracted via YouTube's API. No video files are downloaded.\n\n### Q: Can I save the summary to a file?\n\n**A:** Yes! After the summary is generated, the skill offers flexible save options:\n- **Summary only** - Markdown file with structured summary\n- **Summary + transcript** - Markdown file with summary and raw transcript appended\n- **Transcript only** - Plain text file with raw transcript (NEW in v1.2.0)\n- **Display only** - No files saved, summary shown in terminal\n\nFiles are saved as `resumo-{VIDEO_ID}-{YYYY-MM-DD}.md` (summary) or `transcript-{VIDEO_ID}-{YYYY-MM-DD}.txt` (transcript-only).\n\n### Q: When should I save just the transcript?\n\n**A:** Use the transcript-only option when you:\n- Need raw content for further analysis\n- Want to process the text with other tools\n- Prefer to create your own summary later\n- Need the transcript for documentation or archival purposes\n\n---\n\n## Installation\n\n### Global Installation (Recommended)\n\nInstall the skill globally to use it across all projects:\n\n```bash\n# Clone the repository\ngit clone https://github.com/ericgandrade/cli-ai-skills.git\ncd cli-ai-skills\n\n# Run the install script\n./scripts/install-skills.sh $(pwd)\n```\n\nThis creates symlinks in:\n- `~/.copilot/skills/youtube-summarizer/` (GitHub Copilot CLI)\n- `~/.claude/skills/youtube-summarizer/` (Claude Code)\n\n### Repository Installation\n\nAdd to a specific project:\n\n```bash\n# Copy skill to your project\ncp -r cli-ai-skills/.github/skills/youtube-summarizer .github/skills/\n```\n\n---\n\n## Contributing\n\nFound a bug or have a feature request? Contributions welcome!\n\n1. Fork the repository\n2. Create a feature branch: `git checkout -b feature/youtube-enhancement`\n3. Commit changes: `git commit -m \"feat(youtube-summarizer): add feature X\"`\n4. Push and create a Pull Request\n\n---\n\n## License\n\nMIT License - see LICENSE for details.\n\n---\n\n## Acknowledgments\n\n- **[youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api)** by [Julien Depoix](https://github.com/jdepoix) - Python library for extracting YouTube video transcripts\n- **Anthropic STAR/R-I-S-E frameworks** - For structured summarization\n\n---\n\n**Built with ❤️ by Eric Andrade**\n\n*Version 1.1.0 | Last updated: February 2026*\n"
       },
       "plugins": [
         {
+          "name": "ai-agent-development",
+          "source": "./skills/ai-agent-development",
+          "description": "AI agent development workflow for building autonomous agents, multi-agent systems, and agent orchestration with CrewAI, LangGraph, and custom agents. Use when designing or implementing AI agents.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install ai-agent-development@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "ai-agents-architect",
+          "source": "./skills/ai-agents-architect",
+          "description": "Expert in designing and building autonomous AI agents. Masters tool use, memory systems, planning strategies, and multi-agent orchestration. Use when: build agent, AI agent, autonomous agent, tool ...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install ai-agents-architect@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "ai-engineer",
+          "source": "./skills/ai-engineer",
+          "description": "Production-grade AI engineering for LLM applications, RAG systems, and agent architectures. Use when building AI features, designing model integrations, or implementing AI safety and monitoring.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install ai-engineer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "ai-ml",
+          "source": "./skills/ai-ml",
+          "description": "AI and machine learning workflow covering LLM application development, RAG implementation, agent architecture, ML pipelines, and AI-powered features. Use when building AI or ML systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install ai-ml@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "ai-product",
+          "source": "./skills/ai-product",
+          "description": "AI product engineering covering LLM integration patterns, RAG architecture, prompt engineering, and production AI systems. Use when building AI-powered product features or shipping LLM applications.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install ai-product@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "aws-skills",
+          "source": "./skills/aws-skills",
+          "description": "AWS development with infrastructure automation and cloud architecture patterns. Use when building or deploying services on Amazon Web Services.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install aws-skills@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "business-analyst",
+          "source": "./skills/business-analyst",
+          "description": "Data-driven business analysis with modern analytics, BI tools, and strategic insights. Use when analyzing business data, creating dashboards, running experiments, or generating data-driven recommendations.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install business-analyst@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "clean-code",
+          "source": "./skills/clean-code",
+          "description": "Applies principles from Robert C. Martin's 'Clean Code'. Use this skill when writing, reviewing, or refactoring code to ensure high quality, readability, and maintainability. Covers naming, functio...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install clean-code@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "cloud-architect",
+          "source": "./skills/cloud-architect",
+          "description": "Multi-cloud infrastructure design with AWS, Azure, and GCP. Use when designing cloud architecture, implementing Infrastructure as Code, optimizing costs with FinOps, or building scalable cloud systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install cloud-architect@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "cloud-devops",
+          "source": "./skills/cloud-devops",
+          "description": "Cloud infrastructure and DevOps workflow covering AWS, Azure, GCP, Kubernetes, Terraform, CI/CD, monitoring, and cloud-native development. Use when managing cloud infrastructure or CI/CD pipelines.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install cloud-devops@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "code-documentation-code-explain",
+          "source": "./skills/code-documentation-code-explain",
+          "description": "Code education expert specializing in explaining complex code through clear narratives, visual diagrams, and step-by-step breakdowns. Use when you need to understand or explain unfamiliar code.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install code-documentation-code-explain@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "code-documentation-doc-generate",
+          "source": "./skills/code-documentation-doc-generate",
+          "description": "You are a documentation expert specializing in creating comprehensive, maintainable documentation from code. Generate API docs, architecture diagrams, user guides, and technical references using AI...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install code-documentation-doc-generate@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "code-refactoring-context-restore",
+          "source": "./skills/code-refactoring-context-restore",
+          "description": "Use when working with code refactoring context restore",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install code-refactoring-context-restore@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "code-refactoring-refactor-clean",
+          "source": "./skills/code-refactoring-refactor-clean",
+          "description": "Code refactoring expert specializing in clean code principles, SOLID design patterns, and modern software engineering best practices. Use when refactoring code for readability and maintainability.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install code-refactoring-refactor-clean@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "code-refactoring-tech-debt",
+          "source": "./skills/code-refactoring-tech-debt",
+          "description": "Technical debt expert specializing in identifying, quantifying, and prioritizing technical debt in software projects. Use when auditing a codebase for technical debt or planning remediation.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install code-refactoring-tech-debt@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "code-review-excellence",
+          "source": "./skills/code-review-excellence",
+          "description": "Master effective code review practices to provide constructive feedback, catch bugs early, and foster knowledge sharing while maintaining team morale. Use when reviewing pull requests, establishing...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install code-review-excellence@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "code-reviewer",
+          "source": "./skills/code-reviewer",
+          "description": "Elite code review expert specializing in modern AI-powered code review. Use when reviewing pull requests or establishing code review standards.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install code-reviewer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "commit",
+          "source": "./skills/commit",
+          "description": "Create commit messages following Sentry conventions. Use when committing code changes, writing commit messages, or formatting git history. Follows conventional commits with Sentry-specific issue re...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install commit@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "computer-vision-expert",
+          "source": "./skills/computer-vision-expert",
+          "description": "SOTA Computer Vision Expert. Specialized in YOLO, Segment Anything, Vision Language Models, and real-time spatial analysis. Use when building or optimizing computer vision systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install computer-vision-expert@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "context-optimization",
+          "source": "./skills/context-optimization",
+          "description": "Apply compaction, masking, and caching strategies to optimize context windows. Use when reducing token usage or improving LLM context efficiency.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install context-optimization@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "crewai",
+          "source": "./skills/crewai",
+          "description": "Expert in CrewAI - the leading role-based multi-agent framework used by 60% of Fortune 500 companies. Covers agent design with roles and goals, task definition, crew orchestration, process types (s...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install crewai@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "data-engineer",
+          "source": "./skills/data-engineer",
+          "description": "Scalable data pipelines and modern data architecture. Use when designing batch or streaming pipelines, building data warehouses or lakehouses, or implementing data quality and governance.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install data-engineer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "data-engineering-data-driven-feature",
+          "source": "./skills/data-engineering-data-driven-feature",
+          "description": "Build features guided by data insights, A/B testing, and continuous measurement. Use when implementing data-driven product features or running experiments.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install data-engineering-data-driven-feature@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "data-engineering-data-pipeline",
+          "source": "./skills/data-engineering-data-pipeline",
+          "description": "Data pipeline architecture for scalable, reliable, and cost-effective batch and streaming data processing. Use when designing or building data pipelines.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install data-engineering-data-pipeline@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "data-scientist",
+          "source": "./skills/data-scientist",
+          "description": "Advanced analytics and machine learning for data-driven insights. Use when performing statistical analysis, building predictive models, designing experiments, or creating data visualizations.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install data-scientist@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "data-storytelling",
+          "source": "./skills/data-storytelling",
+          "description": "Transform data into compelling narratives using visualization, context, and persuasive structure. Use when presenting analytics to stakeholders, creating data reports, or building executive present...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install data-storytelling@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "database-cloud-optimization-cost-optimize",
+          "source": "./skills/database-cloud-optimization-cost-optimize",
+          "description": "Cloud cost optimization expert specializing in reducing infrastructure expenses while maintaining performance. Use when analyzing cloud spending or identifying savings opportunities.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install database-cloud-optimization-cost-optimize@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "database-design",
+          "source": "./skills/database-design",
+          "description": "Database design principles and decision-making covering schema design, indexing strategy, ORM selection, and serverless databases. Use when designing or evaluating database schemas.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install database-design@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "database-migration",
+          "source": "./skills/database-migration",
+          "description": "Execute database migrations across ORMs and platforms with zero-downtime strategies, data transformation, and rollback procedures. Use when migrating databases, changing schemas, performing data tr...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install database-migration@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "database-optimizer",
+          "source": "./skills/database-optimizer",
+          "description": "Database performance tuning and query optimization across platforms. Use when analyzing slow queries, designing indexing strategies, tuning database configurations, or scaling database systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install database-optimizer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "embedding-strategies",
+          "source": "./skills/embedding-strategies",
+          "description": "Select and optimize embedding models for semantic search and RAG applications. Use when choosing embedding models, implementing chunking strategies, or optimizing embedding quality for specific dom...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install embedding-strategies@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "fastapi-pro",
+          "source": "./skills/fastapi-pro",
+          "description": "High-performance async API development with FastAPI. Use when building production FastAPI services, implementing async patterns, designing microservice architectures, or optimizing API performance.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install fastapi-pro@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "fastapi-router-py",
+          "source": "./skills/fastapi-router-py",
+          "description": "Create FastAPI routers with CRUD operations, authentication dependencies, and proper response models. Use when building REST API endpoints, creating new routes, implementing CRUD operations, or add...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install fastapi-router-py@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "fastapi-templates",
+          "source": "./skills/fastapi-templates",
+          "description": "Create production-ready FastAPI projects with async patterns, dependency injection, and comprehensive error handling. Use when building new FastAPI applications or setting up backend API projects.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install fastapi-templates@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "full-stack-orchestration-full-stack-feature",
+          "source": "./skills/full-stack-orchestration-full-stack-feature",
+          "description": "Use when working with full stack orchestration full stack feature",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install full-stack-orchestration-full-stack-feature@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "game-development",
+          "source": "./skills/game-development",
+          "description": "Game development orchestrator that routes to platform-specific skills based on project needs. Use when building games or game-related systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install game-development@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "gcp-cloud-run",
+          "source": "./skills/gcp-cloud-run",
+          "description": "Building production-ready serverless applications on GCP with Cloud Run services and Cloud Run Functions. Use when deploying containerized or event-driven applications on Google Cloud.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install gcp-cloud-run@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "git-advanced-workflows",
+          "source": "./skills/git-advanced-workflows",
+          "description": "Master advanced Git workflows including rebasing, cherry-picking, bisect, worktrees, and reflog to maintain clean history and recover from any situation. Use when managing complex Git histories, co...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install git-advanced-workflows@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "github-actions-templates",
+          "source": "./skills/github-actions-templates",
+          "description": "Create production-ready GitHub Actions workflows for automated testing, building, and deploying applications. Use when setting up CI/CD with GitHub Actions, automating development workflows, or cre...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install github-actions-templates@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "github-automation",
+          "source": "./skills/github-automation",
+          "description": "Automate GitHub repositories, issues, pull requests, branches, CI/CD, and permissions via MCP. Use when managing code workflows or automating GitHub operations programmatically.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install github-automation@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "github-workflow-automation",
+          "source": "./skills/github-workflow-automation",
+          "description": "Automate GitHub workflows with AI assistance. Includes PR reviews, issue triage, CI/CD integration, and Git operations. Use when automating GitHub workflows, setting up PR review automation, creating CI/CD pipelines, or integrating AI into DevOps.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install github-workflow-automation@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "hugging-face-cli",
+          "source": "./skills/hugging-face-cli",
+          "description": "Execute Hugging Face Hub operations using the `hf` CLI. Use when the user needs to download models/datasets/spaces, upload files to Hub repositories, create repos, manage local cache, or run comput...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install hugging-face-cli@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "hugging-face-jobs",
+          "source": "./skills/hugging-face-jobs",
+          "description": "This skill should be used when users want to run any workload on Hugging Face Jobs infrastructure. Covers UV scripts, Docker-based jobs, hardware selection, cost estimation, authentication with tokens, scheduled jobs, and result persistence.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install hugging-face-jobs@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "langgraph",
+          "source": "./skills/langgraph",
+          "description": "Expert in LangGraph, the production-grade framework for building stateful, multi-actor AI applications. Use when building agent graphs, managing state, or implementing persistence with checkpoints.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install langgraph@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "mcp-builder",
+          "source": "./skills/mcp-builder",
+          "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate exte...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install mcp-builder@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "ml-engineer",
+          "source": "./skills/ml-engineer",
+          "description": "Production machine learning systems and model serving infrastructure. Use when building ML pipelines, deploying models to production, implementing feature stores, or optimizing inference performance.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install ml-engineer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "ml-pipeline-workflow",
+          "source": "./skills/ml-pipeline-workflow",
+          "description": "Build end-to-end MLOps pipelines from data preparation through model training, validation, and production deployment. Use when creating ML pipelines, implementing MLOps practices, or automating mod...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install ml-pipeline-workflow@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "mlops-engineer",
+          "source": "./skills/mlops-engineer",
+          "description": "ML infrastructure automation and production ML lifecycle management. Use when building ML pipelines, setting up experiment tracking, implementing CI/CD for models, or managing model deployments.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install mlops-engineer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "nosql-expert",
+          "source": "./skills/nosql-expert",
+          "description": "Expert guidance for distributed NoSQL databases (Cassandra, DynamoDB). Focuses on mental models, query-first modeling, single-table design, and avoiding hot partitions in high-scale systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install nosql-expert@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "notebooklm",
+          "source": "./skills/notebooklm",
+          "description": "Use this skill to query your Google NotebookLM notebooks for source-grounded, citation-backed answers from Gemini. Browser automation, library management, persistent auth.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install notebooklm@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "pdf-official",
+          "source": "./skills/pdf-official",
+          "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. Use when working with PDF files programmatically.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install pdf-official@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "postgres-best-practices",
+          "source": "./skills/postgres-best-practices",
+          "description": "Postgres performance optimization and best practices from Supabase. Use this skill when writing, reviewing, or optimizing Postgres queries, schema designs, or database configurations.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install postgres-best-practices@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "postgresql",
+          "source": "./skills/postgresql",
+          "description": "Design PostgreSQL-specific schemas covering best practices, data types, indexing, constraints, performance patterns, and advanced features. Use when designing or optimizing PostgreSQL databases.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install postgresql@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "pptx-official",
+          "source": "./skills/pptx-official",
+          "description": "Presentation creation, editing, and analysis. Use when working with presentations (.pptx files) for creating, modifying, or analyzing PowerPoint content and layouts.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install pptx-official@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "prometheus-configuration",
+          "source": "./skills/prometheus-configuration",
+          "description": "Set up Prometheus for comprehensive metric collection, storage, and monitoring of infrastructure and applications. Use when implementing metrics collection, setting up monitoring infrastructure, or...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install prometheus-configuration@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "python-development-python-scaffold",
+          "source": "./skills/python-development-python-scaffold",
+          "description": "Python project architecture expert for scaffolding production-ready applications with modern tooling (uv, FastAPI, Django) and type hints. Use when creating new Python project structures.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install python-development-python-scaffold@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "python-fastapi-development",
+          "source": "./skills/python-fastapi-development",
+          "description": "Python FastAPI backend development with async patterns, SQLAlchemy, Pydantic, authentication, and production API patterns. Use when building FastAPI backend services.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install python-fastapi-development@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "python-pro",
+          "source": "./skills/python-pro",
+          "description": "Modern Python 3.12+ development with cutting-edge tools and practices. Use when writing production Python code, implementing async patterns, optimizing performance, or setting up modern Python tooling.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install python-pro@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "python-testing-patterns",
+          "source": "./skills/python-testing-patterns",
+          "description": "Implement comprehensive testing strategies with pytest, fixtures, mocking, and test-driven development. Use when writing Python tests, setting up test suites, or implementing testing best practices.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install python-testing-patterns@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "rag-engineer",
+          "source": "./skills/rag-engineer",
+          "description": "Expert in building Retrieval-Augmented Generation systems. Masters embedding models, vector databases, chunking strategies, and retrieval optimization for LLM applications. Use when: building RAG, ...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install rag-engineer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "rag-implementation",
+          "source": "./skills/rag-implementation",
+          "description": "RAG (Retrieval-Augmented Generation) implementation workflow covering embedding selection, vector database setup, chunking strategies, and retrieval optimization. Use when building RAG systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install rag-implementation@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "requesting-code-review",
+          "source": "./skills/requesting-code-review",
+          "description": "Use when completing tasks, implementing major features, or before merging to verify work meets requirements",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install requesting-code-review@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "scientific-skills",
+          "source": "./skills/scientific-skills",
+          "description": "Scientific research and analysis skills. Use when performing scientific analysis, literature review, or research methodology design.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install scientific-skills@agent-skills-kit"
+          ]
+        },
+        {
           "name": "skill-creator",
           "source": "./skills/skill-creator",
-          "description": "Interactive assistant that scaffolds new Agent Skills.",
+          "description": "Interactive assistant that scaffolds new Agent Skills. Use this when the user wants to create, write, or generate a new skill.",
           "categories": [],
           "install_commands": [
             "/plugin marketplace add bcastelino/agent-skills-kit",
@@ -33,13 +666,123 @@
           ]
         },
         {
-          "name": "test-skill",
-          "source": "./skills/test-skill",
-          "description": "Example/template skill demonstrating SKILL.md structure and resources.",
+          "name": "software-architecture",
+          "source": "./skills/software-architecture",
+          "description": "Guide for quality focused software architecture. This skill should be used when users want to write code, design architecture, analyze code, in any case that relates to software development.",
           "categories": [],
           "install_commands": [
             "/plugin marketplace add bcastelino/agent-skills-kit",
-            "/plugin install test-skill@agent-skills-kit"
+            "/plugin install software-architecture@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "spark-optimization",
+          "source": "./skills/spark-optimization",
+          "description": "Optimize Apache Spark jobs with partitioning, caching, shuffle optimization, and memory tuning. Use when improving Spark performance, debugging slow jobs, or scaling data processing pipelines.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install spark-optimization@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "sql-optimization-patterns",
+          "source": "./skills/sql-optimization-patterns",
+          "description": "Master SQL query optimization, indexing strategies, and EXPLAIN analysis to dramatically improve database performance and eliminate slow queries. Use when debugging slow queries, designing database...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install sql-optimization-patterns@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "sql-pro",
+          "source": "./skills/sql-pro",
+          "description": "Advanced SQL across modern database systems and cloud platforms. Use when writing complex queries, optimizing SQL performance, designing analytical patterns, or working with cloud-native databases.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install sql-pro@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "temporal-python-pro",
+          "source": "./skills/temporal-python-pro",
+          "description": "Temporal workflow orchestration with the Python SDK. Use when building durable workflows, implementing distributed transactions, designing activity patterns, or deploying Temporal workers.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install temporal-python-pro@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "unit-testing-test-generate",
+          "source": "./skills/unit-testing-test-generate",
+          "description": "Generate comprehensive, maintainable unit tests across languages with strong coverage and edge case focus. Use when writing test suites or improving test coverage.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install unit-testing-test-generate@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "uv-package-manager",
+          "source": "./skills/uv-package-manager",
+          "description": "Master the uv package manager for fast Python dependency management, virtual environments, and modern Python project workflows. Use when setting up Python projects, managing dependencies, or optimi...",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install uv-package-manager@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "vibe-code-auditor",
+          "source": "./skills/vibe-code-auditor",
+          "description": "Audit rapidly generated or AI-produced code for structural flaws, fragility, and production risks. Use when evaluating prototype or AI-generated code for production readiness.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install vibe-code-auditor@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "vulnerability-scanner",
+          "source": "./skills/vulnerability-scanner",
+          "description": "Advanced vulnerability analysis covering OWASP 2025, Supply Chain Security, attack surface mapping, risk prioritization. Use when auditing code or infrastructure for security vulnerabilities.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install vulnerability-scanner@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "youtube-summarizer",
+          "source": "./skills/youtube-summarizer",
+          "description": "Extract transcripts from YouTube videos and generate comprehensive, detailed summaries. Use when summarizing video content or extracting key insights from YouTube.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install youtube-summarizer@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "tailored-resume-generator",
+          "source": "./skills/tailored-resume-generator",
+          "description": "Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements to maximize interview chances. Use when applying for jobs, customizing resumes for different roles, or optimizing for ATS systems.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install tailored-resume-generator@agent-skills-kit"
+          ]
+        },
+        {
+          "name": "video-downloader",
+          "source": "./skills/video-downloader",
+          "description": "Download YouTube videos with customizable quality and format options. Use when the user asks to download, save, or grab YouTube videos. Supports various quality settings (best, 1080p, 720p, 480p, 360p), multiple formats (mp4, webm, mkv), and audio-only downloads as MP3.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcastelino/agent-skills-kit",
+            "/plugin install video-downloader@agent-skills-kit"
           ]
         }
       ]

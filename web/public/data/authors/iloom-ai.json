@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "iloom-ai",
+    "display_name": "iloom",
+    "avatar_url": "https://avatars.githubusercontent.com/u/244398402?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "stay-fresh-lsp-proxy",
+      "version": null,
+      "description": "LSP proxy plugins that filter diagnostic noise from Claude Code",
+      "repo_full_name": "iloom-ai/stay-fresh-lsp-proxy",
+      "repo_url": "https://github.com/iloom-ai/stay-fresh-lsp-proxy",
+      "repo_description": "A Claude Code plugin that proxies any LSP server and filters stale/noisy diagnostics from conversation context",
+      "signals": {
+        "stars": 3,
+        "forks": 1,
+        "pushed_at": "2026-03-01T19:50:42Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"stay-fresh-lsp-proxy\",\n  \"description\": \"LSP proxy plugins that filter diagnostic noise from Claude Code\",\n  \"owner\": { \"name\": \"acreeger\" },\n  \"plugins\": [\n    {\n      \"name\": \"stay-fresh-typescript\",\n      \"source\": \"./plugins/stay-fresh-typescript\",\n      \"description\": \"TypeScript/JavaScript LSP with diagnostic filtering\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"stay-fresh-python\",\n      \"source\": \"./plugins/stay-fresh-python\",\n      \"description\": \"Python (Pyright) LSP with diagnostic filtering\",\n      \"version\": \"0.1.0\"\n    },\n    {\n      \"name\": \"stay-fresh-rust\",\n      \"source\": \"./plugins/stay-fresh-rust\",\n      \"description\": \"Rust LSP with diagnostic filtering\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
+        "README.md": "# stay-fresh-lsp-proxy\n\nStop stale LSP diagnostics from derailing your Claude Code sessions.\n\n> **Note:** This is a temporary workaround for issues with how Claude Code handles LSP diagnostics. Once the underlying problems are fixed upstream, this plugin will no longer be necessary. Relevant issues:\n>\n> - [LSP output displays stale diagnostics after file changes (#17979)](https://github.com/anthropics/claude-code/issues/17979)\n> - [pyright-lsp plugin promotes hint-level DiagnosticTag.Unnecessary into conversation context (#26634)](https://github.com/anthropics/claude-code/issues/26634)\n> - [TypeScript LSP plugin scans file paths in user prompt text, injecting unwanted diagnostics (#28562)](https://github.com/anthropics/claude-code/issues/28562)\n\n## The Problem\n\nClaude Code's LSP plugins fire `textDocument/publishDiagnostics` after every edit. The diagnostics arrive from the previous state of the file — not the current one. Claude sees these stale errors, thinks the code is broken, and tries to \"fix\" problems that don't exist. This leads to:\n\n- **Unnecessary reverts** — Claude undoes correct work because a stale diagnostic says there's an error\n- **Fix loops** — Claude chases phantom type errors that would resolve on their own after the next save\n- **Wasted turns** — every edit triggers a round of outdated warnings that Claude has to reason about\n\nThe root cause is a timing issue: diagnostics lag behind edits, so Claude is always reacting to the *previous* state of your code.\n\n## How It Works\n\nstay-fresh-lsp-proxy sits between Claude Code and your LSP server. It forwards everything normally (go-to-definition, hover, references, completions) but intercepts `textDocument/publishDiagnostics` notifications and filters them before they reach Claude. No stale diagnostics, no confused AI.\n\n## Quick Install\n\n```bash\nnpx stay-fresh-lsp-proxy setup --typescript --python --rust\n```\n\nPick only the languages you need:\n\n```bash\nnpx stay-fresh-lsp-proxy setup --typescript              # Just TypeScript/JS\nnpx stay-fresh-lsp-proxy setup --typescript --python     # TypeScript + Python\nnpx stay-fresh-lsp-proxy setup --rust                    # Just Rust\n```\n\nThis will:\n1. Register the plugin marketplace with Claude Code\n2. Install per-language plugins and disable conflicting official LSP plugins\n3. Enable the LSP tool in Claude Code settings\n\n## Supported Languages\n\n| Language | LSP Server | Install the server |\n|----------|-----------|-------------------|\n| TypeScript/JS | `typescript-language-server` | `npm i -g typescript-language-server typescript` |\n| Python | `pyright-langserver` | `npm i -g pyright` |\n| Rust | `rust-analyzer` | `rustup component add rust-analyzer` |\n\nThe setup script will warn you if the required LSP server binary is not found in your PATH.\n\n## Configuration\n\nControl filtering behavior with environment variables. Set them in `~/.claude/settings.json` under `env`:\n\n```json\n{\n  \"env\": {\n    \"STAY_FRESH_DROP_DIAGNOSTICS\": \"true\",\n    \"STAY_FRESH_MIN_SEVERITY\": \"1\",\n    \"STAY_FRESH_LOG\": \"false\"\n  }\n}\n```\n\n### Configuration Reference\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `STAY_FRESH_DROP_DIAGNOSTICS` | `true` | Drop all diagnostics. Set to `false` to use severity filtering instead. |\n| `STAY_FRESH_MIN_SEVERITY` | `1` | When not dropping all, the maximum severity level to keep. `1` = only errors, `2` = errors + warnings, `3` = errors + warnings + info, `4` = everything (same as no filter). |\n| `STAY_FRESH_LOG` | `false` | Enable debug logging to `$TMPDIR/stay-fresh-lsp-proxy/`. |\n\n### Recipes\n\n**Drop everything (default)** — The nuclear option. Eliminates all stale diagnostics completely. Claude keeps full LSP intelligence (go-to-definition, hover, etc.) but never gets misleading error reports mid-edit.\n\n```json\n{\n  \"env\": {\n    \"STAY_FRESH_DROP_DIAGNOSTICS\": \"true\"\n  }\n}\n```\n\n**Errors only** — Let genuine errors through (type mismatches, missing imports, syntax errors) but suppress warnings, hints, and info. Good if you want Claude to catch real breakage while ignoring the noise.\n\n```json\n{\n  \"env\": {\n    \"STAY_FRESH_DROP_DIAGNOSTICS\": \"false\",\n    \"STAY_FRESH_MIN_SEVERITY\": \"1\"\n  }\n}\n```\n\n**Errors + Warnings** — Also keep warnings (unused variables, deprecated APIs) but drop hints and info. You'll still get some stale notifications, but you're trading that off against Claude occasionally catching real issues it wouldn't otherwise notice.\n\n```json\n{\n  \"env\": {\n    \"STAY_FRESH_DROP_DIAGNOSTICS\": \"false\",\n    \"STAY_FRESH_MIN_SEVERITY\": \"2\"\n  }\n}\n```\n\n**Everything except hints** — Only drop hint-level diagnostics (like pyright's \"unnecessary\" markers that prompted [#26634](https://github.com/anthropics/claude-code/issues/26634)). Closest to stock behavior with the worst offenders removed.\n\n```json\n{\n  \"env\": {\n    \"STAY_FRESH_DROP_DIAGNOSTICS\": \"false\",\n    \"STAY_FRESH_MIN_SEVERITY\": \"3\"\n  }\n}\n```\n\n**Debug mode** — Combine with any of the above. Logs every intercepted diagnostic to `$TMPDIR/stay-fresh-lsp-proxy/` so you can verify the proxy is running and see exactly what it's dropping.\n\n```json\n{\n  \"env\": {\n    \"STAY_FRESH_LOG\": \"true\"\n  }\n}\n```\n\n### LSP Severity Levels\n\n| Level | Meaning | Examples |\n|-------|---------|---------|\n| 1 — Error | Code is broken | Type errors, missing imports, syntax errors |\n| 2 — Warning | Likely problems | Unused variables, deprecated API usage |\n| 3 — Info | Informational | Suggested refactors, style improvements |\n| 4 — Hint | Subtle suggestions | Unnecessary casts, removable parentheses |\n\n## Manual Install\n\nIf you prefer to set things up manually instead of using the setup script:\n\n1. Add the marketplace:\n   ```bash\n   claude plugin marketplace add iloom-ai/stay-fresh-lsp-proxy\n   ```\n\n2. Install the plugin(s) you want:\n   ```bash\n   claude plugin install stay-fresh-typescript@stay-fresh-lsp-proxy\n   claude plugin install stay-fresh-python@stay-fresh-lsp-proxy\n   claude plugin install stay-fresh-rust@stay-fresh-lsp-proxy\n   ```\n\n3. Disable conflicting official plugins:\n   ```bash\n   claude plugin disable typescript-lsp@claude-plugins-official\n   claude plugin disable pyright-lsp@claude-plugins-official\n   claude plugin disable rust-analyzer-lsp@claude-plugins-official\n   ```\n\n4. Enable the LSP tool in `~/.claude/settings.json`:\n   ```json\n   {\n     \"env\": {\n       \"ENABLE_LSP_TOOL\": \"1\"\n     }\n   }\n   ```\n\n5. Restart Claude Code.\n\n## Uninstall\n\n```bash\nnpx stay-fresh-lsp-proxy setup --uninstall\n```\n\nThis removes all stay-fresh plugins and the marketplace registration.\n\n## Built by iloom\n\n[iloom](https://iloom.ai) is an AI development control plane for Claude Code. Decompose work into issues, swarm parallel agents across a dependency graph, and ship with full reasoning trails for every decision. Free to use — just bring your Claude Code subscription.\n\n[CLI](https://github.com/iloom-ai/iloom-cli) | [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=iloom-ai.iloom)\n\n![iloom VS Code](https://github.com/iloom-ai/iloom-vscode-support/raw/HEAD/assets/iloom-vscode-screenshot-4.png)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "stay-fresh-typescript",
+          "source": "./plugins/stay-fresh-typescript",
+          "description": "TypeScript/JavaScript LSP with diagnostic filtering",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add iloom-ai/stay-fresh-lsp-proxy",
+            "/plugin install stay-fresh-typescript@stay-fresh-lsp-proxy"
+          ]
+        },
+        {
+          "name": "stay-fresh-python",
+          "source": "./plugins/stay-fresh-python",
+          "description": "Python (Pyright) LSP with diagnostic filtering",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add iloom-ai/stay-fresh-lsp-proxy",
+            "/plugin install stay-fresh-python@stay-fresh-lsp-proxy"
+          ]
+        },
+        {
+          "name": "stay-fresh-rust",
+          "source": "./plugins/stay-fresh-rust",
+          "description": "Rust LSP with diagnostic filtering",
+          "version": "0.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add iloom-ai/stay-fresh-lsp-proxy",
+            "/plugin install stay-fresh-rust@stay-fresh-lsp-proxy"
+          ]
+        }
+      ]
+    }
+  ]
+}

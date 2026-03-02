@@ -1,0 +1,74 @@
+{
+  "author": {
+    "id": "edwardsanchez",
+    "display_name": "Edward Sanchez",
+    "avatar_url": "https://avatars.githubusercontent.com/u/40975?u=b5575190bd480b8aaf1d8f1ce56e4b812a046da1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "motioneyes",
+      "version": "1.0.0",
+      "description": "Agent skills for SwiftUI animation/scroll debugging and visual frame analysis using MotionEyes traces and CV.",
+      "repo_full_name": "edwardsanchez/MotionEyes",
+      "repo_url": "https://github.com/edwardsanchez/MotionEyes",
+      "repo_description": null,
+      "signals": {
+        "stars": 138,
+        "forks": 3,
+        "pushed_at": "2026-03-01T22:20:45Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"motioneyes\",\n  \"version\": \"1.0.0\",\n  \"owner\": {\n    \"name\": \"Edward Sanchez\",\n    \"email\": \"edwardsanchez@mac.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Agent skills for SwiftUI animation/scroll debugging and visual frame analysis using MotionEyes traces and CV.\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"motioneyes\",\n      \"description\": \"SwiftUI motion observability and visual frame analysis using MotionEyes runtime traces and CV.\",\n      \"repository\": \"https://github.com/edwardsanchez/MotionEyes\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Edward Sanchez\",\n        \"email\": \"edwardsanchez@mac.com\"\n      },\n      \"license\": \"UNLICENSED\",\n      \"category\": \"development\",\n      \"keywords\": [\n        \"swiftui\",\n        \"animation\",\n        \"scrollview\",\n        \"debugging\",\n        \"observability\",\n        \"motion\",\n        \"ios\",\n        \"swift\"\n      ],\n      \"tags\": [\n        \"SwiftUI\",\n        \"Animation\",\n        \"Debugging\",\n        \"Observability\",\n        \"iOS\"\n      ],\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"motioneyes\",\n  \"displayName\": \"MotionEyes\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Agent-first SwiftUI motion observability for debugging animations and scroll behavior with MotionEyes traces.\",\n  \"author\": {\n    \"name\": \"Edward Sanchez\",\n    \"email\": \"edwardsanchez@mac.com\"\n  },\n  \"homepage\": \"https://github.com/edwardsanchez/MotionEyes\",\n  \"repository\": \"https://github.com/edwardsanchez/MotionEyes\",\n  \"license\": \"UNLICENSED\",\n  \"keywords\": [\n    \"swiftui\",\n    \"animation\",\n    \"scrollview\",\n    \"debugging\",\n    \"observability\",\n    \"motion\",\n    \"ios\",\n    \"swift\",\n    \"xcodebuildmcp\"\n  ],\n  \"skills\": [\n    \"./skill/motioneyes-animation-debug\",\n    \"./skill/motioneyes-visual-analysis\"\n  ]\n}\n",
+        "README.md": "# MotionEyes\n\n![MotionEyes banner](https://raw.githubusercontent.com/edwardsanchez/MotionEyes/assets/.github/assets/motioneyes-banner.jpg)\n\nMotionEyes is an agent-first SwiftUI motion observability system.\n\n## Overview\n\nMotionEyes combines:\n- `package/`: runtime tracing primitives that emit motion data over time (`.motionTrace`, `Trace.value`, `Trace.geometry`, `Trace.scrollGeometry`)\n- `skill/motioneyes-animation-debug`: installs or integrates the package, adds focused traces, captures logs, and validates behavior against intent\n- `skill/motioneyes-visual-analysis`: analyzes frame sequences with computer vision and produces annotated images plus JSON summaries\n\nThe goal is to let agents read real motion, geometry, and scroll values from logs instead of guessing from code.\n\nSkill demo:\n\n![MotionEyes skill demo](https://raw.githubusercontent.com/edwardsanchez/MotionEyes/assets/.github/assets/trim.gif)\n\n## Visual Analysis Outputs\n\n`motioneyes-visual-analysis` can generate keyframe sprites, grid overlays, and pixel diffs for motion analysis. The recommended interpretation flow is:\n\n1. Start with a clean keyframe sprite to understand overall motion progression.\n2. Use the matching grid sequence when you need coordinate-aware position checks.\n3. Use adjacent-frame diffs for precise pixel-change confirmation.\n\nExample artifacts below were generated from a focused demo sequence:\n\n<p>\n  <strong>Keyframe sprite (clean motion progression, 5 selected frames)</strong><br/>\n  <img src=\"https://raw.githubusercontent.com/edwardsanchez/MotionEyes/assets/.github/assets/visual-analysis-focused-keyframe-sequence-clean.png\" alt=\"Clean keyframe sprite across five selected frames\" width=\"980\" />\n</p>\n\n<p>\n  <strong>Grid sequence (same 5 frames with coordinate labels)</strong><br/>\n  <img src=\"https://raw.githubusercontent.com/edwardsanchez/MotionEyes/assets/.github/assets/visual-analysis-focused-grid-sequence.png\" alt=\"Grid sequence across five selected frames\" width=\"980\" />\n</p>\n\n<p>\n  <strong>Adjacent diff sprite (4 selected-frame deltas)</strong><br/>\n  <img src=\"https://raw.githubusercontent.com/edwardsanchez/MotionEyes/assets/.github/assets/visual-analysis-focused-diff-adjacent-sequence.png\" alt=\"Raw adjacent selected-frame diffs across four panels\" width=\"980\" />\n</p>\n\n### GridGPT Dependency\n\nGrid overlays require the GridGPT submodule at `third_party/GridGPT`.\n\n```bash\ngit submodule update --init --recursive\ntest -f third_party/GridGPT/arial.ttf && echo \"GridGPT font OK\" || echo \"GridGPT font missing\"\npip3 install -r skill/motioneyes-visual-analysis/requirements.txt\n```\n\nGenerate analysis artifacts like the examples above:\n\n```bash\npython3 skill/motioneyes-visual-analysis/scripts/analyze_sequence.py \\\n  --video /path/to/capture.mp4 \\\n  --fps 15 \\\n  --duration 1.0 \\\n  --trim \\\n  --diff-grid \\\n  --output /path/to/report\n```\n\nBy default, diff outputs are rendered for keyframe-related pairs only. Add `--all-pairs` when you need `diff/` and `diff_grid/` for every consecutive frame pair.\n\n## How It Works\n\n### End-to-End Flow\n\n1. Define expected behavior in measurable terms.\n2. Locate the views and state values that drive the behavior.\n3. Ensure MotionEyes is available or integrate it if missing.\n4. Add temporary, focused traces to values, geometry, or scroll state.\n5. Reproduce the issue and capture MotionEyes logs.\n6. Compare observed traces against expected motion relationships and timing.\n7. Apply fixes, re-run validation, then remove only the temporary instrumentation added for that run.\n\n### Geometry Modes\n\n`Trace.geometry` separates coordinate target from frame source:\n- Layout-relative debugging: `space: .swiftUI(.global), source: .layout`\n- Window-relative debugging: `space: .window, source: .layout`\n- True on-screen movement: `space: .screen, source: .presentation`\n\n### Tooling and Runtime Requirements\n\nMotionEyes works best alongside `XcodeBuildMCP` for simulator control and log capture, but it is not strictly required.\n\nIf MCP is unavailable, agents can still capture and read simulator logs directly:\n\n```bash\nxcrun simctl spawn booted log stream \\\n  --style compact \\\n  --level debug \\\n  --predicate 'subsystem == \"MotionEyes\"'\n```\n\n### Limitations\n\n- `.transition` visual behavior is not directly observable when no measurable underlying value is exposed.\n\n## Skills\n\nSee `skill/SKILLS.md` for guidance on when to use each skill.\n\n### Repository Layout\n\n- `package/`: MotionEyes Swift package\n- `skill/motioneyes-animation-debug/`: MotionEyes agent skill\n- `skill/motioneyes-visual-analysis/`: Frame-based visual analysis skill\n- `skill/motioneyes-animation-debug/SKILL.md`: Skill workflow definition\n\n### Package Quick Start\n\nFrom repo root:\n\n```bash\nswift build --package-path package\nswift test --package-path package\n```\n\n## Example Scenarios\n\n- Detect unintended movement in UI that should remain still.\n- Confirm expected motion actually happens when a state change should animate.\n- Verify movement direction on each axis (for example, up vs down, left vs right).\n- Confirm two animations are truly staggered instead of firing together.\n- Check that relative positioning between two moving elements stays correct.\n- Detect timing drift, including late starts, early stops, or incorrect duration.\n- Catch easing or path issues such as overshoot or reversal when smooth one-way motion is expected.\n- Diagnose scroll jumps, failed restoration, and content-offset desynchronization.\n\n## Installation\n\n### OpenAI Codex / Agent Skills\n\nThe MotionEyes skill lives at `skill/motioneyes-animation-debug/SKILL.md`.\n\nInvoke it with:\n\n```text\n$motioneyes-animation-debug\n```\n\n### Claude Marketplace\n\nThis repo includes `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` for Claude Code marketplace distribution.\n\nPersonal usage:\n\n1. Add the marketplace.\n\n```text\n/plugin marketplace add edwardsanchez/MotionEyes\n```\n\n2. Install the skill.\n\n```text\n/plugin install motioneyes@motioneyes\n```\n\nProject configuration:\n\n```json\n{\n  \"enabledPlugins\": {\n    \"motioneyes@motioneyes\": true\n  },\n  \"extraKnownMarketplaces\": {\n    \"motioneyes\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"edwardsanchez/MotionEyes\"\n      }\n    }\n  }\n}\n```\n\n## Contributing\n\nContributions are welcome. Please read `CONTRIBUTING.md` for the workflow, quality standards, and scope guidance.\n"
+      },
+      "plugins": [
+        {
+          "name": "motioneyes",
+          "description": "SwiftUI motion observability and visual frame analysis using MotionEyes runtime traces and CV.",
+          "repository": "https://github.com/edwardsanchez/MotionEyes",
+          "version": "1.0.0",
+          "author": {
+            "name": "Edward Sanchez",
+            "email": "edwardsanchez@mac.com"
+          },
+          "license": "UNLICENSED",
+          "category": "development",
+          "keywords": [
+            "swiftui",
+            "animation",
+            "scrollview",
+            "debugging",
+            "observability",
+            "motion",
+            "ios",
+            "swift"
+          ],
+          "tags": [
+            "SwiftUI",
+            "Animation",
+            "Debugging",
+            "Observability",
+            "iOS"
+          ],
+          "source": "./",
+          "categories": [
+            "animation",
+            "debugging",
+            "development",
+            "ios",
+            "motion",
+            "observability",
+            "scrollview",
+            "swift",
+            "swiftui"
+          ],
+          "install_commands": [
+            "/plugin marketplace add edwardsanchez/MotionEyes",
+            "/plugin install motioneyes@motioneyes"
+          ]
+        }
+      ]
+    }
+  ]
+}

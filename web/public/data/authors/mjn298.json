@@ -1,0 +1,45 @@
+{
+  "author": {
+    "id": "mjn298",
+    "display_name": "Mike N",
+    "avatar_url": "https://avatars.githubusercontent.com/u/7076498?u=20dc8f04458686d95367c04f9da418fdc33f1cce&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cool-ass-tools",
+      "version": null,
+      "description": "Shared workflows for product management and engineering team orchestration",
+      "repo_full_name": "mjn298/CoolAssTools",
+      "repo_url": "https://github.com/mjn298/CoolAssTools",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-01T20:45:24Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"cool-ass-tools\",\n  \"description\": \"Shared workflows for product management and engineering team orchestration\",\n  \"owner\": {\n    \"name\": \"CoolAssTools\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"cool-workflows\",\n      \"description\": \"Ticket refinement (/refine-tickets) and full engineering team orchestration (/eng-team)\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"CoolAssTools\"\n      },\n      \"source\": \"./plugins/cool-workflows\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# CoolAssTools\n\nShared workflows and tools for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).\n\n## What is this?\n\nThis repo contains slash commands that automate product and engineering workflows. You type a command in Claude Code and it handles the rest — asking clarifying questions, creating tickets, coordinating agents.\n\n| Command | What it does |\n|---------|-------------|\n| `/refine-tickets` | Takes rough feature descriptions and turns them into well-structured Asana tickets |\n| `/eng-team` | Spins up a full AI engineering team to plan and build a feature |\n\n## Prerequisites\n\n1. **Claude Code** — Install from [claude.ai/code](https://claude.ai/code)\n2. **MCP Plugins** — These commands use external services via MCP (Model Context Protocol):\n   - **Asana MCP** — Required for `/refine-tickets`. Install via Claude Code's plugin marketplace (`/plugins` → search \"asana\")\n   - **Linear MCP** — Required for `/eng-team`. Install via plugin marketplace (`/plugins` → search \"linear\")\n   - **Figma MCP** — Optional, for `/eng-team` when providing Figma design URLs\n\n## Installation\n\n### Add the marketplace (recommended)\n\nThis is the easiest way. It adds the CoolAssTools marketplace to Claude Code so you can install and update plugins from it.\n\n1. Open Claude Code\n2. Run `/plugins`\n3. Choose \"Add marketplace\"\n4. Enter: `mjn298/CoolAssTools`\n5. Install `cool-workflows` from the marketplace\n\nThat's it. Both `/refine-tickets` and `/eng-team` are now available. Updates to the repo are picked up automatically.\n\n### Alternative: Clone and add locally\n\nIf you prefer a local checkout:\n\n```bash\ngit clone https://github.com/mjn298/CoolAssTools.git\n```\n\nThen in Claude Code:\n1. Run `/plugins`\n2. Choose \"Add marketplace\"\n3. Enter the local path to your clone\n\n### Manual (copy command files)\n\nIf you only need `/refine-tickets` and don't want the full plugin:\n\n```bash\ncp plugins/cool-workflows/commands/refine-tickets.md ~/.claude/commands/\n```\n\nNote: `/eng-team` requires the `agents/` and `references/` directories — use the marketplace install for that one.\n\n## Usage\n\n### `/refine-tickets` — Ticket Refinement\n\nTakes rough PM input and produces engineering-ready Asana tickets with user stories, personas, and acceptance criteria.\n\n**How to use it:**\n\n```\n# Refine an existing Asana ticket\n/refine-tickets https://app.asana.com/0/1234567890/9876543210\n\n# Refine all tickets in an Asana project\n/refine-tickets https://app.asana.com/0/1234567890\n\n# Create tickets from a Google Doc\n/refine-tickets https://docs.google.com/document/d/abc123/edit\n\n# Create tickets from a description you type or paste\n/refine-tickets We need a way for managers to export timecards to CSV\n```\n\n**What happens:**\n\n1. It reads your input (fetches from Asana/Google Docs, or uses your pasted text)\n2. Identifies who the feature is for (personas) and asks you to confirm\n3. Analyzes for gaps — missing intent, vague requirements, unclear scope\n4. Asks you clarifying questions one at a time\n5. Composes structured tickets with user stories and acceptance criteria\n6. Shows you everything for approval before writing\n7. Updates/creates tickets in Asana\n\nIf Asana rate-limits the API, it saves everything to a local markdown file so nothing is lost.\n\n**Who should use this:** Product managers, engineers, anyone turning a feature idea into actionable tickets.\n\n---\n\n### `/eng-team` — Engineering Team Orchestration\n\nSpins up a full AI engineering team that plans, designs, and implements a feature — all tracked in Linear.\n\n**How to use it:**\n\n```\n# From a text description\n/eng-team https://linear.app/your-org/team/ENG/all Build a CSV export feature for timecards\n\n# From a Linear ticket\n/eng-team https://linear.app/your-org/team/ENG/all https://linear.app/your-org/issue/ENG-123\n\n# From a Figma design\n/eng-team https://linear.app/your-org/team/ENG/all https://www.figma.com/design/abc123/My-Design\n\n# From an Asana ticket\n/eng-team https://linear.app/your-org/team/ENG/all https://app.asana.com/0/project/task\n```\n\nThe first argument is always your Linear team URL. The second is the feature context.\n\n**What happens:**\n\n1. **Product Discovery** — A ProductMgr agent asks clarifying questions and creates user story tickets in Linear\n2. **Architecture** — Software Architect and Engineering Lead agents explore your codebase and design the approach\n3. **Engineering Design** — Tickets get detailed implementation plans, dependencies, and backend/frontend splits\n4. **Implementation** — Backend and Frontend engineer agents build the feature using TDD, each in isolated git worktrees\n\nYou approve each phase before it proceeds. The whole thing is tracked in Linear.\n\n**Who should use this:** Engineers who want to go from feature description to working code.\n\n---\n\n## Typical Workflow\n\nThese two commands chain together naturally:\n\n1. PM writes a rough feature doc in Google Docs or Asana\n2. Run `/refine-tickets` to turn it into clean, well-structured Asana tickets\n3. Pull the refined tickets into Linear\n4. Run `/eng-team` to plan and build the feature\n\n## Troubleshooting\n\n**\"Command not found\"** — Make sure the plugin is installed. Run `/plugins` in Claude Code to check.\n\n**Asana/Linear errors** — Make sure the respective MCP plugins are installed and authenticated. Run `/plugins` to verify.\n\n**Rate limiting** — `/refine-tickets` automatically falls back to a local markdown file. For `/eng-team`, Linear rate limits are rare but you can retry.\n"
+      },
+      "plugins": [
+        {
+          "name": "cool-workflows",
+          "description": "Ticket refinement (/refine-tickets) and full engineering team orchestration (/eng-team)",
+          "version": "1.0.0",
+          "author": {
+            "name": "CoolAssTools"
+          },
+          "source": "./plugins/cool-workflows",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add mjn298/CoolAssTools",
+            "/plugin install cool-workflows@cool-ass-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

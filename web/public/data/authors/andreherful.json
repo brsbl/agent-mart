@@ -1,0 +1,70 @@
+{
+  "author": {
+    "id": "andreherful",
+    "display_name": "andreherful",
+    "avatar_url": "https://avatars.githubusercontent.com/u/97897979?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "qa-auditor",
+      "version": null,
+      "description": "LLM-driven QA audit plugin for Claude Code",
+      "repo_full_name": "andreherful/qa-auditor",
+      "repo_url": "https://github.com/andreherful/qa-auditor",
+      "repo_description": "LLM-driven QA audit plugin for Claude Code — evaluates web apps like a senior QA engineer with professional HTML reports",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-01T12:27:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"qa-auditor\",\n  \"description\": \"LLM-driven QA audit plugin for Claude Code\",\n  \"owner\": {\n    \"name\": \"Andre Herbst-Fulterer\",\n    \"email\": \"andre@ki-maera.com\"\n  },\n  \"metadata\": {\n    \"description\": \"LLM-driven QA audit plugin that evaluates web applications like a senior QA engineer\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"qa-auditor\",\n      \"source\": \"./\",\n      \"description\": \"LLM-driven QA audit tool that evaluates web applications like a senior QA engineer, producing professional HTML reports with star ratings, severity-graded issues, and embedded screenshots.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Andre Herbst-Fulterer\",\n        \"email\": \"andre@ki-maera.com\"\n      },\n      \"homepage\": \"https://github.com/andreherful/qa-auditor\",\n      \"repository\": \"https://github.com/andreherful/qa-auditor\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"qa\",\n        \"testing\",\n        \"audit\",\n        \"playwright\",\n        \"report\",\n        \"quality-assurance\"\n      ],\n      \"category\": \"testing\",\n      \"tags\": [\n        \"qa\",\n        \"testing\",\n        \"audit\",\n        \"report\"\n      ],\n      \"strict\": false\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"qa-auditor\",\n  \"description\": \"LLM-driven QA audit tool that evaluates web applications like a senior QA engineer, producing professional HTML reports with star ratings, severity-graded issues, and embedded screenshots.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Andre Herbst-Fulterer\",\n    \"email\": \"andre@ki-maera.com\"\n  }\n}\n",
+        "README.md": "# QA Auditor\n\nAn intelligent, LLM-driven QA audit plugin for Claude Code that evaluates web applications like a senior QA engineer.\n\nUnlike traditional E2E tests that check pass/fail, QA Auditor **evaluates quality** across 6 dimensions, finds edge cases, and produces a professional HTML report with star ratings, severity-graded issues, and embedded screenshots.\n\n## Installation\n\n```bash\nclaude plugin install github:andreherful/qa-auditor\n```\n\n**Requirement**: The `playwright` plugin must be installed:\n\n```bash\nclaude plugin install playwright\n```\n\n## Quick Start\n\n### 1. Create a config file\n\nCreate `qa-audit.yaml` in your project root:\n\n```yaml\nproject:\n  name: \"My App\"\n  version: \"1.0.0\"\n\nenvironment:\n  base_url: \"http://localhost:3000\"\n\nauth:\n  strategy: form\n  login_url: \"/login\"\n  credentials:\n    username_field: \"email\"\n    password_field: \"password\"\n    username: \"test@example.com\"\n    password: \"testpass123\"\n\nfeatures:\n  - id: homepage\n    name: \"Homepage\"\n    priority: high\n    pages:\n      - url: \"/\"\n        name: \"Landing Page\"\n```\n\n### 2. Run the audit\n\n```bash\n# Full audit\n/qa-audit\n\n# Audit a specific feature\n/qa-audit --feature auth\n\n# Custom config path\n/qa-audit --config path/to/qa-audit.yaml\n\n# Skip cross-cutting checks\n/qa-audit --skip-cross-cutting\n```\n\n### 3. View the report\n\nThe audit generates a self-contained HTML report at:\n```\nqa-audit-results/qa-audit-YYYY-MM-DD-HHmmss.html\n```\n\nOpen it in any browser — all screenshots are embedded, no external dependencies.\n\n## What It Tests\n\n### 6 Quality Dimensions (scored 1-5)\n\n| Dimension | What It Evaluates |\n|-----------|-------------------|\n| **Functionality** | Do features work correctly? Are workflows complete? |\n| **Quality** | AI output quality, data accuracy, content relevance |\n| **Edge Cases** | Empty states, long inputs, special characters, concurrent actions |\n| **Integration** | API reliability, data flow between components, real-time updates |\n| **UX/UI** | Layout, responsiveness, loading states, error messages, accessibility |\n| **Performance** | Page load times, interaction responsiveness, resource usage |\n\n### Issue Severity Levels\n\n- **CRITICAL** — Feature broken, data loss, security vulnerability\n- **HIGH** — Major functionality impaired, poor user experience\n- **MEDIUM** — Minor issues, cosmetic problems, inconsistencies\n- **LOW** — Suggestions, minor polish items\n- **INFO** — Observations, notes for consideration\n\n## Report Features\n\n- Executive summary with overall score and star rating\n- Radar chart showing scores across all 6 dimensions\n- Per-feature score cards with detailed scenario results\n- Filterable issues table by severity\n- Embedded screenshots with lightbox viewer\n- Cross-cutting audit results (console errors, responsive, performance)\n- Print-ready layout with proper page breaks\n\n## Configuration Reference\n\nSee `examples/qa-audit.yaml` for a complete example with all options documented.\n\n### Config Structure\n\n```yaml\nproject:          # Project metadata\nenvironment:      # URLs and environment settings\nauth:             # Authentication strategy\nfeatures:         # List of features to test\ncross_cutting:    # Cross-cutting audit settings\n```\n\n### Auth Strategies\n\n- `form` — Fill login form fields and submit\n- `token` — Set auth token in localStorage/cookie\n- `none` — No authentication needed\n\n### Feature Priority\n\n- `critical` — Must-test, blocks release\n- `high` — Important, test thoroughly\n- `medium` — Standard testing\n- `low` — Basic smoke test only\n\n## Auto-Discovery Mode\n\nIf no `qa-audit.yaml` exists, the auditor enters auto-discovery mode:\n1. Navigates to the base URL\n2. Discovers available pages and features\n3. Runs a basic audit on discovered content\n4. Generates a report with recommendations\n\n## Project Structure\n\n```\nqa-auditor/\n├── .claude-plugin/plugin.json    # Plugin manifest\n├── commands/qa-audit.md          # /qa-audit slash command\n├── agents/feature-tester.md      # Feature testing sub-agent\n├── skills/qa-auditor/\n│   ├── SKILL.md                  # Skill overview\n│   ├── references/\n│   │   ├── evaluation-rubric.md  # Scoring criteria\n│   │   └── report-schema.md     # JSON data schema\n│   ├── scripts/\n│   │   └── generate_report.py   # HTML report generator\n│   └── assets/\n│       └── report-template.html # HTML/CSS/JS template\n├── examples/qa-audit.yaml       # Example configuration\n├── README.md\n└── LICENSE\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "qa-auditor",
+          "source": "./",
+          "description": "LLM-driven QA audit tool that evaluates web applications like a senior QA engineer, producing professional HTML reports with star ratings, severity-graded issues, and embedded screenshots.",
+          "version": "1.0.0",
+          "author": {
+            "name": "Andre Herbst-Fulterer",
+            "email": "andre@ki-maera.com"
+          },
+          "homepage": "https://github.com/andreherful/qa-auditor",
+          "repository": "https://github.com/andreherful/qa-auditor",
+          "license": "MIT",
+          "keywords": [
+            "qa",
+            "testing",
+            "audit",
+            "playwright",
+            "report",
+            "quality-assurance"
+          ],
+          "category": "testing",
+          "tags": [
+            "qa",
+            "testing",
+            "audit",
+            "report"
+          ],
+          "strict": false,
+          "categories": [
+            "audit",
+            "playwright",
+            "qa",
+            "quality-assurance",
+            "report",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add andreherful/qa-auditor",
+            "/plugin install qa-auditor@qa-auditor"
+          ]
+        }
+      ]
+    }
+  ]
+}
