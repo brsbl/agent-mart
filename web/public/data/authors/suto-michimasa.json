@@ -1,0 +1,108 @@
+{
+  "author": {
+    "id": "Suto-Michimasa",
+    "display_name": "Suto Michimasa",
+    "avatar_url": "https://avatars.githubusercontent.com/u/70099721?u=01d40fffb9b55ecaffb8da889c4457415c9df481&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "session-tools",
+      "version": null,
+      "description": "Productivity tools for Claude Code: daily/weekly reports, session search, and timesheet",
+      "repo_full_name": "Suto-Michimasa/cc-session-tools",
+      "repo_url": "https://github.com/Suto-Michimasa/cc-session-tools",
+      "repo_description": "Claude Code skill that generates daily work reports from session history",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-01T08:08:25Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"session-tools\",\n  \"owner\": {\n    \"name\": \"Suto-Michimasa\"\n  },\n  \"metadata\": {\n    \"description\": \"Productivity tools for Claude Code: daily/weekly reports, session search, and timesheet\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"daily-report\",\n      \"source\": \"./daily-report\",\n      \"description\": \"Generate daily work reports from Claude Code session history\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"report\", \"daily\", \"productivity\"]\n    },\n    {\n      \"name\": \"weekly-report\",\n      \"source\": \"./weekly-report\",\n      \"description\": \"Generate weekly summary reports by aggregating daily reports or session history\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"report\", \"weekly\", \"productivity\"]\n    },\n    {\n      \"name\": \"session-search\",\n      \"source\": \"./session-search\",\n      \"description\": \"Search across all Claude Code sessions by keyword\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"search\", \"session\", \"productivity\"]\n    },\n    {\n      \"name\": \"timesheet\",\n      \"source\": \"./timesheet\",\n      \"description\": \"Estimate per-project work time from Claude Code session timestamps\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"timesheet\", \"time-tracking\", \"productivity\"]\n    }\n  ]\n}\n",
+        "README.md": "# cc-session-tools\n\nA Claude Code plugin marketplace for productivity tracking using session history.\n\nIt scans `~/.claude/projects/` for session data and provides daily/weekly reports, session search, and timesheet estimation. Install all plugins at once or pick only what you need.\n\n## Install\n\n```bash\n# Add the marketplace\n/plugin marketplace add Suto-Michimasa/cc-session-tools\n\n# Install all plugins\n/plugin install daily-report@session-tools\n/plugin install weekly-report@session-tools\n/plugin install session-search@session-tools\n/plugin install timesheet@session-tools\n\n# Or install only what you need\n/plugin install daily-report@session-tools\n```\n\n<details>\n<summary>Manual install (without plugin system)</summary>\n\n```bash\ngit clone https://github.com/Suto-Michimasa/cc-session-tools.git\n# Install all\ncp -r cc-session-tools/*/skills/* ~/.claude/skills/\n\n# Or install individually\ncp -r cc-session-tools/daily-report/skills/daily-report ~/.claude/skills/\n```\n\n</details>\n\n## Skills\n\n### `/daily-report` — Daily work report\n\nGenerate a structured daily report from session history.\n\n```bash\n> /daily-report\n> /daily-report 2025-06-15\n```\n\nReports are saved to `~/daily-reports/YYYY-MM-DD.md` by default. Edit `config.json` to customize output directory, language, and template.\n\n<details>\n<summary>Example output</summary>\n\n```markdown\n# Daily Report — 2025-06-15\n\n## Highlights\n- Dashboard loading time reduced from 3.2s to 0.8s by eliminating N+1 queries\n\n## Tasks by Project\n\n### team-dashboard — 3 sessions, 24 prompts\n- [x] Investigate and fix slow dashboard loading\n- [-] Add real-time updates via WebSocket (remaining: reconnection logic)\n\n## Learnings\n- PostgreSQL's `EXISTS` subquery outperforms `JOIN + DISTINCT` for \"has any\" checks\n\n## Next Actions\n- Implement WebSocket reconnection with exponential backoff\n```\n\n</details>\n\n### `/weekly-report` — Weekly summary\n\nAggregate daily reports into a weekly summary for 1on1 or team meetings.\n\n```bash\n> /weekly-report\n> /weekly-report 2026-W09\n> /weekly-report 2026-02-24..2026-02-28\n```\n\nReads existing daily reports if available, otherwise falls back to raw session data. Reports are saved to `~/weekly-reports/YYYY-Www.md`.\n\n### `/session-search` — Search session history\n\nSearch across all sessions by keyword.\n\n```bash\n> /session-search \"N+1 query fix\"\n> /session-search migration\n```\n\nResults are displayed in the conversation, grouped by project with surrounding context.\n\n### `/timesheet` — Work time estimation\n\nEstimate per-project work time from session timestamps.\n\n```bash\n> /timesheet\n> /timesheet 2026-02-14\n> /timesheet 2026-W09\n> /timesheet 2026-02-01..2026-02-28\n```\n\nCalculates time based on message timestamps, splitting work blocks at 30-minute idle gaps and rounding to 15-minute increments.\n\n## Configuration\n\n`daily-report` and `weekly-report` have `config.json` files in their skill directories. `session-search` and `timesheet` have no configuration (sensible defaults are built-in).\n\n### daily-report config\n\n| Key | Default | Description |\n|---|---|---|\n| `outputDir` | `~/daily-reports` | Directory to save generated reports |\n| `templatePath` | `\"\"` | Path to custom template (empty = use bundled template) |\n| `language` | `en` | Template language — selects `templates/{language}.md` |\n\n### weekly-report config\n\n| Key | Default | Description |\n|---|---|---|\n| `dailyReportDir` | `~/daily-reports` | Where to look for existing daily reports |\n| `outputDir` | `~/weekly-reports` | Directory to save weekly reports |\n| `templatePath` | `\"\"` | Path to custom template |\n| `language` | `en` | Template language |\n\n## Custom templates\n\nTemplates use YAML frontmatter + Markdown with `<!-- -->` instruction comments. To customize:\n\n```bash\ncp cc-session-tools/daily-report/skills/daily-report/templates/default.md ~/.claude/daily-report-template.md\n```\n\nThen set `templatePath` in the corresponding `config.json`.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "daily-report",
+          "source": "./daily-report",
+          "description": "Generate daily work reports from Claude Code session history",
+          "version": "1.0.0",
+          "keywords": [
+            "report",
+            "daily",
+            "productivity"
+          ],
+          "categories": [
+            "daily",
+            "productivity",
+            "report"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Suto-Michimasa/cc-session-tools",
+            "/plugin install daily-report@session-tools"
+          ]
+        },
+        {
+          "name": "weekly-report",
+          "source": "./weekly-report",
+          "description": "Generate weekly summary reports by aggregating daily reports or session history",
+          "version": "1.0.0",
+          "keywords": [
+            "report",
+            "weekly",
+            "productivity"
+          ],
+          "categories": [
+            "productivity",
+            "report",
+            "weekly"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Suto-Michimasa/cc-session-tools",
+            "/plugin install weekly-report@session-tools"
+          ]
+        },
+        {
+          "name": "session-search",
+          "source": "./session-search",
+          "description": "Search across all Claude Code sessions by keyword",
+          "version": "1.0.0",
+          "keywords": [
+            "search",
+            "session",
+            "productivity"
+          ],
+          "categories": [
+            "productivity",
+            "search",
+            "session"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Suto-Michimasa/cc-session-tools",
+            "/plugin install session-search@session-tools"
+          ]
+        },
+        {
+          "name": "timesheet",
+          "source": "./timesheet",
+          "description": "Estimate per-project work time from Claude Code session timestamps",
+          "version": "1.0.0",
+          "keywords": [
+            "timesheet",
+            "time-tracking",
+            "productivity"
+          ],
+          "categories": [
+            "productivity",
+            "time-tracking",
+            "timesheet"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Suto-Michimasa/cc-session-tools",
+            "/plugin install timesheet@session-tools"
+          ]
+        }
+      ]
+    }
+  ]
+}

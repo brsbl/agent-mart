@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "andrsnn",
+    "display_name": "andrsnn",
+    "avatar_url": "https://avatars.githubusercontent.com/u/12955152?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "andrsnn-claude-sketch",
+      "version": null,
+      "description": "Generate UI mockups and visual designs with Google Gemini",
+      "repo_full_name": "andrsnn/claude-sketch",
+      "repo_url": "https://github.com/andrsnn/claude-sketch",
+      "repo_description": "Claude Code plugin that generates UI mockups and visual designs of your codebase with Gemini",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-02T03:56:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"andrsnn-claude-sketch\",\n  \"owner\": {\n    \"name\": \"andrsnn\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"sketch\",\n      \"source\": \"./\",\n      \"description\": \"Generate UI mockups and visual designs with Google Gemini\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"sketch\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Generate mock images, UI mockups, and visual designs with AI — powered by Google Gemini\"\n}\n",
+        "README.md": "# sketch\n\n![sketch - prompt to design](mocks/mock-final.png)\n\nA Claude Code plugin that generates UI mockups and visual designs using Google Gemini. Describe what you want, Claude generates 3 options, and you pick, tweak, or regenerate until you're happy.\n\nClaude analyzes your codebase for context (color schemes, UI framework, existing design patterns) so the generated mockups actually match your project.\n\n## What it does\n\n1. You describe what you want (or use `/sketch a login page with dark theme`)\n2. Claude reads your project for design context (Tailwind config, existing assets, etc.)\n3. Generates 3 variations in parallel using Google Gemini\n4. Shows you all 3 and asks what you think\n5. You pick one, ask for tweaks, or regenerate - loops until you're done\n\nWorks for UI mockups, app screens, icons, illustrations, marketing graphics, concept art, wireframes, and anything else you can describe.\n\n## Install\n\n### 1. Set your Google AI API key\n\nGet one from [Google AI Studio](https://aistudio.google.com/apikey), then add to your shell profile (`~/.bashrc`, `~/.zshrc`):\n\n```bash\nexport GOOGLE_AI_API_KEY=\"your-key\"\n```\n\n### 2. Install the plugin\n\n**From GitHub (two steps):**\n\n```\n/plugin marketplace add andrsnn/claude-sketch\n/plugin install sketch@andrsnn-claude-sketch\n```\n\nThis permanently adds the plugin - no flags needed on future sessions.\n\n**Or from a local directory (for development):**\n\n```bash\nclaude --plugin-dir /path/to/claude-sketch\n```\n\nScript dependencies (`@google/genai`) install automatically on first use.\n\n## Usage\n\n### Slash command\n\n```\n/sketch a SaaS dashboard with analytics charts and a dark sidebar\n/sketch a mobile onboarding flow for a fitness app\n/sketch an icon set for a weather app, 1:1 aspect ratio\n```\n\n### Natural language\n\nJust ask in conversation - the skill auto-triggers:\n\n- \"Sketch me a landing page with a hero section and pricing table\"\n- \"Generate a mockup of the settings page\"\n- \"Mock up a mobile version of this dashboard\"\n- \"Create concept art for the app's empty state illustrations\"\n\n### With reference images\n\nPoint to an existing image to maintain visual consistency:\n\n- \"Sketch a settings page using `./mocks/dashboard.png` as style reference\"\n- After picking an option: \"Tweak this one - make the header blue\"\n\n## How the loop works\n\nAfter generating 3 options, you can:\n\n- **Pick** - Save your favorite to a final location\n- **Tweak** - Keep an option as reference, describe what to change, get 3 new variants\n- **Regenerate** - Fresh batch with adjusted prompts based on your feedback\n- **Start over** - Describe something completely different\n\n## Standalone script\n\nThe generation script works independently of Claude Code:\n\n```bash\nnode scripts/generate-image.mjs \\\n  --prompt \"a flat vector illustration of a rocket launching\" \\\n  --output ./rocket.png \\\n  --aspect-ratio \"1:1\" \\\n  --reference ./existing-style.png\n```\n\nOutputs JSON: `{ \"success\": true, \"output\": \"./rocket.png\", \"description\": \"...\" }`\n\n## Project structure\n\n```\nclaude-sketch/\n├── .claude-plugin/plugin.json         # Plugin metadata\n├── commands/sketch.md                 # /sketch slash command\n├── skills/sketch/\n│   ├── SKILL.md                       # Auto-trigger skill (core workflow)\n│   └── references/prompt-guide.md     # Prompt engineering reference\n├── scripts/\n│   ├── generate-image.mjs             # Gemini image generation CLI\n│   ├── package.json                   # Self-contained dependencies\n│   └── setup.sh                       # Dependency installer\n└── README.md\n```\n\n## Requirements\n\n- Node.js 18+\n- `GOOGLE_AI_API_KEY` environment variable\n- Claude Code with plugin support\n"
+      },
+      "plugins": [
+        {
+          "name": "sketch",
+          "source": "./",
+          "description": "Generate UI mockups and visual designs with Google Gemini",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add andrsnn/claude-sketch",
+            "/plugin install sketch@andrsnn-claude-sketch"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "author": {
+    "id": "geojaz",
+    "display_name": "Eric Hole",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9451328?u=db5bb3b12cc76ce0fd6583dde43cd2cf4e96b0de&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "geojaz-graphiti-plugins",
+      "version": null,
+      "description": "Context retrieval using Graphiti knowledge graph, Context7 docs, and Serena symbol analysis",
+      "repo_full_name": "geojaz/graphiti-context-hub",
+      "repo_url": "https://github.com/geojaz/graphiti-context-hub",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-01T18:22:39Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"geojaz-graphiti-plugins\",\n  \"owner\": {\n    \"name\": \"Eric Hole\",\n    \"email\": \"\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"graphiti-context-hub\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"geojaz/graphiti-context-hub\"\n      },\n      \"description\": \"Context retrieval using Graphiti knowledge graph, Context7 docs, and Serena symbol analysis\",\n      \"version\": \"3.1.0\",\n      \"author\": {\n        \"name\": \"Eric Hole\"\n      },\n      \"repository\": \"https://github.com/geojaz/graphiti-context-hub\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"context\",\n        \"memory\",\n        \"documentation\",\n        \"context7\",\n        \"serena\",\n        \"graphiti\",\n        \"knowledge-graph\",\n        \"code-analysis\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"graphiti-context-hub\",\n  \"description\": \"Context retrieval using Graphiti knowledge graph, Context7 docs, and Serena symbol analysis\",\n  \"version\": \"3.1.0\",\n  \"author\": {\n    \"name\": \"Eric Hole\",\n    \"url\": \"https://github.com/geojaz\"\n  },\n  \"license\": \"MIT\",\n  \"repository\": \"https://github.com/geojaz/graphiti-context-hub\"\n}\n",
+        "README.md": "# Graphiti Context Hub\n\nUnified context retrieval for Claude Code - orchestrates **Graphiti knowledge graph**, **Context7 documentation**, and **Serena symbol analysis** into a single context-gathering workflow.\n\n## Installation\n\n```bash\nclaude plugins install graphiti-context-hub --marketplace geojaz\n```\n\nOr install from local path:\n```bash\nclaude plugins install /path/to/graphiti-context-hub\n```\n\n## Configuration\n\n**Global Config** (recommended): `~/.config/claude/graphiti-context-hub.conf`\n\n```bash\nGRAPHITI_GROUP_ID=main\nGRAPHITI_ENDPOINT=http://localhost:8000\n```\n\n**Local Override** (optional): `.context-hub.conf` in repo\n\nRun `/context-hub-setup` to create global config automatically.\n\n**Group ID**: Uses \"main\" for unified cross-repo knowledge graph. All memories include repo context for flexible filtering.\n\n## Prerequisites\n\n### Required: Graphiti MCP Server\n\n**Automatic Configuration**: This plugin automatically configures Claude Code to connect to Graphiti via HTTP at `http://localhost:8000/mcp`.\n\n**You need to install and run Graphiti separately:**\n\n1. Install the Graphiti MCP server (see [Graphiti documentation](https://github.com/getzep/graphiti))\n2. Start the server:\n   ```bash\n   graphiti-server start --port 8000\n   ```\n3. Verify the connection:\n   ```bash\n   /context-hub-setup\n   ```\n\n**Custom endpoint**: If running on a different host/port, update `.context-hub.yaml`:\n```yaml\ngraphiti:\n  endpoint: \"http://your-host:your-port\"\n```\n\n### Required: Serena (for `/encode-repo-serena`)\n```bash\nclaude plugins install serena\n```\n\n### Recommended: Context7 (for framework docs)\n```bash\nclaude plugins install context7 --marketplace pleaseai/claude-code-plugins\n```\n\n## Setup\n\nRun the setup command to configure and verify:\n\n```bash\n/context-hub-setup\n```\n\nThis will:\n1. Check if Serena and Context7 plugins are installed\n2. Create `.context-hub.yaml` configuration file\n3. Test Graphiti MCP connectivity\n4. Verify group_id auto-detection\n\n## Commands\n\n### Context Retrieval\n\n| Command | Description |\n|---------|-------------|\n| `/context_gather <task>` | Gather context from Graphiti, code, and docs |\n| `/encode-repo-serena` | Bootstrap repository into Graphiti using Serena |\n\n### Memory Management\n\n| Command | Description |\n|---------|-------------|\n| `/memory-search <query>` | Search knowledge graph semantically |\n| `/memory-list [count]` | List recent episodes |\n| `/memory-save` | Save current context as episode |\n| `/memory-explore <query>` | Deep knowledge graph traversal |\n\n### Setup\n\n| Command | Description |\n|---------|-------------|\n| `/context-hub-setup` | Configure and verify setup |\n\n## Skills\n\nGraphiti Context Hub includes auto-discovered skills:\n\n### Memory Skills\n| Skill | Description |\n|-------|-------------|\n| `using-graphiti-memory` | When/how to query and save to Graphiti |\n| `exploring-knowledge-graph` | Deep graph traversal and relationship discovery |\n\n### Serena Skills\n| Skill | Description |\n|-------|-------------|\n| `using-serena-symbols` | Symbol-level code analysis guidance |\n| `serena-code-architecture` | Architectural analysis with Graphiti integration |\n\n## How It Works\n\n### /context_gather\n\nOrchestrates multiple sources:\n\n1. **Graphiti Knowledge Graph** - Semantic search across entities and relationships\n2. **File System** - Read actual code files\n3. **Context7** - Framework-specific documentation (if installed)\n4. **Serena** - Symbol-level code analysis (if installed)\n5. **WebSearch** - Fallback for recent information\n\nReturns synthesized summary with:\n- Relevant entities and relationships\n- Code patterns and snippets\n- Framework guidance\n- Architectural decisions\n\n### /encode-repo-serena\n\nUses Serena's LSP-powered analysis:\n- **Symbol extraction** - Classes, functions, methods with locations\n- **Relationship discovery** - Dependencies and references\n- **Cross-file analysis** - Component connections\n\nStores findings as episodes in Graphiti for future retrieval.\n\n### Repository Tagging\n\nAll memories automatically include repository context:\n\n```\nRepo: graphiti-context-hub\n\nDecision: Implemented user-level group_id\n\nRationale: Enables cross-repo pattern discovery\n```\n\n**Benefits**:\n- Search by repo: \"authentication in graphiti-context-hub\"\n- Search globally: \"authentication patterns\" finds across all repos\n- See which projects use similar patterns\n- Graphiti extracts repo names as entities automatically\n\n## Example Usage\n\n```bash\n# Before implementing a feature\n/context_gather implement OAuth2 authentication for the API\n\n# Bootstrap a new project\n/encode-repo-serena\n\n# Quick memory search\n/memory-search authentication patterns\n\n# Save an important decision\n/memory-save\n\n# Explore the knowledge graph\n/memory-explore authentication architecture\n```\n\n## Architecture\n\n```\ngraphiti-context-hub\n├── skills/\n│   ├── using-graphiti-memory/      ─── Memory usage guide\n│   ├── exploring-knowledge-graph/   ─── Graph traversal\n│   ├── using-serena-symbols/        ─── Symbol analysis\n│   └── serena-code-architecture/    ─── Architecture workflows\n├── commands/\n│   ├── context_gather.md            ─── Multi-source retrieval\n│   ├── encode-repo-serena.md        ─── Repository encoding\n│   └── memory-*.md                  ─── Memory management\n└── agents/\n    └── context-retrieval.md         ─── Context gathering agent\n```\n\n## Graphiti Features\n\n**Automatic Entity Extraction:**\n- Saves episodes and automatically extracts entities\n- Creates relationships between entities\n- No manual linking required\n\n**Knowledge Graph:**\n- Entities: Classes, functions, concepts, decisions\n- Relationships: Dependencies, implementations, influences\n- Temporal: Track evolution over time\n\n**Search:**\n- Semantic search across nodes (entities)\n- Relationship search via facts\n- Episode chronology for context\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "graphiti-context-hub",
+          "source": {
+            "source": "github",
+            "repo": "geojaz/graphiti-context-hub"
+          },
+          "description": "Context retrieval using Graphiti knowledge graph, Context7 docs, and Serena symbol analysis",
+          "version": "3.1.0",
+          "author": {
+            "name": "Eric Hole"
+          },
+          "repository": "https://github.com/geojaz/graphiti-context-hub",
+          "license": "MIT",
+          "keywords": [
+            "context",
+            "memory",
+            "documentation",
+            "context7",
+            "serena",
+            "graphiti",
+            "knowledge-graph",
+            "code-analysis"
+          ],
+          "category": "productivity",
+          "categories": [
+            "code-analysis",
+            "context",
+            "context7",
+            "documentation",
+            "graphiti",
+            "knowledge-graph",
+            "memory",
+            "productivity",
+            "serena"
+          ],
+          "install_commands": [
+            "/plugin marketplace add geojaz/graphiti-context-hub",
+            "/plugin install graphiti-context-hub@geojaz-graphiti-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
