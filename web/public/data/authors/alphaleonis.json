@@ -1,0 +1,153 @@
+{
+  "author": {
+    "id": "alphaleonis",
+    "display_name": "Peter Palotas",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5114354?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "decaf-claude-config",
+      "version": null,
+      "description": "Claude Code Agents and Skills for development and code review",
+      "repo_full_name": "alphaleonis/decaf-claude-config",
+      "repo_url": "https://github.com/alphaleonis/decaf-claude-config",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-03T20:10:33Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"decaf-claude-config\",\n  \"owner\": {\n    \"name\": \"Alphaleonis\",\n    \"email\": \"alphaleonis@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code Agents and Skills for development and code review\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"decaf\",\n      \"source\": \"./decaf\",\n      \"description\": \"General-purpose agents and skills for Claude Code\",\n      \"author\": {\n        \"name\": \"Alphaleonis\"\n      },\n      \"homepage\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"repository\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"agents\",\n        \"skills\",\n        \"analysis\"\n      ],\n      \"category\": \"workflow\",\n      \"tags\": [\n        \"agents\",\n        \"skills\",\n        \"analysis\"\n      ]\n    },\n    {\n      \"name\": \"decaf-review\",\n      \"source\": \"./decaf-review\",\n      \"description\": \"Multi-agent code review and coverage analysis for Claude Code\",\n      \"author\": {\n        \"name\": \"Alphaleonis\"\n      },\n      \"homepage\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"repository\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"code-review\",\n        \"coverage\",\n        \"quality\"\n      ],\n      \"category\": \"workflow\",\n      \"tags\": [\n        \"code-review\",\n        \"coverage\",\n        \"quality\"\n      ]\n    },\n    {\n      \"name\": \"decaf-memory-mcp\",\n      \"source\": \"./decaf-memory-mcp\",\n      \"description\": \"Memory skills backed by @modelcontextprotocol/server-memory\",\n      \"author\": {\n        \"name\": \"Alphaleonis\"\n      },\n      \"homepage\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"repository\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"memory\",\n        \"knowledge-graph\"\n      ],\n      \"category\": \"workflow\",\n      \"tags\": [\n        \"memory\",\n        \"knowledge-graph\"\n      ]\n    },\n    {\n      \"name\": \"decaf-memory-doobidoo\",\n      \"source\": \"./decaf-memory-doobidoo\",\n      \"description\": \"Memory skills backed by mcp-memory-service (doobidoo)\",\n      \"author\": {\n        \"name\": \"Alphaleonis\"\n      },\n      \"homepage\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"repository\": \"https://github.com/alphaleonis/decaf-claude-config\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"memory\",\n        \"knowledge-graph\",\n        \"semantic-search\"\n      ],\n      \"category\": \"workflow\",\n      \"tags\": [\n        \"memory\",\n        \"knowledge-graph\",\n        \"semantic-search\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# decaf's Claude Plugins\n\nPersonalized Claude Code plugins with specialized agents, skills, and conventions for development and code review.\n\nOriginally forked from [everything-claude-code](https://github.com/affaan-m/everything-claude-code).  You probably want that one rather than this one that has been tailored to my own personal workflow.\n\n## Plugins\n\nThis repo provides two plugins that can be installed independently:\n\n| Plugin | Description |\n|--------|-------------|\n| **`decaf`** | General-purpose agents and skills (memory, analysis, development) |\n| **`decaf-review`** | Multi-agent code review and coverage analysis |\n\n## Installation\n\n```bash\n# Add as a marketplace\n/plugin marketplace add alphaleonis/decaf-claude-config\n\n# Install one or both plugins\n/plugin install decaf-claude-config@decaf\n/plugin install decaf-claude-config@decaf-review\n```\n\nOr install from a local clone:\n\n```bash\ncd /path/to/decaf-claude-config\n/plugin marketplace add ./\n/plugin install decaf-claude-config@decaf\n/plugin install decaf-claude-config@decaf-review\n```\n\n### Optional: Memory MCP Server\n\nSome skills (`remember`, `recall`, `add-memory`, `pattern-memory`) require the [Memory MCP server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) for cross-project pattern storage.\n\n```bash\nclaude mcp add --transport stdio memory -- bun x @modelcontextprotocol/server-memory\n```\n\nTo configure a persistent storage location:\n\n```bash\nclaude mcp add --transport stdio memory -- bun x @modelcontextprotocol/server-memory --memory-path ~/.claude/memory.jsonl\n```\n\n## What's Inside\n\n```\ndecaf-claude-config/\n├── .claude-plugin/               # Marketplace manifest\n├── conventions/                  # Shared convention files (@file references)\n├── decaf/                        # Core plugin\n│   ├── .claude-plugin/plugin.json\n│   ├── agents/                   # 6 agents\n│   └── skills/                   # 9 skills\n├── decaf-review/                 # Review plugin\n│   ├── .claude-plugin/plugin.json\n│   ├── agents/                   # 8 agents\n│   └── skills/                   # 4 skills\n├── CLAUDE.md\n└── README.md\n```\n\n## `decaf` — Core Skills\n\nSkills are invoked as `/decaf:<skill-name>`.\n\n| Skill | Description |\n|-------|-------------|\n| `decision-critic` | Stress-test decisions through adversarial analysis |\n| `incoherence-detector` | Detect doc/code/spec inconsistencies |\n| `problem-analysis` | Root cause investigation |\n| `powershell-expert` | PowerShell development patterns |\n| `remember` | Store a pattern in the knowledge graph |\n| `recall` | Search the knowledge graph for stored patterns |\n| `add-memory` | Store patterns in knowledge graph (backing for remember) |\n| `pattern-memory` | Auto-query/store knowledge graph (not user-invocable) |\n| `note` | Capture a follow-up task as a bean |\n\n## `decaf` — Core Agents\n\nAgents are referenced via the Task tool as `decaf:<agent-name>`.\n\n| Agent | Purpose |\n|-------|---------|\n| `architect` | Feature architecture design |\n| `csharp-developer` | C# implementation with idiomatic patterns |\n| `go-developer` | Go implementation with idiomatic patterns |\n| `debugger` | Systematic debugging with evidence gathering |\n| `planner` | Implementation planning |\n| `technical-writer` | LLM-optimized documentation |\n\n## `decaf-review` — Review Skills\n\nSkills are invoked as `/decaf-review:<skill-name>`.\n\n| Skill | Description |\n|-------|-------------|\n| `code-review` | Parallel multi-agent code review with consolidation |\n| `coverage-review` | Run code coverage analysis and review gaps for severity |\n| `handle-cr` | Walk through code review findings interactively |\n| `handle-coverage` | Walk through coverage gaps interactively, writing tests |\n\n## `decaf-review` — Review Agents\n\nAgents are referenced via the Task tool as `decaf-review:<agent-name>`.\n\n| Agent | Purpose |\n|-------|---------|\n| `code-reviewer-broad` | Broad review across 5 categories with confidence scoring |\n| `code-reviewer-quick` | Fast generalist: bugs, security, code quality, conventions |\n| `code-reviewer-knowledge` | Knowledge preservation, production risks |\n| `coverage-reviewer` | Assess coverage gap severity and suggest tests |\n| `design-reviewer` | API contracts, boundaries, concurrency, evolution |\n| `security-reviewer` | Threat modeling, missing controls, architectural gaps |\n| `spec-compliance-reviewer` | Requirement gaps, deviations, scope creep |\n| `test-reviewer` | Test anti-patterns, silent failures, false positives |\n\n## Conventions\n\nShared reference files used by skills and agents via `@file` references:\n\n| Convention | Used by |\n|------------|---------|\n| `code-review-consolidation.md` | `code-review` skill |\n| `coverage-config.md` | `coverage-review` skill |\n| `severity.md` | Review agents |\n| `security.md` | Security reviewer |\n| `code-quality/` | Code review agents |\n| `structural.md` | Code review agents |\n| `temporal.md` | Code review agents |\n| `documentation.md` | Technical writer |\n| `intent-markers.md` | Code review agents |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "decaf",
+          "source": "./decaf",
+          "description": "General-purpose agents and skills for Claude Code",
+          "author": {
+            "name": "Alphaleonis"
+          },
+          "homepage": "https://github.com/alphaleonis/decaf-claude-config",
+          "repository": "https://github.com/alphaleonis/decaf-claude-config",
+          "license": "MIT",
+          "keywords": [
+            "agents",
+            "skills",
+            "analysis"
+          ],
+          "category": "workflow",
+          "tags": [
+            "agents",
+            "skills",
+            "analysis"
+          ],
+          "categories": [
+            "agents",
+            "analysis",
+            "skills",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add alphaleonis/decaf-claude-config",
+            "/plugin install decaf@decaf-claude-config"
+          ]
+        },
+        {
+          "name": "decaf-review",
+          "source": "./decaf-review",
+          "description": "Multi-agent code review and coverage analysis for Claude Code",
+          "author": {
+            "name": "Alphaleonis"
+          },
+          "homepage": "https://github.com/alphaleonis/decaf-claude-config",
+          "repository": "https://github.com/alphaleonis/decaf-claude-config",
+          "license": "MIT",
+          "keywords": [
+            "code-review",
+            "coverage",
+            "quality"
+          ],
+          "category": "workflow",
+          "tags": [
+            "code-review",
+            "coverage",
+            "quality"
+          ],
+          "categories": [
+            "code-review",
+            "coverage",
+            "quality",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add alphaleonis/decaf-claude-config",
+            "/plugin install decaf-review@decaf-claude-config"
+          ]
+        },
+        {
+          "name": "decaf-memory-mcp",
+          "source": "./decaf-memory-mcp",
+          "description": "Memory skills backed by @modelcontextprotocol/server-memory",
+          "author": {
+            "name": "Alphaleonis"
+          },
+          "homepage": "https://github.com/alphaleonis/decaf-claude-config",
+          "repository": "https://github.com/alphaleonis/decaf-claude-config",
+          "license": "MIT",
+          "keywords": [
+            "memory",
+            "knowledge-graph"
+          ],
+          "category": "workflow",
+          "tags": [
+            "memory",
+            "knowledge-graph"
+          ],
+          "categories": [
+            "knowledge-graph",
+            "memory",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add alphaleonis/decaf-claude-config",
+            "/plugin install decaf-memory-mcp@decaf-claude-config"
+          ]
+        },
+        {
+          "name": "decaf-memory-doobidoo",
+          "source": "./decaf-memory-doobidoo",
+          "description": "Memory skills backed by mcp-memory-service (doobidoo)",
+          "author": {
+            "name": "Alphaleonis"
+          },
+          "homepage": "https://github.com/alphaleonis/decaf-claude-config",
+          "repository": "https://github.com/alphaleonis/decaf-claude-config",
+          "license": "MIT",
+          "keywords": [
+            "memory",
+            "knowledge-graph",
+            "semantic-search"
+          ],
+          "category": "workflow",
+          "tags": [
+            "memory",
+            "knowledge-graph",
+            "semantic-search"
+          ],
+          "categories": [
+            "knowledge-graph",
+            "memory",
+            "semantic-search",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add alphaleonis/decaf-claude-config",
+            "/plugin install decaf-memory-doobidoo@decaf-claude-config"
+          ]
+        }
+      ]
+    }
+  ]
+}

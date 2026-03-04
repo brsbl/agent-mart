@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "stemado",
+    "display_name": "Stephen Doherty",
+    "avatar_url": "https://avatars.githubusercontent.com/u/9167604?u=6e41840737c3711a9765ec24fbe0e20503670d89&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "oto",
+      "version": null,
+      "description": "Give Claude a browser to scout, interact with, and navigate websites",
+      "repo_full_name": "stemado/oto",
+      "repo_url": "https://github.com/stemado/oto",
+      "repo_description": "Browsing for Claude Code",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-04T00:49:35Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"oto\",\n  \"owner\": {\n    \"name\": \"stemado\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"oto\",\n      \"version\": \"0.4.8\",\n      \"source\": \"./\",\n      \"description\": \"Give Claude a browser to scout, interact with, and navigate websites\",\n      \"keywords\": [\"browser\", \"automation\", \"anti-detection\", \"stealth\", \"botasaurus\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"oto\",\n  \"version\": \"0.4.8\",\n  \"description\": \"Give Claude a browser. Scout page structure, find elements, interact with websites, and monitor network traffic.\",\n  \"license\": \"MIT\",\n  \"repository\": \"https://github.com/stemado/oto\",\n  \"author\": {\n    \"name\": \"sdoherty\"\n  },\n  \"keywords\": [\"browser\", \"automation\", \"anti-detection\", \"stealth\", \"botasaurus\"]\n}\n",
+        "README.md": "<p align=\"center\">\n  <img src=\"assets/logo.png\" alt=\"OTO\" width=\"200\">\n</p>\n\n<h1 align=\"center\">OTO</h1>\n\n<p align=\"center\">\n  <em>Stop clicking.</em>\n</p>\n\n---\n\nOTO (\"auto\") is browser automation for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). You describe what you need done on a website and Claude opens a browser, figures out the page, and does it.\n\nNo scripts. No selectors. You talk, Claude browses.\n\n### Scrape data from any site\n\n![Hacker News scraping demo](assets/demo-hacker-news.gif)\n\n### Export a workflow, then schedule it\n\n![Export and schedule demo](assets/demo-export-schedule.gif)\n\n### Discover the APIs hiding under the UI\n\n![Network discovery demo](assets/demo-network-discovery.gif)\n\n## How It Works\n\nOTO scouts the page structure, then acts — the same way you'd inspect a page in DevTools before clicking anything:\n\n1. **Scout** — compact structural overview (~200 tokens, not a raw DOM dump)\n2. **Find** — search for elements by text, type, or selector\n3. **Act** — click, type, select, navigate\n4. **Scout again** — see what changed\n\nMost browser tools for AI take full-page screenshots and have the model interpret pixels. A single Playwright MCP screenshot costs ~124,000 tokens and the model still has to guess at selectors from what it sees. OTO reads the DOM directly and returns a compact report (~200 tokens) with exact CSS selectors — 98% less than a screenshot.\n\n## Export and Schedule\n\nWalk through a workflow once, conversationally. Then capture it:\n\n```sh\n/export enrollment\n```\n\nOTO produces a self-contained directory at `workflows/enrollment/` with:\n\n- A standalone Python script using [botasaurus-driver](https://github.com/omkarcloud/botasaurus) with human-like timing\n- A portable workflow JSON for use with any executor\n- `requirements.txt` and `.env.example` for credentials\n\nThen schedule it:\n\n```sh\n/schedule enrollment\n```\n\nOTO detects your OS and creates the right scheduled task — Windows Task Scheduler, macOS launchd, or Linux cron.\n\n## Credential Safety\n\n`fill_secret` reads credentials from `.env` server-side and types them directly into form fields. Claude only sees `\"chars_typed\": 22` — never the actual value. Exported scripts use `${ENV_VAR}` references. Authorization and Cookie headers are scrubbed from network logs before they reach the conversation.\n\n## 2FA Support\n\nOTO's `get_2fa_code` polls Twilio's SMS API for OTP codes — Claude clicks \"Send Code\" in the browser, the tool watches for the SMS, extracts the code, and types it in. Requires a Twilio account with an SMS number set as the 2FA recipient.\n\n## Anti-Detection\n\nOTO uses [Botasaurus](https://github.com/omkarcloud/botasaurus) under the hood, which handles browser fingerprinting and detection evasion automatically. Sites that block Selenium and Playwright see a normal browser session.\n\n## Comparison\n\n|   | OTO | Playwright MCP | Chrome Extension MCP | Selenium / scripts |\n| --- | --- | --- | --- | --- |\n| **Works on sites you don't control** | Yes | Limited — your own app | Limited — your active session | Blocked by detection |\n| **Page discovery** | Compact scout (~200 tokens) | Full screenshot (~124,000 tokens) | You provide selectors | You provide selectors |\n| **Credential safety** | Never in conversation | Plaintext in context | Plaintext in context | In your script |\n| **Anti-detection** | Built-in | None | None | None |\n| **2FA** | Built-in | No | No | You build it |\n| **Export to script** | One command | No | No | You write it |\n| **Cross-platform scheduling** | One command | No | No | You configure it |\n\n## Benchmarks\n\n| Task | OTO tokens | Playwright MCP tokens | Reduction | Wall-clock | Success |\n|------|-----------|----------------------|-----------|-----------|---------|\n| Fact lookup (Wikipedia) | ~1,264 | ~124,000 | **98% fewer** | 11.0s | 3/3 |\n| Form fill + verify (httpbin) | ~3,799 | ~124,000 | **97% fewer** | 25.2s | 3/3 |\n\n<sup>Claude Sonnet 4.6, 3 runs each, wall-clock = browser time only (excludes model reasoning). Playwright MCP baseline is a single full-page screenshot. Full results: <a href=\"docs/benchmarks/benchmark-results-v0.2.md\">v0.2</a></sup>\n\n## Security\n\n- **Credential isolation** — `fill_secret` reads from `.env` server-side; passwords never enter the conversation\n- **Header redaction** — Authorization, Cookie, and API key headers scrubbed from network logs\n- **Export scrubbing** — credentials parameterized as environment variable references\n- **URL validation** — blocks `file://`, `javascript://`, cloud metadata endpoints, and localhost (opt-in via `OTO_ALLOW_LOCALHOST`)\n- **Path traversal protection** — validates all file paths\n- **Invisible character stripping** — removes zero-width Unicode that could hide prompt injection\n- **Content boundary markers** — wraps web-sourced data to distinguish data from instructions\n\n## Install\n\n### Prerequisites\n\n1. **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** installed and working\n2. **Python 3.11+** (`python --version`)\n3. **[uv](https://docs.astral.sh/uv/)** (`pip install uv`)\n4. **Google Chrome**\n5. **[Node.js](https://nodejs.org)**\n\n### Two commands\n\n```\n/plugin marketplace add stemado/oto\n/plugin install oto@oto\n```\n\nRestart Claude Code. Done.\n\n### Updating\n\n```\n/plugin marketplace update oto\n/plugin install oto@oto\n```\n\n## Tools\n\n| Tool | What it does |\n|------|-------------|\n| `launch_session` | Open a browser (headed or headless, optional proxy) |\n| `scout_page_tool` | Structural page overview: iframes, shadow DOM, element counts (~200 tokens) |\n| `find_elements` | Search for elements by text, type, or CSS selector |\n| `execute_action_tool` | Click, type, select, navigate, scroll, hover, wait |\n| `fill_secret` | Type credentials from `.env` without exposing them in conversation |\n| `get_2fa_code` | Retrieve a 2FA OTP code from Twilio SMS |\n| `execute_javascript` | Run arbitrary JS in the page context |\n| `take_screenshot` | Capture the page for Claude to see |\n| `inspect_element` | Deep-inspect visibility, overlays, shadow DOM, ARIA |\n| `process_download` | Convert and move downloaded files |\n| `get_session_history` | Export the full session as a structured workflow log |\n| `monitor_network` | Watch HTTP traffic to discover API endpoints under the UI |\n| `record_video` | Record the browser session as MP4 |\n| `close_session` | Close the browser and release resources |\n\n## Slash Commands\n\n| Command | What it does |\n|---------|-------------|\n| `/oto:demo` | Run a full capabilities demo |\n| `/oto:scout <url>` | Launch a browser and scout any page |\n| `/oto:export [name]` | Export the current session as a replayable workflow |\n| `/oto:schedule [list\\|name\\|delete]` | Schedule an exported workflow |\n| `/oto:report [bug\\|feature\\|friction]` | File a GitHub issue with diagnostics |\n| `/oto:benchmark` | Run performance benchmarks |\n\n## License\n\nMIT"
+      },
+      "plugins": [
+        {
+          "name": "oto",
+          "version": "0.4.8",
+          "source": "./",
+          "description": "Give Claude a browser to scout, interact with, and navigate websites",
+          "keywords": [
+            "browser",
+            "automation",
+            "anti-detection",
+            "stealth",
+            "botasaurus"
+          ],
+          "categories": [
+            "anti-detection",
+            "automation",
+            "botasaurus",
+            "browser",
+            "stealth"
+          ],
+          "install_commands": [
+            "/plugin marketplace add stemado/oto",
+            "/plugin install oto@oto"
+          ]
+        }
+      ]
+    }
+  ]
+}

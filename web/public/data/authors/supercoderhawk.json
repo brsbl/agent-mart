@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "supercoderhawk",
+    "display_name": "NLPerUndefined",
+    "avatar_url": "https://avatars.githubusercontent.com/u/10846896?u=e28234538014548620b702c6e2766a53e5dd3973&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "code-deepwiki-marketplace",
+      "version": null,
+      "description": "Marketplace catalog for the code-deepwiki skill plugin.",
+      "repo_full_name": "supercoderhawk/code-deepwiki",
+      "repo_url": "https://github.com/supercoderhawk/code-deepwiki",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-02T11:25:47Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"code-deepwiki-marketplace\",\n  \"owner\": {\n    \"name\": \"supercoderhawk\"\n  },\n  \"metadata\": {\n    \"description\": \"Marketplace catalog for the code-deepwiki skill plugin.\",\n    \"version\": \"1.0.0\",\n    \"homepage\": \"https://github.com/supercoderhawk/code-deepwiki\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"code-deepwiki\",\n      \"description\": \"Generate multi-page technical wiki documentation from source repositories.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/code-deepwiki\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# code-deepwiki Skills Repository\n\nThis repository packages the `code-deepwiki` skill in a standard multi-skill-compatible layout:\n\n- Canonical skill path: `skills/code-deepwiki`\n- Skill purpose: generate multi-page technical wiki documentation from local or remote code repositories (GitHub/GitLab/Bitbucket), with source citations and output validation.\n\n## Repository Layout\n\n```text\n.\n├── README.md\n├── auth.json\n├── .gitignore\n├── .claude-plugin/\n│   └── marketplace.json\n├── skills/\n│   └── code-deepwiki/\n│       ├── SKILL.md\n│       ├── agents/openai.yaml\n│       ├── references/\n│       └── scripts/\n└── tools/\n    ├── install/\n    └── publish/\n        ├── push_to_skills_sh.sh\n        └── smithery_payload.template.json\n```\n\n`.claude-plugin/marketplace.json` exposes this repository as a Claude plugin marketplace catalog entry.\n\n## `auth.json` (Local Secrets)\n\nCreate `auth.json` at repository root and store runtime keys there. This file is ignored by Git to prevent secret leakage.\n\n```json\n{\n  \"DEEPWIKI_REPO_TOKEN\": \"\",\n  \"SMITHERY_API_KEY\": \"\",\n  \"SMITHERY_API_TOKEN\": \"\",\n  \"SMITHERY_SKILLS_ENDPOINT\": \"https://api.smithery.ai/v1/skills\"\n}\n```\n\nNotes:\n- `auth.json` is local-only and should never be committed.\n- Script behavior: environment variables still have highest priority.\n- Fallback behavior: when env vars are absent, scripts can read matching keys from `auth.json`.\n\n## Install with Vercel Skills CLI (`npx skills`)\n\nInstall from local repository path:\n\n```bash\nnpx -y skills add . --skill code-deepwiki\n```\n\nInstall from a remote GitHub repository:\n\n```bash\nnpx -y skills add https://github.com/supercoderhawk/code-deepwiki --skill code-deepwiki\n```\n\nInstall using `owner/repo` shorthand (recommended for skills.sh discoverability):\n\n```bash\nnpx -y skills add supercoderhawk/code-deepwiki --skill code-deepwiki\n```\n\nInstall specifically for Claude Code:\n\n```bash\nnpx -y skills add . --skill code-deepwiki --agent claude-code\n```\n\nInstall specifically for GitHub Copilot:\n\n```bash\nnpx -y skills add . --skill code-deepwiki --agent github-copilot\n```\n\nGlobal install example:\n\n```bash\nnpx -y skills add . --skill code-deepwiki --agent claude-code --global --yes\n```\n\n## Install with Smithery CLI\n\nInstall by Smithery namespace/slug (`supercoderhawk/code-deepwiki`):\n\n```bash\nnpx -y @smithery/cli skill add supercoderhawk/code-deepwiki --agent claude-code\n```\n\nInstall by skill URL:\n\n```bash\nnpx -y @smithery/cli skill add https://smithery.ai/skills/supercoderhawk/code-deepwiki --agent github-copilot\n```\n\nList available Smithery target agents:\n\n```bash\nnpx -y @smithery/cli skill agents\n```\n\n## Helper Install Scripts\n\nUse wrapper scripts from `tools/install`:\n\n```bash\n# npx skills wrapper\nbash tools/install/install_via_skills.sh --source . --agent claude-code --yes\n\n# npx skills wrapper (remote source, Codex)\nbash tools/install/install_via_skills.sh --source supercoderhawk/code-deepwiki --agent codex --yes\n\n# Smithery wrapper\nbash tools/install/install_via_smithery.sh --skill supercoderhawk/code-deepwiki --agent github-copilot\n\n# Smithery wrapper with explicit auth file\nbash tools/install/install_via_smithery.sh --skill supercoderhawk/code-deepwiki --agent github-copilot --auth-file ./auth.json\n```\n\n## Usage After Installation\n\nExample prompts:\n\n```text\nUse $code-deepwiki to generate a multi-page technical wiki for this repository.\n```\n\n```text\nUse $code-deepwiki to document architecture, core modules, and data flow for this repo in English.\n```\n\n```text\nUse $code-deepwiki to generate wiki pages for https://github.com/supercoderhawk/code-deepwiki with strict citations.\n```\n\n## Local Validation\n\nCheck repository structure and skill discovery:\n\n```bash\nfind . -maxdepth 3 -type f\nnpx -y skills add . --list\nnpx -y skills add . --list --skill code-deepwiki\n```\n\nCheck agent-target options:\n\n```bash\nnpx -y skills add . --list --agent claude-code\nnpx -y skills add . --list --agent github-copilot\n```\n\nSmoke-test Python scripts at canonical path:\n\n```bash\npython3 -m py_compile skills/code-deepwiki/scripts/scan_repo_context.py\npython3 -m py_compile skills/code-deepwiki/scripts/validate_wiki_output.py\n```\n\n## Publish to skills.sh (for `npx skills` / Codex discoverability)\n\nThere is no dedicated publish endpoint in `skills.sh`. Visibility is driven by `npx skills` install telemetry.\n\n1. Push this repository publicly to GitHub (`supercoderhawk/code-deepwiki`).\n2. Trigger a remote install event with `npx skills add`:\n\n```bash\nnpx -y skills add supercoderhawk/code-deepwiki --skill code-deepwiki --agent codex --yes\n```\n\nTo install it into your own Codex environment at the same time:\n\n```bash\nnpx -y skills add supercoderhawk/code-deepwiki --skill code-deepwiki --agent codex --global --yes\n```\n\n3. Verify discovery results:\n\n```bash\nnpx -y skills find code-deepwiki\n```\n\n4. Optional helper script:\n\n```bash\nbash tools/publish/push_to_skills_sh.sh --agent codex\n```\n\nNotes:\n- If telemetry is disabled (`DISABLE_TELEMETRY=1` or `DO_NOT_TRACK=1`), install events may not contribute to ranking/discovery.\n- Use remote source (`owner/repo` or GitHub URL), not local `.` path, when you want skills.sh attribution.\n\nPrivate repo scan with auth.json fallback token:\n\n```bash\npython3 skills/code-deepwiki/scripts/scan_repo_context.py \\\n  --repo-url https://github.com/owner/private-repo \\\n  --token-env DEEPWIKI_REPO_TOKEN \\\n  --auth-file ./auth.json \\\n  --out-dir docs/code-deepwiki\n```\n\n## Publish/Update Guides\n\nSee `tools/publish/README.md` for:\n\n- skills.sh discovery flow (`npx skills add` telemetry + `skills find` verification)\n- helper script `tools/publish/push_to_skills_sh.sh`\n- Smithery prerequisites (`smithery auth login`, namespace ownership, token scope)\n- Smithery publish via console/UI or API (`tools/publish/smithery_payload.template.json`)\n"
+      },
+      "plugins": [
+        {
+          "name": "code-deepwiki",
+          "description": "Generate multi-page technical wiki documentation from source repositories.",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/code-deepwiki"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add supercoderhawk/code-deepwiki",
+            "/plugin install code-deepwiki@code-deepwiki-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
