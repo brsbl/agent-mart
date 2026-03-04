@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "Goodeye-Labs",
+    "display_name": "Goodeye Labs",
+    "avatar_url": "https://avatars.githubusercontent.com/u/227486020?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "goodeye-labs-truesight",
+      "version": null,
+      "description": "Truesight MCP server and skills for AI evaluation workflows",
+      "repo_full_name": "Goodeye-Labs/truesight-mcp-skills",
+      "repo_url": "https://github.com/Goodeye-Labs/truesight-mcp-skills",
+      "repo_description": "Agent skills for the Truesight MCP: step-by-step workflow playbooks for scoring inputs, building live evaluations, error analysis, and the review loop. Works with Claude Code, Cursor, and any client that supports the agent skills standard.",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-03-03T07:40:53Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"goodeye-labs-truesight\",\n  \"metadata\": {\n    \"description\": \"Truesight MCP server and skills for AI evaluation workflows\"\n  },\n  \"owner\": {\n    \"name\": \"Goodeye Labs\",\n    \"email\": \"hello@goodeyelabs.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"truesight\",\n      \"source\": \"./\",\n      \"description\": \"MCP server and agent skills for Truesight AI evaluation platform. Score inputs, build evaluations, analyze errors, and review results through natural language.\",\n      \"category\": \"productivity\",\n      \"tags\": [\"truesight\", \"mcp\", \"evaluations\", \"ai-quality\", \"llm-evals\", \"error-analysis\", \"evals\", \"llm\", \"judge\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"truesight\",\n  \"description\": \"MCP server and agent skills for Truesight AI evaluation platform. Score inputs, build evaluations, analyze errors, and review results through natural language.\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Goodeye Labs\"\n  },\n  \"homepage\": \"https://truesight.goodeyelabs.com/docs/mcp-integration\",\n  \"repository\": \"https://github.com/Goodeye-Labs/truesight-mcp-skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"truesight\", \"mcp\", \"evaluations\", \"ai-quality\", \"llm-evals\", \"error-analysis\", \"evals\", \"llm\", \"judge\"]\n}\n",
+        "README.md": "# Truesight MCP Skills\n\nAgent skills and Cursor plugin for the [Truesight MCP](https://truesight.goodeyelabs.com/docs/mcp-integration) - step-by-step workflow playbooks for scoring inputs, building live evaluations, error analysis, and the review loop.\n\nWorks with Claude Code, Cursor, and any client that supports the [agent skills standard](https://agentskills.io/specification).\n\n## Install as a Claude plugin\n\nIn Claude Code, run:\n\n```bash\n# Step 1: Register this repository as a marketplace\n/plugin marketplace add Goodeye-Labs/truesight-mcp-skills\n\n# Step 2: Install the plugin\n/plugin install truesight@goodeye-labs-truesight\n```\n\nThis installs the Truesight plugin and its MCP skills in Claude, including `truesight-workflows`, `create-evaluation`, and companion workflow skills.\n\nTo upgrade:\n\n```bash\n/plugin update truesight@goodeye-labs-truesight\n```\n\n## Prerequisites\n\n1. A [Truesight](https://truesight.goodeyelabs.com) account\n2. A platform API key: go to **Settings** in Truesight, click **Create Key**, select your scopes, and copy the key\n\n## Connect the MCP\n\n### Cursor\n\nAdd to `~/.cursor/mcp.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"truesight\": {\n      \"url\": \"https://api.truesight.goodeyelabs.com/mcp/\",\n      \"headers\": {\n        \"Authorization\": \"Bearer YOUR_API_KEY_HERE\"\n      }\n    }\n  }\n}\n```\n\nReplace `YOUR_API_KEY_HERE` with your platform API key, then restart Cursor.\n\n### VS Code (GitHub Copilot)\n\nRequires VS Code 1.99+ with GitHub Copilot enabled. Add to `.vscode/settings.json` (or use **MCP: Add Server** from the Command Palette):\n\n```json\n{\n  \"mcp\": {\n    \"servers\": {\n      \"truesight\": {\n        \"url\": \"https://api.truesight.goodeyelabs.com/mcp/\",\n        \"headers\": {\n          \"Authorization\": \"Bearer YOUR_API_KEY_HERE\"\n        }\n      }\n    }\n  }\n}\n```\n\nReplace `YOUR_API_KEY_HERE` with your platform API key.\n\n### Claude Code\n\n```bash\nclaude mcp add --transport http truesight \\\n  https://api.truesight.goodeyelabs.com/mcp/ \\\n  --header \"Authorization: Bearer YOUR_API_KEY_HERE\"\n```\n\nAdd `--scope project` before `truesight` to scope it to a single project instead of your user config.\n\n### Claude Desktop\n\nOpen Claude → **Settings** → **Developer** → **Edit Config** and add to `claude_desktop_config.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"truesight\": {\n      \"url\": \"https://api.truesight.goodeyelabs.com/mcp/\",\n      \"headers\": {\n        \"Authorization\": \"Bearer YOUR_API_KEY_HERE\"\n      }\n    }\n  }\n}\n```\n\nSave and restart Claude.\n\n### Windsurf\n\nOpen **Settings** → **Cascade** → **MCP Servers** → **View raw config** and add:\n\n```json\n{\n  \"mcpServers\": {\n    \"truesight\": {\n      \"serverUrl\": \"https://api.truesight.goodeyelabs.com/mcp/\",\n      \"headers\": {\n        \"Authorization\": \"Bearer YOUR_API_KEY_HERE\"\n      },\n      \"disabled\": false\n    }\n  }\n}\n```\n\nSave and click **Refresh** (or restart Windsurf).\n\n## Skills\n\n| Skill | What it does |\n|-------|-------------|\n| [`truesight-workflows`](./skills/truesight-workflows/SKILL.md) | Strict orchestrator that routes to the correct Truesight MCP skill based on user intent |\n| [`evaluate-trace`](./skills/evaluate-trace/SKILL.md) | Evaluate one or more inputs against an existing live evaluation, with optional handoff to review flows |\n| [`error-analysis`](./skills/error-analysis/SKILL.md) | Analyze traces in datasets, label failure modes, consolidate categories, and prioritize fixes |\n| [`review-and-promote-traces`](./skills/review-and-promote-traces/SKILL.md) | Review flagged traces, submit judgments, and promote judged items back to datasets |\n| [`bootstrap-template-evaluation`](./skills/bootstrap-template-evaluation/SKILL.md) | Provision a template dataset and deploy a live evaluation quickly |\n| [`create-evaluation`](./skills/create-evaluation/SKILL.md) | Scope, build, and deploy new custom live evaluations from scratch |\n| [`eval-audit`](./skills/eval-audit/SKILL.md) | Audit evaluation workflow maturity and return severity-ranked findings with next-skill actions |\n| [`build-review-interface`](./skills/build-review-interface/SKILL.md) | Build a custom web annotation interface when Truesight web UI is not the preferred review surface |\n\n### Install skills manually\n\nIf you installed via Claude Marketplace above, you can skip manual skill installation. Use the manual commands below only when you want to install skill files directly.\n\n#### Project-level (recommended for team workflows)\n\n```bash\nBASE=https://raw.githubusercontent.com/Goodeye-Labs/truesight-mcp-skills/main/skills\nfor skill in truesight-workflows evaluate-trace error-analysis review-and-promote-traces bootstrap-template-evaluation create-evaluation eval-audit build-review-interface; do\n  curl -fsSL \"$BASE/$skill/SKILL.md\" -o \".claude/skills/$skill/SKILL.md\" --create-dirs\ndone\n```\n\n#### Global (available in all projects)\n\n```bash\nBASE=https://raw.githubusercontent.com/Goodeye-Labs/truesight-mcp-skills/main/skills\nfor skill in truesight-workflows evaluate-trace error-analysis review-and-promote-traces bootstrap-template-evaluation create-evaluation eval-audit build-review-interface; do\n  curl -fsSL \"$BASE/$skill/SKILL.md\" -o \"$HOME/.claude/skills/$skill/SKILL.md\" --create-dirs\ndone\n```\n\n## Usage\n\nOnce the MCP is connected and skills are installed, your AI assistant will automatically pick up the right skill based on what you ask:\n\n- **\"I need help choosing the right Truesight workflow\"**: triggers `truesight-workflows`\n- **\"Evaluate these traces against my live eval\"**: triggers `evaluate-trace`\n- **\"Analyze the errors in my dataset\"**: triggers `error-analysis`\n- **\"Review and promote these flagged results\"**: triggers `review-and-promote-traces`\n- **\"Bootstrap a live eval from a template\"**: triggers `bootstrap-template-evaluation`\n- **\"Create an evaluation for response quality\"**: triggers `create-evaluation`\n- **\"Audit my eval setup and tell me what is missing\"**: triggers `eval-audit`\n- **\"Help me build a custom annotation interface for trace review\"**: triggers `build-review-interface`\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "truesight",
+          "source": "./",
+          "description": "MCP server and agent skills for Truesight AI evaluation platform. Score inputs, build evaluations, analyze errors, and review results through natural language.",
+          "category": "productivity",
+          "tags": [
+            "truesight",
+            "mcp",
+            "evaluations",
+            "ai-quality",
+            "llm-evals",
+            "error-analysis",
+            "evals",
+            "llm",
+            "judge"
+          ],
+          "categories": [
+            "ai-quality",
+            "error-analysis",
+            "evals",
+            "evaluations",
+            "judge",
+            "llm",
+            "llm-evals",
+            "mcp",
+            "productivity",
+            "truesight"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Goodeye-Labs/truesight-mcp-skills",
+            "/plugin install truesight@goodeye-labs-truesight"
+          ]
+        }
+      ]
+    }
+  ]
+}

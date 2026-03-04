@@ -15,11 +15,11 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-02-28T05:20:01Z"
+        "pushed_at": "2026-03-03T21:47:11Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"karma-skills\",\n  \"owner\": {\n    \"name\": \"Karma\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code skills for the Karma ecosystem\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"find-opportunities\",\n      \"description\": \"Search the Karma Funding Map for grants, hackathons, bounties, accelerators, VC funds, and RFPs\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/find-opportunities\"\n      ]\n    }\n  ]\n}\n",
-        "README.md": "# Karma Skills\n\nAgent skills for the Karma ecosystem — find funding opportunities, create and manage projects, post milestones and updates, administer grants.\n\n## Quick Start\n\n```bash\nnpx skills add show-karma/skills\n```\n\nThen ask your agent:\n\n> Find active grant programs\n\n> What hackathons are open right now?\n\n## What Are Skills?\n\nSkills are reusable instruction sets that encode domain expertise into repeatable workflows. Each skill teaches an AI agent how to perform a specific task within the Karma ecosystem. Skills work with any compatible agent client, including Claude Code, Codex, Openclaw, and others.\n\nThe `SKILL.md` file contains YAML frontmatter (name, description, version, tags) followed by the instructions Agnets will follow.\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| [`find-opportunities`](skills/find-opportunities/) | Search the Karma Funding Map for grants, hackathons, bounties, accelerators, VC funds, and RFPs |\n\n## Focus Areas\n\n- **Funding Map** — Explore all funding opportunities\n\n## Skill Format\n\nEach skill is a directory under `skills/` containing:\n\n```\nskills/my-skill/\n├── SKILL.md          # Skill definition (required)\n├── scripts/          # Helper scripts (optional)\n└── references/       # Reference documents (optional)\n```\n\n## Karma Ecosystem\n\n[Karma](https://www.karmahq.xyz) helps projects build reputation and find funding opportunities. Karma's grants platform can be used by organizations to run their grant program (application intake, funds disbursal, milestone and metrics tracking). Key areas:\n\n- **Project Profile** — Share progress updates, show traction and get funding\n- **Funding Map** — Discover funding opportunities for your project\n- **Grants management software** — Grant operators can administer grants efficiently\n\n## License\n\nMIT — see [LICENSE](LICENSE).\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"karma-skills\",\n  \"owner\": {\n    \"name\": \"Karma\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code skills for the Karma ecosystem\",\n    \"version\": \"0.2.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"find-opportunities\",\n      \"description\": \"Search the Karma Funding Map for grants, hackathons, bounties, accelerators, VC funds, and RFPs\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/find-opportunities\"\n      ]\n    },\n    {\n      \"name\": \"karma-agent\",\n      \"description\": \"Manage projects, grants, milestones, and updates on the Karma protocol via the agent API\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/setup-agent\",\n        \"./skills/create-project\",\n        \"./skills/update-project\",\n        \"./skills/create-project-update\",\n        \"./skills/create-grant\",\n        \"./skills/create-grant-update\",\n        \"./skills/create-milestone\",\n        \"./skills/complete-milestone\",\n        \"./skills/create-project-with-grant\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# Karma Skills\n\nAgent skills for the Karma ecosystem — find funding opportunities, create and manage projects, post milestones and updates, administer grants.\n\n## Quick Start\n\n```bash\nnpx skills add show-karma/skills\n```\n\nThen ask your agent:\n\n> Create a project called \"My DeFi App\" on Optimism\n\n> Find active grant programs on Ethereum\n\n> Post an update on my project — we shipped the MVP\n\n## What Are Skills?\n\nSkills are reusable instruction sets that encode domain expertise into repeatable workflows. Each skill teaches an AI agent how to perform a specific task within the Karma ecosystem. Skills work with any compatible agent client, including Claude Code, Cursor, Windsurf, and others.\n\nThe `SKILL.md` file contains YAML frontmatter (name, description, version, tags) followed by the instructions agents will follow.\n\n## Available Skills\n\n### Discovery\n\n| Skill | Description |\n|-------|-------------|\n| [`find-opportunities`](skills/find-opportunities/) | Search the Karma Funding Map for grants, hackathons, bounties, accelerators, VC funds, and RFPs |\n\n### Agent Actions\n\nThese skills use the Karma Agent API to create on-chain attestations via a server-managed wallet. No gas fees, no browser wallet needed.\n\n| Skill | Description |\n|-------|-------------|\n| [`setup-agent`](skills/setup-agent/) | Register and get your API key — quick start (no account), email login, or manual |\n| [`create-project`](skills/create-project/) | Create a new project on-chain |\n| [`update-project`](skills/update-project/) | Update a project's title, description, tags, or links |\n| [`create-project-update`](skills/create-project-update/) | Post a progress update on a project |\n| [`create-grant`](skills/create-grant/) | Attach a grant to a project |\n| [`create-grant-update`](skills/create-grant-update/) | Post a progress update on a grant |\n| [`create-milestone`](skills/create-milestone/) | Add a milestone to a grant |\n| [`complete-milestone`](skills/complete-milestone/) | Mark a milestone as completed with proof of work |\n| [`create-project-with-grant`](skills/create-project-with-grant/) | Create a project and grant in a single transaction |\n\n## How It Works\n\n```\nYou (natural language)\n  ↓\nAI Agent (picks the right skill)\n  ↓\nKarma API (encodes attestation)\n  ↓\nServer Wallet (signs + submits tx, gasless)\n  ↓\nBlockchain (EAS attestation created)\n  ↓\nkarmahq.xyz (visible on the web)\n```\n\n- **No gas fees** — transactions are sponsored via account abstraction\n- **No browser wallet** — your agent gets a server-managed wallet\n- **On-chain** — every action creates a verifiable [EAS attestation](https://docs.attest.sh/)\n- **Client-agnostic** — works with any AI agent that supports the Skills Standard\n\n## Skill Format\n\nEach skill is a directory under `skills/` containing:\n\n```\nskills/my-skill/\n├── SKILL.md          # Skill definition (required)\n├── references/       # Reference documents (optional)\n└── assets/           # Templates, scripts (optional)\n```\n\n## Karma Ecosystem\n\n[Karma](https://www.karmahq.xyz) helps projects build reputation and find funding opportunities. Karma's grants platform can be used by organizations to run their grant program (application intake, funds disbursal, milestone and metrics tracking). Key areas:\n\n- **Project Profile** — Share progress updates, show traction and get funding\n- **Funding Map** — Discover funding opportunities for your project\n- **Grants Management** — Grant operators can administer grants efficiently\n\n## License\n\nMIT — see [LICENSE](LICENSE).\n"
       },
       "plugins": [
         {
@@ -34,6 +34,28 @@
           "install_commands": [
             "/plugin marketplace add show-karma/skills",
             "/plugin install find-opportunities@karma-skills"
+          ]
+        },
+        {
+          "name": "karma-agent",
+          "description": "Manage projects, grants, milestones, and updates on the Karma protocol via the agent API",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/setup-agent",
+            "./skills/create-project",
+            "./skills/update-project",
+            "./skills/create-project-update",
+            "./skills/create-grant",
+            "./skills/create-grant-update",
+            "./skills/create-milestone",
+            "./skills/complete-milestone",
+            "./skills/create-project-with-grant"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add show-karma/skills",
+            "/plugin install karma-agent@karma-skills"
           ]
         }
       ]
