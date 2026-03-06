@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "atelier-nyaarium",
+    "display_name": "Atelier Nyaarium",
+    "avatar_url": "https://avatars.githubusercontent.com/u/176003334?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-team-bridge",
+      "version": null,
+      "description": "Cross-team communication for agent teams in different Devcontainers",
+      "repo_full_name": "atelier-nyaarium/agent-team-bridge",
+      "repo_url": "https://github.com/atelier-nyaarium/agent-team-bridge",
+      "repo_description": "Routing bridge server allowing multiple Claude/Cursor agent teams within separate Devcontainers to communicate with each other. For my private projects, but someone else might like this AI bridge.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-05T05:13:34Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-team-bridge\",\n  \"description\": \"Cross-team communication for agent teams in different Devcontainers\",\n  \"owner\": {\n    \"name\": \"Nyaarium\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"agent-team-bridge\",\n      \"description\": \"Cross-team communication for agent teams in different Devcontainers. Provides bridge_discover, bridge_send, bridge_wait, and bridge_reply tools via MCP.\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"agent-team-bridge\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Cross-team communication for agent teams in different Devcontainers. Provides bridge_discover, bridge_send, bridge_wait, and bridge_reply tools via MCP.\",\n  \"author\": {\n    \"name\": \"Nyaarium\"\n  }\n}\n",
+        "README.md": "# Agent Team Bridge\n\nCross-team communication for Claude Code and Cursor agent teams running in separate Devcontainers.\n\n## 🛑 Who it's for\n\nThis is aimed at people who already use **Dev Containers** and want agent teams in different containers to talk to each other. If you don't use Dev Containers, this project won't help you.\n\n## How it works\n\nTeams register with a central router over WebSocket. Any agent can call `bridge_send` to reach another team. The router spawns a dedicated agent session on the receiving end, which handles the request and responds in a structured format. Conversations are threaded by `session_id`.\n\nSee `skills/agent-team-bridge/SKILL.md` for the full tool reference and response format.\n\n## Starting the router\n\nFrom the repo root:\n\n```bash\ndocker compose up -d\n```\n\nThe router listens on port 5678 and uses the external network `agent-team-bridge`.\n\n## Setup\n\n**1. Append to the Devcontainer's Dockerfile:**\n\n```dockerfile\n# Agent Team Bridge\nRUN git clone --depth 1 https://github.com/atelier-nyaarium/agent-team-bridge.git /agent-team-bridge \\\n    && cd /agent-team-bridge/mcp && npm i --silent\n```\n\n**2. Build and start the Devcontainer, then run the install script:**\n\n```bash\n/agent-team-bridge/install.sh\n```\n\nThis configures `.mcp.json`, `.cursor/mcp.json`, `.claude/settings.json` (plugin), and `.devcontainer/compose.yml` (network).\n\n**3. Rebuild the Devcontainer.**\n\n- **F1**\n- `> Dev Containers: Rebuild Container`\n\n**To uninstall, run:**\n\n```bash\n/agent-team-bridge/uninstall.sh\n```\n\n<details>\n<summary>Manual configuration (what the scripts do)</summary>\n\n**Dockerfile addition:**\n\n```dockerfile\n# Agent Team Bridge\nRUN git clone --depth 1 https://github.com/atelier-nyaarium/agent-team-bridge.git /agent-team-bridge \\\n    && cd /agent-team-bridge/mcp && npm i --silent\n```\n\n**Plugin in `.claude/settings.json`:**\n\n```json\n{\n\t\"extraKnownMarketplaces\": {\n\t\t\"agent-team-bridge\": {\n\t\t\t\"source\": {\n\t\t\t\t\"source\": \"github\",\n\t\t\t\t\"repo\": \"atelier-nyaarium/agent-team-bridge\"\n\t\t\t},\n\t\t\t\"autoUpdate\": true\n\t\t}\n\t},\n\t\"enabledPlugins\": {\n\t\t\"agent-team-bridge@agent-team-bridge\": true\n\t}\n}\n```\n\n**MCP server in `.mcp.json`:**\n\n```json\n{\n\t\"mcpServers\": {\n\t\t\"agent-team-bridge\": {\n\t\t\t\"command\": \"node\",\n\t\t\t\"args\": [\"/agent-team-bridge/mcp/server.js\"],\n\t\t\t\"env\": {\n\t\t\t\t\"TEAM_NAME\": \"@org/my-project\",\n\t\t\t\t\"BRIDGE_ROUTER_URL\": \"http://agent-team-bridge:5678\",\n\t\t\t\t\"AGENT_TYPE\": \"claude\",\n\t\t\t\t\"MODEL_SIMPLE\": \"auto\",\n\t\t\t\t\"MODEL_STANDARD\": \"sonnet\",\n\t\t\t\t\"MODEL_COMPLEX\": \"opus\"\n\t\t\t}\n\t\t}\n\t}\n}\n```\n\n**External network in `.devcontainer/compose.yml`:**\n\n```yaml\nnetworks:\n  agent-team-bridge-network:\n    name: agent-team-bridge\n```\n\nAdd `agent-team-bridge-network` to your service's `networks` list.\n\n</details>\n\n## Using Cursor agents instead of Claude\n\nIn `.cursor/mcp.json`, set:\n\n```json\n\"AGENT_TYPE\": \"cursor\"\n```\n\n## Circular dependency warning\n\nIf Team A is waiting on Team B, Team B must not call back to Team A. Both will deadlock until timeout.\n"
+      },
+      "plugins": [
+        {
+          "name": "agent-team-bridge",
+          "description": "Cross-team communication for agent teams in different Devcontainers. Provides bridge_discover, bridge_send, bridge_wait, and bridge_reply tools via MCP.",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add atelier-nyaarium/agent-team-bridge",
+            "/plugin install agent-team-bridge@agent-team-bridge"
+          ]
+        }
+      ]
+    }
+  ]
+}

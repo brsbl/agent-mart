@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "eighteyes",
+    "display_name": "Sean Canton",
+    "avatar_url": "https://avatars.githubusercontent.com/u/405274?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "know-cli",
+      "version": null,
+      "description": "Product-code alignment for LLMs using specification graphs",
+      "repo_full_name": "eighteyes/know-cli",
+      "repo_url": "https://github.com/eighteyes/know-cli",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-06T07:27:59Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"know-cli\",\n  \"owner\": {\n    \"name\": \"eighteyes\"\n  },\n  \"metadata\": {\n    \"description\": \"Product-code alignment for LLMs using specification graphs\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"know\",\n      \"source\": \"./plugins/know\",\n      \"description\": \"Specification graph management for Claude Code. Maps user objectives to software components via the know CLI with slash commands, skill, and agents.\",\n      \"version\": \"1.0.0\",\n      \"category\": \"development-tools\",\n      \"tags\": [\"spec-graph\", \"product-code-alignment\", \"llm-first\", \"requirements\", \"traceability\"],\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        "README.md": "# know\n\nStructured context for AI-driven software development. Spec graphs, not spec files.\n\nKnow turns product decisions into dependency graphs that LLMs can traverse — linking **what** you're building and **why** to **how** it gets implemented. Instead of brittle markdown specs that rot over time, you get a queryable graph where information lives in one place and relationships are first-class.\n\n## Install\n\n```bash\nnpm install -g know-cli\n```\n\nRequires Node.js >= 14 and Python >= 3.8.\n\n## Quick Start\n\n```bash\n# Initialize in your project\nknow init .\n\n# Start building your spec graph\n/know:plan          # Product discovery conversation\n/know:add           # Add features interactively\n/know:build <feat>  # Build with structured context\n/know:review <feat> # Acceptance testing walkthrough\n/know:done <feat>   # Archive completed work\n```\n\n`know init` installs slash commands and a skill into your project for use with [Claude Code](https://claude.com/claude-code).\n\n## Why Graphs Over Spec Files\n\nSpec files are fine for humans. For AI, they're token overhead — brittle snapshots that bloat, duplicate information, and rot. Spec graphs solve this:\n\n- **Single source of truth** — information lives in one place, not scattered across files\n- **Queryable relationships** — traverse from user intent to implementation in a single query\n- **Generated on demand** — specs are produced from the graph when needed, always current\n- **Deterministic completion** — feature delivery is a graph state, not a checklist\n\n## Dual Graph System\n\nKnow maintains two graphs in `.ai/know/`:\n\n### Spec Graph (`spec-graph.json`) — Product Intent\n\nMaps who uses your product, what they need, and how it works:\n\n```\nProject -> User -> Objective -> Feature -> Workflow -> Action -> Component -> Operation\n```\n\n### Code Graph (`code-graph.json`) — Codebase Architecture\n\nMaps your actual code structure and dependencies:\n\n```\nmodule -> [module, package, external-dep]\npackage -> [package, module, external-dep]\nclass   -> [class, interface, module]\nfunction -> [function, module, class]\n```\n\nGraphs cross-link via `implementation` (spec->code) and `graph-link` (code->spec) references.\n\n## LLM Workflow\n\nThe primary interface is through slash commands in Claude Code:\n\n| Command | Purpose |\n|---------|---------|\n| `/know:plan` | Phased product discovery conversation |\n| `/know:add` | Add features with interactive QA |\n| `/know:prepare` | Bootstrap an existing codebase |\n| `/know:prebuild` | Validate specs align with graph |\n| `/know:build <feat>` | 7-phase structured build workflow |\n| `/know:review <feat>` | End-user acceptance testing |\n| `/know:done <feat>` | Archive completed features |\n| `/know:bug` | Track issues against features |\n| `/know:change <feat>` | Structured change requests |\n| `/know:connect` | Cross-link sparse graphs |\n| `/know:validate` | Graph integrity checks |\n| `/know:list` | Show features by status |\n| `/know:schema` | Design custom graph schemas |\n| `/know:fill-out` | Expand graph to full coverage |\n\n## CLI Reference\n\nThe CLI is organized into two groups:\n\n### Graph — Structure and Data\n\n```bash\n# Add entities and references\nknow add <type> <key> [<key2>...] '{\"name\":\"...\",\"description\":\"...\"}'\n\n# Dependencies\nknow link <from> <to> [<to2> <to3>...]\nknow unlink <from> <to> [<to2>...]\n\n# Query\nknow list [--type <type>]\nknow get <entity_id>\nknow search <query>\nknow find <query>              # Semantic search\nknow related <entity_id>\n\n# Graph traversal\nknow graph uses <entity_id>    # What does this depend on?\nknow graph used-by <entity_id> # What depends on this?\nknow graph build-order         # Topological sort\nknow graph diff a.json b.json  # Compare graphs\n\n# Node operations\nknow nodes update <id> '{\"name\":\"New Name\"}'\nknow nodes rename <id> <new_key>\nknow nodes merge <from> <into>\nknow nodes clone <id> <new_key>\nknow nodes delete <id> [-y]\nknow nodes deprecate <id> --reason \"...\"\n\n# Validation\nknow check validate            # Full graph validation\nknow check syntax              # Fast structural check\nknow check structure           # Schema and orphan check\nknow check semantics           # Dependency rules and cycles\nknow check health              # Comprehensive health report\nknow check stats               # Graph statistics\n\n# Generation\nknow gen spec <entity_id>      # Generate entity specification\nknow gen feature-spec <feat>   # Feature specification\nknow gen sitemap               # Interface sitemap\nknow gen codemap <src_dir>     # Code structure map\nknow gen trace <entity_id>     # Cross product-code boundary\nknow gen trace-matrix          # Requirement traceability matrix\nknow gen rules graph           # Visualize dependency topology\n\n# Visualization\nknow viz tree                  # ASCII tree\nknow viz mermaid               # Mermaid diagram\nknow viz dot                   # Graphviz DOT\nknow viz html                  # Interactive HTML (pyvis)\nknow viz d3                    # D3.js visualization\nknow viz fzf                   # Fuzzy finder\n```\n\n### Project — Feature Lifecycle\n\n```bash\nknow feature contract <name>         # Display contract info\nknow feature validate-contracts      # Validate all contracts\nknow feature validate <name>         # Check if re-planning needed\nknow feature done <name>             # Complete and archive\nknow feature impact <target>         # Show affected features\nknow feature coverage <name>         # Test coverage\n\nknow meta get <section>              # Read meta sections\nknow meta set <section> <key> <val>  # Write meta sections\nknow phases list                     # Show project phases\nknow op status <feature>             # Operation-level progress\nknow req list <feature>              # Feature requirements\n```\n\n### Global Options\n\n```bash\nknow -g <path>    # Use a specific graph file (default: .ai/know/spec-graph.json)\nknow -r <path>    # Override dependency rules file\n```\n\nRules auto-detect based on graph filename. Spec graph uses `dependency-rules.json`, code graph uses `code-dependency-rules.json`.\n\n## Customization\n\nThe graph schema is defined by dependency rules in `.ai/know/config/`. After `know init`, you get local copies you can modify:\n\n- `dependency-rules.json` — spec graph entity types, allowed dependencies, reference types\n- `code-dependency-rules.json` — code graph rules\n\nChange the rules to reshape the graph model for your domain.\n\n## Architecture\n\n```\nbin/know.js          # Node wrapper for npm distribution\nknow/know            # Bash entrypoint (venv + Python)\nknow/know.py         # Click CLI (~6400 lines)\nknow/src/            # Python modules (25 files)\n  graph.py           #   Graph I/O and algorithms\n  entities.py        #   Entity CRUD\n  dependencies.py    #   Dependency rules and validation\n  validation.py      #   Graph structure validation\n  generators.py      #   Spec generation\n  diff.py            #   Graph comparison\n  visualizers/       #   tree, mermaid, dot, html, d3, fzf\nknow/config/         #   Default dependency rules\nknow/templates/      #   Slash command templates, feature scaffolds\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "know",
+          "source": "./plugins/know",
+          "description": "Specification graph management for Claude Code. Maps user objectives to software components via the know CLI with slash commands, skill, and agents.",
+          "version": "1.0.0",
+          "category": "development-tools",
+          "tags": [
+            "spec-graph",
+            "product-code-alignment",
+            "llm-first",
+            "requirements",
+            "traceability"
+          ],
+          "license": "MIT",
+          "categories": [
+            "development-tools",
+            "llm-first",
+            "product-code-alignment",
+            "requirements",
+            "spec-graph",
+            "traceability"
+          ],
+          "install_commands": [
+            "/plugin marketplace add eighteyes/know-cli",
+            "/plugin install know@know-cli"
+          ]
+        }
+      ]
+    }
+  ]
+}

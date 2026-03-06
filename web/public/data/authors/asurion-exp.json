@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "asurion-exp",
+    "display_name": "asurion-exp",
+    "avatar_url": "https://avatars.githubusercontent.com/u/230590647?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "wheels",
+      "version": "0.1.0",
+      "description": "A public, open-source Claude Code plugin marketplace. Skills, MCP servers, hooks, and more — organized by concept.",
+      "repo_full_name": "asurion-exp/wheels-public",
+      "repo_url": "https://github.com/asurion-exp/wheels-public",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-04T21:24:58Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"wheels\",\n  \"description\": \"A public, open-source Claude Code plugin marketplace. Skills, MCP servers, hooks, and more — organized by concept.\",\n  \"owner\": {\n    \"name\": \"Zachary Story\",\n    \"email\": \"ztstory@gmail.com\"\n  },\n  \"version\": \"0.1.0\",\n  \"metadata\": {\n    \"pluginRoot\": \"./scopes\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jj\",\n      \"description\": \"Jujutsu (jj) version control commands - a modern alternative to git\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./scopes/jj\"\n    }\n  ]\n}\n",
+        "README.md": "# wheels\n\nA public, open-source plugin marketplace for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Install skills, MCP servers, hooks, and more directly from this repo.\n\nIMPORTANT! This is *public*. If anything is sensitive, client specific, or otherwise a trade secret it must go in a private repo.\n\n## Quick Start\n\nAdd the marketplace (run inside a Claude Code session):\n\n```\n/plugin marketplace add asurion-exp/wheels-public\n\n# OR if you have cloned the repo locally\n/plugin marketplace add ./\n```\n\nBrowse and install plugins:\n\n```\n/plugin marketplace list\n/plugin install <plugin-name>@wheels-public\n```\n\nOr install a plugin directly by path:\n\n```bash\nclaude --plugin-dir ./scopes/<plugin-name>\n```\n\n## Available Plugins\n\n| Plugin | Description | Components |\n| ------ | ----------- | ---------- |\n| [jj](scopes/jj/) | Jujutsu (jj) version control commands — a modern alternative to git | skill, commands |\n\n## How It's Organized\n\nPlugins are organized into **scopes** — topic-based directories under `scopes/`. Each scope is a concept area (e.g., `jj`, `gadget`, `docker`) that bundles whatever plugin components make sense together: skills, hooks, MCP servers, agents, etc.\n\n```\nscopes/\n├── my-tool/              # A full plugin (has .claude-plugin/plugin.json)\n│   ├── .claude-plugin/\n│   │   └── plugin.json\n│   ├── skills/\n│   ├── hooks/\n│   └── README.md\n├── shared-utils/         # A shared resource (no plugin.json, consumed via symlinks)\n│   └── skills/\n└── another-tool/         # Can symlink to shared-utils\n    └── skills/\n        └── util -> ../../shared-utils/skills/util\n```\n\n**Key rules:**\n\n- A scope with `.claude-plugin/plugin.json` is installable as a standalone plugin\n- A scope _without_ `plugin.json` is a shared resource (only consumed via symlinks from other scopes)\n- The root `marketplace.json` only lists scopes that are full plugins\n- Symlinks between scopes are followed during plugin install\n\n## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for how to add a new plugin. Starter templates are in the `templates/` directory.\n\n## License\n\n[MIT](LICENSE)\n",
+        "scopes/jj/README.md": "# jj\n\nJujutsu (jj) version control plugin for Claude Code — a modern alternative to git.\n\n## Installation\n\n```bash\nclaude /plugin install wheels/jj\n```\n\n## What's Included\n\n### Skills\n\n- **jj** — Quick reference guide with essential commands, revsets, and git-to-jj translations. Invoke with `/jj [question]`.\n\n### Commands\n\n- **/commit** `[message]` — Create a jj commit with a descriptive message\n- **/rebase-main** — Rebase current changes onto main\n- **/squash** — Squash current revision into parent\n\n## Why jj?\n\nJujutsu is a Git-compatible VCS with no staging area, automatic change tracking, and first-class support for rebasing and stacking changes. This plugin teaches Claude Code how to use `jj` instead of `git`.\n"
+      },
+      "plugins": [
+        {
+          "name": "jj",
+          "description": "Jujutsu (jj) version control commands - a modern alternative to git",
+          "version": "1.0.0",
+          "source": "./scopes/jj",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add asurion-exp/wheels-public",
+            "/plugin install jj@wheels"
+          ]
+        }
+      ]
+    }
+  ]
+}

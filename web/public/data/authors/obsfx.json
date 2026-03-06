@@ -43,6 +43,43 @@
       ]
     },
     {
+      "name": "address-feedbacks-marketplace",
+      "version": null,
+      "description": "Address inline @feedback annotations in source code with AI-powered code changes",
+      "repo_full_name": "obsfx/cc-feedback",
+      "repo_url": "https://github.com/obsfx/cc-feedback",
+      "repo_description": "Claude Code plugin that finds @feedback annotations in source code and implements the requested changes",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-02-27T02:05:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"address-feedbacks-marketplace\",\n  \"owner\": {\n    \"name\": \"Omercan Balandi\",\n    \"url\": \"https://github.com/obsfx\"\n  },\n  \"metadata\": {\n    \"description\": \"Address inline @feedback annotations in source code with AI-powered code changes\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"feedbacks\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"obsfx/cc-feedback\"\n      },\n      \"description\": \"Finds @feedback annotations in source code and addresses them by implementing the requested code changes. Supports any comment style, adds @agent-response for human review.\",\n      \"version\": \"0.8.0\",\n      \"author\": {\n        \"name\": \"Omercan Balandi\"\n      }\n    }\n  ]\n}",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"feedbacks\",\n  \"version\": \"0.8.0\",\n  \"description\": \"Finds @feedback annotations in source code and addresses them with code changes\"\n}",
+        "README.md": "# feedbacks\n\nThe one of the main things I experienced is while doing agentic coding is staying in the loop and not losing the context.\nAlso sometimes agents do stupid non-efficient stuff. You need to intervene that early to not fuckup in the near feature.\nIt started making much more sense after I read [the brief post from the creator of Django](https://simonwillison.net/2026/Feb/15/cognitive-debt/).\nI always try to find a way to add comments to my agent and pass it to my agent before committing anything to the git.\nSo I developed this little plugin for my claude code. It is super simple.\nI added `// @feedback:` annotations using my editor and my agent address and response them.\nJust dead simple and good enough to do review and address the changes.\n\nA Claude Code plugin that finds `@feedback` annotations in source code and addresses them by implementing the requested changes.\n\n## Workflow\n\n```mermaid\ngraph LR\n    A[\"Add @feedback comments\"] --> B[\"/feedbacks:address\"]\n    B --> C[\"Review changes + @agent-response\"]\n    C --> D[\"/feedbacks:resolve\"]\n    D --> E[\"Clean code → commit\"]\n```\n\n## Installation\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add obsfx/cc-feedback\n\n# Install the plugin\nclaude plugin install feedbacks\n```\n\nOr in Claude Code interactive mode:\n\n```\n/plugin marketplace add obsfx/cc-feedback\n/plugin install feedbacks\n```\n\n## How It Works\n\nSprinkle `@feedback` comments in your code to describe desired changes. The plugin finds them, implements the changes, and leaves an `@agent-response` for you to review.\n\n**Before:**\n```js\n// @feedback: extract this into a reusable hook\nexport function Component() {\n  const [data, setData] = useState([]);\n  useEffect(() => { fetchData().then(setData); }, []);\n  return <List items={data} />;\n}\n```\n\n**After:**\n```js\n// @feedback: extract this into a reusable hook\n// @agent-response: extracted to hooks/useData.ts\nexport function Component() {\n  const data = useData();\n  return <List items={data} />;\n}\n```\n\n## Supported Comment Styles\n\nWorks with any language's comment syntax:\n\n| Style | Languages |\n|-------|-----------|\n| `// @feedback: ...` | JS, TS, Java, Go, C, Rust, Swift |\n| `# @feedback: ...` | Python, Ruby, Shell, YAML |\n| `/* @feedback: ... */` | CSS, SCSS, C (block) |\n| `<!-- @feedback: ... -->` | HTML, XML, Vue |\n| `-- @feedback: ...` | SQL, Lua, Haskell |\n\n## Usage\n\n### Command: `/feedbacks:address`\n\nExplicitly scan and address all `@feedback` annotations in the codebase:\n\n```\n/feedbacks:address\n/feedbacks:address src/components/\n```\n\n- Finds all `@feedback` annotations\n- Skips already-addressed ones (those with `@agent-response`)\n- Implements each change\n- Adds `@agent-response: <summary>` for review\n\n### Command: `/feedbacks:list`\n\nList all `@feedback` annotations with their status and agent responses:\n\n```\n/feedbacks:list\n/feedbacks:list src/components/\n```\n\n### Command: `/feedbacks:resolve`\n\nRemove all `@feedback` and `@agent-response` annotation lines from the codebase, leaving clean code ready to commit:\n\n```\n/feedbacks:resolve\n/feedbacks:resolve src/components/\n```\n\n### Proactive Detection\n\nThe plugin also includes an agent that notices `@feedback` annotations while working on other tasks and offers to address them.\n\n## Annotation Lifecycle\n\n```mermaid\nstateDiagram-v2\n    [*] --> Unaddressed : developer adds feedback\n    Unaddressed --> Addressed : agent implements and responds\n    Addressed --> Resolved : resolve command removes annotations\n    Resolved --> [*]\n```\n\n## Components\n\n| Component | Purpose |\n|-----------|---------|\n| `/feedbacks:address` | Scan and implement all feedbacks |\n| `/feedbacks:list` | List all annotations with status |\n| `/feedbacks:resolve` | Remove annotation comments for clean commit |\n| `feedback-protocol` skill | Protocol knowledge, auto-loaded when relevant |\n| `feedback-addresser` agent | Autonomous worker, proactive detection |\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "feedbacks",
+          "source": {
+            "source": "github",
+            "repo": "obsfx/cc-feedback"
+          },
+          "description": "Finds @feedback annotations in source code and addresses them by implementing the requested code changes. Supports any comment style, adds @agent-response for human review.",
+          "version": "0.8.0",
+          "author": {
+            "name": "Omercan Balandi"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add obsfx/cc-feedback",
+            "/plugin install feedbacks@address-feedbacks-marketplace"
+          ]
+        }
+      ]
+    },
+    {
       "name": "cc-deadline",
       "version": null,
       "description": "Shows remaining context window percentage in the statusline",

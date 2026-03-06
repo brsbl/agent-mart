@@ -1,0 +1,61 @@
+{
+  "author": {
+    "id": "laucw1213",
+    "display_name": "laucw1213",
+    "avatar_url": "https://avatars.githubusercontent.com/u/143982037?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "laucw1213-skills",
+      "version": null,
+      "description": "Flight booking skill for Claude Code — books Cathay Pacific flights via Trip.com",
+      "repo_full_name": "laucw1213/flight-skill",
+      "repo_url": "https://github.com/laucw1213/flight-skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-05T09:43:14Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"laucw1213-skills\",\n  \"owner\": {\n    \"name\": \"laucw1213\"\n  },\n  \"metadata\": {\n    \"description\": \"Flight booking skill for Claude Code — books Cathay Pacific flights via Trip.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"flight\",\n      \"source\": {\n        \"source\": \"url\",\n        \"url\": \"https://github.com/laucw1213/flight-skill.git\",\n        \"ref\": \"master\"\n      },\n      \"description\": \"Book Cathay Pacific flights via Trip.com with automated browser\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"laucw1213\"\n      },\n      \"homepage\": \"https://github.com/laucw1213/flight-skill\",\n      \"keywords\": [\"flight\", \"booking\", \"trip.com\", \"cathay pacific\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"flight\",\n  \"description\": \"Book Cathay Pacific flights via Trip.com with automated browser\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"laucw1213\"\n  }\n}\n",
+        "README.md": "# ✈️ Flight Skill for Claude Code\n\n透過 **Trip.com + agent-browser** 自動搜尋及訂購機票的 Claude Code Plugin。\n\n## 安裝\n\n### 方法一：Plugin Marketplace（推薦）\n\n在 Claude Code 輸入 `/plugin`，選擇 **Discover** → **Add Marketplace**，輸入：\n\n```\nlaucw1213/flight-skill\n```\n\n然後選 **Install for you (user scope)**，即可在任何 project 使用 `/flight`。\n\n### 方法二：手動安裝\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/laucw1213/flight-skill/master/commands/flight.md \\\n  -o ~/.claude/skills/flight/SKILL.md --create-dirs\n```\n\n## 前置條件\n\n### 1. 安裝 agent-browser\n```bash\nnpm install -g agent-browser\n```\n\n### 2. 設定預設 Headed 模式 + Chrome\n\n讓 agent-browser 預設使用有界面模式並使用 Chrome：\n```bash\nmkdir -p ~/.agent-browser && cat > ~/.agent-browser/config.json << 'EOF'\n{\n  \"headed\": true,\n  \"executablePath\": \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\"\n}\nEOF\n```\n\n### 3. 首次登入 Trip.com\n```bash\nagent-browser --session-name trip open \"https://hk.trip.com/?locale=zh_hk&curr=HKD\"\n```\n在彈出的瀏覽器視窗手動登入，完成後 cookies 自動儲存。\n\n### 4. 設定自動授權（可選）\n避免每次執行都要按確認：\n```bash\nnode -e \"\nconst fs = require('fs');\nconst path = require('os').homedir() + '/.claude/settings.json';\nlet cfg = {};\ntry { cfg = JSON.parse(fs.readFileSync(path, 'utf8')); } catch(e) {}\nif (!cfg.allowedTools) cfg.allowedTools = [];\nif (!cfg.allowedTools.includes('Bash(agent-browser*)')) {\n  cfg.allowedTools.push('Bash(agent-browser*)');\n  fs.writeFileSync(path, JSON.stringify(cfg, null, 2));\n  console.log('done');\n} else { console.log('already set'); }\n\"\n```\n\n## 使用方式\n\n```\n/flight\n```\n\n然後按提示輸入：\n- 出發地 / 目的地\n- 日期、艙位、人數\n- 時間偏好（早上 / 下午 / 晚上）\n- 聯絡電郵及電話\n\nClaude 會自動開啟瀏覽器搜尋 Trip.com，顯示最多 3 個最便宜航班供選擇，並協助完成訂票直至付款頁面。\n\n## 檔案結構\n\n```\nflight-skill/\n├── .claude-plugin/\n│   ├── plugin.json       ← Plugin 元數據\n│   └── marketplace.json  ← Marketplace 設定\n├── commands/\n│   └── flight.md         ← /flight 指令定義\n└── README.md\n```\n\n## Session 持久性\n\nagent-browser 用 `--session-name trip` 保存 cookies，重啟後不需重新登入。\n如 session 過期，重新執行首次登入步驟即可。\n"
+      },
+      "plugins": [
+        {
+          "name": "flight",
+          "source": {
+            "source": "url",
+            "url": "https://github.com/laucw1213/flight-skill.git",
+            "ref": "master"
+          },
+          "description": "Book Cathay Pacific flights via Trip.com with automated browser",
+          "version": "1.0.0",
+          "author": {
+            "name": "laucw1213"
+          },
+          "homepage": "https://github.com/laucw1213/flight-skill",
+          "keywords": [
+            "flight",
+            "booking",
+            "trip.com",
+            "cathay pacific"
+          ],
+          "category": "productivity",
+          "categories": [
+            "booking",
+            "cathay-pacific",
+            "flight",
+            "productivity",
+            "trip.com"
+          ],
+          "install_commands": [
+            "/plugin marketplace add laucw1213/flight-skill",
+            "/plugin install flight@laucw1213-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

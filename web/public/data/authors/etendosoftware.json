@@ -1,0 +1,89 @@
+{
+  "author": {
+    "id": "etendosoftware",
+    "display_name": "Etendo Software",
+    "avatar_url": "https://avatars.githubusercontent.com/u/105930555?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "etendo-marketplace",
+      "version": null,
+      "description": "Etendo Dev Assistant plugin marketplace — tools and skills for Etendo ERP development with Claude Code",
+      "repo_full_name": "etendosoftware/etendo_claude_marketplace",
+      "repo_url": "https://github.com/etendosoftware/etendo_claude_marketplace",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-05T15:31:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"etendo-marketplace\",\n  \"owner\": {\n    \"name\": \"Etendo\",\n    \"email\": \"dev@etendo.software\"\n  },\n  \"metadata\": {\n    \"description\": \"Etendo Dev Assistant plugin marketplace — tools and skills for Etendo ERP development with Claude Code\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dev-assistant\",\n      \"source\": \"./plugins/dev-assistant\",\n      \"description\": \"A comprehensive set of skills for Etendo ERP development — module creation, database changes, window configuration, Java scaffolding, builds, and more\",\n      \"version\": \"1.0.0\",\n      \"author\": { \"name\": \"Etendo\" },\n      \"category\": \"development\",\n      \"tags\": [\"etendo\", \"erp\", \"development\", \"database\", \"java\"]\n    },\n    {\n      \"name\": \"etendo-workflow-manager\",\n      \"source\": \"./plugins/etendo-workflow-manager\",\n      \"description\": \"Manages the full Etendo development workflow — creating Jira issues, GitHub issues, branches, commits, and wiki documentation following Etendo conventions\",\n      \"version\": \"1.1.0\",\n      \"author\": { \"name\": \"Etendo\" },\n      \"category\": \"development\",\n      \"tags\": [\"etendo\", \"jira\", \"github\", \"workflow\", \"git\", \"wiki\", \"documentation\"]\n    }\n  ]\n}\n",
+        "README.md": "# Etendo Dev Assistant — Claude Code Plugin Marketplace\n\nA set of Claude Code plugins that help developers work with [Etendo ERP](https://etendo.software). Provides skills for module creation, database changes, window configuration, Java scaffolding, builds, workflow management, and more.\n\n## Available Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| **dev-assistant** | Core Etendo development skills — `/etendo:module`, `/etendo:alter-db`, `/etendo:window`, `/etendo:java`, `/etendo:smartbuild`, and more |\n| **etendo-workflow-manager** | Jira/GitHub issue creation, branch naming, and commit formatting following Etendo conventions |\n\n## Installation\n\n### From the marketplace (recommended)\n\n1. Add this repository as a marketplace in Claude Code:\n\n```\n/plugin marketplace add etendosoftware/etendo_claude_marketplace\n```\n\n2. Install the plugins you need:\n\n```\n/plugin install dev-assistant@etendo_claude_marketplace\n/plugin install etendo-workflow-manager@etendo_claude_marketplace\n```\n\nYou can also browse and install from the interactive plugin manager:\n\n```\n/plugin\n```\n\nThen go to the **Discover** tab to see available plugins.\n\n### Updating plugins\n\nTo pull the latest changes from the marketplace:\n\n```\n/plugin marketplace update etendo_claude_marketplace\n```\n\n### From a local clone\n\nIf you have cloned this repo locally, you can load plugins directly for development or testing:\n\n```bash\nclaude --plugin-dir ./plugins/dev-assistant\nclaude --plugin-dir ./plugins/etendo-workflow-manager\n```\n\nOr add the local directory as a marketplace:\n\n```\n/plugin marketplace add ./path/to/etendo_claude_marketplace\n```\n\n### Installation scope\n\nBy default plugins are installed at user level (available in all projects). To install for a specific project only:\n\n```\n/plugin install dev-assistant@etendo_claude_marketplace --scope project\n```\n\n| Scope | Settings file | Shared via git |\n|-------|---------------|----------------|\n| `user` | `~/.claude/settings.json` | No |\n| `project` | `.claude/settings.json` | Yes |\n| `local` | `.claude/settings.local.json` | No |\n\n## Skills Reference\n\n### dev-assistant\n\nAll skills are prefixed with `/etendo:` and designed to be used from inside an Etendo project directory.\n\n| Skill | Description |\n|-------|-------------|\n| `/etendo:context` | Detect and set active module, show infrastructure mode |\n| `/etendo:init` | Full bootstrap — clone, configure, and set up an Etendo project |\n| `/etendo:install` | Install Etendo on an already-cloned project |\n| `/etendo:module` | Create or configure an Etendo module |\n| `/etendo:alter-db` | Create/modify tables and columns via Application Dictionary |\n| `/etendo:window` | Create/modify windows, tabs, and fields |\n| `/etendo:java` | Scaffold EventHandlers, Background Processes, Action Processes, Webhooks |\n| `/etendo:headless` | Configure EtendoRX REST API endpoints |\n| `/etendo:smartbuild` | Compile and deploy |\n| `/etendo:update` | Synchronize DB with the model (`update.database`) |\n| `/etendo:report` | Create Jasper reports |\n| `/etendo:flow` | Configure EtendoRX flows |\n| `/etendo:test` | Create and run tests |\n\nThe plugin also includes shared internal skills (`_guidelines`, `_context`, `_webhooks`) that provide cross-cutting conventions to all commands, and a `references/` directory with detailed documentation loaded on demand.\n\n### etendo-workflow-manager\n\n| Skill | Description |\n|-------|-------------|\n| `/etendo:workflow-manager` | Create Jira issues (Bug, Story, Task), GitHub issues, branches, and commits following Git Police conventions |\n\n## Prerequisites\n\n- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed\n- An Etendo ERP project (for `dev-assistant` skills)\n- Tomcat running with `com.etendoerp.copilot.devassistant` module installed (optional — skills degrade gracefully to SQL or manual steps)\n\n## How it works\n\nThe dev-assistant skills use **webhooks** and **headless endpoints** provided by the `com.etendoerp.copilot.devassistant` Etendo module to interact with the Application Dictionary, create tables, register windows, and more. If the module is not available, skills fall back to direct SQL or guide the user through manual steps.\n\nAuthentication is handled automatically via JWT Bearer token obtained from the Etendo login endpoint.\n\n## Repository Structure\n\n```\n.claude-plugin/\n  marketplace.json          <- Marketplace definition\nplugins/\n  dev-assistant/\n    .claude-plugin/\n      plugin.json           <- Plugin manifest\n    skills/                 <- Skill definitions (SKILL.md per skill)\n    references/             <- Detailed docs loaded on demand\n  etendo-workflow-manager/\n    .claude-plugin/\n      plugin.json\n    skills/\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "dev-assistant",
+          "source": "./plugins/dev-assistant",
+          "description": "A comprehensive set of skills for Etendo ERP development — module creation, database changes, window configuration, Java scaffolding, builds, and more",
+          "version": "1.0.0",
+          "author": {
+            "name": "Etendo"
+          },
+          "category": "development",
+          "tags": [
+            "etendo",
+            "erp",
+            "development",
+            "database",
+            "java"
+          ],
+          "categories": [
+            "database",
+            "development",
+            "erp",
+            "etendo",
+            "java"
+          ],
+          "install_commands": [
+            "/plugin marketplace add etendosoftware/etendo_claude_marketplace",
+            "/plugin install dev-assistant@etendo-marketplace"
+          ]
+        },
+        {
+          "name": "etendo-workflow-manager",
+          "source": "./plugins/etendo-workflow-manager",
+          "description": "Manages the full Etendo development workflow — creating Jira issues, GitHub issues, branches, commits, and wiki documentation following Etendo conventions",
+          "version": "1.1.0",
+          "author": {
+            "name": "Etendo"
+          },
+          "category": "development",
+          "tags": [
+            "etendo",
+            "jira",
+            "github",
+            "workflow",
+            "git",
+            "wiki",
+            "documentation"
+          ],
+          "categories": [
+            "development",
+            "documentation",
+            "etendo",
+            "git",
+            "github",
+            "jira",
+            "wiki",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add etendosoftware/etendo_claude_marketplace",
+            "/plugin install etendo-workflow-manager@etendo-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

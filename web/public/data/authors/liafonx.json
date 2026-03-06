@@ -1,0 +1,62 @@
+{
+  "author": {
+    "id": "liafonx",
+    "display_name": "Yinong Xu",
+    "avatar_url": "https://avatars.githubusercontent.com/u/79797050?u=740ce6a0badf3f5d0095f04a03d7951fc7f62542&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "open-balatro",
+      "version": "1.0.0",
+      "description": "Claude Code plugins for Balatro mod development",
+      "repo_full_name": "liafonx/Open-Balatro",
+      "repo_url": "https://github.com/liafonx/Open-Balatro",
+      "repo_description": "Claude Code plugin for Balatro mod development.",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-06T00:12:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"open-balatro\",\n  \"description\": \"Claude Code plugins for Balatro mod development\",\n  \"version\": \"1.0.0\",\n  \"owner\": {\n    \"name\": \"liafonx\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"balatro-mod-dev\",\n      \"source\": \"./balatro-mod-dev\",\n      \"description\": \"Develop Balatro mods with Steamodded, Lovely, and SMODS. Includes game source navigation, mobile compat, debugging, and sub-agent delegation.\",\n      \"version\": \"2.8.0\",\n      \"author\": {\n        \"name\": \"liafonx\"\n      },\n      \"repository\": \"https://github.com/liafonx/Open-Balatro\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"balatro\", \"modding\", \"steamodded\", \"lovely\", \"lua\", \"game-mod\"],\n      \"category\": \"framework\"\n    }\n  ]\n}\n",
+        "README.md": "# Open-Balatro\n\nClaude Code plugin for Balatro mod development with Steamodded, Lovely, and SMODS.\n\n## What is This?\n\nA plugin that teaches Claude how to develop Balatro mods using:\n- **Steamodded (SMODS)** - Mod loader and API\n- **Lovely** - Lua injection framework\n- **Malverk** - Texture pack API\n\n## Installation\n\n### Marketplace (Recommended)\n\n```bash\n# Add the marketplace (one-time)\n/plugin marketplace add liafonx/Open-Balatro\n\n# Install the plugin\n/plugin install balatro-mod-dev@open-balatro\n```\n\nOr via CLI:\n\n```bash\nclaude plugin install balatro-mod-dev@open-balatro\n```\n\n### Plugin Directory (Local Dev)\n\n```bash\nclaude --plugin-dir ./balatro-mod-dev\n```\n\n## What's Included\n\n| Component | Count | Purpose |\n|-----------|-------|---------|\n| Skills | 1 | `balatro-mod-dev` — game knowledge, patterns, references |\n| Agents | 11 | Research, debug inspection, code writing, review (Sonnet + Opus + Haiku) |\n| Commands | 16 | `/familiar`, `/init`, `/sync-mod`, `/debug`, `/refactor`, etc. |\n| Hooks | 9 | Session init, file protection, task model enforcement, session memory |\n| Script templates | 4 | Sync to mods, create release, fix sprites |\n| Project templates | 10+ | INIT.md, AGENT.md, mod.config.json, Lua rules |\n\n## Architecture\n\nThe main agent (Sonnet) orchestrates all work. Sub-agents handle research, code writing, and specialized reasoning via the Task tool.\n\n```\nMain Agent (Sonnet)  →  Sonnet sub-agents (research, code writing)\n                     →  Opus sub-agents (code review, synthesis, planning)\n                     →  Haiku sub-agents (scripts)\n         ↑                    ↓\n         └──────── recap ─────┘\n```\n\nSource paths are configured per-mod in `mod.config.json`:\n\n```json\n\"source_paths\": {\n  \"game_desktop\": \"~/path/to/Balatro_src/desktop\",\n  \"steamodded\": \"~/path/to/smods/src\",\n  \"mods\": \"~/path/to/Balatro/Mods\"\n}\n```\n\n## Repository Structure\n\n```\nOpen-Balatro/\n├── .claude-plugin/\n│   └── marketplace.json        # Marketplace catalog (enables plugin discovery)\n├── balatro-mod-dev/            # THE PLUGIN (distributable)\n│   ├── .claude-plugin/\n│   │   └── plugin.json         # Manifest (name, version, description)\n│   ├── skills/balatro-mod-dev/ # Skill knowledge (patterns, references)\n│   ├── agents/                 # 11 sub-agent templates\n│   ├── commands/               # 16 command templates\n│   ├── hooks/                  # 9 hooks + JS scripts\n│   ├── scripts/                # Utility scripts (sync, release, fix-sprites)\n│   └── templates/              # Project setup templates\n│       └── rules/              # Scaffolded to .claude/rules/ by /init\n├── docs/                       # NOT part of plugin (longform guides, reference)\n├── .claude/rules/              # THIS repo's rules\n└── README.md\n```\n\n## Contributing\n\nSee [AGENT.md](AGENT.md) for plugin architecture and development guidelines.\n\n## License\n\nMIT\n",
+        "balatro-mod-dev/README.md": "# balatro-mod-dev\n\nClaude Code plugin for Balatro mod development.\n\n## Install\n\n```bash\nclaude --plugin-dir ./balatro-mod-dev\n```\n\n## What Auto-Loads\n\nWhen installed, Claude Code auto-discovers and loads:\n- **1 skill**: `balatro-mod-dev` — game knowledge (patterns, references, file maps)\n- **11 agents**: Research (4), debug inspection, code writing, script execution, review/synthesis/planning\n- **16 commands**: Init, sync, debug, test, refactor, release, compact, help, and more\n- **9 hooks**: Session init, session end (transcript parser), file protection, external read blocking, task model enforcement, compact suggestion, pre-compact\n- **3 Hookify rules**: Legacy command blocking, Lua print warning, Lua pitfall detection\n\n## Getting Started\n\nAfter installing the plugin, run `/balatro-mod-dev:init` in your mod repo to scaffold:\n- `AGENTS.md` — mod-specific architecture notes, constraints, and Quick Reference\n- `mod.config.json` — file lists, source paths\n- `.claude/rules/` — Lua coding style, mod conventions, delegation rules\n\nThen use `/balatro-mod-dev:familiar` to orient Claude to your mod.\n\n## Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/balatro-mod-dev:familiar` | Read AGENTS.md and produce orientation briefing |\n| `/balatro-mod-dev:init` | Scaffold new mod repo with templates and rules |\n| `/balatro-mod-dev:sync-mod` | Sync mod files to Balatro Mods directory |\n| `/balatro-mod-dev:debug` | Analyze Lovely logs and trace errors |\n| `/balatro-mod-dev:refactor` | Identify refactor targets with code-reviewer (opus) |\n| `/balatro-mod-dev:fix-sprites` | Fix transparent pixel issues in atlases |\n| `/balatro-mod-dev:release` | Package and release mod |\n| `/balatro-mod-dev:draft-pr` | Draft PR description for contribution |\n| `/balatro-mod-dev:update-docs` | Update README and CHANGELOG |\n| `/balatro-mod-dev:knowledge` | Review session work, surface discoveries, capture knowledge |\n| `/balatro-mod-dev:bump-version` | Bump mod version across files |\n| `/balatro-mod-dev:test` | Run test scenarios and verify mod behavior via logs |\n| `/balatro-mod-dev:help` | List all available commands and agents |\n| `/balatro-mod-dev:compact` | Evaluate context health and recommend when to compact |\n| `/balatro-mod-dev:check` | Health audit — project config, scripts, rules, gitignore |\n| `/balatro-mod-dev:update-plugin` | Update plugin knowledge from new findings |\n\n## Agents\n\n| Agent | Model | Role |\n|-------|-------|------|\n| `game-source-researcher` | sonnet | Find game functions, injection points |\n| `smods-api-researcher` | sonnet | Find SMODS API patterns |\n| `mod-pattern-researcher` | sonnet | Find how other mods implement X |\n| `lovely-patch-researcher` | sonnet | Find Lovely patch syntax |\n| `project-explorer` | sonnet | Map mod architecture |\n| `debug-inspector` | sonnet | Inspect runtime logs, dump metadata, mod compatibility |\n| `code-writer` | sonnet | Execute implementation plans |\n| `script-runner` | haiku | Run one-off scripts |\n| `code-reviewer` | opus | Review code (confidence ≥80 filter) |\n| `research-analyst` | opus | Synthesize multi-source research |\n| `strategic-planner` | opus | Plan complex implementations |\n\n## Hooks (9 plugin + 3 Hookify rules)\n\n### Plugin Hooks (hooks.json — command type JS scripts)\n\n| Hook | When |\n|------|------|\n| SessionStart | Load AGENTS.md context + previous session from `~/.claude/sessions/` |\n| SessionEnd | Parse JSONL transcript, write session summary to `~/.claude/sessions/` |\n| PreToolUse Write/Edit | Warn on edits to protected files |\n| PreToolUse Read/Grep/Glob | Block reads from external game source |\n| PreToolUse Task | Enforce model parameter on sub-agent spawns (block if missing) |\n| PreToolUse Write/Edit | Suggest `/compact` at tool call thresholds (50, then every 25) |\n| PostToolUse Write | Suggest mod.config.json updates |\n| PreCompact | Append compaction marker to session file + remind to save progress |\n| Stop | Offer PR drafting for fork contributions |\n\n### Hookify Rules (scaffolded per-repo via `/init`)\n\n| Rule | Action | What |\n|------|--------|------|\n| `block-legacy-routing` | block | Block `codeagent`/`run_subagent`/`route_subagent` bash commands |\n| `lua-print-warning` | warn | Warn on bare `print()` in `.lua` files |\n| `lua-pitfall-check` | warn | Warn on `G.GAME` nil access, string concat nil, FFI cdata comparison |\n\n## Templates\n\n| Template | Purpose |\n|----------|---------|\n| `agents-md-template.md` | AGENTS.md scaffold for standard mods |\n| `agents-texture-pack-template.md` | AGENTS.md scaffold for Malverk texture packs |\n| `mod-config-template.json` | mod.config.json with test_saves schema |\n| `manifest-json-template.json` | Mod manifest for packaging |\n| `mod-json-template.json` | Mod descriptor (name, version, author) |\n| `logger-template.lua` | Logger with DEBUG/INFO/WARN/ERROR levels |\n| `gitignore-template` | .gitignore for mod repos |\n| `release-checklist.md` | Pre-flight release verification |\n| `session-state-template.md` | Legacy session handoff format (deprecated — automated by SessionEnd hook) |\n| `docs/description-template.md` | Mod description scaffold |\n| `docs/knowledge-base-template.md` | Knowledge base scaffold for debugging insights |\n| `docs/NEXUSMODS_DESCRIPTION-template.txt` | BBCode listing for NexusMods |\n| `hookify/hookify.block-legacy-routing.local.md` | Hookify rule: block legacy routing commands |\n| `hookify/hookify.lua-print-warning.local.md` | Hookify rule: warn on bare print() |\n| `hookify/hookify.lua-pitfall-check.local.md` | Hookify rule: warn on common Lua pitfalls |\n| `rules/lua-coding-style.md` | Lua nil safety, FFI, performance rules |\n| `rules/mod-conventions.md` | SMODS, localization, file placement rules |\n| `rules/delegation.md` | Agent selection and iterative retrieval rules |\n| `rules/git-workflow.md` | Branch naming, commit format, PR conventions |\n\n## Scope\n\nThis plugin targets **Balatro mod repos** using Steamodded/Lovely/SMODS. Build tools (e.g., Balatro-IPA-Builder) are out-of-scope — they use different workflows, don't have mod manifests, and don't benefit from SMODS-specific agents or hooks.\n\n## Version\n\nCurrent: **2.8.0** — See `CHANGELOG.md` for history.\n"
+      },
+      "plugins": [
+        {
+          "name": "balatro-mod-dev",
+          "source": "./balatro-mod-dev",
+          "description": "Develop Balatro mods with Steamodded, Lovely, and SMODS. Includes game source navigation, mobile compat, debugging, and sub-agent delegation.",
+          "version": "2.8.0",
+          "author": {
+            "name": "liafonx"
+          },
+          "repository": "https://github.com/liafonx/Open-Balatro",
+          "license": "MIT",
+          "keywords": [
+            "balatro",
+            "modding",
+            "steamodded",
+            "lovely",
+            "lua",
+            "game-mod"
+          ],
+          "category": "framework",
+          "categories": [
+            "balatro",
+            "framework",
+            "game-mod",
+            "lovely",
+            "lua",
+            "modding",
+            "steamodded"
+          ],
+          "install_commands": [
+            "/plugin marketplace add liafonx/Open-Balatro",
+            "/plugin install balatro-mod-dev@open-balatro"
+          ]
+        }
+      ]
+    }
+  ]
+}

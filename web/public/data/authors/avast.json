@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "avast",
+    "display_name": "Avast",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3996079?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "sage",
+      "version": "0.5.2",
+      "description": "Security plugins for Claude Code by Gen Digital",
+      "repo_full_name": "avast/sage",
+      "repo_url": "https://github.com/avast/sage",
+      "repo_description": "Lightweight Agent Detection & Response (ADR) layer for AI agents — guards commands, files, and web requests. Part of Gen Agent Trust Hub.",
+      "signals": {
+        "stars": 101,
+        "forks": 5,
+        "pushed_at": "2026-03-05T16:43:16Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"sage\",\n  \"description\": \"Security plugins for Claude Code by Gen Digital\",\n  \"version\": \"0.5.2\",\n  \"owner\": {\n    \"name\": \"Gen Digital\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"sage\",\n      \"description\": \"Agent Detection & Response (ADR) for Claude Code — guards commands, files, and web requests\",\n      \"version\": \"0.5.2\",\n      \"author\": {\n        \"name\": \"Gen Digital\"\n      },\n      \"source\": \"./\",\n      \"category\": \"security\",\n      \"tags\": [\n        \"security\",\n        \"malware\",\n        \"protection\",\n        \"url-reputation\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"sage\",\n  \"version\": \"0.5.2\",\n  \"description\": \"Safety for Agents - Agent Detection & Response (ADR) for Claude Code\",\n  \"author\": {\n    \"name\": \"Gen Digital\"\n  },\n  \"license\": \"Apache-2.0\",\n  \"repository\": \"https://github.com/avast/sage\",\n  \"keywords\": [\n    \"security\",\n    \"malware\",\n    \"protection\",\n    \"url-reputation\"\n  ],\n  \"skills\": \"./skills/\",\n  \"mcpServers\": {\n    \"sage\": {\n      \"command\": \"node\",\n      \"args\": [\n        \"${CLAUDE_PLUGIN_ROOT}/packages/claude-code/dist/mcp-server.cjs\"\n      ]\n    }\n  }\n}\n",
+        "README.md": "# Sage\n\n**Safety for Agents** - a lightweight Agent Detection & Response (ADR) layer for AI agents that guards commands, files, and web requests.\n\n<p align=\"center\">\n  <img src=\"images/sage-logo-shaded.png\" alt=\"Sage\" width=\"50%\">\n</p>\n\nSage intercepts tool calls (Bash commands, URL fetches, file writes) via hook systems in [Claude Code](docs/platform-guides/claude-code.md), [Cursor / VS Code](docs/platform-guides/cursor.md), [OpenClaw](docs/platform-guides/openclaw.md), and [OpenCode](docs/platform-guides/opencode.md), and checks them against:\n\n- **URL reputation** - cloud-based malware, phishing, and scam detection\n- **Local heuristics** - YAML-based threat definitions for dangerous patterns\n- **Package supply-chain checks** - registry existence, file reputation, and age analysis for npm/PyPI packages\n- **Plugin scanning** - scans other installed plugins for threats at session start\n\n## Quick Start\n\n### Claude Code\n\nRequires [Node.js >= 18](https://nodejs.org/).\n\n```\n/plugin marketplace add https://github.com/avast/sage.git\n/plugin install sage@sage\n```\n\n### Cursor\n\nBuild and install the extension, then run `Sage: Enable Protection` from the command palette.\n\n```bash\npnpm install && pnpm -C packages/extension run package:cursor:vsix\n```\n\n### OpenClaw\n\n```bash\n# From npm (recommended)\nopenclaw plugins install @gendigital/sage-openclaw\n\n# From source\npnpm install && pnpm build\ncp -r packages/openclaw sage && openclaw plugins install ./sage\n```\n\n### OpenCode\n\nUse a local source checkout and add the plugin path in OpenCode config:\n\n```bash\ngit clone https://github.com/avast/sage\ncd sage\npnpm install\npnpm --filter @sage/opencode run build\n```\n\n```json\n{\n  \"plugin\": [\"/absolute/path/to/sage/packages/opencode\"]\n}\n```\n\nSee [Getting Started](docs/getting-started.md) for detailed instructions.\n\n## Documentation\n\n| Document                                         | Description                                    |\n| ------------------------------------------------ | ---------------------------------------------- |\n| [Getting Started](docs/getting-started.md)       | Installation for all platforms                 |\n| [How It Works](docs/how-it-works.md)             | Detection layers, data flow, verdicts          |\n| [Configuration](docs/configuration.md)           | All config options and file paths              |\n| [Threat Rules](docs/threat-rules.md)             | YAML rule format and what gets checked         |\n| [Package Protection](docs/package-protection.md) | npm/PyPI supply-chain checks                   |\n| [Plugin Scanning](docs/plugin-scanning.md)       | Session-start plugin scanning                  |\n| [AMSI Scanning](docs/amsi-scanning.md)           | Windows antimalware scanning via AMSI          |\n| [Architecture](docs/architecture.md)             | Monorepo structure, packages, design decisions |\n| [Development](docs/development.md)               | Building, testing, tooling, conventions        |\n| [FAQ](docs/faq.md)                               | Common questions                               |\n| [Privacy](docs/privacy.md)                       | What data is sent, what stays local            |\n\n**Platform guides:** [Claude Code](docs/platform-guides/claude-code.md) · [Cursor / VS Code](docs/platform-guides/cursor.md) · [OpenClaw](docs/platform-guides/openclaw.md) · [OpenCode](docs/platform-guides/opencode.md)\n\n## Current Limitations\n\n- MCP tool call interception (`mcp__*`) is not yet implemented\n- Custom user threat definitions (`~/.sage/threats/`) are not yet implemented\n\n## Privacy\n\nSage sends URL hashes and package hashes to Gen Digital reputation APIs. File content, commands, and source code stay local. Both services can be disabled for fully offline operation. See [Privacy](docs/privacy.md) for details.\n\n## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding conventions, and the threat rule contribution process.\n\n## License\n\nCopyright 2026 Gen Digital Inc.\n\n- Source code: [Apache License 2.0](LICENSE)\n- Threat detection rules (`threats/`): [Detection Rule License 1.1](threats/LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "sage",
+          "description": "Agent Detection & Response (ADR) for Claude Code — guards commands, files, and web requests",
+          "version": "0.5.2",
+          "author": {
+            "name": "Gen Digital"
+          },
+          "source": "./",
+          "category": "security",
+          "tags": [
+            "security",
+            "malware",
+            "protection",
+            "url-reputation"
+          ],
+          "categories": [
+            "malware",
+            "protection",
+            "security",
+            "url-reputation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add avast/sage",
+            "/plugin install sage@sage"
+          ]
+        }
+      ]
+    }
+  ]
+}

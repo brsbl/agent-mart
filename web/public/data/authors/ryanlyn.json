@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "ryanlyn",
+    "display_name": "Ryan Lin",
+    "avatar_url": "https://avatars.githubusercontent.com/u/32974205?u=a3c75ab5a4f0be83b87ee3e05f0f81667166c913&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "readwise-skill",
+      "version": null,
+      "description": "Claude Code plugin for Readwise workflows",
+      "repo_full_name": "ryanlyn/readwise-skill",
+      "repo_url": "https://github.com/ryanlyn/readwise-skill",
+      "repo_description": "Agent Skill and CLI for Readwise + Reader",
+      "signals": {
+        "stars": 19,
+        "forks": 1,
+        "pushed_at": "2026-03-06T02:10:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"readwise-skill\",\n  \"metadata\": {\n    \"description\": \"Claude Code plugin for Readwise workflows\",\n    \"version\": \"0.2.0\"\n  },\n  \"homepage\": \"https://github.com/ryanlyn/readwise-skill\",\n  \"repository\": \"https://github.com/ryanlyn/readwise-skill\",\n  \"owner\": {\n    \"name\": \"ryanlyn\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"readwise\",\n      \"source\": \"./plugins/readwise\",\n      \"description\": \"Interact with Readwise Original and Reader APIs for syncing highlights, managing documents, and automating reading workflows.\",\n      \"version\": \"0.2.0\"\n    }\n  ]\n}\n",
+        "README.md": "# readwise-skill\n\nA plugin for using [Readwise](https://readwise.io) and [Reader](https://readwise.io/read) in your AI agents. Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Claude Desktop / Cowork](https://claude.ai/download), [OpenAI Codex](https://github.com/openai/codex), [OpenClaw](https://github.com/nicobailon/openClaw), and other agent harnesses that support standalone skill zips.\n\nIt shines when working across your entire library - extracting quotes from transcripts, saving generated highlights across multiple sources, triaging your inbox, and connecting highlights across books.\n\nCompared with the official Readwise MCP ([docs](https://readwise.io), [npm](https://www.npmjs.com/package/@readwise/readwise-mcp)), this skill used `2.0x-9.4x` fewer end-to-end tokens across four overlapping read-only tasks with `GPT-5.4`; the MCP benchmarked here is also read-only and highlights-only, so daily review, highlight CRUD, and Reader workflows are outside its coverage.\n\n```text\nCross-book comparison token shape\n= non-tool tokens\n# tool-result payload tokens\n\nskill [===####]                       ~5.1k\nmcp   [==##########################]  ~20.3k\nadvantage: 4.0x\n```\n\n## What you can do\n\nThe basics work as you'd expect - search highlights, daily review, save articles. The interesting part is what becomes possible when your agent can read and write across your whole library.\n\nVisualize the structure of a Paul Graham essay saved in Reader:\n\n<p align=\"center\">\n  <img src=\"assets/how-to-do-great-work.png\" alt=\"ASCII theme timeline of Paul Graham's How to Do Great Work\" width=\"600\">\n</p>\n\nSave a video, extract quotes, and archive - all in one conversation:\n```\n> Save this to Reader: https://www.youtube.com/watch?v=OfMAtaocvJw\nDone. Saved \"The third golden age of software engineering\" to Reader.\n\n> Get the transcript and suggest the most surprising quotes\nHere are 3 quotes that challenge conventional thinking:\n1. \"Fear not, O developers. Your tools are changing, but your problems are not.\"\n2. \"We're not going to have fewer software engineers - we're going to have\n    more, doing things we couldn't imagine\"\n3. ...\n\n> Save #1 and #2 to Readwise, then archive the video\nDone. Saved 2 highlights to Readwise and archived the document in Reader.\n```\n\nCheck your reading list:\n```\n> What are my latest unread Reader docs?\n\n| Title                                          | Source           | Words | Progress |\n|------------------------------------------------|------------------|------:|:--------:|\n| Does AI already have human-level intelligence? | nature.com       | 2,374 |    0%    |\n| Interpretability vs Neuroscience               | colah.github.io  | 1,394 |    0%    |\n| On neural scaling and the quanta hypothesis    | ericjmichaud.com | 9,976 |    0%    |\n\n... (7 more)\n```\n\nTriage your feed, then save what matters:\n```\n> What are my latest RSS articles? Rank by novelty.\n\nHigh novelty:\n- The Yodogo Hijacking (historical narrative)\n- My Enemy, The Leitmotif (music/aesthetics critique)\n- The Church Of Interruption (attention/tech critique)\n\nLow novelty:\n- How Transformers Architecture Powers Modern LLMs\n- A Guide to Effective Prompt Engineering\n\n> Save #1 and #2 to Readwise\nDone. Saved 2 highlights to Readwise.\n```\n\n```\n> Pull my highlights from \"Thinking in Systems\" and create an Excalidraw\n  diagram of the key feedback loops\n\n> Build me an interactive HTML demo of the reinforcing loops from chapter 3\n  using my highlights as source material\n\n> Compare my highlights from \"Meditations\" and \"Letters from a Stoic\" -\n  where do Aurelius and Seneca agree? Where do they diverge?\n```\n\n## Getting started\n\nSet your Readwise access token (find it at https://readwise.io/access_token):\n```\nexport READWISE_TOKEN=<your-token>\n```\n\n### Claude Code\n\n```\n/plugin marketplace add ryanlyn/readwise-skill\n/plugin install readwise@readwise-skill\n```\n\nOr store your token as a Claude Code secret so it persists across sessions.\n\n### Claude Desktop / Cowork\n\nInstall the plugin from the marketplace, then set `READWISE_TOKEN`. One option is to create a `.env` file in your project folder and open it in Claude Desktop / Cowork.\n\n### Standalone skill zips (Codex, OpenClaw, etc.)\n\nSkill zips are published as CI artifacts on each push to `main`. Download the latest from the [Actions tab](https://github.com/ryanlyn/readwise-skill/actions) or build from source (see Development).\n\nInstall one or both skills (they work independently). Set `SKILL_HOME` to whatever directory your agent harness uses for skills:\n\n```bash\nVERSION=\"0.1.0\"  # check CI artifacts for latest\n# Set SKILL_HOME for your harness, e.g.:\n#   Codex:    export SKILL_HOME=\"${CODEX_HOME:-$HOME/.codex}/skills\"\n#   OpenClaw: export SKILL_HOME=\"$HOME/.openclaw/skills\"\nunzip -o \"readwise-${VERSION}.zip\" -d \"$SKILL_HOME\"\nunzip -o \"readwise-reader-${VERSION}.zip\" -d \"$SKILL_HOME\"\n```\n\nStart a new session after installing.\n\n### Verify\n\nAsk your agent: `Validate my Readwise token`\n\n## Privacy & data\n\nYour Readwise access token grants full read/write access to your account. This plugin only communicates with `readwise.io` API endpoints - no data is sent anywhere else. Destructive operations (`highlight delete`) prompt for confirmation. Use `--dry-run` to preview payloads before any write.\n\n## Uninstall\n\n**Claude Code:**\n```\n/plugin uninstall readwise@readwise-skill\n```\n\n**Claude Desktop / Cowork:** Remove the plugin from Plugins.\n\n**Standalone skill zips:**\n```bash\nrm -r \"$SKILL_HOME/readwise\" \"$SKILL_HOME/readwise-reader\"\n```\n\n## Development\n\nSee [CLAUDE.md](CLAUDE.md) for project structure, conventions, and development setup.\n\n## License\n\n[MIT](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "readwise",
+          "source": "./plugins/readwise",
+          "description": "Interact with Readwise Original and Reader APIs for syncing highlights, managing documents, and automating reading workflows.",
+          "version": "0.2.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add ryanlyn/readwise-skill",
+            "/plugin install readwise@readwise-skill"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "author": {
+    "id": "thangnc",
+    "display_name": "Thang Nguyen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/975394?u=7824aa033ffaecfc0e4350d644ca4b22a40c9539&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "i-ching-plugins",
+      "version": null,
+      "description": "A collection of Vietnamese I Ching (Kinh Dịch) divination plugins for Claude — covering Lục Hào, Bát Quái, and related metaphysical arts.",
+      "repo_full_name": "thangnc/i-ching-plugins",
+      "repo_url": "https://github.com/thangnc/i-ching-plugins",
+      "repo_description": "Lục Hào Bát Quái — Vietnamese I Ching Divination Claude Plugin",
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-03-04T16:01:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"i-ching-plugins\",\n  \"owner\": {\n    \"name\": \"thangnc\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of Vietnamese I Ching (Kinh Dịch) divination plugins for Claude — covering Lục Hào, Bát Quái, and related metaphysical arts.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"luc-hao\",\n      \"source\": \"../plugins/luc-hao/\",\n      \"description\": \"Gieo quẻ và luận giải Lục Hào Bát Quái theo phương pháp Mai Hoa Dịch Số — Vietnamese Six-Line I Ching divination with hexagram casting and interpretation.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"thangnc\"\n      },\n      \"repository\": \"https://github.com/thangnc/i-ching-plugins\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"i-ching\",\n        \"divination\",\n        \"bat-quai\",\n        \"ngu-hanh\",\n        \"luc-hao\",\n        \"mai-hoa\",\n        \"tu-tru\",\n        \"vietnamese\",\n        \"fortune-telling\",\n        \"boi-toan\",\n        \"astrology\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# i-ching-plugins\n\nA collection of Vietnamese I Ching (Kinh Dịch) divination plugins for Claude — covering Lục Hào, Bát Quái, and related metaphysical arts.\n\n## Plugins\n\n### `luc-hao` — Lục Hào Bát Quái (六爻八卦)\n\nGieo quẻ và luận giải Lục Hào Bát Quái theo phương pháp Mai Hoa Dịch Số — Vietnamese Six-Line I Ching divination with hexagram casting and interpretation.\n\n## Cấu trúc\n\n```\n.claude-plugin/\n  marketplace.json                  # Marketplace listing (repo-level)\nplugins/\n  luc-hao/\n    .claude-plugin/\n      plugin.json                   # Plugin metadata và entry points\n    commands/\n      gieo-que.md                   # /gieo-que — Gieo quẻ Lục Hào\n      luan-giai.md                  # /luan-giai — Luận giải quẻ\n    skills/\n      gieo-que/\n        SKILL.md                         # Tự động khi user muốn gieo quẻ\n        references/bang-tra-cuu.md       # Bảng tra cứu Nạp Giáp, Nạp Chi, 64 quẻ, Lục Thần, Nạp Âm\n      luan-giai/\n        SKILL.md                         # Tự động khi user muốn giải quẻ\n        references/quy-tac-luan-giai.md  # Quy tắc luận giải Dụng Thần, Vượng Suy, hào động\n```\n\n## Commands vs Skills\n\n| | Commands | Skills (auto-invoked) |\n|---|---|---|\n| **Kích hoạt** | User gõ `/gieo-que` hoặc `/luan-giai` | Claude tự nhận diện từ ngữ cảnh |\n| **Khi nào** | User biết lệnh, muốn chạy trực tiếp | User nói tự nhiên (\"gieo quẻ cho tôi\") |\n| **Logic** | Chứa toàn bộ hướng dẫn chi tiết | Nhẹ, trỏ về commands/ để thực hiện |\n\nSkills hoạt động như \"bộ nhận diện\" — khi user nói tự nhiên, skill kích hoạt và thực hiện theo hướng dẫn trong commands.\n\n## Thành phần\n\n### `/gieo-que` + skill `gieo-que`\n\nKích hoạt khi: `gieo quẻ`, `bói quẻ`, `xem quẻ`, `xin quẻ`, `lục hào`, `khởi quẻ`, `lập quẻ`, `bói dịch`, hoặc user cung cấp tên + ngày sinh kèm câu hỏi vận mệnh.\n\n**Quy trình:**\n1. Thu thập: họ tên, ngày sinh, giờ sinh, giới tính, câu hỏi\n2. Lập Tứ Trụ (Bát Tự) theo Can Chi + Nạp Âm\n3. Tính Thượng Quái, Hạ Quái, hào động theo Mai Hoa Dịch Số\n4. Lập bảng Lục Hào (Nạp Chi, Lục Thân, Lục Thần, Thế/Ứng, hào động)\n5. Hỏi người dùng có muốn luận giải không\n\n**Ví dụ:**\n```\n/gieo-que Nguyễn Văn A, 15/03/1990, nam, hỏi tài lộc\n\"Tôi muốn gieo quẻ xem tài lộc, tên Nguyễn Văn A, sinh 15/03/1990\"\n```\n\n### `/luan-giai` + skill `luan-giai`\n\nKích hoạt khi: `luận giải`, `giải quẻ`, `phân tích quẻ`, `ý nghĩa quẻ`, `đoán quẻ`, `quẻ này tốt không`, hoặc ngay sau khi gieo quẻ xong.\n\n**Quy trình:**\n1. Xác định Dụng Thần theo lĩnh vực hỏi\n2. Phân tích Vượng/Suy (Nguyệt kiến, Nhật thần)\n3. Phân tích Hào Động (hồi đầu sinh/khắc, hợp/xung)\n4. Phân tích Thế Ứng + Lục Thần bổ trợ\n5. Tổng hợp kết luận + thời vận + lời khuyên\n\n**Output format:**\n```\n🔮 TỔNG QUAN   — quẻ tượng + ý nghĩa chính\n📊 DỤNG THẦN   — dụng thần nào, vượng/suy\n⚡ HÀO ĐỘNG    — hào động hóa gì, tác dụng\n🔮 KẾT LUẬN    — tốt/xấu/bình hòa\n📅 THỜI VẬN    — khi nào ứng nghiệm\n💡 LỜI KHUYÊN  — hành động cụ thể\n```\n\n**Ví dụ:**\n```\n/luan-giai Thiên Phong Cấu, hào 1 động, mệnh Hỏa, hỏi tài lộc\n\"Quẻ này có ý nghĩa gì?\" / \"Giải quẻ giúp tôi\"\n```\n\n## Luồng sử dụng\n\n```\nCách 1: Dùng commands\n  /gieo-que + thông tin  →  /luan-giai\n\nCách 2: Nói tự nhiên (skills tự kích hoạt)\n  \"Gieo quẻ cho tôi...\"  →  \"Giải quẻ giúp tôi\"\n\nCách 3: Luận giải quẻ có sẵn\n  /luan-giai Thiên Phong Cấu, hào 1 động, mệnh Hỏa, hỏi tài lộc\n```\n\n## Cài đặt\n\nCài qua Claude marketplace hoặc sao chép thư mục `plugins/luc-hao/` vào `.claude/plugins/`.\n\n## Lưu ý\n\nNên tắt **thinking mode** (extended thinking) khi dùng plugin này. Tính toán Lục Hào đã được hướng dẫn chi tiết từng bước trong commands — thinking mode không cần thiết và làm chậm phản hồi.\n"
+      },
+      "plugins": [
+        {
+          "name": "luc-hao",
+          "source": "../plugins/luc-hao/",
+          "description": "Gieo quẻ và luận giải Lục Hào Bát Quái theo phương pháp Mai Hoa Dịch Số — Vietnamese Six-Line I Ching divination with hexagram casting and interpretation.",
+          "version": "1.0.0",
+          "author": {
+            "name": "thangnc"
+          },
+          "repository": "https://github.com/thangnc/i-ching-plugins",
+          "license": "MIT",
+          "keywords": [
+            "i-ching",
+            "divination",
+            "bat-quai",
+            "ngu-hanh",
+            "luc-hao",
+            "mai-hoa",
+            "tu-tru",
+            "vietnamese",
+            "fortune-telling",
+            "boi-toan",
+            "astrology"
+          ],
+          "categories": [
+            "astrology",
+            "bat-quai",
+            "boi-toan",
+            "divination",
+            "fortune-telling",
+            "i-ching",
+            "luc-hao",
+            "mai-hoa",
+            "ngu-hanh",
+            "tu-tru",
+            "vietnamese"
+          ],
+          "install_commands": [
+            "/plugin marketplace add thangnc/i-ching-plugins",
+            "/plugin install luc-hao@i-ching-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
