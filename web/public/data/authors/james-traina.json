@@ -1,0 +1,125 @@
+{
+  "author": {
+    "id": "James-Traina",
+    "display_name": "James-Traina",
+    "avatar_url": "https://avatars.githubusercontent.com/u/31974698?u=f9e5b6be82afdfb7a8e92f25f6c10fb66eb53504&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "science-plugins",
+      "version": null,
+      "description": "Plugins for mathematical computing, scientific research, and developer productivity",
+      "repo_full_name": "James-Traina/science-plugins",
+      "repo_url": "https://github.com/James-Traina/science-plugins",
+      "repo_description": "Claude Code plugin marketplace — math, research, and productivity plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-04T23:35:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"science-plugins\",\n  \"owner\": {\n    \"name\": \"James Traina\"\n  },\n  \"metadata\": {\n    \"description\": \"Plugins for mathematical computing, scientific research, and developer productivity\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"wolfram-hart\",\n      \"description\": \"Gives Claude a real math engine. Translates questions to Wolfram Language, runs via wolframscript, and returns exact answers — symbolic algebra, calculus, plotting, statistics, and more.\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"James-Traina/wolfram-hart\"\n      },\n      \"author\": {\n        \"name\": \"James Traina\"\n      },\n      \"homepage\": \"https://github.com/James-Traina/wolfram-hart\",\n      \"repository\": \"https://github.com/James-Traina/wolfram-hart\",\n      \"license\": \"MIT\",\n      \"category\": \"science\",\n      \"tags\": [\"math\", \"wolfram\", \"symbolic-computation\", \"science\"],\n      \"keywords\": [\"wolfram\", \"mathematica\", \"math\", \"science\", \"symbolic\", \"calculus\", \"plotting\", \"statistics\"]\n    },\n    {\n      \"name\": \"compound-science\",\n      \"description\": \"Research workflow toolkit for structural econometrics, causal inference, game theory, and quantitative social science. Each unit of research work makes subsequent work easier.\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"James-Traina/compound-science\"\n      },\n      \"category\": \"science\",\n      \"tags\": [\"econometrics\", \"causal-inference\", \"game-theory\", \"research\"]\n    },\n    {\n      \"name\": \"claude-codex\",\n      \"description\": \"Intelligent task router that automatically delegates mechanical coding tasks to OpenAI Codex, reducing Anthropic token usage by 60-85% on simple tasks.\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"James-Traina/claude-codex\"\n      },\n      \"category\": \"productivity\",\n      \"tags\": [\"codex\", \"routing\", \"cost-optimization\", \"productivity\"]\n    }\n  ]\n}\n",
+        "README.md": "# science-plugins\n\nA personal Claude Code plugin marketplace for mathematical computing, scientific research, and developer productivity. Add this marketplace once, then install any plugin with a single command.\n\n## Add This Marketplace\n\n```\n/plugin marketplace add James-Traina/science-plugins\n```\n\n## Plugins\n\n---\n\n### [wolfram-hart](https://github.com/James-Traina/wolfram-hart)\n\nGives Claude a real math engine. When a math or science question comes up, Claude translates it to Wolfram Language, runs it through `wolframscript`, and presents the exact result. Plots are saved as PNGs and displayed inline. No special syntax needed.\n\nCovers symbolic algebra, calculus, linear algebra, statistics, differential equations, number theory, and plotting. If Wolfram Language can do it, this plugin makes it available.\n\n**Components:** 1 skill · 3 commands (`/eval`, `/check`, `/patterns`) · 1 agent (`wolfram-reviewer`)\n\n**Prerequisites:** A free [Wolfram Engine](https://www.wolfram.com/engine/) (local, ~1 GB) or [wolframscript](https://www.wolfram.com/wolframscript/) for cloud evaluation. Requires a free Wolfram ID.\n\n```\n/plugin install wolfram-hart@science-plugins\n```\n\n---\n\n### [compound-science](https://github.com/James-Traina/compound-science)\n\nResearch workflow toolkit for structural econometrics, causal inference, game theory, applied micro, identification arguments, Monte Carlo studies, and reproducible pipelines. Inspired by [compound-engineering](https://github.com/EveryInc/compound-engineering-plugin) — the same plan → work → review → compound loop, adapted for quantitative social science.\n\nEvery solved methodological problem (a convergence fix, an identification argument, a numerical issue) gets documented and made findable in `docs/solutions/`. The next project starts where the last one left off.\n\nDomain commands handle complete pipelines: `/estimate` runs structural estimation with convergence monitoring and standard errors; `/simulate` designs Monte Carlo studies; `/identify` formalizes identification arguments. Ambient hooks run without being invoked — watching for estimation packages, missing seeds, and unvalidated merges.\n\n**Components:** 20 agents · 15 commands · 14 skills · 7 hooks (56 total)\n\n**Domain coverage:** NFXP/MPEC/BLP, IV/2SLS/GMM, DiD (including staggered), RDD, synthetic control, double ML, causal forests, Nash/BNE equilibria, entry models, auction theory, Bayesian estimation, AEA-compliant replication packages\n\n```\n/plugin install compound-science@science-plugins\n```\n\n---\n\n### [claude-codex](https://github.com/James-Traina/claude-codex)\n\nIntelligent task router that automatically delegates mechanical coding tasks to OpenAI Codex, reducing Anthropic token usage by 60–85% on eligible work — automatically, transparently, and without changing how you use Claude Code.\n\nA `UserPromptSubmit` hook classifies every prompt with weighted pattern matching and routes it to Codex or Claude. Delegated responses are prefixed with `[via Codex · category]` so you always know which model answered. A correctness gate instructs Claude to append a `[Claude note]` correction if the Codex output is wrong. Use `/savings` to see a running report of tasks delegated and estimated costs saved.\n\n**Components:** 2 hooks · 1 agent · 1 skill · 2 commands (`/codex`, `/savings`)\n\n**Prerequisites:** [OpenAI Codex CLI](https://github.com/openai/codex) (`npm install -g @openai/codex`), authenticated with `codex auth`. Requires `jq`.\n\n```\n/plugin install claude-codex@science-plugins\n```\n\n---\n\n## Updating\n\n```bash\n# Refresh the marketplace catalog\n/plugin marketplace update science-plugins\n\n# Update an installed plugin to its latest version\n/plugin update wolfram-hart\n/plugin update compound-science\n/plugin update claude-codex\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "wolfram-hart",
+          "description": "Gives Claude a real math engine. Translates questions to Wolfram Language, runs via wolframscript, and returns exact answers — symbolic algebra, calculus, plotting, statistics, and more.",
+          "source": {
+            "source": "github",
+            "repo": "James-Traina/wolfram-hart"
+          },
+          "author": {
+            "name": "James Traina"
+          },
+          "homepage": "https://github.com/James-Traina/wolfram-hart",
+          "repository": "https://github.com/James-Traina/wolfram-hart",
+          "license": "MIT",
+          "category": "science",
+          "tags": [
+            "math",
+            "wolfram",
+            "symbolic-computation",
+            "science"
+          ],
+          "keywords": [
+            "wolfram",
+            "mathematica",
+            "math",
+            "science",
+            "symbolic",
+            "calculus",
+            "plotting",
+            "statistics"
+          ],
+          "categories": [
+            "calculus",
+            "math",
+            "mathematica",
+            "plotting",
+            "science",
+            "statistics",
+            "symbolic",
+            "symbolic-computation",
+            "wolfram"
+          ],
+          "install_commands": [
+            "/plugin marketplace add James-Traina/science-plugins",
+            "/plugin install wolfram-hart@science-plugins"
+          ]
+        },
+        {
+          "name": "compound-science",
+          "description": "Research workflow toolkit for structural econometrics, causal inference, game theory, and quantitative social science. Each unit of research work makes subsequent work easier.",
+          "source": {
+            "source": "github",
+            "repo": "James-Traina/compound-science"
+          },
+          "category": "science",
+          "tags": [
+            "econometrics",
+            "causal-inference",
+            "game-theory",
+            "research"
+          ],
+          "categories": [
+            "causal-inference",
+            "econometrics",
+            "game-theory",
+            "research",
+            "science"
+          ],
+          "install_commands": [
+            "/plugin marketplace add James-Traina/science-plugins",
+            "/plugin install compound-science@science-plugins"
+          ]
+        },
+        {
+          "name": "claude-codex",
+          "description": "Intelligent task router that automatically delegates mechanical coding tasks to OpenAI Codex, reducing Anthropic token usage by 60-85% on simple tasks.",
+          "source": {
+            "source": "github",
+            "repo": "James-Traina/claude-codex"
+          },
+          "category": "productivity",
+          "tags": [
+            "codex",
+            "routing",
+            "cost-optimization",
+            "productivity"
+          ],
+          "categories": [
+            "codex",
+            "cost-optimization",
+            "productivity",
+            "routing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add James-Traina/science-plugins",
+            "/plugin install claude-codex@science-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

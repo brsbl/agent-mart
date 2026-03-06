@@ -1,0 +1,63 @@
+{
+  "author": {
+    "id": "usmangurowa",
+    "display_name": "Usman Hassan",
+    "avatar_url": "https://avatars.githubusercontent.com/u/55620906?u=8f641d725b3d9a64c6cf5ba647611f3b75e23571&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kodo",
+      "version": null,
+      "description": "Kodo — intelligent session tracking that understands your workflow, not just hours.",
+      "repo_full_name": "usmangurowa/kodo-claude",
+      "repo_url": "https://github.com/usmangurowa/kodo-claude",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-05T20:17:35Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kodo\",\n  \"metadata\": {\n    \"description\": \"Kodo — intelligent session tracking that understands your workflow, not just hours.\"\n  },\n  \"owner\": { \"name\": \"usmangurowa\" },\n  \"plugins\": [\n    {\n      \"name\": \"@kodocodes/claude-code\",\n      \"source\": { \"source\": \"npm\", \"package\": \"@kodocodes/claude-code\" },\n      \"description\": \"Intelligent session tracking for Claude Code — sessions, AI insights, and standup generation for developers.\",\n      \"homepage\": \"https://github.com/usmangurowa/kodo-claude\",\n      \"category\": \"productivity\",\n      \"keywords\": [\"kodo\", \"time-tracking\", \"sessions\", \"ai-insights\", \"standup\", \"heartbeat\", \"developer\", \"claude-code\"]\n    }\n  ]\n}\n",
+        "README.md": "# Kodo for Claude Code\n\nTrack your agentic coding sessions from [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) with [Kodo](https://kodo.codes).\n\n## Installation\n\n### Option A — npx (recommended)\n\n```bash\nnpx @kodocodes/claude-code setup\n```\n\n`setup` will:\n\n1. Ask for your API key (find it at [kodo.codes/dashboard/settings/api-keys](https://kodo.codes/dashboard/settings/api-keys)) and save it to `~/.kodo/config.json`\n2. Automatically register the required hooks in `~/.claude/settings.json`\n\nThat's it. Start Claude Code — your sessions are tracked.\n\n### Option B — Claude plugin marketplace\n\nIf you use the [Claude Code plugin system](https://code.claude.com/docs/en/plugins):\n\n```bash\nclaude plugin marketplace add https://github.com/usmangurowa/kodo-claude.git\nclaude plugin install @kodocodes/claude-code@kodo\nnpx @kodocodes/claude-code setup\n```\n\nRun `npx @kodocodes/claude-code setup` after installing to configure your API key.\n\n---\n\n## Manual setup (optional)\n\nIf you prefer to configure things by hand:\n\n### API key\n\nCreate `~/.kodo/config.json`:\n\n```json\n{\n  \"api_key\": \"kodo_your_api_key_here\"\n}\n```\n\n### Hook registration\n\nAdd the following to `~/.claude/settings.json`:\n\n```json\n{\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [{ \"type\": \"command\", \"command\": \"kodo-claude-code\" }]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [{ \"type\": \"command\", \"command\": \"kodo-claude-code\" }]\n      }\n    ],\n    \"UserPromptSubmit\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [{ \"type\": \"command\", \"command\": \"kodo-claude-code\" }]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [{ \"type\": \"command\", \"command\": \"kodo-claude-code\" }]\n      }\n    ],\n    \"SubagentStop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [{ \"type\": \"command\", \"command\": \"kodo-claude-code\" }]\n      }\n    ]\n  }\n}\n```\n\n---\n\n## Configuration reference\n\n| Setting                                | Description                             | Default                  |\n| -------------------------------------- | --------------------------------------- | ------------------------ |\n| `~/.kodo/config.json` → `api_key`      | Your Kodo API key                       | —                        |\n| `~/.kodo/config.json` → `api_endpoint` | Custom API endpoint                     | `https://api.kodo.codes` |\n| `KODO_API_KEY` env var                 | API key (overrides config file)         | —                        |\n| `KODO_API_ENDPOINT` env var            | Custom endpoint (overrides config file) | —                        |\n\n---\n\n## How it works\n\nThe plugin hooks into Claude Code's event system. On each hook event:\n\n1. Reads the session transcript to identify files modified by Claude since the last heartbeat.\n2. Counts AI line changes from structured patches.\n3. Sends heartbeats to the Kodo API with file, project, language, and branch metadata.\n4. Persists state per-session (throttles to one heartbeat per minute).\n\nHeartbeats are automatically tagged with `editor: \"claude-code\"` so they appear under the Claude Code integration in your Kodo dashboard.\n\n---\n\n## Troubleshooting\n\n**No data appearing in Kodo dashboard:**\n\n- Verify your API key: `cat ~/.kodo/config.json`\n- Check Claude Code is using the hook: `claude --debug`\n- Ensure the binary is in your `$PATH`: `which kodo-claude-code`\n"
+      },
+      "plugins": [
+        {
+          "name": "@kodocodes/claude-code",
+          "source": {
+            "source": "npm",
+            "package": "@kodocodes/claude-code"
+          },
+          "description": "Intelligent session tracking for Claude Code — sessions, AI insights, and standup generation for developers.",
+          "homepage": "https://github.com/usmangurowa/kodo-claude",
+          "category": "productivity",
+          "keywords": [
+            "kodo",
+            "time-tracking",
+            "sessions",
+            "ai-insights",
+            "standup",
+            "heartbeat",
+            "developer",
+            "claude-code"
+          ],
+          "categories": [
+            "ai-insights",
+            "claude-code",
+            "developer",
+            "heartbeat",
+            "kodo",
+            "productivity",
+            "sessions",
+            "standup",
+            "time-tracking"
+          ],
+          "install_commands": [
+            "/plugin marketplace add usmangurowa/kodo-claude",
+            "/plugin install @kodocodes/claude-code@kodo"
+          ]
+        }
+      ]
+    }
+  ]
+}

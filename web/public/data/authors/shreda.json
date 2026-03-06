@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "Shreda",
+    "display_name": "Daniel Moore",
+    "avatar_url": "https://avatars.githubusercontent.com/u/28050016?u=6520d98fff6c229c847eac8af8f7681c09445976&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "skills",
+      "version": null,
+      "description": "Save and resume Claude Code sessions. Create timestamped session summaries with /save-session and pick up where you left off with /resume-session.",
+      "repo_full_name": "Shreda/skills",
+      "repo_url": "https://github.com/Shreda/skills",
+      "repo_description": "Some Claude skills I use",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-04T10:18:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n\t\"name\": \"skills\",\n\t\"owner\": {\n\t\t\"name\": \"Daniel Moore\"\n\t},\n\t\"plugins\": [\n\t\t{\n\t\t\t\"name\": \"sessions\",\n\t\t\t\"description\": \"Save and resume Claude Code sessions. Create timestamped session summaries with /save-session and pick up where you left off with /resume-session.\",\n\t\t\t\"source\": \"./plugins/sessions\"\n\t\t},\n\t\t{\n\t\t\t\"name\": \"go-utils\",\n\t\t\t\"description\": \"Go development utilities. Scaffold production-ready Go web server projects with /init-server-project — includes net/http, slog logging, templ templating, graceful shutdown, and optional rate limiting.\",\n\t\t\t\"source\": \"./plugins/go-utils\"\n\t\t}\n\t]\n}\n",
+        "README.md": "# Claude Code Skills\n\nA collection of reusable skills for [Claude Code](https://claude.ai/claude-code) that extend functionality with custom commands.\n\n## Plugins\n\n### Sessions\n\nSave and resume Claude Code sessions. Create timestamped session summaries with `/save-session` and pick up where you left off with `/resume-session`.\n\n#### `/save-session`\n\nCreates a timestamped summary of your current session, capturing:\n\n- What you worked on (files, features, fixes, research)\n- Key outcomes and accomplishments\n- Files changed with descriptions\n- Next steps as an actionable checklist\n- Session notes and learnings\n\nSession files are saved to `.claude-sessions/` in your project directory (or `~/.claude-sessions/` for user-level sessions).\n\n**Usage:**\n```\n/save-session [optional description]\n```\n\n#### `/resume-session`\n\nLoads a previous session summary to restore context. Supports:\n\n- Finding the latest session automatically\n- Resuming by full file path\n- Searching by session ID or partial description\n- Listing all available sessions\n\n**Usage:**\n```\n/resume-session\n/resume-session [session-id or description]\n```\n\n## Installation\n\n![Installation](docs/installation.webp)\n\n## Project Structure\n\n```\nskills/\n├── .claude-plugin/\n│   └── marketplace.json    # Plugin registry metadata\n└── plugins/\n    └── sessions/\n        └── skills/\n            ├── resume-session/\n            │   └── SKILL.md\n            └── save-session/\n                └── SKILL.md\n```\n\n## Creating New Skills\n\nSkills are defined using `SKILL.md` files with declarative instructions. To add a new skill:\n\n1. Create a directory under `plugins/<plugin-name>/skills/<skill-name>/`\n2. Add a `SKILL.md` file with the skill definition\n3. Register the plugin in `.claude-plugin/marketplace.json`\n\n## Author\n\nDaniel Moore\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "sessions",
+          "description": "Save and resume Claude Code sessions. Create timestamped session summaries with /save-session and pick up where you left off with /resume-session.",
+          "source": "./plugins/sessions",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Shreda/skills",
+            "/plugin install sessions@skills"
+          ]
+        },
+        {
+          "name": "go-utils",
+          "description": "Go development utilities. Scaffold production-ready Go web server projects with /init-server-project — includes net/http, slog logging, templ templating, graceful shutdown, and optional rate limiting.",
+          "source": "./plugins/go-utils",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Shreda/skills",
+            "/plugin install go-utils@skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

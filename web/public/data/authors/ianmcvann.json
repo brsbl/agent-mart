@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "ianmcvann",
+    "display_name": "Ian McVann",
+    "avatar_url": "https://avatars.githubusercontent.com/u/17744433?u=6a9bf84762407954d8ff075720b9d3ad2993b213&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "initiative",
+      "version": null,
+      "description": "Initiative - Autonomous AI task orchestration for Claude Code",
+      "repo_full_name": "ianmcvann/initiative",
+      "repo_url": "https://github.com/ianmcvann/initiative",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-02-28T18:23:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"initiative\",\n  \"description\": \"Initiative - Autonomous AI task orchestration for Claude Code\",\n  \"owner\": {\n    \"name\": \"Ian McVann\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"initiative\",\n      \"description\": \"Autonomous AI task orchestration — turns Claude into a never-stopping background worker that continuously pulls tasks from a priority queue, executes them, and generates new high-impact tasks automatically\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Ian McVann\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"license\": \"MIT\",\n      \"repository\": \"https://github.com/ianmcvann/initiative\",\n      \"keywords\": [\"autonomous\", \"agent\", \"orchestration\", \"background\", \"automation\", \"queue\", \"task\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"initiative\",\n  \"description\": \"Autonomous AI task orchestration for Claude Code\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Ian McVann\"\n  },\n  \"commands\": \"./.claude/commands/\",\n  \"skills\": \"./.claude/skills/\",\n  \"agents\": [],\n  \"hooks\": [\n    \"./.claude/hooks/session-start.json\"\n  ],\n  \"mcpServers\": {\n    \"initiative\": {\n      \"type\": \"stdio\",\n      \"command\": \"uv\",\n      \"args\": [\"run\", \"--directory\", \"${CLAUDE_PLUGIN_ROOT}\", \"initiative\"]\n    }\n  }\n}\n",
+        "README.md": "# Initiative\n\nStart it before bed. Wake up to a codebase that's been analyzed by 8 specialist agents, tasks prioritized and executed in parallel worktrees, with commits ready for review.\n\nInitiative is an autonomous task orchestration plugin for Claude Code. It turns Claude into a never-stopping background worker that continuously pulls tasks from a priority queue, executes them in isolated git worktrees, and when the queue runs dry, convenes a panel of 8 expert agents to analyze your project and generate new high-impact tasks automatically. It doesn't just fix problems -- it builds forward.\n\n## How It Works\n\nInitiative runs as an MCP server that provides task management tools to Claude Code. The orchestration loop is simple:\n\n1. **Check for tasks** -- Pull the highest-priority pending task (respecting dependency order)\n2. **Execute in parallel** -- Dispatch up to 3 subagents in isolated git worktrees for concurrent execution\n3. **Analyze** -- When the queue is empty, convene an 8-agent expert panel to explore the project and generate 3-5 new tasks\n4. **Repeat** -- Never stop unless the user says so\n\n## Installation\n\n```bash\n# Clone the repository\ngit clone https://github.com/ianmcvann/initiative.git\ncd initiative\n\n# Add as a Claude Code plugin\nclaude plugin add ./\n```\n\n### Marketplace (Coming Soon)\n\n```bash\n# Add the Initiative marketplace\nclaude plugin marketplace add ianmcvann/initiative\n\n# Install Initiative plugin\nclaude plugin install initiative@initiative\n```\n\n### Start working!\n\n```\n/initiative:start\n```\n\n## Usage\n\nInitiative provides seven commands:\n\n### `/initiative:start [direction]`\n\nStart autonomous orchestration. Optionally provide a direction to seed the initial task:\n\n```\n/initiative:start\n/initiative:start \"Add authentication to the API\"\n```\n\n### `/initiative:stop`\n\nStop the orchestration loop and show a final status summary:\n\n```\n/initiative:stop\n```\n\n### `/initiative:status`\n\nCheck the current state of the task queue:\n\n```\n/initiative:status\n```\n\nShows total tasks, counts by status, average completion time, throughput, and titles of any in-progress tasks.\n\n### `/initiative:add [task description]`\n\nAdd a task to the queue without starting the orchestration loop:\n\n```\n/initiative:add \"Refactor the database layer to use connection pooling\"\n```\n\n### `/initiative:clear`\n\nClear all pending tasks from the queue:\n\n```\n/initiative:clear\n```\n\n### `/initiative:view [task_id]`\n\nView details of a specific task by ID:\n\n```\n/initiative:view 42\n```\n\n### `/initiative:history`\n\nShow completed and failed task history:\n\n```\n/initiative:history\n```\n\n## Expert Panel\n\nWhen the task queue is empty, Initiative doesn't just sit idle -- it convenes a panel of 8 specialist agents that analyze your project in parallel, each from a different perspective. This is what makes Initiative more than a task runner: it's a team of experts that continuously discovers what your project needs next.\n\n| Expert | Focus |\n|--------|-------|\n| **Security** | Vulnerabilities, input validation gaps, exposed secrets, insecure defaults |\n| **Architecture** | Code structure, coupling, separation of concerns, scalability bottlenecks |\n| **Testing** | Coverage gaps, missing edge cases, flaky tests, untested error paths |\n| **Documentation** | Missing or outdated docs, undocumented APIs, incomplete guides |\n| **Performance** | N+1 queries, unnecessary computation, missing caching, memory leaks |\n| **Product Management** | Missing features, incomplete workflows, user value gaps, feature prioritization |\n| **UX** | Confusing interfaces, poor feedback, accessibility, inconsistent patterns |\n| **Marketing** | Value proposition, examples, comparisons with alternatives, distribution |\n\nAfter all 8 experts report back, Initiative synthesizes their findings: deduplicates overlapping concerns, prioritizes across domains (critical security > product gaps > architecture > UX > testing > docs > performance > marketing), chains related tasks with dependencies, and generates 3-5 concrete, actionable tasks. At least half of generated tasks are additive -- new features and capabilities, not just fixes.\n\n## Architecture\n\n```\nsrc/initiative/\n  models.py      # Task dataclass and TaskStatus enum\n  database.py    # SQLite task store with priority queue\n  server.py      # FastMCP server exposing task management tools\n```\n\n**Task Store** -- SQLite database with WAL journaling. Tasks have a title, description, priority (0-1000, higher = more urgent), status, tags, dependency tracking, auto-retry support, and timestamps. The priority queue returns the highest-priority pending task first (ties broken by creation time), skipping any task whose dependencies haven't completed yet.\n\n**MCP Server** -- Built on [FastMCP](https://github.com/jlowin/fastmcp), exposes 16 tools over stdio transport:\n\n| Tool | Description |\n|------|-------------|\n| `add_task` | Add a new task with title, description, priority, and optional dependencies/tags |\n| `get_next_task` | Pull the highest-priority pending task (respecting dependencies) and mark it in-progress |\n| `complete_task` | Mark a task as completed with a result summary |\n| `fail_task` | Mark a task as failed (auto-retries if retries remain, otherwise permanently fails) |\n| `cancel_task` | Cancel a pending or in-progress task |\n| `update_task` | Update a pending task's title, description, or priority |\n| `retry_task` | Manually retry a failed task by resetting it to pending |\n| `add_tag` | Add a tag to a task for categorization and filtering |\n| `remove_tag` | Remove a tag from a task |\n| `list_tasks` | List tasks, optionally filtered by status and/or tag, with pagination |\n| `get_task` | Get full details of a specific task by ID |\n| `get_status` | Get queue summary (total, pending, in-progress, completed, failed, cancelled, throughput) |\n| `get_summary` | Lightweight task overview (id, title, status, priority only) -- saves context in long sessions |\n| `recover_stale_tasks` | Reset tasks stuck in in-progress back to pending (recovers from crashes) |\n| `decompose_task` | Break a task into ordered subtasks with automatic dependency chaining |\n| `purge_completed` | Delete completed tasks (and optionally failed/cancelled) to clean up the queue |\n\n### Task Statuses\n\n| Status | Description |\n|--------|-------------|\n| `pending` | Waiting to be picked up (or waiting for dependencies to complete) |\n| `in_progress` | Currently being worked on by an agent |\n| `completed` | Successfully finished with a result summary |\n| `failed` | Permanently failed after exhausting all retries |\n| `cancelled` | Cancelled by the user or by decomposition into subtasks |\n\n### Task Features\n\n- **Priority queue** -- Tasks are ordered by priority (0-1000, higher first), with ties broken by creation time\n- **Dependencies** -- Tasks can depend on other tasks via `depends_on`; blocked tasks won't be picked up until all dependencies complete\n- **Auto-retry** -- Failed tasks are automatically retried up to `max_retries` times (default 2) before being permanently marked as failed\n- **Tags** -- Categorize and filter tasks with arbitrary string tags\n- **Decomposition** -- Break large tasks into ordered subtask chains using `decompose_task`; the parent is tagged as an \"epic\" and cancelled, replaced by its subtasks\n\n**Skills** -- Two Claude Code skills drive the orchestration:\n- `initiative` -- The main autonomous loop (check for tasks, execute, analyze, repeat)\n- `analyze` -- Expert panel analysis and task generation\n\n## Development\n\n```bash\n# Install with dev dependencies\nuv sync --extra dev\n\n# Run tests\nuv run pytest\n\n# Run tests with verbose output\nuv run pytest -v\n```\n\nThe test suite covers models, database operations, and all MCP server tools across both asyncio and trio backends.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "initiative",
+          "description": "Autonomous AI task orchestration — turns Claude into a never-stopping background worker that continuously pulls tasks from a priority queue, executes them, and generates new high-impact tasks automatically",
+          "version": "0.1.0",
+          "author": {
+            "name": "Ian McVann"
+          },
+          "source": "./",
+          "category": "productivity",
+          "license": "MIT",
+          "repository": "https://github.com/ianmcvann/initiative",
+          "keywords": [
+            "autonomous",
+            "agent",
+            "orchestration",
+            "background",
+            "automation",
+            "queue",
+            "task"
+          ],
+          "categories": [
+            "agent",
+            "automation",
+            "autonomous",
+            "background",
+            "orchestration",
+            "productivity",
+            "queue",
+            "task"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ianmcvann/initiative",
+            "/plugin install initiative@initiative"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "author": {
+    "id": "EdwardAngert",
+    "display_name": "Edward Angert",
+    "avatar_url": "https://avatars.githubusercontent.com/u/17991901?u=c23ff0d8ef64432d024537455f5967e0ede92e07&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "documentation-agent-marketplace",
+      "version": null,
+      "description": "A documentation coach for Claude Code. Guides subject matter experts through contributing their knowledge — you bring the expertise, the plugin handles the writing. Also provides content audits, style enforcement, and docs-as-code workflows.",
+      "repo_full_name": "EdwardAngert/docs-agent-plugin",
+      "repo_url": "https://github.com/EdwardAngert/docs-agent-plugin",
+      "repo_description": "[WIP] Claude Code skill to help enable technical writers and contributors",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-03-04T13:20:58Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"documentation-agent-marketplace\",\n  \"owner\": {\n    \"name\": \"Edward Angert\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"documentation-agent\",\n      \"version\": \"0.2.0\",\n      \"description\": \"A documentation coach for Claude Code. Guides subject matter experts through contributing their knowledge — you bring the expertise, the plugin handles the writing. Also provides content audits, style enforcement, and docs-as-code workflows.\",\n      \"author\": {\n        \"name\": \"Edward Angert\"\n      },\n      \"repository\": \"https://github.com/EdwardAngert/docs-agent-plugin\",\n      \"license\": \"Apache-2.0\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"documentation-agent\",\n  \"version\": \"0.2.0\",\n  \"description\": \"A documentation coach for Claude Code. Guides subject matter experts through contributing their knowledge — you bring the expertise, the plugin handles the writing. Also provides content audits, style enforcement, and docs-as-code workflows.\",\n  \"author\": {\n    \"name\": \"Edward Angert\"\n  },\n  \"repository\": \"https://github.com/EdwardAngert/docs-agent-plugin\",\n  \"skills\": [\n    \"./skills/documentation-agent\"\n  ],\n  \"commands\": [\n    \"./commands/draft.md\",\n    \"./commands/plan.md\",\n    \"./commands/audit.md\",\n    \"./commands/make-examples.md\"\n  ]\n}\n",
+        "README.md": "# Documentation Agent\n\nA Claude Code plugin that coaches people through writing documentation.\n\nYou have subject matter experts with knowledge in their heads — engineers who built the feature, support leads who know every edge case, PMs who understand the workflow.\nThey don't need to be good at documentation.\nThey just need to share what they know.\n\nThis plugin is the documentation expertise layer.\nIt extracts their knowledge, picks the right structure, applies writing standards, and produces a draft they can review.\nThink of it as having a technical writer in every Claude Code session — one who asks the right questions and handles the formatting so contributors can focus on what they know.\n\n## Install\n\n1. Open Claude Code:\n\n   ```bash\n   claude\n   ```\n\n1. Add this repository as a [plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces):\n\n   ```bash\n   /plugin marketplace add EdwardAngert/docs-agent-plugin\n   ```\n\n1. Install the plugin:\n\n   ```bash\n   /plugin install EdwardAngert/docs-agent-plugin\n   ```\n\n1. Restart Claude Code.\n\n## How It Works\n\nThe plugin activates automatically when you ask for documentation help.\nYou don't need to learn any special syntax or documentation theory.\n\n**The simplest path**: Just tell Claude what you want to document.\n\n```text\nI need to document how to set up SSO for our enterprise customers.\n```\n\nClaude will ask you a few questions to understand the audience and scope, walk you through getting the details down, then produce a structured draft. You review for accuracy, Claude handles the rest.\n\n**Other prompts that work:**\n\n```text\nHelp me document feature X for issue #123\n```\n\n```text\nI just fixed a tricky bug — can we add troubleshooting docs so others don't hit it?\n```\n\n```text\nReview this README for clarity and completeness\n```\n\n## Commands\n\n### `/documentation-agent:draft [topic]`\n\nThe primary workflow.\nGuides you through contributing documentation — bring your expertise, the plugin handles the writing.\n\nClaude will:\n\n- Ask what you're documenting and who it's for\n- Pull out your knowledge through conversational prompts\n- Pick the right document structure automatically\n- Produce a formatted draft you can review for accuracy\n- Refine based on your feedback and write the final file\n\n### `/documentation-agent:plan [repo or description]`\n\nPlan a full documentation set for a project.\nUse when you need to document something from scratch or reorganize existing docs into a coherent structure.\n\nClaude will:\n\n- Read the codebase to understand the project\n- Ask about your users, their goals, and how deep to go\n- Map user journeys and identify what docs need to exist\n- Propose a prioritized plan with content types, audiences, and writing order\n- Execute the plan doc by doc once you approve it\n\n### `/documentation-agent:audit [path]`\n\nRun a documentation audit on a directory or file:\n\n```bash\n/documentation-agent:audit docs/\n```\n\nEvaluates content quality, structure, findability, and gaps.\nProduces a prioritized report with actionable recommendations.\n\n### `/documentation-agent:make-examples [doc-path]`\n\nAdd or improve code examples in a documentation file:\n\n```bash\n/documentation-agent:make-examples docs/setup.md\n```\n\nIdentifies sections that need examples, creates safe copy-paste ready code, and asks before inserting.\n\n## What's Inside\n\nThe plugin includes writing standards and methodologies that Claude applies automatically.\nYou can customize any of these to match your team's conventions:\n\n```text\nskills/documentation-agent/\n├── SKILL.md                    # Core instructions and role definition\n├── frontmatter-spec.md         # Per-doc metadata schema and how the plugin uses it\n├── tone-and-voice.md           # Formatting rules, heading case, markdown style\n├── documentation-patterns.md   # Content types, examples, SEO, accessibility\n├── content-audit-framework.md  # Audit methodology\n├── ia-design-methodology.md    # Information architecture design\n└── style-guides.md             # Style guide selection and enforcement\n```\n\n**What to customize first:**\n\n- `tone-and-voice.md` — Change heading case, list style, or add your company's conventions\n- `SKILL.md` — Adjust the coaching approach or add project-specific instructions\n\n## Background\n\nThis plugin codifies methodologies from 10 years of technical writing experience — building doc practices from scratch for developer tools, managing documentation teams for enterprise platforms, API and SDK documentation, and docs-as-code workflows.\n\nThe core philosophy: I just want your knowledge, expertise, and steps.\nI'll deal with putting it in the right order, getting the words right, and making it all work together.\nThis plugin brings that same approach to every Claude Code session.\n\n## Contribute\n\nSee the [contributing guidelines](CONTRIBUTING.md).\n\n## License\n\nApache 2.0 — see [LICENSE](LICENSE) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "documentation-agent",
+          "version": "0.2.0",
+          "description": "A documentation coach for Claude Code. Guides subject matter experts through contributing their knowledge — you bring the expertise, the plugin handles the writing. Also provides content audits, style enforcement, and docs-as-code workflows.",
+          "author": {
+            "name": "Edward Angert"
+          },
+          "repository": "https://github.com/EdwardAngert/docs-agent-plugin",
+          "license": "Apache-2.0",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add EdwardAngert/docs-agent-plugin",
+            "/plugin install documentation-agent@documentation-agent-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}
