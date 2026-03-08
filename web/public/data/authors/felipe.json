@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "felipe",
+    "display_name": "Felipe Oduardo Sierra",
+    "avatar_url": "https://avatars.githubusercontent.com/u/420001?u=abe041739b628705b8de230184354d5a305213dc&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "imessage-claude-bridge",
+      "version": null,
+      "description": "iMessage integration for Claude Code — read, send, and auto-reply to iMessages on macOS",
+      "repo_full_name": "felipe/iMessage-Claude-Bridge",
+      "repo_url": "https://github.com/felipe/iMessage-Claude-Bridge",
+      "repo_description": "iMessage Claude Bridge",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-06T20:59:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"imessage-claude-bridge\",\n  \"owner\": {\n    \"name\": \"Felipe Oduardo Sierra\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"imessage\",\n      \"source\": \"./\",\n      \"description\": \"iMessage integration for Claude Code — read, send, and auto-reply to iMessages on macOS\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"imessage\",\n  \"description\": \"iMessage integration for Claude Code - read messages, send replies, and run autonomous agents via iMessage\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Felipe Oduardo Sierra\"\n  },\n  \"repository\": \"https://github.com/felipe/iMessage-Claude-Bridge\",\n  \"keywords\": [\n    \"imessage\",\n    \"messages\",\n    \"sms\",\n    \"chat\",\n    \"automation\",\n    \"daemon\",\n    \"agent\"\n  ],\n  \"license\": \"MIT\"\n}\n",
+        "README.md": "# iMessage-Claude-Bridge\n\nClaude Code plugin for iMessage on macOS. Read, send, and auto-reply to iMessages using shell scripts, SQLite, and AppleScript.\n\n## Install\n\n```bash\n/plugin marketplace add felipe/iMessage-Claude-Bridge\n/plugin install imessage@imessage-claude-bridge\n```\n\n## Requirements\n\n- macOS with Messages app signed in to iMessage\n- Full Disk Access for Terminal (System Settings > Privacy & Security > Full Disk Access)\n- Accessibility permission for Terminal (System Settings > Privacy & Security > Accessibility) — required for typing indicator\n- `sqlite3`, `osascript`, `sips`, `bc` (all ship with macOS)\n\n## What It Does\n\nTwo modes of operation:\n\n### 1. Direct Skills\n\nIndividual iMessage commands available as Claude Code skills:\n\n| Script | Description |\n|--------|-------------|\n| `read-messages-db.sh` | Read message history from SQLite database (preferred) |\n| `read-messages.sh` | Read messages via AppleScript (fallback) |\n| `check-new-messages-db.sh` | Check recent incoming messages via SQLite |\n| `check-new-messages.sh` | Check unread message counts via AppleScript |\n| `send-message.sh` | Send to a contact (iMessage first, SMS fallback) |\n| `send-to-chat.sh` | Send to a group chat by chat identifier |\n| `send-file.sh` | Send a file attachment |\n| `list-conversations.sh` | List recent conversations |\n| `get-message-attachments.sh` | Retrieve and process message attachments |\n| `typing-indicator.sh` | Trigger native iMessage typing bubble via System Events |\n\n### 2. Autonomous Daemon\n\nBackground daemon that monitors incoming iMessages from a specific contact and spawns Claude Code agent sessions to respond automatically.\n\n```bash\n# Configure\ncp examples/.env.example ~/.claude-imessage.env\nnano ~/.claude-imessage.env  # Set IMESSAGE_CONTACT_PHONE and IMESSAGE_CONTACT_NAME\n\n# Manage via slash command\n/imessage-daemon start\n/imessage-daemon status\n/imessage-daemon stop\n```\n\nSee [daemon/README.md](skills/imessage/daemon/README.md) for full documentation.\n\n## How It Works\n\n- **Reading messages**: SQLite queries against `~/Library/Messages/chat.db` (preferred), with AppleScript as a fallback\n- **Sending messages**: AppleScript controlling Messages.app — tries iMessage first, falls back to SMS\n- **Daemon mode**: Polls the database for new messages, spawns autonomous Claude Code sessions to handle them\n- **Typing indicator**: Types into the Messages input field to show the native typing bubble while the agent works\n\n## Project Structure\n\n```\n.claude-plugin/          # Plugin manifests\ncommands/                # Slash commands (/imessage-daemon)\nskills/imessage/         # Shell scripts for iMessage operations\n  daemon/                # Auto-reply daemon\nexamples/                # Example configuration files\ntests/                   # Test suite\n```\n\n## Configuration\n\nFor daemon mode, create `~/.claude-imessage.env`:\n\n```bash\nexport IMESSAGE_CONTACT_PHONE=\"4155551234\"  # Required\nexport IMESSAGE_CONTACT_NAME=\"John Doe\"     # Required\n# export IMESSAGE_CONTACT_EMAIL=\"john@example.com\"  # Optional\n# export IMESSAGE_CHECK_INTERVAL=\"1\"                 # Optional (seconds)\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "imessage",
+          "source": "./",
+          "description": "iMessage integration for Claude Code — read, send, and auto-reply to iMessages on macOS",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add felipe/iMessage-Claude-Bridge",
+            "/plugin install imessage@imessage-claude-bridge"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -59,6 +59,59 @@
       ]
     },
     {
+      "name": "psylch-excalidraw-export-skill",
+      "version": null,
+      "description": "Generate Excalidraw diagrams from natural language and export to PNG/SVG images",
+      "repo_full_name": "psylch/excalidraw-export-skill",
+      "repo_url": "https://github.com/psylch/excalidraw-export-skill",
+      "repo_description": "Generate Excalidraw diagrams from natural language and export to PNG/SVG images, end-to-end",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-06T04:18:28Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"psylch-excalidraw-export-skill\",\n  \"owner\": {\n    \"name\": \"psylch\"\n  },\n  \"metadata\": {\n    \"description\": \"Generate Excalidraw diagrams from natural language and export to PNG/SVG images\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"excalidraw-export\",\n      \"source\": \"./\",\n      \"description\": \"End-to-end Excalidraw diagram generation and image export. Supports flowcharts, architecture diagrams, mind maps, sequence diagrams, ER diagrams, and more. Outputs PNG/SVG images via kroki.io rendering pipeline.\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"tags\": [\"excalidraw\", \"diagram\", \"visualization\", \"png\", \"svg\", \"export\", \"flowchart\", \"architecture\"],\n      \"homepage\": \"https://github.com/psylch/excalidraw-export-skill\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"excalidraw-export\",\n  \"description\": \"Generate Excalidraw diagrams and export to PNG/SVG images end-to-end\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"psylch\"\n  },\n  \"homepage\": \"https://github.com/psylch/excalidraw-export-skill\",\n  \"repository\": \"https://github.com/psylch/excalidraw-export-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"excalidraw\", \"diagram\", \"png\", \"svg\", \"export\", \"flowchart\", \"architecture\", \"visualization\"]\n}\n",
+        "README.md": "# excalidraw-export-skill\n\n[中文文档](README.zh.md)\n\nGenerate Excalidraw diagrams from natural language and export to PNG/SVG images, end-to-end.\n\n| Feature | Detail |\n|---------|--------|\n| Input | Natural language description |\n| Output | PNG image, SVG image, .excalidraw source |\n| Diagram types | Flowchart, architecture, mind map, sequence, ER, class, swimlane, DFD |\n| Rendering | [kroki.io](https://kroki.io) (open-source) |\n| PNG conversion | text-to-path + resvg (recommended), Chrome headless (fallback) |\n\n## Installation\n\n### Via skills.sh (recommended)\n\n```bash\nnpx skills add psylch/excalidraw-export-skill -g -y\n```\n\n### Via Plugin Marketplace\n\n```\n/plugin marketplace add psylch/excalidraw-export-skill\n/plugin install excalidraw-export@psylch-excalidraw-export-skill\n```\n\n### Manual Install\n\n```bash\ngit clone https://github.com/psylch/excalidraw-export-skill.git\ncp -r excalidraw-export-skill/skills/excalidraw-export ~/.claude/skills/\n```\n\nRestart Claude Code after installation.\n\n## Prerequisites\n\n- Python 3.8+\n- `resvg` — fast SVG-to-PNG rasterizer (`brew install resvg`)\n- `fonttools` + `brotli` — extracts embedded fonts, converts text to paths (`pip install fonttools brotli`)\n- Internet access (kroki.io for SVG rendering)\n- Google Chrome — optional fallback (not needed if resvg + fonttools installed)\n\nRun the setup script to check and auto-install:\n\n```bash\nbash ~/.agents/skills/excalidraw-export/scripts/setup.sh\n```\n\n## Usage\n\nJust ask Claude to create a diagram:\n\n- \"Create a flowchart for user registration\"\n- \"Draw the system architecture of a microservice app\"\n- \"Visualize the relationship between User, Post, and Comment\"\n- \"Make a mind map about machine learning\"\n- \"画一个登录流程图\"\n- \"画架构图\"\n\nThe skill will generate the diagram and automatically export it as a PNG image.\n\n## How It Works\n\n```\nUser description\n       |\n       v\n  Generate .excalidraw JSON (Claude)\n       |\n       v\n  kroki.io API -> SVG (with embedded Excalifont + Xiaolai woff2)\n       |\n       v\n  fonttools extracts woff2 glyphs -> <text> converted to <path>\n       |\n       v\n  resvg -> PNG (2x retina, hand-drawn fonts preserved)\n       |\n       v\n  Delivered: .png + .excalidraw source\n```\n\n## File Structure\n\n```\nexcalidraw-export-skill/\n├── skills/\n│   └── excalidraw-export/\n│       ├── SKILL.md              # Skill definition\n│       ├── scripts/\n│       │   ├── export.py         # Export pipeline\n│       │   └── setup.sh          # Dependency checker\n│       └── references/\n│           ├── excalidraw-schema.md\n│           └── element-types.md\n├── .claude-plugin/\n│   ├── plugin.json\n│   └── marketplace.json\n├── README.md\n├── README.zh.md\n├── LICENSE\n└── .gitignore\n```\n\n## Known Limitations\n\n- Requires internet (kroki.io renders SVG server-side)\n- Max ~20 elements per diagram for readability\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "excalidraw-export",
+          "source": "./",
+          "description": "End-to-end Excalidraw diagram generation and image export. Supports flowcharts, architecture diagrams, mind maps, sequence diagrams, ER diagrams, and more. Outputs PNG/SVG images via kroki.io rendering pipeline.",
+          "version": "1.0.0",
+          "category": "productivity",
+          "tags": [
+            "excalidraw",
+            "diagram",
+            "visualization",
+            "png",
+            "svg",
+            "export",
+            "flowchart",
+            "architecture"
+          ],
+          "homepage": "https://github.com/psylch/excalidraw-export-skill",
+          "categories": [
+            "architecture",
+            "diagram",
+            "excalidraw",
+            "export",
+            "flowchart",
+            "png",
+            "productivity",
+            "svg",
+            "visualization"
+          ],
+          "install_commands": [
+            "/plugin marketplace add psylch/excalidraw-export-skill",
+            "/plugin install excalidraw-export@psylch-excalidraw-export-skill"
+          ]
+        }
+      ]
+    },
+    {
       "name": "psylch-cloudflare-dns-skill",
       "version": null,
       "description": "Manage Cloudflare DNS records via REST API with Azure and Kubernetes integration.",
@@ -132,59 +185,6 @@
           "install_commands": [
             "/plugin marketplace add psylch/ux-interaction-taste-skill",
             "/plugin install ux-interaction-taste@psylch-ux-interaction-taste-skill"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "psylch-excalidraw-export-skill",
-      "version": null,
-      "description": "Generate Excalidraw diagrams from natural language and export to PNG/SVG images",
-      "repo_full_name": "psylch/excalidraw-export-skill",
-      "repo_url": "https://github.com/psylch/excalidraw-export-skill",
-      "repo_description": "Generate Excalidraw diagrams from natural language and export to PNG/SVG images, end-to-end",
-      "signals": {
-        "stars": 0,
-        "forks": 0,
-        "pushed_at": "2026-03-06T04:18:28Z"
-      },
-      "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"psylch-excalidraw-export-skill\",\n  \"owner\": {\n    \"name\": \"psylch\"\n  },\n  \"metadata\": {\n    \"description\": \"Generate Excalidraw diagrams from natural language and export to PNG/SVG images\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"excalidraw-export\",\n      \"source\": \"./\",\n      \"description\": \"End-to-end Excalidraw diagram generation and image export. Supports flowcharts, architecture diagrams, mind maps, sequence diagrams, ER diagrams, and more. Outputs PNG/SVG images via kroki.io rendering pipeline.\",\n      \"version\": \"1.0.0\",\n      \"category\": \"productivity\",\n      \"tags\": [\"excalidraw\", \"diagram\", \"visualization\", \"png\", \"svg\", \"export\", \"flowchart\", \"architecture\"],\n      \"homepage\": \"https://github.com/psylch/excalidraw-export-skill\"\n    }\n  ]\n}\n",
-        ".claude-plugin/plugin.json": "{\n  \"name\": \"excalidraw-export\",\n  \"description\": \"Generate Excalidraw diagrams and export to PNG/SVG images end-to-end\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"psylch\"\n  },\n  \"homepage\": \"https://github.com/psylch/excalidraw-export-skill\",\n  \"repository\": \"https://github.com/psylch/excalidraw-export-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"excalidraw\", \"diagram\", \"png\", \"svg\", \"export\", \"flowchart\", \"architecture\", \"visualization\"]\n}\n",
-        "README.md": "# excalidraw-export-skill\n\n[中文文档](README.zh.md)\n\nGenerate Excalidraw diagrams from natural language and export to PNG/SVG images, end-to-end.\n\n| Feature | Detail |\n|---------|--------|\n| Input | Natural language description |\n| Output | PNG image, SVG image, .excalidraw source |\n| Diagram types | Flowchart, architecture, mind map, sequence, ER, class, swimlane, DFD |\n| Rendering | [kroki.io](https://kroki.io) (open-source) |\n| PNG conversion | text-to-path + resvg (recommended), Chrome headless (fallback) |\n\n## Installation\n\n### Via skills.sh (recommended)\n\n```bash\nnpx skills add psylch/excalidraw-export-skill -g -y\n```\n\n### Via Plugin Marketplace\n\n```\n/plugin marketplace add psylch/excalidraw-export-skill\n/plugin install excalidraw-export@psylch-excalidraw-export-skill\n```\n\n### Manual Install\n\n```bash\ngit clone https://github.com/psylch/excalidraw-export-skill.git\ncp -r excalidraw-export-skill/skills/excalidraw-export ~/.claude/skills/\n```\n\nRestart Claude Code after installation.\n\n## Prerequisites\n\n- Python 3.8+\n- `resvg` — fast SVG-to-PNG rasterizer (`brew install resvg`)\n- `fonttools` + `brotli` — extracts embedded fonts, converts text to paths (`pip install fonttools brotli`)\n- Internet access (kroki.io for SVG rendering)\n- Google Chrome — optional fallback (not needed if resvg + fonttools installed)\n\nRun the setup script to check and auto-install:\n\n```bash\nbash ~/.agents/skills/excalidraw-export/scripts/setup.sh\n```\n\n## Usage\n\nJust ask Claude to create a diagram:\n\n- \"Create a flowchart for user registration\"\n- \"Draw the system architecture of a microservice app\"\n- \"Visualize the relationship between User, Post, and Comment\"\n- \"Make a mind map about machine learning\"\n- \"画一个登录流程图\"\n- \"画架构图\"\n\nThe skill will generate the diagram and automatically export it as a PNG image.\n\n## How It Works\n\n```\nUser description\n       |\n       v\n  Generate .excalidraw JSON (Claude)\n       |\n       v\n  kroki.io API -> SVG (with embedded Excalifont + Xiaolai woff2)\n       |\n       v\n  fonttools extracts woff2 glyphs -> <text> converted to <path>\n       |\n       v\n  resvg -> PNG (2x retina, hand-drawn fonts preserved)\n       |\n       v\n  Delivered: .png + .excalidraw source\n```\n\n## File Structure\n\n```\nexcalidraw-export-skill/\n├── skills/\n│   └── excalidraw-export/\n│       ├── SKILL.md              # Skill definition\n│       ├── scripts/\n│       │   ├── export.py         # Export pipeline\n│       │   └── setup.sh          # Dependency checker\n│       └── references/\n│           ├── excalidraw-schema.md\n│           └── element-types.md\n├── .claude-plugin/\n│   ├── plugin.json\n│   └── marketplace.json\n├── README.md\n├── README.zh.md\n├── LICENSE\n└── .gitignore\n```\n\n## Known Limitations\n\n- Requires internet (kroki.io renders SVG server-side)\n- Max ~20 elements per diagram for readability\n\n## License\n\nMIT\n"
-      },
-      "plugins": [
-        {
-          "name": "excalidraw-export",
-          "source": "./",
-          "description": "End-to-end Excalidraw diagram generation and image export. Supports flowcharts, architecture diagrams, mind maps, sequence diagrams, ER diagrams, and more. Outputs PNG/SVG images via kroki.io rendering pipeline.",
-          "version": "1.0.0",
-          "category": "productivity",
-          "tags": [
-            "excalidraw",
-            "diagram",
-            "visualization",
-            "png",
-            "svg",
-            "export",
-            "flowchart",
-            "architecture"
-          ],
-          "homepage": "https://github.com/psylch/excalidraw-export-skill",
-          "categories": [
-            "architecture",
-            "diagram",
-            "excalidraw",
-            "export",
-            "flowchart",
-            "png",
-            "productivity",
-            "svg",
-            "visualization"
-          ],
-          "install_commands": [
-            "/plugin marketplace add psylch/excalidraw-export-skill",
-            "/plugin install excalidraw-export@psylch-excalidraw-export-skill"
           ]
         }
       ]

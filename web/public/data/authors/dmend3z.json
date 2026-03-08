@@ -1199,6 +1199,58 @@
           ]
         }
       ]
+    },
+    {
+      "name": "rpi-kit",
+      "version": "0.1.0",
+      "description": "Research → Plan → Implement. A systematic feature development workflow with validation gates, multi-role agent teams, and adaptive depth.",
+      "repo_full_name": "dmend3z/rpi-kit",
+      "repo_url": "https://github.com/dmend3z/rpi-kit",
+      "repo_description": "Research → Plan → Implement. A systematic feature development workflow for Claude Code and Codex.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-07T09:05:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"rpi-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Research → Plan → Implement. A systematic feature development workflow with validation gates, multi-role agent teams, and adaptive depth.\",\n  \"owner\": {\n    \"name\": \"Daniel Mendes\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"rpi-kit\",\n      \"source\": \"./\",\n      \"description\": \"Research → Plan → Implement. A systematic feature development workflow for Claude Code and Codex.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Daniel Mendes\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\"workflow\", \"research\", \"planning\", \"implementation\", \"feature-development\", \"agents\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"rpi-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Research → Plan → Implement. A systematic feature development workflow with validation gates, multi-role agent teams, and adaptive depth.\",\n  \"author\": {\n    \"name\": \"Daniel Mendes\",\n    \"url\": \"https://github.com/dmend3z\"\n  },\n  \"repository\": \"https://github.com/dmend3z/rpi-kit\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"workflow\",\n    \"research\",\n    \"planning\",\n    \"implementation\",\n    \"feature-development\",\n    \"agents\",\n    \"codex\"\n  ]\n}\n",
+        "README.md": "# RPIKit\n\n**Research → Plan → Implement.** A systematic feature development workflow for Claude Code and Codex.\n\nRPIKit guides AI-first developers through a structured 3-phase pipeline with validation gates, multi-role agent teams, and adaptive depth — so you research before you plan, and plan before you code.\n\n## Install\n\n### Claude Code (plugin)\n\n```bash\nclaude plugin add rpi-kit\n```\n\nOr clone and install locally:\n\n```bash\ngit clone https://github.com/dmend3z/rpi-kit.git\nclaude --plugin-dir ./rpi-kit\n```\n\n### Codex (OpenAI)\n\nCopy `AGENTS.md` and `codex.md` to your project root. The workflow rules and agent definitions will be available to Codex automatically.\n\n## Quick Start\n\n```bash\n# 1. Initialize config (once per project)\n/rpi:init\n\n# 2. Describe your feature\n/rpi:new oauth2-auth\n\n# 3. Research feasibility (GO/NO-GO verdict)\n/rpi:research oauth2-auth\n\n# 4. Generate implementation plan\n/rpi:plan oauth2-auth\n\n# 5. Build it (with automatic simplify + review)\n/rpi:implement oauth2-auth\n```\n\n## Commands\n\n| Command | Purpose |\n|---------|---------|\n| `/rpi:init` | Configure RPI for this project (folder, tier, preferences) |\n| `/rpi:new` | Interactive interview → REQUEST.md |\n| `/rpi:research` | Parallel agent research → RESEARCH.md + GO/NO-GO |\n| `/rpi:plan` | Adaptive plan artifacts → PLAN.md + eng/pm/ux.md |\n| `/rpi:implement` | Execute plan with task tracking + simplify + review |\n| `/rpi:simplify` | Code simplification (reuse, quality, efficiency) |\n| `/rpi:status` | Show all features and their current phase |\n| `/rpi:review` | Code review against plan requirements |\n\n## Research Tiers\n\nControl depth and cost with tier flags:\n\n| Tier | Agents | Use when |\n|------|--------|----------|\n| `--quick` | 2 (requirements + codebase) | Small features, quick feasibility check |\n| `--standard` | 4 (+ PM + engineer) | Default. Most features. |\n| `--deep` | 5-6 (+ CTO + UX designer if UI) | Large features, risky changes, new architecture |\n\n## Agent Team\n\nRPIKit simulates a product team with 10 specialized agents:\n\n| Agent | Perspective |\n|-------|-------------|\n| Requirement Parser | Structured requirements, unknowns, implicit needs |\n| Product Manager | Scope, user stories, effort, acceptance criteria |\n| UX Designer | User flows, interaction patterns, existing components |\n| Senior Engineer | Architecture, dependencies, technical decisions |\n| CTO Advisor | Risk assessment, strategic alignment, alternatives |\n| Doc Synthesizer | Merges research into executive summary + verdict |\n| Codebase Explorer | Scans existing code for patterns and context |\n| Plan Executor | Implements tasks surgically, one at a time |\n| Code Simplifier | Reuse, quality, efficiency checks with direct fixes |\n| Code Reviewer | Reviews against plan requirements, PASS/FAIL verdict |\n\nAll agents follow behavioral constraints inspired by [Karpathy's coding guidelines](https://x.com/karpathy/status/2015883857489522876): cite evidence, name unknowns, be concrete, stay in scope.\n\n## Feature Folder Structure\n\nEach feature lives in its own folder (configurable via `.rpi.yaml`):\n\n```\n{folder}/{feature-slug}/        # folder defaults to rpi/\n├── REQUEST.md              # What and why\n├── research/\n│   └── RESEARCH.md         # GO/NO-GO analysis\n├── plan/\n│   ├── PLAN.md             # Task checklist with effort + deps\n│   ├── eng.md              # Technical specification\n│   ├── pm.md               # Product requirements (adaptive)\n│   └── ux.md               # UX design (adaptive)\n└── implement/\n    └── IMPLEMENT.md        # Full audit trail\n```\n\n## Configuration\n\nRun `/rpi:init` or create `.rpi.yaml` manually:\n\n```yaml\nfolder: rpi                    # Feature folder location\ntier: standard                 # Default research tier\nauto_simplify: true            # Run simplify before review\ncommit_style: conventional     # Commit message format\nparallel_threshold: 8          # Task count for parallel mode\nskip_artifacts: []             # Artifacts to never generate\nreview_after_implement: true   # Mandatory review gate\nbranch_per_feature: false      # Git branch per feature\n```\n\n## How It Compares\n\n| | OpenSpec (OPSX) | RPIKit | GSD |\n|---|---|---|---|\n| Focus | Spec-driven artifacts | Feature lifecycle with gates | Full project management |\n| Phases | Fluid (propose/apply) | 3 phases (R→P→I) | Roadmap → phases → tasks |\n| Agents | None | 10 specialized roles | 15+ orchestrated agents |\n| Validation | None | GO/NO-GO research gate | Goal-backward verification |\n| Scope | Single change | Single feature | Entire project |\n| Complexity | Lightweight | Medium | Heavy |\n\n## License\n\nMIT\n\n## Credits\n\nInspired by [GSD](https://github.com/gsd), [OpenSpec](https://github.com/Fission-AI/OpenSpec), and [Andrej Karpathy's coding guidelines](https://x.com/karpathy/status/2015883857489522876).\n"
+      },
+      "plugins": [
+        {
+          "name": "rpi-kit",
+          "source": "./",
+          "description": "Research → Plan → Implement. A systematic feature development workflow for Claude Code and Codex.",
+          "version": "0.1.0",
+          "author": {
+            "name": "Daniel Mendes"
+          },
+          "license": "MIT",
+          "keywords": [
+            "workflow",
+            "research",
+            "planning",
+            "implementation",
+            "feature-development",
+            "agents"
+          ],
+          "category": "productivity",
+          "categories": [
+            "agents",
+            "feature-development",
+            "implementation",
+            "planning",
+            "productivity",
+            "research",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add dmend3z/rpi-kit",
+            "/plugin install rpi-kit@rpi-kit"
+          ]
+        }
+      ]
     }
   ]
 }

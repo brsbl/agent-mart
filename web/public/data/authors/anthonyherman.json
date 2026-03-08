@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "AnthonyHerman",
+    "display_name": "AnthonyHerman",
+    "avatar_url": "https://avatars.githubusercontent.com/u/46350435?u=7928c0eeed139a2710dc4541bf7d865390a77532&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "bug-bounty-skills",
+      "version": null,
+      "description": "Automated reconnaissance — subdomain enumeration, port scanning, HTTP probing, content discovery. Inspired by Jason Haddix and tomnomnom methodologies.",
+      "repo_full_name": "AnthonyHerman/skills",
+      "repo_url": "https://github.com/AnthonyHerman/skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-06T12:57:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"bug-bounty-skills\",\n  \"owner\": {\n    \"name\": \"Anthony\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"recon\",\n      \"version\": \"1.0.0\",\n      \"description\": \"Automated reconnaissance — subdomain enumeration, port scanning, HTTP probing, content discovery. Inspired by Jason Haddix and tomnomnom methodologies.\",\n      \"author\": {\n        \"name\": \"Anthony\"\n      },\n      \"source\": \"./plugins/recon\"\n    }\n  ]\n}\n",
+        "README.md": "# Bug Bounty Skills\n\nClaude Code plugin marketplace for bug bounty hunting.\n\n## Install\n\n```\n/plugin marketplace add <your-github-user>/skills\n/plugin menu\n```\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| **recon** | Automated reconnaissance — subdomain enumeration, port scanning, HTTP probing, content discovery |\n",
+        "plugins/recon/README.md": "# Recon Plugin\n\nBug bounty reconnaissance plugin for Claude Code. Inspired by Jason Haddix's Bug Hunter's Methodology and tomnomnom's Unix-philosophy tooling.\n\n## Install\n\n```bash\n# In Claude Code:\n/plugin install /path/to/this/repo\n```\n\n## Usage\n\n```bash\n# First time: install recon tools and wordlists\n/recon-setup\n\n# Run full recon against a target\n/recon example.com\n\n# Run a specific phase\n/recon example.com --phase subdomains\n/recon example.com --phase ports\n```\n\n## Phases\n\n| Phase | Agent | Input | Output |\n|-------|-------|-------|--------|\n| 1. Seed Discovery | `seed-discovery` | target domain | `seeds.txt` |\n| 2. Subdomain Enumeration | `subdomain-enum` | `seeds.txt` | `subdomains.txt` |\n| 3. Port Scanning | `port-scan` | `subdomains.txt` | `ports.txt` |\n| 4. HTTP Probing | `http-probe` | `subdomains.txt` | `live-hosts.txt`, `technologies.json` |\n| 5. Content Discovery | `content-discovery` | `live-hosts.txt` | `urls.txt`, `params.txt`, `js-files.txt`, `interesting/*` |\n\nPhases 3 and 4 run in parallel.\n\n## Output Structure\n\n```\nrecon/<target>/\n  seeds.txt\n  subdomains.txt\n  live-hosts.txt\n  ports.txt\n  urls.txt\n  params.txt\n  js-files.txt\n  technologies.json\n  interesting/\n    xss.txt\n    ssrf.txt\n    idor.txt\n    redirect.txt\n    lfi.txt\n    sqli.txt\n  report.md\n```\n\n## Tools Used\n\n**Subdomain Enumeration**: subfinder, assetfinder, amass, crt.sh\n**DNS**: dnsx, asnmap\n**HTTP Probing**: httpx, gowitness\n**Content Discovery**: feroxbuster, katana, waybackurls, gau\n**URL Analysis**: unfurl, gf, qsreplace, anew\n**Port Scanning**: nmap, masscan\n**Vulnerability Scanning**: nuclei\n\n## Wordlists\n\nManaged via `/recon-setup`:\n- SecLists (subdomain + content discovery)\n- Assetnote best-dns-wordlist\n- gf patterns for vulnerability matching\n\nInstalled to `~/.recon-wordlists/`.\n"
+      },
+      "plugins": [
+        {
+          "name": "recon",
+          "version": "1.0.0",
+          "description": "Automated reconnaissance — subdomain enumeration, port scanning, HTTP probing, content discovery. Inspired by Jason Haddix and tomnomnom methodologies.",
+          "author": {
+            "name": "Anthony"
+          },
+          "source": "./plugins/recon",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add AnthonyHerman/skills",
+            "/plugin install recon@bug-bounty-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

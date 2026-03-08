@@ -1,0 +1,57 @@
+{
+  "author": {
+    "id": "jointime1",
+    "display_name": "Alexander Starodubtsev",
+    "avatar_url": "https://avatars.githubusercontent.com/u/96395085?u=b9d01dd9f570edb14b5573acbca7a74e2de9ee6e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-tokens-plugin",
+      "version": "1.1.0",
+      "description": "Lightweight token usage display for Claude Code status line",
+      "repo_full_name": "jointime1/claude-tokens-plugin",
+      "repo_url": "https://github.com/jointime1/claude-tokens-plugin",
+      "repo_description": "Lightweight token usage display for Claude Code status line",
+      "signals": {
+        "stars": 1,
+        "forks": 1,
+        "pushed_at": "2026-03-07T18:26:10Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"claude-tokens-plugin\",\n  \"description\": \"Lightweight token usage display for Claude Code status line\",\n  \"owner\": {\n    \"name\": \"aleksandrstarodubcev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-tokens-plugin\",\n      \"description\": \"Lightweight token usage display for Claude Code status line. Zero LLM calls — pure bash + jq.\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"aleksandrstarodubcev\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/jointime1/claude-tokens-plugin\",\n      \"tags\": [\"tokens\", \"usage\", \"status-line\", \"lightweight\"]\n    }\n  ],\n  \"version\": \"1.1.0\"\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-tokens-plugin\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Lightweight token usage display for Claude Code status line\",\n  \"author\": {\n    \"name\": \"aleksandrstarodubcev\"\n  },\n  \"repository\": \"https://github.com/jointime1/claude-tokens-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"tokens\", \"usage\", \"status-line\", \"lightweight\"],\n  \"skills\": \"./skills/\",\n  \"commands\": \"./commands/\"\n}\n",
+        "README.md": "# claude-tokens-plugin\n\nLightweight Claude Code plugin that displays plan usage limits and context window in the status line. Zero LLM token consumption — fetches data from Anthropic API via pure bash + jq + curl.\n\n## Display\n\n```\nSonnet 4.6 | session ━━━───── 37% 1h 45m | weekly ━━────── 21% 6d 5h | ctx ━──────── 10%\n```\n\nWhen API rate limit is hit, a notice appears at the start and cached data continues to be shown:\n```\nrate limit (no updates) | Sonnet 4.6 | session ━━━───── 37% 1h 45m | weekly ━━────── 21% 6d 5h | ctx ━──────── 10%\n```\n\nWith Russian locale:\n```\nSonnet 4.6 | сессия ━━━───── 37% 1ч 45м | неделя ━━────── 21% 6д 5ч | контекст ━──────── 10%\n```\n\nWhen rate limited:\n```\nрейт лимит (нет обновлений) | Sonnet 4.6 | сессия ━━━───── 37% 1ч 45м | неделя ━━────── 21% 6д 5ч | контекст ━──────── 10%\n```\n\nColor-coded:\n- **Green**: < 50%\n- **Yellow**: 50–80%\n- **Red**: > 80%\n\n## Installation\n\n```\n/plugin marketplace add jointime1/claude-tokens-plugin\n/plugin install claude-tokens-plugin\n```\n\n## Setup\n\nRun the setup command to configure the status line:\n\n```\n/setup\n```\n\nIt will ask your preferred language (English/Russian), configure `~/.claude/settings.json`, and you're done. Restart Claude Code to see the status line.\n\n## Requirements\n\n- [jq](https://jqlang.github.io/jq/)\n- [curl](https://curl.se/)\n- Claude Pro/Max subscription (OAuth credentials for usage API)\n\n## How it works\n\nThe status line script:\n1. Reads context window data and model info from stdin (provided by Claude Code)\n2. Fetches plan usage (session/weekly limits) from `api.anthropic.com/api/oauth/usage` using your OAuth token\n3. Caches API responses for 60 seconds; on rate limit error waits 2 minutes before retrying\n4. Outputs a colour-coded summary line with progress bars and reset countdowns\n\nNo LLM calls are made. The API endpoint returns usage statistics only.\n\n## Star\n\nIf you find this plugin useful, please give it a star on GitHub!"
+      },
+      "plugins": [
+        {
+          "name": "claude-tokens-plugin",
+          "description": "Lightweight token usage display for Claude Code status line. Zero LLM calls — pure bash + jq.",
+          "version": "1.1.0",
+          "author": {
+            "name": "aleksandrstarodubcev"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/jointime1/claude-tokens-plugin",
+          "tags": [
+            "tokens",
+            "usage",
+            "status-line",
+            "lightweight"
+          ],
+          "categories": [
+            "lightweight",
+            "productivity",
+            "status-line",
+            "tokens",
+            "usage"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jointime1/claude-tokens-plugin",
+            "/plugin install claude-tokens-plugin@claude-tokens-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}
