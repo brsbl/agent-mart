@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "ilo-lang",
+    "display_name": "ilo-lang",
+    "avatar_url": "https://avatars.githubusercontent.com/u/266294295?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ilo-lang",
+      "version": null,
+      "description": "Agent Skill for the ilo programming language",
+      "repo_full_name": "ilo-lang/ilo",
+      "repo_url": "https://github.com/ilo-lang/ilo",
+      "repo_description": "ilo - a programming language for AI agents",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-08T02:16:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ilo-lang\",\n  \"owner\": {\n    \"name\": \"Daniel Morris\"\n  },\n  \"metadata\": {\n    \"description\": \"Agent Skill for the ilo programming language\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ilo\",\n      \"source\": \"./\",\n      \"description\": \"Write, run, debug, and explain programs in ilo — a token-optimised programming language for AI agents\",\n      \"version\": \"0.8.0\",\n      \"author\": {\n        \"name\": \"Daniel Morris\"\n      },\n      \"homepage\": \"https://github.com/ilo-lang/ilo\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"ilo\", \"programming-language\", \"token-optimised\", \"ai-agents\"]\n    }\n  ]\n}",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ilo\",\n  \"description\": \"Write, run, debug, and explain programs in ilo — a token-optimised programming language for AI agents\",\n  \"version\": \"0.8.0\",\n  \"author\": {\n    \"name\": \"Daniel Morris\"\n  },\n  \"homepage\": \"https://github.com/ilo-lang/ilo\",\n  \"repository\": \"https://github.com/ilo-lang/ilo\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"ilo\", \"programming-language\", \"token-optimised\", \"ai-agents\", \"prefix-notation\"]\n}",
+        "README.md": "# ilo\n\n*A programming language AI agents write, not humans. Named from [Toki Pona](https://sona.pona.la/wiki/ilo) for \"tool\".*\n\n[![CI](https://github.com/ilo-lang/ilo/actions/workflows/rust.yml/badge.svg)](https://github.com/ilo-lang/ilo/actions/workflows/rust.yml)  [![codecov](https://codecov.io/gh/ilo-lang/ilo/branch/main/graph/badge.svg)](https://codecov.io/gh/ilo-lang/ilo)  [![crates.io](https://img.shields.io/crates/v/ilo)](https://crates.io/crates/ilo)  [![npm](https://img.shields.io/npm/v/ilo-lang)](https://www.npmjs.com/package/ilo-lang)  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)\n\n```\nPython                                    ilo\n─────                                     ───\ndef total(price, quantity, rate):          tot p:n q:n r:n>n;s=*p q;t=*s r;+s t\n    sub = price * quantity\n    tax = sub * rate\n    return sub + tax\n\n4 lines, 30 tokens, 90 chars              1 line, 10 tokens, 20 chars\n```\n\n**0.33× the tokens. 0.22× the characters. Same semantics. Type-verified before execution.**\n\n## Why\n\nAI agents pay three costs per program: generation tokens, error feedback, retries. ilo cuts all three:\n\n- **Shorter programs** - prefix notation eliminates parentheses; positional args eliminate boilerplate\n- **Verified first** - type errors caught before execution; agents get `ILO-T004` not a stack trace\n- **Compact errors** - one token, not a paragraph; agents correct faster, fewer retries\n\n## Install\n\n```bash\n# macOS / Linux\ncurl -fsSL https://raw.githubusercontent.com/ilo-lang/ilo/main/install.sh | sh\n\n# npm (any platform with Node 20+)\nnpm i -g ilo-lang\n\n# Rust\ncargo install ilo\n```\n\n<details>\n<summary>Agent-specific install</summary>\n\n| Agent | Install |\n|-------|---------|\n| **Claude Code** | `/plugin marketplace add ilo-lang/ilo` then `/plugin install ilo-lang/ilo` |\n| **Claude Cowork** | Browse Plugins → Add marketplace → `ilo-lang/ilo` → install |\n| **Other agents** | Copy `skills/ilo/` into your agent's skills directory |\n\n> npm/WASM mode runs interpreter only. HTTP builtins (`get`, `$`, `post`) require the native binary.\n\n</details>\n\n## Quick start\n\n```bash\n# Inline\nilo 'dbl x:n>n;*x 2' 5                    # → 10\n\n# From file\nilo program.ilo functionName arg1 arg2\n```\n\n**[Tutorial: Write your first program →](https://ilo-lang.ai/docs/first-program/)**\n\n## What it looks like\n\n**Guards** - flat, no nesting:\n```\ncls sp:n>t;>=sp 1000 \"gold\";>=sp 500 \"silver\";\"bronze\"\n```\n\n**Pipes** - left-to-right composition:\n```\nrun x:n>n;x>>dbl>>inc\n```\n\n**Data pipeline** - fetch, parse, filter, sum:\n```\nfetch url:t>R ? t;r=($!url);rdb! r \"json\"\nproc rows:L ?>n;clean=flt pos rows;sum clean\npos x:?>b;>x 0\n```\n\n**Auto-unwrap `!`** - eliminates Result matching:\n```bash\nilo 'inner x:n>R n t;~x  outer x:n>R n t;~(inner! x)' 42  # → 42\n```\n\n## Teaching agents\n\nilo ships as an [Agent Skill](https://agentskills.io). Install the plugin and the agent learns ilo automatically.\n\nFor manual context loading:\n```bash\nilo -ai              # compact spec for LLM system prompts\nilo help lang        # full spec\n```\n\n## Key docs\n\n| | |\n|---|---|\n| **[Introduction](https://ilo-lang.ai/docs/introduction/)** | What ilo is and why |\n| **[Installation](https://ilo-lang.ai/docs/installation/)** | All install methods |\n| **[Tutorial](https://ilo-lang.ai/docs/first-program/)** | Write your first program |\n| **[Types & Functions](https://ilo-lang.ai/docs/guide/types-and-functions/)** | Core language guide |\n| **[Prefix Notation](https://ilo-lang.ai/docs/guide/prefix-notation/)** | Why prefix saves tokens |\n| **[Guards](https://ilo-lang.ai/docs/guide/guards/)** | Pattern matching without if/else |\n| **[Pipes](https://ilo-lang.ai/docs/guide/pipes/)** | Function composition |\n| **[Collections](https://ilo-lang.ai/docs/guide/collections/)** | Lists and higher-order functions |\n| **[Error Handling](https://ilo-lang.ai/docs/guide/error-handling/)** | Result types and auto-unwrap |\n| **[Data & I/O](https://ilo-lang.ai/docs/guide/data-io/)** | HTTP, files, JSON, env |\n| **[MCP Integration](https://ilo-lang.ai/docs/integrations/mcp/)** | Connect MCP servers |\n| **[CLI Reference](https://ilo-lang.ai/docs/reference/cli/)** | Flags, REPL, output modes |\n| **[Builtins](https://ilo-lang.ai/docs/reference/builtins/)** | All built-in functions |\n| **[Error Codes](https://ilo-lang.ai/docs/reference/error-codes/)** | ILO-XXXX reference |\n| **[SPEC.md](SPEC.md)** | Full language specification |\n| **[examples/](examples/)** | Runnable examples (also test suite) |\n\n## Community\n\n- **[ilo-lang.ai](https://ilo-lang.ai)** - docs, playground, and examples\n- **[r/ilolang](https://www.reddit.com/r/ilolang/)** - discussion and updates\n- **[hello@ilo-lang.ai](mailto:hello@ilo-lang.ai)** - get in touch\n\n## Principles\n\n1. **Token-conservative** - every choice evaluated against total token cost\n2. **Constrained** - small vocabulary, one way to do things, fewer wrong choices\n3. **Verified** - types checked before execution, all errors reported at once\n4. **Language-agnostic** - structural tokens (`@`, `>`, `?`, `^`, `~`, `!`, `$`) over English words\n\nSee [MANIFESTO.md](MANIFESTO.md) for full rationale.\n"
+      },
+      "plugins": [
+        {
+          "name": "ilo",
+          "source": "./",
+          "description": "Write, run, debug, and explain programs in ilo — a token-optimised programming language for AI agents",
+          "version": "0.8.0",
+          "author": {
+            "name": "Daniel Morris"
+          },
+          "homepage": "https://github.com/ilo-lang/ilo",
+          "license": "MIT",
+          "keywords": [
+            "ilo",
+            "programming-language",
+            "token-optimised",
+            "ai-agents"
+          ],
+          "categories": [
+            "ai-agents",
+            "ilo",
+            "programming-language",
+            "token-optimised"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ilo-lang/ilo",
+            "/plugin install ilo@ilo-lang"
+          ]
+        }
+      ]
+    }
+  ]
+}

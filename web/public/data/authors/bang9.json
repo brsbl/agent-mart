@@ -15,84 +15,23 @@
       "signals": {
         "stars": 1,
         "forks": 0,
-        "pushed_at": "2026-03-06T08:30:56Z"
+        "pushed_at": "2026-03-08T06:45:53Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ai-tools\",\n  \"owner\": {\n    \"name\": \"Airen Kang\",\n    \"email\": \"bang9@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of tools for Claude Code to operate more efficiently\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"redit\",\n      \"source\": \"./redit\",\n      \"description\": \"Remote Edit Layer - Local cache for efficiently editing remote documents that don't support partial updates\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"remote\", \"edit\", \"cache\", \"confluence\", \"notion\", \"document\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"memex\",\n      \"source\": \"./memex\",\n      \"description\": \"Local Knowledge Graph for AI — stores, connects, and retrieves knowledge across conversations\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"knowledge\", \"graph\", \"memory\", \"search\", \"notes\"],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"claude-irc\",\n      \"source\": \"./claude-irc\",\n      \"description\": \"IRC-inspired inter-session communication for Claude Code agents\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"irc\", \"communication\", \"agent\", \"inter-session\", \"collaboration\"],\n      \"category\": \"collaboration\"\n    }\n  ]\n}\n",
-        "README.md": "# ai-tools\n\nA collection of tools for Claude Code to operate more efficiently.\n\n## Tools\n\n### [redit](./redit)\n\nA local cache layer for editing remote documents (Confluence, Notion, etc.).\n\n#### Installation\n\n**CLI**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/redit/install.sh | bash\n```\n\n**MCP Server & Skill** (via Claude Code Plugin)\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install redit\n```\n\n### [vaultkey](./vaultkey)\n\nEncrypted secrets manager backed by a private Git repo. AES-256-GCM encryption, synced across machines via git.\n\n#### Installation\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/vaultkey/install.sh | bash\n```\n\n### [claude-irc](./claude-irc)\n\nIRC-inspired inter-session communication for Claude Code agents. Enable multiple sessions working in the same repo to exchange messages, share context, and coordinate in real-time.\n\n#### Installation\n\n**CLI**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/claude-irc/install.sh | bash\n```\n\n**Plugin** (via Claude Code Plugin)\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install claude-irc\n```\n\n### [webform](./webform)\n\nDynamic web form for collecting structured data from users. AI generates a compact schema, opens a browser form, and receives the submitted data as JSON.\n\n#### Installation\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/webform/install.sh | bash\n```\n\n## License\n\nMIT\n",
-        "redit/README.md": "# redit\n\nA local cache layer for editing remote documents.\n\n- **Problem**: APIs that don't support partial updates (Confluence, Notion, etc.)\n- **Solution**: Edit locally with partial modifications, then update with a single API call\n\n<details>\n<summary>Storage Structure</summary>\n\n```\n~/.redit/<key-hash>/\n├── meta.json   # {\"key\": \"...\", \"created_at\": \"...\"}\n├── origin      # Original (immutable)\n└── working     # Working copy (Edit target)\n```\n\n</details>\n\n<details>\n<summary>Tips</summary>\n\n- Use `service:id` key format (e.g., `confluence:12345`, `notion:page-abc`)\n- Use `service:id:version` when version distinction is needed\n- Check `redit status` before pushing back — skip update if `clean`\n- Always `redit drop` when done\n\n</details>\n\n## CLI\n\n### Installation\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/redit/install.sh | bash\n```\n\n### Quick Start\n\n```bash\necho \"$content\" | redit init \"confluence:12345\"  # Store locally\n# Edit the working file...\nredit diff \"confluence:12345\"                     # Review changes\nredit read \"confluence:12345\"                     # Get final content\nredit drop \"confluence:12345\"                     # Clean up\n```\n\n### Command Reference\n\n| Command | Description |\n|---------|-------------|\n| `redit init <key>` | Read stdin, create local cache, return working file path |\n| `redit get <key>` | Return working file path |\n| `redit read <key>` | Output working file content to stdout |\n| `redit status <key>` | Check if modified (`dirty` / `clean`) |\n| `redit diff <key>` | Show unified diff between origin and working |\n| `redit reset <key>` | Restore working file to original |\n| `redit drop <key>` | Remove all cached files for key |\n| `redit list` | List all managed keys with status |\n\n## MCP Server\n\n### Installation\n\nAutomatically available as `mcp__redit__*` tools when the plugin is installed:\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install redit\n```\n\n### Quick Start\n\n```\n1. content = mcp__atlassian__get_page(id=\"12345\")\n2. path = mcp__redit__init(key=\"confluence:12345\", content=content)\n3. Edit <path> with partial modifications\n4. final = mcp__redit__read(\"confluence:12345\")\n5. mcp__atlassian__update_page(id=\"12345\", content=final)\n6. mcp__redit__drop(\"confluence:12345\")\n```\n\n### Tool Reference\n\n| Tool | Description |\n|------|-------------|\n| `mcp__redit__init` | Store content locally, returns working file path |\n| `mcp__redit__get` | Get working file path |\n| `mcp__redit__read` | Read working file content |\n| `mcp__redit__status` | Check dirty/clean state |\n| `mcp__redit__diff` | Show unified diff |\n| `mcp__redit__reset` | Restore to original |\n| `mcp__redit__drop` | Remove cache |\n| `mcp__redit__list` | List all cached documents |\n\n## Skill\n\n### Installation\n\nAvailable automatically when the plugin is installed.\n\n### Quick Start\n\n```\n/remote-edit confluence:12345 Update the Installation section\n```\n\n### Workflow\n\nThe `/remote-edit` skill guides Claude through the full edit cycle:\n\n1. **Fetch and Initialize** — Fetch content via MCP, store locally with `redit init`\n2. **Edit** — Use the Edit tool for partial modifications on the working file\n3. **Review** — Check changes with `redit diff`, reset if needed with `redit reset`\n4. **Commit** — Read final content with `redit read`, push back via MCP\n5. **Cleanup** — Remove local cache with `redit drop`\n",
-        "claude-irc/README.md": "# claude-irc\n\nIRC-inspired inter-session communication for Claude Code agents. Enable multiple Claude Code sessions on the same machine to exchange messages, share context, and coordinate in real-time.\n\n## The Problem\n\nWhen running multiple Claude Code sessions in parallel (e.g., one on server code, another on client code), sessions are isolated. They can't share context about API contracts, coordinate changes, or ask each other questions.\n\n## The Solution\n\n`claude-irc` creates a machine-wide shared communication channel. Sessions \"join\" the channel, send messages, publish structured context, and detect each other's online presence via Unix sockets.\n\n## Quick Start\n\n```bash\n# Install\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/claude-irc/install.sh | bash\n\n# Terminal 1\nclaude-irc join server\nclaude-irc msg client \"API ready. Check src/server/types/user.ts\"\n\n# Terminal 2\nclaude-irc join client\nclaude-irc inbox\nclaude-irc msg server \"Got it. Need avatarUrl in UserResponse\"\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `join <name>` | Join the channel with a peer name |\n| `who` | List peers with online/offline status |\n| `msg <peer> \"<text>\"` | Send a message to a peer |\n| `inbox` | Show unread messages |\n| `inbox <number>` | Read full message by index |\n| `inbox --all` | Show all messages including read |\n| `inbox clear` | Delete all messages |\n| `check [--quiet]` | Check for unread messages (hook-friendly) |\n| `watch [--interval N]` | Poll and exit on new message (background-task friendly, default 10s) |\n| `topic \"<title>\"` | Publish structured context (stdin, same title = update) |\n| `topic --delete <n>` | Delete a topic by index |\n| `topic --clear` | Delete all your topics |\n| `board <peer> [n]` | List or read a peer's published topics |\n| `quit` | Leave the channel and clean up |\n| `upgrade` | Update to latest version |\n| `--version` | Show current version |\n\n## Features\n\n- **Real-time presence**: Unix domain socket per session for instant online/offline detection\n- **File-based messaging**: Reliable, persistent messages that survive process restarts\n- **Structured context**: Publish API contracts, schemas, or any structured information as topics\n- **Machine-wide**: All sessions on the same machine share a single channel\n- **Hook integration**: `PreToolUse` hook auto-surfaces new messages to Claude\n- **Background monitoring**: `watch` command enables event-driven reception via background tasks\n- **Stale cleanup**: Dead sessions are automatically detected and cleaned up\n\n## How It Works\n\n```\nSession A (server)                    Session B (client)\n    │                                     │\n    ├── claude-irc join server            ├── claude-irc join client\n    │   ├── Register in registry.json     │   ├── Register in registry.json\n    │   └── Start daemon (socket)         │   └── Start daemon (socket)\n    │                                     │\n    ├── claude-irc msg client \"...\"       │\n    │   └── Write to inbox/client/        │\n    │                                     │\n    │                         [PreToolUse hook fires]\n    │                         claude-irc check --quiet\n    │                         → reads inbox/client/\n    │                         → \"[claude-irc] server: ...\"\n    │                                     │\n    │                         Claude B sees the message\n    │                         and incorporates into work\n```\n\n## Storage\n\nData is stored at `~/.claude-irc/`:\n\n```\n~/.claude-irc/\n├── registry.json          # Registered peers\n├── sockets/               # Unix domain sockets + PID files\n├── inbox/<peer>/           # Messages (JSON files)\n└── topics/<peer>/          # Published context (JSON files)\n```\n\n## Plugin Installation\n\nVia Claude Code Plugin:\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install claude-irc\n```\n\n## Build from Source\n\n```bash\ncd claude-irc\nmake build    # Build CLI binary\nmake test     # Run tests\nmake cross    # Cross-compile for all platforms\n```\n\n## License\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ai-tools\",\n  \"owner\": {\n    \"name\": \"Airen Kang\",\n    \"email\": \"bang9@users.noreply.github.com\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of tools for Claude Code to operate more efficiently\",\n    \"version\": \"v1.35.2\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-irc\",\n      \"source\": \"./claude-irc\",\n      \"description\": \"IRC-inspired inter-session communication for Claude Code agents\",\n      \"version\": \"v1.35.2\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"irc\",\n        \"communication\",\n        \"agent\",\n        \"inter-session\",\n        \"collaboration\"\n      ],\n      \"category\": \"collaboration\"\n    },\n    {\n      \"name\": \"redit\",\n      \"source\": \"./redit\",\n      \"description\": \"Remote Edit Layer - Local cache for efficiently editing remote documents\",\n      \"version\": \"v1.35.2\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"remote\",\n        \"edit\",\n        \"cache\",\n        \"document\",\n        \"confluence\",\n        \"notion\"\n      ],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"vaultkey\",\n      \"source\": \"./vaultkey\",\n      \"description\": \"Encrypted secrets manager for Claude Code sessions backed by a private Git repo\",\n      \"version\": \"v1.35.2\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"secrets\",\n        \"encryption\",\n        \"vault\",\n        \"credentials\",\n        \"git\"\n      ],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"webform\",\n      \"source\": \"./webform\",\n      \"description\": \"Dynamic browser form for collecting structured user input in Claude Code sessions\",\n      \"version\": \"v1.35.2\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"form\",\n        \"browser\",\n        \"input\",\n        \"structured-data\",\n        \"collection\"\n      ],\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"whip\",\n      \"source\": \"./whip\",\n      \"description\": \"Task orchestrator for Claude Code — spawn and manage multiple task sessions\",\n      \"version\": \"v1.35.2\",\n      \"author\": {\n        \"name\": \"Airen Kang\"\n      },\n      \"repository\": \"https://github.com/bang9/ai-tools\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"task\",\n        \"orchestrator\",\n        \"parallel\",\n        \"session\",\n        \"management\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# ai-tools\n\nA collection of tools for Claude Code to operate more efficiently.\n\n## Tools\n\n### [redit](./redit)\n\nA local cache layer for editing remote documents (Confluence, Notion, etc.).\n\n#### Installation\n\n**CLI**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/redit/install.sh | bash\n```\n\n**Skill** (via Claude Code Plugin)\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install redit\n```\n\n### [vaultkey](./vaultkey)\n\nEncrypted secrets manager backed by a private Git repo. AES-256-GCM encryption, synced across machines via git.\n\n#### Installation\n\n**CLI**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/vaultkey/install.sh | bash\n```\n\n**Plugin** (via Claude Code Plugin)\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install vaultkey\n```\n\n### [claude-irc](./claude-irc)\n\nIRC-inspired inter-session communication for Claude Code agents. Enable multiple sessions working in the same repo to exchange messages, share context, and coordinate in real-time.\n\n#### Installation\n\n**CLI**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/claude-irc/install.sh | bash\n```\n\n**Plugin** (via Claude Code Plugin)\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install claude-irc\n```\n\n### [webform](./webform)\n\nDynamic web form for collecting structured data from users. AI generates a compact schema, opens a browser form, and receives the submitted data as JSON.\n\n#### Installation\n\n**CLI**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/webform/install.sh | bash\n```\n\n**Plugin** (via Claude Code Plugin)\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install webform\n```\n\n### [whip](./whip)\n\nTask orchestrator for Claude Code. Spawn and manage multiple Claude Code sessions via tmux, with inter-session communication via claude-irc. Includes a TUI dashboard, web dashboard with real-time terminal view, and remote mode for headless operation.\n\n#### Installation\n\n**CLI**\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/whip/install.sh | bash\n```\n\n**Plugin** (via Claude Code Plugin)\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install whip\n```\n\n## License\n\nMIT\n",
+        "claude-irc/README.md": "# claude-irc\n\nIRC-inspired inter-session communication for Claude Code agents. Enable multiple Claude Code sessions on the same machine to exchange messages, share context, and coordinate in real-time.\n\n## The Problem\n\nWhen running multiple Claude Code sessions in parallel (e.g., one on server code, another on client code), sessions are isolated. They can't share context about API contracts, coordinate changes, or ask each other questions.\n\n## The Solution\n\n`claude-irc` creates a machine-wide shared communication channel. Sessions \"join\" the channel, send messages, publish structured context, and detect each other's online presence via Unix sockets.\n\n## Quick Start\n\n```bash\n# Install\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/claude-irc/install.sh | bash\n\n# Terminal 1\nclaude-irc join server\nclaude-irc msg client \"API ready. Check src/server/types/user.ts\"\n\n# Terminal 2\nclaude-irc join client\nclaude-irc inbox\nclaude-irc msg server \"Got it. Need avatarUrl in UserResponse\"\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `join <name>` | Join the channel with a peer name |\n| `who` | List peers with online/offline status |\n| `msg <peer> \"<text>\"` | Send a message to a peer |\n| `inbox` | Show unread messages |\n| `inbox <number>` | Read full message by index |\n| `inbox --all` | Show all messages including read |\n| `inbox clear` | Delete all messages |\n| `check [--quiet]` | Check for unread messages (hook-friendly) |\n| `watch [--interval N]` | One-shot watcher: print unread, mark read, exit; restart for next batch |\n| `topic \"<title>\"` | Publish structured context (stdin, same title = update) |\n| `topic --delete <n>` | Delete a topic by index |\n| `topic --clear` | Delete all your topics |\n| `board <peer> [n]` | List or read a peer's published topics |\n| `quit` | Leave the channel and clean up |\n| `upgrade` | Update to latest version |\n| `--version` | Show current version |\n\n## Features\n\n- **Real-time presence**: Unix domain socket per session for instant online/offline detection\n- **File-based messaging**: Reliable, persistent messages that survive process restarts\n- **Structured context**: Publish API contracts, schemas, or any structured information as topics\n- **Machine-wide**: All sessions on the same machine share a single channel\n- **Hook integration**: `PreToolUse` hook auto-surfaces new messages to Claude\n- **Background monitoring**: `watch` command enables event-driven reception via one-shot background tasks\n- **Stale cleanup**: Dead sessions are automatically detected and cleaned up\n\nFor conversational ping-pong, treat `watch` as a one-shot trigger: when it exits with unread messages, start a new `watch` first, then read/process/respond while the new watcher waits for the next batch.\n\n## Name Resolution\n\nCommands that need identity (`msg`, `inbox`, `topic`) resolve the peer name via:\n1. **Session marker** — written by `join`, matched by ancestor PID\n2. **`--name` flag** — fallback when session detection fails; only `user` is allowed without an active session\n3. Error if neither resolves\n\n**Reserved name:** `user` is the remote dashboard operator identity (the whip TUI or web dashboard). Agents may reply with `claude-irc msg user \"...\"`. The `--name user` flag is the only no-session override allowed.\n\n## How It Works\n\n```\nSession A (server)                    Session B (client)\n    │                                     │\n    ├── claude-irc join server            ├── claude-irc join client\n    │   ├── Register in registry.json     │   ├── Register in registry.json\n    │   └── Start daemon (socket)         │   └── Start daemon (socket)\n    │                                     │\n    ├── claude-irc msg client \"...\"       │\n    │   └── Write to inbox/client/        │\n    │                                     │\n    │                         [PreToolUse hook fires]\n    │                         claude-irc check --quiet\n    │                         → reads inbox/client/\n    │                         → \"[claude-irc] server: ...\"\n    │                                     │\n    │                         Claude B sees the message\n    │                         and incorporates into work\n```\n\n## Storage\n\nData is stored at `~/.claude-irc/`:\n\n```\n~/.claude-irc/\n├── registry.json          # Registered peers\n├── sockets/               # Unix domain sockets + PID files\n├── inbox/<peer>/           # Messages (JSON files)\n└── topics/<peer>/          # Published context (JSON files)\n```\n\n## Plugin Installation\n\nVia Claude Code Plugin:\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install claude-irc\n```\n\n## Build from Source\n\n```bash\ncd claude-irc\nmake build    # Build CLI binary\nmake test     # Run tests\nmake cross    # Cross-compile for all platforms\n```\n\n## License\n\nMIT\n",
+        "redit/README.md": "# redit\n\nA local cache layer for editing remote documents.\n\n- **Problem**: APIs that don't support partial updates (Confluence, Notion, etc.)\n- **Solution**: Edit locally with partial modifications, then update with a single API call\n\n<details>\n<summary>Storage Structure</summary>\n\n```\n~/.redit/<key-hash>/\n├── meta.json   # {\"key\": \"...\", \"created_at\": \"...\"}\n├── origin      # Original (immutable)\n└── working     # Working copy (Edit target)\n```\n\n</details>\n\n<details>\n<summary>Tips</summary>\n\n- Use `service:id` key format (e.g., `confluence:12345`, `notion:page-abc`)\n- Use `service:id:version` when version distinction is needed\n- Review `redit diff` and ask whether more changes are needed before pushing back\n- If more edits are requested soon, keep using the same key\n- Check `redit status` before pushing back — skip update if `clean`\n- Only `redit drop` after final confirmation and the remote update\n\n</details>\n\n## CLI\n\n### Installation\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/redit/install.sh | bash\n```\n\n### Quick Start\n\n```bash\necho \"$content\" | redit init \"confluence:12345\"  # Store locally\n# Edit the working file...\nredit diff \"confluence:12345\"                     # Review and confirm\nredit read \"confluence:12345\"                     # Get final content after final approval\nredit drop \"confluence:12345\"                     # Clean up after remote update\n```\n\n### Command Reference\n\n| Command | Description |\n|---------|-------------|\n| `redit init <key>` | Read stdin, create local cache, return working file path |\n| `redit get <key>` | Return working file path |\n| `redit read <key>` | Output working file content to stdout |\n| `redit status <key>` | Check if modified (`dirty` / `clean`) |\n| `redit diff <key>` | Show unified diff between origin and working |\n| `redit reset <key>` | Restore working file to original |\n| `redit drop <key>` | Remove all cached files for key |\n| `redit list` | List all managed keys with status |\n| `redit upgrade` | Upgrade to the latest version |\n| `redit version` | Show the current version |\n\n## Plugin\n\nInstalls the `redit` CLI automatically in Claude Code sessions:\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install redit\n```\n\n## Claude Code Workflow\n\n```\n1. content = <fetch command for page 12345>\n2. path = $(echo \"$content\" | redit init \"confluence:12345\")\n3. Edit <path> with partial modifications\n4. redit diff \"confluence:12345\" and ask whether more changes are needed\n5. If follow-up edits arrive soon, keep using the same key\n6. After final confirmation, final = $(redit read \"confluence:12345\")\n7. <update command>(id=\"12345\", content=final)\n8. redit drop \"confluence:12345\"\n```\n",
+        "vaultkey/README.md": "# vaultkey\n\nEncrypted secrets manager backed by a private Git repo. Store secrets locally with AES-256-GCM encryption and sync across machines via git.\n\n## Install\n\n### CLI\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/vaultkey/install.sh | bash\n```\n\nOr build from source:\n\n```bash\nmake build\n```\n\n### Plugin\n\nInstalls the `vaultkey` CLI automatically in Claude Code sessions:\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install vaultkey\n```\n\n## Quick Start\n\n```bash\n# 1. Initialize with a private repo\nvaultkey init git@github.com:yourname/secrets.git\n\n# 2. Store secrets\nvaultkey set menulens/prod JWT_SECRET \"my-jwt-secret\"\nvaultkey set menulens/dev JWT_SECRET \"dev-secret\"\n\n# 3. Retrieve\nvaultkey get menulens/prod JWT_SECRET\n\n# 4. Sync\nvaultkey push   # commit + push to remote\nvaultkey pull   # pull from remote\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `init <repo-url>` | Clone repo and create vault |\n| `set <scope> <key> <value>` | Store encrypted secret |\n| `get <scope> <key>` | Decrypt and print secret |\n| `list [prefix]` | List scopes/keys (no values) |\n| `delete <scope> <key>` | Remove a secret |\n| `push` | Commit and push changes |\n| `pull` | Pull latest from remote |\n\n## Password\n\nPassword is required for all encrypt/decrypt operations. Provided via (in priority order):\n\n1. `VAULTKEY_PASSWORD` environment variable\n2. `--password` flag\n3. Interactive prompt\n\n## Scope Convention\n\nScopes are free-form strings. Use `/` to organize by project and environment:\n\n```\nmenulens/dev\nmenulens/prod\nponte\nshared/global\n```\n\n`vaultkey list menulens` matches all scopes starting with `menulens`.\n\n## Security\n\n- **Encryption**: AES-256-GCM (authenticated encryption)\n- **Key derivation**: PBKDF2-SHA256 with 600,000 iterations\n- **Per-value nonce**: Each secret gets a unique 12-byte nonce\n- **File permissions**: vault.json is written with `0600`\n- **Password never stored**: Only the PBKDF2 salt is persisted\n\nEven if `vault.json` is exposed, secrets cannot be decrypted without the password.\n",
+        "webform/README.md": "# webform\n\nDynamic web form for collecting structured data from users. AI generates a compact schema, opens a browser form, and receives the submitted data as JSON.\n\n## The Problem\n\nTerminal prompts are fine for simple inputs, but collecting complex, multi-field, or sensitive data (passwords, API keys) is clunky. Filling a browser form is often faster and less error-prone.\n\n## The Solution\n\n`webform` opens a real web form in the browser. The AI describes what it needs as a compact schema, and the user fills it out with proper UI controls — dropdowns, checkboxes, password fields, file uploads, and more.\n\n## Quick Start\n\n```bash\n# Install CLI\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/webform/install.sh | bash\n\n# Open a form\nwebform <<'EOF'\nform \"API Config\"\nkey pw \"API Key\" req\nenv sel \"Environment\" req o=[dev,staging,prod]\nEOF\n```\n\n## Plugin\n\nInstalls the `webform` CLI automatically in Claude Code sessions:\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install webform\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `webform` | Read schema from stdin, open form, print result |\n| `webform schema` | Print schema format reference |\n| `webform --timeout N` | Set timeout in seconds (default: 300) |\n| `webform version` | Print version |\n| `webform upgrade` | Update to latest version |\n\n## Schema Format\n\nPreferred input is the DSL shown by `webform schema`. JSON still works as a fallback.\n\n```\nform \"Title\" [desc=\"Description\"] [timeout=120]\n<name> <type> \"<label>\" [opts...]\n```\n\n**Field types:**\n\n| Code | Type | Code | Type | Code | Type |\n|------|------|------|------|------|------|\n| `t` | text | `pw` | password | `ta` | textarea |\n| `n` | number | `sel` | select | `msel` | multiselect |\n| `rad` | radio | `cb` | checkbox | `url` | url |\n| `email` | email | `tel` | tel | `date` | date |\n| `time` | time | `dt` | datetime | `color` | color |\n| `range` | range | `file` | file | `json` | json editor |\n| `list` | dynamic list | `grp` | field group | | |\n\n**Common options:**\n\n| Key | Description | Key | Description |\n|-----|-------------|-----|-------------|\n| `req` | required | `ph` | placeholder |\n| `def` | default value | `o` | options array |\n| `pat` | regex pattern | `min` | min value/length |\n| `max` | max value/length | `step` | step increment |\n| `rows` | textarea rows | `accept` | file accept types |\n| `it` | list item type | `io.ph` | list item placeholder |\n| `multi` | multiple files (`file`) | | |\n\nNeed the full syntax and examples? Run `webform schema`.\n\n## Example\n\n```bash\nwebform <<'EOF'\nform \"Deploy Config\" timeout=120\nenv sel \"Environment\" req o=[dev,staging,prod]\nkey pw \"API Key\" req\nendpoints list \"Endpoints\" it=url io.ph=\"https://...\"\nnotify cb \"Send notification\"\nEOF\n```\n\nResult:\n```json\n{\"status\":\"submitted\",\"data\":{\"env\":\"prod\",\"key\":\"sk-...\",\"endpoints\":[\"https://...\"],\"notify\":true}}\n```\n\nStatus values: `submitted`, `cancelled`, `timeout`\n\n## How It Works\n\n1. CLI reads a schema from stdin\n2. Starts a temporary local HTTP server on a random port\n3. Opens the form in the default browser\n4. User fills out and submits (or cancels / times out)\n5. Server prints result JSON to stdout and exits\n6. Browser tab auto-closes\n\nSecurity: Each session uses a one-time token. Server binds to localhost only.\n\n## Build from Source\n\n```bash\ncd webform\nmake build    # Build CLI binary\nmake test     # Run tests\nmake cross    # Cross-compile for all platforms\n```\n\n## License\n\nMIT\n",
+        "whip/README.md": "# whip\n\nTask orchestrator for Claude Code — spawn parallel agent sessions, track dependencies, and monitor everything from a TUI or web dashboard.\n\n## Install\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/bang9/ai-tools/main/whip/install.sh | bash\n```\n\nOr via Claude Code Plugin:\n\n```bash\n/plugin marketplace add bang9/ai-tools\n/plugin install whip\n```\n\n## Quick Start\n\n```bash\nwhip create \"Auth module\" --desc \"Implement JWT authentication\"\nwhip create \"API endpoints\" --desc \"Build REST API for users\"\nwhip assign <auth-id> --master-irc whip-master\nwhip dashboard\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `create <title> [--desc/--file/stdin]` | Create a new task |\n| `list` | List all tasks with status |\n| `show <id>` | Show task details |\n| `assign <id> [--master-irc <name>]` | Spawn agent session |\n| `unassign <id>` | Kill session, reset to created |\n| `status <id> [new-status] [--note]` | Get/set status with notes |\n| `dep <id> --after <id>` | Set task dependencies |\n| `broadcast \"message\"` | Message all active sessions |\n| `retry <id>` | Retry failed task |\n| `resume <id>` | Resume task session interactively |\n| `kill <id>` | Force kill a task session |\n| `clean` | Remove completed/failed tasks |\n| `dashboard` | Live TUI dashboard |\n| `remote` | Start remote mode with web dashboard |\n\n## Task Lifecycle\n\n```\ncreated → assigned → in_progress → completed\n                                 → failed\n```\n\n- Tasks are stored in `~/.whip/tasks/<id>/task.json`\n- `assign` spawns a tmux session (or Terminal.app tab) with Claude Code\n- Dependent tasks auto-assign when prerequisites complete\n- Sessions communicate via `claude-irc`\n\n## Dashboard\n\n`whip dashboard` — live TUI with task list, status indicators, dependency graph, and auto-refresh.\n\n## Remote Mode\n\n`whip remote` starts a master agent session + HTTP API server for remote access.\n\n```bash\n# Requires tmux and cloudflared\nwhip remote\nwhip remote --tunnel your-tunnel.example.com\nwhip remote --backend codex --difficulty medium --port 8585\n```\n\n| Flag | Description |\n|------|-------------|\n| `--backend` | `claude` (default) or `codex` |\n| `--difficulty` | `easy`, `medium`, `hard` (default) |\n| `--port` | Serve port (default 8585) |\n| `--tunnel` | Cloudflare tunnel hostname |\n\nSettings are saved to `~/.whip/config.json` for reuse. With a tunnel, a **short URL** and **QR code** are generated for quick mobile access.\n\n### Web Dashboard\n\n- **Tasks** — real-time task list with status and detail view\n- **Chat** — IRC messaging with agent peers and topic boards\n- **Terminal** — live master session output with keyboard input, fullscreen mode, mobile touch scroll\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `/whip-plan` | Decompose work into tasks with dependency graph |\n| `/whip-start` | Dispatch agents with parallel execution |\n\n## How It Works\n\n1. Master session creates tasks and assigns them\n2. Each task spawns a tmux session running Claude Code with a prompt file\n3. Sessions coordinate via `claude-irc`\n4. On completion, dependent tasks auto-assign and master is notified\n\nSee [Workflow Guide (EN)](docs/workflow-en.md) | [워크플로우 가이드 (KO)](docs/workflow-ko.md)\n\n## Build from Source\n\n```bash\ncd whip && make build\n```\n\n## License\n\nMIT\n"
       },
       "plugins": [
-        {
-          "name": "redit",
-          "source": "./redit",
-          "description": "Remote Edit Layer - Local cache for efficiently editing remote documents that don't support partial updates",
-          "version": "1.0.0",
-          "author": {
-            "name": "Airen Kang"
-          },
-          "repository": "https://github.com/bang9/ai-tools",
-          "license": "MIT",
-          "keywords": [
-            "remote",
-            "edit",
-            "cache",
-            "confluence",
-            "notion",
-            "document"
-          ],
-          "category": "productivity",
-          "categories": [
-            "cache",
-            "confluence",
-            "document",
-            "edit",
-            "notion",
-            "productivity",
-            "remote"
-          ],
-          "install_commands": [
-            "/plugin marketplace add bang9/ai-tools",
-            "/plugin install redit@ai-tools"
-          ]
-        },
-        {
-          "name": "memex",
-          "source": "./memex",
-          "description": "Local Knowledge Graph for AI — stores, connects, and retrieves knowledge across conversations",
-          "version": "1.0.0",
-          "author": {
-            "name": "Airen Kang"
-          },
-          "repository": "https://github.com/bang9/ai-tools",
-          "license": "MIT",
-          "keywords": [
-            "knowledge",
-            "graph",
-            "memory",
-            "search",
-            "notes"
-          ],
-          "category": "productivity",
-          "categories": [
-            "graph",
-            "knowledge",
-            "memory",
-            "notes",
-            "productivity",
-            "search"
-          ],
-          "install_commands": [
-            "/plugin marketplace add bang9/ai-tools",
-            "/plugin install memex@ai-tools"
-          ]
-        },
         {
           "name": "claude-irc",
           "source": "./claude-irc",
           "description": "IRC-inspired inter-session communication for Claude Code agents",
-          "version": "1.0.0",
+          "version": "v1.35.2",
           "author": {
             "name": "Airen Kang"
           },
@@ -116,6 +55,132 @@
           "install_commands": [
             "/plugin marketplace add bang9/ai-tools",
             "/plugin install claude-irc@ai-tools"
+          ]
+        },
+        {
+          "name": "redit",
+          "source": "./redit",
+          "description": "Remote Edit Layer - Local cache for efficiently editing remote documents",
+          "version": "v1.35.2",
+          "author": {
+            "name": "Airen Kang"
+          },
+          "repository": "https://github.com/bang9/ai-tools",
+          "license": "MIT",
+          "keywords": [
+            "remote",
+            "edit",
+            "cache",
+            "document",
+            "confluence",
+            "notion"
+          ],
+          "category": "productivity",
+          "categories": [
+            "cache",
+            "confluence",
+            "document",
+            "edit",
+            "notion",
+            "productivity",
+            "remote"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bang9/ai-tools",
+            "/plugin install redit@ai-tools"
+          ]
+        },
+        {
+          "name": "vaultkey",
+          "source": "./vaultkey",
+          "description": "Encrypted secrets manager for Claude Code sessions backed by a private Git repo",
+          "version": "v1.35.2",
+          "author": {
+            "name": "Airen Kang"
+          },
+          "repository": "https://github.com/bang9/ai-tools",
+          "license": "MIT",
+          "keywords": [
+            "secrets",
+            "encryption",
+            "vault",
+            "credentials",
+            "git"
+          ],
+          "category": "productivity",
+          "categories": [
+            "credentials",
+            "encryption",
+            "git",
+            "productivity",
+            "secrets",
+            "vault"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bang9/ai-tools",
+            "/plugin install vaultkey@ai-tools"
+          ]
+        },
+        {
+          "name": "webform",
+          "source": "./webform",
+          "description": "Dynamic browser form for collecting structured user input in Claude Code sessions",
+          "version": "v1.35.2",
+          "author": {
+            "name": "Airen Kang"
+          },
+          "repository": "https://github.com/bang9/ai-tools",
+          "license": "MIT",
+          "keywords": [
+            "form",
+            "browser",
+            "input",
+            "structured-data",
+            "collection"
+          ],
+          "category": "productivity",
+          "categories": [
+            "browser",
+            "collection",
+            "form",
+            "input",
+            "productivity",
+            "structured-data"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bang9/ai-tools",
+            "/plugin install webform@ai-tools"
+          ]
+        },
+        {
+          "name": "whip",
+          "source": "./whip",
+          "description": "Task orchestrator for Claude Code — spawn and manage multiple task sessions",
+          "version": "v1.35.2",
+          "author": {
+            "name": "Airen Kang"
+          },
+          "repository": "https://github.com/bang9/ai-tools",
+          "license": "MIT",
+          "keywords": [
+            "task",
+            "orchestrator",
+            "parallel",
+            "session",
+            "management"
+          ],
+          "category": "productivity",
+          "categories": [
+            "management",
+            "orchestrator",
+            "parallel",
+            "productivity",
+            "session",
+            "task"
+          ],
+          "install_commands": [
+            "/plugin marketplace add bang9/ai-tools",
+            "/plugin install whip@ai-tools"
           ]
         }
       ]

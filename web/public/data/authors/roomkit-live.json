@@ -1,0 +1,53 @@
+{
+  "author": {
+    "id": "roomkit-live",
+    "display_name": "Roomkit",
+    "avatar_url": "https://avatars.githubusercontent.com/u/259731342?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "roomkit-skills",
+      "version": null,
+      "description": "Skills for building multi-channel AI agents with RoomKit",
+      "repo_full_name": "roomkit-live/roomkit-skills",
+      "repo_url": "https://github.com/roomkit-live/roomkit-skills",
+      "repo_description": "Skills for building multi-channel AI conversation agents",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-03T13:26:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"roomkit-skills\",\n  \"owner\": { \"name\": \"RoomKit\", \"email\": \"hello@roomkit.live\" },\n  \"metadata\": {\n    \"description\": \"Skills for building multi-channel AI agents with RoomKit\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"roomkit-dev\",\n      \"description\": \"Complete skill set for building multi-channel conversation agents with RoomKit — rooms, AI, voice, SMS, hooks, orchestration, and more\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./setup-project\",\n        \"./create-room\",\n        \"./create-ai-channel\",\n        \"./create-voice-agent\",\n        \"./create-sms-channel\",\n        \"./add-hooks\",\n        \"./create-multichannel\",\n        \"./setup-orchestration\",\n        \"./create-telegram-bot\",\n        \"./create-whatsapp-agent\",\n        \"./setup-postgres\",\n        \"./setup-telemetry\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# RoomKit Skills\n\nSkills for building multi-channel AI conversation agents with [RoomKit](https://www.roomkit.live). These skills teach AI coding assistants (Claude Code, Cursor, VS Code Copilot, Gemini CLI) how to build with RoomKit's room-based messaging framework.\n\nRoomKit is a pure async Python library that unifies SMS, RCS, Email, WhatsApp, Messenger, Teams, Telegram, Voice, WebSocket, HTTP, and AI channels through a single room abstraction. Messages flow into rooms, get processed by hooks, and broadcast to all attached channels with automatic content transcoding.\n\n## Installation\n\n### Claude Code Plugin (recommended)\n\n```bash\nclaude plugin marketplace add https://github.com/roomkit-live/roomkit-skills\nclaude plugin install roomkit-dev\n```\n\n### Manual Copy\n\nClone this repo next to your project and reference it in your Claude Code settings:\n\n```bash\ngit clone https://github.com/roomkit-live/roomkit-skills.git\n```\n\n## Available Skills\n\n| Skill | Description |\n|-------|-------------|\n| [setup-project](./setup-project/) | Install RoomKit, create your first room, run the quickstart |\n| [create-room](./create-room/) | Room lifecycle, participants, channel binding, permissions |\n| [create-ai-channel](./create-ai-channel/) | AI providers (Anthropic, OpenAI, Gemini, Mistral), tools, system prompts |\n| [create-voice-agent](./create-voice-agent/) | Voice channel with STT/TTS, audio pipeline, interruption handling |\n| [create-sms-channel](./create-sms-channel/) | SMS/RCS via Twilio, Sinch, Telnyx with delivery status |\n| [add-hooks](./add-hooks/) | Hook system with 40+ triggers, sync/async execution, filtering |\n| [create-multichannel](./create-multichannel/) | Bridge multiple channel types in one room with content transcoding |\n| [setup-orchestration](./setup-orchestration/) | ConversationRouter, phases, handoffs, delegation, pipeline stages |\n| [create-telegram-bot](./create-telegram-bot/) | Telegram Bot API channel with webhook parsing |\n| [create-whatsapp-agent](./create-whatsapp-agent/) | WhatsApp Cloud API and Personal (neonize) channels |\n| [setup-postgres](./setup-postgres/) | PostgresStore for production persistence |\n| [setup-telemetry](./setup-telemetry/) | OpenTelemetry, console telemetry, protocol tracing |\n\n## Configuration\n\n**Requirements:** Python 3.12+\n\n```bash\nuv add roomkit        # recommended\npip install roomkit   # alternative\n```\n\nFor voice features:\n\n```bash\nuv add \"roomkit[voice]\"       # STT/TTS/pipeline\nuv add \"roomkit[local-audio]\" # local mic/speaker\n```\n\n## Quick Start\n\n### 1. Install RoomKit\n\n```bash\nuv init my-agent && cd my-agent\nuv add roomkit\n```\n\n### 2. Create your first room\n\n```python\nfrom __future__ import annotations\n\nimport asyncio\nfrom roomkit import RoomKit, WebSocketChannel, InboundMessage, TextContent\n\nasync def main() -> None:\n    kit = RoomKit()\n\n    ws = WebSocketChannel(\"ws-user\")\n    kit.register_channel(ws)\n\n    await kit.create_room(room_id=\"my-room\")\n    await kit.attach_channel(\"my-room\", \"ws-user\")\n\n    await kit.process_inbound(\n        InboundMessage(channel_id=\"ws-user\", sender_id=\"user\", content=TextContent(body=\"Hello!\"))\n    )\n\nasyncio.run(main())\n```\n\n### 3. Add an AI channel\n\n```python\nfrom roomkit import AnthropicAIProvider, AnthropicConfig, ChannelCategory\nfrom roomkit.channels.ai import AIChannel\n\nai = AIChannel(\n    \"ai-assistant\",\n    provider=AnthropicAIProvider(AnthropicConfig(api_key=\"sk-...\")),\n    system_prompt=\"You are a helpful assistant.\",\n)\nkit.register_channel(ai)\nawait kit.attach_channel(\"my-room\", \"ai-assistant\", category=ChannelCategory.INTELLIGENCE)\n```\n\n### 4. Add hooks for control\n\n```python\nfrom roomkit import HookTrigger, HookResult, RoomEvent, RoomContext\n\n@kit.hook(HookTrigger.BEFORE_BROADCAST)\nasync def log_messages(event: RoomEvent, ctx: RoomContext) -> HookResult:\n    print(f\"[{event.source.channel_id}] {event.content}\")\n    return HookResult.allow()\n```\n\n## API Reference\n\n- **Full documentation:** https://www.roomkit.live\n- **RFC specification:** Available in the `roomkit-specs` repository\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "roomkit-dev",
+          "description": "Complete skill set for building multi-channel conversation agents with RoomKit — rooms, AI, voice, SMS, hooks, orchestration, and more",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./setup-project",
+            "./create-room",
+            "./create-ai-channel",
+            "./create-voice-agent",
+            "./create-sms-channel",
+            "./add-hooks",
+            "./create-multichannel",
+            "./setup-orchestration",
+            "./create-telegram-bot",
+            "./create-whatsapp-agent",
+            "./setup-postgres",
+            "./setup-telemetry"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add roomkit-live/roomkit-skills",
+            "/plugin install roomkit-dev@roomkit-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
