@@ -1,0 +1,55 @@
+{
+  "author": {
+    "id": "myrtlepn",
+    "display_name": "myrtlepn",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6927275?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "gran-maestro",
+      "version": null,
+      "description": "AI 오케스트레이션의 그랜드마스터 — PM이 코드를 쓰지 않고 AI 에이전트를 지휘하여 개발",
+      "repo_full_name": "myrtlepn/gran-maestro",
+      "repo_url": "https://github.com/myrtlepn/gran-maestro",
+      "repo_description": null,
+      "signals": {
+        "stars": 18,
+        "forks": 1,
+        "pushed_at": "2026-03-09T15:38:16Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"gran-maestro\",\n  \"description\": \"AI 오케스트레이션의 그랜드마스터 — PM이 코드를 쓰지 않고 AI 에이전트를 지휘하여 개발\",\n  \"owner\": {\n    \"name\": \"bran.dev\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"mst\",\n      \"description\": \"AI 오케스트레이션의 그랜드마스터 — PM이 코드를 쓰지 않고 AI 에이전트를 지휘하여 개발\",\n      \"version\": \"0.53.0\",\n      \"author\": {\n        \"name\": \"bran.dev\"\n      },\n      \"source\": \"./\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/myrtlepn/gran-maestro\",\n      \"tags\": [\n        \"orchestration\",\n        \"ai-agents\",\n        \"claude-code\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"mst\",\n  \"description\": \"AI 오케스트라의 그랜드마스터 — PM이 코드를 쓰지 않고 AI 에이전트를 지휘하여 개발\",\n  \"version\": \"0.53.0\",\n  \"author\": {\n    \"name\": \"myrtlepn\"\n  },\n  \"repository\": \"https://github.com/myrtlepn/gran-maestro\",\n  \"homepage\": \"https://github.com/myrtlepn/gran-maestro\",\n  \"license\": \"SEE LICENSE IN LICENSE\",\n  \"keywords\": [\n    \"orchestration\",\n    \"pm\",\n    \"ai-agents\",\n    \"claude-code\"\n  ],\n  \"skills\": \"./skills/\",\n  \"agents\": [\n    \"./agents/pm-conductor.md\",\n    \"./agents/architect.md\",\n    \"./agents/outsource-brief.md\",\n    \"./agents/feedback-composer.md\",\n    \"./agents/schema-designer.md\",\n    \"./agents/ui-designer.md\"\n  ]\n}\n",
+        "README.md": "# Gran Maestro\n\n[한국어](README.md) | [English](README.en.md)\n\n> **\"I am the Maestro — I conduct, I don't code.\"**\n\nAI에게 모호한 요청을 던지면 빠르게 엉뚱한 결과가 나옵니다.\n필요한 건 코드를 짜기 전, AI와 함께 계획을 세우는 단계입니다.\nGran Maestro는 그 계획 수립 단계에서 AI를 사고 파트너로 만듭니다.\n\n```bash\n/plugin marketplace add myrtlepn/gran-maestro\n```\n\n![계획이 토론되고 검증되는 실제 화면](docs/assets/dashboard-ideation.png)\n\n[Q&A 계획 수립](#기능-요약) | [다각도 브레인스토밍](#기능-요약) | [팀 토론](#기능-요약) | [UI 시각화](#기능-요약) | [코드 탐색](docs/skills-reference.md)\n\n---\n\n기존 스펙 문서나 PRD는 작성과 구현 사이에 단절을 만듭니다. 문맥이 끊긴 채 구현에 들어가면, 시간과 집중과 신뢰를 함께 잃습니다. 계획과 실행이 하나의 흐름으로 이어지는 방식이 필요합니다.\n\n`/mst:plan`은 코드를 짜는 대신 핵심 결정을 질문으로 꺼냅니다. 답변이 돌아올 때마다 다음 질문이 구체화되어, 모호했던 요청이 실행 가능한 플랜으로 정제됩니다. 막히면 AI 팀이 다각도로 의견을 모으고(ideation), 합의에 도달할 때까지 토론합니다(discussion).\n\n```\n> /mst:plan \"로그인 화면 개선해줘\"\n\n[PM] 두 가지 결정이 필요합니다:\n  1. 소셜 로그인을 추가할까요, 기존 폼을 개선할까요?\n  2. 세션 유지는 JWT로 바꿀까요?\n\n> 막히면 ideation으로 AI 팀의 의견을 모을 수 있습니다.\n```\n\n텍스트만으로 합의하면 빈칸이 남습니다 — 화면은 Stitch로 즉석 시각화하고, 완성된 플랜은 다중 AI가 역할별로 검토합니다(Plan Review). 검증된 플랜은 Codex와 Gemini 개발팀에 전달되어 자동으로 구현됩니다. 대시보드에서 진행 상태와 근거를 실시간으로 확인할 수 있습니다. 아래 Quick Start에서 바로 시작하세요.\n\n## Quick Start\n\nClaude Code(v1.0.33 이상)에서:\n\n```bash\n/plugin marketplace add myrtlepn/gran-maestro\n/plugin install mst@gran-maestro\n```\n\n```\n# 1. 여러 요청을 plan으로 상세화\n/mst:plan 로그인 화면 개선\n/mst:plan API 엔드포인트 추가\n/mst:plan 대시보드 오류 수정\n\n# 2. 스펙 확인 후 일괄 시작\n/mst:list\n/mst:approve PLN-001 PLN-002 PLN-003\n```\n\n단건 실행도 가능합니다: `/mst:request`\n\n상세 설치 가이드: [docs/quick-start.md](docs/quick-start.md)\n\n## What's New\n\nChrome Extension으로 브라우저에서 UI 요소를 직접 선택해 캡처로 저장할 수 있습니다.\n저장된 캡처는 `/mst:picks`로 목록을 확인하고 원하는 항목을 골라낼 수 있습니다.\n원하는 캡처를 선택하고 \"plan으로 전환해줘\"라고 입력하면 구현 계획이 시작됩니다.\n\n```\n/mst:picks   # 캡처 목록 확인 → 원하는 항목 선택 후 \"plan으로 전환해줘\" 입력\n```\n\n## 기능 요약\n\n| 기능 | 명령 | 용도 |\n|------|------|------|\n| Q&A 계획 수립 | `/mst:plan` | 질문으로 요구사항 정제, 검증된 플랜 생성 |\n| 다각도 브레인스토밍 | `/mst:ideation` | AI 팀이 병렬로 의견 수집, PM이 종합 |\n| 팀 토론 | `/mst:discussion` | 합의에 도달할 때까지 반복 토론 |\n| 버그 조사 | `/mst:debug` | 3 AI가 병렬로 버그 조사, 종합 리포트 |\n| UI 시각화 | `/mst:stitch` | Stitch로 UI 목업 즉석 생성 |\n| 코드 탐색 | `/mst:explore` | 코드베이스 자율 탐색, 스펙 근거 확보 |\n\n전체 스킬 목록: [docs/skills-reference.md](docs/skills-reference.md)\n\n## 문서\n\n**시작하기**\n- [빠른 시작 가이드](docs/quick-start.md) — 사전 요구사항, 설치, Stitch MCP 설정, 인증 방법\n- [설정 관리](docs/configuration.md) — config.json 전체 옵션 레퍼런스\n\n**심화**\n- [스킬 레퍼런스](docs/skills-reference.md) — 30개 스킬 상세 사용법\n- [대시보드](docs/dashboard.md) — 허브 구조, 뷰, API 엔드포인트\n- [베스트 프랙티스](docs/best-practices.md) — 효율적인 워크플로우 패턴\n- [OMX 가이드](docs/omx-guide.md) — oh-my-codex 설치, AGENTS.md 커스터마이징, 트리거 레퍼런스\n\n**레퍼런스**\n- [용어 사전](docs/glossary.md) — 공식 용어 및 ID 체계\n- [변경 이력](CHANGELOG.md) — 버전별 변경사항\n\n## 라이선스\n\nMIT License — 자세한 내용은 [LICENSE](LICENSE)를 참조하세요.\n"
+      },
+      "plugins": [
+        {
+          "name": "mst",
+          "description": "AI 오케스트레이션의 그랜드마스터 — PM이 코드를 쓰지 않고 AI 에이전트를 지휘하여 개발",
+          "version": "0.53.0",
+          "author": {
+            "name": "bran.dev"
+          },
+          "source": "./",
+          "category": "productivity",
+          "homepage": "https://github.com/myrtlepn/gran-maestro",
+          "tags": [
+            "orchestration",
+            "ai-agents",
+            "claude-code"
+          ],
+          "categories": [
+            "ai-agents",
+            "claude-code",
+            "orchestration",
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add myrtlepn/gran-maestro",
+            "/plugin install mst@gran-maestro"
+          ]
+        }
+      ]
+    }
+  ]
+}

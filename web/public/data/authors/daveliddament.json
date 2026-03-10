@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "DaveLiddament",
+    "display_name": "Dave Liddament",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6787687?u=d6d75956b3d1627ade662faa49814a5a926ef704&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "php-claude-skills",
+      "version": null,
+      "description": "Various skills for PHP projects",
+      "repo_full_name": "DaveLiddament/php-claude-skills",
+      "repo_url": "https://github.com/DaveLiddament/php-claude-skills",
+      "repo_description": "Claude skills for PHP projects",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-08T23:00:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"php-claude-skills\",\n  \"owner\": {\n    \"name\": \"Dave Liddament\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"dave-liddament\",\n      \"description\": \"Various skills for PHP projects\",\n      \"source\": \"./plugins/dave-liddament\"\n    }\n  ]\n}\n",
+        "README.md": "# PHP Claude Skills\n\nA Claude Code plugin providing skills for PHP projects.\n\n## Installation\n\nFrom within a Claude Code session, run:\n\n```\n/plugin marketplace add DaveLiddament/php-claude-skills\n/plugin install dave-liddament@php-claude-skills\n```\n\nFor local testing:\n\n```bash\nclaude --plugin-dir /path/to/php-claude-skills\n```\n\n## Skills\n\nSkills are invoked as `/dave-liddament:<skill-name>`.\n\n- [`docker-php-cli`](#docker-php-cli) — Docker setup for PHP CLI projects\n- [`php-project-setup`](#php-project-setup) — Standard PHP project tooling and config\n- [`makefile-php-cli`](#makefile-php-cli) — Makefile wrapping Docker and PHP commands\n- [`phpstan-custom-rule`](#phpstan-custom-rule) — Create custom PHPStan rules\n\n### `docker-php-cli`\n\nSet up Docker for a PHP CLI project with Xdebug support.\n\n- Generates Dockerfile and docker-compose.yml\n- Xdebug enabled by default, easy to toggle off\n- Composer cache persisted via Docker volume\n- PHP version configurable via build arg\n- Updates CLAUDE.md to instruct Claude to use Docker for all PHP commands\n\n```bash\n/dave-liddament:docker-php-cli\n```\n\n### `php-project-setup`\n\nSet up a new PHP project or complete the setup of an existing one. Works incrementally — checks what already exists and only adds what's missing.\n\nIncludes:\n\n- Standard directory structure (`src/`, `tests/`, `utils/`)\n- PHP 8.3+ requirement\n- Composer dependencies: PHPStan (with strict rules, PHPUnit, webmozart-assert, php-language-extensions, and disallowed-calls extensions), PHPUnit, and php-language-extensions\n- Isolated dev tools via `bamarni/composer-bin-plugin`: PHP-CS-Fixer, parallel-lint, composer-require-checker, and composer-unused\n- Composer scripts for CI, linting, static analysis, code style, and testing\n- Template configs for PHPStan and PHP-CS-Fixer\n- `.gitignore` setup\n\n```bash\n/dave-liddament:php-project-setup\n```\n\n### `makefile-php-cli`\n\nCreate a Makefile wrapping Docker and PHP tooling for a CLI project.\n\n- OS detection with Linux user mapping for correct file permissions\n- Docker targets: `build`, `up`, `start`, `down`, `logs`\n- App targets generated dynamically from `composer.json` scripts\n- Always includes `app/shell` and `app/composer` with passthrough params\n- Self-documenting via `make help`\n- Updates CLAUDE.md to prefer Make targets over direct Docker commands\n\n```bash\n/dave-liddament:makefile-php-cli\n```\n\n### `phpstan-custom-rule`\n\nCreate a custom PHPStan rule with tests and fixtures. Handles both initial environment setup (directories, autoloading, test suite, config) and rule creation.\n\n- Sets up `utils/phpstan/` directory structure on first use\n- Creates test fixtures first for review before implementing the rule\n- Generates rule class, test class, and fixture files\n- Registers the rule in `phpstan.neon`\n- Supports error message placeholders and custom formatters via `phpstan-rule-test-helper`\n\n```bash\n/dave-liddament:phpstan-custom-rule Disallow echo statements\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "dave-liddament",
+          "description": "Various skills for PHP projects",
+          "source": "./plugins/dave-liddament",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add DaveLiddament/php-claude-skills",
+            "/plugin install dave-liddament@php-claude-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

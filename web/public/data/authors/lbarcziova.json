@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "lbarcziova",
+    "display_name": "Laura Barcziová",
+    "avatar_url": "https://avatars.githubusercontent.com/u/49026743?u=65866b002a08dd2e5cb3e3facb36ea80fe065b5e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-backport-poc",
+      "version": null,
+      "description": "Backport upstream patches to RHEL/CentOS dist-git packages",
+      "repo_full_name": "lbarcziova/claude-backport-poc",
+      "repo_url": "https://github.com/lbarcziova/claude-backport-poc",
+      "repo_description": null,
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-09T13:33:23Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n    \"name\": \"claude-backport-poc\",\n    \"owner\": {\n        \"name\": \"lbarczio\"\n    },\n    \"plugins\": [\n        {\n            \"name\": \"claude-backport\",\n            \"source\": \"./claude-backport-poc/\",\n            \"description\": \"Backport upstream patches to RHEL/CentOS dist-git packages\"\n        }\n    ]\n}\n",
+        "README.md": "# Claude Backport POC\n\nClaude Code plugin POC for backporting upstream patches to RHEL/CentOS dist-git packages.\n\n> **Note:** This plugin is intended to be run inside a VM, as it performs mock builds during the backport process.\n\n## Prerequisites\n\n- Claude Code CLI installed and configured\n- `centpkg` installed and configured\n- `mock` installed and configured\n- `git` with access to upstream repositories\n- `podman` (optional, for CVE reproducer testing)\n\n## Installation\n\nAdd the marketplace and install the plugin:\n\n```\n/plugin marketplace add https://github.com/lbarczio/claude-backport-poc\n/plugin install claude-backport-poc@claude-backport\n```\n\nVerify the installation:\n\n```\n/plugin\n```\n\n### Local Development\n\n```bash\ngit clone https://github.com/lbarczio/claude-backport-poc.git\nclaude\n/plugin marketplace add ./claude-backport-poc\n/plugin install claude-backport-poc@claude-backport\n```\n\n## Usage\n\nFrom inside a dist-git repository clone:\n\n```bash\n/claude-backport:backport JIRA_ISSUE BRANCH PATCH_URL [REPRODUCER_URL]\n```\n\n### Examples\n\n```bash\n# Basic backport\n/claude-backport:backport RHEL-12345 c10s https://gitlab.com/libtiff/libtiff/-/commit/abc123.patch\n\n# With CVE reproducer verification\n/claude-backport:backport RHEL-67890 c10s https://github.com/openssl/openssl/commit/def456.patch https://raw.githubusercontent.com/example/cve-poc/main/reproducer.c\n\n# Multiple patches (comma-separated)\n/claude-backport:backport RHEL-11111 c10s https://github.com/curl/curl/commit/aaa.patch,https://github.com/curl/curl/commit/bbb.patch\n```\n\n## What It Does\n\n1. Creates a working branch from the provided base branch\n2. Downloads and applies upstream patches using cherry-pick (preferred) or git-am (fallback)\n3. Updates the spec file with new Patch tags\n4. Verifies patches apply with `centpkg prep`\n5. Generates SRPM and runs a mock build\n6. (Optional) Reproduces the CVE before/after to verify the fix\n\n## Available Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| `claude-backport` | Backport upstream patches to RHEL/CentOS dist-git packages |\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-backport",
+          "source": "./claude-backport-poc/",
+          "description": "Backport upstream patches to RHEL/CentOS dist-git packages",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add lbarcziova/claude-backport-poc",
+            "/plugin install claude-backport@claude-backport-poc"
+          ]
+        }
+      ]
+    }
+  ]
+}

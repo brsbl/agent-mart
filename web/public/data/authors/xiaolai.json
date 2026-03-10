@@ -315,6 +315,36 @@
           ]
         }
       ]
+    },
+    {
+      "name": "xiaolai-local-marketplace",
+      "version": null,
+      "description": "Strict TDD workflow plugin with orchestrated subagents and enforcement hooks.",
+      "repo_full_name": "xiaolai/mecha.im",
+      "repo_url": "https://github.com/xiaolai/mecha.im",
+      "repo_description": "Mecha: Run an army of bots on your own machines. ",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-03-10T05:54:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"xiaolai-local-marketplace\",\n  \"owner\": {\n    \"name\": \"xiaolai\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tdd-guardian-for-claude\",\n      \"version\": \"0.1.0\",\n      \"description\": \"Strict TDD workflow plugin with orchestrated subagents and enforcement hooks.\",\n      \"source\": \"./plugins/tdd-guardian-for-claude\"\n    }\n  ]\n}\n",
+        "README.md": "# Mecha\n\nRun an army of bots on your own machines. Each bot is a Claude Code process with its own workspace, identity, and schedule.\n\n## Why\n\nYou need more than one AI assistant. You need a team — a coder, a reviewer, a researcher, a monitor — each focused on its own job, running on your hardware, under your control.\n\nMecha makes this possible. It wraps Claude Code (specifically) into managed processes called **bots**. You define a bot with a markdown file — its system prompt, permissions, schedule, tools. Then Mecha spawns it, sandboxes it, and keeps it running.\n\n## What a bot is\n\nA bot is a markdown file that becomes a Claude Code process.\n\nThe markdown file defines who the bot is — its personality, instructions, and constraints. Mecha reads the file, spawns a Claude Code session with those settings, and manages the process lifecycle.\n\n```\nbots/\n├── coder/\n│   ├── CLAUDE.md          ← the bot's identity and instructions\n│   ├── config.json        ← port, workspace, model, schedule\n│   └── sessions/          ← conversation history (JSONL)\n├── reviewer/\n│   ├── CLAUDE.md\n│   ├── config.json\n│   └── sessions/\n└── researcher/\n    ├── CLAUDE.md\n    ├── config.json\n    └── sessions/\n```\n\n## Active, not passive\n\nMost AI setups wait for you to type something. Mecha bots can be **active**:\n\n- **Scheduled** — run tasks on a cron schedule (check logs every hour, review PRs daily)\n- **Responsive** — listen for events via webhooks or mesh queries from other bots\n- **Autonomous** — work through multi-step tasks independently within their sandbox\n\nA bot sitting idle is a bot not earning its keep.\n\n## Tree structure\n\nEach bot is a directory with a markdown file. Organize them in a tree — group by project, team, or role. The directory structure is your org chart.\n\n```\nbots/\n├── frontend/\n│   ├── coder/\n│   │   └── CLAUDE.md     ← \"You write React components...\"\n│   ├── reviewer/\n│   │   └── CLAUDE.md     ← \"You review PRs for quality...\"\n│   └── tester/\n│       └── CLAUDE.md     ← \"You write and maintain tests...\"\n├── backend/\n│   ├── api-dev/\n│   │   └── CLAUDE.md     ← \"You build API endpoints...\"\n│   └── db-admin/\n│       └── CLAUDE.md     ← \"You manage database migrations...\"\n└── ops/\n    ├── monitor/\n    │   └── CLAUDE.md     ← \"You watch logs and alert on errors...\"\n    └── deployer/\n        └── CLAUDE.md     ← \"You run deployments on schedule...\"\n```\n\nEach markdown file defines a bot's identity, instructions, and constraints. Mecha reads the file and spawns a Claude Code process from it.\n\n## Built on Claude Code\n\nMecha is not a generic AI framework. It runs Claude Code — the same CLI tool Anthropic ships. Every bot gets the full Claude Code toolset: file editing, bash execution, web search, MCP servers.\n\nThis means your bots can do real work: write code, run tests, read documentation, manage files. They operate in real workspaces on real filesystems.\n\n## Install\n\n```bash\nbrew install xiaolai/tap/mecha\n```\n\n## Quick start\n\n```bash\n# Initialize\nmecha init\n\n# Start the runtime (background)\nmecha start -d\n\n# Spawn a bot\nmecha bot spawn coder ~/my-project\n\n# Chat with it\nmecha bot chat coder \"refactor the auth module\"\n\n# Give it a schedule\nmecha schedule add coder --cron \"0 9 * * *\" --prompt \"review open PRs and summarize\"\n```\n\n## Features\n\n- **CLI-first** — every feature works from the terminal. The dashboard is optional.\n- **Sandboxed** — each bot runs in OS-level isolation (macOS sandbox-exec, Linux bwrap)\n- **Metered** — track API costs per bot, set daily budgets, auto-pause overspenders\n- **Networked** — bots query each other through a permission-controlled mesh\n- **Persistent** — conversation history survives restarts as plain JSONL files\n- **Multi-machine** — deploy across machines, manage from one place\n\n## License\n\nISC\n"
+      },
+      "plugins": [
+        {
+          "name": "tdd-guardian-for-claude",
+          "version": "0.1.0",
+          "description": "Strict TDD workflow plugin with orchestrated subagents and enforcement hooks.",
+          "source": "./plugins/tdd-guardian-for-claude",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add xiaolai/mecha.im",
+            "/plugin install tdd-guardian-for-claude@xiaolai-local-marketplace"
+          ]
+        }
+      ]
     }
   ]
 }

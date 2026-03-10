@@ -1,0 +1,168 @@
+{
+  "author": {
+    "id": "htxryan",
+    "display_name": "Ryan Henderson",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1981049?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-operators",
+      "version": null,
+      "description": "A plugin marketplace for Claude Code operator subagents. Each operator wraps a CLI tool behind a dedicated subagent with enforcement hooks that block direct CLI usage.",
+      "repo_full_name": "htxryan/agent-operators",
+      "repo_url": "https://github.com/htxryan/agent-operators",
+      "repo_description": "Claude Code plugin marketplace for operator subagents",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-09T19:26:22Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-operators\",\n  \"description\": \"A plugin marketplace for Claude Code operator subagents. Each operator wraps a CLI tool behind a dedicated subagent with enforcement hooks that block direct CLI usage.\",\n  \"author\": \"htxryan\",\n  \"owner\": {\n    \"name\": \"htxryan\",\n    \"url\": \"https://github.com/htxryan\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"operator-system\",\n      \"description\": \"Base infrastructure for operator subagents. Provides CLI enforcement hooks, subagent lifecycle tracking, the git-operator agent, and a scaffolding skill for creating new operators.\",\n      \"source\": \"./plugins/operator-system\",\n      \"keywords\": [\"operators\", \"subagents\", \"git\", \"enforcement\", \"hooks\"]\n    },\n    {\n      \"name\": \"operator-github\",\n      \"description\": \"GitHub operator subagent. Guards the gh CLI and provides expert GitHub operations (PRs, issues, Actions, releases).\",\n      \"source\": \"./plugins/operator-github\",\n      \"keywords\": [\"github\", \"gh\", \"pull-requests\", \"issues\", \"actions\"]\n    },\n    {\n      \"name\": \"operator-bun\",\n      \"description\": \"Bun runtime and package manager operator subagent. Guards bun and bunx CLI commands.\",\n      \"source\": \"./plugins/operator-bun\",\n      \"keywords\": [\"bun\", \"bunx\", \"package-manager\", \"runtime\", \"testing\"]\n    },\n    {\n      \"name\": \"operator-cloudflare-wrangler\",\n      \"description\": \"Cloudflare Workers operator subagent. Guards the wrangler CLI for deployments, secrets, KV, R2, Queues, and more.\",\n      \"source\": \"./plugins/operator-cloudflare-wrangler\",\n      \"keywords\": [\"cloudflare\", \"wrangler\", \"workers\", \"kv\", \"r2\", \"queues\"]\n    },\n    {\n      \"name\": \"operator-drizzle\",\n      \"description\": \"Drizzle ORM operator subagent. Guards the drizzle-kit CLI for migrations, schema push/pull, and Drizzle Studio.\",\n      \"source\": \"./plugins/operator-drizzle\",\n      \"keywords\": [\"drizzle\", \"drizzle-kit\", \"orm\", \"migrations\", \"database\"]\n    },\n    {\n      \"name\": \"operator-neon\",\n      \"description\": \"Neon Postgres operator subagent. Guards the neonctl CLI for branch management, connection strings, and database operations.\",\n      \"source\": \"./plugins/operator-neon\",\n      \"keywords\": [\"neon\", \"neonctl\", \"postgres\", \"database\", \"branching\"]\n    }\n  ]\n}\n",
+        "README.md": "# Agent Operators\n\nA collection of Claude Code plugins that enforce CLI tool usage through operator subagents. Each plugin guards specific CLI commands and redirects to specialized subagents for safe, consistent execution.\n\n## Table of Contents\n\n- [Why the Operator Pattern?](#why-the-operator-pattern)\n- [Plugins](#plugins)\n- [How It Works](#how-it-works)\n- [Installation](#installation)\n- [Creating Custom Operators](#creating-custom-operators)\n- [Project-Local Overrides](#project-local-overrides)\n- [How Subagent Bypass Works](#how-subagent-bypass-works)\n\n## Why the Operator Pattern?\n\nAI agents can run CLI tools directly, but every command and its output consumes the main agent's context window. A handful of `git` or `gh` invocations can burn through context fast, forcing earlier compaction and degrading the agent's ability to track your actual task. The main agent also has broad permissions — there's no guardrail preventing a careless `git push --force` or `wrangler deploy` to the wrong environment.\n\nThe **operator pattern** (agent-as-tool) solves this by routing CLI execution through specialized subagents:\n\n1. **Hooks intercept** guarded commands in the main agent context and block them\n2. **The main agent delegates** to a purpose-built operator subagent instead\n3. **The operator executes** with its own dedicated context window and returns a concise result\n\nThis gives you:\n\n- **Context isolation** — The primary benefit. Each operator runs in its own context window, dedicated to a specific tool and task. CLI output, retries, and troubleshooting stay contained in the subagent. The main agent's context stays focused on your actual work, letting it run longer before requiring compaction.\n- **Cost efficiency** — Operators can run on cheaper, faster models. Most CLI operations don't need your most capable model — a Sonnet-class agent handles `gh pr create` or `bun install` just fine, while Opus stays focused on the work that actually needs it.\n- **Safety** — Operators have scoped permissions and built-in safeguards. The main agent can't accidentally force-push or deploy to production; each operator enforces its own guardrails.\n- **Consistency** — Every `gh pr create` goes through the same operator with the same conventions. No variation depending on how the main agent decides to construct a command.\n- **Composability** — Operators are modular plugins. Install only what you need, create custom operators for your own CLIs, and override mappings per-project.\n\nThis isn't specific to the operators in this repo — it's a general pattern you can apply to any CLI tool your agent needs to use.\n\n## Plugins\n\n| Plugin | CLI Guards | Operator | Description |\n|--------|-----------|----------|-------------|\n| `operator-system` | `git` | git-operator | Base infrastructure + git operator + create-operator skill |\n| `operator-github` | `gh` | operator-github | GitHub CLI operations (PRs, issues, releases) |\n| `operator-bun` | `bun`, `bunx` | operator-bun | Bun package manager and runtime operations |\n| `operator-cloudflare-wrangler` | `wrangler` | operator-cloudflare-wrangler | Cloudflare Workers, KV, R2, D1, and deployments |\n| `operator-drizzle` | `drizzle-kit` | operator-drizzle | Drizzle ORM migrations, schema push, and studio |\n| `operator-neon` | `neonctl` | operator-neon | Neon Postgres branches, connections, and projects |\n\n## How It Works\n\nEach plugin uses Claude Code hooks to intercept Bash tool calls. When a guarded CLI command is detected in the main agent context, the hook blocks execution and instructs the agent to use the corresponding operator subagent instead.\n\nThe **operator-system** plugin provides the shared infrastructure:\n- **PreToolUse hook** (`enforce-operator.sh`): Checks commands against the operator map and blocks direct CLI usage in the main agent, while allowing subagents through via the `agent_type` field\n- **git-operator agent**: The foundational git operator\n- **create-operator skill**: A scaffolding command to create new operator subagents\n\nIndividual operator plugins (github, bun, cloudflare, drizzle, neon) each provide:\n- Their own `enforce-operator.sh` hook to guard their specific CLI commands\n- An agent markdown file defining the operator subagent behavior\n- An `operator-map.json` mapping CLI commands to operator names\n\n## Installation\n\n**1. Add the marketplace** — Run this in Claude Code to register the plugin registry:\n\n```\n/plugin marketplace add htxryan/claude-operators\n```\n\n**2. Install the base plugin** — This is required and provides the enforcement hooks, git-operator, and scaffolding skill:\n\n```\n/plugin install operator-system@agent-operators\n```\n\n**3. Install operator plugins** — Add whichever operators you need:\n\n```\n/plugin install operator-github@agent-operators\n/plugin install operator-bun@agent-operators\n/plugin install operator-cloudflare-wrangler@agent-operators\n/plugin install operator-drizzle@agent-operators\n/plugin install operator-neon@agent-operators\n```\n\nYou can also browse available plugins interactively with `/plugin` and selecting the **Discover** tab.\n\n## Creating Custom Operators\n\nUse the `create-operator` skill (provided by `operator-system`) to scaffold new operators:\n\n```\n/create-operator kubectl\n```\n\nThis creates the agent file and hook guard entries in your project's `.claude/` directory.\n\n## Project-Local Overrides\n\nEach plugin reads both its own `config/operator-map.json` and a project-local `.claude/operator-map.json`. This lets projects add custom CLI-to-operator mappings without modifying the plugins.\n\nFor example, after scaffolding a kubectl operator with `/create-operator kubectl`, your `.claude/operator-map.json` would look like:\n\n```json\n{\n  \"kubectl\": \"kubectl-operator\"\n}\n```\n\n## How Subagent Bypass Works\n\nWhen the main agent tries to run `git push`, the `PreToolUse` hook blocks it and says \"use the git-operator subagent instead.\" When `git-operator` then runs `git push` itself, the same hook fires — but now the hook input includes `agent_type: \"git-operator\"`, so the hook allows it through.\n\nThis relies on the `agent_type` field that Claude Code includes in `PreToolUse` hook input when the call originates from a subagent (available since Claude Code 2.1.64). Main-agent calls have no `agent_type`, so they are subject to enforcement. Subagent calls include `agent_type`, so they are allowed through.\n\n> **Requires Claude Code >= 2.1.64.** Earlier versions do not include `agent_type` in `PreToolUse` hook input.\n"
+      },
+      "plugins": [
+        {
+          "name": "operator-system",
+          "description": "Base infrastructure for operator subagents. Provides CLI enforcement hooks, subagent lifecycle tracking, the git-operator agent, and a scaffolding skill for creating new operators.",
+          "source": "./plugins/operator-system",
+          "keywords": [
+            "operators",
+            "subagents",
+            "git",
+            "enforcement",
+            "hooks"
+          ],
+          "categories": [
+            "enforcement",
+            "git",
+            "hooks",
+            "operators",
+            "subagents"
+          ],
+          "install_commands": [
+            "/plugin marketplace add htxryan/agent-operators",
+            "/plugin install operator-system@agent-operators"
+          ]
+        },
+        {
+          "name": "operator-github",
+          "description": "GitHub operator subagent. Guards the gh CLI and provides expert GitHub operations (PRs, issues, Actions, releases).",
+          "source": "./plugins/operator-github",
+          "keywords": [
+            "github",
+            "gh",
+            "pull-requests",
+            "issues",
+            "actions"
+          ],
+          "categories": [
+            "actions",
+            "gh",
+            "github",
+            "issues",
+            "pull-requests"
+          ],
+          "install_commands": [
+            "/plugin marketplace add htxryan/agent-operators",
+            "/plugin install operator-github@agent-operators"
+          ]
+        },
+        {
+          "name": "operator-bun",
+          "description": "Bun runtime and package manager operator subagent. Guards bun and bunx CLI commands.",
+          "source": "./plugins/operator-bun",
+          "keywords": [
+            "bun",
+            "bunx",
+            "package-manager",
+            "runtime",
+            "testing"
+          ],
+          "categories": [
+            "bun",
+            "bunx",
+            "package-manager",
+            "runtime",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add htxryan/agent-operators",
+            "/plugin install operator-bun@agent-operators"
+          ]
+        },
+        {
+          "name": "operator-cloudflare-wrangler",
+          "description": "Cloudflare Workers operator subagent. Guards the wrangler CLI for deployments, secrets, KV, R2, Queues, and more.",
+          "source": "./plugins/operator-cloudflare-wrangler",
+          "keywords": [
+            "cloudflare",
+            "wrangler",
+            "workers",
+            "kv",
+            "r2",
+            "queues"
+          ],
+          "categories": [
+            "cloudflare",
+            "kv",
+            "queues",
+            "r2",
+            "workers",
+            "wrangler"
+          ],
+          "install_commands": [
+            "/plugin marketplace add htxryan/agent-operators",
+            "/plugin install operator-cloudflare-wrangler@agent-operators"
+          ]
+        },
+        {
+          "name": "operator-drizzle",
+          "description": "Drizzle ORM operator subagent. Guards the drizzle-kit CLI for migrations, schema push/pull, and Drizzle Studio.",
+          "source": "./plugins/operator-drizzle",
+          "keywords": [
+            "drizzle",
+            "drizzle-kit",
+            "orm",
+            "migrations",
+            "database"
+          ],
+          "categories": [
+            "database",
+            "drizzle",
+            "drizzle-kit",
+            "migrations",
+            "orm"
+          ],
+          "install_commands": [
+            "/plugin marketplace add htxryan/agent-operators",
+            "/plugin install operator-drizzle@agent-operators"
+          ]
+        },
+        {
+          "name": "operator-neon",
+          "description": "Neon Postgres operator subagent. Guards the neonctl CLI for branch management, connection strings, and database operations.",
+          "source": "./plugins/operator-neon",
+          "keywords": [
+            "neon",
+            "neonctl",
+            "postgres",
+            "database",
+            "branching"
+          ],
+          "categories": [
+            "branching",
+            "database",
+            "neon",
+            "neonctl",
+            "postgres"
+          ],
+          "install_commands": [
+            "/plugin marketplace add htxryan/agent-operators",
+            "/plugin install operator-neon@agent-operators"
+          ]
+        }
+      ]
+    }
+  ]
+}

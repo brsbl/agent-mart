@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "jarfa",
+    "display_name": "Jonathan Arfa",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5531822?u=ab667191861c17334eae9b51077532036b8f89b9&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "jarfa",
+      "version": null,
+      "description": "Start a dialogue between two subagents to critique & improve your plans or code",
+      "repo_full_name": "jarfa/critique-loop",
+      "repo_url": "https://github.com/jarfa/critique-loop",
+      "repo_description": "A Claude Code plugin that enables two Claude Code instances to collaborate through turn-based dialogues with automatic notifications.",
+      "signals": {
+        "stars": 5,
+        "forks": 1,
+        "pushed_at": "2026-03-09T17:25:40Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jarfa\",\n  \"owner\": {\n    \"name\": \"Jonathan Arfa\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"critique-loop\",\n      \"source\": \"./plugins/critique-loop\",\n      \"description\": \"Start a dialogue between two subagents to critique & improve your plans or code\",\n      \"version\": \"0.3.1\"\n    }\n  ]\n}\n",
+        "README.md": "# Critique Loop\n\nA Claude Code plugin that starts a dialogue between two subagents to critique & improve your plans or code.\n\n## Motivation\n\nWhen planning or writing code I often want Claude Code to critique its own work. Previously this required manually running two instances and relaying messages between them.\n\nThis plugin automates the process: invoke once, and a two subagents are spawned to provide critique, review, or collaboration. The human stays out of the loop until the dialogue reaches a conclusion.\n\nUse this for:\n- **Planning/Critiquing** — One agent proposes, the partner challenges assumptions\n- **Writing/Reviewing** — One agent presents code or docs, the partner reviews\n- **Pair Programming** — Collaborative problem-solving between two partners\n\n## Installation\n\n**From GitHub:**\n```bash\n# Add the marketplace\n/plugin marketplace add jarfa/critique-loop\n\n# Install the plugin\n/plugin install critique-loop@jarfa\n```\n\n**From local source (for development):**\n```bash\nclaude --plugin-dir /path/to/critique-loop\n```\n\n## Usage\n\nJust describe what you want in plain text:\n\n```\n/critique-loop plan my new caching strategy\n```\n\n```\n/critique-loop review the auth module with codex\n```\n\nThe plugin infers appropriate roles (e.g., \"proposer\" / \"critic\" for planning, \"author\" / \"reviewer\" for reviews) and starts the dialogue automatically. Say something like \"with codex\" in your description to use Codex as the second partner instead of Claude.\n\n## How It Works\n\n1. You describe what you want to discuss in plain text\n2. The orchestrator infers roles, topic, and partner from your description\n3. You provide additional context when prompted\n4. Two subagents are spawned to start the critique-loop\n5. Turns alternate until conclusion (DONE), intervention needed (STUCK), or max rounds reached\n6. You receive the summary and a reminder of where to find the full transcript\n\n## Configuration\n\n| Environment Variable | Default | Purpose |\n|---------------------|---------|---------|\n| `DIALOGUE_DIR` | `.dialogues` | Where dialogue files are stored (project-local) |\n\n## Future Improvements\n\nThe dialogue file currently serves as the communication medium between the subagents. A potential optimization: direct communication where the orchestrator passes context in the resume prompt and the partner returns its response directly, eliminating file I/O overhead. The dialogue file would then become optional for debugging purposes.\n\n## License\n\nThis project is licensed under the MIT License — see the LICENSE file for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "critique-loop",
+          "source": "./plugins/critique-loop",
+          "description": "Start a dialogue between two subagents to critique & improve your plans or code",
+          "version": "0.3.1",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add jarfa/critique-loop",
+            "/plugin install critique-loop@jarfa"
+          ]
+        }
+      ]
+    }
+  ]
+}

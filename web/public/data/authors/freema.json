@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "freema",
+    "display_name": "Tomas Grasl",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2912985?u=1793b95ab2bd7c6e83c27a6ee6b124c4125d5fb0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "pixelforge-plugins",
+      "version": "1.0.0",
+      "description": "Pixel art generation and sprite processing tools for game development.",
+      "repo_full_name": "freema/pixelforge-mcp",
+      "repo_url": "https://github.com/freema/pixelforge-mcp",
+      "repo_description": "🎮  MCP server that forges pixel art sprites & game assets using Google Gemini — generate, crop,  split & process, all from your AI",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-08T11:06:26Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pixelforge-plugins\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Pixel art generation and sprite processing tools for game development.\",\n  \"owner\": {\n    \"name\": \"Tomas Grasl\",\n    \"url\": \"https://github.com/freema\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pixelforge-mcp\",\n      \"source\": \"./\",\n      \"description\": \"Forge pixel art sprites, animations, backgrounds & thumbnails using Google Gemini\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"pixelforge-mcp\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Forge pixel art sprites, animations, backgrounds & thumbnails using Google Gemini. Auto prompt engineering, crop, background removal, and sprite sheet splitting.\",\n  \"mcpServers\": {\n    \"pixelforge\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"pixelforge-mcp@latest\"],\n      \"env\": {\n        \"GEMINI_API_KEY\": \"\"\n      }\n    }\n  }\n}\n",
+        "README.md": "# pixelforge-mcp\n\nMCP server that forges pixel art sprites & game assets using Google Gemini — generate, crop, split & process, all from your AI assistant.\n\n## Features\n\n- **AI-powered generation** — sprites, animations, backgrounds, thumbnails via Google Gemini\n- **Smart post-processing** — background removal, auto-crop, pixelation downscale, square padding\n- **Sprite sheet splitting** — auto-detect and split sheets into individual frames\n- **Style presets** — neon, retro, gameboy, snes, clean\n- **Pure PNG pipeline** — zero-dependency PNG encoder/decoder, no native modules\n- **Reference matching** — pass existing sprites to match visual style\n\n## Installation\n\n### Claude Code (CLI)\n\n```bash\nclaude mcp add pixelforge npx pixelforge-mcp@latest \\\n  --env GEMINI_API_KEY=your-api-key\n```\n\n### Claude Code (Plugin)\n\n```bash\n/plugin marketplace add freema/pixelforge-mcp\n/plugin install pixelforge-mcp\n```\n\nRestart Claude Code to load the MCP server (check with `/mcp`).\n\n### Claude Desktop\n\nAdd to your `claude_desktop_config.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"pixelforge\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"pixelforge-mcp@latest\"],\n      \"env\": {\n        \"GEMINI_API_KEY\": \"your-api-key\"\n      }\n    }\n  }\n}\n```\n\n### Manual (any MCP client)\n\nAdd to your `.mcp.json` or equivalent config:\n\n```json\n{\n  \"mcpServers\": {\n    \"pixelforge\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"pixelforge-mcp@latest\"],\n      \"env\": {\n        \"GEMINI_API_KEY\": \"your-api-key\"\n      }\n    }\n  }\n}\n```\n\n### Requirements\n\n- Node.js >= 20\n- [Google Gemini API key](https://aistudio.google.com/apikey)\n\n## Tools\n\n### `forge_sprite`\n\nGenerate a single pixel art sprite with automatic post-processing (crop, bg removal, downscale, square padding).\n\n```\n\"Generate a green slime enemy sprite, 48px, retro style\"\n```\n\n**Required:** `description`, `outputPath`\n**Optional:** `size` (default: 48), `style`, `background`, `aspect`, `square`, `model`, `references`\n\n### `forge_animation`\n\nGenerate animation frames as a sprite sheet, then auto-split into individual frame PNGs.\n\n```\n\"Animate a slime bouncing, 4 frames\"\n```\n\n**Required:** `description`, `action`, `outputPrefix`\n**Optional:** `frames` (default: 3), `frameDescriptions`, `names`, `size`, `style`, `model`, `references`\n\n### `forge_background`\n\nGenerate a full game background — no cropping, outputs the image as-is.\n\n```\n\"Deep space background with stars and nebula, 16:9\"\n```\n\n**Required:** `description`, `outputPath`, `aspect`\n**Optional:** `style`, `model`\n\n### `forge_thumbnail`\n\nGenerate a game thumbnail/screenshot. Pass `references` for visual consistency with your sprites.\n\n```\n\"Space shooter scene with player ship vs alien rows\"\n```\n\n**Required:** `description`, `outputPath`\n**Optional:** `references`, `aspect` (default: 4:3), `style`, `model`\n\n### `process_sprite`\n\nPost-process an existing PNG — background removal, auto-crop, sprite sheet splitting.\n\n```\n\"Split this sprite sheet into individual frames\"\n```\n\n**Required:** `inputPath`\n**Optional:** `outputPath`, `split`, `names`, `threshold`, `square`, `padding`, `skipCrop`, `skipTransparent`\n\n### `optimize_sprite`\n\nDownscale oversized AI images to true pixel art resolution using area-averaging (not blurry bilinear).\n\n```\n\"Optimize this 1024px image down to 48px pixel art\"\n```\n\n**Required:** `inputPath`, `size`\n**Optional:** `outputPath`, `removeBackground`, `square`\n\n> Full parameter docs: see [docs/tools.md](docs/tools.md)\n\n## Models\n\n| Alias | Model ID | Notes |\n|-------|----------|-------|\n| `nano-banana`, `banana` | nano-banana-pro-preview | **Default** — best for pixel art |\n| `flash`, `gemini-flash` | gemini-3.1-flash-image-preview | Fast, reliable |\n| `pro`, `gemini-pro` | gemini-3-pro-image-preview | Best quality |\n| `25`, `gemini-25` | gemini-2.5-flash-image | Stable fallback |\n\n## Prompts\n\n### `pixel_art_guide`\n\nBuilt-in MCP prompt with comprehensive pixel art generation guidelines — prompting rules, style tips, size recommendations, and best practices.\n\n## License\n\nMIT — see [LICENSE](LICENSE)\n\n---\n\nBuilt by [Tomas Grasl](https://tomasgrasl.cz)\n"
+      },
+      "plugins": [
+        {
+          "name": "pixelforge-mcp",
+          "source": "./",
+          "description": "Forge pixel art sprites, animations, backgrounds & thumbnails using Google Gemini",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add freema/pixelforge-mcp",
+            "/plugin install pixelforge-mcp@pixelforge-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}
