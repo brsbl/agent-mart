@@ -1,0 +1,67 @@
+{
+  "author": {
+    "id": "supportersimulator",
+    "display_name": "supportersimulator",
+    "avatar_url": "https://avatars.githubusercontent.com/u/239036639?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "3-surgeons-marketplace",
+      "version": null,
+      "description": "Marketplace for the 3-Surgeons multi-model consensus plugin",
+      "repo_full_name": "supportersimulator/3-surgeons",
+      "repo_url": "https://github.com/supportersimulator/3-surgeons",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-09T21:07:17Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"3-surgeons-marketplace\",\n  \"description\": \"Marketplace for the 3-Surgeons multi-model consensus plugin\",\n  \"metadata\": {\n    \"description\": \"Multi-model consensus marketplace — 3 LLMs cross-examine each other to catch blind spots on critical decisions\"\n  },\n  \"owner\": {\n    \"name\": \"Aaron Tjomsland\",\n    \"email\": \"aaron@ersimulator.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"3-surgeons\",\n      \"description\": \"Multi-model consensus system — 3 LLMs cross-examine each other to catch blind spots on critical decisions\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Aaron Tjomsland\",\n        \"email\": \"aaron@ersimulator.com\"\n      },\n      \"skills\": [\n        \"./skills/ab-testing\",\n        \"./skills/ab-validate\",\n        \"./skills/architectural-gate\",\n        \"./skills/cardio-review\",\n        \"./skills/consensus\",\n        \"./skills/counter-position\",\n        \"./skills/cross-examination\",\n        \"./skills/direct-query\",\n        \"./skills/doc-organizer\",\n        \"./skills/integrity-check\",\n        \"./skills/invariance-health\",\n        \"./skills/neurologist\",\n        \"./skills/post-implementation-verification\",\n        \"./skills/pre-implementation-review\",\n        \"./skills/probe\",\n        \"./skills/quality-gates\",\n        \"./skills/research\",\n        \"./skills/review-loop\",\n        \"./skills/sentinel\",\n        \"./skills/setup-team\",\n        \"./skills/using-3-surgeons\"\n      ]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"3-surgeons\",\n  \"description\": \"Multi-model consensus system — 3 LLMs cross-examine each other to catch blind spots on critical decisions\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Aaron Tjomsland\",\n    \"email\": \"aaron@ersimulator.com\"\n  },\n  \"homepage\": \"https://github.com/supportersimulator/3-surgeons\",\n  \"repository\": \"https://github.com/supportersimulator/3-surgeons\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"multi-model\", \"consensus\", \"cross-examination\", \"quality-gates\", \"a-b-testing\"],\n  \"mcpServers\": {\n    \"3-surgeons\": {\n      \"command\": \"${CLAUDE_PLUGIN_ROOT}/bin/3surgeons-mcp\",\n      \"args\": [],\n      \"env\": {}\n    }\n  }\n}\n",
+        "README.md": "# 3-Surgeons\n\nMulti-model consensus system for Claude Code. Three LLMs cross-examine each other to catch blind spots on critical decisions.\n\n## Why\n\nClaude may confabulate confidently where GPT hedges. A local model catches patterns that API models miss due to token limits. **The value is in the disagreements, not the agreements.**\n\n| Surgeon | Role | Default Model |\n|---------|------|---------------|\n| **Atlas** (Head Surgeon) | Synthesizes, decides, implements | Claude (this session) |\n| **Cardiologist** | External perspective, cross-examination | GPT-4.1-mini (OpenAI) |\n| **Neurologist** | Pattern recognition, corrigibility checks | Qwen3-4B (Ollama) |\n\n## Prerequisites\n\n**Python 3.10+** is required for the MCP server (cross-examination tools in your IDE).\n\n```bash\n# Check your version\npython3 --version\n\n# If below 3.10, install via Homebrew (macOS)\nbrew install python@3.12\n\n# Or via pyenv (any platform)\npyenv install 3.12\npyenv global 3.12\n```\n\nThe `3s init` wizard will check your Python version and guide you if it's too old.\n\n## Install\n\n### Claude Code (Marketplace)\n\n```bash\n# Add the marketplace, then install\n/plugin marketplace add supportersimulator/3-surgeons\n/plugin install 3-surgeons@supportersimulator/3-surgeons\n```\n\n### VS Code (Agent Plugin — requires 1.110+)\n\n> **Important:** This uses VS Code's Agent Plugin system (Chat panel), NOT the traditional Extension Marketplace. You will NOT find it by searching in the Extensions sidebar.\n\n**Step 1: Install GitHub Copilot Chat**\n\nInstall the **GitHub Copilot Chat** extension from the VS Code Marketplace (not the legacy \"GitHub Copilot\" extension). Sign into GitHub with a Copilot-entitled account.\n\n**Step 2: Enable plugins and add the marketplace**\n\nOpen Settings (`Cmd+,` / `Ctrl+,`) and add these to your `settings.json`:\n\n```json\n{\n  \"chat.plugins.enabled\": true,\n  \"chat.plugins.marketplaces\": [\"supportersimulator/3-surgeons\"]\n}\n```\n\n**Step 3: Reload and verify**\n\n1. Reload window (`Cmd+Shift+P` → \"Developer: Reload Window\")\n2. Open the **Chat panel** (not Extensions sidebar)\n3. Type `@agentPlugins` to verify the plugin appears\n\n**Step 4: Set up the Python runtime**\n\nThe MCP tools need Python 3.10+ with the package installed:\n\n```bash\ngit clone https://github.com/supportersimulator/3-surgeons.git ~/3-surgeons\ncd ~/3-surgeons\npython3 -m venv .venv && .venv/bin/pip install -e '.[mcp]'\n```\n\n**Local path fallback** (if marketplace discovery doesn't resolve):\n\nAdd the cloned path directly in `settings.json`:\n\n```json\n{\n  \"chat.plugins.paths\": {\n    \"/Users/you/3-surgeons\": true\n  }\n}\n```\n\n### Cursor\n\n```bash\ncursor plugin add supportersimulator/3-surgeons\n```\n\n### Manual (any IDE)\n\n```bash\ngit clone https://github.com/supportersimulator/3-surgeons.git ~/.claude/plugins/3-surgeons\ncd ~/.claude/plugins/3-surgeons\npython3 -m venv .venv && .venv/bin/pip install -e '.[mcp]'\n```\n\n## Quick Start\n\n```bash\n# 1. Run the setup wizard (picks a preset, writes config)\n3s init\n\n# 2. Set your API key(s) — see .env.example for all options\nexport OPENAI_API_KEY=sk-...\n\n# 3. Verify all surgeons are reachable\n3s probe\n\n# 4. Cross-examine a decision\n3s cross-exam \"Should we use Redis or PostgreSQL for session storage?\"\n```\n\n## Three Modes\n\n| Mode | Cardiologist | Neurologist | Needs | Cost |\n|------|-------------|-------------|-------|------|\n| **Hybrid** (default) | OpenAI GPT-4.1-mini | Local Ollama qwen3:4b | 1 API key + Ollama | ~$0.003/query |\n| **API-Only** | OpenAI GPT-4.1-mini | DeepSeek deepseek-chat | 2 API keys | ~$0.005/query |\n| **Local-Only** | Ollama mistral:7b | Ollama qwen3:4b | Ollama installed | $0 |\n\nRun `3s init` to pick a mode, or copy a preset directly:\n\n```bash\ncp config/presets/api-only.yaml ~/.3surgeons/config.yaml\n```\n\n## Provider Compatibility\n\nAny endpoint implementing OpenAI's `/v1/chat/completions` API works with zero code changes:\n\n**Cloud:** OpenAI, DeepSeek, Groq, Grok (xAI), Mistral\n\n**Local:** Ollama, LM Studio, vLLM, MLX\n\nSee the [full provider matrix](skills/using-3-surgeons/SKILL.md#supported-providers) for endpoints, models, and pricing.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/probe` | Health check all three surgeons |\n| `/cross-exam` | Full 3-phase cross-examination |\n| `/sentinel` | Scan for complexity risk vectors |\n| `/gains-gate` | Infrastructure health gate |\n| `/challenge` | Neurologist corrigibility skeptic |\n\n## CLI\n\n```bash\n3s probe                        # Health check\n3s cross-exam \"topic\"           # Full cross-examination\n3s consult \"topic\"              # Quick parallel query\n3s consensus \"claim\"            # Confidence-weighted vote\n3s sentinel \"content\"           # Complexity vector scan\n3s gains-gate                   # Infrastructure health gate\n3s neurologist-challenge \"topic\" # Corrigibility skeptic\n3s ask-local \"prompt\"           # Direct neurologist query\n3s ask-remote \"prompt\"          # Direct cardiologist query\n3s research \"topic\"             # Self-directed research\n3s ab-propose PARAM A B \"hyp\"   # Propose A/B test\n```\n\n## Configuration\n\nConfig lives in `~/.3surgeons/config.yaml` (user-level) or `.3surgeons.yaml` (project-level).\n\nRun `3s init` for guided setup, or copy a preset from `config/presets/`.\n\nSee `config/3surgeons.example.yaml` for the full schema.\n\n## Security\n\n- **All API keys are loaded from environment variables** -- never hardcoded, never committed\n- `.gitignore` excludes all secret files, config files, and databases\n- See `.env.example` for the full list of supported environment variables\n\n## ContextDNA IDE Upgrade\n\n3-Surgeons works standalone. When you're ready for priority queue GPU scheduling, Redis state, and the full butler subconscious, the upgrade is one line:\n\n```python\nfrom context_dna.adapters import priority_queue_adapter\nprovider = LLMProvider(config, query_adapter=priority_queue_adapter)\n```\n\nSee [docs/CONTEXTDNA-IDE-UPGRADE.md](docs/CONTEXTDNA-IDE-UPGRADE.md) for the full migration guide.\n\n## Contributing\n\n1. Fork the repo\n2. Create a feature branch\n3. Run tests: `python -m pytest tests/ -v`\n4. Submit a PR\n\n## License\n\nMIT -- see [LICENSE](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "3-surgeons",
+          "description": "Multi-model consensus system — 3 LLMs cross-examine each other to catch blind spots on critical decisions",
+          "version": "1.0.0",
+          "source": "./",
+          "author": {
+            "name": "Aaron Tjomsland",
+            "email": "aaron@ersimulator.com"
+          },
+          "skills": [
+            "./skills/ab-testing",
+            "./skills/ab-validate",
+            "./skills/architectural-gate",
+            "./skills/cardio-review",
+            "./skills/consensus",
+            "./skills/counter-position",
+            "./skills/cross-examination",
+            "./skills/direct-query",
+            "./skills/doc-organizer",
+            "./skills/integrity-check",
+            "./skills/invariance-health",
+            "./skills/neurologist",
+            "./skills/post-implementation-verification",
+            "./skills/pre-implementation-review",
+            "./skills/probe",
+            "./skills/quality-gates",
+            "./skills/research",
+            "./skills/review-loop",
+            "./skills/sentinel",
+            "./skills/setup-team",
+            "./skills/using-3-surgeons"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add supportersimulator/3-surgeons",
+            "/plugin install 3-surgeons@3-surgeons-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

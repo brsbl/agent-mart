@@ -15,17 +15,19 @@
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-03-08T03:19:52Z"
+        "pushed_at": "2026-03-10T00:59:20Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"diggymo-cc-plugin\",\n  \"description\": \"macOS通知でClaude Codeのイベントを知らせるプラグイン集\",\n  \"owner\": {\n    \"name\": \"morimorikochan\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"notify\",\n      \"description\": \"macOS通知でClaude Codeのイベント（Notification/Stop）を知らせるプラグイン。通知本文にユーザーの最後の指示内容を表示します。\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"morimorikochan\"\n      },\n      \"source\": \"./plugins/notify\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
-        "README.md": "# claude-notify-plugin\n\nClaude Code の Notification / Stop イベント時に macOS 通知を表示するプラグイン。\n\n通知本文にユーザーの最後の指示内容を表示するので、複数セッション稼働中でもどのタスクが完了したか分かります。\n\n## 機能\n\n- **Notification イベント**: Claude が確認を求めている時に通知\n- **Stop イベント**: Claude の応答完了時に通知\n- イベントごとに通知音を変更可能\n- スキル実行時（`/frontend-design` 等）は展開プロンプトをスキップし、`[meta] {直前の入力}` を表示\n\n## 前提条件\n\n- macOS\n- `jq` がインストール済み（`brew install jq`）\n\n## インストール\n\n```bash\n# 1. マーケットプレイスとしてリポジトリを追加\nclaude plugin marketplace add diggymo/cc-plugin\n\n# 2. プラグインをインストール\nclaude plugin install notify\n```\n\n## 通知音の変更\n\n環境変数で通知音を設定できます。`.claude/settings.json` の `env` セクションに追記することでユーザーごとにカスタマイズ可能です。\n\n```json\n{\n  \"env\": {\n    \"CLAUDE_CODE_SOUND_NOTIFICATION\": \"Glass\",\n    \"CLAUDE_CODE_SOUND_STOP\": \"Submarine\"\n  }\n}\n```\n\n環境変数を設定しない場合はデフォルト値（`Glass` / `Submarine`）が使われます。\n\n利用可能なサウンド:\n\n`Basso` `Blow` `Bottle` `Frog` `Funk` `Glass` `Hero` `Morse` `Ping` `Pop` `Purr` `Sosumi` `Submarine` `Tink`\n\n## ライセンス\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"diggymo-cc-plugin\",\n  \"description\": \"macOS通知でClaude Codeのイベントを知らせるプラグイン集\",\n  \"owner\": {\n    \"name\": \"morimorikochan\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"notify\",\n      \"description\": \"macOS通知でClaude Codeのイベント（Notification/Stop）を知らせるプラグイン。通知本文にユーザーの最後の指示内容を表示します。\",\n      \"version\": \"1.0.1\",\n      \"author\": {\n        \"name\": \"morimorikochan\"\n      },\n      \"source\": \"./plugins/notify\",\n      \"category\": \"productivity\"\n    },\n    {\n      \"name\": \"grep-sessions\",\n      \"description\": \"Claude Codeの全会話履歴から特定のキーワードでgrep検索し、該当するsessionIdとマッチした内容を一覧表示します\",\n      \"version\": \"1.0.1\",\n      \"author\": {\n        \"name\": \"morimorikochan\"\n      },\n      \"source\": \"./plugins/grep-sessions\",\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# cc-plugin\n\nClaude Code 用プラグイン集。\n\n## インストール\n\n```bash\n# マーケットプレイスとしてリポジトリを追加\nclaude plugin marketplace add diggymo/cc-plugin\n\n# 使いたいプラグインをインストール\nclaude plugin install notify\nclaude plugin install grep-sessions\n```\n\n## プラグイン一覧\n\n### [notify](./plugins/notify/)\n\nmacOS 通知で Claude Code のイベント（Notification / Stop）を知らせるフックプラグイン。\n\n- 応答完了時や確認要求時に macOS 通知を表示\n- 通知本文にユーザーの最後の指示内容を表示（複数セッション稼働中でも識別可能）\n- イベントごとに通知音をカスタマイズ可能\n\n### [grep-sessions](./plugins/grep-sessions/)\n\nClaude Code の全会話履歴からキーワード検索するスキルプラグイン。\n\n- `/grep-sessions {キーワード}` で過去の会話を横断検索\n- セッション ID ごとにマッチ箇所と直近のユーザー入力を一覧表示\n- プロジェクト指定・件数制限のオプション付き\n\n## ライセンス\n\nMIT\n",
+        "plugins/notify/README.md": "# notify\n\nClaude Code の Notification / Stop イベント時に macOS 通知を表示するプラグイン。\n\n通知本文にユーザーの最後の指示内容を表示するので、複数セッション稼働中でもどのタスクが完了したか分かります。\n\n## 機能\n\n- **Notification イベント**: Claude が確認を求めている時に通知\n- **Stop イベント**: Claude の応答完了時に通知\n- イベントごとに通知音を変更可能\n- スキル実行時（`/frontend-design` 等）は展開プロンプトをスキップし、`[meta] {直前の入力}` を表示\n\n## 前提条件\n\n- macOS\n- `jq` がインストール済み（`brew install jq`）\n\n## 通知音の変更\n\n環境変数で通知音を設定できます。`~/.claude/settings.json` の `env` セクションに追記することでユーザーごとにカスタマイズ可能です。\n\n```json\n{\n  \"env\": {\n    \"CLAUDE_CODE_SOUND_NOTIFICATION\": \"Glass\",\n    \"CLAUDE_CODE_SOUND_STOP\": \"Submarine\"\n  }\n}\n```\n\n環境変数を設定しない場合はデフォルト値（`Glass` / `Submarine`）が使われます。\n\n利用可能なサウンド:\n\n`Basso` `Blow` `Bottle` `Frog` `Funk` `Glass` `Hero` `Morse` `Ping` `Pop` `Purr` `Sosumi` `Submarine` `Tink`\n",
+        "plugins/grep-sessions/README.md": "# grep-sessions\n\nClaude Code の全会話履歴から特定のキーワードで検索し、該当するセッションとマッチ内容を一覧表示するスキルプラグイン。\n\n## 使い方\n\nClaude Code 内で以下のように呼び出します:\n\n```\n/grep-sessions {キーワード}\n```\n\n## オプション\n\n| オプション | 説明 |\n|-----------|------|\n| `--project {dir}` | 特定プロジェクトのみ検索 |\n| `--limit {N}` | 表示件数の上限（デフォルト: 20） |\n\n## 出力例\n\n```\n### session: abc12345-...  (2026-03-08 15:30)\n\nマッチ箇所:\n- ...キーワード周辺のスニペット...\n\n直近のユーザー入力:\n1. 最新の入力内容\n2. その前の入力内容\n3. さらにその前の入力内容\n\n---\n```\n\n## ccs コマンド\n\n以下の alias を `~/.zshrc` に追加してください:\n\n```sh\nalias ccs='python3 /path/to/plugins/grep-sessions/search.py'\n```\n\n## 仕組み\n\n- `~/.claude/projects/` 配下の全 JSONL ファイル（subagents ディレクトリ含む）を検索\n- 大文字小文字を区別しない\n- 2パス検索: 1パス目でキーワードマッチ、2パス目でマッチしたセッションのユーザーメッセージを収集\n- セッション ID 単位でユニーク化して表示\n"
       },
       "plugins": [
         {
           "name": "notify",
           "description": "macOS通知でClaude Codeのイベント（Notification/Stop）を知らせるプラグイン。通知本文にユーザーの最後の指示内容を表示します。",
-          "version": "1.0.0",
+          "version": "1.0.1",
           "author": {
             "name": "morimorikochan"
           },
@@ -37,6 +39,23 @@
           "install_commands": [
             "/plugin marketplace add diggymo/cc-plugin",
             "/plugin install notify@diggymo-cc-plugin"
+          ]
+        },
+        {
+          "name": "grep-sessions",
+          "description": "Claude Codeの全会話履歴から特定のキーワードでgrep検索し、該当するsessionIdとマッチした内容を一覧表示します",
+          "version": "1.0.1",
+          "author": {
+            "name": "morimorikochan"
+          },
+          "source": "./plugins/grep-sessions",
+          "category": "productivity",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add diggymo/cc-plugin",
+            "/plugin install grep-sessions@diggymo-cc-plugin"
           ]
         }
       ]

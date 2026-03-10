@@ -1,0 +1,72 @@
+{
+  "author": {
+    "id": "dwmetz",
+    "display_name": "Doug Metz",
+    "avatar_url": "https://avatars.githubusercontent.com/u/50598266?u=b31dbcad6bd9e7f9da5a66c3573fd403e1f1feae&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "malchela-marketplace",
+      "version": null,
+      "description": "MalChela — A YARA & Malware Analysis Toolkit with Claude MCP integration for DFIR analysts.",
+      "repo_full_name": "dwmetz/MalChela",
+      "repo_url": "https://github.com/dwmetz/MalChela",
+      "repo_description": "A YARA & Malware Analysis Toolkit written in Rust.",
+      "signals": {
+        "stars": 95,
+        "forks": 6,
+        "pushed_at": "2026-03-09T17:37:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"malchela-marketplace\",\n  \"owner\": {\n    \"name\": \"Doug Metz\",\n    \"github\": \"dwmetz\"\n  },\n  \"description\": \"MalChela — A YARA & Malware Analysis Toolkit with Claude MCP integration for DFIR analysts.\",\n  \"homepage\": \"https://bakerstreetforensics.com\",\n  \"repository\": \"https://github.com/dwmetz/MalChela\",\n  \"plugins\": [\n    {\n      \"name\": \"malchela\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"dwmetz/MalChela\"\n      },\n      \"description\": \"Exposes MalChela's full malware analysis suite to Claude: file analysis (hashes, entropy, PE metadata, YARA, VirusTotal), string extraction with MITRE ATT&CK mapping, hash lookups against VirusTotal and MalwareBazaar, NSRL known-good queries, and directory scanning for file type anomalies.\",\n      \"version\": \"3.1.2\",\n      \"author\": {\n        \"name\": \"Doug Metz\",\n        \"email\": \"dwmetz@gmail.com\"\n      },\n      \"homepage\": \"https://bakerstreetforensics.com\",\n      \"repository\": \"https://github.com/dwmetz/MalChela\",\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"malware\",\n        \"dfir\",\n        \"forensics\",\n        \"yara\",\n        \"threat-intel\",\n        \"virustotal\",\n        \"mcp\",\n        \"security\",\n        \"rust\"\n      ],\n      \"category\": \"security\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"malchela\",\n  \"version\": \"3.1.2\",\n  \"description\": \"MalChela malware analysis toolkit — exposes file analysis, string extraction, hash lookup, NSRL queries, and directory scanning to Claude via MCP. Built for DFIR analysts and malware researchers.\",\n  \"author\": {\n    \"name\": \"Doug Metz\",\n    \"email\": \"dwmetz@gmail.com\"\n  },\n  \"homepage\": \"https://bakerstreetforensics.com\",\n  \"repository\": \"https://github.com/dwmetz/MalChela\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"malware\",\n    \"dfir\",\n    \"forensics\",\n    \"yara\",\n    \"threat-intel\",\n    \"virustotal\",\n    \"mcp\",\n    \"security\"\n  ],\n  \"category\": \"security\",\n  \"mcpServers\": {\n    \"malchela\": {\n      \"command\": \"node\",\n      \"args\": [\"${CLAUDE_PLUGIN_ROOT}/mcp/index.js\"],\n      \"env\": {\n        \"MALCHELA_DIR\": \"${CLAUDE_PLUGIN_ROOT}\"\n      }\n    }\n  }\n}\n",
+        "README.md": "<div align=\"center\">\n <img style=\"padding:0;vertical-align:bottom;\" height=\"400\" width=\"400\" src=\"images/terminator-malchela.png\"/>\n <p>\n <h1>\n  MalChela v3.1.2\n </h1>\n  <h4>\n      A YARA &amp; Malware Analysis Toolkit written in Rust.\n   </h4>\n<p>\n<p>\n </div>\n<div align=\"center\">\n  <table>\n    <tr>\n      <td><img src=\"images/malchela_screenshot.png\" style=\"height:280px; width:auto;\"></td>\n      <td><img src=\"images/malchela_cli_screenshot.png\" style=\"height:280px; width:auto;\"></td>\n    </tr>\n    <tr>\n      <td align=\"center\"><strong>GUI View</strong></td>\n      <td align=\"center\"><strong>CLI View</strong></td>\n    </tr>\n  </table>\n</div>\n\n<h3>Features:</h3>\n\n| Program             | Function |\n|---------------------|----------|\n| Combine YARA        | Combines all `.yara`/`.yar` files in a directory into a single rule file |\n| Extract Samples     | Recursively extracts password-protected malware archives (ZIP/RAR) using common passwords |\n| File Analyzer       | Analyzes a file for hashes, entropy, PE structure, fuzzy hashes, YARA matches, NSRL lookup, and VirusTotal status |\n| File Miner          | Scans a folder for file type mismatches and metadata |\n| Hash It             | Generates MD5, SHA1, and SHA256 hashes for a single file |\n| Hash Check          | Checks if a given hash exists in a provided hash set file |\n| Malware Hash Lookup | Queries a hash against VirusTotal and MalwareBazaar for threat intelligence |\n| mStrings            | Extracts strings from a file, applies regex and Sigma rules, maps to MITRE ATT&CK, identifies IOCs, and includes built-in MITRE Technique lookup |\n| mzhash              | Recursively hashes files with MZ headers using MD5 — ideal for gold build or known-bad corpus generation |\n| mzcount             | Recursively counts files by format (MZ, ZIP, PDF, etc.) using header/YARA detection |\n| nsrlquery           | Queries an MD5 hash against the NSRL database to determine if it's known-good |\n| strings_to_yara     | Prompts for metadata and a string list to generate a YARA rule |\n| xmzhash             | Recursively hashes files that are *not* MZ, ZIP, or PDF — ideal for non-Windows malware corpus |\n\n**Malware Hash Lookup requires API keys for VirusTotal and MalwareBazaar.  If not configured, MalChela will prompt you to create them the first time you run the malware lookup function.*\n\n<h3>About:</h3>\n\n> **mal** — malware  \n> **chela** — \"crab hand\"  \n> A chela on a crab is the scientific term for a claw or pincer. It's a specialized appendage, typically found on the first pair of legs, used for grasping, defense, and manipulating things — just like these programs.\n\n<h3>Dependencies:</h3>\n\nLinux\n```\nsudo apt install openssl libssl-dev clang yara libyara-dev pkg-config build-essential libglib2.0-dev libgtk-3-dev\n```\n\nMac\n```\nbrew install openssl yara pkg-config gtk+3 glib\n```\nNote: YARA 4.2> required.\nBefore building, point the build to to Homebrew's YARA prefix\n```\nexport YARA_LIBRARY_PATH=$(brew --prefix yara)/lib\nexport BINDGEN_EXTRA_CLANG_ARGS=\"-I$(brew --prefix yara)/include\"\n```\n\n<h3>Installation &amp; Usage:</h3>\n\nInstall Rust — https://rustup.rs/\n\nFor CLI only installations (WSL, Raspberry Pi, etc.):\n\n```\ncurl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh\n```\n\nClone the repository and build:\n\n```\ngit clone https://github.com/dwmetz/MalChela.git\ncd MalChela\nchmod +x release.sh\n./release.sh  # Builds all programs in release mode (recommended)\n```\n\n<h3>Run:</h3>\n\n```\n./target/release/malchela\n```\n\nor\n\n```\n./target/release/MalChelaGUI\n```\n\nℹ️ It is recommended to build and run MalChela in `--release` mode to ensure GUI and subtools function optimally.\n\n> ⚠️ **Important:** MalChela binaries must be invoked from the project root directory. Always use `cd /path/to/MalChela && ./target/release/<binary>` rather than calling the binary directly from another path. This is required for correct resolution of API key files (`vt-api.txt`, `mb-api.txt`), YARA rules, and Sigma rules — all of which are resolved relative to the project root. API keys are read exclusively from these files; environment variables are not supported.\n\n---\n\n### Case Management (v3.0)\n\nMalChela v3.0 introduces a full-featured case system:\n\n- Track files, tools run, and notes under a unified `case.yaml`\n- Auto-save tool output under `saved_output/cases/<case-name>/`\n- Integrated tagging, search, and scratchpad with VS Code support\n- Seamless case loading and archiving in GUI mode\n\n---\n\n### 🤖 AI Integration &amp; MCP Support (v3.1.0)\n\nMalChela v3.1.0 introduces support for AI-assisted malware analysis through the **Model Context Protocol (MCP)**, exposing all 13 MalChela tools to AI agents like Claude. Three deployment paths are supported depending on your environment:\n\n---\n\n#### Path 1: Native MCP Server (Claude Desktop on macOS)\n\nA Node.js MCP server exposes all MalChela tools directly to Claude Desktop on macOS with no additional infrastructure required.\n\n**Setup:**\n\n```\ncd mcp/\nnpm install\n```\n\nConfigure Claude Desktop to load the server by adding it to your `claude_desktop_config.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"malchela\": {\n      \"command\": \"node\",\n      \"args\": [\"/path/to/MalChela/mcp/server.js\"]\n    }\n  }\n}\n```\n\nSee [`mcp/README.md`](mcp/README.md) for full configuration details.\n\n---\n\n#### Path 2: Kali MCP Server (Remote Linux host / Raspberry Pi)\n\nA two-layer architecture for running MalChela on a remote Kali Linux system (e.g., a Raspberry Pi forensics toolkit) and exposing it to Claude Desktop via MCP.\n\n- **`mcp_server.py`** — FastMCP frontend, receives tool calls and forwards them\n- **`kali_server.py`** — Flask backend, executes MalChela binaries on the Kali host\n\n**Setup on the Kali host:**\n\n```\ncd /usr/share/mcp-kali-server/\npip install -r requirements.txt\npython3 kali_server.py\n```\n\nConfigure `mcp_server.py` with the host's IP and start it. Then point Claude Desktop at `mcp_server.py` as the MCP server.\n\n> 📝 Note: `malhash` accepts a hash string as its argument, not a file path.\n\nSee [`mcp/README.md`](mcp/README.md) for full setup and configuration.\n\n---\n\n#### Path 3: OpenCode / AGENTS.md (REMnux / Agentic CLI)\n\nFor agentic coding environments and CLI-based AI tools, MalChela ships with an `AGENTS.md` file describing all available tools, their arguments, and usage patterns. This allows tools like OpenCode to discover and invoke MalChela automatically.\n\nOn REMnux, OpenCode can be pointed at the MalChela directory and will use `AGENTS.md` to drive analysis workflows autonomously.\n\n---\n\nFor a detailed walkthrough of all three approaches, see the blog post: [**MalChela Meets AI: Three Paths to Smarter Malware Analysis**](https://bakerstreetforensics.com)\n\n---\n\n<h3>🔧 Adding Custom Tools:</h3>\n\nYou can extend MalChela by editing the `tools.yaml` file to add third-party or custom tools to the GUI. This flexible configuration supports binaries, Python scripts, and Rust-based programs.\n\nEach entry defines the tool's name, category, execution type, how input is passed (file, folder, or hash), and any optional arguments. Here are a few sample entries:\n\n```yaml\n- name: capa\n  description: \"Detects capabilities in binaries via rules\"\n  command: [\"capa\"]\n  input_type: \"file\"\n  category: \"File Analysis\"\n  exec_type: binary\n  file_position: \"last\"\n  optional_args: []\n\n- name: strings\n  description: \"Extracts printable strings from binaries\"\n  command: [\"strings\"]\n  input_type: \"file\"\n  category: \"Utilities\"\n  exec_type: binary\n  file_position: \"first\"\n  optional_args: []\n\n- name: pdf-parser\n  description: \"Parses and analyzes suspicious PDF structures\"\n  command: [\"python3\"]\n  input_type: \"file\"\n  category: \"PDF Analysis\"\n  exec_type: script\n  file_position: \"last\"\n  optional_args: [\"tools/pdf-parser/pdf-parser.py\"]\n```\n---\n<h3> 🦀 **REMnux Mode:**  </h3>\n\n\nWhen run on a REMnux system, MalChela can load a REMnux-specific `tools.yaml` file tailored for the built-in tools available in that distro. This ensures smoother setup with minimal configuration required.\n\n📝 **Notes:**\n- Tools must be in your system `PATH` or include a full/relative path.\n- `exec_type` must be one of: `cargo`, `binary`, or `script`.\n- `file_position` indicates where the input is placed in the command (`first` or `last`).\n- See the [MalChela User Guide](https://dwmetz.github.io/MalChela/) for detailed configuration examples and workflows.\n\n---\n\n<h3>Enhanced Tool Support:</h3>\n\nMalChela includes improved integration with the following third-party tools:\n\n- **Volatility 3**: Dynamic plugin builder, argument templating, and output directory selection.\n- **TShark**: Visual reference panel and support for capturing filtered traffic with custom syntax.\n- **YARA-X**: Smart rule matching with improved argument handling and REMnux-compatible default configuration.\n\nThese enhancements make working with memory images, PCAPs, and YARA rules more streamlined for forensic workflows.\n\n---\n\n#### Platform Support:\n\nSuccessfully tested on macOS (Apple Silicon), Ubuntu, and Raspberry Pi.  \n\nYARA version 4.2 or greater is required.\n\n**Windows:** As of October 2025, both MalChela CLI and GUI operate on Windows under WSL2. MalChelaGUI improvements for WSL included in v3.1.1.\n"
+      },
+      "plugins": [
+        {
+          "name": "malchela",
+          "source": {
+            "source": "github",
+            "repo": "dwmetz/MalChela"
+          },
+          "description": "Exposes MalChela's full malware analysis suite to Claude: file analysis (hashes, entropy, PE metadata, YARA, VirusTotal), string extraction with MITRE ATT&CK mapping, hash lookups against VirusTotal and MalwareBazaar, NSRL known-good queries, and directory scanning for file type anomalies.",
+          "version": "3.1.2",
+          "author": {
+            "name": "Doug Metz",
+            "email": "dwmetz@gmail.com"
+          },
+          "homepage": "https://bakerstreetforensics.com",
+          "repository": "https://github.com/dwmetz/MalChela",
+          "license": "MIT",
+          "keywords": [
+            "malware",
+            "dfir",
+            "forensics",
+            "yara",
+            "threat-intel",
+            "virustotal",
+            "mcp",
+            "security",
+            "rust"
+          ],
+          "category": "security",
+          "categories": [
+            "dfir",
+            "forensics",
+            "malware",
+            "mcp",
+            "rust",
+            "security",
+            "threat-intel",
+            "virustotal",
+            "yara"
+          ],
+          "install_commands": [
+            "/plugin marketplace add dwmetz/MalChela",
+            "/plugin install malchela@malchela-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

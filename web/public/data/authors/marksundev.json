@@ -1,0 +1,65 @@
+{
+  "author": {
+    "id": "MarkSunDev",
+    "display_name": "BlackAce",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2765967?u=2406905f6d5a667ca6849e4d2b3b62e91cad60f9&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "marksundev-skills",
+      "version": null,
+      "description": "Claude Code marketplace entries published by MarkSunDev.",
+      "repo_full_name": "MarkSunDev/skill-android-app-analyzer",
+      "repo_url": "https://github.com/MarkSunDev/skill-android-app-analyzer",
+      "repo_description": "A technical Codex/Claude Code skill for Android app reverse analysis, designed to inspect APK/XAPK packages, extract manifest metadata, and identify background behaviors, third-party services, and monetization SDKs.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-09T18:12:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"marksundev-skills\",\n  \"owner\": {\n    \"name\": \"MarkSunDev\",\n    \"url\": \"https://github.com/MarkSunDev\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code marketplace entries published by MarkSunDev.\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"android-app-analyzer\",\n      \"description\": \"Analyze Android APK/XAPK packages by package name or local file, inspect manifest metadata, background strategies, ad SDKs, and third-party services.\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"version\": \"0.2.0\",\n      \"author\": {\n        \"name\": \"MarkSunDev\",\n        \"url\": \"https://github.com/MarkSunDev\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"android\",\n        \"apk\",\n        \"xapk\",\n        \"manifest\",\n        \"skills\",\n        \"claude-code\",\n        \"androguard\"\n      ],\n      \"skills\": [\n        \"./\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "[English](README.md) | [简体中文](README.zh-CN.md)\n\n# Android App Analyzer\n\nA Claude Code marketplace-compatible, Codex-compatible, and Gemini CLI extension-compatible skill source package for downloading Android APK/XAPK files, extracting manifest metadata, and generating structured analysis reports for research, competitive analysis, and SDK inspection.\n\n## Features\n\n- Download the latest APK or XAPK from APKCombo by package name\n- Use a managed cache workspace for repeated runs\n- Extract the base APK from XAPK packages automatically\n- Parse `AndroidManifest.xml` with `androguard`\n- Detect permissions, background keep-alive strategies, push integrations, ad SDKs, and common third-party services\n- Generate readable Markdown reports and run metadata for later review\n\n## Why This Project\n\nThis project is designed for people who need a fast, scriptable way to inspect Android application packages without relying on the full Android SDK toolchain. It is especially useful for product research, growth analysis, monetization analysis, and lightweight security review.\n\n## Requirements\n\n- Python 3.8 or later\n- `curl`\n- Network access for dependency installation and package downloads\n\nIf `python` points to Python 2 on Windows, use `python3` or `py -3`.\n\n## Installation\n\n### Install as a Claude Code Marketplace Plugin\n\nThis repository now includes a root `.claude-plugin/marketplace.json`, so it can be added directly as a Claude Code plugin marketplace:\n\n```bash\n/plugin marketplace add MarkSunDev/skill-android-app-analyzer\n/plugin install android-app-analyzer@marksundev-skills\n```\n\nThe marketplace name is `marksundev-skills` and the plugin name is `android-app-analyzer`.\n\n### Install with Dvcode AI\n\nInstall from the repository marketplace and then install the plugin:\n\n```bash\n/skill marketplace add https://github.com/MarkSunDev/skill-android-app-analyzer\n/plugin install skill-android-app-analyzer:android-app-analyzer\n```\n\n### Install as a Codex Skill (Recommended)\n\nInstall directly from GitHub with the skills CLI:\n\n```bash\nnpx skills add MarkSunDev/skill-android-app-analyzer -g -y\n```\n\nThis is the recommended installation path for end users.\n\n### Install as a Gemini CLI Extension\n\nThis repository now includes a root `gemini-extension.json`, so it can be installed directly as a Gemini CLI extension:\n\n```bash\ngemini extensions install https://github.com/MarkSunDev/skill-android-app-analyzer\n```\n\nFor local development, install or link from an absolute path:\n\n```bash\ngemini extensions install /absolute/path/to/skill-android-app-analyzer\ngemini extensions link /absolute/path/to/skill-android-app-analyzer\n```\n\nTo validate the manifest in this repository:\n\n```bash\ngemini extensions validate .\n```\n\n### Install Python Dependencies Manually\n\nInstall dependencies manually:\n\n```bash\npython3 -m pip install -r requirements.txt\n```\n\nThe scripts also support lazy dependency loading. Dependencies are only installed when a code path actually needs them. If automatic installation fails, the tool prints the exact manual install command.\n\n## Managed Workspace\n\nThe analyzer always uses a managed cache workspace:\n\n```text\n.cache/\n  android-app-analyzer/\n    com.example.app/\n      downloads/\n      extracted/\n      reports/\n      temp/\n      run.json\n```\n\nRules:\n\n- More than 5 package workspaces: warn and continue.\n- More than 20 package workspaces: stop and require manual cleanup.\n\nThis version does not auto-delete old package folders. Cleanup stays explicit and user-controlled.\n\n## Quick Start\n\nAnalyze an app by package name:\n\n```bash\npython3 android_analyzer.py com.kjvbibleadio.dailyverse\n```\n\nAnalyze an existing local package:\n\n```bash\npython3 android_analyzer.py path/to/app.apk\n```\n\nDownload only:\n\n```bash\npython3 apkcombo_download.py com.example.app\n```\n\nUse a custom workspace root:\n\n```bash\npython3 android_analyzer.py com.example.app --output D:\\analysis-cache\n```\n\nSkip download and reuse a cached package in the managed workspace:\n\n```bash\npython3 android_analyzer.py com.example.app --skip-download\n```\n\n## Output Files\n\nThe analyzer can generate:\n\n- `downloads/*.apk` or `downloads/*.xapk`\n- `extracted/<xapk-name>/...`\n- `reports/{package}_analysis.md`\n- `reports/{apk_name}_manifest.xml`\n- `run.json`\n\n## APKCombo Download Notes\n\nThe downloader now follows APKCombo's current flow:\n\n1. Open the resolved app page.\n2. Find the download page.\n3. Extract the internal `xid` value from page script content.\n4. POST to `/<xid>/dl`.\n5. Parse returned variant links.\n6. Download the selected APK/XAPK with `curl`.\n\nIf APKCombo changes its HTML or internal endpoints again, `apkcombo_download.py` is the first place to update.\n\n## Project Structure\n\n- `.claude-plugin/marketplace.json`: Claude Code marketplace definition for this repository\n- `gemini-extension.json`: Gemini CLI extension manifest\n- `SKILL.md`: Codex skill entry document\n- `android_analyzer.py`: Main analysis workflow\n- `apkcombo_download.py`: APK/XAPK downloader\n- `workspace_manager.py`: Shared workspace management logic\n- `dependency_bootstrap.py`: Shared dependency bootstrap logic\n- `requirements.txt`: Python dependency list\n- `tests/`: Unit tests for workspace, downloader parsing, and dependency bootstrap behavior\n- `docs/plans/`: Design and implementation notes\n\n## Install as a Codex Skill for Local Development\n\nTo use this project directly from your local Codex skill library, create a symbolic link:\n\n```powershell\nNew-Item -ItemType SymbolicLink `\n  -Path \"$HOME\\\\.codex\\\\skills\\\\android-app-analyzer\" `\n  -Target \"C:\\\\path\\\\to\\\\this\\\\project\"\n```\n\n## npm Package\n\nThis repository is distributed as a `skill-source` style npm package. The npm package ships the Codex skill files and Python implementation, but it is not the primary installation path for end users.\n\nUse this repository with:\n\n```bash\nnpx skills add MarkSunDev/skill-android-app-analyzer -g -y\n```\n\nDo not use unrelated commands such as `npx skill ...` for this project. That targets a different npm package and will fail.\n\n## Testing\n\nRun the unit tests with:\n\n```bash\npython3 -m unittest discover -s tests -v\n```\n\n## License\n\nReleased under the MIT License.\n"
+      },
+      "plugins": [
+        {
+          "name": "android-app-analyzer",
+          "description": "Analyze Android APK/XAPK packages by package name or local file, inspect manifest metadata, background strategies, ad SDKs, and third-party services.",
+          "source": "./",
+          "strict": false,
+          "version": "0.2.0",
+          "author": {
+            "name": "MarkSunDev",
+            "url": "https://github.com/MarkSunDev"
+          },
+          "license": "MIT",
+          "keywords": [
+            "android",
+            "apk",
+            "xapk",
+            "manifest",
+            "skills",
+            "claude-code",
+            "androguard"
+          ],
+          "skills": [
+            "./"
+          ],
+          "categories": [
+            "androguard",
+            "android",
+            "apk",
+            "claude-code",
+            "manifest",
+            "skills",
+            "xapk"
+          ],
+          "install_commands": [
+            "/plugin marketplace add MarkSunDev/skill-android-app-analyzer",
+            "/plugin install android-app-analyzer@marksundev-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
