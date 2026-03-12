@@ -1,0 +1,41 @@
+{
+  "author": {
+    "id": "datumbrain",
+    "display_name": "Datum Brain",
+    "avatar_url": "https://avatars.githubusercontent.com/u/29494100?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "datumbrain-plugins",
+      "version": null,
+      "description": "🛡️ Prevent secrets and PII from being accidentally shared with Claude Code",
+      "repo_full_name": "datumbrain/claude-privacy-guard",
+      "repo_url": "https://github.com/datumbrain/claude-privacy-guard",
+      "repo_description": "A Claude Code plugin that helps developers avoid leaking PII, secrets, and sensitive internal data while using Claude inside codebases.",
+      "signals": {
+        "stars": 1,
+        "forks": 2,
+        "pushed_at": "2026-03-10T09:57:01Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"datumbrain-plugins\",\n  \"owner\": {\n    \"name\": \"Datum Brain\",\n    \"url\": \"https://github.com/datumbrain\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-privacy-guard\",\n      \"source\": \"./\",\n      \"description\": \"🛡️ Prevent secrets and PII from being accidentally shared with Claude Code\",\n      \"version\": \"0.1.2\",\n      \"repository\": \"https://github.com/datumbrain/claude-privacy-guard\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-privacy-guard\",\n  \"version\": \"0.1.2\",\n  \"description\": \"Privacy guard plugin for Claude Code - prevents PII and secrets from leaking into AI prompts\",\n  \"author\": {\n    \"name\": \"Datum Brain\"\n  },\n  \"repository\": \"https://github.com/datumbrain/claude-privacy-guard\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"privacy\",\n    \"security\",\n    \"pii\",\n    \"secrets\",\n    \"redaction\"\n  ]\n}\n",
+        "README.md": "# Claude Privacy Guard\n\n<img src=\"./assets/claude-privacy-guard-logo.png\" alt=\"Claude Privacy Guard Logo\" height=\"120\" />\n\n> 🛡️ Prevent secrets and PII from being accidentally shared with Claude Code.\n\nA privacy-first plugin for Claude Code that scans prompts for sensitive data and **blocks** them before they reach the AI.\n\n## Features\n\n- ✅ **Blocks prompts** containing sensitive data before they're sent to Claude\n- ✅ **Detects** PII, secrets, API keys, tokens, and sensitive information\n- ✅ **Works locally** - all scanning happens on your machine\n- ✅ **Zero configuration** - works out of the box\n- ✅ **Detailed reporting** - shows exactly what was detected\n\n## Installation\n\n```bash\n# Add the marketplace (if not already added)\n/plugin marketplace add datumbrain/claude-privacy-guard\n\n# Install the plugin\n/plugin install claude-privacy-guard\n```\n\n> **⚠️ Important: Restart Required**\n>\n> After installing the plugin, you must **restart your Claude Code session** for it to take effect. This is because hooks are registered at session startup - Claude Code doesn't dynamically load new hooks mid-session.\n>\n> Simply close and reopen Claude Code, or start a new session.\n\nOnce restarted, the plugin will automatically scan all prompts before they reach Claude.\n\n## What Gets Detected\n\n✅ **Secrets**\n- OpenAI API keys (`sk-...`, `sk-proj-...`)\n- AWS credentials\n- GitHub tokens\n- Stripe keys\n- JWT tokens\n- Bearer tokens\n- SSH private keys\n- Generic API key patterns\n\n✅ **Personal Information (PII)**\n- Email addresses\n- Phone numbers\n- Social Security Numbers\n- Credit card numbers\n\n## How It Works\n\n1. You type a prompt in Claude Code\n2. Privacy Guard intercepts it via a `UserPromptSubmit` hook\n3. Scans for sensitive data using regex patterns\n4. **Blocks the prompt** if sensitive data is found\n5. Shows you exactly what was detected\n\n## Example\n\n**Input:**\n```\nMy API key is sk-proj-abc123xyz and email is john@example.com\n```\n\n**Result:**\n```\n🛡️ Privacy Guard blocked this prompt\n\nFound 2 sensitive item(s):\n  - API_KEY: sk-proj-abc123xyz...\n  - EMAIL: john@example.com...\n\nRisk Score: 100/100\nSecrets: 1 | PII: 1\n\nPlease remove or anonymize sensitive data before proceeding.\n```\n\n\n## Development\n\n```bash\n# Clone the repository\ngit clone https://github.com/datumbrain/claude-privacy-guard.git\ncd claude-privacy-guard\n\n# Install dependencies\nnpm install\n\n# Build\nnpm run build\n\n# Test the scanner directly\necho \"test sk-proj-abc123\" | node scripts/prompt-guard.js\n```\n\nRelease:\n```bash\nmake release\n```\nThis runs an interactive flow that asks for version bump, confirms release actions, then runs build/test, creates commit+tag, and optionally pushes/publishes.\n\nExternal regex dataset:\n- Converted rules are stored at `data/regex_list_1.json`\n- By default, external rules are loaded in `coding-only` mode (focus on keys/tokens/secrets/password/private key patterns)\n- Set `.privacy-guard.json` to control behavior:\n\n```json\n{\n  \"externalRulesJsonPath\": \"./data/regex_list_1.json\",\n  \"externalRulesMode\": \"coding-only\"\n}\n```\n\nSee [docs/](./docs/) for detailed architecture and integration guides.\n\n## Privacy & Security\n\n- ✅ All scanning happens **locally on your machine**\n- ✅ No data is sent to external services\n- ✅ No telemetry or tracking\n- ✅ Open source and fully auditable\n- ✅ The plugin only blocks - it doesn't store or log your sensitive data\n\n## Why Block Instead of Redact?\n\nClaude Code's hook system doesn't support transforming prompts - only blocking or adding context. Blocking ensures sensitive data **never** reaches the AI, which is the safest approach.\n\n## Debugging\n\nCheck the debug log if you encounter issues:\n\n```bash\ncat /tmp/claude-privacy-guard.log\n```\n\n## Contributing\n\nContributions welcome! Please feel free to submit a Pull Request.\n\n## License\n\nMIT © Datum Brain\n"
+      },
+      "plugins": [
+        {
+          "name": "claude-privacy-guard",
+          "source": "./",
+          "description": "🛡️ Prevent secrets and PII from being accidentally shared with Claude Code",
+          "version": "0.1.2",
+          "repository": "https://github.com/datumbrain/claude-privacy-guard",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add datumbrain/claude-privacy-guard",
+            "/plugin install claude-privacy-guard@datumbrain-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

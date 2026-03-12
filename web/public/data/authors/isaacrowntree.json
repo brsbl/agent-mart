@@ -1,0 +1,104 @@
+{
+  "author": {
+    "id": "isaacrowntree",
+    "display_name": "Isaac Rowntree",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11435437?u=e479c935fe6d5c0bbfbc30ddb4453b68ea6115f9&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "social-skills",
+      "version": null,
+      "description": "Social media, e-commerce, and communication plugins for Claude Code",
+      "repo_full_name": "isaacrowntree/claude-social-skills",
+      "repo_url": "https://github.com/isaacrowntree/claude-social-skills",
+      "repo_description": "Claude Code plugins for social media posting, eBay listings, and email management",
+      "signals": {
+        "stars": 2,
+        "forks": 0,
+        "pushed_at": "2026-03-11T07:32:05Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"social-skills\",\n  \"owner\": {\n    \"name\": \"Isaac Rowntree\"\n  },\n  \"metadata\": {\n    \"description\": \"Social media, e-commerce, and communication plugins for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"social-post\",\n      \"source\": \"./plugins/social-post\",\n      \"description\": \"Post to Twitter/X, Reddit, Facebook, and Instagram from Claude Code\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"social-media\", \"twitter\", \"reddit\", \"facebook\", \"instagram\"],\n      \"category\": \"social-media\"\n    },\n    {\n      \"name\": \"ebay-listing\",\n      \"source\": \"./plugins/ebay-listing\",\n      \"description\": \"List items for sale on eBay from Claude Code\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"ebay\", \"listing\", \"selling\", \"marketplace\", \"e-commerce\"],\n      \"category\": \"e-commerce\"\n    },\n    {\n      \"name\": \"himalaya-email\",\n      \"source\": \"./plugins/himalaya-email\",\n      \"description\": \"Read, send, and manage email from Claude Code using the Himalaya CLI\",\n      \"version\": \"1.0.0\",\n      \"keywords\": [\"email\", \"himalaya\", \"gmail\", \"imap\", \"smtp\"],\n      \"category\": \"communication\"\n    }\n  ]\n}\n",
+        "README.md": "# claude-social-skills\n\nClaude Code plugin marketplace for social media, email, and e-commerce.\n\nNo MCP servers. Just scripts + skills that teach Claude how to use them.\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| **social-post** | Post to Twitter/X, Reddit, Facebook, and Instagram |\n| **ebay-listing** | List items for sale on eBay |\n| **himalaya-email** | Read, send, and manage email using the Himalaya CLI |\n\n## Install\n\nIn Claude Code:\n\n```\n/plugin marketplace add isaacrowntree/claude-social-skills\n/plugin install social-post@social-skills\n/plugin install ebay-listing@social-skills\n/plugin install himalaya-email@social-skills\n```\n\n## social-post\n\n### Dependencies\n\n```bash\npip install requests requests-oauthlib\n```\n\n### Credentials\n\nExport environment variables for the platforms you want to use:\n\n```bash\n# Twitter/X\nexport TWITTER_API_KEY=...\nexport TWITTER_API_SECRET=...\nexport TWITTER_ACCESS_TOKEN=...\nexport TWITTER_ACCESS_TOKEN_SECRET=...\n\n# Reddit\nexport REDDIT_CLIENT_ID=...\nexport REDDIT_CLIENT_SECRET=...\nexport REDDIT_USERNAME=...\nexport REDDIT_PASSWORD=...\n\n# Facebook\nexport FB_PAGE_ID=...\nexport FB_ACCESS_TOKEN=...\n\n# Instagram\nexport IG_USER_ID=...\nexport IG_ACCESS_TOKEN=...\n```\n\n| Platform | Where to get credentials | Account type |\n|----------|-------------------------|--------------|\n| **Twitter/X** | [Developer Portal](https://developer.x.com/en/portal/dashboard) | Any (free tier: ~50 posts/month) |\n| **Reddit** | [App Preferences](https://www.reddit.com/prefs/apps) — create \"script\" type | Any (2FA must be disabled) |\n| **Facebook** | [Graph API Explorer](https://developers.facebook.com/tools/explorer/) | Page (not personal) |\n| **Instagram** | Same as Facebook, linked IG account | Business/Creator only |\n\n### Usage\n\n```\n> Post this to Reddit r/programming: \"Check out this tool...\"\n> Share on Twitter and Reddit: \"Big announcement...\"\n```\n\n### Direct script usage\n\n```bash\n# Twitter\npython3 scripts/tweet.py \"Hello world\"\n\n# Reddit\npython3 scripts/reddit_post.py post programming \"My title\" --text \"Post body\"\npython3 scripts/reddit_post.py comment t3_abc123 \"Nice post!\"\n\n# Facebook\npython3 scripts/fb_post.py \"Page update\" --link \"https://example.com\"\n\n# Instagram (image must be a public URL)\npython3 scripts/ig_post.py image \"https://example.com/photo.jpg\" --caption \"Caption\"\npython3 scripts/ig_post.py reel \"https://example.com/video.mp4\" --caption \"Reel caption\"\n```\n\n### Platform limitations\n\n- **Twitter**: Free tier allows ~50 posts/month. OAuth 1.0a required for posting.\n- **Reddit**: API key self-service was restricted Nov 2025. Existing keys still work. 2FA must be disabled.\n- **Facebook**: Page posting only (no personal profiles via API). 200 calls/hour.\n- **Instagram**: Business accounts only. Must be linked to a Facebook Page. Images must be publicly hosted JPEG URLs. 25 posts/day max.\n\n## ebay-listing\n\nList items for sale on eBay. Supports fixed-price and auction listings with local image upload, product photo cleanup, and multiple marketplaces.\n\n### Dependencies\n\n```bash\npip install requests Pillow\n```\n\n### Setup\n\n1. Create an app at [developer.ebay.com](https://developer.ebay.com) (free, no API fees)\n2. Go to the **User Tokens** tab > **Auth'n'Auth** > **Sign in to Production**\n3. Sign in with your eBay account to generate a token\n4. Export it:\n   ```bash\n   export EBAY_AUTH_TOKEN=<your-token>\n   ```\n\nThat's it. The token lasts ~18 months and the script uses eBay's Trading API (XML) with it.\n\n> **Why Auth'n'Auth?** The OAuth 2.0 alternative requires a browser-based redirect flow that's finicky on localhost. Auth'n'Auth is simpler for personal use — one token, no callback server. The script supports both methods and auto-detects based on which env vars are set.\n\n### Usage\n\n```\n> List my GoPro on eBay for $299, condition is like new\n> Create a draft eBay listing for this camera with these photos\n> Clean up my product photos in this folder\n```\n\n### Direct script usage\n\n```bash\n# Create a listing\npython3 scripts/ebay_list.py list \\\n  --title \"GoPro Hero 12 Black\" \\\n  --description \"Brand new, sealed in box.\" \\\n  --price 299.99 \\\n  --condition NEW \\\n  --image \"https://example.com/photo.jpg\" \\\n  --marketplace US \\\n  --currency USD\n\n# Photo cleanup (auto white balance, contrast, sharpening)\npython3 scripts/photo_cleanup.py <directory|file>\n```\n\n### Listing options\n\n| Option | Required | Description |\n|--------|----------|-------------|\n| `--title` | Yes | Item title (max 80 chars) |\n| `--description` | Yes | Item description (max 4000 chars) |\n| `--price` | Yes | Listing price |\n| `--condition` | Yes | NEW, LIKE_NEW, USED_EXCELLENT, USED_VERY_GOOD, USED_GOOD, FOR_PARTS_OR_NOT_WORKING, etc. |\n| `--image` | Yes | HTTPS image URL (repeatable for multiple images) |\n| `--category` | No | eBay category ID |\n| `--marketplace` | No | US (default), UK, AU, CA, DE, FR, IT, ES |\n| `--currency` | No | USD (default), GBP, AUD, CAD, EUR |\n| `--format` | No | FIXED_PRICE (default) or AUCTION |\n| `--quantity` | No | Number available (default: 1) |\n| `--sku` | No | Custom SKU (auto-generated if omitted) |\n| `--brand` | No | Brand name |\n| `--draft` | No | Create offer without publishing (for review) |\n\n### Platform notes\n\n- Free API access, no fees. Auth'n'Auth token lasts ~18 months.\n- Supports fixed-price and auction listings.\n- Includes `photo_cleanup.py` for auto white balance, contrast, brightness, and sharpening of product photos.\n- Also supports OAuth 2.0 (Inventory API) if you set `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET`, `EBAY_RUNAME` instead — auto-detects based on which env vars are present.\n\n## himalaya-email\n\nRead, send, and manage email from Claude Code using the [himalaya](https://github.com/pimalaya/himalaya) CLI. No scripts needed — this plugin teaches Claude how to use the himalaya commands directly.\n\n### Prerequisites\n\n1. Install himalaya (v1.2.0+):\n   ```bash\n   brew install himalaya\n   ```\n2. Configure your email account in `~/.config/himalaya/config.toml` (or `~/Library/Application Support/himalaya/config.toml` on macOS). See the [himalaya docs](https://github.com/pimalaya/himalaya) for config examples.\n\n### Features\n\n- List and read emails from any folder (INBOX, Sent, Drafts, etc.)\n- Send emails and reply to threads with proper threading headers\n- Trace email origins — inspect SPF, DKIM, DMARC, and Received headers\n- Preview mode (`-p` flag) to read without marking as seen\n- Gmail folder alias support (Sent Mail, Drafts, Bin, Spam)\n- JSON output for programmatic use\n\n### Usage\n\n```\n> Check my inbox\n> Read the latest email from GitHub\n> Reply to that email saying thanks\n> Where did this email actually come from? Check the headers\n> Show me emails in my Sent folder\n```\n\n### Platform notes\n\n- Works with any IMAP/SMTP email provider (Gmail, Outlook, Fastmail, etc.)\n- Gmail users: set `message.send.save-copy = false` in config to avoid duplicate sent messages.\n- No API keys needed — uses standard IMAP/SMTP with app passwords.\n\n## Repo structure\n\n```\nclaude-social-skills/\n├── .claude-plugin/\n│   └── marketplace.json           # Marketplace catalog\n└── plugins/\n    ├── social-post/\n    │   ├── .claude-plugin/\n    │   │   └── plugin.json        # Plugin manifest\n    │   ├── skills/\n    │   │   └── social-post/\n    │   │       └── SKILL.md       # Skill instructions\n    │   ├── scripts/\n    │   │   ├── tweet.py           # Twitter/X (OAuth 1.0a)\n    │   │   ├── reddit_post.py     # Reddit (OAuth2)\n    │   │   ├── fb_post.py         # Facebook Pages (Graph API v24.0)\n    │   │   └── ig_post.py         # Instagram Business (Graph API v24.0)\n    │   ├── requirements.txt\n    │   └── .env.example\n    ├── ebay-listing/\n    │   ├── .claude-plugin/\n    │   │   └── plugin.json        # Plugin manifest\n    │   ├── skills/\n    │   │   └── ebay-listing/\n    │   │       └── SKILL.md       # Skill instructions\n    │   ├── scripts/\n    │   │   ├── ebay_list.py       # eBay (Trading API + Inventory API)\n    │   │   └── photo_cleanup.py   # Product photo auto-cleanup\n    │   ├── tests/\n    │   │   └── test_ebay_list.py\n    │   ├── requirements.txt\n    │   └── .env.example\n    └── himalaya-email/\n        ├── .claude-plugin/\n        │   └── plugin.json        # Plugin manifest\n        └── skills/\n            └── himalaya-email/\n                └── SKILL.md       # Skill instructions (uses himalaya CLI)\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "social-post",
+          "source": "./plugins/social-post",
+          "description": "Post to Twitter/X, Reddit, Facebook, and Instagram from Claude Code",
+          "version": "1.0.0",
+          "keywords": [
+            "social-media",
+            "twitter",
+            "reddit",
+            "facebook",
+            "instagram"
+          ],
+          "category": "social-media",
+          "categories": [
+            "facebook",
+            "instagram",
+            "reddit",
+            "social-media",
+            "twitter"
+          ],
+          "install_commands": [
+            "/plugin marketplace add isaacrowntree/claude-social-skills",
+            "/plugin install social-post@social-skills"
+          ]
+        },
+        {
+          "name": "ebay-listing",
+          "source": "./plugins/ebay-listing",
+          "description": "List items for sale on eBay from Claude Code",
+          "version": "1.0.0",
+          "keywords": [
+            "ebay",
+            "listing",
+            "selling",
+            "marketplace",
+            "e-commerce"
+          ],
+          "category": "e-commerce",
+          "categories": [
+            "e-commerce",
+            "ebay",
+            "listing",
+            "marketplace",
+            "selling"
+          ],
+          "install_commands": [
+            "/plugin marketplace add isaacrowntree/claude-social-skills",
+            "/plugin install ebay-listing@social-skills"
+          ]
+        },
+        {
+          "name": "himalaya-email",
+          "source": "./plugins/himalaya-email",
+          "description": "Read, send, and manage email from Claude Code using the Himalaya CLI",
+          "version": "1.0.0",
+          "keywords": [
+            "email",
+            "himalaya",
+            "gmail",
+            "imap",
+            "smtp"
+          ],
+          "category": "communication",
+          "categories": [
+            "communication",
+            "email",
+            "gmail",
+            "himalaya",
+            "imap",
+            "smtp"
+          ],
+          "install_commands": [
+            "/plugin marketplace add isaacrowntree/claude-social-skills",
+            "/plugin install himalaya-email@social-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

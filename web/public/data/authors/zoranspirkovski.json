@@ -38,6 +38,57 @@
           ]
         }
       ]
+    },
+    {
+      "name": "pas-framework",
+      "version": null,
+      "description": "PAS (Process, Agent, Skill) framework for building agentic workflows",
+      "repo_full_name": "ZoranSpirkovski/PAS",
+      "repo_url": "https://github.com/ZoranSpirkovski/PAS",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-10T13:35:54Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"pas-framework\",\n  \"owner\": {\n    \"name\": \"Zoran Spirkovski\"\n  },\n  \"metadata\": {\n    \"description\": \"PAS (Process, Agent, Skill) framework for building agentic workflows\",\n    \"version\": \"1.3.2\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"pas\",\n      \"source\": \"./plugins/pas\",\n      \"description\": \"Framework for building agentic workflows with composable processes, agents, and skills. Provides /pas command to create and manage automated pipelines.\",\n      \"version\": \"1.3.2\",\n      \"author\": {\n        \"name\": \"Zoran Spirkovski\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"framework\",\n        \"agents\",\n        \"skills\",\n        \"processes\",\n        \"workflow\",\n        \"automation\"\n      ],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# PAS Framework\n\n> **This is the official source repository for PAS.** All development happens here, and this is where users get the latest version.\n\n**Process, Agent, Skill** - a modular framework for building agentic workflows with AI coding assistants.\n\nPAS gives you composable primitives that can be created, tested, improved, and combined into any automated pipeline. Define a goal, and PAS creates the process, agents, and skills needed to achieve it. Feedback from each run improves the system over time.\n\n## The Problem\n\nBuilding complex AI workflows today means writing monolithic prompts that handle everything. When something breaks, you can't fix one thing without touching everything. There's no way to give feedback to a specific part of the pipeline, and nothing is reusable across projects.\n\n## How PAS Solves It\n\nClean separation of responsibilities:\n\n| Concept | Role | One-liner |\n|---------|------|-----------|\n| **Process** | WHY + WHAT + WHEN | The goal and the plan to achieve it |\n| **Agent** | WHO | The specialist who does the work |\n| **Skill** | HOW | The technique they use |\n\nA Process assigns Agents work toward a goal, and Agents use Skills to do it. Each piece has its own feedback backlog and changelog, so improvements target exactly where the issue lives.\n\n## Install\n\nPAS is distributed as a [Claude Code plugin](https://code.claude.com/docs/en/plugins). Install it from the marketplace:\n\n```\n/plugin marketplace add ZoranSpirkovski/PAS\n/plugin install pas@pas-framework\n```\n\nOnce installed, use `/pas:pas` to create and manage processes, agents, and skills.\n\n### Alternative: Local Development\n\nClone the repo and load the plugin directly:\n\n```bash\ngit clone https://github.com/ZoranSpirkovski/PAS.git\nclaude --plugin-dir ./PAS/plugins/pas\n```\n\n## Quick Start\n\nAfter installing, start a conversation with PAS:\n\n```\n/pas:pas I want to build a code review pipeline\n```\n\nPAS will ask clarifying questions (one at a time, brainstorming-style), then create:\n- A process definition with phases, gates, and agent assignments\n- Agents with identities, tools, and skills\n- A thin launcher so you can run it with a slash command\n- Library skills (orchestration patterns, self-evaluation, feedback routing)\n\nOn first use, PAS creates `.pas/config.yaml` and `.pas/workspace/` in your project root.\n\n## Walkthrough\n\nA full lifecycle example using the code review pipeline from Quick Start.\n\n### 1. Create a Process\n\n```\n/pas:pas I want to build a code review pipeline\n```\n\nPAS asks clarifying questions — how many reviewers, what languages, which quality gates — then generates everything:\n\n```\n.pas/\n  config.yaml\n  workspace/\n  processes/code-review/\n    process.md              # Phases, agents, gates\n    agents/\n      orchestrator/         # Coordinates the pipeline\n      reviewer/             # Reviews code changes\n    modes/\n      supervised.md\n      autonomous.md\n    feedback/backlog/\n.claude/skills/code-review/\n    SKILL.md                # Thin launcher — invoke with /code-review\n```\n\n`process.md` defines the phases (e.g., diff analysis, review, summary), the gates between them, and which agent handles each phase. Agents get identities, tools, and skills. The thin launcher in `.claude/skills/` lets you run the whole pipeline with a single slash command.\n\n### 2. Run the Process\n\n```\n/code-review\n```\n\nThe orchestrator reads `process.md`, creates a workspace instance at `.pas/workspace/code-review/{slug}/`, and executes each phase in order. Gates between phases enforce quality checks — a phase only advances when its gate criteria are met. The workspace tracks pipeline state in `status.yaml` so runs are resumable.\n\n### 3. Feedback Loop\n\nAt shutdown, every agent writes self-evaluation signals:\n\n- **PPU** — a workflow improvement (e.g., \"check test coverage before style review\")\n- **OQI** — a quality issue in output (e.g., \"missed edge case in error handling review\")\n- **GATE** — a change that should not be made (stability guard)\n- **STA** — a behavior that must not regress (stability anchor)\n\nSignals route automatically to the relevant artifact's `feedback/backlog/`. To review and apply them:\n\n```\n/pas:pas what feedback exists?\n```\n\nPAS shows accumulated signals grouped by artifact, then applies improvements directly — updating process definitions, agent instructions, or skill logic. Each run makes the pipeline better.\n\n## Core Concepts\n\n### Recursive Composition\n\nPAS is a tree structure. Each layer can contain any other:\n\n- **Process** can contain processes, agents, skills\n- **Agent** can contain processes, skills\n- **Skill** is the leaf node (instructions)\n\nFeedback attaches to the exact level where an issue lives.\n\n### Start Lean, Grow Through Feedback\n\nPAS creates the minimum viable set. A simple task might need just an orchestrator with one skill. A complex pipeline gets specialist agents. More structure is added only when usage establishes the need.\n\n### Orchestration Patterns\n\nFour built-in patterns for coordinating agents:\n\n| Pattern | When to Use |\n|---------|-------------|\n| **Solo** | Single agent, no delegation |\n| **Hub-and-Spoke** | Central orchestrator delegates to specialists in parallel |\n| **Sequential Agents** | One agent at a time, handoff between phases |\n| **Discussion** | Multi-agent deliberation for decisions requiring consensus |\n\n### Feedback System\n\nEvery agent writes self-evaluation signals at shutdown. Four signal types:\n\n- **PPU** (Persistent Preference Update) - workflow improvements\n- **OQI** (Output Quality Issue) - quality problems in deliverables\n- **GATE** (Gate Evaluation) - review point observations\n- **STA** (Stability Anchor) - behaviors that must not regress\n\nSignals route automatically to artifact backlogs. Apply them with `/pas:pas what feedback exists?`\n\n### Two-Tier Agent Lifecycle\n\n- **Process agents** (TeamCreate): persistent for the full pipeline run, retain context for rich self-evaluation\n- **Task helpers** (Agent tool): ephemeral fire-and-forget for subtasks\n\n## What's in the Plugin\n\n```\nplugins/pas/\n  skills/pas/SKILL.md              # /pas entry point with intelligent routing\n  hooks/\n    hooks.json                     # Hook configuration\n    check-self-eval.sh             # Ensures agents write self-evaluation\n    route-feedback.sh              # Routes feedback signals to artifact backlogs\n  library/\n    orchestration/                 # 4 patterns: solo, hub-and-spoke, sequential, discussion\n    self-evaluation/               # Always-on feedback collection skill\n    message-routing/               # Gate message classification skill\n  processes/pas/                   # PAS self-management process\n    agents/orchestrator/\n      skills/\n        creating-processes/        # Create new processes from goals\n        creating-agents/           # Create agents within processes\n        creating-skills/           # Create composable skills\n        applying-feedback/         # Review and apply accumulated feedback\n  pas-config.yaml                  # Framework configuration\n```\n\n## Conventions\n\n- Every artifact (process, agent, skill) has `feedback/backlog/` and `changelog.md`\n- Skills follow the [Agent Skills](https://agentskills.io) open standard (SKILL.md format)\n- Workspace instances live at `workspace/{process}/{slug}/`\n- Pipeline state tracked in `workspace/{process}/{slug}/status.yaml`\n- Agents are always process-local (no shared agents across processes)\n- Skills are local-first; only graduate to `library/` when reused in 2+ places\n\n## Compatibility\n\nPAS works with any AI coding assistant that supports the [Agent Skills](https://agentskills.io) standard. The plugin format and hooks are specific to Claude Code.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "pas",
+          "source": "./plugins/pas",
+          "description": "Framework for building agentic workflows with composable processes, agents, and skills. Provides /pas command to create and manage automated pipelines.",
+          "version": "1.3.2",
+          "author": {
+            "name": "Zoran Spirkovski"
+          },
+          "license": "MIT",
+          "keywords": [
+            "framework",
+            "agents",
+            "skills",
+            "processes",
+            "workflow",
+            "automation"
+          ],
+          "category": "productivity",
+          "categories": [
+            "agents",
+            "automation",
+            "framework",
+            "processes",
+            "productivity",
+            "skills",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add ZoranSpirkovski/PAS",
+            "/plugin install pas@pas-framework"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,119 @@
+{
+  "author": {
+    "id": "shokai",
+    "display_name": "Sho Hashimoto",
+    "avatar_url": "https://avatars.githubusercontent.com/u/34204?u=8bec96595ac613e2936155cc9764fdf60ca766a2&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "shokai-agent-skills",
+      "version": null,
+      "description": "shokai's Claude Code Agent Skills collection",
+      "repo_full_name": "shokai/agent-skills",
+      "repo_url": "https://github.com/shokai/agent-skills",
+      "repo_description": "Claude Code Agent Skills",
+      "signals": {
+        "stars": 9,
+        "forks": 1,
+        "pushed_at": "2026-03-11T03:59:37Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"shokai-agent-skills\",\n  \"owner\": {\n    \"name\": \"shokai\"\n  },\n  \"metadata\": {\n    \"description\": \"shokai's Claude Code Agent Skills collection\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"library-update-review\",\n      \"source\": \"./plugins/library-update-review\",\n      \"description\": \"ライブラリ更新pull requestのレビュー手順。dependabot/renovatebot PRの分析、release note調査、コード更新、過去の失敗調査を行う。\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"shokai\"\n      },\n      \"repository\": \"https://github.com/shokai/agent-skills\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"library-update\", \"dependabot\", \"renovatebot\", \"review\", \"npm\"],\n      \"category\": \"code-review\"\n    },\n    {\n      \"name\": \"codex-consultation\",\n      \"source\": \"./plugins/codex-consultation\",\n      \"description\": \"Codex CLIにセカンドオピニオンを求めるスキル。「codexと相談して」「codexに聞いて」で発動する。\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"shokai\"\n      },\n      \"repository\": \"https://github.com/shokai/agent-skills\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"codex\", \"openai\", \"consultation\", \"second-opinion\"],\n      \"category\": \"ai-collaboration\"\n    },\n    {\n      \"name\": \"conversation-context\",\n      \"source\": \"./plugins/conversation-context\",\n      \"description\": \"対話コンテキストのexport/importスキル。会話で共有された目的・意図・設計判断・制約条件を .dev/contexts/ に書き出し、別セッションやレビューで読み込む。1対多のコンテキスト共有により、複数のsub PRをまとめたfeature PRのレビューやコードの自動改善に便利。\",\n      \"version\": \"1.1.0\",\n      \"author\": {\n        \"name\": \"shokai\"\n      },\n      \"repository\": \"https://github.com/shokai/agent-skills\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"context\", \"export\", \"import\", \"session\", \"handoff\"],\n      \"category\": \"workflow\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Code Agent Skills by shokai\n\n- https://github.com/shokai/agent-skills\n\n## インストール方法\n\n### 1. マーケットプレイスを登録\n\n```bash\n/plugin marketplace add shokai/agent-skills\n```\n\n### 2. スキルをインストール\n\n```bash\n/plugin install library-update-review\n/plugin install codex-consultation\n/plugin install conversation-context\n```\n\n### スキルをうまくインストールできない場合\n\n既にマーケットプレイスを登録済みの場合、新しいスキルをインストールするにはマーケットプレイスの更新が必要です。\n\n1. `/plugin` コマンドを実行\n2. 「Update marketplace」を選択\n3. 「Browse plugins」から新しいスキルをインストール\n\n## 含まれるスキル\n\n### library-update-review\n\nライブラリ更新pull requestのレビューを支援するスキルです。\n\n#### 機能\n\n- dependabotやrenovatebotが作成したPRの分析\n- release noteやchangelogの詳細調査\n- ライブラリの依存関係の確認\n- コードの使用箇所の特定\n- 必要に応じたコード更新の提案\n- 過去の失敗事例の調査\n\n#### 使い方\n\n```bash\n/library-update-review [PR-URL-or-number]\n```\n\ndependabotやrenovatebotのPRブランチで実行すると、包括的なレビューレポートを作成します。\n\n### codex-consultation\n\nCodex CLI（OpenAI）にセカンドオピニオンを求めるスキルです。\n\n前提: Codex CLIがローカル環境にインストールされ、実行可能であること。\n\n#### 機能\n\n- 会話コンテキストに基づいてCodexへの相談プロンプトを自動設計\n- Codexの回答をClaudeが要約・整理し、自身の見解と照らし合わせて報告\n- Codexのコマンド失敗を検知した場合、Claudeが補正\n\n#### 使い方\n\n```bash\n/codex-consultation\n```\n\n作業中に「codexと相談して」「codexに聞いて」「codexにレビューしてもらって」と伝えると発動します。\n\n### conversation-context\n\n対話コンテキストのexport/importスキルです。2つのスキルがセットでインストールされます。\n\n会話で共有された目的・意図・設計判断・制約条件を `.dev/contexts/` ディレクトリに書き出し、別セッションやレビューで読み込むことができます。1対多のコンテキスト共有により、複数のsub pull requestをまとめたfeature pull requestのレビューやコードの自動改善に便利です。\n\n#### 機能\n\n- **conversation-context-export**: 現在の会話コンテキスト（目的、設計判断、制約条件など）を `.dev/contexts/` に書き出す\n- **conversation-context-import**: `.dev/contexts/` に保存されたコンテキストを読み込み、現在のセッションに反映する\n\n#### 使い方\n\n```bash\n/conversation-context-export\n/conversation-context-import\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "library-update-review",
+          "source": "./plugins/library-update-review",
+          "description": "ライブラリ更新pull requestのレビュー手順。dependabot/renovatebot PRの分析、release note調査、コード更新、過去の失敗調査を行う。",
+          "version": "1.0.0",
+          "author": {
+            "name": "shokai"
+          },
+          "repository": "https://github.com/shokai/agent-skills",
+          "license": "MIT",
+          "keywords": [
+            "library-update",
+            "dependabot",
+            "renovatebot",
+            "review",
+            "npm"
+          ],
+          "category": "code-review",
+          "categories": [
+            "code-review",
+            "dependabot",
+            "library-update",
+            "npm",
+            "renovatebot",
+            "review"
+          ],
+          "install_commands": [
+            "/plugin marketplace add shokai/agent-skills",
+            "/plugin install library-update-review@shokai-agent-skills"
+          ]
+        },
+        {
+          "name": "codex-consultation",
+          "source": "./plugins/codex-consultation",
+          "description": "Codex CLIにセカンドオピニオンを求めるスキル。「codexと相談して」「codexに聞いて」で発動する。",
+          "version": "1.2.0",
+          "author": {
+            "name": "shokai"
+          },
+          "repository": "https://github.com/shokai/agent-skills",
+          "license": "MIT",
+          "keywords": [
+            "codex",
+            "openai",
+            "consultation",
+            "second-opinion"
+          ],
+          "category": "ai-collaboration",
+          "categories": [
+            "ai-collaboration",
+            "codex",
+            "consultation",
+            "openai",
+            "second-opinion"
+          ],
+          "install_commands": [
+            "/plugin marketplace add shokai/agent-skills",
+            "/plugin install codex-consultation@shokai-agent-skills"
+          ]
+        },
+        {
+          "name": "conversation-context",
+          "source": "./plugins/conversation-context",
+          "description": "対話コンテキストのexport/importスキル。会話で共有された目的・意図・設計判断・制約条件を .dev/contexts/ に書き出し、別セッションやレビューで読み込む。1対多のコンテキスト共有により、複数のsub PRをまとめたfeature PRのレビューやコードの自動改善に便利。",
+          "version": "1.1.0",
+          "author": {
+            "name": "shokai"
+          },
+          "repository": "https://github.com/shokai/agent-skills",
+          "license": "MIT",
+          "keywords": [
+            "context",
+            "export",
+            "import",
+            "session",
+            "handoff"
+          ],
+          "category": "workflow",
+          "categories": [
+            "context",
+            "export",
+            "handoff",
+            "import",
+            "session",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add shokai/agent-skills",
+            "/plugin install conversation-context@shokai-agent-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

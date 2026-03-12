@@ -1,0 +1,95 @@
+{
+  "author": {
+    "id": "postsharp",
+    "display_name": "PostSharp",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1415585?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "postsharp-engineering",
+      "version": null,
+      "description": "Claude Code plugins for PostSharp and Metalama development workflows",
+      "repo_full_name": "postsharp/PostSharp.Engineering.AISkills",
+      "repo_url": "https://github.com/postsharp/PostSharp.Engineering.AISkills",
+      "repo_description": "AI Skills for PostSharp.Engineering and our Git/DevOps workflows",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-11T12:29:13Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"postsharp-engineering\",\n  \"owner\": {\n    \"name\": \"PostSharp Technologies\",\n    \"email\": \"hello@postsharp.net\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins for PostSharp and Metalama development workflows\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"eng\",\n      \"source\": \"./plugins/eng\",\n      \"description\": \"PostSharp engineering workflows: git conventions, PRs, releases, TeamCity CI/CD, build diagnostics\",\n      \"version\": \"1.6.0\",\n      \"author\": {\n        \"name\": \"PostSharp Technologies\",\n        \"email\": \"hello@postsharp.net\"\n      },\n      \"keywords\": [\"git\", \"workflow\", \"pr\", \"release\", \"teamcity\", \"ci-cd\", \"build\", \"diagnostics\"],\n      \"category\": \"workflow\"\n    },\n    {\n      \"name\": \"metalama-dev\",\n      \"source\": \"./plugins/metalama-dev\",\n      \"description\": \"Metalama framework development: aspect testing, test directives, code model, diagnostics\",\n      \"version\": \"1.2.0\",\n      \"author\": {\n        \"name\": \"PostSharp Technologies\",\n        \"email\": \"hello@postsharp.net\"\n      },\n      \"keywords\": [\"metalama\", \"aspects\", \"testing\", \"roslyn\", \"csharp\"],\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        "README.md": "# PostSharp Engineering AI Skills\n\nClaude Code plugin marketplace for PostSharp and Metalama development workflows.\n\n## Available Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [eng](./plugins/eng/) | Git conventions, PRs, releases, TeamCity CI/CD, build diagnostics |\n| [metalama-dev](./plugins/metalama-dev/) | Metalama framework development: aspect testing, test directives |\n\n## Installation\n\n### Add Marketplace\n\n```bash\n/plugin marketplace add postsharp/PostSharp.Engineering.AISkills\n```\n\n### Install Plugin\n\n```bash\n/plugin install eng@postsharp-engineering\n```\n\n### Team Configuration\n\nAdd to your project's `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"postsharp-engineering\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"postsharp/PostSharp.Engineering.AISkills\"\n      }\n    }\n  },\n  \"enabledPlugins\": [\"eng@postsharp-engineering\"]\n}\n```\n\n## Plugin: eng\n\nPostSharp/Metalama engineering workflows:\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/eng:create-pr` | Create PR with metadata, milestone, issue linking |\n| `/eng:prepare-release` | Prepare GitHub release for a milestone |\n| `/eng:tc-build` | Trigger TeamCity build |\n| `/eng:tc-check-build` | Check TeamCity build status |\n| `/eng:fix-binlog-warnings` | Fix compiler warnings from MSBuild binlog files |\n| `/eng:reflect` | Review session and capture learnings |\n\n### Skills\n\nThe `eng` skill provides git workflow conventions:\n- Branch naming: `topic/YYYY.N/XXXX-description`\n- Commit messages: Short, imperative, with issue numbers\n- Merge targets: Always `develop/YYYY.N`, never default branch\n- GitHub API patterns for milestones, project status, issue linking\n\n## Recommended Directory Structure\n\nOrganize your source code with product families at the first level, repos underneath:\n\n```\nC:\\src\\\n├── Metalama-2025.1\\           # Product family (specific major version)\n│   ├── Metalama\\              # Main repo\n│   ├── Metalama.Premium\\\n│   ├── Metalama.Documentation\\\n│   └── Metalama.Samples\\\n├── Metalama-2026.0\\           # Another major version\n│   ├── Metalama\\\n│   ├── Metalama.Premium\\\n│   └── ...\n├── PostSharp.Engineering\\     # Cross-product tooling (not version-specific)\n│   ├── PostSharp.Engineering\\\n│   └── PostSharp.Engineering.AISkills\\\n└── ...\n```\n\nThis structure allows:\n- Working on multiple major versions simultaneously\n- Shared tooling repos outside product families\n- Clear separation between version-specific and cross-cutting concerns\n\n## Contributing\n\n**Developers are encouraged to clone this repo locally and improve it.**\n\nFor local development, reference the local path in your project's `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"postsharp-engineering\": {\n      \"source\": \"C:/src/PostSharp.Engineering/PostSharp.Engineering.AISkills\"\n    }\n  },\n  \"enabledPlugins\": [\"eng@postsharp-engineering\"]\n}\n```\n\nWhen you've made improvements:\n1. Test your changes locally\n2. Submit a PR back to this repository\n3. Once merged, teams using the GitHub source will get the updates automatically\n\n## License\n\nMIT\n",
+        "plugins/eng/README.md": "# Engineering Plugin\n\nPostSharp/Metalama engineering workflows: git conventions, PRs, releases, TeamCity CI/CD, build diagnostics.\n\n## Prerequisites\n\n- Git repository with GitHub remote\n- GitHub authentication (via MCP authorization server when running in Docker)\n- TeamCity access (for CI/CD commands)\n- PowerShell (for cache updates on Windows hosts)\n\n## Commands\n\n| Command | Description | Usage |\n|---------|-------------|-------|\n| `/eng:create-pr [issue numbers]` | Create a pull request with proper metadata, milestone, and issue linking | `/eng:create-pr 123 456` |\n| `/eng:prepare-release <milestone>` | Prepare a GitHub release for a milestone with proper release notes | `/eng:prepare-release 2024.1` |\n| `/eng:tc-build [BuildType]` | Trigger a TeamCity build for the current branch | `/eng:tc-build` |\n| `/eng:tc-check-build <buildId>` | Check the status of a TeamCity build | `/eng:tc-check-build 12345` |\n| `/eng:fix-binlog-warnings` | Fix compiler warnings found in MSBuild binlog files | `/eng:fix-binlog-warnings` |\n| `/eng:reflect` | Review session and capture learnings for future sessions | `/eng:reflect` |\n| `/eng:update-cache` | Update the local Claude plugin cache from source | `/eng:update-cache` |\n\n## Skills\n\nThe `eng` skill provides:\n- Git workflow conventions (branching, commits, merge targets)\n- GitHub API patterns (milestones, project status, issue linking)\n- TeamCity integration\n\n## Installation\n\nAdd to your project's `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"postsharp-engineering\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"postsharp/PostSharp.Engineering.AISkills\"\n      }\n    }\n  },\n  \"enabledPlugins\": [\"eng@postsharp-engineering\"]\n}\n```\n\nOr install interactively:\n```bash\n/plugin marketplace add postsharp/PostSharp.Engineering.AISkills\n/plugin install eng@postsharp-engineering\n```\n\n## Troubleshooting\n\n### GitHub Authentication\n\nClaude's authentication method depends on the execution environment (check `RUNNING_IN_DOCKER` environment variable).\n\n**When Claude runs in Docker** (environment variable `RUNNING_IN_DOCKER=true`):\n- GitHub operations (`gh` commands, `git push`) use an **MCP authorization server**\n- Claude will prompt for authorization when needed\n- No manual `gh auth login` required\n- The MCP server handles authentication securely\n\n**When Claude runs on host machine** (no `RUNNING_IN_DOCKER` or `RUNNING_IN_DOCKER=false`):\n- Ensure GitHub CLI is authenticated:\n  ```bash\n  gh auth status\n  gh auth login\n  ```\n\n### Git Push Operations\nMost git operations work automatically, but `git push` requires authentication:\n- In Docker: Uses MCP authorization server (automatic prompting)\n- On host: Uses your local git credentials\n\n### TeamCity Access\nTeamCity commands require proper authentication. Ensure your TeamCity credentials are configured in your environment.\n\n### Cache Updates\nIf plugin updates aren't reflected, run:\n```bash\n/eng:update-cache\n```\n\n### Docker Container Context\nTo check if Claude is running in Docker, check the `RUNNING_IN_DOCKER` environment variable.\n\nWhen running in Docker:\n- Authenticated operations use MCP authorization server\n- File paths are relative to the container's mounted workspace\n- Some host-specific tools may not be available\n\nWhen running on host:\n- Authentication uses local credentials (`gh auth`, git config)\n- Direct access to all host tools and paths\n",
+        "plugins/metalama-dev/README.md": "# Metalama Development Plugin\n\nSpecialized knowledge and tools for developing the Metalama framework itself. Provides comprehensive reference documentation, testing patterns, and TeamCity integration for Metalama contributors.\n\n## Prerequisites\n\n- Metalama source code repository\n- .NET SDK (version matching Metalama requirements)\n- Understanding of Roslyn and C# compilation\n- TeamCity access (for CI/CD integration)\n- Git authentication (via MCP authorization server when running in Docker)\n\n## Features\n\n### Aspect Testing\n- **Snapshot-based testing** - Test aspects through the Metalama pipeline with expected output comparison\n- **Test directives** - Use `@TestScenario`, `@IgnoredDiagnostic`, `@RemoveOutputCode`, and other directives\n- **Pipeline validation** - Verify aspect behavior across different compilation stages\n- **Output verification** - Compare transformed code against expected snapshots\n\n### Test Directives Reference\n- `@TestScenario(applyCodeFix)` - Apply code fixes during testing\n- `@IgnoredDiagnostic(diagnosticId)` - Suppress expected diagnostics\n- `@RemoveOutputCode` - Remove generated code from output\n- `@Include(path)` - Include external files in test compilation\n- `@DesignTime` - Test design-time behavior vs compile-time\n\n### Code Model & Templates\n- Metalama code model API reference\n- Template syntax and best practices\n- Compile-time vs run-time code patterns\n- Diagnostic creation and reporting\n\n### Debugging & Troubleshooting\n- Debugging techniques for aspect development\n- Pipeline inspection and diagnostic paths\n- Common issues and resolutions\n- Performance optimization strategies\n\n## Skills\n\n### metalama-reference\nComprehensive API reference and development patterns for Metalama framework development. Covers:\n- Code model navigation and manipulation\n- Template authoring and syntax\n- Aspect lifecycle and pipeline\n- Diagnostic and validation patterns\n- Advanced scenarios and edge cases\n\n**When to use**: When developing aspects, working with the code model, writing templates, or implementing Metalama framework features.\n\n### metalama-teamcity\nTeamCity CI/CD integration patterns specific to Metalama builds. Covers:\n- Build configuration for Metalama projects\n- Test execution and reporting\n- Artifact management\n- Build triggers and dependencies\n\n**When to use**: When setting up or troubleshooting Metalama builds on TeamCity, or configuring CI/CD pipelines.\n\n## Usage Examples\n\n### Working with Aspects\nAsk Claude:\n- \"How do I test an aspect that adds logging to methods?\"\n- \"What's the correct way to use IMethod in the code model?\"\n- \"How do I create a diagnostic for invalid aspect usage?\"\n\nThe `metalama-reference` skill will automatically provide relevant API documentation and patterns.\n\n### Test Development\nAsk Claude:\n- \"Show me how to write a snapshot test for my aspect\"\n- \"How do I use @TestScenario with code fixes?\"\n- \"What test directives should I use for this scenario?\"\n\n### TeamCity Integration\nAsk Claude:\n- \"How should I configure the Metalama build on TeamCity?\"\n- \"What's the proper artifact structure for Metalama packages?\"\n\nThe `metalama-teamcity` skill will provide CI/CD guidance.\n\n## Installation\n\nAdd to your project's `.claude/settings.json`:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"postsharp-engineering\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"postsharp/PostSharp.Engineering.AISkills\"\n      }\n    }\n  },\n  \"enabledPlugins\": [\"metalama-dev@postsharp-engineering\"]\n}\n```\n\nOr install interactively:\n```bash\n/plugin marketplace add postsharp/PostSharp.Engineering.AISkills\n/plugin install metalama-dev@postsharp-engineering\n```\n\n## Troubleshooting\n\n### Skills Not Loading\nIf the Metalama reference isn't being used:\n1. Check that the plugin is enabled in settings\n2. Verify you're in a Metalama project directory\n3. Try asking explicitly: \"Using the metalama-reference skill, how do I...\"\n\n### Missing API Documentation\nThe plugin includes extensive offline reference documentation. If information seems outdated:\n1. Check the official Metalama documentation\n2. Update the plugin to the latest version\n3. Report missing or incorrect information\n\n### Test Failures\nWhen snapshot tests fail:\n1. Review the diff between expected and actual output\n2. Verify test directives are correctly applied\n3. Check that the Metalama pipeline is running as expected\n4. Regenerate snapshots if the behavior change is intentional\n\n### Git Operations & Authentication\n\nCheck the `RUNNING_IN_DOCKER` environment variable to determine the execution context.\n\n**When running in Docker** (`RUNNING_IN_DOCKER=true`):\n- Git operations like `git push` use an **MCP authorization server**\n- Claude will prompt for authorization when needed\n- No manual authentication setup required\n\n**When running on host** (no `RUNNING_IN_DOCKER` or `RUNNING_IN_DOCKER=false`):\n- Uses local git credentials and SSH keys\n- Manual `gh auth login` may be required\n\n**General Git Workflow**:\n- Most git operations (status, diff, commit) work without authentication\n- Push operations require MCP authorization approval (Docker) or local credentials (host)\n- Use the `eng` plugin commands for PR creation and release management\n\n## Contributing\n\nThis plugin is part of the PostSharp Engineering AI Skills repository. Contributions, bug reports, and suggestions are welcome.\n\n## Related Plugins\n\n- **eng** - General PostSharp/Metalama engineering workflows (git, PRs, releases)\n\nUse both plugins together for comprehensive Metalama development support.\n"
+      },
+      "plugins": [
+        {
+          "name": "eng",
+          "source": "./plugins/eng",
+          "description": "PostSharp engineering workflows: git conventions, PRs, releases, TeamCity CI/CD, build diagnostics",
+          "version": "1.6.0",
+          "author": {
+            "name": "PostSharp Technologies",
+            "email": "hello@postsharp.net"
+          },
+          "keywords": [
+            "git",
+            "workflow",
+            "pr",
+            "release",
+            "teamcity",
+            "ci-cd",
+            "build",
+            "diagnostics"
+          ],
+          "category": "workflow",
+          "categories": [
+            "build",
+            "ci-cd",
+            "diagnostics",
+            "git",
+            "pr",
+            "release",
+            "teamcity",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add postsharp/PostSharp.Engineering.AISkills",
+            "/plugin install eng@postsharp-engineering"
+          ]
+        },
+        {
+          "name": "metalama-dev",
+          "source": "./plugins/metalama-dev",
+          "description": "Metalama framework development: aspect testing, test directives, code model, diagnostics",
+          "version": "1.2.0",
+          "author": {
+            "name": "PostSharp Technologies",
+            "email": "hello@postsharp.net"
+          },
+          "keywords": [
+            "metalama",
+            "aspects",
+            "testing",
+            "roslyn",
+            "csharp"
+          ],
+          "category": "development",
+          "categories": [
+            "aspects",
+            "csharp",
+            "development",
+            "metalama",
+            "roslyn",
+            "testing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add postsharp/PostSharp.Engineering.AISkills",
+            "/plugin install metalama-dev@postsharp-engineering"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "balabalabalading",
+    "display_name": "balabalabalading",
+    "avatar_url": "https://avatars.githubusercontent.com/u/98296706?u=f618e5077bf7a954bdc128dc98d9d43aad582f3f&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "article2ticktick",
+      "version": null,
+      "description": "将技术周报文章批量/单篇转换为 TickTick 待办事项的 Claude Skill",
+      "repo_full_name": "balabalabalading/article2ticktick",
+      "repo_url": "https://github.com/balabalabalading/article2ticktick",
+      "repo_description": "将技术周报文章批量/单篇转换为 TickTick 待办事项的 Claude Skill",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-12T07:31:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"article2ticktick\",\n  \"owner\": {\n    \"name\": \"Mr.H\",\n    \"email\": \"\"\n  },\n  \"metadata\": {\n    \"description\": \"将技术周报文章批量/单篇转换为 TickTick 待办事项的 Claude Skill\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"article2ticktick\",\n      \"description\": \"解析技术周报 Markdown，批量或单篇添加文章到 TickTick 待办清单，支持自动分类标签\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/article2ticktick\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# article2ticktick\n\n[English](#english) | [中文](#chinese)\n\n---\n\n<a id=\"english\"></a>\n\nA Claude Skill that converts technical newsletter articles (batch or single) into [TickTick](https://ticktick.com/) todos with automatic categorization and tagging.\n\n## Features\n\n- **Branch A: Batch Newsletter** — Paste an entire newsletter issue (Fatbobman's Swift Weekly, iOS Weekly, etc.), AI auto-categorizes and batch-adds to TickTick\n- **Branch B: Single Article** — Share any article URL, AI infers category, generates a recommendation, and adds it to TickTick in one click\n\n## Installation\n\n> Requires [Claude Code](https://code.claude.com) with `/plugin` command support.\n\nIn Claude Code, run:\n\n```\n/plugin marketplace add balabalabalading/article2ticktick\n/plugin install article2ticktick@article2ticktick\n```\n\nUpdate to the latest version:\n\n```\n/plugin marketplace update article2ticktick\n```\n\n## Usage\n\n### Create Lists in TickTick\n\nTickTick does not support creating lists via URL scheme. Please manually create the required lists in TickTick first — otherwise all todos will fall into the Inbox.\n\n### Trigger the Skill\n\nAfter installation, describe your needs directly to Claude:\n\n- `Help me add this newsletter to TickTick` → triggers Branch A\n- `Add this article to TickTick: [URL]` → triggers Branch B\n\nThe Skill guides you through the full workflow: organize → preview (dry-run) → confirm → execute.\n\n## Local Testing\n\nAfter cloning the repo, test with a local path in Claude Code:\n\n```\n/plugin marketplace add ./path/to/article2ticktick\n/plugin install article2ticktick@article2ticktick\n```\n\nValidate marketplace config:\n\n```\n/plugin validate .\n```\n\n## Classification System\n\nLevel-2 categories map to TickTick list names; Level-3 categories map to tags.\n\nThe Skill constrains AI to use predefined Level-2 categories (matching fixed TickTick lists), while Level-3 categories are flexible. Since the newsletters I follow focus on the Swift ecosystem, the list names reflect that. You can modify the categories in `SKILL.md` to fit your own technical focus — just make sure Level-2 names exactly match your TickTick lists.\n\n| Level-2 Category (TickTick list) | Common Level-3 Categories (tags) |\n|---|---|\n| SwiftUI | Basic components & API, Layout & animation, State management & observation, Navigation & interaction, System integration, Performance & debugging, App architecture |\n| Swift 语言 | Concurrency & async, Language features & internals, Cross-platform & embedded |\n| 数据与持久化 | SwiftData, CloudKit & data sync, Database |\n| iOS 与 macOS 工程实践 | System capabilities & platform integration, App Store & publishing, Resource management, App architecture |\n| 开发工具与工作流 | Package managers & dependencies, Xcode & project setup, Testing & debugging, CLI & server-side |\n| AI 辅助开发 | Agent coding practices, Tools & configuration, On-device AI |\n| 行业思考与视野 | Hardware products |\n\n## Repository Structure\n\n```\narticle2ticktick/\n├── .claude-plugin/\n│   └── marketplace.json           # Claude Code Marketplace config\n├── skills/\n│   └── article2ticktick/\n│       ├── SKILL.md               # Skill instruction file\n│       └── scripts/\n│           └── add_articles.py    # Main script (batch + single)\n└── README.md\n```\n\n## Standalone Script Usage\n\nThe script can also run independently without Claude:\n\n```bash\n# Batch mode\npython3 skills/article2ticktick/scripts/add_articles.py \\\n  --input my_weekly.md --dry-run\n\n# Single article mode\npython3 skills/article2ticktick/scripts/add_articles.py \\\n  --task \\\n  --title \"[Article Title](https://example.com)\" \\\n  --list \"SwiftUI\" \\\n  --tags \"State management & observation\" \\\n  --desc \"A brief intro of the article...\"\n```\n\n## License\n\n[MIT](LICENSE)\n\n---\n\n<a id=\"chinese\"></a>\n\n将技术周报文章（批量或单篇）转换为 [滴答清单](https://dida365.com/) 待办事项的 Claude Skill，支持自动分类和标签。\n\n[English](#english) | **中文**\n\n## 功能\n\n- **分支 A：批量周报** — 粘贴一整期周报（肘子 Swift 周刊、老司机 iOS 周报等），AI 自动整理分类，批量添加到[滴答清单](https://dida365.com/)\n- **分支 B：单篇文章** — 分享任意文章 URL，AI 推断分类、生成推荐语，一键添加到[滴答清单](https://dida365.com/)\n\n## 安装\n\n> 需要 [Claude Code](https://code.claude.com)（版本支持 `/plugin` 命令）。\n\n在 Claude Code 中运行：\n\n```\n/plugin marketplace add balabalabalading/article2ticktick\n/plugin install article2ticktick@article2ticktick\n```\n\n更新到最新版本：\n\n```\n/plugin marketplace update article2ticktick\n```\n\n## 使用\n\n### 在滴答清单创建列表\n\n由于[滴答清单](https://dida365.com/)不支持通过 Scheme URL 来创建列表，请先在滴答清单中手动创建好列表，否则待办都会创建至收集箱中。\n\n### 触发 Skill\n\n安装后，直接向 Claude 描述你的需求：\n\n- `帮我把这期周报添加到滴答清单` → 触发分支 A\n- `把这篇文章添加到滴答清单：[URL]` → 触发分支 B\n\nSkill 会引导你完成整理、预览（dry-run）、确认、执行全流程。\n\n## 本地测试安装\n\n克隆仓库后，可在 Claude Code 中用本地路径测试：\n\n```\n/plugin marketplace add ./path/to/article2ticktick\n/plugin install article2ticktick@article2ticktick\n```\n\n验证 marketplace 配置：\n\n```\n/plugin validate .\n```\n\n## 分类体系\n\n二级分类对应[滴答清单](https://dida365.com/)列表名，三级分类对应标签。\n\n在 Skill 中，我约束 AI 必须使用预设的二级分类，因为对应滴答清单中的列表是固定的；三级分类则比较灵活，可以根据文章内容自由添加标签。\n\n由于我订阅的周报偏向 Swift 生态，因此列表名也都与之相关。你可以在 SKILL.md 文档中修改这些分类来适配你关注的技术领域，但要确保二级分类与滴答清单中的列表完全一致。\n\n| 二级分类（滴答清单列表名） | 常见三级分类（标签） |\n|---|---|\n| SwiftUI | 基础组件与 API、布局视觉与动画、状态管理与观察、导航与交互、系统集成与实战、性能与调试、应用架构 |\n| Swift 语言 | 并发与异步、语言特性与底层原理、跨平台与嵌入式 |\n| 数据与持久化 | SwiftData、CloudKit 与数据同步、数据库 |\n| iOS 与 macOS 工程实践 | 系统能力与平台集成、App Store 与发布、资源管理、应用架构 |\n| 开发工具与工作流 | 包管理器与依赖、Xcode 与项目工程、测试与调试、命令行与服务端 |\n| AI 辅助开发 | Agent 编码实践、工具与配置、端侧 AI |\n| 行业思考与视野 | 硬件产品 |\n\n## 仓库结构\n\n```\narticle2ticktick/\n├── .claude-plugin/\n│   └── marketplace.json           # Claude Code Marketplace 配置\n├── skills/\n│   └── article2ticktick/\n│       ├── SKILL.md               # Skill 指令文件\n│       └── scripts/\n│           └── add_articles.py    # 主脚本（批量 + 单篇）\n└── README.md\n```\n\n## 脚本直接使用\n\n脚本也可以脱离 Claude 独立运行：\n\n```bash\n# 批量模式\npython3 skills/article2ticktick/scripts/add_articles.py \\\n  --input my_weekly.md --dry-run\n\n# 单篇模式\npython3 skills/article2ticktick/scripts/add_articles.py \\\n  --task \\\n  --title \"[文章标题](https://example.com)\" \\\n  --list \"SwiftUI\" \\\n  --tags \"状态管理与观察\" \\\n  --desc \"这篇文章介绍了...\"\n```\n\n## License\n\n[MIT](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "article2ticktick",
+          "description": "解析技术周报 Markdown，批量或单篇添加文章到 TickTick 待办清单，支持自动分类标签",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/article2ticktick"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add balabalabalading/article2ticktick",
+            "/plugin install article2ticktick@article2ticktick"
+          ]
+        }
+      ]
+    }
+  ]
+}

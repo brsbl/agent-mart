@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "BlackshearDevCo",
+    "display_name": "Brooklyn Blackshear",
+    "avatar_url": "https://avatars.githubusercontent.com/u/22128297?u=0f480e5154581532ea2100eb0029ebc77351fc9c&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-code-notify",
+      "version": null,
+      "description": "Native desktop notifications for Claude Code",
+      "repo_full_name": "BlackshearDevCo/claude-code-notify",
+      "repo_url": "https://github.com/BlackshearDevCo/claude-code-notify",
+      "repo_description": "Native desktop notifications for Claude Code — alerts when Claude needs attention or finishes work, with smart focus detection",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-11T18:59:44Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-notify\",\n  \"owner\": {\n    \"name\": \"Brooklyn Blackshear\"\n  },\n  \"metadata\": {\n    \"description\": \"Native desktop notifications for Claude Code\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"notify\",\n      \"description\": \"Native desktop notifications for Claude Code — alerts when Claude needs attention or finishes work, with smart focus detection.\",\n      \"source\": \"./plugin\"\n    }\n  ]\n}\n",
+        "plugin/README.md": "# notify\n\nNative desktop notifications for Claude Code. Get notified when Claude needs your attention or finishes work — only when you're not already looking at the terminal.\n\n## Features\n\n- Claude icon on notifications (macOS, via `terminal-notifier`)\n- Fallback to built-in `osascript` if `terminal-notifier` isn't installed\n- Linux support via `notify-send`\n- Smart focus detection (macOS): skips notifications when your terminal is focused\n- Configurable reminder alerts (toggle the \"waiting for input\" notification)\n- Configurable sounds, title, and focus detection toggle\n- Zero mandatory dependencies — works out of the box, better with `terminal-notifier`\n\n## Installation\n\n```bash\nclaude plugin add BlackshearDevCo/claude-code-notify\n```\n\n## Setup\n\nThe plugin works immediately after installation with no setup required. For the best experience on macOS, install `terminal-notifier`:\n\n```bash\nbrew install terminal-notifier\n```\n\nTo run the full interactive setup (backend detection, sound selection, focus detection, reminders):\n\n```\n/notify:setup\n```\n\n## Commands\n\n| Command | Description |\n|---|---|\n| `/notify:setup` | Full interactive setup — backend, sounds, focus detection, reminders |\n| `/notify:config` | Change individual settings |\n| `/notify:test` | Send a test notification |\n| `/notify:preview` | Preview all available sounds by category |\n\n## Configuration\n\nPreferences are stored in `~/.claude/notify.json`:\n\n```json\n{\n  \"attention_sound\": \"Ping\",\n  \"completed_sound\": \"Purr\",\n  \"focus_detection\": true,\n  \"reminder_enabled\": true,\n  \"title\": \"Claude Code\"\n}\n```\n\n| Field | Default | Description |\n|---|---|---|\n| `attention_sound` | `\"Ping\"` | Sound when Claude needs your attention |\n| `completed_sound` | `\"Purr\"` | Sound when Claude finishes work |\n| `focus_detection` | `true` | Skip notifications when terminal is focused (macOS) |\n| `reminder_enabled` | `true` | Notify when Claude is waiting for your input |\n| `title` | `\"Claude Code\"` | Notification title text |\n\n### Available sounds (macOS)\n\nAny system sound name works. Common choices: `Ping`, `Purr`, `Glass`, `Hero`, `Submarine`, `Tink`, `Pop`.\n\n## Notification backends\n\n| Platform | Backend | Icon | Sound | Focus detection |\n|---|---|---|---|---|\n| macOS + `terminal-notifier` | terminal-notifier | Claude icon | Yes | Yes |\n| macOS (fallback) | osascript + afplay | Script Editor icon | Yes | Yes |\n| Linux | notify-send | System default | No | No |\n\n## Troubleshooting\n\n### macOS: No notification appears\n- Check **System Settings > Notifications** for either \"Claude\" (terminal-notifier) or \"Script Editor\" (osascript fallback)\n- If focus detection is on and your terminal is focused, notifications are intentionally skipped\n\n### macOS: Want the Claude icon?\nInstall `terminal-notifier`: `brew install terminal-notifier`\n\n### Linux: \"notify-send: command not found\"\nInstall libnotify:\n- **Debian/Ubuntu**: `sudo apt install libnotify-bin`\n- **Fedora**: `sudo dnf install libnotify`\n- **Arch**: `sudo pacman -S libnotify`\n"
+      },
+      "plugins": [
+        {
+          "name": "notify",
+          "description": "Native desktop notifications for Claude Code — alerts when Claude needs attention or finishes work, with smart focus detection.",
+          "source": "./plugin",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add BlackshearDevCo/claude-code-notify",
+            "/plugin install notify@claude-code-notify"
+          ]
+        }
+      ]
+    }
+  ]
+}
