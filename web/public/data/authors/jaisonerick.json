@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "jaisonerick",
+    "display_name": "Jaison Erick",
+    "avatar_url": "https://avatars.githubusercontent.com/u/332253?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "spec-plugin",
+      "version": "2.0.0",
+      "description": "Spec-driven product development pipeline — from ideation to verified code, orchestrated by AI agents",
+      "repo_full_name": "jaisonerick/spec-plugin",
+      "repo_url": "https://github.com/jaisonerick/spec-plugin",
+      "repo_description": "Claude Code plugin for spec-driven product development — ideation to verified code",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-10T21:23:49Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"spec-plugin\",\n  \"version\": \"2.0.0\",\n  \"description\": \"Spec-driven product development pipeline — from ideation to verified code, orchestrated by AI agents\",\n  \"owner\": {\n    \"name\": \"Jaison Erick\",\n    \"email\": \"jaison@jaisonerick.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"spec-plugin\",\n      \"description\": \"Spec-driven product development pipeline with 5 agents and 11 skills. Full flow: /ideate → /architect → /plan → /orchestrate (coordinates architect, product-owner, engineer, designer, and QA agents through architecture, stories, implementation, testing, and retrospectives).\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"Jaison Erick\",\n        \"email\": \"jaison@jaisonerick.com\"\n      },\n      \"source\": \"./plugins/spec-plugin\",\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"spec-plugin\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Spec-driven product development pipeline — from ideation to verified code, orchestrated by AI agents\",\n  \"author\": {\n    \"name\": \"Jaison Erick\",\n    \"url\": \"https://github.com/jaisonerick\"\n  },\n  \"repository\": \"https://github.com/jaisonerick/spec-plugin\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"spec-driven\", \"orchestration\", \"agents\", \"pipeline\", \"ideation\", \"architecture\", \"qa\"]\n}\n",
+        "README.md": "# Spec Plugin Marketplace\n\nClaude Code plugin marketplace for spec-driven product development.\n\n## Install\n\n```\n/install jaisonerick/spec-plugin\n```\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [spec-plugin](./plugins/spec-plugin/) | Full pipeline from ideation to verified code with 5 agents and 11 skills |\n",
+        "plugins/spec-plugin/README.md": "# Spec Plugin\n\nA Claude Code plugin for spec-driven product development. Provides a complete pipeline from ideation to verified, shipped code — orchestrated by AI agents.\n\n## Pipeline\n\n```\n/ideate → /architect → /plan → /orchestrate (per version)\n```\n\n| Skill | Purpose |\n|-------|---------|\n| `/ideate` | Build a product specification through conversational refinement |\n| `/architect` | Create high-level technical architecture for the project |\n| `/plan` | Design an evolutionary product roadmap with version progression |\n| `/orchestrate` | Execute a version end-to-end with a coordinated agent team |\n\nThe orchestrator runs a simple cycle per version:\n\n```\n/architect-version → /build-stories → [ /execute-task → /validate-execution ]* → human signs off\n```\n\nA version ships when the human confirms its Definition of Done is met.\n\n## Agents\n\n| Agent | Role |\n|-------|------|\n| `architect` | Deep-dive version architecture. No Bash — documents only. |\n| `product-owner` | Story breakdown and retrospectives. |\n| `engineer` | Task execution — new stories and validation fixes. |\n| `designer` | Visual UI creation following the design system. |\n| `qa` | Writes validation specs and executes them against the live application. |\n\nAll agents call `EnterWorktree` as their first action to work on an isolated copy of the repo.\n\n## All Skills\n\n| Skill | Description |\n|-------|-------------|\n| `/ideate` | Product spec through conversation |\n| `/architect` | Project-level architecture |\n| `/plan` | Evolutionary product roadmap (version progression) |\n| `/architect-version` | Per-version architecture deep-dive |\n| `/build-stories` | Version → ordered story files |\n| `/execute-task` | Execute one task (story or fix) with working code |\n| `/validate-execution` | Write validation specs (if needed), execute them, guide human review |\n| `/run-retrospective` | Post-version lessons learned |\n| `/orchestrate` | Full version execution with agent team |\n\n## Worktree Isolation\n\nAgents work in isolated git worktrees to avoid conflicts:\n\n1. **Agent definitions** instruct each agent to call `EnterWorktree` before doing any work\n2. **Orchestrate skill** provides worktree names in agent prompts\n3. **PostToolUse hook** on `EnterWorktree` runs `scripts/setup-worktree.sh` if it exists\n4. **Setup script** (optional) copies `.env`, `.tool-versions`, and other gitignored files\n\n## Specs Directory Convention\n\n```\nspecs/\n├── <project-name>.md          # Product specification (from /ideate)\n├── architecture.md             # Technical architecture (from /architect)\n├── roadmap.md                  # Version progression (from /plan)\n├── v0.1-core-push.md           # Version specs (from /plan)\n├── v0.2-config-support.md\n├── v0.1-core-push/             # Per-version folders (from /orchestrate)\n│   ├── architecture.md         # Version architecture (from /architect-version)\n│   ├── stories.md              # Story index (from /build-stories)\n│   ├── 010-story-slug.md       # Story files\n│   └── qa/                     # Validation specs (from /validate-execution)\n│       ├── specs.md\n│       └── 010-spec-name.md\n└── ...\n```\n\n## Installation\n\n```\n/install jaisonerick/spec-plugin\n```\n\nOr add to `.claude/settings.json`:\n\n```json\n{\n  \"plugins\": [\"jaisonerick/spec-plugin\"]\n}\n```\n\n## Optional Dependencies\n\n- **`/interface-design` plugin** — Required for `designer` agent stories.\n- **Chrome DevTools MCP** — Used by `/validate-execution` for browser-based validation.\n"
+      },
+      "plugins": [
+        {
+          "name": "spec-plugin",
+          "description": "Spec-driven product development pipeline with 5 agents and 11 skills. Full flow: /ideate → /architect → /plan → /orchestrate (coordinates architect, product-owner, engineer, designer, and QA agents through architecture, stories, implementation, testing, and retrospectives).",
+          "version": "2.0.0",
+          "author": {
+            "name": "Jaison Erick",
+            "email": "jaison@jaisonerick.com"
+          },
+          "source": "./plugins/spec-plugin",
+          "category": "development",
+          "categories": [
+            "development"
+          ],
+          "install_commands": [
+            "/plugin marketplace add jaisonerick/spec-plugin",
+            "/plugin install spec-plugin@spec-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

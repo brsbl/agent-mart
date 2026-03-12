@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "donotdonuts",
+    "display_name": "Liangqu Chen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/25854272?u=7105ce7949da1687496b4691422c36dfa1d79a79&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "lc-workflow",
+      "version": null,
+      "description": "Session workflow, git worktrees, security, brainstorming, notifications, and changelog management for Claude Code",
+      "repo_full_name": "donotdonuts/claude-workflow-skills",
+      "repo_url": "https://github.com/donotdonuts/claude-workflow-skills",
+      "repo_description": "Claude Code plugin marketplace: session workflow, git worktrees, security, brainstorming, notifications, and changelog management",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-11T00:57:03Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"lc-workflow\",\n  \"owner\": {\n    \"name\": \"Liang Chen\"\n  },\n  \"metadata\": {\n    \"description\": \"Session workflow, git worktrees, security, brainstorming, notifications, and changelog management for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"workflow-skills\",\n      \"source\": \"./plugins/workflow-skills\",\n      \"description\": \"Session workflow, git worktrees, security, brainstorming, notifications, and changelog management\",\n      \"version\": \"1.0.0\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"workflow\", \"git\", \"worktrees\", \"security\", \"brainstorming\", \"notifications\", \"changelog\"],\n      \"category\": \"productivity\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Workflow Skills\n\nA Claude Code plugin marketplace providing 6 workflow skills for session management, git worktrees, security, brainstorming, notifications, and changelog management.\n\n## Skills\n\n| Skill | Description |\n|-------|-------------|\n| `run-every-session` | Auto-invoked at session start. Renames terminal, defers worktree creation to after planning, writes per-branch changelogs on wrap-up. |\n| `using-git-worktrees` | Creates isolated git worktrees under `.worktrees/` for feature branch work. Auto-detects project type and installs dependencies. |\n| `security` | Security & privacy guard. Enforces best practices for secrets, input validation, auth, dependencies, logging, and more. Includes automated scan script. |\n| `brainstorming` | Collaborative design process before implementation. Explores intent, proposes approaches, validates design before any code is written. |\n| `claude-code-notify` | Sets up audio/visual notifications (bell, sound, voice, OS notification) for when Claude finishes responding. |\n| `consolidate-changelogs` | Merges per-branch changelog files into CLAUDE.md and cleans up worktrees and merged branches. |\n\n## Installation\n\n### From GitHub (as a marketplace)\n\n```bash\n# Inside Claude Code:\n/plugin marketplace add donotdonuts/claude-workflow-skills\n\n# Then install the plugin:\n/plugin install workflow-skills@lc-workflow\n```\n\n### From a local directory\n\n```bash\n# Inside Claude Code:\n/plugin marketplace add /path/to/claude-workflow-skills\n\n# Then install the plugin:\n/plugin install workflow-skills@lc-workflow\n```\n\n### Auto-install for a project\n\nAdd to your project's `.claude/settings.json` so collaborators get prompted automatically:\n\n```json\n{\n  \"extraKnownMarketplaces\": {\n    \"lc-workflow\": {\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"donotdonuts/claude-workflow-skills\"\n      }\n    }\n  },\n  \"enabledPlugins\": {\n    \"workflow-skills@lc-workflow\": true\n  }\n}\n```\n\n## Usage\n\nOnce installed, skills are available as slash commands:\n\n```\n/workflow-skills:run-every-session\n/workflow-skills:using-git-worktrees\n/workflow-skills:security\n/workflow-skills:brainstorming\n/workflow-skills:claude-code-notify\n/workflow-skills:consolidate-changelogs\n```\n\n## Hooks\n\nThe plugin includes two hooks:\n\n- **SessionStart**: Reminds Claude to invoke the `run-every-session` skill at the start of every session.\n- **Stop**: Runs `check-changelog.sh` to block stopping if a feature branch has commits but no changelog file.\n\n## Workflow Overview\n\n1. **Session starts** → `run-every-session` renames the terminal\n2. **User describes task** → `brainstorming` explores the design space\n3. **Plan approved** → `using-git-worktrees` creates an isolated workspace\n4. **During development** → `security` enforces best practices\n5. **Task complete** → `run-every-session` Phase 2 writes the changelog\n6. **Batch complete** → `consolidate-changelogs` merges everything into CLAUDE.md\n\n## Structure\n\n```\nclaude-workflow-skills/\n├── .claude-plugin/\n│   └── marketplace.json          # Marketplace catalog\n├── plugins/\n│   └── workflow-skills/          # The plugin\n│       ├── .claude-plugin/\n│       │   └── plugin.json       # Plugin manifest\n│       ├── skills/               # 6 skills with SKILL.md + scripts\n│       │   ├── run-every-session/\n│       │   ├── using-git-worktrees/\n│       │   ├── security/\n│       │   ├── brainstorming/\n│       │   ├── claude-code-notify/\n│       │   └── consolidate-changelogs/\n│       └── hooks/\n│           └── hooks.json\n└── README.md\n```\n\n## Requirements\n\n- Claude Code CLI\n- Git\n- Bash\n- Python 3 (for `check-changelog.sh` JSON parsing)\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "workflow-skills",
+          "source": "./plugins/workflow-skills",
+          "description": "Session workflow, git worktrees, security, brainstorming, notifications, and changelog management",
+          "version": "1.0.0",
+          "license": "MIT",
+          "keywords": [
+            "workflow",
+            "git",
+            "worktrees",
+            "security",
+            "brainstorming",
+            "notifications",
+            "changelog"
+          ],
+          "category": "productivity",
+          "categories": [
+            "brainstorming",
+            "changelog",
+            "git",
+            "notifications",
+            "productivity",
+            "security",
+            "workflow",
+            "worktrees"
+          ],
+          "install_commands": [
+            "/plugin marketplace add donotdonuts/claude-workflow-skills",
+            "/plugin install workflow-skills@lc-workflow"
+          ]
+        }
+      ]
+    }
+  ]
+}

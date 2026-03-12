@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "TLeiott",
+    "display_name": "Tim Nicolas Leiott",
+    "avatar_url": "https://avatars.githubusercontent.com/u/147133802?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "T.L-Marketplace",
+      "version": null,
+      "description": "Autonomous .NET development pipeline tools for Claude Code",
+      "repo_full_name": "TLeiott/T.L-Marketplace4CCToolz",
+      "repo_url": "https://github.com/TLeiott/T.L-Marketplace4CCToolz",
+      "repo_description": "MyPersonalClaudeCodeMarketplace",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-12T07:32:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"T.L-Marketplace\",\n  \"owner\": {\n    \"name\": \"TLeiott\"\n  },\n  \"description\": \"Autonomous .NET development pipeline tools for Claude Code\",\n  \"plugins\": [\n    {\n      \"name\": \"T.L-AutoDevelop\",\n      \"source\": \"./plugins/T.L-AutoDevelop\",\n      \"description\": \"Interactive .NET dev pipeline. Skills: /develop, /develop-batch. User confirms each commit.\",\n      \"version\": \"2.3.0\"\n    },\n    {\n      \"name\": \"T.L-AutoDevelop-Pro\",\n      \"source\": \"./plugins/T.L-AutoDevelop-Pro\",\n      \"description\": \"Autonomous .NET dev pipeline. Skills: /TLA-develop, /TLA-develop-batch. Zero confirmations, auto-commits.\",\n      \"version\": \"2.3.0\"\n    }\n  ]\n}\n",
+        "README.md": "# T.L Marketplace for Claude Code Tools\n\nA Claude Code plugin marketplace providing .NET development pipeline tools.\n\n## What's Included\n\n### T.L-AutoDevelop (v2.3.0) — Interactive\n\nAn interactive development pipeline that orchestrates Claude Code through plan, semantic plan validation, investigation, implementation, preflight, and review — with user confirmations before each commit.\n\n| Command | Description |\n|---------|-------------|\n| `/develop [task]` | Single task with user confirmations before commit |\n| `/develop-batch [tasks.md]` | Batched git-worktree pipeline with capped parallelism, confirms each commit |\n\n### T.L-AutoDevelop-Pro (v2.3.0) — Autonomous\n\nA fully autonomous development pipeline — zero confirmations. Runs plan, investigation, implement, preflight, review, and commit end-to-end unattended.\n\n| Command | Description |\n|---------|-------------|\n| `/TLA-develop [task]` | Single task, zero confirmations, auto-commit |\n| `/TLA-develop-batch [tasks.md]` | Batched pipeline with capped parallelism, fully automated end-to-end |\n\n**Pipeline Flow:**\n```\nPlan -> Plan Validate -> Investigate -> Implement -> Change Validate -> Preflight -> Review\n```\n\n**New runtime behavior:**\n- Explicit no-op categories instead of generic `IMPL_FAIL`\n- Per-run artifacts under `.claude-develop-logs/runs/<taskName>/`\n- Per-run temp debug bundles under `%TEMP%\\claude-develop\\debug\\<runId>\\`\n- Investigation phase for ambiguous or diagnostic tasks\n- Semantic plan validation that rejects placeholder/template plans\n- Batch launchers should cap concurrency at 2 simultaneous pipelines\n- Conditional Sonnet usage for low-risk planning, implementation, and repair phases\n\n## Prerequisites\n\n- **Windows** (PowerShell 5.1+)\n- **.NET SDK** (for `dotnet build`)\n- **Git** (with worktree support)\n- **Claude CLI** installed and authenticated\n\n## Installation\n\nAdd this marketplace to Claude Code:\n\n```\n/plugin marketplace add TLeiott/T.L-Marketplace4CCToolz\n```\n\nThen install the plugin(s) you want:\n\n```\n/plugin install T.L-AutoDevelop\n```\n\n```\n/plugin install T.L-AutoDevelop-Pro\n```\n\n## Configuration\n\nConstants in `auto-develop.ps1`:\n\n| Constant | Default | Description |\n|----------|---------|-------------|\n| `CONST_MODEL_PLAN` | `claude-opus-4-6` | Model for planning phase |\n| `CONST_MODEL_INVESTIGATE` | `claude-opus-4-6` | Model for investigation phase |\n| `CONST_MODEL_IMPLEMENT` | `claude-opus-4-6` | Model for implementation |\n| `CONST_MODEL_REVIEW` | `claude-opus-4-6` | Model for code review |\n| `CONST_MODEL_FAST` | `claude-sonnet-4-6` | Cost-saving model for low-risk phases |\n| `CONST_PLAN_ATTEMPTS` | `2` | Plan / replan attempts |\n| `CONST_INVESTIGATION_ATTEMPTS` | `2` | Investigation attempts |\n| `CONST_IMPLEMENT_ATTEMPTS` | `2` | Fresh implementation attempts |\n| `CONST_REMEDIATION_ATTEMPTS` | `2` | Preflight / review remediation attempts |\n| `CONST_TIMEOUT_SECONDS` | `900` | Timeout per phase (15 min) |\n\n## Result Categories\n\n`auto-develop.ps1` now returns structured terminal categories such as:\n\n- `ACCEPTED`\n- `PLAN_INSUFFICIENT`\n- `INVESTIGATION_INCONCLUSIVE`\n- `NO_CHANGE_ALREADY_SATISFIED`\n- `NO_CHANGE_TARGET_NOT_FOUND`\n- `NO_CHANGE_BLOCKED`\n- `PREFLIGHT_FAILED`\n- `REVIEW_DENIED_MAJOR`\n- `REVIEW_DENIED_RETHINK`\n\nThe result JSON also includes `summary`, `attemptsByPhase`, `artifacts.runDir`, `artifacts.debugDir`, and `noChangeReason`.\n\n## Model Selection\n\nThe pipeline now chooses models per phase:\n\n- `PLAN`: Sonnet for direct edits or already-concrete file targets, Opus otherwise\n- `INVESTIGATE`: Opus\n- `IMPLEMENT`: Sonnet only when targets are concrete and the step is low-complexity\n- `REPAIR`: usually Sonnet for format/fixup loops with concrete hints\n- `REVIEW`: Opus\n\n## Language\n\nAll prompts, comments, and output are in **German (Deutsch)**. The pipeline is designed for .NET/WPF/Core.UI projects following German coding conventions.\n\n## License\n\nMIT\n",
+        "plugins/T.L-AutoDevelop/README.md": "# T.L-AutoDevelop\n\nInteractive .NET development pipeline plugin for Claude Code with explicit investigation and no-op handling.\n\n## Skills\n\n- **`/develop`** — Interactive single-task pipeline (plan, validate, investigate, implement, preflight, review) with user confirmations\n- **`/develop-batch`** — Interactive batch processing via git worktrees with capped parallelism and per-commit confirmations\n\n## Agents\n\n- **reviewer** — Read-only code reviewer for .NET/WPF/Core.UI. Outputs `ACCEPTED` or `DENIED` with structured feedback. Reviews architecture, Core.UI patterns, code quality, German comments, security, and correctness.\n\n## Scripts\n\n- **auto-develop.ps1** — Main pipeline orchestrator. Manages git worktrees, persists per-run artifacts, validates plans semantically, runs investigation before implementation when needed, classifies no-op outcomes, and performs preflight/review remediation.\n- **preflight.ps1** — Deterministic validation: build check, forbidden comments, stub detection, class-per-file rule, NuGet audit, and various warnings.\n\n## Runtime Output\n\nEach run writes artifacts under `.claude-develop-logs/runs/<taskName>/` and returns structured result fields such as:\n\n- `finalCategory`\n- `summary`\n- `attemptsByPhase`\n- `artifacts.runDir`\n- `artifacts.debugDir`\n- `investigationConclusion`\n- `noChangeReason`\n\nIn addition, the pipeline now mirrors low-level diagnostics into `%TEMP%\\claude-develop\\debug\\<runId>\\`, including full Claude prompt/output captures, per-phase metadata, and detailed preflight build/test/run logs.\n\n## Model Policy\n\n- `INVESTIGATE` and `REVIEW` stay on Opus\n- `PLAN` may drop to Sonnet for direct edits or already-concrete targets\n- `IMPLEMENT` and narrow repair loops may use Sonnet only when file targets are concrete and the step is low-complexity\n\n## Requirements\n\n- Windows (PowerShell 5.1+)\n- .NET SDK\n- Git\n- Claude CLI\n",
+        "plugins/T.L-AutoDevelop-Pro/README.md": "# T.L-AutoDevelop-Pro\n\nAutonomous addon for [T.L-AutoDevelop](../T.L-AutoDevelop/). Zero confirmations — auto-commits on success without user input.\n\n**Requires T.L-AutoDevelop** (all engine scripts and agents live there).\n\n## Skills\n\n- **`/TLA-develop`** — Fully autonomous single-task pipeline. No user input after launch, auto-commits on success.\n- **`/TLA-develop-batch`** — Fully autonomous batched pipeline with capped parallelism. No user input, auto-commits all accepted tasks.\n\n## Differences from T.L-AutoDevelop\n\n| Feature | T.L-AutoDevelop | T.L-AutoDevelop-Pro |\n|---------|-----------------|---------------------|\n| Pipeline engine | Included | Uses T.L-AutoDevelop's |\n| Reviewer agent | Included | Uses T.L-AutoDevelop's |\n| Commit on ACCEPTED | Asks user first | Auto-commits |\n| User confirmations | Yes | None |\n| Investigation / no-op logic | Included | Uses T.L-AutoDevelop's |\n\n## Requirements\n\n- **T.L-AutoDevelop** plugin installed\n- Windows (PowerShell 5.1+)\n- .NET SDK\n- Git\n- Claude CLI\n"
+      },
+      "plugins": [
+        {
+          "name": "T.L-AutoDevelop",
+          "source": "./plugins/T.L-AutoDevelop",
+          "description": "Interactive .NET dev pipeline. Skills: /develop, /develop-batch. User confirms each commit.",
+          "version": "2.3.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add TLeiott/T.L-Marketplace4CCToolz",
+            "/plugin install T.L-AutoDevelop@T.L-Marketplace"
+          ]
+        },
+        {
+          "name": "T.L-AutoDevelop-Pro",
+          "source": "./plugins/T.L-AutoDevelop-Pro",
+          "description": "Autonomous .NET dev pipeline. Skills: /TLA-develop, /TLA-develop-batch. Zero confirmations, auto-commits.",
+          "version": "2.3.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add TLeiott/T.L-Marketplace4CCToolz",
+            "/plugin install T.L-AutoDevelop-Pro@T.L-Marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

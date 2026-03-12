@@ -13,8 +13,8 @@
       "repo_url": "https://github.com/fcakyon/claude-codex-settings",
       "repo_description": "My personal Claude Code and OpenAI Codex setup with battle-tested skills, commands, hooks, agents and MCP servers that I use daily.",
       "signals": {
-        "stars": 459,
-        "forks": 43,
+        "stars": 462,
+        "forks": 44,
         "pushed_at": "2026-03-06T03:11:37Z"
       },
       "files": {
@@ -682,6 +682,36 @@
           "install_commands": [
             "/plugin marketplace add fcakyon/claude-codex-settings",
             "/plugin install claude-tools@claude-settings"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "phd-skills",
+      "version": null,
+      "description": "Research integrity plugin for Claude Code — paper auditing, citation verification, experiment analysis, and methodology-first skills for academic workflows.",
+      "repo_full_name": "fcakyon/phd-skills",
+      "repo_url": "https://github.com/fcakyon/phd-skills",
+      "repo_description": "Research integrity plugin for Claude Code — paper auditing, citation verification, experiment analysis, and methodology-first skills for academic workflows.",
+      "signals": {
+        "stars": 3,
+        "forks": 0,
+        "pushed_at": "2026-03-11T07:41:07Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"phd-skills\",\n  \"description\": \"Research integrity plugin for Claude Code — paper auditing, citation verification, experiment analysis, and methodology-first skills for academic workflows.\",\n  \"owner\": {\n    \"name\": \"Fatih Cagatay Akyon\",\n    \"url\": \"https://scholar.google.com/citations?user=RHGyDE0AAAAJ\"\n  },\n  \"repository\": \"https://github.com/fcakyon/phd-skills\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"research\",\n    \"academic\",\n    \"phd\",\n    \"paper-writing\",\n    \"citations\",\n    \"experiments\",\n    \"latex\"\n  ],\n  \"plugins\": [\n    {\n      \"name\": \"phd-skills\",\n      \"source\": \".\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"phd-skills\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Research integrity plugin for Claude Code — paper auditing, citation verification, experiment analysis, and methodology-first skills for academic workflows.\",\n  \"keywords\": [\n    \"research\",\n    \"academic\",\n    \"phd\",\n    \"paper-writing\",\n    \"citations\",\n    \"experiments\",\n    \"latex\"\n  ]\n}\n",
+        "README.md": "# phd-skills\n\nResearch integrity plugin for Claude Code — paper auditing, citation\nverification, experiment analysis, and methodology-first skills for\nacademic workflows.\n\nBuilt by [Fatih Cagatay Akyon](https://scholar.google.com/citations?user=RHGyDE0AAAAJ)\n(1300+ citations, 7 patents) after 200+ Claude Code sessions, tens of\ncritical AI mistakes caught the hard way, and thousands of hours of\nPhD research. Every guardrail in this plugin traces to a real mistake.\n\n![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blue)\n![MIT License](https://img.shields.io/badge/License-MIT-green)\n![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen)\n![No MCP Required](https://img.shields.io/badge/MCP-Not_Required-lightgrey)\n\n---\n\n## Why This Plugin Exists\n\nI use Claude Code daily for my PhD — writing papers, running experiments,\nverifying results, managing citations. It's incredibly powerful, but it\nmakes research-specific mistakes that cost hours:\n\n- It stated my \"detached tag head\" worked differently than it actually did\n- It typed \"done?\" as \"dont?\" and launched an unwanted upload of thousands of files\n- It silently removed novelty claims from my introduction during a \"small edit\"\n- It analyzed my full dataset when I asked for a specific 4k/2k/2k split\n- It claimed a test covered a bug it had never actually verified\n- It never once looked at a figure it generated — just trusted the numbers\n\nOther plugins give you more commands. **This plugin gives you guardrails.**\n\n6 silent hooks catch these exact failure patterns before they cost you time.\n8 skills encode research methodology — not scripts. 2 agents build\nproject knowledge across sessions.\n\n---\n\n## Install\n\n```\nclaude plugin install fcakyon/phd-skills\n```\n\n---\n\n## What You Get\n\n### Commands\n\n| Command | What it does |\n|---------|-------------|\n| [`/phd-skills:xray`](commands/xray.md) | Audit paper against code and data (5 parallel dimensions) |\n| [`/phd-skills:factcheck`](commands/factcheck.md) | Verify BibTeX entries and cited claims against DBLP |\n| [`/phd-skills:gaps <topic>`](commands/gaps.md) | Literature gap analysis with web confirmation |\n| [`/phd-skills:fortify [venue]`](commands/fortify.md) | Select strongest ablations + anticipate reviewer questions |\n| [`/phd-skills:setup`](commands/setup.md) | Interactive onboarding (notifications, allowlist, LaTeX) |\n| [`/phd-skills:help`](commands/help.md) | Show all features at a glance |\n\n### Skills (auto-trigger — just describe what you need)\n\n| When you say... | Skill activates |\n|-----------------|----------------|\n| \"design an ablation study\" | [Experiment Design](skills/experiment-design/SKILL.md) |\n| \"find related papers on X\" | [Literature Research](skills/literature-research/SKILL.md) |\n| \"write the methods section\" | [Paper Writing](skills/paper-writing/SKILL.md) |\n| \"check if my numbers match the code\" | [Paper Verification](skills/paper-verification/SKILL.md) |\n| \"analyze dataset bias\" | [Dataset Curation](skills/dataset-curation/SKILL.md) |\n| \"prepare code for open-source release\" | [Research Publishing](skills/research-publishing/SKILL.md) |\n| \"what will reviewers ask about this?\" | [Reviewer Defense](skills/reviewer-defense/SKILL.md) |\n| \"setup latex for CVPR\" | [LaTeX Setup](skills/latex-setup/SKILL.md) |\n\n### Agents (Claude delegates automatically)\n\n| Agent | What it does | Special |\n|-------|-------------|---------|\n| [`paper-auditor`](agents/paper-auditor.md) | Cross-checks paper claims vs code and data | Runs in isolated worktree, remembers patterns across sessions |\n| [`experiment-analyzer`](agents/experiment-analyzer.md) | Analyzes results from wandb/neptune/local/any format | Can schedule monitoring via cron, sends SSH notifications |\n\n### Research Guardrails (run silently — you never invoke these)\n\n| What it catches | Real incident that inspired it |\n|-----------------|-------------------------------|\n| [Unverified claims, wrong targets, scope creep, dropped requests, assumptions stated as facts](hooks/hooks.json) | Claude removed introduction novelty claims, analyzed wrong data split, dropped a verification question mid-commit |\n| [Ambiguous short messages before costly actions](hooks/hooks.json) | \"done?\" misread as \"dont?\", launched unwanted upload |\n| [Missing citation verification when editing .tex/.bib](scripts/citation_guard.sh) | Claude propagated unverified author names and venue info |\n| [LaTeX compilation errors after .tex edits](scripts/latex_check.sh) | Errors compounded across multiple edits before being caught |\n| [Unreviewed generated images/figures](scripts/visual_check.sh) | Claude analyzed metrics but never looked at the actual plots |\n| [Research state loss before context overflow](scripts/save_state.sh) | Long research sessions lost context, leading to rushed conclusions |\n\n---\n\n## Quick Start\n\n```\n/phd-skills:setup                    # Configure once\n/phd-skills:xray                     # Audit your paper\n\"design an ablation study\"           # Skills auto-trigger\n\"audit my paper against the code\"    # Spawns paper-auditor agent\n```\n\n---\n\n## How It Compares\n\n| | phd-skills | flonat/claude-research | Others |\n|---|---|---|---|\n| Commands to learn | 6 | 39 | 13-20 |\n| Research integrity hooks | 6 (prompt + command) | 1 | 0 |\n| Paper-code consistency audit | 5-dimension parallel | Read-only, no code cross-ref | None |\n| Experiment monitoring + SSH notifications | Yes (ntfy/slack/email) | No | No |\n| External dependencies | **None** | npm + pip + MCP servers | MCP required |\n| Install time | 30 seconds | 10+ minutes | Varies |\n\n---\n\n## Design Principles\n\n1. **No MCP dependency** — works on any machine, including SSH\n2. **Methodology over scripts** — skills teach the approach, Claude generates code for your specific setup (wandb, neptune, local files, whatever)\n3. **Human oversight first** — Claude makes premature claims and jumps to conclusions. Every skill builds in verification checkpoints\n4. **Actionable output** — ranked suggestions with specific fixes, never just a list of findings\n\n---\n\n## License\n\nMIT — use it, fork it, adapt it to your research.\n\nBuilt with frustration and care during a PhD at METU.\n"
+      },
+      "plugins": [
+        {
+          "name": "phd-skills",
+          "source": ".",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add fcakyon/phd-skills",
+            "/plugin install phd-skills@phd-skills"
           ]
         }
       ]
