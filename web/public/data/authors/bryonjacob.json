@@ -1,0 +1,38 @@
+{
+  "author": {
+    "id": "bryonjacob",
+    "display_name": "Bryon Jacob",
+    "avatar_url": "https://avatars.githubusercontent.com/u/134765?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "nanoclip",
+      "version": null,
+      "description": "AI organization orchestrator for Claude Code",
+      "repo_full_name": "bryonjacob/nanoclip",
+      "repo_url": "https://github.com/bryonjacob/nanoclip",
+      "repo_description": "Claude Code plugin for orchestrating AI agent organizations",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-12T20:59:11Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"nanoclip\",\n  \"owner\": {\n    \"name\": \"NanoClip\"\n  },\n  \"metadata\": {\n    \"description\": \"AI organization orchestrator for Claude Code\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"nanoclip\",\n      \"source\": \"./plugins/nanoclip\",\n      \"description\": \"Define agents, assign tasks, and run them as coordinated teams inside Claude Code\"\n    }\n  ]\n}\n",
+        "README.md": "# NanoClip\n\nA Claude Code plugin that orchestrates AI organizations. Define agents with rich profiles, assign tasks, and run them as coordinated agent teams — all from within Claude Code.\n\nInspired by [PaperClip](https://github.com/paperclipai/paperclip).\n\nNanoClip models an organization as a directory on disk. Agents are JSON files. Tasks are JSON files. The directory structure IS the database. No server, no UI, no external dependencies beyond Claude Code and `jq`.\n\n## Installation\n\n### Prerequisites\n\n- [Claude Code](https://claude.ai/claude-code) (1.0.33+)\n- [jq](https://jqlang.github.io/jq/)\n\n### Install the plugin\n\n```bash\nclaude plugin marketplace add https://github.com/bryonjacob/nanoclip\nclaude plugin install nanoclip@nanoclip\n```\n\nThat's it — all `/nanoclip:*` commands are now available in any Claude Code session.\n\n## Getting Started\n\n### 1. Set up your organization\n\nCreate a new directory and initialize NanoClip inside it:\n\n```bash\nmkdir my-org && cd my-org && git init\n```\n\nThen from Claude Code:\n\n```\n/nanoclip:init --name \"My Team\" --goal \"Build a web app\"\n```\n\n### 2. Add some agents\n\n```\n/nanoclip:agent add --name \"Lead\" --title \"Tech Lead\" \\\n  --capabilities \"Architecture, planning\" --management\n\n/nanoclip:agent add --name \"Alice\" --title \"Backend Engineer\" \\\n  --capabilities \"Python, APIs\" --reports-to lead\n\n/nanoclip:agent add --name \"Bob\" --title \"Frontend Engineer\" \\\n  --capabilities \"React, CSS\" --reports-to lead\n```\n\n### 3. Create a task and run\n\n```\n/nanoclip:task create --title \"Build the landing page\" \\\n  --assignee lead --priority high\n\n/nanoclip:run\n```\n\nThat's it. The lead agent will break down the task, delegate to Alice and Bob, and they'll coordinate to get it done.\n\nUse `/nanoclip:dashboard` at any time to see progress.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/nanoclip:init` | Initialize a NanoClip organization in the current directory |\n| `/nanoclip:agent` | Manage agents — `add`, `list`, `show`, `edit` |\n| `/nanoclip:task` | Manage tasks — `create`, `list`, `show`, `update`, `comment` |\n| `/nanoclip:orgchart` | Display the reporting hierarchy as a tree |\n| `/nanoclip:dashboard` | Full dashboard: org chart, tasks, progress, recent runs |\n| `/nanoclip:status` | Quick status overview |\n| `/nanoclip:run` | Launch agents as a coordinated team to work through tasks |\n\n## Organization Structure\n\n```\nmy-org/\n├── .nanoclip/\n│   ├── org.json              # Organization metadata (name, goal)\n│   ├── agents/\n│   │   ├── director.json     # Agent definitions with rich profiles\n│   │   ├── alice.json\n│   │   └── bob.json\n│   ├── tasks/\n│   │   ├── 001.json          # Tasks with full history & comments\n│   │   └── 002.json\n│   ├── runs/                 # Run logs\n│   └── counter.txt           # Auto-incrementing task ID\n└── workspace/                # Where agents do actual work\n    └── .memory/              # Agent memory persists across cycles\n```\n\n## Agent Schema\n\nAgents have rich profiles that shape how they work:\n\n```json\n{\n  \"id\": \"alice\",\n  \"displayName\": \"Alice\",\n  \"title\": \"Backend Engineer\",\n  \"model\": \"claude-sonnet-4-6\",\n  \"capabilities\": [\"Python\", \"APIs\", \"databases\"],\n  \"expertise\": \"5 years backend, distributed systems\",\n  \"jobDescription\": \"Owns backend implementation...\",\n  \"reportsTo\": \"director\",\n  \"management\": false,\n  \"status\": \"idle\",\n  \"createdAt\": \"2024-01-15T10:30:00Z\"\n}\n```\n\n- **`title`** — free-form, any role you want (not limited to CEO/engineer)\n- **`capabilities`** — array of skills, used for task assignment\n- **`expertise`** — background and experience\n- **`jobDescription`** — detailed responsibilities\n- **`management`** — enables delegation and hiring abilities\n- **`reportsTo`** — builds the org hierarchy\n\n## How It Works\n\n### Management agents\nAgents flagged as `management: true` (or any agent with reports) get the delegation skill. They break down large tasks into subtasks, assign work to their reports, review progress, unblock stuck agents, and can hire new agents when capabilities are missing.\n\n### Individual contributors\nNon-management agents do the actual implementation work: writing code, creating files, running tests in the `workspace/` directory.\n\n### Agent teams\n`/nanoclip:run` uses Claude Code's agent teams feature for parallel execution. The top-level manager becomes the team lead, other agents become teammates. They coordinate through the shared task list and messaging, while persisting all state changes to `.nanoclip/`.\n\nIf agent teams aren't available, it falls back to running agents sequentially.\n\n### Memory\nAgents save working context to `workspace/.memory/<agent-id>/` before finishing a cycle. This is automatically loaded into their next cycle, providing continuity across runs.\n\n## Acknowledgments\n\nNanoClip is inspired by [PaperClip](https://github.com/paperclipai/paperclip), reimagined as a Claude Code plugin.\n\n## License\n\n[MIT](LICENSE)\n"
+      },
+      "plugins": [
+        {
+          "name": "nanoclip",
+          "source": "./plugins/nanoclip",
+          "description": "Define agents, assign tasks, and run them as coordinated teams inside Claude Code",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bryonjacob/nanoclip",
+            "/plugin install nanoclip@nanoclip"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,25 +6,26 @@
   },
   "marketplaces": [
     {
-      "name": "bugfix-pipeline-marketplace",
+      "name": "sbox-bugfix-pipeline-marketplace",
       "version": null,
-      "description": "Marketplace for bugfix-pipeline plugin",
+      "description": "Marketplace for sbox-bugfix-pipeline plugin",
       "repo_full_name": "quynhlx/sbox-bugfix-pipeline",
       "repo_url": "https://github.com/quynhlx/sbox-bugfix-pipeline",
       "repo_description": "Claude Code plugin: Complete bug fix workflow from Sentry issue to PR with ClickUp tracking",
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-03-10T02:21:29Z"
+        "pushed_at": "2026-03-13T04:45:19Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"bugfix-pipeline-marketplace\",\n  \"description\": \"Marketplace for bugfix-pipeline plugin\",\n  \"owner\": {\n    \"name\": \"Spiderbox Design\",\n    \"email\": \"dev@spiderbox.design\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"bugfix-pipeline\",\n      \"description\": \"Complete bug fix workflow: Sentry issue investigation, code fix, ClickUp task tracking, and PR creation\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Spiderbox Design\",\n        \"email\": \"dev@spiderbox.design\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"sbox-bugfix-pipeline-marketplace\",\n  \"description\": \"Marketplace for sbox-bugfix-pipeline plugin\",\n  \"owner\": {\n    \"name\": \"Spiderbox Design\",\n    \"email\": \"dev@spiderbox.design\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"sbox-bugfix-pipeline\",\n      \"description\": \"Complete bug fix workflow: issue triage, Sentry investigation, code fix, ClickUp task tracking, and PR creation\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Spiderbox Design\",\n        \"email\": \"dev@spiderbox.design\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"sbox-bugfix-pipeline\",\n  \"description\": \"Complete bug fix workflow: Sentry or ClickUp issue investigation, code fix, ClickUp task tracking, and PR creation\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"Spiderbox Design\",\n    \"email\": \"dev@spiderbox.design\"\n  }\n}\n",
         "README.md": "# Bugfix Pipeline Plugin\n\nA Claude Code plugin that automates the complete bug fix lifecycle:\n\n**Sentry Issue** → **Root Cause Analysis** → **Dev Confirmation** → **ClickUp Task** → **Branch** → **Code Fix** → **Commit** → **Dev Review** → **PR** → **Status Update**\n\n## What it does\n\nWhen you encounter a Sentry error, this plugin guides Claude through:\n\n1. **Investigating** the Sentry issue (error details, stacktrace, impact)\n2. **Finding the root cause** in the codebase, then **pausing for developer confirmation**\n3. **Creating a ClickUp task** in the developer-chosen sprint/folder\n4. **Creating a branch** from master\n5. **Fixing** the bug using TDD (test-driven development)\n6. **Committing** with standardized message format\n7. **Presenting the fix** to the developer for manual review, then **creating a PR** if approved\n8. **Updating ClickUp task status** to PR - IN REVIEW\n\n## Prerequisites\n\n### MCP Servers\n\nConfigure these MCP servers in `~/.claude/settings.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"sentry\": {\n      \"type\": \"stdio\",\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@sentry/mcp-server\"],\n      \"env\": {\n        \"SENTRY_AUTH_TOKEN\": \"<your-sentry-token>\"\n      }\n    },\n    \"clickup\": {\n      \"type\": \"stdio\",\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"clickup-mcp-server\"],\n      \"env\": {\n        \"CLICKUP_API_TOKEN\": \"<your-clickup-token>\"\n      }\n    }\n  }\n}\n```\n\n### CLI Tools\n\n- **GitHub CLI** (`gh`): `brew install gh && gh auth login`\n- **Git**: configured with remotes for your repository\n\n## Installation\n\n### Option 1: Local install (for testing)\n\n```bash\n# Clone the plugin\ngit clone <repo-url> ~/Sources/sbox-bugfix-pipeline\n\n# Register as a local marketplace in Claude Code settings\n# Add to ~/.claude/settings.json:\n{\n  \"pluginMarketplaces\": [\n    \"file:///Users/<you>/Sources/sbox-bugfix-pipeline\"\n  ]\n}\n```\n\nThen in Claude Code, run: `/install-plugin bugfix-pipeline`\n\n### Option 2: Direct file copy\n\nCopy the `skills/` and `commands/` directories into your existing plugin cache or `~/.claude/skills/`.\n\n## Usage\n\n### Via slash command\n\n```\n/fix-sentry 6704185624\n```\n\n### Via natural language\n\n```\nCheck Sentry issue 6704185624, fix it, create a ClickUp task, and make a PR.\n```\n\n### Via skill invocation\n\nThe skill `bugfix-pipeline:sentry-to-pr` is automatically available and will be suggested when you mention Sentry issues.\n\n## Conventions\n\n| Convention | Format |\n|---|---|\n| Branch naming | `bugfix/<CustomID>-<short-kebab-description>` |\n| Commit prefix | `[b] [<CustomID>] <description>` |\n| PR title | `[b] [<CustomID>] <ClickUp Task Title>` |\n| ClickUp task name | `[Feature] [Screen] Bug description` |\n\n## Customization\n\n### Project-specific conventions\n\nAdd to your project's `CLAUDE.md`:\n\n```markdown\n## Git Remotes\n- `origin`: your fork\n- `upstream`: main repository (PR target)\n```\n\n### ClickUp configuration\n\nThe plugin asks the developer to choose the workspace, space, and sprint/folder before creating a task — no assumptions are made.\n\n## Plugin Structure\n\n```\nsbox-bugfix-pipeline/\n├── .claude-plugin/\n│   └── marketplace.json    # Plugin metadata\n├── skills/\n│   └── sentry-to-pr/\n│       └── SKILL.md        # Main workflow skill\n├── commands/\n│   └── fix-sentry.md       # /fix-sentry slash command\n└── README.md\n```\n\n## Roadmap\n\n| Skill | Description |\n|---|---|\n| `fix-from-clickup` | Read bug details directly from a ClickUp task, understand the issue context, and fix the bug — skipping Sentry investigation |\n| `fix-from-email` | Parse bug reports from email, create a ClickUp task for tracking, then investigate and fix the bug |\n\n## Contributing\n\n1. Fork this repository\n2. Create a feature branch\n3. Follow the workflow conventions in the skill itself\n4. Submit a PR\n"
       },
       "plugins": [
         {
-          "name": "bugfix-pipeline",
-          "description": "Complete bug fix workflow: Sentry issue investigation, code fix, ClickUp task tracking, and PR creation",
+          "name": "sbox-bugfix-pipeline",
+          "description": "Complete bug fix workflow: issue triage, Sentry investigation, code fix, ClickUp task tracking, and PR creation",
           "version": "1.0.0",
           "source": "./",
           "author": {
@@ -34,7 +35,7 @@
           "categories": [],
           "install_commands": [
             "/plugin marketplace add quynhlx/sbox-bugfix-pipeline",
-            "/plugin install bugfix-pipeline@bugfix-pipeline-marketplace"
+            "/plugin install sbox-bugfix-pipeline@sbox-bugfix-pipeline-marketplace"
           ]
         }
       ]

@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "zarcen",
+    "display_name": "Wei-Chen Chen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2419493?u=44dad436da5201b04b394e8c0696d51ae366f673&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ai-persona",
+      "version": null,
+      "description": "Reusable agent skills for AI coding agents",
+      "repo_full_name": "zarcen/ai-persona",
+      "repo_url": "https://github.com/zarcen/ai-persona",
+      "repo_description": "Put some skills to be used for agents",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-13T03:27:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ai-persona\",\n  \"owner\": {\n    \"name\": \"zarcen\"\n  },\n  \"metadata\": {\n    \"description\": \"Reusable agent skills for AI coding agents\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"k8s-operator\",\n      \"source\": \"./plugins/k8s-operator\",\n      \"description\": \"Expert guide for building Kubernetes operators with kubebuilder and controller-runtime. Covers CRD schema design, reconciler patterns, client-go usage, RBAC markers, webhooks, and envtest-based testing. Use when writing or reviewing Go code for Kubernetes operators.\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# ai-persona\n\nA monorepo of reusable agent skills and MCPs for Claude Code, Cursor, and other AI coding agents.\n\n---\n\n## Skills\n\n| Skill | Description | Install |\n|-------|-------------|---------|\n| [k8s-operator](skills/k8s-operator/) | Kubernetes operator development with kubebuilder — CRDs, reconcilers, client-go, testing | [README](skills/k8s-operator/README.md) |\n\n> See each skill's README for detailed installation instructions.\n\n---\n\n## Install Overview\n\n### Claude Code (as a Plugin — recommended)\n\nAdd the marketplace once, then install any skill by name:\n\n```bash\nclaude plugin marketplace add zarcen/ai-persona\nclaude plugin install <skill-name>@ai-persona\n```\n\n### Claude Code (manual — curl)\n\nCopy the skill's `SKILL.md` and `references/` directory into `.claude/skills/<skill-name>/`.\nSee each skill's README for exact commands.\n\n### Cursor (as a Skill — recommended)\n\nCopy the skill's `SKILL.md` and `references/` directory into `.cursor/skills/<skill-name>/`.\nThe agent sees the skill description and loads it on demand when your task is relevant.\nSee each skill's README for exact commands.\n\n### Cursor (as a Rule — alternative)\n\nDownload the pre-built `.mdc` file from `cursor-rules/` into `.cursor/rules/`.\nThis bundles everything into one file, auto-injected on matching file patterns.\nSee each skill's README for exact commands.\n\n### Generic (any agent that reads markdown)\n\nCopy `SKILL.md` and the `references/` folder into your agent's skills or rules directory.\n\n---\n\n## Repo Structure\n\n```\nai-persona/\n├── .claude-plugin/              # Claude Code marketplace manifest\n│   └── marketplace.json\n├── skills/                      # SOURCE — author skills here\n│   └── <skill-name>/\n│       ├── SKILL.md             # Source — frontmatter + instructions\n│       ├── README.md            # Human-readable install guide\n│       └── references/          # Deep-dive reference docs (loaded on demand)\n├── plugins/                     # BUILT — Claude Code plugin format (symlinks into skills/)\n│   └── <skill-name>/\n│       ├── .claude-plugin/\n│       │   └── plugin.json\n│       └── skills/\n│           └── <skill-name> → symlink to skills/<skill-name>\n├── cursor-rules/                # BUILT — .mdc files (SKILL.md + references bundled)\n├── scripts/\n│   ├── build.sh                 # Regenerate plugins/ + cursor-rules/ + marketplace\n│   └── validate.sh              # Lint frontmatter + check built artifacts\n└── .github/workflows/\n    └── build.yml                # Auto-rebuild on push to main\n```\n\n---\n\n## Adding a New Skill\n\n```bash\n# 1. Scaffold\nmkdir -p skills/my-skill/references\n\n# 2. Write the skill\n#    skills/my-skill/SKILL.md       ← frontmatter (name, description, parameters) + main body\n#    skills/my-skill/references/    ← optional deep-dive docs\n#    skills/my-skill/README.md      ← human-readable install guide\n\n# 3. Build (generates .mdc + plugin manifests)\n./scripts/build.sh my-skill\n\n# 4. Validate\n./scripts/validate.sh my-skill\n\n# 5. Commit (cursor-rules/ files are committed so curl installs work without a build step)\ngit add skills/my-skill plugins/my-skill cursor-rules/my-skill.mdc README.md\ngit commit -m \"feat: add my-skill\"\n```\n\n### SKILL.md frontmatter format\n\n```yaml\n---\nname: my-skill\ndescription: >\n  One-paragraph description used as the agent trigger.\n  Be specific about when to use this skill. The more\n  precise, the better the agent will trigger on it.\nparameters:\n  some_param: \"default_value\"\n  another_param: true\n---\n```\n\n---\n\n## Adding an MCP\n\nMCPs live under `mcps/` (coming soon). Each MCP has its own directory with a `README.md`,\nserver implementation, and any required config.\n\n---\n\n## Local Development\n\n```bash\n# Build all skills (generates plugins/ + cursor-rules/ + marketplace)\n./scripts/build.sh\n\n# Build a single skill\n./scripts/build.sh k8s-operator\n\n# Validate (frontmatter, references, built artifacts)\n./scripts/validate.sh\n```\n\nCI (GitHub Actions) automatically rebuilds `cursor-rules/`, `plugins/`, and marketplace\non every push to `main`.\n"
+      },
+      "plugins": [
+        {
+          "name": "k8s-operator",
+          "source": "./plugins/k8s-operator",
+          "description": "Expert guide for building Kubernetes operators with kubebuilder and controller-runtime. Covers CRD schema design, reconciler patterns, client-go usage, RBAC markers, webhooks, and envtest-based testing. Use when writing or reviewing Go code for Kubernetes operators.",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add zarcen/ai-persona",
+            "/plugin install k8s-operator@ai-persona"
+          ]
+        }
+      ]
+    }
+  ]
+}

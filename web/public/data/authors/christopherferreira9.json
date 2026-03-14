@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "christopherferreira9",
+    "display_name": "Christopher Ferreira",
+    "avatar_url": "https://avatars.githubusercontent.com/u/104831203?u=8a04dff375091bc33206874a348bcd11616ec014&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "cferreira-local",
+      "version": null,
+      "description": "Local plugins by cferreira",
+      "repo_full_name": "christopherferreira9/obsidian-mcp",
+      "repo_url": "https://github.com/christopherferreira9/obsidian-mcp",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-11T16:35:41Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"cferreira-local\",\n  \"owner\": {\n    \"name\": \"cferreira\"\n  },\n  \"metadata\": {\n    \"description\": \"Local plugins by cferreira\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"obsidian-mcp\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugin\",\n      \"description\": \"Save curated notes to an Obsidian vault from Claude Code conversations\"\n    }\n  ]\n}\n",
+        "README.md": "# obsidian-mcp\n\nA Claude Code plugin that saves curated notes from conversations into an Obsidian vault.\n\n## MCP Tools\n\n- **`save_note`** — Save a markdown note with title, content, optional folder and tags\n- **`list_folders`** — List available folders in the vault\n- **`read_note`** — Read a note by relative path\n\n## Setup\n\n### 1. Build the MCP server\n\n```bash\ncd plugin/server\nnpm install\nnpm run build\n```\n\nOr use the build script:\n\n```bash\n./plugin/scripts/build.sh\n```\n\n### 2. Configure vault path\n\nEdit `plugin/.mcp.json` and set `OBSIDIAN_VAULT_PATH` to your vault's absolute path:\n\n```json\n{\n  \"mcpServers\": {\n    \"obsidian-vault\": {\n      \"type\": \"stdio\",\n      \"command\": \"node\",\n      \"args\": [\"${CLAUDE_PLUGIN_ROOT}/server/dist/index.js\"],\n      \"env\": {\n        \"OBSIDIAN_VAULT_PATH\": \"/path/to/your/obsidian/vault\"\n      }\n    }\n  }\n}\n```\n\n### 3. Choose your install method\n\n#### Option A: MCP only (just the tools)\n\nIf you only need the MCP tools (`save_note`, `list_folders`, `read_note`), add this to your `~/.claude/settings.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"obsidian-vault\": {\n      \"type\": \"stdio\",\n      \"command\": \"node\",\n      \"args\": [\"/absolute/path/to/obsidian-mcp/plugin/server/dist/index.js\"],\n      \"env\": {\n        \"OBSIDIAN_VAULT_PATH\": \"/path/to/your/obsidian/vault\"\n      }\n    }\n  }\n}\n```\n\nRestart Claude Code to activate.\n\n#### Option B: Full plugin (tools + skill + slash command)\n\nInstalling as a plugin adds:\n- `/save-to-obsidian` slash command\n- `obsidian-save` skill for natural language triggers\n- Auto-loaded vault conventions via CLAUDE.md\n\nRegister the repo as a local marketplace and install:\n\n```bash\nclaude plugin marketplace add /path/to/obsidian-mcp\nclaude plugin install obsidian-mcp\n```\n\nRestart Claude Code to activate.\n\n## Usage\n\n### Slash command (plugin install only)\n\n```\n/save-to-obsidian Our auth discussion folder=Investigations\n```\n\n### Natural language (plugin install only)\n\n> \"Save a note about our discussion to Work Notes\"\n\n> \"Pull my recent discoveries from claude-mem and save to obsidian\"\n\n### Direct tool use (both options)\n\nThe MCP tools are always available once configured. Claude can call `save_note`, `list_folders`, and `read_note` directly.\n\n## Note format\n\nNotes follow Obsidian conventions — no YAML frontmatter, inline tags after the title:\n\n```markdown\n# Title\n\nTags:\n#tag1 #tag2 #tag3\n\nContent body...\n\n## Source\nFrom Claude Code conversation on 2026-03-06\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "obsidian-mcp",
+          "version": "1.0.0",
+          "source": "./plugin",
+          "description": "Save curated notes to an Obsidian vault from Claude Code conversations",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add christopherferreira9/obsidian-mcp",
+            "/plugin install obsidian-mcp@cferreira-local"
+          ]
+        }
+      ]
+    }
+  ]
+}

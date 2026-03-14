@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "codeflash-ai",
+    "display_name": "codeflash ⚡️",
+    "avatar_url": "https://avatars.githubusercontent.com/u/148400846?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "codeflash",
+      "version": null,
+      "description": "Codeflash plugin for Claude Code — optimize Python code for performance",
+      "repo_full_name": "codeflash-ai/codeflash-cc-plugin",
+      "repo_url": "https://github.com/codeflash-ai/codeflash-cc-plugin",
+      "repo_description": "A plugin for Claude Code to use Codeflash: automatically improve performance while maintaining correctness",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-14T01:31:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"codeflash\",\n  \"owner\": {\n    \"name\": \"Codeflash\",\n    \"email\": \"support@codeflash.ai\"\n  },\n  \"metadata\": {\n    \"description\": \"Codeflash plugin for Claude Code — optimize Python code for performance\",\n    \"version\": \"0.1.8\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"codeflash\",\n      \"description\": \"Run codeflash as a background agent to optimize Python code for performance\",\n      \"version\": \"0.1.8\",\n      \"author\": {\n        \"name\": \"Codeflash\",\n        \"email\": \"support@codeflash.ai\"\n      },\n      \"source\": \"./\",\n      \"homepage\": \"https://codeflash.ai\",\n      \"repository\": \"https://github.com/codeflash-ai/codeflash-cc-plugin\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"python\", \"optimization\", \"performance\", \"codeflash\"],\n      \"category\": \"development\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"codeflash\",\n  \"description\": \"Run codeflash as a background agent to optimize Python code for performance\",\n  \"version\": \"0.1.8\",\n  \"author\": {\n    \"name\": \"Codeflash\",\n    \"url\": \"https://codeflash.ai\"\n  },\n  \"repository\": \"https://github.com/codeflash-ai/codeflash-cc-plugin\",\n  \"homepage\": \"https://codeflash.ai\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"python\", \"optimization\", \"performance\", \"codeflash\"]\n}\n",
+        "README.md": "# Codeflash Claude Code Plugin\n\nA minimal Claude Code plugin that runs [Codeflash](https://codeflash.ai) as a background agent to optimize Python code for performance.\n\n## Prerequisites\n\n- Claude Code v2.1.38 or later\n- [codeflash](https://pypi.org/project/codeflash/) installed in your project\n- Project initialized with `codeflash init` (creates `[tool.codeflash]` in `pyproject.toml`)\n\n## Installation\n\n### From GitHub\n\nAdd the plugin marketplace and install:\n\n```bash\n/plugin marketplace add codeflash-ai/codeflash-cc-plugin\n/plugin install codeflash\n```\n\n### From a local clone\n\n```bash\ngit clone https://github.com/codeflash-ai/codeflash-cc-plugin.git\n/plugin marketplace add ./codeflash-cc-plugin\n/plugin install codeflash\n```\n\n### Installation scope\n\nBy default, plugins are installed at the user level (available across all projects). You can change this:\n\n```bash\n/plugin install codeflash --scope project  # shared with team via .claude/settings.json\n/plugin install codeflash --scope local    # this project only, gitignored\n```\n\n### Verify installation\n\nRun `/plugin` to open the plugin manager and confirm codeflash appears under the **Installed** tab.\n\n## Usage\n\n### Optimize a file\n\n```\n/optimize src/utils.py\n```\n\n### Optimize a specific function\n\n```\n/optimize src/utils.py my_function\n```\n\n### Optimize the entire project\n\n```\n/optimize --all\n```\n\n### Additional flags\n\n```\n/optimize src/utils.py --no-pr          # Skip PR creation\n/optimize src/utils.py --effort high    # Set optimization effort level\n```\n\n### Auto-suggest after commits\n\nWhen you make a git commit that includes Python file changes, the plugin suggests running `/optimize` on those files.\n\n## Plugin Structure\n\n```\ncodeflash-cc-plugin/\n├── .claude-plugin/\n│   ├── marketplace.json         # Marketplace manifest\n│   └── plugin.json              # Plugin manifest\n├── agents/\n│   └── optimizer.md             # Background optimization agent\n├── hooks/\n│   └── hooks.json               # PostToolUse hook for commit detection\n├── scripts/\n│   └── suggest-optimize.sh      # Detects Python commits, suggests /optimize\n├── skills/\n│   └── optimize/\n│       └── SKILL.md             # /optimize slash command\n└── README.md\n```\n\n## How It Works\n\nThe plugin is a thin wrapper around the `codeflash` CLI:\n\n1. `/optimize` spawns a background optimizer agent\n2. Verifies codeflash is installed (via `pip install codeflash`) and configured\n3. Runs the `codeflash` CLI with the appropriate flags\n4. Reports results (optimizations found, PRs created)\n\nCodeflash handles everything else: analysis, benchmarking, test generation, and PR creation.\n"
+      },
+      "plugins": [
+        {
+          "name": "codeflash",
+          "description": "Run codeflash as a background agent to optimize Python code for performance",
+          "version": "0.1.8",
+          "author": {
+            "name": "Codeflash",
+            "email": "support@codeflash.ai"
+          },
+          "source": "./",
+          "homepage": "https://codeflash.ai",
+          "repository": "https://github.com/codeflash-ai/codeflash-cc-plugin",
+          "license": "MIT",
+          "keywords": [
+            "python",
+            "optimization",
+            "performance",
+            "codeflash"
+          ],
+          "category": "development",
+          "categories": [
+            "codeflash",
+            "development",
+            "optimization",
+            "performance",
+            "python"
+          ],
+          "install_commands": [
+            "/plugin marketplace add codeflash-ai/codeflash-cc-plugin",
+            "/plugin install codeflash@codeflash"
+          ]
+        }
+      ]
+    }
+  ]
+}

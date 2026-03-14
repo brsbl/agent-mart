@@ -36,6 +36,41 @@
           ]
         }
       ]
+    },
+    {
+      "name": "wos",
+      "version": null,
+      "description": "Claude Code plugin for building and maintaining structured project context",
+      "repo_full_name": "bcbeidel/wos",
+      "repo_url": "https://github.com/bcbeidel/wos",
+      "repo_description": "personal work operating system",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-14T02:51:33Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"wos\",\n  \"description\": \"Claude Code plugin for building and maintaining structured project context\",\n  \"owner\": {\n    \"name\": \"bcbeidel\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"wos\",\n      \"source\": {\n        \"source\": \"github\",\n        \"repo\": \"bcbeidel/wos\"\n      },\n      \"description\": \"Claude Code plugin for building and maintaining structured project context\",\n      \"version\": \"0.31.0\",\n      \"license\": \"MIT\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"wos\",\n  \"version\": \"0.31.0\",\n  \"description\": \"Claude Code plugin for building and maintaining structured project context\",\n  \"author\": {\n    \"name\": \"bbeidel\"\n  },\n  \"license\": \"MIT\",\n  \"skills\": \"./skills/\"\n}\n",
+        "README.md": "# wos\n\nA Claude Code plugin for building and maintaining structured project context\nwith AI-assisted research, source verification, and quality validation.\n\n## What It Does\n\nWOS helps teams create and maintain a structured knowledge base alongside their\ncode. It provides skills for creating context documents, verifying sources,\nand auditing quality — so agents can find what they need and trust what they\nfind.\n\n**Structured context** — Documents have YAML metadata (`name`, `description`,\noptional `type`, `sources`, `related`). Auto-generated `_index.md` files\nprovide lookup tables at every directory level.\n\n**Research quality** — The SIFT framework guides source evaluation. Source URLs\nare verified programmatically (HTTP HEAD/GET) at creation time and during\naudit. Research documents require non-empty `sources` lists.\n\n**Agent navigation** — AGENTS.md contains a WOS-managed section\n(`<!-- wos:begin -->` / `<!-- wos:end -->`) with navigation instructions,\nan areas table, metadata format, and communication preferences.\n\n## Skills\n\nWOS provides 13 skills organized into four layers — knowledge, delivery,\ninfrastructure, and feedback. See [OVERVIEW.md](OVERVIEW.md) for the full\nskill ecosystem diagram, lifecycle descriptions, and reference table.\n\n## Project Structure\n\n```\nwos/\n  document.py          # Document dataclass + parse_document()\n  frontmatter.py       # Custom YAML subset parser (stdlib-only)\n  index.py             # _index.md generation + sync checking\n  validators.py        # 5 validation checks\n  url_checker.py       # HTTP HEAD/GET URL reachability\n  agents_md.py         # Marker-based AGENTS.md section management\n  markers.py           # Shared marker-based section replacement\n  preferences.py       # Communication preferences capture\n  research_protocol.py # Search protocol logging\nscripts/\n  audit.py             # CLI: run validation, offer fixes\n  reindex.py           # CLI: regenerate all _index.md files\n  deploy.py            # CLI: export skills to .agents/ for cross-platform use\n  check_url.py         # CLI: URL reachability checking\n  update_preferences.py # CLI: update communication preferences\n  get_version.py       # CLI: print plugin version\nskills/                # Skill definitions (SKILL.md + references/)\n  _shared/references/  # Shared references (research, distill pipelines)\ntests/                 # pytest tests\ndocs/                  # Documentation, plans, and research\n  context/             # Topic areas (created by /wos:init-wos)\n  plans/               # Design docs and implementation plans\n  research/            # Research artifacts\n```\n\n## Usage\n\n```bash\nclaude --plugin-dir /path/to/wos\n```\n\nOr add to Claude Code settings for automatic loading.\n\n## Cross-Platform Deployment\n\nWOS skills can be deployed to GitHub Copilot, Cursor, Windsurf, Codex,\nGemini CLI, and other platforms. See [DEPLOYING.md](DEPLOYING.md) for\nthe full guide.\n\n```bash\npython scripts/deploy.py --platform copilot   # or --target /path/to/project\n```\n\n## Script Invocation\n\nAll scripts use [PEP 723](https://peps.python.org/pep-0723/) inline metadata\nand are invoked via `python`. No external runtime dependencies — stdlib only.\nDev dependencies (pytest, ruff) install via `pip install -e \".[dev]\"`.\n\n## Dependencies\n\n- Python 3.9+\n- No runtime Python dependencies (stdlib only for `wos/` package)\n- `gh` CLI (for report-issue skill)\n"
+      },
+      "plugins": [
+        {
+          "name": "wos",
+          "source": {
+            "source": "github",
+            "repo": "bcbeidel/wos"
+          },
+          "description": "Claude Code plugin for building and maintaining structured project context",
+          "version": "0.31.0",
+          "license": "MIT",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add bcbeidel/wos",
+            "/plugin install wos@wos"
+          ]
+        }
+      ]
     }
   ]
 }

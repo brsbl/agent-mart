@@ -1,0 +1,43 @@
+{
+  "author": {
+    "id": "vhspace",
+    "display_name": "VHSpace",
+    "avatar_url": "https://avatars.githubusercontent.com/u/117481895?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ipa-mcp-marketplace",
+      "version": null,
+      "description": "FreeIPA MCP server for user/host group management, HBAC, and sudo rules",
+      "repo_full_name": "vhspace/ipa-mcp",
+      "repo_url": "https://github.com/vhspace/ipa-mcp",
+      "repo_description": "FreeIPA MCP server for user/host group management, HBAC, and sudo rules",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-13T17:18:18Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ipa-mcp-marketplace\",\n  \"description\": \"FreeIPA MCP server for user/host group management, HBAC, and sudo rules\",\n  \"owner\": {\n    \"name\": \"Together AI\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ipa-mcp\",\n      \"description\": \"FreeIPA MCP server for user/host group management, HBAC, and sudo rules\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Together AI\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"ipa-mcp\",\n  \"description\": \"FreeIPA MCP server for user/host group management, HBAC, and sudo rules\",\n  \"version\": \"0.2.0\",\n  \"author\": {\n    \"name\": \"Together AI\"\n  },\n  \"repository\": \"https://github.com/vhspace/ipa-mcp\",\n  \"license\": \"Apache-2.0\",\n  \"keywords\": [\n    \"mcp\",\n    \"freeipa\",\n    \"ipa\",\n    \"hbac\",\n    \"sudo\"\n  ],\n  \"mcpServers\": {\n    \"ipa-mcp\": {\n      \"command\": \"uvx\",\n      \"args\": [\n        \"--from\",\n        \"ipa-mcp\",\n        \"ipa-mcp\"\n      ],\n      \"env\": {\n        \"IPA_HOST\": \"${IPA_HOST}\",\n        \"IPA_USERNAME\": \"${IPA_USERNAME}\",\n        \"IPA_PASSWORD\": \"${IPA_PASSWORD}\",\n        \"IPA_VERIFY_SSL\": \"${IPA_VERIFY_SSL:-false}\"\n      }\n    }\n  }\n}\n",
+        "README.md": "# IPA MCP Server\n\n[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)\n[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)\n\nMCP server and CLI for [FreeIPA](https://www.freeipa.org/) — manages user groups, host groups, HBAC rules, and sudo rules via the FreeIPA JSON-RPC API. Designed for forge cluster bringup and access control automation in the Together AI SRE stack.\n\n## Quick Start\n\n### Cursor IDE\n\nAdd to `.cursor/mcp.json`:\n\n```json\n{\n  \"mcpServers\": {\n    \"ipa-mcp\": {\n      \"command\": \"uvx\",\n      \"args\": [\"--from\", \"ipa-mcp\", \"ipa-mcp\"],\n      \"env\": {\n        \"IPA_HOST\": \"ipa.example.com\",\n        \"IPA_USERNAME\": \"admin\",\n        \"IPA_PASSWORD\": \"your-password\"\n      }\n    }\n  }\n}\n```\n\n### From Source\n\n```bash\ncd ipa-mcp\nuv sync --all-groups\nuv run ipa-mcp\n```\n\n## Tools\n\n### Read Tools (6)\n\n| Tool | Description |\n|------|-------------|\n| `ipa_list_groups` | List user groups |\n| `ipa_list_hostgroups` | List host groups |\n| `ipa_list_hbac_rules` | List HBAC rules |\n| `ipa_list_sudo_rules` | List sudo rules |\n| `ipa_list_users` | List users |\n| `ipa_list_hosts` | List hosts |\n\n### Write Tools (10)\n\n| Tool | Description |\n|------|-------------|\n| `ipa_create_group` | Create user group |\n| `ipa_add_group_members` | Add users to group |\n| `ipa_create_hostgroup` | Create host group |\n| `ipa_add_hostgroup_members` | Add hosts to host group |\n| `ipa_create_hbac_rule` | Create HBAC rule |\n| `ipa_add_hbac_rule_members` | Add members to HBAC rule |\n| `ipa_create_sudo_rule` | Create sudo rule |\n| `ipa_add_sudo_rule_members` | Add members to sudo rule |\n| `ipa_add_sudo_option` | Add sudo option |\n| `ipa_setup_forge` | One-shot forge cluster setup (groups + HBAC + sudo) |\n\n## CLI\n\nThe companion `ipa-cli` provides the same capabilities via shell commands — use when token budget matters or shell access is available.\n\n| Task | Command |\n|------|---------|\n| List user groups | `ipa-cli groups` |\n| List host groups | `ipa-cli hostgroups` |\n| List HBAC rules | `ipa-cli hbac-rules` |\n| List sudo rules | `ipa-cli sudo-rules` |\n| List users | `ipa-cli users` |\n| List hosts | `ipa-cli hosts` |\n| Create user group | `ipa-cli create-group <name> --desc \"description\"` |\n| Create host group | `ipa-cli create-hostgroup <name>` |\n| Full forge setup | `ipa-cli setup-forge <cluster> --hosts \"host1,host2\" --users \"alice,bob\"` |\n\nInstall CLI: `uvx --from ipa-mcp ipa-cli` or run from repo with `uv run ipa-cli`.\n\n## Cross-MCP Integration\n\nThis server works alongside other MCP servers in the SRE stack:\n\n- **NetBox MCP** — Look up host FQDNs before adding them to IPA host groups. NetBox is the source of truth for device inventory.\n- **AWX MCP** — Trigger Ansible playbooks for IPA enrollment or host provisioning after forge setup.\n- **MAAS MCP** — Coordinate with MAAS when commissioning nodes that will be enrolled in IPA.\n\n## Installation\n\nRequires Python 3.12+ and a FreeIPA server with JSON-RPC API enabled.\n\n```bash\nuv add ipa-mcp\n# or\npip install ipa-mcp\n```\n\nFor development from source:\n\n```bash\ncd ipa-mcp\nuv sync --all-groups\n```\n\n## Configuration\n\n### Environment Variables\n\nCreate a `.env` file (see `env.example`):\n\n| Variable | Required | Default | Description |\n|----------|----------|---------|-------------|\n| `IPA_HOST` | Yes | — | FreeIPA server hostname or URL |\n| `IPA_USERNAME` | No | `admin` | IPA API username |\n| `IPA_PASSWORD` | Yes | — | IPA admin password |\n| `IPA_VERIFY_SSL` | No | `false` | SSL certificate verification (typically false for self-signed) |\n\nAliases: `IPA_URL` for `IPA_HOST`, `IPA_USER` for `IPA_USERNAME`, `IPA_PASS` for `IPA_PASSWORD`.\n\n### Command Line\n\n```bash\nipa-mcp                    # stdio (default)\nipa-cli groups             # CLI\nipa-cli setup-forge cartesia5 --hosts \"host1.cloud.together.ai\" --users \"alice\"\n```\n\n## Cursor / Claude Code Integration\n\n### Cursor (`.cursor/mcp.json` or `.mcp.json`)\n\n```json\n{\n  \"mcpServers\": {\n    \"ipa-mcp\": {\n      \"command\": \"uv\",\n      \"args\": [\"--directory\", \"/path/to/ipa-mcp\", \"run\", \"ipa-mcp\"],\n      \"env\": {\n        \"IPA_HOST\": \"ipa.example.com\",\n        \"IPA_USERNAME\": \"admin\",\n        \"IPA_PASSWORD\": \"your-password\"\n      }\n    }\n  }\n}\n```\n\n### Claude Code\n\n```bash\nclaude mcp add ipa-mcp -- uv --directory /path/to/ipa-mcp run ipa-mcp\n```\n\n## Development\n\n```bash\nuv sync --all-groups\nuv run ruff check src/ tests/\nuv run ruff format src/ tests/\nuv run pytest -v\nuv run mypy src/\n```\n\n### Project Structure\n\n```\nsrc/ipa_mcp/\n├── config.py       # Pydantic Settings\n├── ipa_client.py   # FreeIPA JSON-RPC client\n├── server.py       # FastMCP tools and entrypoint\n└── cli.py          # Typer CLI\n```\n\n## Security\n\n- Credentials are `SecretStr` and redacted in logs\n- Never commit `.env` files with real credentials\n- FreeIPA servers often use self-signed certs — `IPA_VERIFY_SSL=false` is typical\n\n## License\n\nApache License 2.0\n"
+      },
+      "plugins": [
+        {
+          "name": "ipa-mcp",
+          "description": "FreeIPA MCP server for user/host group management, HBAC, and sudo rules",
+          "version": "0.1.0",
+          "source": "./",
+          "author": {
+            "name": "Together AI"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add vhspace/ipa-mcp",
+            "/plugin install ipa-mcp@ipa-mcp-marketplace"
+          ]
+        }
+      ]
+    }
+  ]
+}

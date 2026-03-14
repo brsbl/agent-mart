@@ -64,6 +64,49 @@
           ]
         }
       ]
+    },
+    {
+      "name": "transcription-reader-marketplace",
+      "version": null,
+      "description": "Transcription and subtitle file reader skill",
+      "repo_full_name": "yaniv-golan/transcription-reader-skill",
+      "repo_url": "https://github.com/yaniv-golan/transcription-reader-skill",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-12T16:25:09Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"transcription-reader-marketplace\",\n  \"owner\": {\n    \"name\": \"Yaniv Golan\",\n    \"email\": \"yaniv@golan.name\"\n  },\n  \"metadata\": {\n    \"description\": \"Transcription and subtitle file reader skill\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"transcription-reader\",\n      \"source\": \"./\",\n      \"description\": \"Read, parse, and analyze transcription and subtitle files (STJ, VTT, SRT, ASS, SSA)\",\n      \"category\": \"productivity\",\n      \"tags\": [\"transcription\", \"subtitles\", \"captions\", \"meeting-notes\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"transcription-reader\",\n  \"version\": \"0.4.0\",\n  \"description\": \"Read, parse, and analyze transcription and subtitle files (STJ, VTT, SRT, ASS, SSA)\",\n  \"author\": {\n    \"name\": \"Yaniv Golan\",\n    \"email\": \"yaniv@golan.name\"\n  },\n  \"repository\": \"https://github.com/yaniv-golan/transcription-reader-skill\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"transcription\", \"subtitles\", \"captions\", \"vtt\", \"srt\", \"stj\", \"ass\", \"ssa\"],\n  \"skills\": \"./skills\"\n}\n",
+        "README.md": "# Transcription Reader\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)\n[![Release](https://img.shields.io/github/v/release/yaniv-golan/transcription-reader-skill)](https://github.com/yaniv-golan/transcription-reader-skill/releases)\n[![Tests](https://img.shields.io/github/actions/workflow/status/yaniv-golan/transcription-reader-skill/tests.yml?label=tests)](https://github.com/yaniv-golan/transcription-reader-skill/actions/workflows/tests.yml)\n[![Agent Skills Compatible](https://img.shields.io/badge/Agent_Skills-compatible-4A90D9)](https://agentskills.io)\n[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org)\n[![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-plugin-F97316)](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/plugins)\n[![Cursor Plugin](https://img.shields.io/badge/Cursor-plugin-00D886)](https://cursor.com/docs/plugins)\n\nAn AI agent skill for reading, parsing, and analyzing transcription and subtitle files. Strips timing metadata to produce compact, analysis-ready text — saving 40-90% of tokens depending on format.\n\nUses the open [Agent Skills](https://agentskills.io) standard. Works with Claude, ChatGPT, Codex CLI, Cursor, Windsurf, Manus, and any other compatible tool.\n\n## Supported Formats\n\n| Extension | Format | Key Features |\n|-----------|--------|-------------|\n| `.stj`, `.stjson`, `.stj.json` | STJ (Standard Transcription JSON) | Speaker names, language per segment, confidence scores, word-level timing |\n| `.vtt` | WebVTT | Voice tags and inline speaker labels (Zoom compatible) |\n| `.srt` | SubRip | Simple numbered blocks, optional inline speakers |\n| `.ass`, `.ssa` | Advanced SubStation Alpha | Named dialogue events, style stripping |\n\n## Installation\n\n### Claude Desktop\n\n1. Click **Customize** in the sidebar\n2. Click **Browse Plugins**\n3. Go to the **Personal** tab and click **+**\n4. Add: `yaniv-golan/transcription-reader-skill`\n\n### Claude Code (CLI)\n\n```bash\n/plugin marketplace add yaniv-golan/transcription-reader-skill\n```\n\n### Cursor\n\n1. Open **Cursor Settings**\n2. Paste `https://github.com/yaniv-golan/transcription-reader-skill` into the **Search or Paste Link** box\n\n### Manus\n\n1. Download [`transcription-reader.zip`](https://github.com/yaniv-golan/transcription-reader-skill/releases/latest/download/transcription-reader.zip)\n2. Go to **Settings** → **Skills**\n3. Click **+ Add** → **Upload**\n4. Upload the zip\n\n### ChatGPT\n\n1. Download [`transcription-reader.zip`](https://github.com/yaniv-golan/transcription-reader-skill/releases/latest/download/transcription-reader.zip)\n2. Go to **Settings** → **Skills** → **New Skill** → **Upload from your Computer**\n3. Upload the zip\n\n### Codex CLI\n\nUse the built-in skill installer:\n\n```\n$skill-installer https://github.com/yaniv-golan/transcription-reader-skill\n```\n\nOr install manually:\n\n1. Download [`transcription-reader.zip`](https://github.com/yaniv-golan/transcription-reader-skill/releases/latest/download/transcription-reader.zip)\n2. Extract the `transcription-reader/` folder to `~/.codex/skills/`\n\n### Other Tools (Windsurf, etc.)\n\nDownload [`transcription-reader.zip`](https://github.com/yaniv-golan/transcription-reader-skill/releases/latest/download/transcription-reader.zip) and extract the `transcription-reader/` folder to:\n\n- **Project-level**: `.agents/skills/` in your project root\n- **User-level**: `~/.agents/skills/`\n\n## Usage\n\nThe skill auto-activates when you attach or reference a transcription file. You can also invoke it manually with `/transcription-reader`:\n\n```\n/transcription-reader summarize the first 20 minutes of the attached conversation\n```\n\n## How It Works\n\nThe skill teaches your AI agent to:\n\n1. **Identify the format** from the file extension\n2. **Decide whether to extract** — small files can be read directly, large files benefit from the bundled extraction script (saves thousands of tokens)\n3. **Run the extraction script** to produce clean, speaker-labeled text\n4. **Analyze** based on your request — summarize, search, extract action items, identify speakers, etc.\n\n## Extraction Script\n\nThe bundled `extract_transcript.py` supports:\n\n```\nUsage: extract_transcript.py INPUT_FILE [options]\n\nOptions:\n  --format FORMAT        Force format (auto-detected from extension if omitted)\n  --output FILE          Write to file instead of stdout\n  --output-format FMT    Output as 'text' (default) or 'jsonl' (one JSON object per line)\n  --keep-timestamps      Include timestamps in output\n  --merge-speakers       Merge consecutive segments from the same speaker\n  --time-range RANGE     Extract only a time range (e.g., 10:00-20:00)\n  --min-confidence N     Skip low-confidence segments (STJ only)\n  --speakers-only NAME   Filter to a specific speaker\n  --language LANG        Filter by language (STJ only)\n  --list-speakers        List speakers found in the file\n  --stats                Show transcript statistics\n```\n\n### Dependencies\n\nThe script requires Python 3 and format-specific packages (install only what you need):\n\n```bash\npip install stjlib       # STJ format\npip install webvtt-py    # WebVTT format\npip install pysubs2      # SRT, ASS, SSA formats\n```\n\nMissing packages are detected gracefully — the script tells you what to install.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "transcription-reader",
+          "source": "./",
+          "description": "Read, parse, and analyze transcription and subtitle files (STJ, VTT, SRT, ASS, SSA)",
+          "category": "productivity",
+          "tags": [
+            "transcription",
+            "subtitles",
+            "captions",
+            "meeting-notes"
+          ],
+          "categories": [
+            "captions",
+            "meeting-notes",
+            "productivity",
+            "subtitles",
+            "transcription"
+          ],
+          "install_commands": [
+            "/plugin marketplace add yaniv-golan/transcription-reader-skill",
+            "/plugin install transcription-reader@transcription-reader-marketplace"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,52 @@
+{
+  "author": {
+    "id": "kelp",
+    "display_name": "Travis Cole",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11240?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "kelp-claude-plugins",
+      "version": null,
+      "description": "Claude Code plugins by kelp",
+      "repo_full_name": "kelp/kelp-claude-plugins",
+      "repo_url": "https://github.com/kelp/kelp-claude-plugins",
+      "repo_description": "Claude Code plugins: language-agnostic TDD pipeline and Zig 0.15.x corrective context",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-09T02:25:33Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"kelp-claude-plugins\",\n  \"owner\": {\n    \"name\": \"Travis Cole\",\n    \"email\": \"kelp@plek.org\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by kelp\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"zig-claude-kit\",\n      \"source\": \"./plugins/zig-claude-kit\",\n      \"description\": \"Corrective context for Zig 0.15.x that fixes Claude's outdated training data. Covers I/O (Writergate), build.zig, format strings, ArrayList, BoundedArray, and usingnamespace.\",\n      \"strict\": true\n    },\n    {\n      \"name\": \"tdd-pipeline\",\n      \"source\": \"./plugins/tdd-pipeline\",\n      \"description\": \"Language-agnostic TDD pipeline with test-first agents, review loops, and verify gates.\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# kelp-claude-plugins\n\nTwo plugins that make Claude Code write correct code:\none enforces TDD, the other fixes Zig 0.15.x.\n\n## Install\n\n```bash\n/plugin marketplace add kelp/kelp-claude-plugins\n```\n\n## Plugins\n\n### zig-claude-kit\n\nClaude generates broken Zig 0.15.x code for 12 specific\npatterns. This plugin corrects them by appending the right\npatterns to your project's CLAUDE.md so every agent\nreads them.\n\n```bash\n/plugin install zig-claude-kit@kelp-claude-plugins\n```\n\nOpen a Zig project. The plugin detects Zig source files\nand prompts you to run `/zig-init`. From that point,\nClaude writes correct Zig.\n\n**Commands:**\n- `/zig-init` -- inject corrections into CLAUDE.md\n- `/zig-patterns` -- quick reference with code examples\n- `/zig-check` -- audit files for outdated API usage\n\n### tdd-pipeline\n\nClaude skips tests, writes stubs, and reviews its own\nwork. This plugin stops that. It splits every module\ninto seven stages across separate agents -- no single\nagent both writes and reviews code.\n\n```bash\n/plugin install tdd-pipeline@kelp-claude-plugins\n```\n\nRun `/tdd-init` to configure your project, then\n`/tdd-orchestrate parser` to build a module.\n\n**The pipeline:**\n\n```\n1. Test Writer    write tests + type stubs (RED)\n2. Test Reviewer  review tests, fix loop\n3. Red Gate       confirm all tests fail against stubs\n4. Implementer    write code to pass tests (GREEN)\n5. Verify Gate    tests pass, no stubs, lint clean\n6. Code Reviewer  review implementation, fix loop\n7. Integrate      update build files, full tests, commit\n```\n\nThe orchestrator -- your main Claude session --\ndispatches agents and never writes code. Each agent receives a role skill that constrains\nwhat it can touch. Language-specific context comes from\nCLAUDE.md, not the plugin -- so the pipeline works with\nany language.\n\n## Composition\n\nCLAUDE.md connects these plugins:\n\n1. `zig-claude-kit` appends language corrections\n2. `tdd-pipeline` reads test commands and file patterns\n\n## License\n\nPublic domain.\n",
+        "plugins/zig-claude-kit/README.md": "# zig-claude-kit\n\nClaude generates broken Zig 0.15.x code. This plugin\nfixes it by injecting correct patterns into your\nproject's CLAUDE.md.\n\n## The Problem\n\nClaude's Zig training predates 0.15.x. Fourteen test\nprobes cover twelve broken patterns that produce code\nwhich fails to compile. Testing against Opus 4.6 and\nSonnet 4.6 without project context confirmed all twelve\npersist across fresh conversations.\n\n## What It Corrects\n\n1. **Writergate** -- `getStdOut()`/`getStdErr()` removed;\n   buffered writer pattern required\n2. **build.zig** -- `.root_source_file` moved inside\n   `.root_module = b.createModule(...)`\n3. **Format specifiers** -- generic `{}` removed; use\n   `{s}`, `{d}`, `{any}`, or `{f}` for format methods\n4. **usingnamespace** -- removed from language\n5. **BoundedArray** -- removed; use\n   `ArrayListUnmanaged.initBuffer`\n6. **ArrayList.init()** -- managed API removed; use\n   `ArrayListUnmanaged{}` with allocator per call\n7. **Signed division** -- `/` on runtime signed integers\n   requires `@divTrunc`\n8. **tokenize** -- renamed to `tokenizeAny`,\n   `tokenizeScalar`, `tokenizeSequence`\n9. **process.args()** -- now `argsAlloc(allocator)`;\n   returns owned slice\n10. **For-loop index** -- requires explicit range:\n    `for (items, 0..) |item, i|`\n11. **async/await** -- removed from the language\n12. **JSON Parser** -- redesigned to\n    `std.json.parseFromSlice`\n\n## Install\n\n```bash\n/plugin marketplace add kelp/kelp-claude-plugins\n/plugin install zig-claude-kit@kelp-claude-plugins\n```\n\n## Use\n\nOpen a Zig project. The plugin detects Zig source files\nand prompts you to run `/zig-init`. That command appends\ncorrections to your CLAUDE.md. Every agent reads them\nas project context.\n\n**Commands:**\n- `/zig-init` -- inject corrections into CLAUDE.md\n- `/zig-patterns` -- quick reference with code examples\n- `/zig-check` -- audit source files for outdated APIs\n\n## Verify\n\nRun the blind-test suite to confirm corrections remain\nnecessary:\n\n```bash\nmake eval                              # test all models\nmake eval-model MODEL=claude-haiku-4-5 # test one model\nmake audit                             # probe current Zig\nmake compile-test MODEL=claude-sonnet-4-6\n```\n\n**Prerequisites:** `ANTHROPIC_API_KEY` and `uv`.\n\n## Latest Results (2026-02-27)\n\nTested against Zig 0.15.2, no project context.\n\n| Probe | Sonnet 4.6 | Opus 4.6 |\n|-------|------------|----------|\n| 01 stdout (Writergate) | FAIL | FAIL |\n| 02 stderr (Writergate) | FAIL | FAIL* |\n| 03 ArrayList | FAIL | FAIL |\n| 04 BoundedArray | FAIL | FAIL |\n| 05 tokenize | pass | FAIL |\n| 06 testing | pass | pass |\n| 07 process args | FAIL | FAIL |\n| 08 JSON | pass | FAIL |\n| 09 format method | FAIL | FAIL |\n| 10 mixin (usingnamespace) | FAIL | FAIL |\n| 11 division | pass | pass |\n| 12 for loop with index | pass | pass |\n| 13 build.zig | FAIL* | FAIL* |\n| 14 async/await | FAIL | FAIL |\n\n\\* Compiled only due to lazy analysis. Manual inspection\nconfirmed wrong patterns.\n\nWhen all probes pass without corrections, retire this\nplugin.\n\n## Reference\n\n- [Breaking Changes](docs/ZIG_BREAKING_CHANGES.md) --\n  full reference with error diagnostics\n- [CLAUDE.md Fragment](docs/claude-md-fragment.md) --\n  corrections appended by `/zig-init`\n\n## License\n\nPublic domain.\n",
+        "plugins/tdd-pipeline/README.md": "# tdd-pipeline\n\nClaude skips tests, reviews its own work, and writes\nstubs that pass. This plugin enforces test-first\ndiscipline with seven agents across separate stages.\n\n## How It Works\n\nSeven agents, seven stages. No single agent both writes\nand reviews code. The orchestrator -- your main Claude\nsession -- dispatches agents and reads only CLAUDE.md.\n\n```\n1. Test Writer    write tests + type stubs (RED)\n2. Test Reviewer  review tests, fix loop\n3. Red Gate       confirm all tests fail against stubs\n4. Implementer    write code to pass tests (GREEN)\n5. Verify Gate    tests pass, no stubs, lint clean\n6. Code Reviewer  review implementation, fix loop\n7. Integrate      update build files, full tests, commit\n```\n\nThe RED gate catches a common failure: stubs that\ncontain real logic. Tests against such stubs always\npass, proving nothing. Every test must fail before\nimplementation begins.\n\n## Install\n\n```bash\n/plugin marketplace add kelp/kelp-claude-plugins\n/plugin install tdd-pipeline@kelp-claude-plugins\n```\n\n## Setup\n\n1. Run `/tdd-init` to add a configuration template to\n   your project's CLAUDE.md\n2. Fill in test commands, file patterns, and lint rules\n\n## Use\n\n```\n/tdd-orchestrate parser\n```\n\nThe orchestrator reads your CLAUDE.md for project\nspecifics, then drives all seven stages. If a reviewer\nrejects code three times, it escalates to you.\n\n## Composition\n\nThis plugin defines the process. Your CLAUDE.md defines\nproject specifics, and language plugins append\ncorrections.\n\nExample with Zig:\n1. Install `zig-claude-kit`, run `/zig-init`\n2. Install `tdd-pipeline`, run `/tdd-init`\n3. Fill in test commands and file patterns\n4. Run `/tdd-orchestrate` for each module\n\nCLAUDE.md is the only integration point between plugins.\n\n## Skills\n\n**User-invocable:**\n- `tdd-orchestrate` -- drive the 7-stage pipeline\n- `tdd-init` -- add config template to CLAUDE.md\n\n**Agent roles** (injected into sub-agent prompts):\n- `test-writer` -- write tests and type stubs\n- `test-reviewer` -- review tests for correctness\n- `implementer` -- write implementation code\n- `code-reviewer` -- review implementation\n- `agent-briefing` -- common rules for all agents\n\n## Reference\n\n- [Methodology](docs/methodology.md) -- pipeline\n  stages, gates, fix loops\n- [CLAUDE.md Fragment](docs/claude-md-fragment.md) --\n  configuration template\n"
+      },
+      "plugins": [
+        {
+          "name": "zig-claude-kit",
+          "source": "./plugins/zig-claude-kit",
+          "description": "Corrective context for Zig 0.15.x that fixes Claude's outdated training data. Covers I/O (Writergate), build.zig, format strings, ArrayList, BoundedArray, and usingnamespace.",
+          "strict": true,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kelp/kelp-claude-plugins",
+            "/plugin install zig-claude-kit@kelp-claude-plugins"
+          ]
+        },
+        {
+          "name": "tdd-pipeline",
+          "source": "./plugins/tdd-pipeline",
+          "description": "Language-agnostic TDD pipeline with test-first agents, review loops, and verify gates.",
+          "strict": false,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add kelp/kelp-claude-plugins",
+            "/plugin install tdd-pipeline@kelp-claude-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

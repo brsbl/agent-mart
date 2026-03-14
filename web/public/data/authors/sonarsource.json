@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "SonarSource",
+    "display_name": "Sonar",
+    "avatar_url": "https://avatars.githubusercontent.com/u/545988?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "sonar",
+      "version": null,
+      "description": "AI Agent Plugins by Sonar",
+      "repo_full_name": "SonarSource/sonarqube-agent-plugins",
+      "repo_url": "https://github.com/SonarSource/sonarqube-agent-plugins",
+      "repo_description": "SonarQube Plugin for AI Agents",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-11T12:46:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"sonar\",\n  \"owner\": {\n    \"name\": \"Sonar\"\n  },\n  \"metadata\": {\n    \"description\": \"AI Agent Plugins by Sonar\",\n    \"homepage\": \"https://sonarsource.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"sonarqube\",\n      \"version\": \"0.1.0\",\n      \"description\": \"SonarQube plugin for Claude Code - analyze code, improve quality and security of your codebase, make sure secrets are not propagated to AI agents\",\n      \"source\": \"./\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"sonarqube\",\n  \"version\": \"0.1.0\",\n  \"description\": \"SonarQube plugin for Claude Code - analyze code, improve quality and security of your codebase, make sure secrets are not propagated to AI agents\",\n  \"author\": {\n    \"name\": \"Sonar\",\n    \"url\": \"https://www.sonarsource.com/\"\n  },\n  \"keywords\": [\n    \"sonarqube\",\n    \"code-quality\",\n    \"static-analysis\",\n    \"security\",\n    \"secrets\"\n  ],\n  \"license\": \"LGPL-3.0\",\n  \"repository\": \"https://github.com/SonarSource/sonarqube-claude-code-plugin\",\n  \"homepage\": \"https://www.sonarsource.com\"\n}\n",
+        "README.md": "# SonarQube Plugin for Claude Code\n\nIntegrate SonarQube code quality and security analysis directly into your Claude Code workflow.\n\n## Features\n\n- **Issue Fixing**: Fix specific code quality issues by rule key and location\n- **Issue Listing**: Search and filter issues in your SonarQube project\n- **Project Discovery**: List accessible SonarQube projects to find project keys\n- **Secrets Scanning**: Prevent secrets from being propagated to AI agents via pre-tool hooks\n- **Session Check**: On startup, reports whether prerequisites are installed and configured\n\n## Installation\n\n### Add Plugin to Claude Code\n\n```bash\n# Local development\nclaude --plugin-dir ./path/to/sonarqube-claude-code-plugin\n```\n\n### Prerequisites\n\n- **Node.js** — required to run the `SessionStart` hook (`scripts/setup.js`).\n- **sonarqube-cli** (`sonar`) — install it yourself before running `/sonarqube:configuring-sonarqube`:\n\n  | Platform              | Command                                                                                                                    |\n  |---------------------- |----------------------------------------------------------------------------------------------------------------------------|\n  | macOS / Linux         | `curl -o- https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.sh \\| bash`   |\n  | Windows (PowerShell)  | `irm https://raw.githubusercontent.com/SonarSource/sonarqube-cli/refs/heads/master/user-scripts/install.ps1 \\| iex`        |\n\n### Set Up\n\nOnce `sonarqube-cli` is installed, run the guided setup skill:\n\n```\n/sonarqube:configuring-sonarqube\n```\n\nThis will:\n1. Verify `sonarqube-cli` is available\n2. Authenticate with SonarQube Cloud or a self-hosted SonarQube Server via `sonar auth login` (opens browser — token stored in your system keychain, never pasted in chat)\n3. Install the secrets scanning binary\n4. Run `sonar integrate claude` to register secrets hooks with Claude Code\n\n## Usage\n\n### Set Up\n\n```\n/sonarqube:configuring-sonarqube\n```\n\n### List Projects\n\n```\n/sonarqube:list-projects             # all accessible projects\n/sonarqube:list-projects my-team     # search by name or key\n```\n\n### List Issues\n\n```\n/sonarqube:list-issues                              # issues in the current project\n/sonarqube:list-issues my-project --severity CRITICAL\n```\n\n### Fix an Issue\n\n```\n/sonarqube:fix-issue java:S1481 src/main/java/MyClass.java\n/sonarqube:fix-issue python:S2077 src/auth/login.py:34\n```\n\n## Configuration\n\nRun `/sonarqube:configuring-sonarqube` — it handles everything interactively.\n\nFor reference, the connection scenarios and corresponding `sonar auth login` commands are:\n\n| Scenario                        | Command                                                   |\n|---------------------------------|-----------------------------------------------------------|\n| SonarQube Cloud — EU (default)  | `sonar auth login -o <org-key>`                           |\n| SonarQube Cloud — US            | `sonar auth login -o <org-key> -s https://sonarqube.us`   |\n| SonarQube Server                | `sonar auth login -s <server-url>`                        |\n\nCredentials are stored in your system keychain. You can verify the current auth status with:\n\n```bash\nsonar auth status\n```\n\n### Optional: sonar-project.properties\n\nCreate a `sonar-project.properties` file in your project root to set a project key for analysis:\n\n```properties\nsonar.projectKey=my-project\nsonar.projectName=My Project\nsonar.projectVersion=1.0\nsonar.sources=src\nsonar.sourceEncoding=UTF-8\n```\n\n## Development\n\n### Testing Locally\n\n```bash\nclaude --plugin-dir .\n```\n\n## Support\n\n- Issues: https://community.sonarsource.com/\n"
+      },
+      "plugins": [
+        {
+          "name": "sonarqube",
+          "version": "0.1.0",
+          "description": "SonarQube plugin for Claude Code - analyze code, improve quality and security of your codebase, make sure secrets are not propagated to AI agents",
+          "source": "./",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add SonarSource/sonarqube-agent-plugins",
+            "/plugin install sonarqube@sonar"
+          ]
+        }
+      ]
+    }
+  ]
+}

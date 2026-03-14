@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "HumandDev",
+    "display_name": "Humand",
+    "avatar_url": "https://avatars.githubusercontent.com/u/67800209?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "hu-ai-agent-plugin",
+      "version": null,
+      "description": "Humand Claude Code plugin marketplace for company-wide and area-specific workflows",
+      "repo_full_name": "HumandDev/hu-ai-agent-plugin",
+      "repo_url": "https://github.com/HumandDev/hu-ai-agent-plugin",
+      "repo_description": "A centralized place to share custom Humand MCPs, skills, hooks",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-13T18:39:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"hu-ai-agent-plugin\",\n  \"owner\": {\n    \"name\": \"Humand\",\n    \"email\": \"developers@humand.co\"\n  },\n  \"metadata\": {\n    \"description\": \"Humand Claude Code plugin marketplace for company-wide and area-specific workflows\",\n    \"version\": \"0.1.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"humand-product-workflow\",\n      \"source\": \"./plugins/humand-product-workflow\",\n      \"description\": \"Product plugin with sprint reporting, setup, estimation, and staging workflows\"\n    }\n  ]\n}\n",
+        "README.md": "# Humand AI Agent Plugins\n\nCompany-wide marketplace for AI agent plugins used across Humand teams.\n\nThis repository hosts multiple plugins:\n\n- shared or cross-area plugins\n- area-specific plugins (Product, future teams)\n- starter templates to bootstrap new areas quickly\n\n## Plugin Catalog\n\n| Plugin | Scope | Status |\n|------|------|--------|\n| `humand-product-workflow` | Product-only workflows (planning, sprint, staging) | Active |\n| `humand-area-starter` | Example starter for future areas | Template-only (not published) |\n\n`humand-area-starter` is kept only as a folder template at `plugins/humand-area-starter/`.\nIt is intentionally not listed in active `plugins[]` for either marketplace.\n\n## Structure\n\n```text\n.cursor-plugin/marketplace.json\n.claude-plugin/marketplace.json\nplugins/\n  humand-product-workflow/\n    .cursor-plugin/plugin.json\n    .claude-plugin/plugin.json\n  humand-area-starter/\n    .cursor-plugin/plugin.json\n    .claude-plugin/plugin.json\ndocs/\n  add-a-plugin.md\nscripts/\n  validate-template.mjs\n```\n\n## Add a New Area Plugin\n\n1. Create `plugins/humand-<area>-workflow/`.\n2. Add `.cursor-plugin/plugin.json` and `.claude-plugin/plugin.json` inside the plugin folder.\n3. Register it in `.cursor-plugin/marketplace.json` and `.claude-plugin/marketplace.json`.\n4. Run both validations.\n\nDetailed guide: `docs/add-a-plugin.md`.\n\n## Validation\n\nRun:\n\n```bash\nnode scripts/validate-template.mjs\nclaude plugin validate .\n```\n\n- `node scripts/validate-template.mjs` validates Cursor marketplace/manifests.\n- `claude plugin validate .` validates Claude marketplace/manifests.\n",
+        "plugins/humand-product-workflow/README.md": "# Humand Product Workflow\n\nShared Cursor skills and agent configuration for the Humand development team.\n\n## Structure\n\n```\nconfig/\n  repos.json\n  sprint-report-context.json\n  teams.json\nscripts/\n  fetch-jira-dev-info.sh\n  fetch-jira-sprint-issues.sh\n  generate-sprint-report.py\n  process-sprint-data.py\n  run-sprint-report.py\n  search-prs-for-keys.sh\nskills/\n  feature-estimate-plan/\n    SKILL.md\n  hu-team-staging-status/\n    SKILL.md\n    team-staging-status.py\n  setup/\n    SKILL.md\n  sprint-report/\n    SKILL.md\n```\n\n## Setup\n\n### Local (developers)\n\n1. Install and authenticate the [GitHub CLI](https://cli.github.com/): `gh auth login`\n2. Set Jira API credentials: `export JIRA_EMAIL=you@humand.com` and `export JIRA_API_TOKEN=<token>` (get token from https://id.atlassian.com/manage-profile/security/api-tokens)\n3. (Optional) Configure the Atlassian MCP server in Cursor (fallback for Jira, required for Confluence)\n4. Configure the Notion MCP server in Cursor (`https://mcp.notion.com/mcp`) — skills publish output to Notion pages\n5. Run `/setup` in a conversation to verify everything works\n\n### Cloud Agents (product managers)\n\n1. Open https://cursor.com/dashboard?tab=cloud-agents and go to **My Settings**.\n2. Add secret `GH_TOKEN` (read-only):\n   - In GitHub: **Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens -> Generate new token**.\n   - Minimum permissions: **Metadata: Read**, **Contents: Read**, **Pull requests: Read**, **Issues: Read**.\n3. Add secret `JIRA_API_TOKEN` (read-only):\n   - In Atlassian: **Account settings -> Security -> API tokens -> Create API token**.\n   - Use an account with Jira browse/read permissions only.\n4. Use Cloud Agents to run the skills:\n   - Cursor Agents UI: https://cursor.com/agents\n   - Slack: tag `@Cursor` with your request.\n\n## Skills\n\n| Skill | Purpose | Run |\n|------|---------|-----|\n| `/setup` | First-time setup wizard — verifies `gh`, Atlassian MCP, Notion MCP, repo access, and teams config | `/setup` |\n| `/sprint-report <team>` | Cross-repo sprint health → Notion page: Jira tickets + linked PRs, status, blockers | `/sprint-report rhino` |\n| `/feature-estimate-plan` | Evidence-backed per-repo effort assessment, feasibility, and execution plan → Notion page (output in Spanish) | Ask the agent to plan a feature |\n| `/hu-team-staging-status` | Per-repo staging vs develop status → Notion page (Jira-first) | `/hu-team-staging-status shark` |\n\n## Reusable Scripts\n\nScripts in `scripts/` are shared across skills.\n\n| Script | Purpose |\n|--------|---------|\n| `fetch-jira-sprint-issues.sh` | Fetch sprint issues via Jira REST API with automatic pagination |\n| `fetch-jira-dev-info.sh` | Query Jira's dev-status REST API for linked PRs/branches per ticket |\n| `process-sprint-data.py` | Merges MCP JSON pages, performs parent/subtask rollup, outputs compact digest + processed tickets JSON |\n| `generate-sprint-report.py` | Takes Jira tickets JSON + optional PR data, categorizes tickets, outputs formatted markdown |\n| `run-sprint-report.py` | End-to-end wrapper: resolves team, fetches Jira, searches PRs, generates report |\n| `search-prs-for-keys.sh` | Batch-search PRs across all 6 repos for a set of Jira ticket keys |\n"
+      },
+      "plugins": [
+        {
+          "name": "humand-product-workflow",
+          "source": "./plugins/humand-product-workflow",
+          "description": "Product plugin with sprint reporting, setup, estimation, and staging workflows",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add HumandDev/hu-ai-agent-plugin",
+            "/plugin install humand-product-workflow@hu-ai-agent-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

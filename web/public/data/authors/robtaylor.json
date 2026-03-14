@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "robtaylor",
+    "display_name": "Rob Taylor",
+    "avatar_url": "https://avatars.githubusercontent.com/u/247664?u=e874c721389a5e918de0dd4cc7755fc686a650e8&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "apple-profiler",
+      "version": null,
+      "description": "Xctrace profiling tools — analyze CPU samples, hangs, signposts, Metal/GPU traces, and any Instruments table from .trace files",
+      "repo_full_name": "robtaylor/apple-profiler",
+      "repo_url": "https://github.com/robtaylor/apple-profiler",
+      "repo_description": "Python wrapper for xctrace export XML parsing with MCP server",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-13T14:39:43Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"apple-profiler\",\n  \"metadata\": {\n    \"description\": \"Xctrace profiling tools — analyze CPU samples, hangs, signposts, Metal/GPU traces, and any Instruments table from .trace files\"\n  },\n  \"owner\": {\n    \"name\": \"Robert Taylor\",\n    \"email\": \"robert@chipflow.io\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"apple-profiler\",\n      \"source\": \"./\",\n      \"description\": \"Xctrace profiling tools for Claude Code — analyze CPU samples, hangs, signposts, Metal/GPU traces, and any Instruments table from .trace files\",\n      \"version\": \"0.2.0\",\n      \"author\": {\n        \"name\": \"Robert Taylor\"\n      },\n      \"repository\": \"https://github.com/robtaylor/apple-profiler\",\n      \"license\": \"MIT\",\n      \"keywords\": [\"xctrace\", \"instruments\", \"profiling\", \"performance\", \"macos\", \"ios\", \"metal\", \"gpu\"]\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"apple-profiler\",\n  \"version\": \"0.2.0\",\n  \"description\": \"Xctrace profiling tools for Claude Code — analyze CPU samples, hangs, signposts, Metal/GPU traces, and any Instruments table from .trace files\",\n  \"author\": {\n    \"name\": \"Robert Taylor\"\n  },\n  \"repository\": \"https://github.com/robtaylor/apple-profiler\",\n  \"keywords\": [\"xctrace\", \"instruments\", \"profiling\", \"performance\", \"macos\", \"ios\", \"metal\", \"gpu\"],\n  \"mcpServers\": {\n    \"apple-profiler\": {\n      \"command\": \"uv\",\n      \"args\": [\n        \"run\",\n        \"--directory\",\n        \"${CLAUDE_PLUGIN_ROOT}\",\n        \"apple-profiler\"\n      ]\n    }\n  }\n}\n",
+        "README.md": "# apple-profiler\n\nA Claude Code plugin that wraps `xctrace` to parse and analyze Instruments `.trace` files. It exposes CPU profiling, hang detection, signpost analysis, Metal/GPU trace data, and generic table queries as MCP tools — letting Claude investigate performance issues directly from trace recordings.\n\n## Installation\n\n```bash\nclaude plugin add --transport stdio -- uv run --directory /path/to/apple-profiler apple-profiler\n```\n\nOr from the plugin registry:\n\n```bash\nclaude plugin add apple-profiler\n```\n\n## Available Tools\n\n| Tool | Description |\n|------|-------------|\n| `profiler_open_trace` | Open a `.trace` file, return device info, duration, and available tables |\n| `profiler_cpu_samples` | Get CPU samples with full stack traces (backtraces), optional time-range filtering |\n| `profiler_top_functions` | Top N functions by CPU weight, optional time-range filtering |\n| `profiler_hangs` | Detected hang/unresponsiveness intervals |\n| `profiler_signpost_events` | Raw `os-signpost` Begin/End/Event entries with optional filtering |\n| `profiler_signpost_intervals` | Matched signpost intervals (begin+end pairs) with durations |\n| `profiler_query_table` | Query any data table by schema name — works with Metal, thermal, disk I/O, etc. |\n| `profiler_list_tables` | List all available data tables and their schemas |\n\n## Usage Examples\n\n### CPU Profiling\n\nWorks with CPU Profiler, Time Profiler, and Metal System Trace templates.\n\n```\n1. profiler_open_trace(trace_path=\"recording.trace\")\n2. profiler_top_functions(trace_path=\"recording.trace\", n=10)\n3. profiler_cpu_samples(trace_path=\"recording.trace\", limit=50)\n```\n\n### Time-Range Scoped Analysis\n\n```\n# What was hot between 1.0s and 1.5s?\nprofiler_top_functions(trace_path=\"recording.trace\", n=10,\n    start_time_ns=1000000000, end_time_ns=1500000000)\n\n# Stack traces in that window\nprofiler_cpu_samples(trace_path=\"recording.trace\",\n    start_time_ns=1000000000, end_time_ns=1500000000, limit=20)\n```\n\n### Hang Detection\n\n```\n1. profiler_open_trace(trace_path=\"recording.trace\")\n2. profiler_hangs(trace_path=\"recording.trace\")\n```\n\n### Metal System Trace\n\n```\n1. profiler_open_trace(trace_path=\"metal.trace\")\n2. profiler_list_tables(trace_path=\"metal.trace\")\n3. profiler_query_table(trace_path=\"metal.trace\", schema=\"metal-gpu-interval\", limit=20)\n```\n\nThe `profiler_query_table` tool works with any table schema reported by `profiler_list_tables`, including `metal-gpu-interval`, `gpu-shader-timeline`, `thermal-state`, and others.\n\n### Signpost Analysis\n\n```\n1. profiler_signpost_intervals(trace_path=\"recording.trace\", subsystem=\"com.example.app\")\n2. profiler_signpost_events(trace_path=\"recording.trace\", category=\"networking\")\n```\n\n## Recording Traces\n\nUse `xctrace` to record traces from the command line:\n\n```bash\n# CPU profiling\nxctrace record --template \"CPU Profiler\" --launch -- ./my-app\n\n# Time Profiler with an already-running process\nxctrace record --template \"Time Profiler\" --attach <pid> --time-limit 10s\n\n# Metal System Trace\nxctrace record --template \"Metal System Trace\" --launch -- ./my-metal-app\n\n# Hangs detection\nxctrace record --template \"Hangs\" --launch -- ./my-app\n```\n\n## Development\n\n### Setup\n\n```bash\nuv sync --group dev\n```\n\n### Tests\n\n```bash\n# Unit tests only\nuv run pytest -m \"not integration and not mcp_integration and not metal_integration\"\n\n# Integration tests (requires xctrace / macOS)\nuv run pytest -m integration\n\n# Metal integration tests (compiles and traces a Metal compute program)\nuv run pytest -m metal_integration\n\n# All tests\nuv run pytest\n```\n\n### Linting\n\n```bash\nuv run ruff check .\nuv run pyright\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "apple-profiler",
+          "source": "./",
+          "description": "Xctrace profiling tools for Claude Code — analyze CPU samples, hangs, signposts, Metal/GPU traces, and any Instruments table from .trace files",
+          "version": "0.2.0",
+          "author": {
+            "name": "Robert Taylor"
+          },
+          "repository": "https://github.com/robtaylor/apple-profiler",
+          "license": "MIT",
+          "keywords": [
+            "xctrace",
+            "instruments",
+            "profiling",
+            "performance",
+            "macos",
+            "ios",
+            "metal",
+            "gpu"
+          ],
+          "categories": [
+            "gpu",
+            "instruments",
+            "ios",
+            "macos",
+            "metal",
+            "performance",
+            "profiling",
+            "xctrace"
+          ],
+          "install_commands": [
+            "/plugin marketplace add robtaylor/apple-profiler",
+            "/plugin install apple-profiler@apple-profiler"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "author": {
+    "id": "thariman",
+    "display_name": "Tony Hariman",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2712611?u=db8c80470425d2059541e6d6a1f6d6fb89911571&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "tools-ai",
+      "version": null,
+      "description": "Custom Claude Code plugins",
+      "repo_full_name": "thariman/Tools-AI",
+      "repo_url": "https://github.com/thariman/Tools-AI",
+      "repo_description": "Claude Code plugins and tools",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-13T06:03:08Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"tools-ai\",\n  \"owner\": {\n    \"name\": \"thariman\"\n  },\n  \"metadata\": {\n    \"description\": \"Custom Claude Code plugins\",\n    \"homepage\": \"https://github.com/thariman/Tools-AI\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"statusline\",\n      \"version\": \"1.1.0\",\n      \"source\": \"./plugins/statusline\",\n      \"description\": \"Status line showing model, git branch/status, active task, directory, and context window usage\"\n    },\n    {\n      \"name\": \"rename\",\n      \"version\": \"1.1.0\",\n      \"source\": \"./plugins/rename\",\n      \"description\": \"Auto-rename sessions on startup using directory name + counter (e.g. Tools-AI-3)\"\n    }\n  ]\n}\n",
+        "README.md": "# Tools-AI\n\nA Claude Code plugin marketplace with productivity-focused plugins.\n\n## Installation\n\nRequires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) v1.0.33+.\n\n**1. Add the marketplace:**\n\n```\n/plugin marketplace add thariman/Tools-AI\n```\n\n**2. Install plugins:**\n\n```\n/plugin install statusline@tools-ai\n/plugin install rename@tools-ai\n```\n\n**3. Start using Claude Code** — both plugins are automatically configured on the first session start via `SessionStart` hooks. The statusline appears after your first interaction and sessions are auto-named immediately (no restart needed).\n\n> **How it works:** On the first session after install, a `SessionStart` hook runs `setup.sh` which copies the statusline files to a persistent location (`~/.claude/statusline/`) and writes the `statusLine` config to `~/.claude/settings.json`. This ensures the status line survives plugin cache clears and Claude Code updates. Claude Code auto-reloads settings after each interaction, so the status bar appears as soon as you send your first message. A `UserPromptSubmit` hook also runs `setup.sh` as a safety net, ensuring the config is written before any interaction triggers the reload.\n\n## Plugins\n\n### Statusline\n\nA rich status line for Claude Code that displays at-a-glance session info:\n\n- **Model** — current Claude model in use\n- **Active task** — what Claude is currently working on (from the task list)\n- **Directory** — current working directory\n- **Git branch & status** — branch name with clean (✔) or dirty (●) indicator\n- **Context window usage** — 10-segment progress bar with color-coded thresholds\n- **Update checker** — notifies when a new Claude Code version is available\n\n```\nOpus 4.6 │ Fixing auth bug │ my-project │ main ✔ █████░░░░░ 50% │ ⬆ v2.2.0\n```\n\nContext window colors shift from green → yellow → orange → red as usage increases, with a skull (💀) warning above 80%.\n\nThe update checker queries the npm registry on session start (with a 4-hour cooldown) and compares against your running version. When a new version is found, the `⬆ v{version}` indicator appears in the status bar and a full notification with GitHub release notes is displayed at session start.\n\n### Rename\n\nAutomatically names Claude Code sessions on startup using the current directory name plus an incrementing counter:\n\n```\nTools-AI-1    Tools-AI-2    my-project-1    my-project-2\n```\n\n- Names sessions instantly on `SessionStart` — no manual `/rename` needed\n- Counter is per-directory, stored in `~/.claude/rename/state.json`\n- Writes directly to the session JSONL file for immediate effect\n- Falls back gracefully if `python3` is unavailable\n\n## Uninstalling\n\n**1. Run the uninstall script for the plugin(s) you want to remove:**\n\n```bash\n# Statusline\nbash ~/.claude/plugins/cache/tools-ai/statusline/*/scripts/uninstall.sh\n\n# Rename\nbash ~/.claude/plugins/cache/tools-ai/rename/*/scripts/uninstall.sh\n```\n\n**2. Uninstall the plugin(s):**\n\n```\n/plugin uninstall statusline@tools-ai\n/plugin uninstall rename@tools-ai\n```\n\n> **Important:** Run `uninstall.sh` first. The plugin system doesn't have a lifecycle hook for uninstall, so if you skip step 1, persistent files and config will remain orphaned (they won't cause errors, but you'll need to manually clean up `~/.claude/statusline/` or `~/.claude/rename/`).\n\nTo remove the marketplace source entirely:\n\n```\n/plugin marketplace remove tools-ai\n```\n\n## How It Works\n\n```\nPlugin Install\n  └─ adds to enabledPlugins, caches plugin files\n\nFirst Session Start\n  └─ SessionStart hook fires\n       ├─ setup.sh runs (~500ms)\n       │    ├─ copies run.sh + statusline.js + check-update files to ~/.claude/statusline/\n       │    └─ python3 writes statusLine config to ~/.claude/settings.json\n       └─ check-update.sh runs\n            └─ node check-update.js\n                 ├─ claude --version → current version\n                 ├─ npm registry → latest version\n                 ├─ GitHub releases → release notes (if update available)\n                 └─ writes ~/.claude/statusline/update-cache.json\n\nFirst User Interaction (same session)\n  └─ UserPromptSubmit hook fires → setup.sh runs (idempotent, ~7ms)\n  └─ Claude auto-reloads settings.json\n       └─ reads statusLine config → runs bash ~/.claude/statusline/run.sh\n            └─ run.sh finds node → exec node statusline.js\n                 ├─ reads JSON from stdin → renders status bar\n                 └─ reads update-cache.json → shows ⬆ indicator if update available\n```\n\nThe `SessionStart` and `UserPromptSubmit` hooks also act as a **self-healing mechanism**: if the `statusLine` config is accidentally removed from `settings.json`, or if the persistent files are deleted, the next session start or prompt will restore them automatically.\n\n## Edge Cases\n\n| Scenario | Behavior |\n|----------|----------|\n| `python3` not available | `setup.sh` fails with clear error message |\n| `settings.json` missing | Created from scratch with valid JSON |\n| `settings.json` malformed | `setup.sh` fails gracefully, doesn't corrupt further |\n| Plugin cache cleared | Status line keeps working (files persisted to `~/.claude/statusline/`) |\n| Persistent files deleted | Self-heals on next session start (re-copies from cache) |\n| Config manually deleted | Self-heals on next session start |\n| Existing manual statusLine | Overwritten by plugin config |\n| npm registry unreachable | Update check skipped silently, status bar still renders |\n| GitHub API unavailable | Update shown without release notes |\n| `claude --version` fails | Update check skipped, cached result used if available |\n\n## Compatibility\n\nThe statusline plugin works across different Node.js installation methods:\n\n- System node (`/usr/local/bin/node`)\n- **nvm** / **fnm** (sourced automatically)\n- **volta** (detected via `VOLTA_HOME`)\n- **nodeenv** (used by Claude Code's own installer)\n- **Homebrew** (`/opt/homebrew/bin/node`)\n\nNo global `node` in PATH is required — the plugin discovers it automatically.\n\n## Plugin Structure\n\nEach plugin follows the standard Claude Code plugin layout:\n\n```\nplugins/<name>/\n├── .claude-plugin/\n│   └── plugin.json        # Plugin metadata (name, version, description)\n├── hooks/\n│   └── hooks.json         # Hook event registrations (SessionStart, etc.)\n├── scripts/\n│   ├── setup.sh           # Auto-configuration + persistent file copy\n│   └── uninstall.sh       # Pre-uninstall cleanup (removes persistent files)\n└── <plugin files>         # Plugin-specific scripts and logic\n```\n\n## Export Claude-Mem Memories\n\nA standalone script to export memories from [claude-mem](https://github.com/thedotmack/claude-mem) to JSON. By default exports all data (observations, sessions, and prompts). Use `--prompts-only` to export just user prompts.\n\n**HTTP API mode** (default) — queries a running claude-mem server:\n\n```bash\n# Full export: observations, sessions, and prompts\n./export-claude-mem-prompts.sh\n\n# User prompts only\n./export-claude-mem-prompts.sh --prompts-only\n\n# Custom output file and port\n./export-claude-mem-prompts.sh my-memories.json 38888\n```\n\nRequires `curl` and a running claude-mem server.\n\n**SQLite mode** (`--db`) — reads the database directly:\n\n```bash\n# Full export\n./export-claude-mem-prompts.sh --db\n\n# User prompts only\n./export-claude-mem-prompts.sh --db --prompts-only\n\n# Custom output file and db path\n./export-claude-mem-prompts.sh --db my-prompts.json /path/to/claude-mem.db\n```\n\nRequires `sqlite3`. Flags (`--db`, `--prompts-only`) can be combined in any order.\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "statusline",
+          "version": "1.1.0",
+          "source": "./plugins/statusline",
+          "description": "Status line showing model, git branch/status, active task, directory, and context window usage",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add thariman/Tools-AI",
+            "/plugin install statusline@tools-ai"
+          ]
+        },
+        {
+          "name": "rename",
+          "version": "1.1.0",
+          "source": "./plugins/rename",
+          "description": "Auto-rename sessions on startup using directory name + counter (e.g. Tools-AI-3)",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add thariman/Tools-AI",
+            "/plugin install rename@tools-ai"
+          ]
+        }
+      ]
+    }
+  ]
+}

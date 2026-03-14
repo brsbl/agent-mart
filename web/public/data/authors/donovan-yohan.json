@@ -1,0 +1,48 @@
+{
+  "author": {
+    "id": "donovan-yohan",
+    "display_name": "Donovan Yohan",
+    "avatar_url": "https://avatars.githubusercontent.com/u/34756395?u=f31878eee202992ca60c2b60249b1224ca503d9e&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "belayer",
+      "version": null,
+      "description": "Belayer marketplace — plugins shipped with the multi-repo coding agent orchestrator",
+      "repo_full_name": "donovan-yohan/belayer",
+      "repo_url": "https://github.com/donovan-yohan/belayer",
+      "repo_description": "Go CLI that orchestrates autonomous coding agents across multiple repositories",
+      "signals": {
+        "stars": 4,
+        "forks": 0,
+        "pushed_at": "2026-03-14T04:28:20Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"belayer\",\n  \"owner\": { \"name\": \"donovanyohan\" },\n  \"metadata\": {\n    \"description\": \"Belayer marketplace — plugins shipped with the multi-repo coding agent orchestrator\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"harness\",\n      \"source\": \"./plugins/harness\",\n      \"description\": \"3-tier documentation system with living execution plans\"\n    },\n    {\n      \"name\": \"pr\",\n      \"source\": \"./plugins/pr\",\n      \"description\": \"PR lifecycle management — author, review, resolve, update\"\n    }\n  ]\n}\n",
+        "README.md": "# belayer\n\nA Go CLI that orchestrates autonomous coding agents across multiple repositories. Give it a work item, and it decomposes it into per-repo climbs, spawns isolated agent sessions in git worktrees, monitors progress, validates cross-repo alignment, and creates PRs.\n\n## How It Works\n\n```\nProblem Input (text or Jira ticket)\n        |\n        v\n  Brainstorm + Decompose (interactive Claude session)\n        |\n        v\n  Climbs DAG (per-repo, with dependencies)\n        |\n  +-----+------+------+\n  v     v      v      v\nLead  Lead   Lead   Lead     (parallel, isolated worktrees)\n  |     |      |      |\n  +-----+------+------+\n        |\n        v\n  Alignment Review (cross-repo spotter)\n     |          |\n   PASS       FAIL\n     |          |\n  Create PRs  Re-dispatch with corrections\n```\n\n**Three layers:**\n- **User** — CLI commands\n- **Belayer** — Deterministic Go daemon; polls SQLite, manages DAG execution, enforces concurrency limits\n- **Lead** — Ephemeral agent session per climb (Claude Code or Codex CLI); runs in an isolated git worktree\n\n## Claude Code Marketplace\n\nThis repository is a valid [Claude Code marketplace](https://github.com/anthropics/claude-code-plugins) plugin repository. It vendors two plugins that are automatically available when you work in this project:\n\n- **harness** (`plugins/harness/`) — 3-tier documentation system with living execution plans: brainstorm, bug, refactor, plan, orchestrate, complete, and the strangler-fig refactoring skill\n- **pr** (`plugins/pr/`) — Pull request lifecycle management: authoring, reviewing, resolving, and updating PRs\n\n### Installing the plugins\n\nThese plugins are vendored in the `plugins/` directory and are picked up automatically by Claude Code when working in this repo. No additional installation is needed for contributors.\n\nIf you want to use these plugins in **other projects**, install them from the marketplace:\n\n```bash\nclaude plugin add donovan-yohan/belayer --path plugins/harness\nclaude plugin add donovan-yohan/belayer --path plugins/pr\n```\n\n## Prerequisites\n\n- **Go 1.24+**\n- **tmux** — process management for agent sessions (`brew install tmux`)\n- **Agent CLI** (at least one):\n  - **Claude Code** — the `claude` binary on your PATH ([install guide](https://docs.anthropic.com/en/docs/claude-code))\n  - **Codex CLI** — the `codex` binary on your PATH ([install guide](https://github.com/openai/codex))\n- **SQLite** — bundled via `modernc.org/sqlite` (no C dependency)\n\n## Install\n\n```bash\ngo install github.com/donovan-yohan/belayer/cmd/belayer@latest\n```\n\nOr build from source:\n\n```bash\ngit clone https://github.com/donovan-yohan/belayer.git\ncd belayer\ngo build -o belayer ./cmd/belayer\n```\n\n## Quickstart\n\n### 1. Initialize belayer\n\n```bash\nbelayer init\n```\n\nCreates `~/.belayer/config.json`.\n\n### 2. Create a crag\n\nA crag is a long-lived workspace tied to one or more repos.\n\n```bash\nbelayer crag create my-project \\\n  --repo https://github.com/you/frontend.git \\\n  --repo https://github.com/you/backend.git\n```\n\nThis bare-clones the repos into `~/.belayer/crags/my-project/repos/`.\n\n### 3. Brainstorm and create a problem\n\nLaunch an interactive Claude session that knows your crag's repos and can generate problem specs:\n\n```bash\nbelayer setter -c my-project\n```\n\nOr create a problem directly from a spec and climbs file:\n\n```bash\nbelayer problem create -c my-project --spec spec.md --climbs climbs.json\n```\n\n<details>\n<summary>Example climbs.json</summary>\n\n```json\n{\n  \"climbs\": [\n    {\n      \"id\": \"setup\",\n      \"repo\": \"frontend\",\n      \"description\": \"Initialize project scaffolding with Vite + React\",\n      \"depends_on\": []\n    },\n    {\n      \"id\": \"api-layer\",\n      \"repo\": \"backend\",\n      \"description\": \"Create REST API endpoints for user management\",\n      \"depends_on\": []\n    },\n    {\n      \"id\": \"integration\",\n      \"repo\": \"frontend\",\n      \"description\": \"Connect frontend to backend API\",\n      \"depends_on\": [\"setup\", \"api-layer\"]\n    }\n  ]\n}\n```\n\n</details>\n\n### 4. Start the belayer daemon\n\nThe belayer daemon picks up pending problems and runs them:\n\n```bash\nbelayer belayer start -i my-project --max-leads 4\n```\n\nThis will:\n- Build a DAG from the climbs\n- Create isolated git worktrees per climb\n- Spawn agent sessions (Claude Code or Codex) in tmux windows\n- Monitor for completion (via mail messages)\n- Run a cross-repo spotter review when all climbs finish\n- Create PRs on approval, or re-dispatch corrections on rejection\n\n### 5. Monitor progress\n\n```bash\n# Quick status\nbelayer status -c my-project\n\n# View lead session logs\nbelayer logs -c my-project\n```\n\n## CLI Reference\n\n| Command | Description |\n|---------|-------------|\n| `belayer init` | Initialize global config |\n| `belayer crag create` | Create a new crag with repos |\n| `belayer crag list` | List all crags |\n| `belayer crag delete` | Delete a crag |\n| `belayer setter` | Interactive agent session for problem creation |\n| `belayer problem create` | Create a problem from spec + climbs files |\n| `belayer problem list` | List problems for a crag |\n| `belayer belayer start` | Start the daemon that executes problems |\n| `belayer status` | Show problem and climb status |\n| `belayer message <addr>` | Send a typed mail message to an agent |\n| `belayer mail read` | Read unread messages and mark as read |\n| `belayer mail inbox` | List unread messages without marking read |\n| `belayer mail ack <id>` | Mark a specific message as read |\n| `belayer logs` | View and manage lead session logs |\n\n## Agent Provider\n\nBelayer defaults to Claude Code for all roles. You can switch the default or mix providers per role in your crag's `belayer.toml`:\n\n```toml\n[agents]\nprovider = \"claude\"              # default for all roles\nlead_provider = \"codex\"          # override: leads use Codex\n# spotter_provider = \"\"          # empty = use default (claude)\n# anchor_provider = \"\"           # empty = use default (claude)\n```\n\nConfig files live at `~/.belayer/crags/<crag-name>/belayer.toml` (per-crag) or `~/.belayer/belayer.toml` (global).\n\n## Architecture\n\nSee [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full code map and data flow.\n\n**Key design decisions:**\n- **Stripe-style blueprint** — deterministic Go code handles orchestration; ephemeral agent sessions handle judgment calls (decomposition, sufficiency checks, alignment reviews)\n- **Bare repos + worktrees** — each climb gets an isolated git worktree so agents can work in parallel without conflicts\n- **SQLite as single source of truth** — all state (problems, climbs, verdicts, events) lives in one database per crag\n- **DAG execution** — climbs declare dependencies; the belayer daemon only spawns a climb when all its dependencies are complete\n- **Crash recovery** — the belayer daemon resumes in-progress problems on restart by scanning SQLite and checking for `TOP.json` files\n- **Inter-agent mail** — filesystem-backed messaging system (`belayer message` / `belayer mail read`) with typed messages and tmux send-keys delivery\n\n## Development\n\n```bash\n# Run all tests\ngo test ./...\n\n# Build\ngo build -o belayer ./cmd/belayer\n```\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "harness",
+          "source": "./plugins/harness",
+          "description": "3-tier documentation system with living execution plans",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add donovan-yohan/belayer",
+            "/plugin install harness@belayer"
+          ]
+        },
+        {
+          "name": "pr",
+          "source": "./plugins/pr",
+          "description": "PR lifecycle management — author, review, resolve, update",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add donovan-yohan/belayer",
+            "/plugin install pr@belayer"
+          ]
+        }
+      ]
+    }
+  ]
+}
