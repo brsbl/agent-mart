@@ -1,0 +1,198 @@
+{
+  "author": {
+    "id": "Christophe1997",
+    "display_name": "Christophe Shen",
+    "avatar_url": "https://avatars.githubusercontent.com/u/23160644?u=83e83c1da5d62e0df5e44b000b7a9415280b9e32&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agent-extensions",
+      "version": null,
+      "description": "Marketplace for Claude Code extensions",
+      "repo_full_name": "Christophe1997/agent-extentions",
+      "repo_url": "https://github.com/Christophe1997/agent-extentions",
+      "repo_description": "agent extentions",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-10T15:22:36Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"agent-extensions\",\n  \"owner\": {\n    \"name\": \"Christophe1997\",\n    \"email\": \"hey_christophe@outlook.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Marketplace for Claude Code extensions\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"writing-hugo-blog\",\n      \"source\": \"./plugins/writing-hugo-blog\",\n      \"description\": \"Create Hugo blog posts in Chinese with proper front matter, formatting, and AI content labeling.\",\n      \"version\": \"1.0.2\",\n      \"author\": {\n        \"name\": \"Christophe1997\",\n        \"email\": \"hey_christophe@outlook.com\"\n      },\n      \"category\": \"content-creation\",\n      \"keywords\": [\"hugo\", \"blog\", \"writing\", \"chinese\", \"markdown\"]\n    },\n    {\n      \"name\": \"agent-design\",\n      \"source\": \"./plugins/agent-design\",\n      \"description\": \"Guidelines for designing tools and action spaces for AI agents. Covers progressive disclosure, tool design patterns, and lessons from Claude Code development.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Christophe1997\",\n        \"email\": \"hey_christophe@outlook.com\"\n      },\n      \"category\": \"ai-development\",\n      \"keywords\": [\"ai\", \"agent\", \"tools\", \"design\", \"claude-code\"]\n    },\n    {\n      \"name\": \"redis-dev\",\n      \"source\": \"./plugins/redis-dev\",\n      \"description\": \"Comprehensive Redis design patterns, best practices, and command references. Includes caching, messaging, coordination patterns, and MCP integration for live queries.\",\n      \"version\": \"0.1.0\",\n      \"author\": {\n        \"name\": \"Christophe1997\",\n        \"email\": \"hey_christophe@outlook.com\"\n      },\n      \"category\": \"database\",\n      \"keywords\": [\"redis\", \"caching\", \"patterns\", \"database\", \"messaging\", \"distributed-systems\", \"queue\", \"rate-limiting\"]\n    },\n    {\n      \"name\": \"llm-doc\",\n      \"source\": \"./plugins/llm-doc\",\n      \"description\": \"Documentation standards for AI coding agents: AGENTS.md format for project context and conventional commit messages for clear git history.\",\n      \"version\": \"0.5.0\",\n      \"author\": {\n        \"name\": \"Christophe1997\",\n        \"email\": \"hey_christophe@outlook.com\"\n      },\n      \"category\": \"developer-tools\",\n      \"keywords\": [\"agents.md\", \"ai\", \"documentation\", \"commit\", \"conventional-commits\", \"coding-agents\"]\n    },\n    {\n      \"name\": \"adk-go\",\n      \"source\": \"./plugins/adk-go\",\n      \"description\": \"Build production-grade AI agents with Google's Agent Development Kit (ADK) for Go. Skills for agent creation, tool development, multi-agent patterns, and callbacks.\",\n      \"version\": \"0.1.1\",\n      \"author\": {\n        \"name\": \"Christophe1997\",\n        \"email\": \"hey_christophe@outlook.com\"\n      },\n      \"category\": \"ai-development\",\n      \"keywords\": [\"go\", \"golang\", \"ai\", \"agent\", \"adk\", \"google\", \"gemini\", \"mcp\", \"llm\"]\n    }\n  ]\n}\n",
+        "README.md": "# Agent Extensions\n\nAgent extentions in Claude marketplace structure.\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [writing-hugo-blog](./plugins/writing-hugo-blog/README.md) | Create and review Hugo blog posts in Chinese with proper front matter and AI content labeling |\n| [agent-design](./plugins/agent-design/README.md) | Guidelines for designing tools and action spaces for AI agents |\n| [redis-dev](./plugins/redis-dev/README.md) | Redis design patterns, best practices, and command references with MCP integration |\n| [llm-doc](./plugins/llm-doc/README.md) | Documentation standards for AI coding agents: AGENTS.md format and conventional commit messages |\n| [adk-go](./plugins/adk-go/README.md) | Build production-grade AI agents with Google's Agent Development Kit (ADK) for Go |\n\n## Installation\n\n### Add Marketplace\n\n```bash\n/plugin marketplace add Christophe1997/agent-extentions\n```\n\n### Install Plugins\n\n```bash\n/plugin install writing-hugo-blog@agent-extentions\n/plugin install agent-design@agent-extentions\n/plugin install redis-dev@agent-extentions\n/plugin install llm-doc@agent-extentions\n/plugin install adk-go@agent-extentions\n```\n\n## License\n\nMIT License - see [LICENSE](LICENSE) for details.\n",
+        "plugins/writing-hugo-blog/README.md": "# Writing Hugo Blog\n\nCreate Chinese blog posts for Hugo static sites with proper front matter, content structure, and AI labeling.\n\n## Features\n\n### Skill\nAutomatically activates when creating blog content or working with Hugo. Follows a structured workflow:\n1. Explore blog configuration\n2. Recognize content formats and structure\n3. **Check archetypes** (respects user's custom archetypes)\n4. Identify front matter requirements\n5. Ask user about topic\n6. Generate draft (`draft: true`)\n7. Review writing quality\n8. Publish (`draft: false`)\n\n### Archetype Support\n\nThe plugin respects Hugo's archetype lookup order:\n1. `archetypes/posts.md` → 2. Theme archetype → 3. `archetypes/default.md` → 4. Theme default → 5. Built-in\n\nWhen creating posts, the plugin:\n- Reads existing archetype to understand provided fields\n- Only adds missing front matter fields (author, categories, showToc, tags)\n- Always includes `\"AI generated\"` in tags for transparency\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/writing-hugo-blog:draft <topic>` | Create a new draft blog post |\n| `/writing-hugo-blog:review <path>` | Review existing post for style issues and apply fixes |\n\n## Installation\n\n```bash\n/plugin install writing-hugo-blog@agent-extentions\n```\n\n## Usage\n\n### Create a new blog post\n```\n/writing-hugo-blog:draft 如何使用Redis实现分布式锁\n```\n\n### Review existing post\n```\n/writing-hugo-blog:review content/posts/my-post.md\n```\n\n### Ask questions\n```\n\"帮我写一篇关于Docker最佳实践的博客\"\n\"Create a blog post about Redis clustering\"\n```\n\n## Style Guide\n\nFollows [中文技术文档的写作规范](https://github.com/ruanyf/document-style-guide) for Chinese content.\n\n## References\n\n- [Hugo Documentation](https://gohugo.io/documentation/)\n- [Chinese Writing Style Guide](./skills/writing-hugo-blog/references/chinese-writing-style.md)\n",
+        "plugins/agent-design/README.md": "# Agent Design\n\nGuidelines for designing tools and action spaces for AI agents. Covers progressive disclosure, tool design patterns, and lessons from Claude Code development.\n\n## Features\n\n### Skill\nAutomatically activates when:\n- Building agent harnesses\n- Designing tool interfaces\n- Creating elicitation mechanisms\n- Optimizing agent-tool interactions\n\n## Installation\n\n```bash\n/plugin install agent-design@agent-extentions\n```\n\n## Core Principles\n\n### 1. Claude Must \"Like\" Calling the Tool\nEven the best designed tool doesn't work if Claude doesn't understand how to call it.\n- Test if the model naturally uses the tool\n- Read outputs to see if it's confused\n- Iterate on the interface until it \"clicks\"\n\n### 2. Tools That Were Necessary Can Become Constraints\nAs models improve, old workarounds become unnecessary. Constantly revisit assumptions.\n\n### 3. Progressive Disclosure Over Context Bloat\nInstead of stuffing everything in the system prompt:\n- Give agents tools to discover context themselves\n- Let them search, read, and explore recursively\n\n## Usage\n\nAsk questions about agent design:\n```\n\"How should I design tools for my AI agent?\"\n\"What's the best way to structure tool interfaces?\"\n\"How do I implement progressive disclosure?\"\n\"What can I learn from Claude Code's tool design?\"\n```\n\n## Topics Covered\n\n- Tool design patterns\n- Progressive disclosure\n- Elicitation mechanisms\n- Action space optimization\n- Lessons from Claude Code development\n",
+        "plugins/redis-dev/README.md": "# Redis Dev Plugin\n\nComprehensive Redis design patterns, best practices, and command references for Claude Code. Includes MCP integration for live Redis queries.\n\n## Features\n\n### Skills (Use-Case Driven)\n\n| Skill | Use Cases |\n|-------|-----------|\n| `redis-caching` | Caching strategies, cache consistency, stampede prevention |\n| `redis-messaging` | Queues, reliable delivery, event streaming, pub/sub |\n| `redis-coordination` | Distributed locking, rate limiting, cross-shard consistency |\n| `redis-data-structures` | Efficient storage, unique counting, leaderboards, geospatial |\n| `redis-commands` | Complete Redis command reference with examples |\n| `redis-production` | Scaling, tuning, high availability patterns |\n\n### Commands\n\n| Command | Description |\n|---------|-------------|\n| `/redis-dev:connect` | Connect to a Redis instance (asks for approval before creating files) |\n| `/redis-dev:query <command>` | Execute a Redis command and explain results |\n| `/redis-dev:pattern <use-case>` | Look up patterns by use case |\n\n### Agents\n\n- `redis-code-reviewer` - Analyzes code for Redis anti-patterns and suggests improvements\n\n### MCP Integration\n\nConnect to live Redis instances for real-time queries and inspection.\n\n## Installation\n\n```bash\n/plugin install redis-dev@agent-extentions\n```\n\n## MCP Configuration\n\nCreate a `.claude/redis-dev.local.md` file to configure your Redis connection:\n\n```yaml\n---\nredis_host: localhost\nredis_port: 6379\nredis_password: \"\"\nredis_db: 0\n---\n```\n\nOr set environment variables:\n```bash\nexport REDIS_HOST=localhost\nexport REDIS_PORT=6379\n```\n\n## Usage\n\n### Ask about patterns\n\n```\n\"How do I implement a rate limiter with Redis?\"\n\"What's the best caching strategy for read-heavy workloads?\"\n\"How do I build a reliable message queue with Redis?\"\n```\n\n### Use commands\n\n```\n/redis-dev:connect --host localhost --port 6379\n/redis-dev:query GET user:123\n/redis-dev:pattern queue\n```\n\n### Code review\n\nThe `redis-code-reviewer` agent automatically analyzes code for:\n- Key naming anti-patterns\n- Missing TTL on cache keys\n- Inefficient data structure choices\n- Race conditions in distributed scenarios\n\n## Code Examples\n\nThis plugin uses **pseudocode + Redis commands** for language-agnostic documentation. When you ask questions, it will:\n1. Detect your project's programming language\n2. Generate code examples in that language\n3. Fall back to pseudocode if no language is detected\n\n## Documentation Source\n\nThis plugin follows the [Redis llms.txt specification](https://redis.antirez.com/llms.txt).\n\n## License\n\nMIT\n",
+        "plugins/llm-doc/README.md": "# llm-doc\n\nDocumentation standards for AI coding agents. Provides comprehensive tooling for AGENTS.md lifecycle management and conventional commit messages.\n\n## Skills\n\n### agents-md\nGuidance for creating and maintaining AGENTS.md files - the standardized format for AI coding agent context. Includes structure, sections, best practices, and symlink patterns for multi-agent compatibility.\n\n**Resources:**\n- `references/lifecycle.md` - AGENTS.md maintenance lifecycle\n- `references/validation.md` - Quality checklist and validation patterns\n- `references/agent-compatibility.md` - Multi-agent symlink strategies\n- `examples/` - Real-world AGENTS.md samples\n\n**Trigger phrases:**\n- \"create an AGENTS.md\"\n- \"write AGENTS.md\"\n- \"migrate to AGENTS.md\"\n- \"update AGENTS.md\"\n\n### conventional-commits\nGenerate compact, clear commit messages following the Conventional Commits specification. Covers types, scopes, breaking changes, and style guidelines.\n\n**Key principle:** No `Co-Authored-By` footer for AI agents. Human takes full ownership of all commits.\n\n**Trigger phrases:**\n- \"write a commit message\"\n- \"generate a commit\"\n- \"help me commit\"\n- \"commit these changes\"\n\n## Installation\n\n### Via Marketplace\n\n```bash\n/plugin install llm-doc@agent-extentions\n```\n\n## Commands\n\n### /llm-doc:commit\nGenerate a commit message from staged changes and create the commit. Analyzes the diff to determine type, scope, and description following Conventional Commits.\n\n```bash\n/llm-doc:commit        # Auto-detect scope from changed files\n```\n\n### /llm-doc:init-agents-md [path]\nScaffold a compact AGENTS.md file by analyzing project configuration (package.json, Cargo.toml, go.mod, etc.). Detects test commands, build scripts, and code style automatically. Defaults to single-file approach.\n\n```bash\n/llm-doc:init-agents-md           # Create ./AGENTS.md\n/llm-doc:init-agents-md ./docs/   # Create ./docs/AGENTS.md\n```\n\n### /llm-doc:migrate-agents-md [source]\nMigrate existing agent documentation (AGENT.md, .cursorrules, .windsurfrules, CLAUDE.md) to the compact AGENTS.md format. Auto-detects source files.\n\n```bash\n/llm-doc:migrate-agents-md                    # Auto-detect source\n/llm-doc:migrate-agents-md ./AGENT.md         # Migrate specific file\n```\n\n### /llm-doc:update-agents-md [path]\nUpdate an existing AGENTS.md to reflect current project state. Use when build commands, dependencies, or conventions change.\n\n```bash\n/llm-doc:update-agents-md           # Update ./AGENTS.md\n/llm-doc:update-agents-md ./docs/   # Update ./docs/AGENTS.md\n```\n\n## Usage\n\n- **For guidance**: Ask questions using the trigger phrases above\n- **For action**: Use commands for AGENTS.md lifecycle:\n  - New project → `/llm-doc:init-agents-md`\n  - Existing docs → `/llm-doc:migrate-agents-md`\n  - Project changes → `/llm-doc:update-agents-md`\n  - Ready to commit → `/llm-doc:commit`\n\n## License\n\nMIT\n",
+        "plugins/adk-go/README.md": "# ADK-Go Plugin\n\nBuild production-grade AI agents with Google's Agent Development Kit (ADK) for Go.\n\n## What is ADK-Go?\n\nADK (Agent Development Kit) for Go is a **code-first, framework-level toolkit** for building production-grade AI agents. It features:\n\n- **Idiomatic Go**: Designed to leverage Go's concurrency and performance\n- **Model-Agnostic**: Works with Gemini, OpenAI, or custom LLM implementations\n- **Rich Tool Ecosystem**: Function tools, MCP integration, built-in tools\n- **Multi-Agent Patterns**: Sequential, parallel, and loop agent workflows\n- **Production-Ready**: Session management, memory services, artifact storage\n\n## Installation\n\n```bash\ngo get google.golang.org/adk\n```\n\n## Skills\n\n| Skill | Purpose |\n|-------|---------|\n| `adk-basics` | Core concepts, minimal agent setup, custom models |\n| `adk-tools` | Function tools, MCP toolsets, HITL patterns |\n| `adk-multi-agent` | Sequential, parallel, loop agents, handoffs |\n| `adk-callbacks` | Callback system, plugins, state management |\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/adk-go:init-agent` | Scaffold a new ADK agent project |\n| `/adk-go:add-tool` | Add a new function tool to an agent |\n\n## Agents\n\n| Agent | Purpose |\n|-------|---------|\n| `adk-architect` | Help design ADK agent architectures and debug issues |\n\n## Quick Start\n\n```go\npackage main\n\nimport (\n    \"context\"\n    \"google.golang.org/adk/agent/llmagent\"\n    \"google.golang.org/adk/model/gemini\"\n    \"google.golang.org/adk/runner\"\n    \"google.golang.org/adk/session\"\n    \"google.golang.org/genai\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    model, _ := gemini.NewModel(ctx, \"gemini-2.5-flash\", &genai.ClientConfig{\n        APIKey: os.Getenv(\"GOOGLE_API_KEY\"),\n    })\n\n    agent, _ := llmagent.New(llmagent.Config{\n        Name:        \"my_agent\",\n        Model:       model,\n        Description: \"A helpful assistant.\",\n        Instruction: \"You are a helpful assistant.\",\n    })\n\n    r, _ := runner.New(runner.Config{\n        AppName:        \"my_app\",\n        Agent:          agent,\n        SessionService: session.InMemoryService(),\n    })\n\n    // Run the agent...\n}\n```\n\n## Resources\n\n- [ADK Documentation](https://google.github.io/adk-docs/)\n- [Go Package Docs](https://pkg.go.dev/google.golang.org/adk)\n- [GitHub Repository](https://github.com/google/adk-go)\n- [Examples](https://github.com/google/adk-go/tree/main/examples)\n"
+      },
+      "plugins": [
+        {
+          "name": "writing-hugo-blog",
+          "source": "./plugins/writing-hugo-blog",
+          "description": "Create Hugo blog posts in Chinese with proper front matter, formatting, and AI content labeling.",
+          "version": "1.0.2",
+          "author": {
+            "name": "Christophe1997",
+            "email": "hey_christophe@outlook.com"
+          },
+          "category": "content-creation",
+          "keywords": [
+            "hugo",
+            "blog",
+            "writing",
+            "chinese",
+            "markdown"
+          ],
+          "categories": [
+            "blog",
+            "chinese",
+            "content-creation",
+            "hugo",
+            "markdown",
+            "writing"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Christophe1997/agent-extentions",
+            "/plugin install writing-hugo-blog@agent-extensions"
+          ]
+        },
+        {
+          "name": "agent-design",
+          "source": "./plugins/agent-design",
+          "description": "Guidelines for designing tools and action spaces for AI agents. Covers progressive disclosure, tool design patterns, and lessons from Claude Code development.",
+          "version": "0.1.0",
+          "author": {
+            "name": "Christophe1997",
+            "email": "hey_christophe@outlook.com"
+          },
+          "category": "ai-development",
+          "keywords": [
+            "ai",
+            "agent",
+            "tools",
+            "design",
+            "claude-code"
+          ],
+          "categories": [
+            "agent",
+            "ai",
+            "ai-development",
+            "claude-code",
+            "design",
+            "tools"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Christophe1997/agent-extentions",
+            "/plugin install agent-design@agent-extensions"
+          ]
+        },
+        {
+          "name": "redis-dev",
+          "source": "./plugins/redis-dev",
+          "description": "Comprehensive Redis design patterns, best practices, and command references. Includes caching, messaging, coordination patterns, and MCP integration for live queries.",
+          "version": "0.1.0",
+          "author": {
+            "name": "Christophe1997",
+            "email": "hey_christophe@outlook.com"
+          },
+          "category": "database",
+          "keywords": [
+            "redis",
+            "caching",
+            "patterns",
+            "database",
+            "messaging",
+            "distributed-systems",
+            "queue",
+            "rate-limiting"
+          ],
+          "categories": [
+            "caching",
+            "database",
+            "distributed-systems",
+            "messaging",
+            "patterns",
+            "queue",
+            "rate-limiting",
+            "redis"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Christophe1997/agent-extentions",
+            "/plugin install redis-dev@agent-extensions"
+          ]
+        },
+        {
+          "name": "llm-doc",
+          "source": "./plugins/llm-doc",
+          "description": "Documentation standards for AI coding agents: AGENTS.md format for project context and conventional commit messages for clear git history.",
+          "version": "0.5.0",
+          "author": {
+            "name": "Christophe1997",
+            "email": "hey_christophe@outlook.com"
+          },
+          "category": "developer-tools",
+          "keywords": [
+            "agents.md",
+            "ai",
+            "documentation",
+            "commit",
+            "conventional-commits",
+            "coding-agents"
+          ],
+          "categories": [
+            "agents.md",
+            "ai",
+            "coding-agents",
+            "commit",
+            "conventional-commits",
+            "developer-tools",
+            "documentation"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Christophe1997/agent-extentions",
+            "/plugin install llm-doc@agent-extensions"
+          ]
+        },
+        {
+          "name": "adk-go",
+          "source": "./plugins/adk-go",
+          "description": "Build production-grade AI agents with Google's Agent Development Kit (ADK) for Go. Skills for agent creation, tool development, multi-agent patterns, and callbacks.",
+          "version": "0.1.1",
+          "author": {
+            "name": "Christophe1997",
+            "email": "hey_christophe@outlook.com"
+          },
+          "category": "ai-development",
+          "keywords": [
+            "go",
+            "golang",
+            "ai",
+            "agent",
+            "adk",
+            "google",
+            "gemini",
+            "mcp",
+            "llm"
+          ],
+          "categories": [
+            "adk",
+            "agent",
+            "ai",
+            "ai-development",
+            "gemini",
+            "go",
+            "golang",
+            "google",
+            "llm",
+            "mcp"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Christophe1997/agent-extentions",
+            "/plugin install adk-go@agent-extensions"
+          ]
+        }
+      ]
+    }
+  ]
+}

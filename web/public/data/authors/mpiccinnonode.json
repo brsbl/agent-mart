@@ -1,0 +1,40 @@
+{
+  "author": {
+    "id": "mpiccinnonode",
+    "display_name": "Massimo Piccinno 🤏🏻",
+    "avatar_url": "https://avatars.githubusercontent.com/u/147384281?u=ebf87a3968387f0d16943ae53403962b9998b04a&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "mpiccinnonode",
+      "version": null,
+      "description": "Claude Code plugins by mpiccinnonode",
+      "repo_full_name": "mpiccinnonode/config-doctor",
+      "repo_url": "https://github.com/mpiccinnonode/config-doctor",
+      "repo_description": "Claude Code plugin that deep-scans current configuration and proposes improvements",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-13T14:37:27Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"mpiccinnonode\",\n  \"owner\": {\n    \"name\": \"mpiccinnonode\"\n  },\n  \"metadata\": {\n    \"description\": \"Claude Code plugins by mpiccinnonode\",\n    \"homepage\": \"https://github.com/mpiccinnonode/config-doctor\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"config-doctor\",\n      \"version\": \"1.1.0\",\n      \"source\": \"./\",\n      \"description\": \"Deep-scan and audit a project's Claude configuration — agents, rules, skills, memory files — and produce quality reports, tooling gap analysis, and memory optimization recommendations.\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"config-doctor\",\n  \"version\": \"1.1.0\",\n  \"description\": \"Deep-scan and audit a project's Claude configuration — agents, rules, skills, memory files — and produce quality reports, tooling gap analysis, and memory optimization recommendations.\",\n  \"author\": {\n    \"name\": \"mpiccinnonode\"\n  },\n  \"repository\": \"https://github.com/mpiccinnonode/config-doctor\",\n  \"license\": \"MIT\",\n  \"keywords\": [\n    \"audit\",\n    \"config\",\n    \"agents\",\n    \"rules\",\n    \"memory\",\n    \"tooling\"\n  ]\n}\n",
+        "README.md": "# config-doctor\n\nA Claude Code plugin that deep-scans and audits a project's Claude configuration — agents, rules, skills, and memory files — then produces a quality report, tooling gap analysis, and memory optimization recommendations.\n\n## What it does\n\nRuns a five-phase audit:\n\n1. **Orientation** — inventories all `.claude/` configuration files\n2. **Agent & Rules Quality Audit** — evaluates every agent against a rubric (0–50), flags rule contradictions, duplicates, and gaps\n3. **Tooling Gap Analysis** — identifies missing linters, MCP servers, and LSP integrations for the project's tech stack\n4. **Memory Optimization** — finds redundant, verbose, and dead rules; projects token savings\n5. **Enforcement** — optionally applies safe fixes automatically or all recommendations with confirmation\n\n## Bundled agents\n\nThe plugin ships three agents used internally by the audit:\n\n| Agent | Purpose |\n| ------- | --------- |\n| `agent-architect` | Evaluates agent and rules quality using a structured rubric |\n| `code-quality-scouter` | Audits developer tooling and recommends MCP/LSP additions |\n| `memory-optimizer` | Audits memory files for token waste and redundancy |\n\nThe `memory-optimizer` is only used if the project does not already have a custom one in `.claude/agents/`. If a project-level `memory-optimizer` exists, it takes priority.\n\n## Usage\n\n### Via slash command\n\n```text\n/audit\n/audit --report-only\n/audit --apply-safe\n/audit --apply-all\n/audit --skip-tooling\n/audit --skip-memory\n/audit /path/to/other/project\n```\n\n### Via natural language (skill auto-trigger)\n\nAsk Claude to run the config doctor, audit your Claude configuration, or check your `.claude/` setup.\n\n## Optional: Serena MCP for reduced token usage\n\nconfig-doctor works out of the box with native Claude Code tools. For ~60% lower token usage during audits, add [Serena](https://github.com/oraios/serena) to your Claude Code MCP configuration. config-doctor detects Serena automatically when available — no extra setup needed.\n\n## Installation\n\n### 0. Start Claude Code\n\n```bash\nclaude\n```\n\n### 1. Add the marketplace\n\nIn Claude chat:\n\n```text\n/plugin marketplace add mpiccinnonode/config-doctor\n```\n\n### 2. Install the plugin\n\nIn Claude chat:\n\n```text\n/plugin install config-doctor\n```\n\n**3. Restart Claude Code** — the plugin will be active immediately.\n\n## Arguments reference\n\n| Flag | Effect |\n| ------ | -------- |\n| `--report-only` | Phases 1–4 only; no changes applied |\n| `--apply-safe` | Auto-applies unambiguously safe fixes |\n| `--apply-all` | Applies all recommendations (confirms each significant change) |\n| `--skip-tooling` | Skips Phase 2 (tooling gap analysis) |\n| `--skip-memory` | Skips Phase 3 (memory optimization) |\n| `/path/to/project` | Targets a specific directory instead of cwd |\n"
+      },
+      "plugins": [
+        {
+          "name": "config-doctor",
+          "version": "1.1.0",
+          "source": "./",
+          "description": "Deep-scan and audit a project's Claude configuration — agents, rules, skills, memory files — and produce quality reports, tooling gap analysis, and memory optimization recommendations.",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add mpiccinnonode/config-doctor",
+            "/plugin install config-doctor@mpiccinnonode"
+          ]
+        }
+      ]
+    }
+  ]
+}

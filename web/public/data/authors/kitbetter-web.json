@@ -1,0 +1,59 @@
+{
+  "author": {
+    "id": "kitbetter-web",
+    "display_name": "kitbetter",
+    "avatar_url": "https://avatars.githubusercontent.com/u/163379546?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "muzlive-android-plugin",
+      "version": null,
+      "description": "MuzLive Android 개발자를 위한 Claude Code 플러그인",
+      "repo_full_name": "kitbetter-web/muzlive-android-plugin",
+      "repo_url": "https://github.com/kitbetter-web/muzlive-android-plugin",
+      "repo_description": "Claude Code 개발 워크플로우 자동화 플러그인",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-13T07:48:02Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"muzlive-android-plugin\",\n  \"description\": \"MuzLive Android 개발자를 위한 Claude Code 플러그인\",\n  \"owner\": {\n    \"name\": \"kitbetter-web\",\n    \"url\": \"https://github.com/kitbetter-web\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"muzlive-android\",\n      \"source\": \"./\",\n      \"version\": \"1.1.0\",\n      \"description\": \"MuzLive Android 개발자를 위한 Claude Code 플러그인 - 기획부터 커밋까지 전체 개발 사이클 자동화\",\n      \"author\": {\n        \"name\": \"kitbetter-web\"\n      },\n      \"keywords\": [\n        \"android\",\n        \"kotlin\",\n        \"workflow\",\n        \"automation\",\n        \"planner\",\n        \"commit\",\n        \"code-review\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# muzlive-android-plugin\n\nAndroid 개발 워크플로우를 위한 Claude Code 플러그인.\n\n계획 수립부터 코딩, 리뷰, 커밋까지 개발 사이클 전반을 자동화합니다.\n\n## 설치\n\n```\n/plugin marketplace add kitbetter-web/muzlive-android-plugin\n/plugin install muzlive-android@muzlive-android-plugin\n```\n\n## 업데이트\n\n```\n/plugin uninstall muzlive-android@muzlive-android-plugin\n/plugin marketplace add kitbetter-web/muzlive-android-plugin\n/plugin install muzlive-android@muzlive-android-plugin\n```\n\n또는 `/update` 커맨드로 최신 버전 여부를 먼저 확인할 수 있습니다.\n\n## 제거\n\n```\n/plugin uninstall muzlive-android@muzlive-android-plugin\n```\n\n---\n\n## 도구 목록\n\n### Commands (슬래시 커맨드)\n\n| 커맨드 | 설명 |\n|--------|------|\n| `/planner <작업 설명>` | 작업 계획 수립 후 PLAN.md 저장 |\n| `/dev-cycle <작업 설명> [#이슈] [태스크번호]` | 전체 개발 사이클 한 번에 진행 (Plan → Code → Review → Commit) |\n| `/commit <태스크번호>` | 팀 컨벤션에 맞는 커밋 메시지 생성 및 커밋 실행 |\n| `/create-pr <타겟브랜치>` | Draft PR 생성 및 `/gemini review` 댓글 자동 작성 (fork 레포 지원) |\n| `/apply-review <리뷰_코멘트_URL> [-resolve]` | PR 리뷰 내용 자동 반영 후 \"반영완료\" 답글 작성 |\n| `/explain <질문>` | 코드 흐름 분석 및 Mermaid 다이어그램 포함 문서를 `docs/`에 저장 |\n| `/update` | 플러그인 최신 버전 확인 및 업데이트 안내 |\n\n### Agents (Sub-agent)\n\n| 에이전트 | 설명 |\n|----------|------|\n| `programmer` | PLAN.md를 읽고 코드 작성, 기술적 결정사항을 DECISIONS.md에 기록 |\n| `code-reviewer` | 변경사항 코드 리뷰 — 품질, 보안, 성능 검토 (읽기 전용) |\n| `kotlin-expert` | Kotlin/Android 전문가 — MVI, Compose, Hilt, Coroutines/Flow |\n| `android-refactoring-specialist` | 레거시 코드 리팩토링 — MVC/MVVM → MVI, XML → Compose 마이그레이션 |\n| `gradle-build-engineer` | Gradle 멀티모듈 빌드 최적화, 의존성 관리, 빌드 오류 해결 |\n| `android-security-review` | Android 보안 리뷰 — 권한, 데이터 저장, 네트워크, Injection, DexGuard 난독화 위험 |\n| `deployment-engineer` | CI/CD 파이프라인 설계 및 배포 자동화 |\n| `project-manager` | 프로젝트 계획, 리스크 관리, 이해관계자 커뮤니케이션 |\n\n---\n\n## 워크플로우\n\n### 전체 사이클 자동 진행\n\n```\n/dev-cycle 로그인 기능 구현 #42 MBLES-295\n```\n\nPlan → Code → Review → Commit 단계를 순서대로 진행하며, 각 단계마다 확인을 받습니다.\n\n### 단계별 수동 진행\n\n```\n/planner 로그인 기능 구현\n# PLAN.md 검토 후\nUse the programmer subagent to implement the plan\n# 코딩 완료 후\nUse the code-reviewer subagent to review the changes\n# 리뷰 확인 후\n/commit MBLES-295\n```\n\n### PR 생성\n\n```\n/create-pr feature/#24/develop\n/create-pr develop\n```\n\nfork 레포지토리 여부와 타겟 브랜치 위치를 자동으로 감지합니다.\n생성 후 `/gemini review` 댓글을 자동으로 작성합니다.\n\n### PR 리뷰 반영\n\n```\n/apply-review https://github.com/ORG/REPO/pull/123#discussion_r456789\n/apply-review https://github.com/ORG/REPO/pull/123#discussion_r456789 -resolve\n```\n\n### 코드 흐름 분석\n\n```\n/explain 이미지 캐싱이 어떻게 이루어져?\n/explain HomeScreen에서 PlayerScreen으로 어떻게 전환돼?\n```\n\n### 플러그인 업데이트 확인\n\n```\n/update\n```\n\n최신 버전이 있으면 변경사항과 업데이트 방법을 안내합니다.\n\n---\n\n## 커밋 메시지 형식\n\n```\nissue #<이슈번호> <태스크번호> <type>: <메시지>\n```\n\n예시:\n```\nissue #24 MBLES-295 feat: VideoQuality에 displayName 추가 및 UI 목록에서 Auto 제외\nissue #31 MBLES-312 fix: 재생 중 화면 회전 시 크래시 수정\n```\n\n- 이슈 번호: 현재 브랜치명에서 자동 추출\n- 태스크 번호: `/commit` 실행 시 인자로 전달\n\n---\n\n## 생성 파일\n\n| 파일 | 생성 주체 | 설명 |\n|------|----------|------|\n| `PLAN.md` | planner | 작업 계획 |\n| `DECISIONS.md` | programmer | 작업 중 내린 기술적 결정 기록 |\n| `docs/explain-*.md` | explain | 코드 흐름 분석 문서 |\n"
+      },
+      "plugins": [
+        {
+          "name": "muzlive-android",
+          "source": "./",
+          "version": "1.1.0",
+          "description": "MuzLive Android 개발자를 위한 Claude Code 플러그인 - 기획부터 커밋까지 전체 개발 사이클 자동화",
+          "author": {
+            "name": "kitbetter-web"
+          },
+          "keywords": [
+            "android",
+            "kotlin",
+            "workflow",
+            "automation",
+            "planner",
+            "commit",
+            "code-review"
+          ],
+          "categories": [
+            "android",
+            "automation",
+            "code-review",
+            "commit",
+            "kotlin",
+            "planner",
+            "workflow"
+          ],
+          "install_commands": [
+            "/plugin marketplace add kitbetter-web/muzlive-android-plugin",
+            "/plugin install muzlive-android@muzlive-android-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

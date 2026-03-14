@@ -1,0 +1,64 @@
+{
+  "author": {
+    "id": "akurinnoy",
+    "display_name": "Oleksii Kurinnyi",
+    "avatar_url": "https://avatars.githubusercontent.com/u/16220722?u=b9983684db57cb49b28f849e802f260ee52144d1&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ok-plugins",
+      "version": null,
+      "description": "Custom Claude Code plugins by akurinnoy",
+      "repo_full_name": "akurinnoy/ok_plugins",
+      "repo_url": "https://github.com/akurinnoy/ok_plugins",
+      "repo_description": "Custom Claude Code plugins",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-12T14:59:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"ok-plugins\",\n  \"description\": \"Custom Claude Code plugins by akurinnoy\",\n  \"owner\": {\n    \"name\": \"Oleksii Kurinnyi\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ok-pr-review\",\n      \"description\": \"Two-stage PR review: standard review for correctness and security, then deep review for design quality, testing rigor, and anti-patterns\",\n      \"author\": {\n        \"name\": \"Oleksii Kurinnyi\"\n      },\n      \"source\": \"./plugins/ok-pr-review\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/akurinnoy/ok-plugins/tree/main/plugins/ok-pr-review\"\n    },\n    {\n      \"name\": \"ok-prerelease-verification\",\n      \"description\": \"Generates manual step-by-step verification instructions for confirming a GitHub PR fix is correctly included in a DWO prerelease build\",\n      \"author\": {\n        \"name\": \"Oleksii Kurinnyi\"\n      },\n      \"source\": \"./plugins/ok-prerelease-verification\",\n      \"category\": \"productivity\",\n      \"homepage\": \"https://github.com/akurinnoy/ok-plugins/tree/main/plugins/ok-prerelease-verification\"\n    }\n  ]\n}\n",
+        "README.md": "# ok-plugins\n\nCustom Claude Code plugin marketplace by akurinnoy.\n\n## Plugins\n\n| Plugin | Description |\n|--------|-------------|\n| [ok-pr-review](./plugins/ok-pr-review) | Two-stage PR review: standard review + deep review |\n| [ok-prerelease-verification](./plugins/ok-prerelease-verification) | DWO prerelease verification checklist generator |\n\n## Installation\n\n### 1. Register the marketplace (one-time)\n\nIn Claude Code, run:\n\n```\n/plugin marketplace add\n```\n\nSelect \"GitHub repository\" and enter `akurinnoy/ok_plugins`.\n\n### 2. Install plugins\n\n```\n/plugin install ok-pr-review@ok-plugins\n/plugin install ok-prerelease-verification@ok-plugins\n```\n\n## Adding New Plugins\n\n1. Create a new directory under `plugins/`\n2. Add `.claude-plugin/plugin.json` manifest\n3. Add skills, commands, or agents\n4. Register in `.claude-plugin/marketplace.json`\n",
+        "plugins/ok-pr-review/README.md": "# ok-pr-review\n\nTwo-stage pull request review plugin for Claude Code.\n\n## Skills\n\n### 1. ok-pr-review (Standard Review)\n\nFetches PR data from GitHub and provides structured feedback on:\n- Correctness vs linked issue requirements\n- Security vulnerabilities\n- Code quality and performance\n- Best practices\n\n**Must be run first.** Outputs a `STANDARD_REVIEW_COMPLETE` marker that the deep review depends on.\n\n### 2. ok-pr-deep-review (Deep Review)\n\nBuilds on the standard review with deeper analysis of:\n- Design and abstraction quality\n- Code thoughtfulness indicators\n- Testing quality and rigor\n- Language-specific anti-patterns\n- Integration contract verification\n\n**Must be run after ok-pr-review on the same PR.** Reuses PR data already in context (no duplicate API calls).\n\n## Usage\n\n```\n/ok-pr-review https://github.com/owner/repo/pull/123\n# Wait for STANDARD_REVIEW_COMPLETE marker\n/ok-pr-deep-review https://github.com/owner/repo/pull/123\n```\n\n## Installation\n\n```\n/plugin install ok-pr-review@ok-plugins\n```\n\n## License\n\nEPL-2.0\n",
+        "plugins/ok-prerelease-verification/README.md": "# ok-prerelease-verification\n\nGenerates manual, copy-pasteable verification checklists for confirming a specific GitHub PR fix is correctly included in a DWO (DevWorkspace Operator) prerelease build.\n\n## Usage\n\n```\n/ok-prerelease-verification https://github.com/devfile/devworkspace-operator/pull/123\n```\n\n## What It Does\n\nGiven a PR URL, the skill:\n\n1. Fetches PR metadata and linked issues\n2. Reads the code diff to understand what changed\n3. Determines the verification criteria (what Kubernetes resources changed, what should exist after the fix)\n4. Generates a numbered, ready-to-run checklist with concrete `oc` commands\n\nThe output is designed to be executed manually in your terminal against a cluster running the prerelease build.\n\n## Installation\n\n```\n/plugin install ok-prerelease-verification@ok-plugins\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "ok-pr-review",
+          "description": "Two-stage PR review: standard review for correctness and security, then deep review for design quality, testing rigor, and anti-patterns",
+          "author": {
+            "name": "Oleksii Kurinnyi"
+          },
+          "source": "./plugins/ok-pr-review",
+          "category": "productivity",
+          "homepage": "https://github.com/akurinnoy/ok-plugins/tree/main/plugins/ok-pr-review",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add akurinnoy/ok_plugins",
+            "/plugin install ok-pr-review@ok-plugins"
+          ]
+        },
+        {
+          "name": "ok-prerelease-verification",
+          "description": "Generates manual step-by-step verification instructions for confirming a GitHub PR fix is correctly included in a DWO prerelease build",
+          "author": {
+            "name": "Oleksii Kurinnyi"
+          },
+          "source": "./plugins/ok-prerelease-verification",
+          "category": "productivity",
+          "homepage": "https://github.com/akurinnoy/ok-plugins/tree/main/plugins/ok-prerelease-verification",
+          "categories": [
+            "productivity"
+          ],
+          "install_commands": [
+            "/plugin marketplace add akurinnoy/ok_plugins",
+            "/plugin install ok-prerelease-verification@ok-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

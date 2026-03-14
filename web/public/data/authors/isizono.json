@@ -9,18 +9,18 @@
       "name": "claude-code-memory-marketplace",
       "version": null,
       "description": "Claude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・アクティビティを永続化する",
-      "repo_full_name": "isizono/claude-code-exterminal-memory",
-      "repo_url": "https://github.com/isizono/claude-code-exterminal-memory",
+      "repo_full_name": "isizono/cc-memory",
+      "repo_url": "https://github.com/isizono/cc-memory",
       "repo_description": "claude codeさんが作業内容を記録するためのメモリ",
       "signals": {
         "stars": 0,
         "forks": 0,
-        "pushed_at": "2026-03-12T00:48:25Z"
+        "pushed_at": "2026-03-14T07:18:44Z"
       },
       "files": {
         ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-code-memory-marketplace\",\n  \"owner\": {\n    \"name\": \"isizono\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"claude-code-memory\",\n      \"source\": \"./\",\n      \"description\": \"Claude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・アクティビティを永続化する\",\n      \"version\": \"0.1.0\"\n    }\n  ]\n}\n",
         ".claude-plugin/plugin.json": "{\n  \"name\": \"claude-code-memory\",\n  \"description\": \"Claude Codeの記憶を外部DBに保存し、セッション間で知識・決定事項・アクティビティを永続化する\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"isizono\"\n  }\n}\n",
-        "README.md": "# claude-code-memory\n\nClaude Codeのセッション間で、議論の文脈・決定事項・作業状況を永続化するプラグインです。\n\n## 何が解決されるのか\n\nClaude Codeはセッションごとに記憶がリセットされます。短いタスクなら問題ありませんが、長期プロジェクトでは「前に何を決めたか」「なぜその設計にしたか」「どこまで作業が進んでいるか」がセッションをまたぐと失われます。\n\nclaude-code-memoryは、こうした文脈をSQLiteデータベースに保存し、新しいセッションでAIが自動的に過去の記録を参照できるようにします。同じ説明を繰り返す必要がなくなり、議論の積み重ねがそのまま次のセッションに引き継がれます。\n\n## 主な機能\n\n- **トピック管理** — 議論の主題ごとに情報を整理します\n- **決定事項の記録** — 合意した内容を理由とともに保存します\n- **議論ログ** — 議論の経緯や検討過程を保存します\n- **アクティビティ管理** — 作業タスクの進捗をステータスで追跡します\n- **タグシステム** — トピック・決定・ログ・アクティビティを横断的にタグで分類します\n- **ハイブリッド検索** — キーワード検索（FTS5）とベクトル検索を組み合わせて関連情報を見つけます\n- **ナレッジ保存** — 調査結果をマークダウンファイルとして保存します\n\n## インストール\n\n### 前提条件\n\n- [uv](https://docs.astral.sh/uv/) がインストールされていること\n- Claude Code v2.0.12以上\n\n### インストール手順\n\n```bash\n# マーケットプレイスを追加\nclaude plugin marketplace add isizono/claude-code-memory\n\n# プラグインをインストール\nclaude plugin install claude-code-memory\n```\n\nインストール後、Claude Code内で以下を実行すると使い方の案内が表示されます。\n\n```\n/guide\n```\n\n## MCPツール\n\n| カテゴリ | ツール | 説明 |\n|---------|--------|------|\n| トピック | `add_topic`, `get_topics` | 議論トピックの作成・取得 |\n| 議論ログ | `add_log`, `get_logs` | 議論の経緯や検討過程の記録・取得 |\n| 決定事項 | `add_decision`, `get_decisions` | 合意内容の記録・取得 |\n| アクティビティ | `add_activity`, `get_activities`, `update_activity` | 作業タスクの作成・取得・状態更新 |\n| タグ | `list_tags`, `update_tag` | タグ一覧の取得・タグ情報の更新 |\n| 検索 | `search`, `get_by_ids` | キーワード横断検索・詳細情報の取得 |\n| ナレッジ | `add_knowledge` | 調査結果のマークダウンファイル保存 |\n\n## スキル\n\n| スキル | 説明 |\n|--------|------|\n| `/guide` | cc-memoryの使い方をAIが説明します |\n| `/sync-memory` | セッション終了前にtranscriptを解析し、トピック・決定事項・アクティビティを一括で記録・更新します |\n| `/check-in` | アクティビティにcheck-inして関連情報を集約取得します |\n| `/tag-notes` | タグのnotesを確認・更新します |\n\n## 設定\n\n### 環境変数\n\n| 変数 | 説明 | デフォルト |\n|------|------|-----------|\n| `DISCUSSION_DB_PATH` | SQLiteデータベースのパス | `~/.claude/.claude-code-memory/discussion.db` |\n| `KNOWLEDGE_ROOT` | ナレッジファイルの保存先 | `~/.claude/knowledge/` |\n\n## ライセンス\n\nMIT\n"
+        "README.md": "# claude-code-memory\n\nClaude Codeのセッション間で、議論の文脈・決定事項・作業状況を永続化するプラグインです。\n\n## 何が解決されるのか\n\nClaude Codeはセッションごとに記憶がリセットされます。短いタスクなら問題ありませんが、長期プロジェクトでは「前に何を決めたか」「なぜその設計にしたか」「どこまで作業が進んでいるか」がセッションをまたぐと失われます。\n\nclaude-code-memoryは、こうした文脈をSQLiteデータベースに保存し、新しいセッションでAIが自動的に過去の記録を参照できるようにします。同じ説明を繰り返す必要がなくなり、議論の積み重ねがそのまま次のセッションに引き継がれます。\n\n## 主な機能\n\n- **トピック管理** — 議論の主題ごとに情報を整理します\n- **決定事項の記録** — 合意した内容を理由とともに保存します\n- **議論ログ** — 議論の経緯や検討過程を保存します\n- **アクティビティ管理** — 作業タスクの進捗をステータスで追跡します\n- **タグシステム** — トピック・決定・ログ・アクティビティを横断的にタグで分類します\n- **ハイブリッド検索** — キーワード検索（FTS5）とベクトル検索を組み合わせて関連情報を見つけます\n- **ナレッジ保存** — 調査結果をマークダウンファイルとして保存します\n\n## インストール\n\n### 前提条件\n\n- [uv](https://docs.astral.sh/uv/) がインストールされていること\n- Claude Code v2.0.12以上\n\n### インストール手順\n\n```bash\n# マーケットプレイスを追加\nclaude plugin marketplace add isizono/cc-memory\n\n# プラグインをインストール\nclaude plugin install claude-code-memory\n```\n\nインストール後、Claude Code内で以下を実行すると使い方の案内が表示されます。\n\n```\n/guide\n```\n\n## MCPツール\n\n| カテゴリ | ツール | 説明 |\n|---------|--------|------|\n| トピック | `add_topic`, `get_topics` | 議論トピックの作成・取得 |\n| 議論ログ | `add_log`, `get_logs` | 議論の経緯や検討過程の記録・取得 |\n| 決定事項 | `add_decision`, `get_decisions` | 合意内容の記録・取得 |\n| アクティビティ | `add_activity`, `get_activities`, `update_activity` | 作業タスクの作成・取得・状態更新 |\n| タグ | `list_tags`, `update_tag` | タグ一覧の取得・タグ情報の更新 |\n| 検索 | `search`, `get_by_ids` | キーワード横断検索・詳細情報の取得 |\n| ナレッジ | `add_knowledge` | 調査結果のマークダウンファイル保存 |\n\n## スキル\n\n| スキル | 説明 |\n|--------|------|\n| `/guide` | cc-memoryの使い方をAIが説明します |\n| `/sync-memory` | セッション終了前にtranscriptを解析し、トピック・決定事項・アクティビティを一括で記録・更新します |\n| `/check-in` | アクティビティにcheck-inして関連情報を集約取得します |\n| `/tag-notes` | タグのnotesを確認・更新します |\n\n## 設定\n\n### 環境変数\n\n| 変数 | 説明 | デフォルト |\n|------|------|-----------|\n| `DISCUSSION_DB_PATH` | SQLiteデータベースのパス | `~/.claude/.claude-code-memory/discussion.db` |\n| `KNOWLEDGE_ROOT` | ナレッジファイルの保存先 | `~/.claude/knowledge/` |\n\n## ライセンス\n\nMIT\n"
       },
       "plugins": [
         {
@@ -30,7 +30,7 @@
           "version": "0.1.0",
           "categories": [],
           "install_commands": [
-            "/plugin marketplace add isizono/claude-code-exterminal-memory",
+            "/plugin marketplace add isizono/cc-memory",
             "/plugin install claude-code-memory@claude-code-memory-marketplace"
           ]
         }

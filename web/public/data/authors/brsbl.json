@@ -1,0 +1,60 @@
+{
+  "author": {
+    "id": "brsbl",
+    "display_name": "brsbl",
+    "avatar_url": "https://avatars.githubusercontent.com/u/57682038?u=af280732ff94a84419a0d53b0fd0f1376da1acec&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "ottonomous",
+      "version": null,
+      "description": "Ottonomous plugin marketplace",
+      "repo_full_name": "brsbl/ottonomous",
+      "repo_url": "https://github.com/brsbl/ottonomous",
+      "repo_description": "Set of Claude Code skills for product development",
+      "signals": {
+        "stars": 11,
+        "forks": 1,
+        "pushed_at": "2026-03-14T06:28:57Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"ottonomous\",\n  \"owner\": {\n    \"name\": \"brsbl\",\n    \"email\": \"brsbl@users.noreply.github.com\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"ottonomous\",\n      \"source\": \"./\",\n      \"description\": \"Skills for autonomous product development\",\n      \"skills\": [\n        \"./skills/otto\",\n        \"./skills/test\",\n        \"./skills/spec\",\n        \"./skills/review\",\n        \"./skills/summary\",\n        \"./skills/task\",\n        \"./skills/next\",\n        \"./skills/doc\",\n        \"./skills/verify\",\n        \"./skills/browser\",\n        \"./skills/reset\"\n      ],\n      \"agents\": [\n        \"./skills/next/agents/frontend-developer.md\",\n        \"./skills/next/agents/backend-architect.md\",\n        \"./skills/review/agents/architect-reviewer.md\",\n        \"./skills/review/agents/senior-code-reviewer.md\",\n        \"./skills/test/agents/test-writer.md\",\n        \"./skills/verify/agents/smoke-tester.md\",\n        \"./skills/verify/agents/verify-fixer.md\"\n      ]\n    }\n  ],\n  \"metadata\": {\n    \"description\": \"Ottonomous plugin marketplace\",\n    \"version\": \"1.0.0\"\n  }\n}\n",
+        "README.md": "# Ottonomous 🚌💨\n\nClaude Code skills for every stage of product development: spec writing, task prioritization, testing, code review, and documentation.\n\n<img width=\"3072\" height=\"1428\" alt=\"image 1 (1)\" src=\"https://github.com/user-attachments/assets/2e8b420b-8b85-43af-9db7-764f6d4dc269\" />\n\n## Add marketplace\n\n```bash\n/plugin marketplace add brsbl/ottonomous\n```\n\n## Install plugin\n```bash\n/plugin install ottonomous@brsbl-ottonomous\n```\n\n## Dependencies\n\n- [Claude Code](https://claude.ai/claude-code) (CLI)\n- Node.js 18+\n- Git\n\n## Philosophy\n\n### Subagents for Context Isolation\n\nUse subagents to isolate concerns and prevent context pollution:\n\n- **Context isolation**: Each subagent gets only what it needs, nothing more. Orchestrator agent delegates to and manages subagent\n- **Specialization**: Different expertise per agent (frontend-developer vs backend-architect, senior-code-reviewer vs architect-reviewer, test-writer, etc)\n\n### Skill/Subagent Separation\n\nSkills and subagents have distinct responsibilities:\n\n- **Skills** define *what* to hand off (file list, diff command, scope, context) and are instructions for the Orchestrator agent\n- **Subagents** define *how* to process what's handed off (criteria, detection rules, output format)\n\nThis keeps subagents self-contained and reusable while skills orchestrate the workflow.\n\n### Swarm Orchestration\n\nSkills coordinate multiple subagents working in parallel using `run_in_background: true`:\n\n**Coordination patterns:**\n- **Fan-out/Fan-in** — Spawn N agents, wait for all, synthesize results. Used by `/review`.\n- **Batches** — Complete batch N before starting N+1 (for dependent work). Used by `/review fix`.\n- **Pipeline** — Sequential handoff between specialists. Used by `/otto`.\n\n**Scaling:** 1-4 items = 1 agent, 5-10 = 2-3 agents, 11+ = 3-5 agents. Group by directory or component type.\n\n### Iterative Review for Verification\n\nEvery phase has explicit verification:\n\n- **Planning**: spec → spec review → user approval\n- **Implementation**: code → code review → fix → commit\n- **Verification criteria**: Each step defines \"Done when...\"\n- **Prioritized findings**: P0-P2 across all skills (P0 = critical, P1 = important, P2 = minor)\n\n## Recommended Workflow\n\n```\n/spec                     # define requirements via interview\n  │\n  ▼\n/task                     # break spec into sessions & tasks\n  │\n  ▼\n┌───────────────────┐\n│                   │\n▼                   │\n/next batch         │     # implement sessions of tasks in parallel then stage results\n│                   │\n▼                   │\n/test write staged  │     # generate tests, then lint/typecheck/run all\n│                   │\n▼                   │\n/review staged      │     # multi-agent code review\n│                   │\n▼                   │\n/review fix staged  │     # fix P0-P2 issues\n│                   │\n▼                   │\ncommit ─────────────┘     # loop if more sessions/tasks\n  │\n  ▼\n/summary                  # generate semantic overview of changes, opened in browser\n  │\n  ▼\n PR\n```\n\nUse `/clear` between steps to reset context.\n\n## Skills\n\n### Specification & Planning\n\n| Skill | Description |\n|-------|-------------|\n| `/spec [idea]` | Researches best practices, interviews you to define requirements and design. `technical-product-manager` validates completeness, consistency, feasibility, and technical correctness. |\n| `/spec revise {spec}` | Saves a comprehensive spec and goes straight to review with codebase exploration, skipping the interview. |\n| `/spec list` | Lists all specs with id, name, status, and created date. |\n| `/task <spec-id>` | Creates atomic tasks grouped into agent sessions. `principal-engineer` reviews work breakdown, dependencies, and completeness. |\n| `/task list` | Lists all tasks and their spec, sessions, status etc. |\n\n### Implementation\n\n| Skill | Description |\n|-------|-------------|\n| `/next` | Returns next task id. |\n| `/next session` | Returns next session id. |\n| `/next <id>` | Launches subagent to implement task or session. Plans first, then implements. |\n| `/next batch` | Implements all highest-priority unblocked sessions in parallel. |\n\n### Testing\n\n| Skill | Description |\n|-------|-------------|\n| `/test run` | Lint, type check, run tests. |\n| `/test write` | `test-writer` generates tests for pure functions with edge cases, then runs pipeline. |\n| `/test browser` | Visual verification with browser automation. |\n| `/test all` | Run + browser combined. |\n\n**Scope:** `staged`, `branch` (default)\n\n### Code Review\n\n| Skill | Description |\n|-------|-------------|\n| `/review` | Multi-agent code review. `architect-reviewer` checks system structure and boundaries; `senior-code-reviewer` checks correctness, security, performance; `false-positive-validator` filters out invalid findings. |\n| `/review fix` | Implements all fixes from plan in parallel batches. |\n| `/review fix P0` | Implements only P0 (critical) fixes. |\n| `/review fix P0-P1` | Implements P0 and P1 fixes. |\n\n**Scope:** `staged`, `branch` (default)\n\n### Documentation\n\n| Skill | Description |\n|-------|-------------|\n| `/summary` | Synthesizes code docs into semantic HTML summary explaining what changed and why. Primarily a resource to complement or replace code review. |\n\n**Scope:** `staged`, `branch` (default)\n\n### Automation\n\n| Skill | Description |\n|-------|-------------|\n| `/otto <idea>` | Autonomous spec → tasks → [next/test/review] per session → summary. Best for greenfield explorations, prototyping, scoped migrations, and simple applications. **Not recommended for building complex apps end-to-end.** |\n| `/reset [targets]` | Resets workflow data. Targets: `tasks`, `specs`, `sessions`, `all` (default). Docs are preserved. |\n\n### Utilities\n\n| Skill | Description |\n|-------|-------------|\n| `/browser <url>` | Navigate to URL, capture screenshot and ARIA snapshot. |\n| `/browser explore` | Interactive browser exploration. |\n| `/browser verify` | Verify specific UI behavior or state. |\n| `/browser extract` | Extract specific data from the frontend. |\n\n\n## Architecture\n\n```\n.otto/                       # Workflow artifacts (git-ignored)\n├── specs/                   # Specification documents (.md)\n├── tasks/                   # Sessions and tasks (.json)\n├── reviews/                 # Review fix plans (.json)\n├── summaries/               # Generated HTML summaries\n└── otto/\n    └── sessions/            # Otto session state (state.json)\n\nskills/                      # Skill implementations (SKILL.md + support files)\n├── spec/\n│   └── agents/\n│       └── technical-product-manager.md  # Spec validation (completeness, feasibility)\n├── task/\n│   └── agents/\n│       └── principal-engineer.md         # Task decomposition review\n├── next/\n│   └── agents/                    # Implementation agents\n│       ├── frontend-developer.md\n│       └── backend-architect.md\n├── review/\n│   └── agents/                    # Code review agents\n│       ├── architect-reviewer.md         # Architectural issues\n│       ├── senior-code-reviewer.md       # Implementation issues\n│       └── false-positive-validator.md   # Validates and filters review findings\n├── test/\n│   └── agents/\n│       └── test-writer.md         # Test generation\n├── otto/\n│   └── lib/browser/               # Playwright-based browser automation\n├── browser/\n│   └── references/                   # Browser automation reference guides\n├── summary/\n│   └── scripts/md-to-html.js\n└── ...\n```\n\n## Feedback\n\nFound a bug or have a feature request? [Open an issue](https://github.com/brsbl/ottonomous/issues).\n\n## License\n\nMIT\n"
+      },
+      "plugins": [
+        {
+          "name": "ottonomous",
+          "source": "./",
+          "description": "Skills for autonomous product development",
+          "skills": [
+            "./skills/otto",
+            "./skills/test",
+            "./skills/spec",
+            "./skills/review",
+            "./skills/summary",
+            "./skills/task",
+            "./skills/next",
+            "./skills/doc",
+            "./skills/verify",
+            "./skills/browser",
+            "./skills/reset"
+          ],
+          "agents": [
+            "./skills/next/agents/frontend-developer.md",
+            "./skills/next/agents/backend-architect.md",
+            "./skills/review/agents/architect-reviewer.md",
+            "./skills/review/agents/senior-code-reviewer.md",
+            "./skills/test/agents/test-writer.md",
+            "./skills/verify/agents/smoke-tester.md",
+            "./skills/verify/agents/verify-fixer.md"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add brsbl/ottonomous",
+            "/plugin install ottonomous@ottonomous"
+          ]
+        }
+      ]
+    }
+  ]
+}

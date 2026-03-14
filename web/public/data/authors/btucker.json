@@ -1,0 +1,44 @@
+{
+  "author": {
+    "id": "btucker",
+    "display_name": "Ben Tucker",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6181?u=472218ca2637e389c8bd049a6337e1da7115db7a&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "tracegrep-dev",
+      "version": null,
+      "description": "Development marketplace for the tracegrep Claude Code plugin",
+      "repo_full_name": "btucker/tracegrep",
+      "repo_url": "https://github.com/btucker/tracegrep",
+      "repo_description": "grep with backtrace context for coding agents",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-14T03:36:56Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"tracegrep-dev\",\n  \"description\": \"Development marketplace for the tracegrep Claude Code plugin\",\n  \"owner\": {\n    \"name\": \"Ben Tucker\",\n    \"email\": \"ben@btucker.net\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"tracegrep\",\n      \"description\": \"Claude Code plugin for tracegrep-aware search with call-graph context. Includes a skill for tg-based search, plus hooks for search guidance (PreToolUse), call-graph annotations (PostToolUse), and session context injection (SessionStart).\",\n      \"version\": \"0.1.0\",\n      \"source\": \"./\",\n      \"author\": {\n        \"name\": \"Ben Tucker\",\n        \"email\": \"ben@btucker.net\"\n      }\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"tracegrep\",\n  \"description\": \"Claude Code plugin for tracegrep-aware search with call-graph context. Includes a skill for tg-based search, plus hooks for search guidance (PreToolUse), call-graph annotations (PostToolUse), and session context injection (SessionStart).\",\n  \"version\": \"0.1.0\",\n  \"author\": {\n    \"name\": \"Ben Tucker\",\n    \"email\": \"ben@btucker.net\"\n  },\n  \"homepage\": \"https://github.com/btucker/tracegrep\",\n  \"repository\": \"https://github.com/btucker/tracegrep\",\n  \"license\": \"MIT\",\n  \"keywords\": [\"skills\", \"hooks\", \"search\", \"tracegrep\", \"call-graph\", \"rust\", \"python\", \"javascript\", \"typescript\", \"svelte\", \"code-search\"]\n}\n",
+        "README.md": "# tracegrep\n\n`tracegrep` layers backtrace context on top of `rg` ([ripgrep](https://github.com/BurntSushi/ripgrep)) results.\nIt exists to give coding agents instant context for how a line of code is used in the codebase. This allows the agent to gain a more complete understanding prior to making changes.\nRust, Python, TypeScript, and JavaScript are currently supported via [treesitter](https://github.com/tree-sitter/tree-sitter).\n\nThis repo includes a Claude Code plugin with a search skill and hooks (PreToolUse search guidance, PostToolUse call-graph annotations, SessionStart context injection), plus a standalone `SKILL.md` for Codex and Cursor.\n\n`tracegrep` maintains a mostly compatible CLI to `ripgrep`.\n\n`$ rg tool_block`\n\n```rust\n212:    let blocks = extract_tool_blocks(session_events);\n279:fn extract_tool_blocks(events: &[StreamEvent]) -> Vec<ToolBlock> {\n```\n\n`$ tg tool_block`\n\n```rust\nsrc/daemon/stream.rs:append_tool_data_effects\n212:    let blocks = extract_tool_blocks(session_events);\n  Called by:\n    src/daemon/stream.rs:process_lead_output:110  (when events.get(main_lead_session_name) is Some(lead_events) && ...)\n\nsrc/daemon/stream.rs:extract_tool_blocks\n279:fn extract_tool_blocks(events: &[StreamEvent]) -> Vec<ToolBlock> {\n  Called by:\n    src/daemon/stream.rs:append_tool_data_effects:206\n    src/daemon/stream.rs:process_agent_output:552  (when events.get(name.as_str()) is Some(coworker_events))\n```\n\n## Installation\n\nNote: installation differs by environment. The CLI installs with Cargo. Claude Code can also load the plugin (skill + hooks) via the repo's plugin metadata.\n\n### CLI (quick install)\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/btucker/tracegrep/main/install.sh | sh\n```\n\nThis downloads the latest release binary for your platform and installs it to `~/.local/bin`. You can customize the install directory:\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/btucker/tracegrep/main/install.sh | INSTALL_DIR=/usr/local/bin sh\n```\n\nOr install a specific version:\n\n```bash\ncurl -fsSL https://raw.githubusercontent.com/btucker/tracegrep/main/install.sh | VERSION=v0.1.0 sh\n```\n\n### CLI (from source)\n\nInstall `rg` first, then install `tracegrep` from this repo:\n\n```bash\ncargo install --path .\n```\n\nThis installs both `tracegrep` and `tg`.\n\nThen install shell completions:\n\n```bash\ntg --install-completions\n```\n\n`tg` auto-detects `bash`, `zsh`, or `fish` from `$SHELL`. For `bash` and `zsh`,\nit also updates your shell rc file so completions load in new shells. Restart the\nshell after installation, or source the updated rc file once.\n\n### Claude Code (via Plugin Marketplace)\n\nIn Claude Code, register the repository marketplace first:\n\n```text\n/plugin marketplace add btucker/tracegrep\n```\n\nThen install the plugin from that marketplace:\n\n```text\n/plugin install tracegrep@tracegrep-dev\n```\n\n### Codex and other agents\n\nUse the CLI directly and point the agent at the local skill file:\n\n```text\nskills/tracegrep/SKILL.md\n```\n\nThat keeps the setup explicit: the agent gets the search workflow from the skill, and `tg` provides the actual search behavior.\n\n### Verify installation\n\nVerify the CLI:\n\n```bash\ntracegrep --version\ntg --help\ntg --generate complete-zsh | head\n```\n\nIn Claude Code, start a fresh session and ask it to search the repo. It should prefer `tg`/`tracegrep`-aware search flow rather than raw `rg`.\n\n## Usage\n\nAfter `cargo install --path .`, both `tracegrep` and `tg` are installed.\n\n```bash\n# Install completions once for the current shell\ntg --install-completions\n\n# Search with caller/reference context\ntg tool_data /path/to/repo\n\n# Inline context onto the location line\ntg --compact tool_data /path/to/repo\n\n# Include test callers when they matter\ntg --include-tests --include-test-callers tool_data /path/to/repo\n\n# Search a subset of the repo with rg-style path arguments\ntg tool_data src tests\n\n# Emit a completion script without installing it\ntg --generate complete-zsh\n```\n\n## Caching\n\n- Each supported language is cached separately under `.git/tracegrep/` by default, then merged in memory at query time.\n- Set `TRACEGREP_CACHE_DIR` to override the cache root directory.\n- The call graph is rebuilt automatically when the relevant per-language cache is missing or its stored `HEAD` no longer matches the repo.\n\n## Limits\n\n- Most `rg` flags can be passed through before `<pattern>`, but tools that\n  expect raw `rg` output should keep using `rg`.\n- Function references passed as arguments are shown separately from direct callers.\n- The current resolver is heuristic and language-local; it does not attempt import-aware or type-aware cross-file analysis.\n"
+      },
+      "plugins": [
+        {
+          "name": "tracegrep",
+          "description": "Claude Code plugin for tracegrep-aware search with call-graph context. Includes a skill for tg-based search, plus hooks for search guidance (PreToolUse), call-graph annotations (PostToolUse), and session context injection (SessionStart).",
+          "version": "0.1.0",
+          "source": "./",
+          "author": {
+            "name": "Ben Tucker",
+            "email": "ben@btucker.net"
+          },
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add btucker/tracegrep",
+            "/plugin install tracegrep@tracegrep-dev"
+          ]
+        }
+      ]
+    }
+  ]
+}

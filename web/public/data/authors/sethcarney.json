@@ -1,0 +1,80 @@
+{
+  "author": {
+    "id": "sethcarney",
+    "display_name": "Seth",
+    "avatar_url": "https://avatars.githubusercontent.com/u/48496865?u=765743b207f4afa766530451727bf2ecb085e300&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "custom-plugins",
+      "version": null,
+      "description": "A collection of AI coding assistant plugins",
+      "repo_full_name": "sethcarney/custom-plugins",
+      "repo_url": "https://github.com/sethcarney/custom-plugins",
+      "repo_description": "Custom marketplace of skills for claude code and other agentic coding tools",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-03T00:45:51Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"custom-plugins\",\n  \"owner\": {\n    \"name\": \"sethcarney\"\n  },\n  \"metadata\": {\n    \"description\": \"A collection of AI coding assistant plugins\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"godot\",\n      \"description\": \"Godot 4.6 skills — CLI build verification, headless validation, one-shot animation patterns for AnimationTree state machines\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugins/godot\",\n      \"category\": \"gamedev\",\n      \"keywords\": [\"godot\", \"gamedev\", \"cli\", \"animation\", \"animationtree\"]\n    },\n    {\n      \"name\": \"github-pm\",\n      \"description\": \"GitHub project management skills — create well-structured issues with acceptance criteria and scope a project into milestones using the GitHub CLI\",\n      \"version\": \"1.0.0\",\n      \"source\": \"./plugins/github-pm\",\n      \"category\": \"project-management\",\n      \"keywords\": [\"github\", \"issues\", \"project-management\", \"milestone\", \"acceptance-criteria\", \"gh-cli\"]\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugins\n\nA plugin marketplace for AI coding assistant skills.\n\n## Install (Claude Code)\n\n**1. Add the marketplace:**\n\n```\n/plugin marketplace add sethcarney/claude-plugins\n```\n\n**2. Install a plugin:**\n\n```\n/plugin install godot@sethcarney-claude-plugins\n/plugin install github-pm@sethcarney-claude-plugins\n```\n\nThe `godot-cli` skill becomes available as a slash command. The `github-pm` plugin adds `gh-issue` and `gh-project-scope`.\n\n### Other Tools\n\n**Cursor** — Copy the skill markdown into `.cursor/rules/<name>.mdc` with frontmatter:\n\n```yaml\n---\ndescription: <skill description>\nglobs:\nalwaysApply: true\n---\n```\n\n**GitHub Copilot** — Copy the skill markdown into `.github/instructions/<name>.instructions.md`.\n\n## Plugin Catalog\n\n| Plugin | Skills | Description |\n|--------|--------|-------------|\n| [godot](plugins/godot/) | [godot-cli](plugins/godot/skills/godot-cli/SKILL.md) | Godot 4.6 CLI build verification and headless validation |\n| [github-pm](plugins/github-pm/) | [gh-issue](plugins/github-pm/skills/gh-issue/SKILL.md), [gh-project-scope](plugins/github-pm/skills/gh-project-scope/SKILL.md) | Create well-structured GitHub issues with acceptance criteria and scope a project into milestones via the GitHub CLI |\n\n## How Skills Work\n\nEach skill is a `SKILL.md` file with YAML frontmatter and a markdown body containing instructions for the AI assistant:\n\n```yaml\n---\nname: skill-name\ndescription: What this skill does and when to use it.\nuser-invocable: true\nallowed-tools: Bash, Read\n---\n```\n\n| Field | Purpose |\n|-------|---------|\n| `name` | Unique identifier (lowercase, hyphens) |\n| `description` | When and how the AI should use this skill |\n| `user-invocable` | Whether users can invoke it as a slash command |\n| `allowed-tools` | Which tools the skill can use |\n\nThe markdown body contains the actual instructions — workflows, reference tables, code patterns, debugging steps. Only the frontmatter loads at startup; the body loads on demand.\n\n## Contributing\n\n1. To add a skill to an existing plugin, create `plugins/<plugin>/skills/<your-skill>/SKILL.md`\n2. To add a new plugin, create `plugins/<your-plugin>/skills/` and add an entry to `.claude-plugin/marketplace.json`\n3. Open a PR\n\nGuidelines:\n- Keep skill names lowercase with hyphens\n- Write a description that explains both *what* the skill does and *when* to use it\n- Keep `SKILL.md` under 500 lines — move detailed reference to separate files in the same directory\n- Include real examples and concrete gotchas, not just theory\n\n## Repo Structure\n\n```\n.claude-plugin/\n  marketplace.json                 # Marketplace manifest\nplugins/\n  godot/\n    skills/\n      godot-cli/SKILL.md          # CLI build verification\n  github-pm/\n    skills/\n      gh-issue/SKILL.md           # Structured issue creation with acceptance criteria\n      gh-project-scope/SKILL.md   # Project decomposition into milestones and issues\n.claude/skills/                    # Active copies for local dev\n```\n"
+      },
+      "plugins": [
+        {
+          "name": "godot",
+          "description": "Godot 4.6 skills — CLI build verification, headless validation, one-shot animation patterns for AnimationTree state machines",
+          "version": "1.0.0",
+          "source": "./plugins/godot",
+          "category": "gamedev",
+          "keywords": [
+            "godot",
+            "gamedev",
+            "cli",
+            "animation",
+            "animationtree"
+          ],
+          "categories": [
+            "animation",
+            "animationtree",
+            "cli",
+            "gamedev",
+            "godot"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sethcarney/custom-plugins",
+            "/plugin install godot@custom-plugins"
+          ]
+        },
+        {
+          "name": "github-pm",
+          "description": "GitHub project management skills — create well-structured issues with acceptance criteria and scope a project into milestones using the GitHub CLI",
+          "version": "1.0.0",
+          "source": "./plugins/github-pm",
+          "category": "project-management",
+          "keywords": [
+            "github",
+            "issues",
+            "project-management",
+            "milestone",
+            "acceptance-criteria",
+            "gh-cli"
+          ],
+          "categories": [
+            "acceptance-criteria",
+            "gh-cli",
+            "github",
+            "issues",
+            "milestone",
+            "project-management"
+          ],
+          "install_commands": [
+            "/plugin marketplace add sethcarney/custom-plugins",
+            "/plugin install github-pm@custom-plugins"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "juliuszfedyk",
+    "display_name": "Juliusz Fedyk",
+    "avatar_url": "https://avatars.githubusercontent.com/u/6018440?u=009a68e396637b135d8cf344218879d15a4e0719&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "dev-journal",
+      "version": null,
+      "description": "Development journal for tracking decisions, sessions, and architecture changes",
+      "repo_full_name": "juliuszfedyk/dev-journal",
+      "repo_url": "https://github.com/juliuszfedyk/dev-journal",
+      "repo_description": "Claude Code plugin for development journaling — track decisions, sessions, and architecture changes with /journal.  ",
+      "signals": {
+        "stars": 1,
+        "forks": 0,
+        "pushed_at": "2026-03-13T03:15:50Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"dev-journal\",\n  \"owner\": { \"name\": \"Juliusz Fedyk\" },\n  \"plugins\": [\n    {\n      \"name\": \"dev-journal\",\n      \"source\": \"./\",\n      \"description\": \"Development journal for tracking decisions, sessions, and architecture changes\"\n    }\n  ]\n}\n",
+        ".claude-plugin/plugin.json": "{\n  \"name\": \"dev-journal\",\n  \"version\": \"1.0.1\",\n  \"description\": \"Development journal for tracking decisions, sessions, and architecture changes\",\n  \"author\": {\n    \"name\": \"Juliusz Fedyk\"\n  },\n  \"license\": \"MIT\",\n  \"keywords\": [\"journal\", \"decisions\", \"context\", \"documentation\"]\n}\n",
+        "README.md": "# dev-journal\n\nA Claude Code plugin that adds a `/journal` skill for development journaling — tracking decisions, sessions, and architecture changes per-project.\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/journal` | Write a new entry (default) — summarizes the current session |\n| `/journal <title>` | Write a new entry with a specific title |\n| `/journal search <query>` | Search entries by filename, then full text |\n| `/journal last [N]` | Show the last N entries (default 1) |\n| `/journal help` | Show available commands and usage |\n| `/journal check` | Find entries relevant to the current conversation |\n| `/journal init` | Set up the journal directory, README, GUIDE.md, CLAUDE.md @import, and first entry |\n\n## Features\n\n- **Proactive context surfacing** — `/journal check` is designed to be invoked automatically when starting work or before architectural decisions, not just on explicit command.\n- **Auto-init** — Writing your first entry automatically runs `init` if no journal exists yet.\n- **CLAUDE.md integration** — `init` writes journal guidance to `docs/journal/GUIDE.md` and adds an `@import` reference in your project's `CLAUDE.md`, so Claude knows to check past decisions before making new ones.\n- **Two-phase search** — Searches filenames first, then falls back to full-text grep with context excerpts.\n\n## Entry format\n\nEntries are stored in `docs/journal/` with the naming convention:\n\n```\nYYYY-MM-DD--NNN-short-description.md\n```\n\n- `YYYY-MM-DD` — date of the entry\n- `NNN` — zero-padded per-day sequence number (resets each day)\n- `short-description` — slugified title\n\nEach entry contains a structured template: summary, what changed, and context/rationale.\n\n## Installation\n\n```sh\n/plugin marketplace add juliuszfedyk/dev-journal\n/plugin install dev-journal@dev-journal\n```\n\n## How it works\n\nThis plugin contains no runtime code. The entire skill is defined in `skills/journal/SKILL.md` as a prompt template. When invoked, Claude Code follows the instructions in `SKILL.md` using its built-in tools (Read, Write, Glob, Grep) to manage journal entries.\n\n## License\n\nMIT — see [LICENSE](LICENSE).\n\n## Privacy\n\nThis plugin collects no data. See [PRIVACY.md](PRIVACY.md) for details.\n"
+      },
+      "plugins": [
+        {
+          "name": "dev-journal",
+          "source": "./",
+          "description": "Development journal for tracking decisions, sessions, and architecture changes",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add juliuszfedyk/dev-journal",
+            "/plugin install dev-journal@dev-journal"
+          ]
+        }
+      ]
+    }
+  ]
+}

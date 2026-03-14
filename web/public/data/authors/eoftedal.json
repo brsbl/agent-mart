@@ -1,0 +1,42 @@
+{
+  "author": {
+    "id": "eoftedal",
+    "display_name": "Erlend Oftedal",
+    "avatar_url": "https://avatars.githubusercontent.com/u/238804?u=0490e077bd28694201a0d8d6a9890a0c4b512fbf&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "owasp-agent-skills-project",
+      "version": null,
+      "description": "OWASP-grounded secure coding skills for AI agents — For use during planning and implementation",
+      "repo_full_name": "eoftedal/owasp-agent-skills-project",
+      "repo_url": "https://github.com/eoftedal/owasp-agent-skills-project",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-13T10:28:49Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"owasp-agent-skills-project\",\n  \"owner\": {\n    \"name\": \"Erlend Oftedal\",\n    \"email\": \"erlend.oftedal@owasp.org\"\n  },\n  \"metadata\": {\n    \"description\": \"OWASP-grounded secure coding skills for AI agents — For use during planning and implementation\",\n    \"version\": \"1.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"secure-coding-skills\",\n      \"description\": \"Security guidance skills that apply OWASP ASVS requirements during code planning and implementation\",\n      \"source\": \"./\",\n      \"strict\": false,\n      \"skills\": [\n        \"./skills/security-guidance\"\n      ]\n    }\n  ]\n}\n",
+        "README.md": "# OWASP Agent Skills\n\n**Goal:** Help AI Coding Agents to write more secure code by influencing them at the planning stage.\n\nSecurity guidance for AI coding agents, grounded in [OWASP ASVS 5.0](https://owasp.org/www-project-application-security-verification-standard/). Two delivery options are provided — use whichever fits your setup:\n\n|                           | Skill                              | MCP server                  |\n| ------------------------- | ---------------------------------- | --------------------------- |\n| Requires a running server | No                                 | Yes                         |\n| Guidance delivery         | Inlined into context at skill load | Fetched on demand via tools |\n| Semantic search           | No (index only)                    | Yes                         |\n\n---\n\n## Option 1: Claude Code Skill\n\nThe skill inlines a compact ASVS index into the agent context. The agent reads the index to identify relevant sections, then reads the full reference files as needed.\n\n### Install as a plugin (recommended)\n\nThe easiest way to install is via the Claude Code plugin system. This also installs hooks that automatically remind the agent to apply security guidance when planning, creating tasks, and editing code.\n\n```bash\n# Register the marketplace\n/plugin marketplace add eoftedal/owasp-agent-skills-project\n\n# Install the plugin\n/plugin install secure-coding-skills@owasp-agent-skills-project\n```\n\nTo install for a single project only, pass `--scope project`:\n\n```bash\n/plugin install secure-coding-skills@owasp-agent-skills-project --scope project\n```\n\n### Manual setup\n\nAlternatively, copy or symlink the `skills/security-guidance/` directory into your Claude Code skills folder (typically `~/.claude/skills/` or a project-local `.claude/skills/`):\n\n```bash\n# Project-local\nln -s /path/to/this/repo/skills/security-guidance .claude/skills/security-guidance\n```\n\nNote: manual setup does not include the hooks — only the skill itself.\n\nNo server, no dependencies — the skill works entirely from files in this repository.\n\n### How it works\n\nWhen triggered, the skill:\n\n1. Runs `expand.sh` to build a live index from `references/ASVS/` — one entry per subsection with its title, summary, and `when_to_use` triggers.\n2. Instructs the agent to match the current task against those triggers, read the relevant reference files, and apply the requirements.\n3. Requires the agent to cite each applied requirement inline (e.g., `// ASVS 6.2.4`).\n\nThe skill is designed to trigger automatically on any task touching user input, authentication, data persistence, network communication, file I/O, cryptography, or access control.\n\n---\n\n## Option 2: MCP Server\n\nThe MCP server exposes two tools — `search_guidance` (semantic search) and `get_guidance` (fetch by ID) — and serves them over stdio or HTTP.\n\n### First run / caching\n\nOn startup the server:\n\n1. Downloads the `onnx-community/Qwen3-Embedding-0.6B-ONNX` model via `@huggingface/transformers` (~600 MB, cached by Hugging Face in `~/.cache/huggingface/`).\n2. Computes embeddings for every reference file and caches them in `mcp/src/_cache/` (keyed by file content hash).\n\n**This only happens once.** Subsequent runs load from cache. To avoid re-downloading the model or regenerating embeddings on every run, make sure both cache locations are preserved between runs — do not run the server in a throwaway container without mounting these directories.\n\n### Install\n\n```bash\ncd mcp\nnpm install\n```\n\n### Run modes\n\n```bash\nnpm run stdio       # stdio transport (for mcp.json)\nnpm run stateless   # HTTP stateless — http://localhost:3000/mcp\nnpm run stateful    # HTTP stateful  — http://localhost:3000/mcp (+ legacy /sse)\n```\n\nSet `PORT` to change the HTTP port. Set `CARDFOLDER` to point at a different references directory if you want to use custom guidance rather than ASVS.\n\n### Claude Code — stdio configuration\n\nAdd to your `mcp.json` (e.g., `~/.claude/mcp.json` for global, or `.claude/mcp.json` for project-local):\n\n```json\n{\n  \"mcpServers\": {\n    \"security-guidance\": {\n      \"type\": \"stdio\",\n      \"command\": \"npm\",\n      \"args\": [\"run\", \"stdio\"],\n      \"cwd\": \"/absolute/path/to/this/repo/mcp\",\n      \"env\": {}\n    }\n  }\n}\n```\n\nTo persist the Hugging Face model cache across runs, add it to `env`:\n\n```json\n\"env\": {\n  \"HF_HOME\": \"/absolute/path/to/this/repo/mcp/.hf_cache\"\n}\n```\n\nThis keeps the model download local to the project so it survives between updates and is easy to back up.\n\n### Agent rules (MCP)\n\n`mcp/rules/security_guidance.md` contains a system prompt you can add to your agent configuration to instruct it to always consult the MCP tools before writing security-sensitive code.\n\n---\n\n## Updating for a new ASVS version\n\nWhen a new ASVS release is published, the reference files in `references/ASVS/` need to be regenerated. The full specification for the extraction script and output format is in [`docs/EXTRACT_ASVS.md`](docs/EXTRACT_ASVS.md).\n\nThe extraction script (`scripts/extract_asvs.py`) is not included in this repository. Ask an AI agent to create it by pointing it at `docs/EXTRACT_ASVS.md` as the specification.\n\nOnce the script exists:\n\n1. Delete the existing generated files:\n   ```bash\n   rm references/ASVS/*.md\n   ```\n2. Run:\n   ```bash\n   python3 scripts/extract_asvs.py\n   ```\n\nThe MCP embedding cache (`mcp/src/_cache/`) will automatically recompute only the changed files on next startup — unchanged files hit the cache by content hash.\n"
+      },
+      "plugins": [
+        {
+          "name": "secure-coding-skills",
+          "description": "Security guidance skills that apply OWASP ASVS requirements during code planning and implementation",
+          "source": "./",
+          "strict": false,
+          "skills": [
+            "./skills/security-guidance"
+          ],
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add eoftedal/owasp-agent-skills-project",
+            "/plugin install secure-coding-skills@owasp-agent-skills-project"
+          ]
+        }
+      ]
+    }
+  ]
+}

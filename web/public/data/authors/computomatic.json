@@ -63,6 +63,35 @@
           ]
         }
       ]
+    },
+    {
+      "name": "claude-plugin-microplans",
+      "version": null,
+      "description": "Structured microplan pattern for scaling code generation over multi-step roadmaps",
+      "repo_full_name": "computomatic/claude-plugin-microplans",
+      "repo_url": "https://github.com/computomatic/claude-plugin-microplans",
+      "repo_description": "Claude Code plugin marketplace for structured microplanning",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-14T05:51:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-plugin-microplans\",\n  \"owner\": { \"name\": \"computomatic\" },\n  \"metadata\": {\n    \"description\": \"Structured microplan pattern for scaling code generation over multi-step roadmaps\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"microplans\",\n      \"description\": \"Structured microplan pattern for scaling code generation over multi-step roadmaps\",\n      \"source\": \"./plugins/microplans\"\n    }\n  ]\n}\n",
+        "README.md": "# Microplans\n\nA Claude Code plugin for breaking large, multi-step projects into structured, plannable, and executable units of work.\n\n## The Pattern\n\nThe microplan pattern addresses a core challenge in AI-assisted development: large projects exceed what a single context window can handle effectively. Instead of trying to do everything at once, this plugin introduces a delegation-based workflow:\n\n1. An **orchestrator** maintains a master plan with a roadmap of steps\n2. A **microplanner agent** researches each step and produces a detailed plan (the \"microplan\") with sub-steps and outstanding questions\n3. Outstanding questions are resolved with the user before implementation begins\n4. Implementation is **delegated to a subagent**, keeping the orchestrator's context lean\n5. Progress is tracked in the master plan, which survives context loss\n\nEach microplan is a self-contained markdown document stored in `.claude/plans/` that captures the objective, context, research findings, implementation steps, and open questions for a single task.\n\n## When to Use This\n\nThis pattern works well for projects where:\n\n- You have a well-defined roadmap with multiple discrete steps\n- Each step builds on the previous one\n- The total scope would overwhelm a single conversation\n- You want structured checkpoints and the ability to resume after context loss\n\nExamples: migrating a codebase to a new framework, implementing a multi-component feature (API + database + frontend + tests), setting up CI/CD pipelines across multiple services, or executing a large refactoring plan.\n\n## Installation\n\nAdd the marketplace and install the plugin:\n\n```\n/plugin marketplace add computomatic/claude-plugin-microplans\n/plugin install microplans@claude-plugin-microplans\n```\n\n## Usage\n\n### Starting a roadmap\n\nInvoke the `create-master-plan` skill with a description of your goal:\n\n```\n/microplans:create-master-plan Migrate the API from REST to GraphQL\n```\n\nThe skill will walk you through scoping the work, create a master plan, then execute each step using the plan-question-implement loop.\n\n### Planning a single task\n\nIf you just need a detailed plan for one task without the full roadmap workflow, delegate directly to the microplanner agent:\n\n> \"Use the microplanner agent to plan out adding rate limiting to the API gateway\"\n\nThe agent will research the codebase, produce a microplan with implementation steps and outstanding questions, and report back.\n\n## What's Included\n\n| Component | Description |\n|---|---|\n| **microplanner** agent | Researches a task and produces a structured microplan |\n| **create-master-plan** skill | Sets up and executes a multi-step roadmap |\n| **using-microplans** skill | Reference for the execution pattern and recovery procedures |\n| **writing-microplans** skill | Reference for the microplan document format |\n"
+      },
+      "plugins": [
+        {
+          "name": "microplans",
+          "description": "Structured microplan pattern for scaling code generation over multi-step roadmaps",
+          "source": "./plugins/microplans",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add computomatic/claude-plugin-microplans",
+            "/plugin install microplans@claude-plugin-microplans"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "Chogos",
+    "display_name": "Tomislav Blažeka",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5013687?u=0ebb2ccea784204ba26a173f1c48971971dc57c0&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "chogos-skills",
+      "version": null,
+      "description": "Claude Code skills for infrastructure, languages, and development best practices.",
+      "repo_full_name": "Chogos/claude-skills",
+      "repo_url": "https://github.com/Chogos/claude-skills",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-10T09:03:00Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"chogos-skills\",\n  \"owner\": {\n    \"name\": \"Chogos\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"chogos\",\n      \"source\": \"./\",\n      \"description\": \"Claude Code skills for infrastructure, languages, and development best practices.\",\n      \"version\": \"1.1.0\"\n    }\n  ]\n}\n",
+        "README.md": "# claude-skills\n\nClaude Code skills for infrastructure, languages, and development best practices.\n\n## Installation\n\n```bash\n# Add the marketplace\nclaude plugin marketplace add Chogos/claude-skills\n\n# Install the plugin\nclaude plugin install chogos@chogos-skills\n\n# Update to latest\nclaude plugin marketplace update chogos-skills\nclaude plugin update chogos@chogos-skills\n```\n\nOnce installed, skills are available as slash commands:\n\n```text\n/writing-python\n/developing-backend-services\n```\n\n## Skills\n\n| Skill                         | Description                                              |\n| ----------------------------- | -------------------------------------------------------- |\n| `developing-backend-services` | API design, database patterns, observability, 12-factor  |\n| `developing-frontend-apps`    | Component architecture, performance, accessibility       |\n| `developing-helm-charts`      | Helm chart conventions, security, values design          |\n| `writing-aws-infrastructure`  | IAM, CloudFormation/CDK, VPC, Lambda, ECS, cost          |\n| `writing-dockerfiles`         | Dockerfile conventions, multi-stage builds, security     |\n| `writing-golang`              | Go project layout, error handling, concurrency, testing  |\n| `writing-python`              | Python project structure, type hints, pytest, async      |\n| `writing-rego-policies`       | OPA/Rego policy rules, testing, Kubernetes admission     |\n| `writing-rust`                | Rust ownership, error handling, async, traits, testing   |\n| `writing-shell-scripts`       | Bash scripting, CLI tools, deployment scripts            |\n| `writing-postgres`            | Schema design, queries, migrations — PostgreSQL          |\n| `writing-sqlite`              | Schema design, queries, migrations — SQLite              |\n\n## Structure\n\nEach skill uses progressive disclosure — `SKILL.md` is the overview loaded on trigger, with deeper reference files loaded only when needed:\n\n```text\nskills/\n└── <skill>/\n    ├── SKILL.md              # Overview + conventions (loaded on trigger)\n    ├── patterns/             # Full examples by use case (loaded on demand)\n    │   ├── <pattern>.md\n    │   └── ...\n    └── <reference>.md        # Cheatsheets, matrices (loaded on demand)\n```\n\n## Naming convention\n\nSkill directories use gerund form: `<verb>ing-<noun>` (e.g., `developing-helm-charts`).\n\n## Skill authoring best practices\n\nFull reference: [Skill authoring best practices — Claude API Docs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)\n\n### Core principles\n\n- **Concise is key.** The context window is a shared resource. Only add context Claude doesn't already have — challenge every paragraph: \"Does Claude really need this?\"\n- **Set appropriate degrees of freedom.** High freedom (text instructions) for heuristic tasks, low freedom (exact scripts) for fragile operations. Match specificity to the task's fragility.\n- **Test with all models you plan to use.** What works for Opus might need more detail for Haiku.\n\n### Structure constraints\n\n- **SKILL.md**: Under 500 lines. Overview loaded on trigger — keep it concise with progressive disclosure to pattern files.\n- **Pattern files** (`patterns/*.md`): 100–250 lines each. Full examples organized by use case.\n- **Reference files** (`*.md` at skill root): Cheatsheets, matrices, lookup tables.\n- **One level deep.** All reference files link directly from SKILL.md — no nested chains of references.\n- **TOC for long files.** Reference files over 100 lines get a table of contents at the top.\n\n### SKILL.md frontmatter\n\n- `name`: Lowercase letters, numbers, hyphens only. Max 64 chars. Gerund form preferred (`writing-python`, `developing-helm-charts`).\n- `description`: Max 1024 chars. Third person. Include both *what* the skill does and *when* to use it. Be specific — Claude uses this to pick the right skill from 100+ candidates.\n\n### Style\n\n- Code examples over prose. Every guideline should have a snippet.\n- Bad/good pairs for anti-patterns. Show what's wrong and the fix.\n- No duplicate content between SKILL.md and pattern files. SKILL.md summarizes, patterns go deep.\n- Consistent terminology — pick one term and use it throughout (not \"endpoint\" in one place and \"route\" in another).\n- No time-sensitive information. Use an \"old patterns\" section with `<details>` for deprecated approaches.\n\n### Workflows and feedback loops\n\n- Break complex operations into clear sequential steps with a checklist Claude can track.\n- Use feedback loops: run validator → fix errors → repeat. This pattern greatly improves output quality.\n- For conditional workflows, guide Claude through decision points explicitly.\n\n### Adding content\n\n- New best practices go in SKILL.md if they fit within the line budget, otherwise create a pattern file and link to it.\n- New anti-patterns go in the existing anti-patterns file (if one exists) or as a \"Rules\" list in SKILL.md.\n- Cheatsheet entries should be one-liner examples with a signature and brief description.\n\n### Iteration\n\n- Build evaluations *before* writing extensive documentation — at least three scenarios that test real gaps.\n- Develop iteratively with Claude: use one instance to author, another to test. Observe how Claude navigates the skill and refine based on actual behavior, not assumptions.\n"
+      },
+      "plugins": [
+        {
+          "name": "chogos",
+          "source": "./",
+          "description": "Claude Code skills for infrastructure, languages, and development best practices.",
+          "version": "1.1.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Chogos/claude-skills",
+            "/plugin install chogos@chogos-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}

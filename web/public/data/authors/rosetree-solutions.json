@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "Rosetree-Solutions",
+    "display_name": "Rosetree Solutions",
+    "avatar_url": "https://avatars.githubusercontent.com/u/85582139?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "rosetree-lucid-plugin",
+      "version": null,
+      "description": "Connect to Lucid for creating, searching, and sharing diagrams",
+      "repo_full_name": "Rosetree-Solutions/claude-plugins",
+      "repo_url": "https://github.com/Rosetree-Solutions/claude-plugins",
+      "repo_description": "A collection of plugins for Claude that bundle MCP server integrations with custom skills.",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-12T18:55:51Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"rosetree-lucid-plugin\",\n  \"owner\": {\n    \"name\": \"Rosetree Solutions\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"lucid\",\n      \"source\": \"./plugins/lucid\",\n      \"description\": \"Connect to Lucid for creating, searching, and sharing diagrams\",\n      \"version\": \"1.0.0\"\n    }\n  ]\n}\n",
+        "README.md": "# Claude Plugins\n\nA collection of plugins for Claude (Desktop/CoWork/Code) that bundle MCP server integrations with custom skills.\n\n## Available Plugins\n\n| Plugin                 | Description                                                                   |\n|------------------------|-------------------------------------------------------------------------------|\n| [lucid](plugins/lucid) | Connect to Lucid (Lucidchart & Lucidspark) for creating and managing diagrams |\n\n## Installation\n\nThese plugins work with both [Claude CoWork](https://claude.com/cowork) and [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (CLI).\n\n### Claude CoWork\n\n**Step 1.** Open the **Customize** panel, select **Connectors**, then click **Browse plugins**.\n\n<img src=\"resources/01-connectors-browse-plugins.png\" alt=\"Open Connectors and Browse plugins\" width=\"600\">\n\n**Step 2.** Switch to the **Personal** tab, click the **+** button, and select **Add marketplace from GitHub**.\n\n<img src=\"resources/02-personal-add-marketplace.png\" alt=\"Personal tab, add marketplace\" width=\"600\">\n\n**Step 3.** Enter `Rosetree-Solutions/claude-plugins` and click **Sync**.\n\n<img src=\"resources/03-add-marketplace-dialog.png\" alt=\"Add marketplace dialog\" width=\"500\">\n\n**Step 4.** The **Lucid** plugin appears in the marketplace. Click **Install**.\n\n<img src=\"resources/04-install-plugin.png\" alt=\"Install the Lucid plugin\" width=\"600\">\n\n### Checking for updates\n\nTo refresh available plugins after new versions are published, click the **...** menu next to the marketplace name and select **Check for updates**.\n\n<img src=\"resources/05-marketplace-options.png\" alt=\"Check for updates\" width=\"600\">\n\n### Claude Code (CLI)\n\n1. **Add the marketplace:**\n   ```\n   /plugin marketplace add Rosetree-Solutions/claude-cowork-plugins\n   ```\n\n2. **Install a plugin:**\n   ```\n   /plugin install lucid@rosetree-lucid-plugin\n   ```\n\n### After installation\n\nThe first time you use a plugin's MCP tools, you'll be prompted to connect your account (e.g., sign in to Lucid). Once authenticated, the plugin's skills are available automatically — ask Claude to \"create a flowchart\" or \"find my Lucid diagrams\" and the appropriate skill will activate.\n\n## Repository Structure\n\n```\n.claude-plugin/\n└── marketplace.json            # Marketplace catalog (registers plugins for distribution)\nplugins/\n└── <plugin-name>/\n    ├── .claude-plugin/\n    │   └── plugin.json         # Plugin manifest (name, description, version, author)\n    ├── .mcp.json               # MCP server configuration\n    ├── .claude/\n    │   └── settings.local.json # Permission allowlists for MCP tools\n    └── skills/\n        └── <skill-name>/\n            └── SKILL.md        # Skill definition with instructions for Claude\n```\n\n- **marketplace.json** — Lives at the repo root in `.claude-plugin/`. Registers all plugins in this repository for distribution via `/plugin marketplace add`.\n- **plugin.json** — Identifies an individual plugin and provides metadata (name, description, version, keywords).\n- **.mcp.json** — Registers MCP servers (HTTP or stdio) that the plugin connects to.\n- **settings.local.json** — Whitelists specific MCP tools and restricts external access (e.g., domain-scoped `WebFetch`).\n- **SKILL.md** — Defines a skill with YAML front matter (`name`, `description`) and markdown instructions that guide Claude through a workflow using the plugin's MCP tools.\n\n## Contributing a New Plugin\n\n1. Create a directory: `plugins/<your-plugin-name>/`\n2. Add a `.claude-plugin/plugin.json` with at minimum:\n   ```json\n   {\n     \"name\": \"your-plugin-name\",\n     \"description\": \"What this plugin does\",\n     \"version\": \"1.0.0\",\n     \"author\": { \"name\": \"Your Name\" }\n   }\n   ```\n3. Add `.mcp.json` if your plugin uses an MCP server.\n4. Add skills under `skills/<skill-name>/SKILL.md` for guided workflows.\n5. Add `.claude/settings.local.json` to configure tool permissions.\n6. Add your plugin to the root `.claude-plugin/marketplace.json` so it's discoverable.\n7. Update the **Available Plugins** table in this README.\n"
+      },
+      "plugins": [
+        {
+          "name": "lucid",
+          "source": "./plugins/lucid",
+          "description": "Connect to Lucid for creating, searching, and sharing diagrams",
+          "version": "1.0.0",
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add Rosetree-Solutions/claude-plugins",
+            "/plugin install lucid@rosetree-lucid-plugin"
+          ]
+        }
+      ]
+    }
+  ]
+}

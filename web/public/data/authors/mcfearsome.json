@@ -1,0 +1,39 @@
+{
+  "author": {
+    "id": "mcfearsome",
+    "display_name": "mcfearsome",
+    "avatar_url": "https://avatars.githubusercontent.com/u/8698?u=79858b043cdb1a0da95ed1311ae4f8c18f580606&v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "claude-gists",
+      "version": null,
+      "description": null,
+      "repo_full_name": "mcfearsome/claude-gists",
+      "repo_url": "https://github.com/mcfearsome/claude-gists",
+      "repo_description": null,
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-12T21:54:15Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"claude-gists\",\n  \"owner\": {\n    \"name\": \"mcfearsome\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"deslop\",\n      \"source\": \"./deslop\"\n    }\n  ]\n}\n",
+        "README.md": "# claude-gists",
+        "deslop/README.md": "# deslop\n\nClaude Code plugin for [desloppify](https://github.com/peteromallet/desloppify) — AI-powered codebase quality scoring and iterative improvement.\n\n## What it does\n\nWraps the `desloppify` CLI into Claude Code commands, an autonomous agent, and a post-task hook so you can scan, score, and fix code quality issues without leaving your conversation.\n\n## Prerequisites\n\n- Python 3.11+\n- `pip3` available on your system PATH\n\nThe plugin will install/upgrade desloppify automatically when needed.\n\n## Installation\n\n### From marketplace\n\n```\nclaude install-plugin mcfearsome/cc-marketplace --name deslop\n```\n\n### Local development\n\n```\nclaude --plugin-dir /path/to/claude-gists/deslop\n```\n\n## Commands\n\n| Command | Description |\n|---------|-------------|\n| `/deslop:setup` | Install or upgrade desloppify, choose extras, configure for Claude |\n| `/deslop:scan <path>` | Scan a codebase and get a quality score |\n| `/deslop:next <path>` | Get the next prioritized issue and optionally fix it |\n| `/deslop:loop <path> [N]` | Autonomously fix up to N issues (default: 10) |\n\n### Examples\n\n```\n/deslop:scan ~/projects/my-app\n/deslop:next ~/projects/my-app\n/deslop:loop ~/projects/my-app 5\n```\n\n**Note:** Path is always required — the plugin does not default to the current working directory.\n\n## Agent\n\n**deslop-fixer** triggers proactively when:\n- You've just written a lot of code and mention it's rough or needs cleanup\n- You ask Claude to clean up or improve code quality\n- You mention desloppify directly\n\nIt runs THE LOOP autonomously: scan → next issue → fix → repeat, up to the iteration limit.\n\n## Hook\n\nA `Stop` hook suggests running `/deslop:scan` after tasks where significant code was written or modified. It stays quiet for minor changes like config tweaks or docs.\n\n## Extras\n\nWhen running `/deslop:setup`, you can choose which desloppify extras to install:\n\n| Extra | What it adds |\n|-------|-------------|\n| `full` | Everything below (recommended) |\n| `treesitter` | Language parsing via tree-sitter |\n| `python-security` | Bandit vulnerability scanning |\n| `scorecard` | Image generation for score badges |\n| `plan-yaml` | YAML support for plans |\n"
+      },
+      "plugins": [
+        {
+          "name": "deslop",
+          "source": "./deslop",
+          "description": null,
+          "categories": [],
+          "install_commands": [
+            "/plugin marketplace add mcfearsome/claude-gists",
+            "/plugin install deslop@claude-gists"
+          ]
+        }
+      ]
+    }
+  ]
+}

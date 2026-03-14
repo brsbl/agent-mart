@@ -8,25 +8,25 @@
     {
       "name": "jin-claudecode-mp",
       "version": null,
-      "description": "Multi-agent orchestration system for Claude Code: 9 agents, 6 skills, statusline utilities",
+      "description": "Multi-agent orchestration system for Claude Code: 15 agents, 14 skills, orchestrator, parallel execution",
       "repo_full_name": "cjinzy/jin-claude",
       "repo_url": "https://github.com/cjinzy/jin-claude",
       "repo_description": null,
       "signals": {
         "stars": 2,
         "forks": 0,
-        "pushed_at": "2026-03-10T04:54:07Z"
+        "pushed_at": "2026-03-13T03:18:23Z"
       },
       "files": {
-        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jin-claudecode-mp\",\n  \"owner\": {\n    \"name\": \"jin\",\n    \"email\": \"jin@stealthmole.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Multi-agent orchestration system for Claude Code: 9 agents, 6 skills, statusline utilities\",\n    \"version\": \"2.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jin-claude\",\n      \"source\": \"./plugins/jin-claude\",\n      \"description\": \"Multi-agent orchestration for Claude Code: 9 agents, execution skills, lifecycle hooks, CTI pipeline, statusline\",\n      \"version\": \"2.0.0\",\n      \"author\": {\n        \"name\": \"jin\",\n        \"email\": \"jin@stealthmole.com\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"orchestration\", \"multi-agent\", \"agents\", \"skills\",\n        \"workflow\", \"tdd\", \"code-review\", \"research\",\n        \"cti\", \"mole\", \"statusline\"\n      ],\n      \"category\": \"development\",\n      \"strict\": false\n    }\n  ]\n}\n",
-        "README.md": "# jin-claude\n\nClaude Code용 멀티 에이전트 오케스트레이션 시스템. 9개 에이전트, 6개 스킬, statusline 유틸리티, CTI 파이프라인을 단일 플러그인으로 제공합니다.\n\n## 빠른 시작\n\n### 마켓플레이스 설치\n\n```bash\n# 1. Marketplace 등록\nclaude plugin marketplace add cjinzy/jin-claude\n\n# 2. Plugin 설치\nclaude plugin install jin-claude@jin-claudecode-mp\n```\n\n### 팀원 환경 초기화 (jin-claude-init)\n\nClaude Code 내에서 `/jin-claude-init`을 실행하면 플러그인, 설정, 에이전트, 스킬을 자동으로 구성합니다.\n\n---\n\n## 에이전트 (9개)\n\n### Opus (고비용, 고품질)\n\n| 에이전트 | 설명 |\n|----------|------|\n| `mole-review-agent` | CTI 프로파일링 오케스트레이터 |\n\n### Sonnet (기본, 균형)\n\n| 에이전트 | 설명 |\n|----------|------|\n| `python-expert` | Python 프로덕션 코드 |\n| `jin-interview-agent` | 구조적 요구사항 인터뷰 |\n| `mole-research-agent` | 위협 인텔리전스 수집 |\n| `mole-intel-organizer-agent` | 인텔리전스 분류 및 구조화 |\n| `mole-interview-agent` | CTI 조사 전 인터뷰 |\n| `mole-user-identifier-agent` | 사용자 신원 상관관계 분석 |\n| `mole-graph-generator-agent` | Mermaid 그래프 시각화 |\n| `mole-report-presenter-agent` | 발표자료 생성 |\n\n---\n\n## 스킬 (6개)\n\n| 스킬 | 설명 |\n|------|------|\n| `jin-claude-init` | 팀원 환경 초기화 자동화 |\n| `jin-commit` | gitmoji 기반 커밋 메시지 추천 |\n| `jin-interview` | 구현 전 심층 인터뷰 → 스펙 문서 |\n| `manage-skills` | 스킬 관리 (추가/제거/목록) |\n| `py-standard` | Python 프로젝트 컨벤션 가이드 |\n| `verify-implementation` | 구현 검증 체크리스트 |\n\n---\n\n## Statusline\n\nClaude Code 상태 표시줄에 세션 정보, 컨텍스트, API 사용량을 실시간 표시합니다.\n\n```\nclaude │ ⎇ master │ Opus │ v1.0 │ 5h: 8% →02:00 │ 7d: 11% →03/06(Fri)\nctx: 50% │ cache: 1.0K\n```\n\n### 구성 요소\n\n| 요소 | 설명 |\n|------|------|\n| 디렉토리 | 현재 작업 디렉토리명 |\n| 브랜치 | 현재 git 브랜치 |\n| 모델 | 사용 중인 Claude 모델 |\n| 버전 | Claude Code 버전 |\n| 5h 사용량 | 5시간 세션 사용률 (%) + 리셋 시간 |\n| 7d 사용량 | 7일 주간 사용률 (%) + 리셋 날짜 |\n| ctx | 컨텍스트 윈도우 사용률 (%) |\n| cache | 캐시 읽기 토큰 수 |\n\n사용률에 따라 dark green(0%) → deep red(100%)로 10단계 gradient 색상이 자동 적용됩니다.\n\n### 설정\n\n`~/.claude/settings.json`에 추가:\n\n```json\n{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"bash {$HOME}/.claude/statusline-command.sh\"\n  }\n}\n```\n\n표시 항목은 `~/.claude/statusline-config.txt`에서 제어합니다 (`0`으로 숨김):\n\n```\nSHOW_DIRECTORY=1\nSHOW_BRANCH=1\nSHOW_MODEL=1\nSHOW_VERSION=1\nSHOW_CONTEXT=1\nSHOW_USAGE=1\n```\n\n---\n\n## 아키텍처\n\n### 사용량 가져오기 (`fetch-claude-usage`)\n\n```\nmacOS Keychain / ~/.claude/.credentials.json\n    │\n    ▼\nOAuth Bearer Token 추출\n    │\n    ▼\nGET https://api.anthropic.com/api/oauth/usage\n    Header: anthropic-beta: oauth-2025-04-20\n    │\n    ▼\n~/.claude/.usage-cache.json (30초 TTL 캐시)\n    │\n    ▼\nstdout: \"5h_util|5h_resets|7d_util|7d_resets\"\n```\n\n- **토큰 소스**: `~/.claude/.credentials.json` → macOS Keychain (fallback)\n- **캐시**: `~/.claude/.usage-cache.json` (30초 TTL)\n- **외부 의존성**: 없음 (Python stdlib만 사용)\n\n### statusline 렌더링 (`statusline-command.sh`)\n\nClaude Code가 stdin으로 전달하는 JSON을 파싱하여 2줄의 ANSI 컬러 텍스트를 출력합니다.\n\n---\n\n## 요구사항\n\n- Python 3.12+\n- [uv](https://docs.astral.sh/uv/)\n- `jq` (statusline JSON 파싱용)\n- Claude Pro/Max/Team/Enterprise 구독\n\n---\n\n## 개발\n\n```bash\n# 의존성 설치\nuv sync\n\n# 린트\nuv run ruff check src/ tests/\n\n# 테스트\nuv run pytest tests/ -v\n\n# CLI 직접 실행\nuv run fetch-claude-usage\n```\n\n---\n\n## 프로젝트 구조\n\n```\njin-claude/\n├── .claude-plugin/\n│   └── marketplace.json                 # 마켓플레이스 카탈로그\n├── plugins/\n│   └── jin-claude/                      # 단일 플러그인\n│       ├── .claude-plugin/\n│       │   └── plugin.json              # 플러그인 매니페스트\n│       ├── agents/                      # 9 에이전트\n│       │   └── templates/               # 에이전트 템플릿\n│       ├── skills/                      # 6 스킬\n│       │   ├── jin-claude-init/\n│       │   ├── jin-commit/\n│       │   ├── jin-interview/\n│       │   ├── manage-skills/\n│       │   ├── py-standard/\n│       │   └── verify-implementation/\n│       ├── scripts/                     # statusline + timer\n│       │   ├── statusline-command.sh    # statusline 렌더러\n│       │   ├── statusline-config.txt    # 표시 설정\n│       │   ├── tmux-usage.sh            # tmux 연동\n│       │   └── install-timer.sh         # 타이머 설치 (Linux/macOS/Windows)\n│       ├── settings.json                # 플러그인 설정\n│       ├── systemd/                     # Linux systemd timer\n│       └── launchd/                     # macOS launchd plist\n├── src/jin_claude/\n│   ├── __init__.py\n│   └── fetch_claude_usage.py            # OAuth usage API 클라이언트\n├── .claude/\n│   ├── CLAUDE.md                        # 프로젝트 지침\n│   └── settings.json                    # 개발용 설정\n└── pyproject.toml                       # uv 프로젝트 설정\n```\n\n---\n\n## 라이선스\n\nMIT\n"
+        ".claude-plugin/marketplace.json": "{\n  \"name\": \"jin-claudecode-mp\",\n  \"owner\": {\n    \"name\": \"jin\",\n    \"email\": \"jin@stealthmole.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Multi-agent orchestration system for Claude Code: 15 agents, 14 skills, orchestrator, parallel execution\",\n    \"version\": \"3.0.0\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"jin-claude\",\n      \"source\": \"./plugins/jin-claude\",\n      \"description\": \"Multi-agent orchestration for Claude Code: 15 agents, 14 skills, orchestrator, parallel execution, lifecycle hooks, CTI pipeline\",\n      \"version\": \"3.0.0\",\n      \"author\": {\n        \"name\": \"jin\",\n        \"email\": \"jin@stealthmole.com\"\n      },\n      \"license\": \"MIT\",\n      \"keywords\": [\n        \"orchestration\", \"multi-agent\", \"agents\", \"skills\",\n        \"workflow\", \"tdd\", \"code-review\", \"hooks\", \"research\",\n        \"cti\", \"mole\", \"statusline\", \"swe\",\n        \"parallel\", \"maxwork\", \"fsd\", \"ralph\", \"gcc\", \"cleanser\", \"deepinit\"\n      ],\n      \"category\": \"development\",\n      \"strict\": false\n    }\n  ]\n}\n",
+        "README.md": "# jin-claude\n\nClaude Code용 멀티 에이전트 오케스트레이션 시스템. 13개 에이전트, 8개 스킬, statusline 유틸리티, CTI 파이프라인을 단일 플러그인으로 제공합니다.\n\n## 빠른 시작\n\n### 마켓플레이스 설치\n\n```bash\n# 1. Marketplace 등록\nclaude plugin marketplace add cjinzy/jin-claude\n\n# 2. Plugin 설치\nclaude plugin install jin-claude@jin-claudecode-mp\n```\n\n### 팀원 환경 초기화 (jin-claude-init)\n\nClaude Code 내에서 `/jin-claude-init`을 실행하면 플러그인, 설정, 에이전트, 스킬을 자동으로 구성합니다.\n\n---\n\n## 에이전트 (13개)\n\n### Opus (고비용, 고품질)\n\n| 에이전트 | 설명 |\n|----------|------|\n| `mole-review-agent` | CTI 프로파일링 오케스트레이터 |\n| `swe-agent-high` | 복잡한 교차 모듈 이슈 해결 (고급 SWE) |\n\n### Sonnet (기본, 균형)\n\n| 에이전트 | 설명 |\n|----------|------|\n| `python-expert` | Python 프로덕션 코드 |\n| `jin-interview-agent` | 구조적 요구사항 인터뷰 |\n| `mole-research-agent` | 위협 인텔리전스 수집 |\n| `mole-intel-organizer-agent` | 인텔리전스 분류 및 구조화 |\n| `mole-interview-agent` | CTI 조사 전 인터뷰 |\n| `mole-user-identifier-agent` | 사용자 신원 상관관계 분석 |\n| `mole-graph-generator-agent` | Mermaid 그래프 시각화 |\n| `mole-report-presenter-agent` | 발표자료 생성 |\n| `swe-agent` | Live-SWE-agent 워크플로우 이슈 해결 실행자 |\n| `swe-analyst` | 이슈 근본 원인 진단 (읽기 전용) |\n| `swe-verifier` | 수정 후 독립 검증 (읽기 전용) |\n\n---\n\n## 스킬 (8개)\n\n| 스킬 | 설명 |\n|------|------|\n| `jin-claude-init` | 팀원 환경 초기화 자동화 |\n| `jin-commit` | gitmoji 기반 커밋 메시지 추천 |\n| `jin-interview` | 구현 전 심층 인터뷰 → 스펙 문서 |\n| `manage-skills` | 스킬 관리 (추가/제거/목록) |\n| `py-standard` | Python 프로젝트 컨벤션 가이드 |\n| `verify-implementation` | 구현 검증 체크리스트 |\n| `jin-suggest` | 적합한 스킬/에이전트 추천 |\n| `jin-swe-fix` | Live-SWE-agent 워크플로우 기반 이슈 수정 |\n\n---\n\n## Statusline\n\nClaude Code 상태 표시줄에 세션 정보, 컨텍스트, API 사용량을 실시간 표시합니다.\n\n```\nclaude │ ⎇ master │ Opus │ v1.0 │ 5h: 8% →02:00 │ 7d: 11% →03/06(Fri)\nctx: 50% │ cache: 1.0K\n```\n\n### 구성 요소\n\n| 요소 | 설명 |\n|------|------|\n| 디렉토리 | 현재 작업 디렉토리명 |\n| 브랜치 | 현재 git 브랜치 |\n| 모델 | 사용 중인 Claude 모델 |\n| 버전 | Claude Code 버전 |\n| 5h 사용량 | 5시간 세션 사용률 (%) + 리셋 시간 |\n| 7d 사용량 | 7일 주간 사용률 (%) + 리셋 날짜 |\n| ctx | 컨텍스트 윈도우 사용률 (%) |\n| cache | 캐시 읽기 토큰 수 |\n\n사용률에 따라 dark green(0%) → deep red(100%)로 10단계 gradient 색상이 자동 적용됩니다.\n\n### 설정\n\n`~/.claude/settings.json`에 추가:\n\n```json\n{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"bash {$HOME}/.claude/statusline-command.sh\"\n  }\n}\n```\n\n표시 항목은 `~/.claude/statusline-config.txt`에서 제어합니다 (`0`으로 숨김):\n\n```\nSHOW_DIRECTORY=1\nSHOW_BRANCH=1\nSHOW_MODEL=1\nSHOW_VERSION=1\nSHOW_CONTEXT=1\nSHOW_USAGE=1\n```\n\n---\n\n## 아키텍처\n\n### 사용량 가져오기 (`fetch-claude-usage`)\n\n```\nmacOS Keychain / ~/.claude/.credentials.json\n    │\n    ▼\nOAuth Bearer Token 추출\n    │\n    ▼\nGET https://api.anthropic.com/api/oauth/usage\n    Header: anthropic-beta: oauth-2025-04-20\n    │\n    ▼\n~/.claude/.usage-cache.json (30초 TTL 캐시)\n    │\n    ▼\nstdout: \"5h_util|5h_resets|7d_util|7d_resets\"\n```\n\n- **토큰 소스**: `~/.claude/.credentials.json` → macOS Keychain (fallback)\n- **캐시**: `~/.claude/.usage-cache.json` (30초 TTL)\n- **외부 의존성**: 없음 (Python stdlib만 사용)\n\n### statusline 렌더링 (`statusline-command.sh`)\n\nClaude Code가 stdin으로 전달하는 JSON을 파싱하여 2줄의 ANSI 컬러 텍스트를 출력합니다.\n\n---\n\n## 요구사항\n\n- Python 3.12+\n- [uv](https://docs.astral.sh/uv/)\n- `jq` (statusline JSON 파싱용)\n- Claude Pro/Max/Team/Enterprise 구독\n\n---\n\n## 개발\n\n```bash\n# 의존성 설치\nuv sync\n\n# 린트\nuv run ruff check src/ tests/\n\n# 테스트\nuv run pytest tests/ -v\n\n# CLI 직접 실행\nuv run fetch-claude-usage\n```\n\n---\n\n## 프로젝트 구조\n\n```\njin-claude/\n├── .claude-plugin/\n│   └── marketplace.json                 # 마켓플레이스 카탈로그\n├── plugins/\n│   └── jin-claude/                      # 단일 플러그인\n│       ├── .claude-plugin/\n│       │   └── plugin.json              # 플러그인 매니페스트\n│       ├── agents/                      # 13 에이전트\n│       │   └── templates/               # 에이전트 템플릿\n│       ├── skills/                      # 8 스킬\n│       │   ├── jin-claude-init/\n│       │   ├── jin-commit/\n│       │   ├── jin-interview/\n│       │   ├── jin-swe-fix/\n│       │   ├── jin-suggest/\n│       │   ├── manage-skills/\n│       │   ├── py-standard/\n│       │   └── verify-implementation/\n│       ├── scripts/                     # statusline + timer\n│       │   ├── statusline-command.sh    # statusline 렌더러\n│       │   ├── statusline-config.txt    # 표시 설정\n│       │   ├── tmux-usage.sh            # tmux 연동\n│       │   └── install-timer.sh         # 타이머 설치 (Linux/macOS/Windows)\n│       ├── settings.json                # 플러그인 설정\n│       ├── systemd/                     # Linux systemd timer\n│       └── launchd/                     # macOS launchd plist\n├── src/jin_claude/\n│   ├── __init__.py\n│   └── fetch_claude_usage.py            # OAuth usage API 클라이언트\n├── .claude/\n│   ├── CLAUDE.md                        # 프로젝트 지침\n│   └── settings.json                    # 개발용 설정\n└── pyproject.toml                       # uv 프로젝트 설정\n```\n\n---\n\n## 라이선스\n\nMIT\n"
       },
       "plugins": [
         {
           "name": "jin-claude",
           "source": "./plugins/jin-claude",
-          "description": "Multi-agent orchestration for Claude Code: 9 agents, execution skills, lifecycle hooks, CTI pipeline, statusline",
-          "version": "2.0.0",
+          "description": "Multi-agent orchestration for Claude Code: 15 agents, 14 skills, orchestrator, parallel execution, lifecycle hooks, CTI pipeline",
+          "version": "3.0.0",
           "author": {
             "name": "jin",
             "email": "jin@stealthmole.com"
@@ -40,24 +40,42 @@
             "workflow",
             "tdd",
             "code-review",
+            "hooks",
             "research",
             "cti",
             "mole",
-            "statusline"
+            "statusline",
+            "swe",
+            "parallel",
+            "maxwork",
+            "fsd",
+            "ralph",
+            "gcc",
+            "cleanser",
+            "deepinit"
           ],
           "category": "development",
           "strict": false,
           "categories": [
             "agents",
+            "cleanser",
             "code-review",
             "cti",
+            "deepinit",
             "development",
+            "fsd",
+            "gcc",
+            "hooks",
+            "maxwork",
             "mole",
             "multi-agent",
             "orchestration",
+            "parallel",
+            "ralph",
             "research",
             "skills",
             "statusline",
+            "swe",
             "tdd",
             "workflow"
           ],

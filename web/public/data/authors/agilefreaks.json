@@ -1,0 +1,56 @@
+{
+  "author": {
+    "id": "Agilefreaks",
+    "display_name": "Agilefreaks",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1319488?v=4"
+  },
+  "marketplaces": [
+    {
+      "name": "agilefreaks-skills",
+      "version": null,
+      "description": "Internal AgileFreaks skills library for Claude Code and Claude.ai Cowork.",
+      "repo_full_name": "Agilefreaks/claude-skills",
+      "repo_url": "https://github.com/Agilefreaks/claude-skills",
+      "repo_description": "A marketplace of plugins for claude.ai",
+      "signals": {
+        "stars": 0,
+        "forks": 0,
+        "pushed_at": "2026-03-11T18:02:24Z"
+      },
+      "files": {
+        ".claude-plugin/marketplace.json": "{\n  \"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\",\n  \"name\": \"agilefreaks-skills\",\n  \"owner\": {\n    \"name\": \"AgileFreaks\",\n    \"email\": \"dev@agilefreaks.com\"\n  },\n  \"metadata\": {\n    \"description\": \"Internal AgileFreaks skills library for Claude Code and Claude.ai Cowork.\",\n    \"version\": \"1.0.0\",\n    \"pluginRoot\": \"./plugins\"\n  },\n  \"plugins\": [\n    {\n      \"name\": \"code-review\",\n      \"source\": \"./plugins/code-review\",\n      \"description\": \"Outside-in, risk-driven code review methodology based on Gregory Brown's Effective Code Reviews. Covers all change types: bug fixes, new features, enhancements, and refinements.\",\n      \"version\": \"1.0.0\",\n      \"author\": {\n        \"name\": \"AgileFreaks\"\n      },\n      \"category\": \"productivity\",\n      \"keywords\": [\"code-review\", \"pr-review\", \"quality\", \"risk-assessment\"]\n    }\n  ]\n}\n",
+        "README.md": "# AgileFreaks Skills\n\nInternal Claude skills library. Works across Claude.ai Cowork, Claude Code (terminal), and GitHub Actions.\n\n## Plugin Catalogue\n\n| Plugin | Description | Version | Category |\n|--------|-------------|---------|----------|\n| [code-review](plugins/code-review/) | Outside-in, risk-driven code review. Covers bug fixes, new features, add-ons, extensions, and refinements. | 1.0.0 | productivity |\n\n## Usage\n\n### Claude.ai Cowork\n\nIn your organization's Cowork settings, add this repository under **Org Settings > Plugins > Add plugin source**. Once synced, plugins can be made available or auto-installed for org members.\n\n### Claude Code (terminal)\n\n```bash\n# Add the marketplace\n/plugin marketplace add agilefreaks/claude-skills\n\n# Install a plugin\n/plugin install code-review@agilefreaks-skills\n```\n\nOr add to your project's `.claude/settings.json` to install automatically:\n\n```json\n{\n  \"enabledPlugins\": {\n    \"code-review@agilefreaks-skills\": true\n  }\n}\n```\n\n### GitHub Actions\n\nCopy `.github/workflows/code-review.yml` from this repo into your project. It checks out this skills repo at `.skills/` and passes the relevant skill to `anthropics/claude-code-action@v1`.\n\nSee the workflow file for required secrets and permissions.\n\n## Adding Plugins\n\n1. Create `plugins/<name>/` with:\n   - `.claude-plugin/plugin.json` — plugin manifest\n   - `skills/<name>/SKILL.md` — skill content\n   - `README.md` — documentation\n2. Add an entry to `.claude-plugin/marketplace.json`\n3. Update `CHANGELOG.md`\n",
+        "plugins/code-review/README.md": "# code-review\n\nOutside-in, risk-driven code review skill based on Gregory Brown's *Effective Code Reviews* (Programming Beyond Practices, 2015).\n\n## What it does\n\nReviews pull requests in six phases:\n\n1. **Problem Validation** — does the code solve the right problem?\n2. **Build & Runability** — is the build passing, is it running somewhere real?\n3. **Test Audit** — are modified/deleted tests a red flag?\n4. **Coverage Assessment** — categorizes the change (bug fix, new feature, add-on, extension, refinement) and applies risk-appropriate expectations\n5. **Project-Specific Checks** — deferred to your project's rules file\n6. **Risk Assessment & Output** — Low / Medium / High risk level, review summary, human reviewer checklist\n\n## Companion rules file (recommended)\n\nThe SKILL.md contains the generic methodology. Phase 5 (\"Project-Specific Checks\") and Phase 6 output mechanics intentionally defer to your project. You should create `.claude/rules/code-review.md` in your project repo with:\n\n### How code changes are fetched\n\n```markdown\n## Context Gathering\n\n1. Get PR details: `gh pr view <PR_NUMBER>`\n2. Find the linked issue:\n   - From branch name: pattern `^\\d+` (e.g. `733-fix-login` → issue #733)\n   - From PR body: look for `Fixes #N`, `Closes #N`, `Resolves #N`\n3. If found: `gh issue view <ISSUE_NUMBER>`\n4. If not found: use PR title/description as source of truth\n5. Get the diff: `gh pr diff <PR_NUMBER>`\n```\n\n### Project-specific checks (Phase 5)\n\n```markdown\n## Project-Specific Checks\n\nRun checks relevant to the changes. Skip sections for unaffected areas.\n\n### Architecture\n- [Your architecture rules, e.g. bounded context boundaries, layer separation]\n\n### Performance\n- [Your performance checks, e.g. N+1 queries, missing indexes]\n\n### Security\n- [Your security checks, e.g. auth changes, raw SQL, sensitive data in logs]\n\n### Testing\n- [Your testing conventions, e.g. framework, required coverage for change types]\n```\n\n### How reviews are posted (Phase 6)\n\n```markdown\n## Output Format\n\n### > Automated Review\n\n**Context**\n- **PR:** #<number> - <title>\n- **Issue:** #<number> - <title> (or \"No linked issue\")\n- **Change Type:** [Bug Fix / New Feature / Enhancement / Refactoring / Config/Docs]\n- **Scope:** [Brief description]\n\n**Looks Good**\n- [Specific passing checks]\n\n**Concerns Found**\n\n_See inline comments in the Files Changed tab for specific line-level concerns._\n\n_General concerns:_\n- [Concern and why it matters]\n\n(If none: \"No issues found\")\n\n**Risk Assessment**\n- **Risk Level:** [Low / Medium / High]\n- **Reasoning:** [Why]\n\n---\n\n[Human Reviewer Checklist — generated per SKILL.md Phase 6]\n\n## Posting Mechanics\n\n### Part 1: Summary\n\n\\`\\`\\`bash\ngh pr review <PR_NUMBER> --comment --body \"$(cat <<'EOF'\n...output format above...\nEOF\n)\"\n\\`\\`\\`\n\n### Part 2: Inline Comments\n\n\\`\\`\\`bash\nCOMMIT_SHA=$(gh pr view <PR_NUMBER> --json headRefOid --jq '.headRefOid')\n\n# Verify the line appears in the diff before posting\ngh pr diff <PR_NUMBER>\n\njq -n \\\n  --arg commit_id \"$COMMIT_SHA\" \\\n  --arg path \"relative/path/to/file.rb\" \\\n  --arg body \"**Concern:** Description and suggestion\" \\\n  --argjson line 42 \\\n  '{commit_id: $commit_id, event: \"COMMENT\", body: \"\", comments: [{path: $path, line: $line, side: \"RIGHT\", body: $body}]}' \\\n| gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --method POST --input -\n\\`\\`\\`\n\n**Rules:**\n- `event`: Always `\"COMMENT\"` — never approve or request changes\n- `line`: Must be present in the diff or the API rejects it\n- `side`: Always `\"RIGHT\"`\n- `path`: Relative to repo root, no leading `/`\n- **Fallback:** If inline comment fails, include the concern in the summary instead\n```\n\n## Usage\n\n### Claude Code (terminal)\n\nAfter installing via `/plugin install code-review@agilefreaks-skills`:\n\n```\nUse the code-review skill to review PR #42\n```\n\n### Claude.ai Cowork\n\nOnce the plugin is distributed to your org, use it from any Cowork project. See your org's Cowork plugin settings for availability.\n\n### GitHub Actions\n\nSee `.github/workflows/code-review.yml` in this repo for a template workflow that checks out this plugin and runs the skill on every PR.\n"
+      },
+      "plugins": [
+        {
+          "name": "code-review",
+          "source": "./plugins/code-review",
+          "description": "Outside-in, risk-driven code review methodology based on Gregory Brown's Effective Code Reviews. Covers all change types: bug fixes, new features, enhancements, and refinements.",
+          "version": "1.0.0",
+          "author": {
+            "name": "AgileFreaks"
+          },
+          "category": "productivity",
+          "keywords": [
+            "code-review",
+            "pr-review",
+            "quality",
+            "risk-assessment"
+          ],
+          "categories": [
+            "code-review",
+            "pr-review",
+            "productivity",
+            "quality",
+            "risk-assessment"
+          ],
+          "install_commands": [
+            "/plugin marketplace add Agilefreaks/claude-skills",
+            "/plugin install code-review@agilefreaks-skills"
+          ]
+        }
+      ]
+    }
+  ]
+}
